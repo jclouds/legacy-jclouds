@@ -19,12 +19,9 @@
 
 package org.jclouds.epc.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.testng.Assert.assertEquals;
+import java.util.Properties;
 
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
+import org.jclouds.eucalyptus.compute.EucalyptusComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -32,7 +29,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest")
-public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
+public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends EucalyptusComputeServiceLiveTest {
 
    public EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest() {
       provider = "eucalyptus-partnercloud-ec2";
@@ -41,23 +38,11 @@ public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends EC2C
    }
 
    @Override
-   @Test(enabled = false)
-   public void testExtendedOptionsAndLogin() throws Exception {
-      // euc does not support monitoring
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      if (System.getProperties().containsKey("test.eucalyptus-partnercloud-ec2.virtualization-type"))
+         overrides.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", System
+                  .getProperty("test.eucalyptus-partnercloud-ec2.virtualization-type"));
+      return overrides;
    }
-
-   @Override
-   @Test(enabled = false)
-   public void testExtendedOptionsNoKeyPair() throws Exception {
-      // euc does not support multiple security groups
-   }
-
-   @Override
-   protected void assertDefaultWorks() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-   }
-
 }

@@ -83,7 +83,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeInstances")
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<? extends Reservation<? extends RunningInstance>>> describeInstancesInRegion(
+   ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>> describeInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -94,7 +94,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "RunInstances")
    @XMLResponseParser(RunInstancesResponseHandler.class)
-   ListenableFuture<Reservation<? extends RunningInstance>> runInstancesInRegion(
+   ListenableFuture<? extends Reservation<? extends RunningInstance>> runInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) String nullableAvailabilityZone,
          @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,

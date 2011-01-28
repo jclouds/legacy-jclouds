@@ -42,8 +42,6 @@ import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.logging.Logger;
@@ -52,6 +50,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
@@ -70,7 +69,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    @VisibleForTesting
    final EC2Client client;
    @VisibleForTesting
-   final CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize;
+   final CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize;
    @VisibleForTesting
    final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    @VisibleForTesting
@@ -82,7 +81,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    @Inject
    EC2RunNodesAndAddToSetStrategy(
             EC2Client client,
-            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             @Named("PRESENT") Predicate<RunningInstance> instancePresent,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
@@ -100,33 +99,38 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
-      Reservation<? extends RunningInstance> reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag,
-               count, template);
-
-      Iterable<String> ids = transform(reservation, instanceToId);
+      Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag, count,
+               template);
+      Iterable<String> ids = transform(started, instanceToId);
 
       String idsString = Joiner.on(',').join(ids);
       if (Iterables.size(ids) > 0) {
          logger.debug("<< started instances(%s)", idsString);
-         all(reservation, instancePresent);
+         all(started, instancePresent);
          logger.debug("<< present instances(%s)", idsString);
-         populateCredentials(reservation);
+         populateCredentials(started);
       }
 
-      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(reservation,
+      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }
 
-   protected void populateCredentials(Reservation<? extends RunningInstance> reservation) {
-      RunningInstance instance1 = Iterables.get(reservation, 0);
-      Credentials credentials = instanceToCredentials.apply(instance1);
+   protected void populateCredentials(Iterable<? extends RunningInstance> started) {
+      Credentials credentials = null;
+      for (RunningInstance instance : started) {
+         credentials = instanceToCredentials.apply(instance);
+         if (credentials != null)
+            break;
+      }
       if (credentials != null)
-         for (RunningInstance instance : reservation)
+         for (RunningInstance instance : started)
             credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), credentials);
+
    }
 
+   // TODO write test for this
    @VisibleForTesting
-   Reservation<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
+   Iterable<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
             Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
@@ -134,15 +138,23 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
                tag, template);
 
-      if (EC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())
-         instanceOptions.enableMonitoring();
+      int countStarted = 0;
+      int tries = 0;
+      Iterable<? extends RunningInstance> started = ImmutableSet.<RunningInstance> of();
 
-      if (logger.isDebugEnabled())
-         logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count, region, zone, template
-                  .getImage().getProviderId(), instanceOptions.buildFormParameters());
+      while (countStarted < count && tries++ < count) {
+         if (logger.isDebugEnabled())
+            logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count - countStarted, region,
+                     zone, template.getImage().getProviderId(), instanceOptions.buildFormParameters());
 
-      return client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
-               count, instanceOptions);
+         started = Iterables.concat(started, client.getInstanceServices().runInstancesInRegion(region, zone,
+                  template.getImage().getProviderId(), 1, count - countStarted, instanceOptions));
+
+         countStarted = Iterables.size(started);
+         if (countStarted < count)
+            logger.debug(">> not enough instances (%d/%d) started, attempting again", countStarted, count);
+      }
+      return started;
    }
 
 }

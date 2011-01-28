@@ -58,8 +58,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             return input.family == OsFamily.RHEL || //
-                  (input.family == OsFamily.CENTOS && !input.version.matches("5.[42]")) || //
-                  (input.family == OsFamily.WINDOWS && !input.version.matches("200[38]"));
+                     (input.family == OsFamily.CENTOS && !input.version.matches("5.[42]")) || //
+                     (input.family == OsFamily.WINDOWS && !input.version.matches("200[38]"));
          }
 
       };
@@ -69,13 +69,13 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderM1SMALLWithDescription() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-            .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+               .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20110122");
+      assertEquals(template.getImage().getVersion(), "20110126");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
@@ -86,8 +86,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderCanUseImageIdAndhardwareId() {
 
-      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
-            .hardwareId(InstanceType.M2_2XLARGE).build();
+      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").hardwareId(
+               InstanceType.M2_2XLARGE).build();
 
       System.out.println(template.getHardware());
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -119,11 +119,12 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderMicro() throws IOException {
 
-      Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO).build();
+      Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
+               .osFamily(OsFamily.UBUNTU).build();
 
       assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
-      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
-      assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(microTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(microTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(microTemplate.getLocation().getId(), "us-east-1");
@@ -139,8 +140,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          // set owners to nothing
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 

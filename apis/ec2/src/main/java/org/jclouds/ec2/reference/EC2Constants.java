@@ -26,19 +26,11 @@ import org.jclouds.compute.ComputeService;
  * 
  * @author Adrian Cole
  */
-public interface EC2Constants{
+public interface EC2Constants {
    /**
     * Listing the universe of amis is extremely expensive. set this to a comma separated value of
     * the ami owners you wish to use in {@link ComputeService}
     */
    public static final String PROPERTY_EC2_AMI_OWNERS = "jclouds.ec2.ami-owners";
-   public static final String PROPERTY_ELB_ENDPOINT = "jclouds.elb.endpoint";
-
-   /**
-    * amis that work on the cluster instance type
-    * 
-    * @see InstanceType.CC1_4XLARGE
-    */
-   public static final String PROPERTY_EC2_CC_AMIs = "jclouds.ec2.cc-amis";
 
 }

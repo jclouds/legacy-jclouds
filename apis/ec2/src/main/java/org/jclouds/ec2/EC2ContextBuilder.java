@@ -63,7 +63,7 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new EC2RestClientModule());
+      modules.add(EC2RestClientModule.create());
    }
 
    @Override

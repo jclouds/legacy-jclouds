@@ -42,10 +42,6 @@ import org.jclouds.ec2.services.InstanceAsyncClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairAsyncClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.ec2.services.MonitoringAsyncClient;
-import org.jclouds.ec2.services.MonitoringClient;
-import org.jclouds.ec2.services.PlacementGroupAsyncClient;
-import org.jclouds.ec2.services.PlacementGroupClient;
 import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
@@ -65,23 +61,26 @@ import com.google.common.collect.ImmutableMap.Builder;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class EC2RestClientModule extends WithZonesFormSigningRestClientModule<EC2Client, EC2AsyncClient> {
+public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> extends
+         WithZonesFormSigningRestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(AMIClient.class, AMIAsyncClient.class)//
-         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-         .put(InstanceClient.class, InstanceAsyncClient.class)//
-         .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
-         .put(MonitoringClient.class, MonitoringAsyncClient.class)//
-         .put(WindowsClient.class, WindowsAsyncClient.class)//
-         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-         .build();
+            .put(AMIClient.class, AMIAsyncClient.class)//
+            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+            .put(InstanceClient.class, InstanceAsyncClient.class)//
+            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(WindowsClient.class, WindowsAsyncClient.class)//
+            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+            .build();
 
-   public EC2RestClientModule() {
-      super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+   public static EC2RestClientModule<EC2Client, EC2AsyncClient> create() {
+      return new EC2RestClientModule<EC2Client, EC2AsyncClient>(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+   }
+
+   public EC2RestClientModule(Class<S> sync, Class<A> async, Map<Class<?>, Class<?>> delegateMap) {
+      super(sync, async, delegateMap);
    }
 
    @Override
@@ -111,6 +110,7 @@ public class EC2RestClientModule extends WithZonesFormSigningRestClientModule<EC
       }
 
    }
+
    @Singleton
    public static class RegionIdToZoneId implements javax.inject.Provider<Map<String, String>> {
       private final AvailabilityZoneAndRegionClient client;

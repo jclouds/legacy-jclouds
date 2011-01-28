@@ -22,7 +22,6 @@ package org.jclouds.ec2.compute.config;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -31,25 +30,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeService;
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.CreatePlacementGroupIfNeeded;
-import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
-import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
-import org.jclouds.ec2.compute.functions.CredentialsForInstance;
-import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
-import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
-import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.ec2.domain.PlacementGroup;
-import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.predicates.InstancePresent;
-import org.jclouds.ec2.predicates.PlacementGroupAvailable;
-import org.jclouds.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
@@ -59,6 +39,21 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeService;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
+import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
+import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.InstanceState;
+import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.predicates.InstancePresent;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -98,20 +93,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    @Named("PRESENT")
    protected Predicate<RunningInstance> instancePresent(InstancePresent present) {
       return new RetryablePredicate<RunningInstance>(present, 5000, 200, TimeUnit.MILLISECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("AVAILABLE")
-   protected Predicate<PlacementGroup> placementGroupAvailable(PlacementGroupAvailable available) {
-      return new RetryablePredicate<PlacementGroup>(available, 60, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("DELETED")
-   protected Predicate<PlacementGroup> placementGroupDeleted(PlacementGroupDeleted deleted) {
-      return new RetryablePredicate<PlacementGroup>(deleted, 60, 1, TimeUnit.SECONDS);
    }
 
    @Override
@@ -162,14 +143,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       return newLinkedHashMap();
    }
 
-   @Provides
-   @Singleton
-   @Named("PLACEMENT")
-   protected final Map<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
-      // doesn't seem to clear when someone issues remove(key)
-      // return new MapMaker().makeComputingMap(in);
-      return newLinkedHashMap();
-   }
 
    @Provides
    @Singleton
@@ -180,14 +153,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       return toArray(Splitter.on(',').split(amiOwners), String.class);
    }
 
-   @Provides
-   @Singleton
-   @Named(PROPERTY_EC2_CC_AMIs)
-   String[] ccAmis(@Named(PROPERTY_EC2_CC_AMIs) String ccAmis) {
-      if (ccAmis.trim().equals(""))
-         return new String[] {};
-      return toArray(Splitter.on(',').split(ccAmis), String.class);
-   }
 
    @Provides
    @Singleton

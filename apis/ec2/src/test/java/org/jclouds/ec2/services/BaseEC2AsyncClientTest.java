@@ -29,6 +29,8 @@ import java.util.Properties;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.http.HttpRequest;
@@ -50,7 +52,11 @@ import com.google.inject.Module;
 public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    @RequiresHttp
    @ConfiguresRestClient
-   protected static class StubEC2RestClientModule extends EC2RestClientModule {
+   protected static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+
+      public StubEC2RestClientModule() {
+         super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+      }
 
       @Override
       protected String provideTimeStamp(DateService dateService, int expiration) {

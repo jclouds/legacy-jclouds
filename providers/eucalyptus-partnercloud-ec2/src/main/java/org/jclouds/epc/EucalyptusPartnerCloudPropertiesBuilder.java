@@ -34,6 +34,7 @@ public class EucalyptusPartnerCloudPropertiesBuilder extends EucalyptusPropertie
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
       properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Eucalyptus");
       return properties;
    }

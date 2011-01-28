@@ -24,7 +24,6 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 
 import java.util.Properties;
 
@@ -44,7 +43,6 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_API_VERSION, EC2AsyncClient.VERSION);
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
-      properties.setProperty(PROPERTY_EC2_CC_AMIs, "");
       return properties;
    }
 

@@ -65,10 +65,6 @@ public class EC2TemplateOptions extends TemplateOptions {
    private Set<String> groupIds = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
-   private boolean monitoringEnabled;
-   private String placementGroup = null;
-   private boolean noPlacementGroup;
-   private String subnetId;
    private byte[] userData;
    private Set<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.of();
 
@@ -94,21 +90,11 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * Enable Cloudwatch monitoring
-    * 
-    * @see CloudWatchClient
-    */
-   public EC2TemplateOptions enableMonitoring() {
-      this.monitoringEnabled = true;
-      return this;
-   }
-
-   /**
     * Unencoded data
     */
    public EC2TemplateOptions userData(byte[] unencodedData) {
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
-            "userData cannot be larger than 16kb");
+               "userData cannot be larger than 16kb");
       this.userData = unencodedData;
       return this;
    }
@@ -134,40 +120,10 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * Specifies the keypair used to run instances with
-    */
-   public EC2TemplateOptions placementGroup(String placementGroup) {
-      checkNotNull(placementGroup, "use noPlacementGroup option to request boot without a keypair");
-      checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
-      Preconditions2.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
-      this.placementGroup = placementGroup;
-      return this;
-   }
-
-   /**
-    * Do not use a keypair on instances
-    */
-   public EC2TemplateOptions noPlacementGroup() {
-      checkState(placementGroup == null, "you cannot specify both options placementGroup and noPlacementGroup");
-      this.noPlacementGroup = true;
-      return this;
-   }
-
-   /**
-    * Specifies the subnetId used to run instances in
-    */
-   public EC2TemplateOptions subnetId(String subnetId) {
-      checkNotNull(subnetId, "subnetId cannot be null");
-      Preconditions2.checkNotEmpty(subnetId, "subnetId must be non-empty");
-      this.subnetId = subnetId;
-      return this;
-   }
-
-   /**
     * Specifies the block device mappings to be used to run the instance
     */
    public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
-         @Nullable Integer sizeInGib, @Nullable Boolean deleteOnTermination) {
+            @Nullable Integer sizeInGib, @Nullable Boolean deleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
       checkNotNull(snapshotId, "snapshotId cannot be null");
@@ -175,7 +131,7 @@ public class EC2TemplateOptions extends TemplateOptions {
       Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
       mappings.addAll(blockDeviceMappings);
       MapEBSSnapshotToDevice mapping = new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib,
-            deleteOnTermination);
+               deleteOnTermination);
       mappings.add(mapping);
       blockDeviceMappings = ImmutableSet.copyOf(mappings);
       return this;
@@ -185,7 +141,7 @@ public class EC2TemplateOptions extends TemplateOptions {
     * Specifies the block device mappings to be used to run the instance
     */
    public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, Integer sizeInGib,
-         @Nullable Boolean deleteOnTermination) {
+            @Nullable Boolean deleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
       checkNotNull(sizeInGib, "sizeInGib cannot be null");
@@ -280,30 +236,6 @@ public class EC2TemplateOptions extends TemplateOptions {
          return EC2TemplateOptions.class.cast(options.noKeyPair());
       }
 
-      /**
-       * @see EC2TemplateOptions#placementGroup
-       */
-      public static EC2TemplateOptions placementGroup(String placementGroup) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.placementGroup(placementGroup));
-      }
-
-      /**
-       * @see EC2TemplateOptions#noPlacementGroup
-       */
-      public static EC2TemplateOptions noPlacementGroup() {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.noPlacementGroup());
-      }
-
-      /**
-       * @see EC2TemplateOptions#enableMonitoring
-       */
-      public static EC2TemplateOptions enableMonitoring() {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.enableMonitoring());
-      }
-
       // methods that only facilitate returning the correct object type
       /**
        * @see TemplateOptions#inboundPorts
@@ -353,13 +285,6 @@ public class EC2TemplateOptions extends TemplateOptions {
          return EC2TemplateOptions.class.cast(options.withMetadata());
       }
 
-      /**
-       * @see TemplateOptions#withSubnetId
-       */
-      public static EC2TemplateOptions subnetId(String subnetId) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.subnetId(subnetId));
-      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -510,34 +435,6 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return placementGroup to use when running the instance or null, to generate a placementGroup.
-    */
-   public String getPlacementGroup() {
-      return placementGroup;
-   }
-
-   /**
-    * @return true (default) if we are supposed to use a placementGroup
-    */
-   public boolean shouldAutomaticallyCreatePlacementGroup() {
-      return !noPlacementGroup;
-   }
-
-   /**
-    * @return true (default) if we are supposed to enable cloudwatch
-    */
-   public boolean isMonitoringEnabled() {
-      return monitoringEnabled;
-   }
-
-   /**
-    * @return subnetId to use when running the instance or null.
-    */
-   public String getSubnetId() {
-      return subnetId;
-   }
-
-   /**
     * @return unencoded user data.
     */
    public byte[] getUserData() {
@@ -559,11 +456,7 @@ public class EC2TemplateOptions extends TemplateOptions {
       result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
-      result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + (noKeyPair ? 1231 : 1237);
-      result = prime * result + (noPlacementGroup ? 1231 : 1237);
-      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
-      result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       result = prime * result + Arrays.hashCode(userData);
       return result;
    }
@@ -592,22 +485,7 @@ public class EC2TemplateOptions extends TemplateOptions {
             return false;
       } else if (!keyPair.equals(other.keyPair))
          return false;
-      if (monitoringEnabled != other.monitoringEnabled)
-         return false;
-      if (noKeyPair != other.noKeyPair)
-         return false;
-      if (noPlacementGroup != other.noPlacementGroup)
-         return false;
-      if (placementGroup == null) {
-         if (other.placementGroup != null)
-            return false;
-      } else if (!placementGroup.equals(other.placementGroup))
-         return false;
-      if (subnetId == null) {
-         if (other.subnetId != null)
-            return false;
-      } else if (!subnetId.equals(other.subnetId))
-         return false;
+
       if (!Arrays.equals(userData, other.userData))
          return false;
 
@@ -618,9 +496,6 @@ public class EC2TemplateOptions extends TemplateOptions {
    public String toString() {
 
       return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair
-            + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup=" + placementGroup + ", noPlacementGroup="
-            + noPlacementGroup + ", subnetId=" + subnetId + ", userData=" + Arrays.toString(userData)
-            + ", blockDeviceMappings=" + blockDeviceMappings + "]";
+               + ", userData=" + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings + "]";
    }
-
 }

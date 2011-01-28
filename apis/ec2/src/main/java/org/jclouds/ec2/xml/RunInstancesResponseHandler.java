@@ -21,10 +21,12 @@ package org.jclouds.ec2.xml;
 
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.date.DateService;
 import org.jclouds.location.Region;
+
+import com.google.inject.Provider;
 
 /**
  * Parses the following XML document:
@@ -37,8 +39,9 @@ import org.jclouds.location.Region;
 public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   RunInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
-      super(dateService, defaultRegion);
+   RunInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+            Provider<RunningInstance.Builder> builderProvider) {
+      super(dateService, defaultRegion, builderProvider);
    }
 
    @Override

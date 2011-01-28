@@ -127,7 +127,6 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
       expect(strategy.instancePresent.apply(instance)).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
-      expect(input.options.isMonitoringEnabled()).andReturn(false);
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(
@@ -212,7 +211,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    @SuppressWarnings("unchecked")
    private EC2RunNodesAndAddToSetStrategy setupStrategy() {
       EC2Client client = createMock(EC2Client.class);
-      CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
+      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       Function<RunningInstance, Credentials> instanceToCredentials = createMock(Function.class);

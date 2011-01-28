@@ -20,14 +20,12 @@
 package org.jclouds.ec2.options;
 
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
-import static org.jclouds.ec2.options.RunInstancesOptions.Builder.enableMonitoring;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withBlockDeviceMappings;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withKernelId;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withKeyName;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withRamdisk;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withSecurityGroup;
-import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withSubnetId;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withUserData;
-import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withBlockDeviceMappings;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
@@ -184,49 +182,6 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testWithMonitoringEnabled() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
-   }
-
-   @Test
-   public void testNullWithMonitoringEnabled() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithMonitoringEnabledStatic() {
-      RunInstancesOptions options = enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
-   }
-
-   @Test
-   public void testWithSubnetId() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
-   }
-
-   @Test
-   public void testNullWithSubnetId() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithSubnetIdStatic() {
-      RunInstancesOptions options = withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testWithSubnetIdNPE() {
-      withSubnetId(null);
-   }
-
-   @Test
    public void testWithRamdisk() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withRamdisk("test");
@@ -255,17 +210,20 @@ public class RunInstancesOptionsTest {
       RunInstancesOptions options = new RunInstancesOptions();
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
    }
-   
+
    @Test
    public void testWithBlockDeviceMapping() {
       RunInstancesOptions options = new RunInstancesOptions();
       BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
-      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
       mappings.add(mapping);
       options.withBlockDeviceMappings(mappings);
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
+               .singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
+               .singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
+               .singletonList("true"));
    }
 
    @Test
@@ -277,17 +235,20 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithBlockDeviceMappingStatic() {
       BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
-      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
       mappings.add(mapping);
       RunInstancesOptions options = withBlockDeviceMappings(mappings);
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
+               .singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
+               .singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
+               .singletonList("true"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithBlockDeviceMappingNPE() {
-       withBlockDeviceMappings(null);
+      withBlockDeviceMappings(null);
    }
 
 }

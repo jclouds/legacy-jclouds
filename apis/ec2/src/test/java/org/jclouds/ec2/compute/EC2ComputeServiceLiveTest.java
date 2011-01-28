@@ -101,11 +101,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
-//      Date before = new Date();
-
       options.as(EC2TemplateOptions.class).securityGroups(tag);
       options.as(EC2TemplateOptions.class).keyPair(tag);
-      options.as(EC2TemplateOptions.class).enableMonitoring();
 
       String startedId = null;
       try {
@@ -129,7 +126,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RunningInstance instance = getInstance(instanceClient, startedId);
 
          assertEquals(instance.getKeyName(), tag);
-//         checkMonitoringEnabled(before, instance);
 
          // make sure we made our dummy group and also let in the user's group
          assertEquals(Sets.newTreeSet(instance.getGroupIds()),
@@ -154,21 +150,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
    }
-
-//   private void checkMonitoringEnabled(Date before, RunningInstance instance) {
-//      assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
-//
-//      RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory().createContext(
-//            "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
-//
-//      try {
-//         Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-//               "CPUUtilization", before, new Date(), 60, "Average");
-//         assert datapoints != null;
-//      } finally {
-//         monitoringContext.close();
-//      }
-//   }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsNoKeyPair() throws Exception {
@@ -224,73 +205,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testExtendedOptionsWithSubnetId() throws Exception {
-
-      String subnetId = System.getProperty("test.subnetId");
-      if (subnetId == null) {
-         // Skip test and return
-         return;
-      }
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
-
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
-
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
-
-      String tag = this.tag + "g";
-
-      TemplateOptions options = client.templateOptions();
-
-      // options.as(EC2TemplateOptions.class).securityGroups(tag);
-      options.as(EC2TemplateOptions.class).keyPair(tag);
-      options.as(EC2TemplateOptions.class).subnetId(subnetId);
-
-      String startedId = null;
-      String nodeId = null;
-      try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
-
-         // create the security group
-         // securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-
-         // create a keypair to pass in as well
-         keyPairClient.createKeyPairInRegion(null, tag);
-
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
-
-         NodeMetadata first = Iterables.get(nodes, 0);
-         assert first.getCredentials() != null : first;
-         assert first.getCredentials().identity != null : first;
-
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
-         nodeId = Iterables.getOnlyElement(nodes).getId();
-
-         RunningInstance instance = getInstance(instanceClient, startedId);
-
-         assertEquals(instance.getSubnetId(), subnetId);
-
-      } finally {
-         if (nodeId != null)
-            client.destroyNode(nodeId);
-         if (startedId != null) {
-            // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-         }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
-      }
-   }
-
-   private RunningInstance getInstance(InstanceClient instanceClient, String id) {
+   protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
             .describeInstancesInRegion(null, id)));
       return instance;
    }
 
-   private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
+   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
          throws InterruptedException {
       try {
          for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))

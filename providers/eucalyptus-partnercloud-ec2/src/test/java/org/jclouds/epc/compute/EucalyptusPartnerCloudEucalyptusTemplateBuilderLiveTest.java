@@ -68,7 +68,7 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends Bas
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
-      assertEquals(defaultTemplate.getLocation().getId(), "xen-cluster");
+      assertEquals(defaultTemplate.getLocation().getId(), "kvm-cluster");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
 
    }

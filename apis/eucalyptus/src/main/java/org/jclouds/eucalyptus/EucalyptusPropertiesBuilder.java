@@ -22,7 +22,6 @@ package org.jclouds.eucalyptus;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
@@ -38,12 +37,9 @@ public class EucalyptusPropertiesBuilder extends EC2PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT,
-            "http://173.205.188.130:8773/services/Eucalyptus");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://173.205.188.130:8773/services/Eucalyptus");
       properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
-      // amis that work with the cluster instances
-      properties.setProperty(PROPERTY_EC2_CC_AMIs, "");
       properties.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
 
       return properties;

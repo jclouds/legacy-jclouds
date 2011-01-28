@@ -81,12 +81,13 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
 
    @Override
    public Set<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-      Iterable<Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
+      Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
             regions, new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
 
+               @SuppressWarnings("unchecked")
                @Override
                public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
-                  return client.getInstanceServices().describeInstancesInRegion(from);
+                  return (Future<Set<? extends Reservation<? extends RunningInstance>>>) client.getInstanceServices().describeInstancesInRegion(from);
                }
 
             }, executor, null, logger, "reservations");

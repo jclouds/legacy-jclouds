@@ -27,6 +27,8 @@ import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.epc.strategy.EucalyptusPartnerCloudReviseParsedImage;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -36,7 +38,9 @@ public class EucalyptusPartnerCloudComputeServiceContextModule extends EC2Comput
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS).locationId("xen-cluster").osDescriptionMatches("xen");
+      String virt = injector.getInstance(Key.get(String.class, Names
+               .named("eucalyptus-partnercloud-ec2.virtualization-type")));
+      return template.osFamily(CENTOS).locationId(virt + "-cluster").osDescriptionMatches(virt);
    }
 
    @Override

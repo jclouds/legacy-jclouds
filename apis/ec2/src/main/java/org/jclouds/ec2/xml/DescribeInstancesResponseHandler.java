@@ -23,12 +23,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.date.DateService;
 import org.jclouds.location.Region;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Provider;
 
 /**
  * Parses the following XML document:
@@ -43,8 +44,9 @@ public class DescribeInstancesResponseHandler extends
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
-      super(dateService, defaultRegion);
+   DescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+            Provider<RunningInstance.Builder> builderProvider) {
+      super(dateService, defaultRegion, builderProvider);
    }
 
    @Override
@@ -52,9 +54,13 @@ public class DescribeInstancesResponseHandler extends
       return reservations;
    }
 
+   protected boolean endOfReservationItem() {
+      return itemDepth == 1;
+   }
+
    @Override
    protected void inItem() {
-      if (!inInstances && !inProductCodes && !inGroups) {
+      if (endOfReservationItem()) {
          reservations.add(super.newReservation());
       } else {
          super.inItem();
