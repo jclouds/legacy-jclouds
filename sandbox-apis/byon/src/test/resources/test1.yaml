@@ -1,15 +1,15 @@
 nodes:
-    cluster-1:
-        id: cluster-1
-        description: xyz
-        hostname: cluster-1.mydomain.com
-        os_arch: x86
-        os_family: rhel
-        os_name: redhat
-        os_version: 5.3
-        group: hadoop
-        tags:
-            - vanilla
-        username: myUser
-        credential: ZmFuY3lmb290
-        sudo_password: c3Vkbw==
+    - id: cluster-1
+      name: cluster-1
+      description: xyz
+      hostname: cluster-1.mydomain.com
+      os_arch: x86
+      os_family: rhel
+      os_name: redhat
+      os_version: 5.3
+      group: hadoop
+      tags:
+          - vanilla
+      username: myUser
+      credential: ZmFuY3lmb290
+      sudo_password: c3Vkbw==

@@ -46,7 +46,7 @@ import com.google.common.collect.Maps;
 public class NodeToNodeMetadataTest {
    public static final Location location = new LocationImpl(LocationScope.PROVIDER, "byon", "byon", null);
 
-   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("xyz").location(
+   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1").location(
             location).state(NodeState.RUNNING).operatingSystem(
             new OperatingSystemBuilder().name("redhat").family(OsFamily.RHEL).arch("x86").version("5.3").description(
                      "xyz").build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com")).credentials(

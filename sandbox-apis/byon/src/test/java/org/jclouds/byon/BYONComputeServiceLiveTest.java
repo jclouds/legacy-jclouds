@@ -60,19 +60,19 @@ public class BYONComputeServiceLiveTest {
 
       StringBuilder nodes = new StringBuilder();
       nodes.append("nodes:\n");
-      nodes.append("    mymachine:\n");
-      nodes.append("        id: mymachine\n");
-      nodes.append("        description: my local machine\n");
-      nodes.append("        hostname: localhost\n");
-      nodes.append("        os_arch: ").append(System.getProperty("os.arch")).append("\n");
-      nodes.append("        os_family: ").append(OsFamily.UNIX).append("\n");
-      nodes.append("        os_name: ").append(System.getProperty("os.name")).append("\n");
-      nodes.append("        os_version: ").append(System.getProperty("os.version")).append("\n");
-      nodes.append("        group: ").append("ssh").append("\n");
-      nodes.append("        tags:\n");
-      nodes.append("            - local\n");
-      nodes.append("        username: ").append(System.getProperty("user.name")).append("\n");
-      nodes.append("        credential: ").append(base64(ComputeTestUtils.setupKeyPair().get("private").getBytes()))
+      nodes.append("    - id: mymachine\n");
+      nodes.append("      name: mymachine\n");
+      nodes.append("      description: my local machine\n");
+      nodes.append("      hostname: localhost\n");
+      nodes.append("      os_arch: ").append(System.getProperty("os.arch")).append("\n");
+      nodes.append("      os_family: ").append(OsFamily.UNIX).append("\n");
+      nodes.append("      os_name: ").append(System.getProperty("os.name")).append("\n");
+      nodes.append("      os_version: ").append(System.getProperty("os.version")).append("\n");
+      nodes.append("      group: ").append("ssh").append("\n");
+      nodes.append("      tags:\n");
+      nodes.append("          - local\n");
+      nodes.append("      username: ").append(System.getProperty("user.name")).append("\n");
+      nodes.append("      credential: ").append(base64(ComputeTestUtils.setupKeyPair().get("private").getBytes()))
                .append("\n");
 
       contextProperties.setProperty("byon.nodes", nodes.toString());

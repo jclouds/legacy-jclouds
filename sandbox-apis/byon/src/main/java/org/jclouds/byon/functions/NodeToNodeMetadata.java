@@ -59,7 +59,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
    public NodeMetadata apply(Node from) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId());
-      builder.name(from.getDescription());
+      builder.name(from.getName());
       builder.location(location.get());
       builder.tag(from.getGroup());
       // TODO add tags!
