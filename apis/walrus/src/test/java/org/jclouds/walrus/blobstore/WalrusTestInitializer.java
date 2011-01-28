@@ -19,33 +19,18 @@
 
 package org.jclouds.walrus.blobstore;
 
-import java.io.IOException;
+import org.jclouds.s3.blobstore.integration.S3TestInitializer;
 
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class WalrusTestInitializer extends TransientBlobStoreTestInitializer {
+public class WalrusTestInitializer extends S3TestInitializer {
 
    public WalrusTestInitializer() {
       provider = "walrus";
-      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
 
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
-            String app, String identity, String credential) throws IOException {
-      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
-   }
 
 }

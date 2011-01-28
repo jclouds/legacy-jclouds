@@ -19,13 +19,13 @@
 
 package org.jclouds.walrus.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
+import org.jclouds.s3.blobstore.integration.S3ServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "WalrusServiceIntegrationLiveTest")
-public class WalrusServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
+public class WalrusServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
 
 }

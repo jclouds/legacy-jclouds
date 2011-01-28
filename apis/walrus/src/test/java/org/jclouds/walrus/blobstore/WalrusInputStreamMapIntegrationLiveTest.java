@@ -19,13 +19,13 @@
 
 package org.jclouds.walrus.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
+import org.jclouds.s3.blobstore.integration.S3InputStreamMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "WalrusInputStreamMapIntegrationLiveTest")
-public class WalrusInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
+public class WalrusInputStreamMapIntegrationLiveTest extends S3InputStreamMapIntegrationLiveTest {
 
 }

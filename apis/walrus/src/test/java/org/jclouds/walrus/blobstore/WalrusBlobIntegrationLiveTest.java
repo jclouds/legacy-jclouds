@@ -19,22 +19,14 @@
 
 package org.jclouds.walrus.blobstore;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.s3.blobstore.integration.S3BlobIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "WalrusBlobIntegrationLiveTest")
-public class WalrusBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+public class WalrusBlobIntegrationLiveTest extends S3BlobIntegrationLiveTest {
 
-   @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
-   }
 
 }

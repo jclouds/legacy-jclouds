@@ -41,7 +41,6 @@ public class EucalyptusPropertiesBuilder extends EC2PropertiesBuilder {
       properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
       properties.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
-
       return properties;
    }
 
