@@ -21,8 +21,10 @@ package org.jclouds.byon.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
@@ -46,21 +48,23 @@ import com.google.common.collect.Maps;
 public class NodeToNodeMetadataTest {
    public static final Location location = new LocationImpl(LocationScope.PROVIDER, "byon", "byon", null);
 
-   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1").location(
-            location).state(NodeState.RUNNING).operatingSystem(
-            new OperatingSystemBuilder().name("redhat").family(OsFamily.RHEL).arch("x86").version("5.3").description(
-                     "xyz").build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com")).credentials(
-            new Credentials("myUser", "fancyfoot")).adminPassword("sudo").build();
+   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1")
+            .location(location).state(NodeState.RUNNING).operatingSystem(
+                     new OperatingSystemBuilder().name("redhat").description("redhat").family(OsFamily.RHEL)
+                              .arch("x86").version("5.3").build()).publicAddresses(
+                     ImmutableSet.of("cluster-1.mydomain.com")).credentials(new Credentials("myUser", "fancyfoot"))
+            .adminPassword("sudo").build();
 
    @Test
    public void testNodesParse() throws Exception {
 
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
 
-      NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(location), credentialStore);
+      NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(location),
+               new SupplyFromProviderURIOrNodesProperty(URI.create("test")), credentialStore);
 
       assertEquals(parser.apply(NodesFromYamlTest.TEST1), TEST1);
-      assertEquals(credentialStore, ImmutableMap.of("node#cluster-1",  new Credentials("myUser", "fancyfoot")));
+      assertEquals(credentialStore, ImmutableMap.of("node#cluster-1", new Credentials("myUser", "fancyfoot")));
 
    }
 }

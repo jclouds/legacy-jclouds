@@ -20,6 +20,7 @@
 package org.jclouds.byon.config;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -65,6 +66,8 @@ public class BYONComputeServiceContextModule extends
       }).to(NodesParsedFromSupplier.class);
       bind(new TypeLiteral<Supplier<InputStream>>() {
       }).annotatedWith(Provider.class).to(SupplyFromProviderURIOrNodesProperty.class);
+      bind(new TypeLiteral<Function<URI, InputStream>>() {
+      }).to(SupplyFromProviderURIOrNodesProperty.class);
       // TODO make this somehow overridable via user request
       bind(new TypeLiteral<Function<InputStream, Map<String, Node>>>() {
       }).to(NodesFromYaml.class);

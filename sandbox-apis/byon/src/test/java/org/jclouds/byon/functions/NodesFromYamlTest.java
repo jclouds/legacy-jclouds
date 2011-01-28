@@ -37,14 +37,23 @@ import com.google.common.collect.ImmutableMap;
  */
 public class NodesFromYamlTest {
 
-   public static final Node TEST1 = new Node("cluster-1", "cluster-1", "xyz", "cluster-1.mydomain.com", "x86", "rhel", "redhat",
-            "5.3", "hadoop", ImmutableList.of("vanilla"), "myUser", CryptoStreams.base64("fancyfoot".getBytes()),
-            CryptoStreams.base64("sudo".getBytes()));
+   public static final Node TEST1 = new Node("cluster-1", "cluster-1", "cluster-1.mydomain.com", "x86", "rhel",
+            "redhat", "5.3", "hadoop", ImmutableList.of("vanilla"), "myUser", CryptoStreams.base64("fancyfoot"
+                     .getBytes()), null, CryptoStreams.base64("sudo".getBytes()));
 
    @Test
    public void testNodesParse() throws Exception {
 
       InputStream is = getClass().getResourceAsStream("/test1.yaml");
+      NodesFromYaml parser = new NodesFromYaml();
+
+      assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));
+   }
+
+   @Test
+   public void testNodesParseWhenCredentialInUrl() throws Exception {
+
+      InputStream is = getClass().getResourceAsStream("/test_with_url.yaml");
       NodesFromYaml parser = new NodesFromYaml();
 
       assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));

@@ -32,6 +32,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
@@ -40,7 +41,7 @@ import com.google.inject.name.Named;
 /**
  * @author Adrian Cole
  */
-public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStream> {
+public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStream>, Function<URI, InputStream> {
    @Resource
    protected Logger logger = Logger.NULL;
    private final URI url;
@@ -51,7 +52,7 @@ public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStrea
    String nodes;
 
    @Inject
-   SupplyFromProviderURIOrNodesProperty(@Provider URI url) {
+   public SupplyFromProviderURIOrNodesProperty(@Provider URI url) {
       this.url = checkNotNull(url, "url");
    }
 
@@ -59,18 +60,25 @@ public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStrea
    public InputStream get() {
       if (nodes != null)
          return Strings2.toInputStream(nodes);
-      try {
-         return url.toURL().openStream();
-      } catch (IOException e) {
-         logger.error(e, "URI could not be read: %s", url);
-         Throwables.propagate(e);
-         return null;
-      }
+      return apply(url);
    }
 
    @Override
    public String toString() {
       return "[url=" + url + "]";
+   }
+
+   @Override
+   public InputStream apply(URI input) {
+      try {
+         if (input.getScheme() != null && input.getScheme().equals("classpath"))
+            return getClass().getResourceAsStream(input.getPath());
+         return input.toURL().openStream();
+      } catch (IOException e) {
+         logger.error(e, "URI could not be read: %s", url);
+         Throwables.propagate(e);
+         return null;
+      }
    }
 
 }

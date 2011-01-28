@@ -54,6 +54,8 @@ import com.google.common.collect.Maps;
  *           - vanilla
  *       username: kelvin
  *       credential: password_or_rsa_in_base64
+ *         or
+ *       credential_url: password_or_rsa_file ex. resource:///id_rsa will get the classpath /id_rsa.pub; file://path/to/id_rsa
  *       sudo_password: password_in_base64
  * </pre>
  * 
@@ -87,8 +89,10 @@ public class NodesFromYaml implements Function<InputStream, Map<String, Node>> {
       checkState(config != null, "missing config: class");
       checkState(config.nodes != null, "missing nodes: collection");
 
-      return Maps.uniqueIndex(config.nodes, new Function<Node, String>(){
-         public String apply(Node node) { return node.getId(); }
+      return Maps.uniqueIndex(config.nodes, new Function<Node, String>() {
+         public String apply(Node node) {
+            return node.getId();
+         }
       });
    }
 }

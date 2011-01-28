@@ -21,8 +21,12 @@ package org.jclouds.byon.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +39,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.logging.Logger;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -46,13 +52,19 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    private final Supplier<Location> location;
    private final Map<String, Credentials> credentialStore;
+   private final Function<URI, InputStream> slurp;
 
    @Inject
-   NodeToNodeMetadata(Supplier<Location> location, Map<String, Credentials> credentialStore) {
+   NodeToNodeMetadata(Supplier<Location> location, Function<URI, InputStream> slurp,
+            Map<String, Credentials> credentialStore) {
       this.location = checkNotNull(location, "location");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.slurp = checkNotNull(slurp, "slurp");
    }
 
    @Override
@@ -64,17 +76,31 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.tag(from.getGroup());
       // TODO add tags!
       builder.operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch()).family(
-               OsFamily.fromValue(from.getOsFamily())).name(from.getOsName()).version(from.getOsVersion()).description(
-               from.getDescription()).build());
+               OsFamily.fromValue(from.getOsFamily())).name(from.getOsName()).description(from.getOsName()).version(
+               from.getOsVersion()).build());
       builder.state(NodeState.RUNNING);
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));
-      Credentials creds = new Credentials(from.getUsername(), new String(CryptoStreams.base64(from.getCredential()),
-               Charsets.UTF_8));
-      builder.credentials(creds);
+
+      if (from.getUsername() != null) {
+         Credentials creds = null;
+         if (from.getCredentialUrl() != null) {
+            try {
+               creds = new Credentials(from.getUsername(), Strings2.toStringAndClose(slurp.apply(from
+                        .getCredentialUrl())));
+            } catch (IOException e) {
+               logger.error(e, "URI could not be read: %s", from.getCredentialUrl());
+            }
+         } else if (from.getCredential() != null) {
+            creds = new Credentials(from.getUsername(), new String(CryptoStreams.base64(from.getCredential()),
+                     Charsets.UTF_8));
+         }
+         if (creds != null)
+            builder.credentials(creds);
+         credentialStore.put("node#" + from.getId(), creds);
+      }
+
       if (from.getSudoPassword() != null)
          builder.adminPassword(new String(CryptoStreams.base64(from.getSudoPassword()), Charsets.UTF_8));
-      credentialStore.put("node#" + from.getId(), creds);
       return builder.build();
    }
-
 }

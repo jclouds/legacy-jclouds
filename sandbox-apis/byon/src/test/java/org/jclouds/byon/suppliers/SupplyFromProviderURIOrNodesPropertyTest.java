@@ -45,6 +45,17 @@ public class SupplyFromProviderURIOrNodesPropertyTest {
    }
 
    @Test
+   public void testFromURIClasspath() throws Exception {
+
+      SupplyFromProviderURIOrNodesProperty supplier = new SupplyFromProviderURIOrNodesProperty(URI
+               .create("classpath:///test1.yaml"));
+
+      assertEquals(Strings2.toStringAndClose(supplier.get()), Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/test1.yaml")));
+
+   }
+
+   @Test
    public void testFromProperty() throws Exception {
 
       SupplyFromProviderURIOrNodesProperty supplier = new SupplyFromProviderURIOrNodesProperty(URI.create("file://bar"));

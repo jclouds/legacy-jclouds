@@ -10,5 +10,5 @@ nodes:
       tags:
           - vanilla
       username: myUser
-      credential: ZmFuY3lmb290
+      credential_url: classpath:///testkey.txt
       sudo_password: c3Vkbw==

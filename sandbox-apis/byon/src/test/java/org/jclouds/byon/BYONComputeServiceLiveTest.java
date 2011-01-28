@@ -20,7 +20,6 @@
 package org.jclouds.byon;
 
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.io.FileNotFoundException;
@@ -31,7 +30,6 @@ import java.util.Map.Entry;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -61,8 +59,7 @@ public class BYONComputeServiceLiveTest {
       StringBuilder nodes = new StringBuilder();
       nodes.append("nodes:\n");
       nodes.append("    - id: mymachine\n");
-      nodes.append("      name: mymachine\n");
-      nodes.append("      description: my local machine\n");
+      nodes.append("      name: my local machine\n");
       nodes.append("      hostname: localhost\n");
       nodes.append("      os_arch: ").append(System.getProperty("os.arch")).append("\n");
       nodes.append("      os_family: ").append(OsFamily.UNIX).append("\n");
@@ -72,7 +69,7 @@ public class BYONComputeServiceLiveTest {
       nodes.append("      tags:\n");
       nodes.append("          - local\n");
       nodes.append("      username: ").append(System.getProperty("user.name")).append("\n");
-      nodes.append("      credential: ").append(base64(ComputeTestUtils.setupKeyPair().get("private").getBytes()))
+      nodes.append("      credential_url: file://").append(System.getProperty("user.home")).append("/.ssh/id_rsa")
                .append("\n");
 
       contextProperties.setProperty("byon.nodes", nodes.toString());

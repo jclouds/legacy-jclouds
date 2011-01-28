@@ -45,10 +45,18 @@ import com.google.inject.Module;
 public class BYONComputeServiceTest {
 
    @Test
-   public void testNodesParse() throws Exception {
+   public void testNodesParseWithFileUrl() throws Exception {
+      assertNodesParse("file://" + getClass().getResource("/test1.yaml").getPath());
+   }
+
+   @Test
+   public void testNodesParseWithClasspathUrl() throws Exception {
+      assertNodesParse("classpath:///test1.yaml");
+   }
+
+   private void assertNodesParse(String endpoint) {
       ComputeServiceContext context = null;
       try {
-         String endpoint = "file://" + getClass().getResource("/test1.yaml").getPath();
 
          Properties props = new Properties();
          props.setProperty("byon.endpoint", endpoint);
