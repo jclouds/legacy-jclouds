@@ -36,13 +36,11 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
@@ -76,8 +74,8 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.tag(from.getGroup());
       // TODO add tags!
       builder.operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch()).family(
-               OsFamily.fromValue(from.getOsFamily())).description(from.getOsDescription()).version(
-               from.getOsVersion()).build());
+               OsFamily.fromValue(from.getOsFamily())).description(from.getOsDescription())
+               .version(from.getOsVersion()).build());
       builder.state(NodeState.RUNNING);
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));
 
@@ -91,8 +89,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
                logger.error(e, "URI could not be read: %s", from.getCredentialUrl());
             }
          } else if (from.getCredential() != null) {
-            creds = new Credentials(from.getUsername(), new String(CryptoStreams.base64(from.getCredential()),
-                     Charsets.UTF_8));
+            creds = new Credentials(from.getUsername(), from.getCredential());
          }
          if (creds != null)
             builder.credentials(creds);
@@ -100,7 +97,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       }
 
       if (from.getSudoPassword() != null)
-         builder.adminPassword(new String(CryptoStreams.base64(from.getSudoPassword()), Charsets.UTF_8));
+         builder.adminPassword(from.getSudoPassword());
       return builder.build();
    }
 }

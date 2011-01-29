@@ -53,10 +53,10 @@ import com.google.common.collect.Maps;
  *       tags:
  *           - vanilla
  *       username: kelvin
- *       credential: password_or_rsa_in_base64
+ *       credential: password_or_rsa
  *         or
- *       credential_url: password_or_rsa_file ex. resource:///id_rsa will get the classpath /id_rsa.pub; file://path/to/id_rsa
- *       sudo_password: password_in_base64
+ *       credential_url: password_or_rsa_file ex. resource:///id_rsa will get the classpath /id_rsa; file://path/to/id_rsa
+ *       sudo_password: password
  * </pre>
  * 
  * @author Kelvin Kakugawa

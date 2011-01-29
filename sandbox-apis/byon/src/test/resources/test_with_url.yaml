@@ -12,4 +12,4 @@ nodes:
           - vanilla
       username: myUser
       credential_url: classpath:///testkey.txt
-      sudo_password: c3Vkbw==
+      sudo_password: happy bear

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.byon.Node;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -36,11 +35,15 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 public class NodesFromYamlTest {
+   public static final String key = new StringBuilder().append("-----BEGIN RSA PRIVATE KEY-----\n").append(
+            "MIIEowIBAAKCAQEAuzaE6azgUxwESX1rCGdJ5xpdrc1XC311bOGZBCE8NA+CpFh2\n").append(
+            "u01Vfv68NC4u6LFgdXSY1vQt6hiA5TNqQk0TyVfFAunbXgTekF6XqDPQUf1nq9aZ\n").append(
+            "lMvo4vlaLDKBkhG5HJE/pIa0iB+RMZLS0GhxsIWerEDmYdHKM25o\n").append("-----END RSA PRIVATE KEY-----\n")
+            .toString();
 
    public static final Node TEST1 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
-            "cluster-1.mydomain.com", "x86", "rhel", "redhat", "5.3", "hadoop", ImmutableList
-                     .of("vanilla"), "myUser", CryptoStreams.base64("fancyfoot".getBytes()), null, CryptoStreams
-                     .base64("sudo".getBytes()));
+            "cluster-1.mydomain.com", "x86", "rhel", "redhat", "5.3", "hadoop", ImmutableList.of("vanilla"), "myUser",
+            key, null, "happy bear");
 
    @Test
    public void testNodesParse() throws Exception {

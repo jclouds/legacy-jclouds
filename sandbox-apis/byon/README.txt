@@ -54,9 +54,11 @@ Here are the properties:
   * tags           - optional; list of arbitrary tags. 
                                * note this list is not yet in jclouds NodeMetadata 
   * username       - primary login user to the os. ex. ubuntu, vcloud, root 
-  * sudo_password  - optional; base 64 encoded sudo password (ex. input to sudo -S)
+  * sudo_password  - optional; sudo password (ex. input to sudo -S)
+                               * if not set and an sudo command is attempted, it will attempt
+                                 without a password
   one of:
-    * credential     - base 64 encoded RSA private key or password 
+    * credential     - RSA private key or password 
     * credential_url - location of plain-text RSA private key or password.
                        ex. file:///home/me/.ssh/id_rsa
                            classpath:///id_rsa
@@ -76,5 +78,10 @@ nodes:
       tags:
           - vanilla
       username: myUser
-      credential: ZmFuY3lmb290
-      sudo_password: c3Vkbw==
+      credential: |
+                  -----BEGIN RSA PRIVATE KEY-----
+                  MIIEowIBAAKCAQEAuzaE6azgUxwESX1rCGdJ5xpdrc1XC311bOGZBCE8NA+CpFh2
+                  u01Vfv68NC4u6LFgdXSY1vQt6hiA5TNqQk0TyVfFAunbXgTekF6XqDPQUf1nq9aZ
+                  lMvo4vlaLDKBkhG5HJE/pIa0iB+RMZLS0GhxsIWerEDmYdHKM25o
+                  -----END RSA PRIVATE KEY-----
+      sudo_password: go panthers!
