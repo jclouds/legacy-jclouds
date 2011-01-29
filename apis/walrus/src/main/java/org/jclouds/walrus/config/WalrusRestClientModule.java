@@ -19,11 +19,16 @@
 
 package org.jclouds.walrus.config;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.walrus.WalrusAsyncClient;
+
+import com.google.inject.Provides;
 
 /**
  * 
@@ -35,6 +40,12 @@ public class WalrusRestClientModule extends S3RestClientModule<S3Client, WalrusA
 
    public WalrusRestClientModule() {
       super(S3Client.class, WalrusAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   S3AsyncClient provideS3AsyncClient(WalrusAsyncClient in) {
+      return in;
    }
 
 }
