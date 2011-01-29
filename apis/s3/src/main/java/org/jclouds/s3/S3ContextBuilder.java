@@ -57,6 +57,6 @@ public class S3ContextBuilder extends BlobStoreContextBuilder<S3Client, S3AsyncC
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new S3RestClientModule());
+      modules.add(S3RestClientModule.create());
    }
 }

@@ -17,16 +17,29 @@
  * ====================================================================
  */
 
-package org.jclouds.epc.blobstore;
+package org.jclouds.googlestorage;
 
-import org.jclouds.walrus.blobstore.WalrusBlobSignerLiveTest;
-import org.testng.annotations.Test;
+import java.util.List;
+import java.util.Properties;
+
+import org.jclouds.googlestorage.config.GoogleStorageRestClientModule;
+import org.jclouds.s3.S3ContextBuilder;
+
+import com.google.inject.Module;
 
 /**
  * 
+ * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobSignerLiveTest")
-public class EucalyptusPartnerCloudWalrusBlobSignerLiveTest extends WalrusBlobSignerLiveTest {
+public class GoogleStorageContextBuilder extends S3ContextBuilder {
 
+   public GoogleStorageContextBuilder(Properties props) {
+      super(props);
+   }
+
+   @Override
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new GoogleStorageRestClientModule());
+   }
 }

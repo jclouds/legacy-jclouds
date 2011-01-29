@@ -19,6 +19,8 @@
 
 package org.jclouds.googlestorage.blobstore;
 
+import java.io.IOException;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
@@ -34,5 +36,11 @@ public class GoogleStorageBlobIntegrationLiveTest extends BaseBlobIntegrationTes
    protected void checkContentLanguage(Blob blob, String contentLanguage) {
       assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
       assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
+   }
+
+   // double range not supported
+   @Test(groups = { "integration", "live" })
+   public void testGetTwoRanges() throws InterruptedException, IOException {
+
    }
 }

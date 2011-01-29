@@ -33,6 +33,8 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.handlers.ParseS3ErrorFromXmlContent;
 import org.testng.annotations.Test;
 
@@ -55,7 +57,7 @@ public class S3RestClientModuleTest {
 
    @Test
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
-      S3RestClientModule module = new S3RestClientModule();
+      S3RestClientModule<S3Client, S3AsyncClient> module = S3RestClientModule.create();
 
       Supplier<String> map = module.provideTimeStampCache(1, new SimpleDateFormatDateService());
       String timeStamp = map.get();

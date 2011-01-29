@@ -19,15 +19,13 @@
 
 package org.jclouds.epc.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
+import org.jclouds.walrus.blobstore.WalrusServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest")
-public class EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
-   public EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest() {
-      containerCount = 5;
-   }
+public class EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest extends WalrusServiceIntegrationLiveTest {
+  
 }

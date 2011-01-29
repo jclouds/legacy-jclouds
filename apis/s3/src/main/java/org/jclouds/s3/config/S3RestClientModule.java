@@ -52,9 +52,13 @@ import com.google.inject.Scopes;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncClient> {
-   public S3RestClientModule() {
-      super(S3Client.class, S3AsyncClient.class);
+public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> extends AWSRestClientModule<S, A> {
+   public static S3RestClientModule<S3Client, S3AsyncClient> create() {
+      return new S3RestClientModule<S3Client, S3AsyncClient>(S3Client.class, S3AsyncClient.class);
+   }
+
+   public S3RestClientModule(Class<S> sync, Class<A> async) {
+      super(sync, async);
    }
 
    @Override
@@ -91,7 +95,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    @TimeStamp
    @Singleton
    protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-         final DateService dateService) {
+            final DateService dateService) {
       return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();

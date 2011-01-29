@@ -36,17 +36,13 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedProviders() {
       Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "s3") : providers;
-      assert Iterables.contains(providers, "walrus") : providers;
-      assert Iterables.contains(providers, "googlestorage") : providers;
+      assert Iterables.contains(providers, "s3") : providers;;
    }
 
    @Test
    public void testSupportedBlobStoreProviders() {
       Iterable<String> providers = BlobStoreUtils.getSupportedProviders();
       assert Iterables.contains(providers, "s3") : providers;
-      assert Iterables.contains(providers, "walrus") : providers;
-      assert Iterables.contains(providers, "googlestorage") : providers;
    }
 
 }

@@ -24,8 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
@@ -38,6 +36,9 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.config.S3RestClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -128,10 +129,10 @@ public class S3BlobRequestSignerTest extends RestClientTest<S3AsyncClient> {
 
    @RequiresHttp
    @ConfiguresRestClient
-   private static final class TestS3RestClientModule extends S3RestClientModule {
-      @Override
-      protected void configure() {
-         super.configure();
+   private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
+
+      public TestS3RestClientModule() {
+         super(S3Client.class, S3AsyncClient.class);
       }
 
       @Override
