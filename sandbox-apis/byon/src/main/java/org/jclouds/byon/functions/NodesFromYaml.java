@@ -47,7 +47,7 @@ import com.google.common.collect.Maps;
  *       hostname: cluster-1.mydomain.com
  *       os_arch: x86
  *       os_family: linux
- *       os_name: redhat
+ *       os_description: redhat
  *       os_version: 5.3
  *       group: hadoop
  *       tags:

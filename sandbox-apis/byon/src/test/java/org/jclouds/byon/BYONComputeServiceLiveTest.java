@@ -63,7 +63,7 @@ public class BYONComputeServiceLiveTest {
       nodes.append("      hostname: localhost\n");
       nodes.append("      os_arch: ").append(System.getProperty("os.arch")).append("\n");
       nodes.append("      os_family: ").append(OsFamily.UNIX).append("\n");
-      nodes.append("      os_name: ").append(System.getProperty("os.name")).append("\n");
+      nodes.append("      os_description: ").append(System.getProperty("os.name")).append("\n");
       nodes.append("      os_version: ").append(System.getProperty("os.version")).append("\n");
       nodes.append("      group: ").append("ssh").append("\n");
       nodes.append("      tags:\n");

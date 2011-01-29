@@ -36,15 +36,16 @@ public class Node {
    public Node() {
    }
 
-   public Node(String id, String name, String hostname, String osArch, String osFamily,
-            String osName, String osVersion, String group, List<String> tags, String username, String credential,
-            URI credentialUrl, String sudo_password) {
+   public Node(String id, String name, String description, String hostname, String osArch, String osFamily,
+            String osDescription, String osVersion, String group, List<String> tags, String username,
+            String credential, URI credentialUrl, String sudo_password) {
       this.id = id;
       this.name = name;
+      this.description = description;
       this.hostname = hostname;
       this.os_arch = osArch;
       this.os_family = osFamily;
-      this.os_name = osName;
+      this.os_description = osDescription;
       this.os_version = osVersion;
       this.group = group;
       this.tags = ImmutableList.copyOf(tags);
@@ -57,10 +58,11 @@ public class Node {
    // public due to snakeyaml
    public String id;
    public String name;
+   public String description;
    public String hostname;
    public String os_arch;
    public String os_family;
-   public String os_name;
+   public String os_description;
    public String os_version;
    public String group;
    public List<String> tags;
@@ -75,6 +77,10 @@ public class Node {
 
    public String getName() {
       return name;
+   }
+
+   public String getDescription() {
+      return description;
    }
 
    public String getGroup() {
@@ -93,8 +99,8 @@ public class Node {
       return os_family;
    }
 
-   public String getOsName() {
-      return os_name;
+   public String getOsDescription() {
+      return os_description;
    }
 
    public String getOsVersion() {
@@ -138,10 +144,10 @@ public class Node {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("name", name).add(
-               "hostname", hostname).add("osArch", os_arch).add("osFamily", os_family).add("osName", os_name).add(
-               "osVersion", os_version).add("group", group).add("tags", tags).add("username", username).add(
-               "hasCredential", credential != null || credential_url != null).add("hasSudoPassword",
+      return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
+               "hostname", hostname).add("osArch", os_arch).add("osFamily", os_family).add("osDescription",
+               os_description).add("osVersion", os_version).add("group", group).add("tags", tags).add("username",
+               username).add("hasCredential", credential != null || credential_url != null).add("hasSudoPassword",
                sudo_password != null).toString();
    }
 

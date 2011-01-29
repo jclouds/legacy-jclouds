@@ -40,18 +40,21 @@ context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar",
 You must define your nodes in yaml, and they must be in a collection called nodes.
 
 Here are the properties:
-  * id            - opaque unique id
-  * name          - optional; user specified name
-  * hostname      - name or ip address to contact the node on
-  * os_arch       - ex. x86 
-  * os_family     - must conform to org.jclouds.compute.domain.OsFamily in lower-hyphen format
-                    ex. rhel, ubuntu, centos, debian, amzn-linux
-  * os_name       - ex. redhat 
-  * os_version    - normalized to numbers when possible. ex. for centos: 5.3, ubuntu: 10.10 
-  * group         - primary group of the machine. ex. hadoop 
-  * tags          - list of arbitrary tags. * note this list is not yet in jclouds NodeMetadata 
-  * username      - primary login user to the os. ex. ubuntu, vcloud, root 
-  * sudo_password - optional; base 64 encoded sudo password (ex. input to sudo -S)
+  * id             - opaque unique id
+  * name           - optional; user specified name
+  * description    - optional; long description of this node 
+                               * note this is not yet in jclouds NodeMetadata
+  * hostname       - name or ip address to contact the node on
+  * os_arch        - ex. x86 
+  * os_family      - must conform to org.jclouds.compute.domain.OsFamily in lower-hyphen format
+                     ex. rhel, ubuntu, centos, debian, amzn-linux
+  * os_description - long description of the os ex. Ubuntu with lamp stack 
+  * os_version     - normalized to numbers when possible. ex. for centos: 5.3, ubuntu: 10.10 
+  * group          - primary group of the machine. ex. hadoop 
+  * tags           - optional; list of arbitrary tags. 
+                               * note this list is not yet in jclouds NodeMetadata 
+  * username       - primary login user to the os. ex. ubuntu, vcloud, root 
+  * sudo_password  - optional; base 64 encoded sudo password (ex. input to sudo -S)
   one of:
     * credential     - base 64 encoded RSA private key or password 
     * credential_url - location of plain-text RSA private key or password.
@@ -61,12 +64,13 @@ Here are the properties:
 === Example File ===
 
 nodes:
-    - id: cluster-1
+    - id: i-sdfkjh7
       name: cluster-1
+      description: accounting analytics cluster
       hostname: cluster-1.mydomain.com
       os_arch: x86
       os_family: rhel
-      os_name: redhat
+      os_description: redhat with CDH
       os_version: 5.3
       group: hadoop
       tags:

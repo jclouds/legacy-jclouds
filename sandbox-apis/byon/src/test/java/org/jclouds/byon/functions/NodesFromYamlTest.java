@@ -37,9 +37,10 @@ import com.google.common.collect.ImmutableMap;
  */
 public class NodesFromYamlTest {
 
-   public static final Node TEST1 = new Node("cluster-1", "cluster-1", "cluster-1.mydomain.com", "x86", "rhel",
-            "redhat", "5.3", "hadoop", ImmutableList.of("vanilla"), "myUser", CryptoStreams.base64("fancyfoot"
-                     .getBytes()), null, CryptoStreams.base64("sudo".getBytes()));
+   public static final Node TEST1 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
+            "cluster-1.mydomain.com", "x86", "rhel", "redhat", "5.3", "hadoop", ImmutableList
+                     .of("vanilla"), "myUser", CryptoStreams.base64("fancyfoot".getBytes()), null, CryptoStreams
+                     .base64("sudo".getBytes()));
 
    @Test
    public void testNodesParse() throws Exception {
