@@ -40,6 +40,7 @@ context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar",
 You must define your nodes in yaml, and they must be in a collection called nodes.
 
 Here are the properties:
+
   * id             - opaque unique id
   * name           - optional; user specified name
   * description    - optional; long description of this node 
@@ -53,11 +54,14 @@ Here are the properties:
   * group          - primary group of the machine. ex. hadoop 
   * tags           - optional; list of arbitrary tags. 
                                * note this list is not yet in jclouds NodeMetadata 
-  * username       - primary login user to the os. ex. ubuntu, vcloud, root 
-  * sudo_password  - optional; sudo password (ex. input to sudo -S)
-                               * if not set and an sudo command is attempted, it will attempt
-                                 without a password
+  * username       - primary login user. ex. ubuntu, vcloud, toor, root 
+  * sudo_password  - optional; when a script is run with the "runAsRoot" option true, yet the
+                               username is not root, a sudo command is invoked. If sudo_password
+                               is set, the contents will be passed to sudo -S.  
+                               Ex. echo 'foobar'| sudo -S init 5
+ 
   one of:
+  
     * credential     - RSA private key or password 
     * credential_url - location of plain-text RSA private key or password.
                        ex. file:///home/me/.ssh/id_rsa
