@@ -35,21 +35,21 @@ public class AWSELBClientLiveTest extends ELBClientLiveTest {
 
    @Test
    public void testCreateLoadBalancer() {
-      for (String region : ELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
          createLoadBalancerInRegionZone(region, region + "a", name);
       }
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testDescribeLoadBalancers() {
-      for (String region : ELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
          describeLoadBalancerInRegion(region);
       }
    }
 
    @Test
    public void testDeleteLoadBalancer() {
-      for (String region : ELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
          deleteLoadBalancerInRegion(region);
       }
    }

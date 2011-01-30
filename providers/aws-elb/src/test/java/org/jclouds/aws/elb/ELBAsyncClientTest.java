@@ -19,7 +19,7 @@
 
 package org.jclouds.aws.elb;
 
-import static org.jclouds.aws.elb.ELBPropertiesBuilder.DEFAULT_REGIONS;
+import static org.jclouds.aws.elb.AWSELBPropertiesBuilder.DEFAULT_REGIONS;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

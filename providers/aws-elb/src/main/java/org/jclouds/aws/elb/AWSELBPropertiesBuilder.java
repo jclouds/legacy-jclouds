@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBAsyncClient;
+import org.jclouds.elb.ELBPropertiesBuilder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class ELBPropertiesBuilder extends org.jclouds.elb.ELBPropertiesBuilder {
+public class AWSELBPropertiesBuilder extends ELBPropertiesBuilder {
    public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 
    @Override
@@ -66,11 +67,11 @@ public class ELBPropertiesBuilder extends org.jclouds.elb.ELBPropertiesBuilder {
       return properties;
    }
 
-   public ELBPropertiesBuilder() {
+   public AWSELBPropertiesBuilder() {
       super();
    }
 
-   public ELBPropertiesBuilder(Properties properties) {
+   public AWSELBPropertiesBuilder(Properties properties) {
       super(properties);
    }
 
