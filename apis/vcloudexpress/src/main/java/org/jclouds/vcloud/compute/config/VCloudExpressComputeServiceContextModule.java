@@ -26,6 +26,7 @@ import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -33,6 +34,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
+import org.jclouds.vcloud.compute.functions.ParseOsFromVAppTemplateName;
 import org.jclouds.vcloud.compute.functions.VCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.Org;
@@ -64,6 +66,8 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
+      bind(new TypeLiteral<Function<String, OperatingSystem>>() {
+      }).to(ParseOsFromVAppTemplateName.class);
    }
 
    protected void bindVAppConverter() {

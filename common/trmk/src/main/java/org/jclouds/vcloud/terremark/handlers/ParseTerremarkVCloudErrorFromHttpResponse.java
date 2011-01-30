@@ -34,6 +34,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 
@@ -61,6 +62,9 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                            || (response.getMessage().indexOf("because it is already powered off") != -1)
                            || (response.getMessage().indexOf("exists") != -1)))
             exception = new IllegalStateException(response.getMessage(), exception);
+         else if (response.getMessage() != null
+                  && ((response.getMessage().indexOf("There are no additional Public IPs available") != -1)))
+            exception = new  InsufficientResourcesException(response.getMessage(), exception);
          else
             switch (response.getStatusCode()) {
                case 400:

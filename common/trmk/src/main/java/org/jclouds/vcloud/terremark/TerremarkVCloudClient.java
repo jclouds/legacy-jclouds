@@ -51,19 +51,33 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudExpressClient {
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
    TerremarkCatalogItem getCatalogItem(URI catalogItem);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    TerremarkVDC getVDC(URI catalogItem);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    TerremarkCatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    TerremarkOrg getOrg(URI orgId);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    TerremarkOrg findOrgNamed(String orgName);
 

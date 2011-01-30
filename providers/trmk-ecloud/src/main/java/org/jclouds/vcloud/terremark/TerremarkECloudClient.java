@@ -44,6 +44,8 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
     * 
     * @param vDCId
     * @return
+    * @throws org.jclouds.rest.InsufficientResourcesException
+    *            if there's no additional ips available
     */
    PublicIpAddress activatePublicIpInVDC(URI vDCId);
 

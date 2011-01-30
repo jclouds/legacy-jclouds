@@ -25,7 +25,6 @@ import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 
 import javax.inject.Inject;
 
@@ -56,7 +55,7 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private StringBuilder currentText = new StringBuilder();
 
    private ReferenceType catalog;
-   private SortedMap<String, ReferenceType> contents = Maps.newTreeMap();
+   private Map<String, ReferenceType> contents = Maps.newLinkedHashMap();
    protected List<Task> tasks = Lists.newArrayList();
    private String description;
    private ReferenceType org;

@@ -201,7 +201,7 @@ public class ComputeServiceUtils {
                "node does not have IP addresses configured: " + node);
    }
 
-   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in,
+   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, String in,
             Map<OsFamily, Map<String, String>> osVersionMap) {
       if (osVersionMap.containsKey(family)) {
          if (osVersionMap.get(family).containsKey(in))

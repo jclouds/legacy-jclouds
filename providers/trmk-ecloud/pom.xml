@@ -36,7 +36,7 @@
 
     <properties>
         <test.trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</test.trmk-ecloud.endpoint>
-        <test.trmk-ecloud.apiversion>0.8b-ext2.6</test.trmk-ecloud.apiversion>
+        <test.trmk-ecloud.apiversion>0.8b-ext2.7</test.trmk-ecloud.apiversion>
         <test.trmk-ecloud.identity>FIXME</test.trmk-ecloud.identity>
         <test.trmk-ecloud.credential>FIXME</test.trmk-ecloud.credential>
     </properties>

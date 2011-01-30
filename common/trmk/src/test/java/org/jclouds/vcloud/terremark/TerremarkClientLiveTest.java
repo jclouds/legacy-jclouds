@@ -220,16 +220,13 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
    abstract TerremarkInstantiateVAppTemplateOptions createInstantiateOptions();
 
-   protected abstract Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(URI vdc);
+   protected abstract Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp);
 
-   @Test
+   @Test(enabled = true, dependsOnMethods = "testInstantiateAndPowerOn")
    public void testAddInternetService() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-
-      Entry<InternetService, PublicIpAddress> entry = getNewInternetServiceAndIpForSSH(tmClient.findVDCInOrgNamed(null,
-               null).getHref());
+      Entry<InternetService, PublicIpAddress> entry = getNewInternetServiceAndIpForSSH(vApp);
       is = entry.getKey();
       publicIp = entry.getValue().getAddress();
-
    }
 
    @Test(enabled = true, dependsOnMethods = "testInstantiateAndPowerOn")
