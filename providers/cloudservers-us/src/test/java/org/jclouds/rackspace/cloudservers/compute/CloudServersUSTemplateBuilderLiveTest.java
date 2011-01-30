@@ -47,12 +47,17 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return (input.family != OsFamily.WINDOWS && !input.is64Bit) || //
-                     input.family == OsFamily.RHEL || //
-                     (input.family == OsFamily.UBUNTU && input.version.equals("11.04")) || //
-                     (input.family == OsFamily.CENTOS && input.version.matches("5.[23]")) || //
-                     (input.family == OsFamily.WINDOWS && input.version.equals("2008")) || //
-                     (input.family == OsFamily.WINDOWS && input.version.equals("2008 R2") && !input.is64Bit);
+            switch (input.family) {
+               case UBUNTU:
+                  return input.version.equals("11.04") || input.version.equals("8.04") || !input.is64Bit;
+               case CENTOS:
+                  return input.version.matches("5.[023]") || !input.is64Bit;
+               case WINDOWS:
+                  return input.version.equals("2008") || input.version.indexOf("2003") != -1
+                           || (input.version.equals("2008 R2") && !input.is64Bit);
+               default:
+                  return true;
+            }
          }
 
       };

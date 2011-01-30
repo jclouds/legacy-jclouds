@@ -49,11 +49,17 @@ public class SkaliCloudMalaysiaTemplateBuilderLiveTest extends BaseTemplateBuild
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL) || //
-                     (input.family == OsFamily.CENTOS && !input.version.equals("5.5")) || //
-                     (input.family == OsFamily.UBUNTU && !input.version.equals("10.10")) || //
-            (input.family == OsFamily.WINDOWS && !(input.version.equals("2008 R2") && input.is64Bit)) //
-            );
+            switch (input.family) {
+               case UBUNTU:
+                  return !input.version.equals("") && !input.version.equals("10.10");
+               case CENTOS:
+                  return !input.version.equals("") && !input.version.equals("5.5");
+               case WINDOWS:
+                  return !(input.version.equals("") && input.is64Bit)
+                           && !(input.version.equals("2008 R2") && input.is64Bit);
+               default:
+                  return true;
+            }
          }
 
       };

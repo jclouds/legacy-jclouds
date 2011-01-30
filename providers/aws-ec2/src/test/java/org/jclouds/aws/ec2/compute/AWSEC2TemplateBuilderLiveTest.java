@@ -57,9 +57,16 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return input.family == OsFamily.RHEL || //
-                     (input.family == OsFamily.CENTOS && !input.version.matches("5.[42]")) || //
-                     (input.family == OsFamily.WINDOWS && !input.version.matches("200[38]"));
+            switch (input.family) {
+               case UBUNTU:
+                  return false;
+               case CENTOS:
+                  return !(input.version.matches("5.[42]") || input.version.equals(""));
+               case WINDOWS:
+                  return !(input.version.matches("200[38]") || input.version.equals(""));
+               default:
+                  return true;
+            }
          }
 
       };
@@ -75,7 +82,6 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20110126");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
@@ -120,10 +126,10 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderMicro() throws IOException {
 
       Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
-               .osFamily(OsFamily.UBUNTU).build();
+               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.10").os64Bit(true).build();
 
       assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
-      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(microTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(microTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");

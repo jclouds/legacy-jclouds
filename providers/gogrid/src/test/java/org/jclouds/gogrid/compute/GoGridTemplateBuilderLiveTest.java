@@ -46,17 +46,20 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
       return new Predicate<OsFamilyVersion64Bit>() {
-
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL && !input.version.equals("5.4")) || //
-                     (input.family == OsFamily.CENTOS && input.version.matches("5.[542]")) || //
-                     (input.family == OsFamily.CENTOS && input.is64Bit && input.version.equals("5.[42]")) || //
-                     (input.family == OsFamily.UBUNTU) || //
-            (input.family == OsFamily.WINDOWS && input.version.equals("2008 SP2") || //
-            (input.family == OsFamily.WINDOWS && input.version.equals("2008 R2"))));
+            switch (input.family) {
+               case RHEL:
+                  return !input.version.equals("") && !input.version.equals("5.4");
+               case CENTOS:
+                  return !input.version.equals("") && !input.version.equals("5.3");
+               case WINDOWS:
+                  return !input.version.equals("") && (input.is64Bit && !input.version.matches("200[38]"))
+                           || (input.version.matches("200[38] [RS]P?2") && !input.is64Bit);
+               default:
+                  return true;
+            }
          }
-
       };
    }
 

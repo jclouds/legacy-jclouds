@@ -46,14 +46,22 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
       return new Predicate<OsFamilyVersion64Bit>() {
-
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL || input.family == OsFamily.CENTOS) || //
-                     (input.family == OsFamily.UBUNTU && !input.version.equals("9.10")) || //
-            (input.family == OsFamily.WINDOWS && (input.version.equals("2008 SP2") || input.version.equals("2008 R2"))));
+            switch (input.family) {
+               case RHEL:
+                  return !input.version.equals("") && !input.version.equals("5.0");
+               case CENTOS:
+                  return !input.version.equals("") && !input.version.matches("5.0");
+               case UBUNTU:
+                  return !input.version.equals("") && !(input.version.equals("9.04") || input.version.equals("9.10"));
+               case WINDOWS:
+                  return !input.version.equals("") && !input.version.equals("2003") //
+                           && !input.version.equals("2008");
+               default:
+                  return true;
+            }
          }
-
       };
    }
 
