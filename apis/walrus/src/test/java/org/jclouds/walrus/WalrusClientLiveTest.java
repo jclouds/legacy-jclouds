@@ -19,7 +19,12 @@
 
 package org.jclouds.walrus;
 
+import static org.testng.Assert.assertEquals;
+
+import java.net.URL;
+
 import org.jclouds.s3.S3ClientLiveTest;
+import org.jclouds.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
 /**
@@ -29,5 +34,23 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "WalrusClientLiveTest")
 public class WalrusClientLiveTest extends S3ClientLiveTest {
+   // path based, not virtual host
+   @Override
+   protected URL getObjectURL(String containerName, String key) throws Exception {
+      URL url = new URL(String.format(context.getProviderSpecificContext().getEndpoint().toASCIIString()
+               + "/services/Walrus/%s/%s", containerName, key));
+      return url;
+   }
 
+   // no support for content encoding
+   @Override
+   protected void assertContentEncoding(S3Object newObject, String string) {
+      assertEquals(newObject.getMetadata().getContentMetadata().getContentEncoding(), null);
+   }
+
+   // no support for cache control
+   @Override
+   protected void assertCacheControl(S3Object newObject, String string) {
+      assertEquals(newObject.getMetadata().getCacheControl(), null);
+   }
 }

@@ -54,7 +54,8 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends Bas
                   return !(input.version.equals("") && input.is64Bit)
                            && !(input.version.equals("5.3") && input.is64Bit);
                case WINDOWS:
-                  return !(input.version.equals("") && input.is64Bit);
+                  return !(input.version.equals("") && input.is64Bit)
+                           && !(input.version.equals("2008") && input.is64Bit);
                default:
                   return true;
             }
