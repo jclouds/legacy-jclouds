@@ -19,7 +19,7 @@
 
 package org.jclouds.s3.domain.internal;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jclouds.s3.domain.ListBucketResponse;
@@ -32,8 +32,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  * 
  */
-public class ListBucketResponseImpl extends HashSet<ObjectMetadata> implements
-         ListBucketResponse {
+public class ListBucketResponseImpl extends LinkedHashSet<ObjectMetadata> implements ListBucketResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
    protected final String name;
@@ -45,9 +44,8 @@ public class ListBucketResponseImpl extends HashSet<ObjectMetadata> implements
    protected final Set<String> commonPrefixes;
    protected final boolean truncated;
 
-   public ListBucketResponseImpl(String name, Iterable<ObjectMetadata> contents, String prefix,
-            String marker, String nextMarker, int maxKeys, String delimiter, boolean isTruncated,
-            Set<String> commonPrefixes) {
+   public ListBucketResponseImpl(String name, Iterable<ObjectMetadata> contents, String prefix, String marker,
+            String nextMarker, int maxKeys, String delimiter, boolean isTruncated, Set<String> commonPrefixes) {
       Iterables.addAll(this, contents);
       this.name = name;
       this.prefix = prefix;

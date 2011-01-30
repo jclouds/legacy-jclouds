@@ -93,7 +93,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
-         assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata().getContentType();
+         assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata()
+                  .getContentType();
          assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
          checkMD5(metadata);
@@ -123,6 +124,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
+
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(1));
 
          assert container.getNextMarker() != null;
@@ -255,6 +257,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
+
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(5));
          assertEquals(container.size(), 5);
          assert container.getNextMarker() != null;
@@ -330,6 +333,20 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          blob.setPayload(letter + "content");
          context.getBlobStore().putBlob(containerName, blob);
       }
+      assertContainerSize(containerName, 26);
+
+   }
+
+   protected void assertContainerSize(final String containerName, final int size) throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               assertEquals(context.getBlobStore().countBlobs(containerName), size);
+            } catch (Exception e) {
+               propagateIfPossible(e);
+            }
+         }
+      });
    }
 
    protected void add15UnderRoot(String containerName) throws InterruptedException {

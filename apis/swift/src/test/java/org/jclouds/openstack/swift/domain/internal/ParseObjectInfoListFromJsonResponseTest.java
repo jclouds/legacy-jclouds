@@ -63,7 +63,7 @@ public class ParseObjectInfoListFromJsonResponseTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
-      Set<ObjectInfo> expects = Sets.newHashSet();
+      Set<ObjectInfo> expects = Sets.newLinkedHashSet();
       ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
       one.name = "test_obj_1";
       one.hash = CryptoStreams.hex("4281c348eaf83e70ddce0e07221c3d28");
