@@ -132,17 +132,14 @@ public class ComputeServiceUtils {
       return total;
    }
 
-   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrUnrecognized(String provider, String in) {
+   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrUnrecognized(String in) {
       org.jclouds.compute.domain.OsFamily myOs = null;
       for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily.values()) {
          if (in.toLowerCase().replaceAll("\\s", "").indexOf(os.toString()) != -1) {
             myOs = os;
          }
       }
-      if (myOs == null && provider.indexOf("nebula") != -1) {
-         myOs = OsFamily.UBUNTU;
-      }
-      return OsFamily.UNRECOGNIZED;
+      return myOs != null ? myOs : OsFamily.UNRECOGNIZED;
    }
 
    public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {
@@ -209,6 +206,8 @@ public class ComputeServiceUtils {
       if (osVersionMap.containsKey(family)) {
          if (osVersionMap.get(family).containsKey(in))
             return osVersionMap.get(family).get(in);
+         if (osVersionMap.get(family).containsValue(in))
+            return in;
          CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
          try {
             String key = Iterables.find(osVersionMap.get(family).keySet(), contains);

@@ -45,7 +45,6 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.ImageType;
-import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -66,19 +65,16 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Set<? extends Location>> locations;
    private final Supplier<Location> defaultLocation;
-   private final String provider;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
    private final ReviseParsedImage reviseParsedImage;
 
    @Inject
-   public
-   EC2ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+   public EC2ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             Map<OsFamily, Map<String, String>> osVersionMap, @Memoized Supplier<Set<? extends Location>> locations,
-            Supplier<Location> defaultLocation, @Provider String provider, ReviseParsedImage reviseParsedImage) {
+            Supplier<Location> defaultLocation, ReviseParsedImage reviseParsedImage) {
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
-      this.provider = checkNotNull(provider, "provider");
       this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");
       this.reviseParsedImage = checkNotNull(reviseParsedImage, "reviseParsedImage");
    }
@@ -98,7 +94,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
 
       OperatingSystemBuilder osBuilder = new OperatingSystemBuilder();
       osBuilder.is64Bit(from.getArchitecture() == Architecture.X86_64);
-      OsFamily family = parseOsFamilyOrUnrecognized(provider, from.getImageLocation());
+      OsFamily family = parseOsFamilyOrUnrecognized(from.getImageLocation());
       osBuilder.family(family);
       osBuilder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(family, from.getImageLocation(),
                osVersionMap));

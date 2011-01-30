@@ -21,7 +21,6 @@ package org.jclouds.nova.ec2;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 
 import java.util.Properties;
 
@@ -38,7 +37,6 @@ public class NovaEC2PropertiesBuilder extends EC2PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "YOU_MUST_SET_" + PROPERTY_ENDPOINT);
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
-      properties.setProperty(PROPERTY_EC2_CC_AMIs, "");
       return properties;
    }
 

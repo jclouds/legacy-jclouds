@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
@@ -31,7 +32,6 @@ import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;

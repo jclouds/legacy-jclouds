@@ -31,13 +31,16 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
+
+import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -48,18 +51,22 @@ public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTag
    private final Map<String, String> credentialsMap;
 
    @Inject
-   protected CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet(AddNodeWithTagStrategy addNodeWithTagStrategy,
-         ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
-         ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         IBMDeveloperCloudClient client, @Named("CREDENTIALS") Map<String, String> credentialsMap) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
+   protected CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet(
+            AddNodeWithTagStrategy addNodeWithTagStrategy,
+            ListNodesStrategy listNodesStrategy,
+            @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
+            IBMDeveloperCloudClient client, @Named("CREDENTIALS") Map<String, String> credentialsMap) {
+      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, executor,
+               customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
-         Map<NodeMetadata, Exception> badNodes) {
+   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       String keyAsText = template.getOptions().getPublicKey();
       if (keyAsText != null) {
          template.getOptions().dontAuthorizePublicKey();
@@ -72,7 +79,7 @@ public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTag
       } else {
          credentialsMap.put(tag, client.generateKeyPair(tag).getKeyMaterial());
       }
-      return super.execute(tag, count, template, nodes, badNodes);
+      return super.execute(tag, count, template, goodNodes, badNodes, customizationResponses);
    }
 
 }

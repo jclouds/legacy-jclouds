@@ -97,7 +97,7 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
       EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
                Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-                        .ofInstance(defaultLocation), "ec2", new EucalyptusPartnerCloudReviseParsedImage(map));
+                        .ofInstance(defaultLocation), new EucalyptusPartnerCloudReviseParsedImage(map));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }
 
