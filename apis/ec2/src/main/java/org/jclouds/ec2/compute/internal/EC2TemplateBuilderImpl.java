@@ -69,6 +69,8 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             eTo.securityGroups(eFrom.getGroupIds());
          if (eFrom.getKeyPair() != null)
             eTo.keyPair(eFrom.getKeyPair());
+         if (eFrom.getBlockDeviceMappings().size() > 0)
+            eTo.blockDeviceMappings(eFrom.getBlockDeviceMappings());
          if (!eFrom.shouldAutomaticallyCreateKeyPair())
             eTo.noKeyPair();
          if (eFrom.getUserData() != null)

@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -123,34 +122,34 @@ public class EC2TemplateOptions extends TemplateOptions {
     * Specifies the block device mappings to be used to run the instance
     */
    public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
-            @Nullable Integer sizeInGib, @Nullable Boolean deleteOnTermination) {
+            @Nullable Integer sizeInGib, boolean deleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
       checkNotNull(snapshotId, "snapshotId cannot be null");
       Preconditions2.checkNotEmpty(snapshotId, "snapshotId must be non-empty");
-      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
+               .<BlockDeviceMapping> builder();
       mappings.addAll(blockDeviceMappings);
       MapEBSSnapshotToDevice mapping = new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib,
                deleteOnTermination);
       mappings.add(mapping);
-      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      blockDeviceMappings = mappings.build();
       return this;
    }
 
    /**
     * Specifies the block device mappings to be used to run the instance
     */
-   public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, Integer sizeInGib,
-            @Nullable Boolean deleteOnTermination) {
+   public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
-      checkNotNull(sizeInGib, "sizeInGib cannot be null");
 
-      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
+               .<BlockDeviceMapping> builder();
       mappings.addAll(blockDeviceMappings);
       MapNewVolumeToDevice mapping = new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination);
       mappings.add(mapping);
-      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      blockDeviceMappings = mappings.build();
       return this;
    }
 
@@ -163,11 +162,12 @@ public class EC2TemplateOptions extends TemplateOptions {
       checkNotNull(virtualName, "virtualName cannot be null");
       Preconditions2.checkNotEmpty(virtualName, "virtualName must be non-empty");
 
-      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
+               .<BlockDeviceMapping> builder();
       mappings.addAll(blockDeviceMappings);
       MapEphemeralDeviceToDevice mapping = new MapEphemeralDeviceToDevice(deviceName, virtualName);
       mappings.add(mapping);
-      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      blockDeviceMappings = mappings.build();
       return this;
    }
 
@@ -178,11 +178,12 @@ public class EC2TemplateOptions extends TemplateOptions {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
 
-      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
+               .<BlockDeviceMapping> builder();
       mappings.addAll(blockDeviceMappings);
       UnmapDeviceNamed mapping = new UnmapDeviceNamed(deviceName);
       mappings.add(mapping);
-      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      blockDeviceMappings = mappings.build();
       return this;
    }
 
@@ -195,6 +196,47 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    public static class Builder {
+      /**
+       * @see EC2TemplateOptions#blockDeviceMappings
+       */
+      public static EC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.blockDeviceMappings(blockDeviceMappings);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapEBSSnapshotToDeviceName
+       */
+      public static EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
+               @Nullable Integer sizeInGib, boolean deleteOnTermination) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib, deleteOnTermination);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapNewVolumeToDeviceName
+       */
+      public static EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib,
+               boolean deleteOnTermination) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapEphemeralDeviceToDeviceName
+       */
+      public static EC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.mapEphemeralDeviceToDeviceName(deviceName, virtualName);
+      }
+
+      /**
+       * @see EC2TemplateOptions#unmapDeviceNamed
+       */
+      public static EC2TemplateOptions unmapDeviceNamed(String deviceName) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.unmapDeviceNamed(deviceName);
+      }
 
       /**
        * @see EC2TemplateOptions#securityGroups(Iterable<String>)
@@ -494,8 +536,7 @@ public class EC2TemplateOptions extends TemplateOptions {
 
    @Override
    public String toString() {
-
-      return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair
-               + ", userData=" + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings + "]";
+      return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", userData="
+               + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings + "]";
    }
 }

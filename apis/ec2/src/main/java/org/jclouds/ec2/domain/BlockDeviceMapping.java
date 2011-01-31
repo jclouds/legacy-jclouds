@@ -42,15 +42,15 @@ public class BlockDeviceMapping {
    private static final Integer VOLUME_SIZE_MIN_VALUE = 1;
    private static final Integer VOLUME_SIZE_MAX_VALUE = 1000;
 
-   public BlockDeviceMapping(String deviceName, @Nullable String virtualName, @Nullable String snapshotId,
-         @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
+   BlockDeviceMapping(String deviceName, @Nullable String virtualName, @Nullable String snapshotId,
+            @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
 
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
 
       if (sizeInGib != null) {
-         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE),
-               String.format("Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
+         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE), String.format(
+                  "Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
       }
       this.deviceName = deviceName;
       this.virtualName = virtualName;
@@ -88,7 +88,12 @@ public class BlockDeviceMapping {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((deleteOnTermination == null) ? 0 : deleteOnTermination.hashCode());
       result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
+      result = prime * result + ((noDevice == null) ? 0 : noDevice.hashCode());
+      result = prime * result + ((sizeInGib == null) ? 0 : sizeInGib.hashCode());
+      result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
+      result = prime * result + ((virtualName == null) ? 0 : virtualName.hashCode());
       return result;
    }
 
@@ -101,24 +106,49 @@ public class BlockDeviceMapping {
       if (getClass() != obj.getClass())
          return false;
       BlockDeviceMapping other = (BlockDeviceMapping) obj;
+      if (deleteOnTermination == null) {
+         if (other.deleteOnTermination != null)
+            return false;
+      } else if (!deleteOnTermination.equals(other.deleteOnTermination))
+         return false;
       if (deviceName == null) {
          if (other.deviceName != null)
             return false;
       } else if (!deviceName.equals(other.deviceName))
+         return false;
+      if (noDevice == null) {
+         if (other.noDevice != null)
+            return false;
+      } else if (!noDevice.equals(other.noDevice))
+         return false;
+      if (sizeInGib == null) {
+         if (other.sizeInGib != null)
+            return false;
+      } else if (!sizeInGib.equals(other.sizeInGib))
+         return false;
+      if (snapshotId == null) {
+         if (other.snapshotId != null)
+            return false;
+      } else if (!snapshotId.equals(other.snapshotId))
+         return false;
+      if (virtualName == null) {
+         if (other.virtualName != null)
+            return false;
+      } else if (!virtualName.equals(other.virtualName))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "BlockDeviceMapping [deviceName=" + deviceName + ", virtualName=" + virtualName + ", snapshotId="
-            + snapshotId + ", sizeInGib=" + sizeInGib + ", noDevice=" + noDevice + ", deleteOnTermination="
-            + deleteOnTermination + "]";
+      return "[deviceName=" + deviceName + ", virtualName=" + virtualName + ", snapshotId=" + snapshotId
+               + ", sizeInGib=" + sizeInGib + ", noDevice=" + noDevice + ", deleteOnTermination=" + deleteOnTermination
+               + "]";
    }
 
    public static class MapEBSSnapshotToDevice extends BlockDeviceMapping {
       public MapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
-            @Nullable Boolean deleteOnTermination) {
+               @Nullable Boolean deleteOnTermination) {
          super(deviceName, null, snapshotId, sizeInGib, null, deleteOnTermination);
          checkNotNull(snapshotId, "snapshotId cannot be null");
          Preconditions2.checkNotEmpty(snapshotId, "the snapshotId must be non-empty");

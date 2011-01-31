@@ -22,7 +22,6 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
-import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
@@ -30,7 +29,6 @@ import org.jclouds.aws.ec2.compute.suppliers.AWSRegionAndNameToImageSupplier;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
@@ -58,7 +56,6 @@ public class AWSEC2ComputeServiceContextModule extends EC2ComputeServiceContextM
       bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
       bind(RegionAndNameToImageSupplier.class).to(AWSRegionAndNameToImageSupplier.class);
       bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
-      bind(EC2TemplateOptions.class).to(AWSEC2TemplateOptions.class);
    }
 
    @Override

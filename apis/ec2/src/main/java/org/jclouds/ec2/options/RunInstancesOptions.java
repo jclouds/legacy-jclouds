@@ -153,7 +153,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
 
    public RunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
       int i = 1;
-      for (BlockDeviceMapping mapping : mappings) {
+      for (BlockDeviceMapping mapping : checkNotNull(mappings, "mappings")) {
          checkNotNull(mapping.getDeviceName(), "deviceName");
          formParameters.put(String.format("BlockDeviceMapping.%d.DeviceName", i), mapping.getDeviceName());
          if (mapping.getVirtualName() != null)

@@ -79,21 +79,23 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
       String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template.getOptions());
 
       addSecurityGroups(region, tag, template, instanceOptions);
+      if (template.getOptions() instanceof EC2TemplateOptions) {
 
-      if (keyPairName != null)
-         instanceOptions.withKeyName(keyPairName);
+         if (keyPairName != null)
+            instanceOptions.withKeyName(keyPairName);
 
-      byte[] userData = EC2TemplateOptions.class.cast(template.getOptions()).getUserData();
+         byte[] userData = EC2TemplateOptions.class.cast(template.getOptions()).getUserData();
 
-      if (userData != null)
-         instanceOptions.withUserData(userData);
+         if (userData != null)
+            instanceOptions.withUserData(userData);
 
-      Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions())
-               .getBlockDeviceMappings();
-      if (blockDeviceMappings != null && blockDeviceMappings.size() > 0) {
-         checkState("ebs".equals(template.getImage().getUserMetadata().get("rootDeviceType")),
-                  "BlockDeviceMapping only available on ebs boot");
-         instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
+         Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions())
+                  .getBlockDeviceMappings();
+         if (blockDeviceMappings.size() > 0) {
+            checkState("ebs".equals(template.getImage().getUserMetadata().get("rootDeviceType")),
+                     "BlockDeviceMapping only available on ebs boot");
+            instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
+         }
       }
       return instanceOptions;
    }

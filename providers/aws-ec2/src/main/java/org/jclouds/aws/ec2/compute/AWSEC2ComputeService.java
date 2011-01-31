@@ -102,17 +102,21 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    void deletePlacementGroup(String region, String tag) {
       Preconditions2.checkNotEmpty(tag, "tag");
       String group = String.format("jclouds#%s#%s", tag, region);
-      if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
-         logger.debug(">> deleting placementGroup(%s)", group);
-         try {
-            ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
-            checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)), String
-                     .format("placementGroup region(%s) name(%s) failed to delete", region, group));
-            placementGroupMap.remove(new RegionAndName(region, group));
-            logger.debug("<< deleted placementGroup(%s)", group);
-         } catch (IllegalStateException e) {
-            logger.debug("<< inUse placementGroup(%s)", group);
+      try {
+         if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
+            logger.debug(">> deleting placementGroup(%s)", group);
+            try {
+               ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
+               checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
+                        String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
+               placementGroupMap.remove(new RegionAndName(region, group));
+               logger.debug("<< deleted placementGroup(%s)", group);
+            } catch (IllegalStateException e) {
+               logger.debug("<< inUse placementGroup(%s)", group);
+            }
          }
+      } catch (UnsupportedOperationException e) {
+         logger.trace("<< placementGroups unsupported in region %s", region);
       }
    }
 

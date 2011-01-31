@@ -31,13 +31,13 @@ import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withUse
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests possible uses of AWSRunInstancesOptions and AWSRunInstancesOptions.Builder.*
@@ -255,17 +255,18 @@ public class AWSRunInstancesOptionsTest {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
    }
-   
+
    @Test
    public void testWithBlockDeviceMapping() {
-      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
-      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
-      mappings.add(mapping);
-      options.withBlockDeviceMappings(mappings);
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions().withBlockDeviceMappings(ImmutableSet
+               .<BlockDeviceMapping> of(mapping));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
+               .singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
+               .singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
+               .singletonList("true"));
    }
 
    @Test
@@ -276,18 +277,19 @@ public class AWSRunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
-      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
-      mappings.add(mapping);
-      AWSRunInstancesOptions options = withBlockDeviceMappings(mappings);
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      AWSRunInstancesOptions options = withBlockDeviceMappings(ImmutableSet.<BlockDeviceMapping> of(mapping));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
+               .singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
+               .singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
+               .singletonList("true"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithBlockDeviceMappingNPE() {
-       withBlockDeviceMappings(null);
+      withBlockDeviceMappings(null);
    }
 
 }

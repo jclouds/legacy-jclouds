@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
+import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
@@ -48,7 +49,6 @@ import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -69,7 +69,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
-      bind(TemplateOptions.class).to(EC2TemplateOptions.class);
+      bind(TemplateOptions.class).to(AWSEC2TemplateOptions.class);
       bind(ComputeService.class).to(AWSEC2ComputeService.class);
       bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
       }).to(RunningInstanceToNodeMetadata.class);

@@ -19,9 +19,12 @@
 
 package org.jclouds.location.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +38,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ZoneToEndpoint implements Function<Object, URI> {
+
    private final Map<String, URI> zoneToEndpoint;
 
    @Inject
@@ -42,8 +46,9 @@ public class ZoneToEndpoint implements Function<Object, URI> {
       this.zoneToEndpoint = zoneToEndpoint;
    }
 
-   public URI apply(Object from) {
+   @Override
+   public URI apply(@Nullable Object from) {
+      checkArgument(from != null, "you must specify a zone");
       return zoneToEndpoint.get(from);
    }
-
 }

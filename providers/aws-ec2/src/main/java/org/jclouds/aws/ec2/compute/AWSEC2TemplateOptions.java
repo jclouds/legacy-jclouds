@@ -23,10 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
@@ -98,13 +102,54 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
    }
 
    public static class Builder {
+      /**
+       * @see EC2TemplateOptions#blockDeviceMappings
+       */
+      public static AWSEC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.blockDeviceMappings(blockDeviceMappings);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapEBSSnapshotToDeviceName
+       */
+      public static AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
+               @Nullable Integer sizeInGib, boolean deleteOnTermination) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib, deleteOnTermination);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapNewVolumeToDeviceName
+       */
+      public static AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib,
+               boolean deleteOnTermination) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination);
+      }
+
+      /**
+       * @see EC2TemplateOptions#mapEphemeralDeviceToDeviceName
+       */
+      public static AWSEC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.mapEphemeralDeviceToDeviceName(deviceName, virtualName);
+      }
+
+      /**
+       * @see EC2TemplateOptions#unmapDeviceNamed
+       */
+      public static AWSEC2TemplateOptions unmapDeviceNamed(String deviceName) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.unmapDeviceNamed(deviceName);
+      }
 
       /**
        * @see AWSEC2TemplateOptions#securityGroups(Iterable<String>)
        */
       public static AWSEC2TemplateOptions securityGroups(String... groupIds) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.securityGroups(groupIds));
+         return options.securityGroups(groupIds);
       }
 
       /**
@@ -112,7 +157,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions securityGroups(Iterable<String> groupIds) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.securityGroups(groupIds));
+         return options.securityGroups(groupIds);
       }
 
       /**
@@ -120,7 +165,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions keyPair(String keyPair) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.keyPair(keyPair));
+         return options.keyPair(keyPair);
       }
 
       /**
@@ -128,7 +173,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions userData(byte[] unencodedData) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.userData(unencodedData));
+         return options.userData(unencodedData);
       }
 
       /**
@@ -136,7 +181,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions noKeyPair() {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.noKeyPair());
+         return options.noKeyPair();
       }
 
       /**
@@ -144,7 +189,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions placementGroup(String placementGroup) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.placementGroup(placementGroup));
+         return options.placementGroup(placementGroup);
       }
 
       /**
@@ -152,7 +197,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions noPlacementGroup() {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.noPlacementGroup());
+         return options.noPlacementGroup();
       }
 
       /**
@@ -160,7 +205,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions enableMonitoring() {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.enableMonitoring());
+         return options.enableMonitoring();
       }
 
       // methods that only facilitate returning the correct object type
@@ -169,7 +214,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions inboundPorts(int... ports) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.inboundPorts(ports));
+         return options.inboundPorts(ports);
       }
 
       /**
@@ -177,7 +222,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions blockOnPort(int port, int seconds) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.blockOnPort(port, seconds));
+         return options.blockOnPort(port, seconds);
       }
 
       /**
@@ -185,7 +230,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions runScript(byte[] script) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.runScript(script));
+         return options.runScript(script);
       }
 
       /**
@@ -193,7 +238,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions installPrivateKey(String rsaKey) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.installPrivateKey(rsaKey));
+         return options.installPrivateKey(rsaKey);
       }
 
       /**
@@ -201,7 +246,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions authorizePublicKey(String rsaKey) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
+         return options.authorizePublicKey(rsaKey);
       }
 
       /**
@@ -209,7 +254,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions withDetails() {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.withMetadata());
+         return options.withMetadata();
       }
 
       /**
@@ -217,11 +262,95 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        */
       public static AWSEC2TemplateOptions subnetId(String subnetId) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return AWSEC2TemplateOptions.class.cast(options.subnetId(subnetId));
+         return options.subnetId(subnetId);
       }
    }
 
    // methods that only facilitate returning the correct object type
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+      return AWSEC2TemplateOptions.class.cast(super.blockDeviceMappings(blockDeviceMappings));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions keyPair(String keyPair) {
+      return AWSEC2TemplateOptions.class.cast(super.keyPair(keyPair));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+
+   @Override
+   public AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId, Integer sizeInGib,
+            boolean deleteOnTermination) {
+      return AWSEC2TemplateOptions.class.cast(super.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib,
+               deleteOnTermination));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
+      return AWSEC2TemplateOptions.class.cast(super.mapEphemeralDeviceToDeviceName(deviceName, virtualName));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
+      return AWSEC2TemplateOptions.class.cast(super
+               .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions noKeyPair() {
+      return AWSEC2TemplateOptions.class.cast(super.noKeyPair());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions securityGroups(Iterable<String> groupIds) {
+      return AWSEC2TemplateOptions.class.cast(super.securityGroups(groupIds));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions securityGroups(String... groupIds) {
+      return AWSEC2TemplateOptions.class.cast(super.securityGroups(groupIds));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions unmapDeviceNamed(String deviceName) {
+      return AWSEC2TemplateOptions.class.cast(super.unmapDeviceNamed(deviceName));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions userData(byte[] unencodedData) {
+      return AWSEC2TemplateOptions.class.cast(super.userData(unencodedData));
+   }
 
    /**
     * {@inheritDoc}
@@ -414,7 +543,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
    @Override
    public String toString() {
 
-      return "AWSEC2TemplateOptions [groupIds=" + getGroupIds() + ", keyPair=" + getKeyPair() + ", noKeyPair="
+      return "[groupIds=" + getGroupIds() + ", keyPair=" + getKeyPair() + ", noKeyPair="
                + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
                + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
                + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + "]";
