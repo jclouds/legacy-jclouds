@@ -21,7 +21,10 @@ package org.jclouds.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -33,10 +36,15 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.AvailabilityZone;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.SecurityGroup;
+import org.jclouds.ec2.domain.Snapshot;
+import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
@@ -204,6 +212,181 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
    }
+   
+   @Test(enabled = true)
+   public void testMapNewVolumeToDeviceName() throws Exception {
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
+
+      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getKeyPairServices();
+
+      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
+
+      String tag = this.tag + "BDM1";
+      int volumeSize = 120;
+      TemplateOptions options = client.templateOptions();
+
+      options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).noKeyPair();
+      options.as(EC2TemplateOptions.class).mapNewVolumeToDeviceName("/dev/sda1", volumeSize, true);
+
+      String startedId = null;
+      try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
+         // create the security group
+         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Credentials creds = nodes.iterator().next().getCredentials();
+         assert creds == null;
+
+         NodeMetadata node = nodes.iterator().next();
+         startedId = node.getId();
+         
+         Map<String, BlockDevice> devices = instanceClient
+         .getBlockDeviceMappingForInstanceInRegion(node.getLocation()
+                 .getParent().getId(), node.getProviderId());
+
+         BlockDevice device = devices.get("/dev/sda1");
+         //check  delete on termination
+         assertTrue(device.isDeleteOnTermination());
+         ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+             .getElasticBlockStoreServices();
+
+         Set<Volume> volumes = ebsClient.describeVolumesInRegion(node
+                   .getLocation().getParent().getId(), device.getVolumeId());
+         // check volume size
+         assertEquals(volumeSize, volumes.iterator().next().getSize());
+
+      } finally {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         if (startedId != null) {
+            // ensure we didn't delete these resources!
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+         }
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+      }
+   }
+   
+   @Test(enabled = true)
+   public void testMapEBSSnapshotToDeviceName() throws Exception {
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
+
+      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getKeyPairServices();
+
+      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
+      
+      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      .getElasticBlockStoreServices();
+      //create snapshot
+      Volume volume = ebsClient.createVolumeInAvailabilityZone(AvailabilityZone.US_EAST_1A, 4);
+      Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
+
+      String tag = this.tag + "BDM2";
+      int volumeSize = 120;
+      TemplateOptions options = client.templateOptions();
+
+      options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).noKeyPair();
+      options.as(EC2TemplateOptions.class).mapEBSSnapshotToDeviceName("/dev/sda1", snapshot.getId(), 120, true);      
+      
+      String startedId = null;
+      try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
+         // create the security group
+         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Credentials creds = nodes.iterator().next().getCredentials();
+         assert creds == null;
+
+         NodeMetadata node = nodes.iterator().next();
+
+         Map<String, BlockDevice> devices = instanceClient
+         .getBlockDeviceMappingForInstanceInRegion(node.getLocation()
+                 .getParent().getId(), node.getProviderId());
+
+         BlockDevice device = devices.get("/dev/sda1");        
+         //check  delete on termination
+         assertTrue(device.isDeleteOnTermination());
+         
+         Set<Volume> volumes = ebsClient.describeVolumesInRegion(node
+                   .getLocation().getParent().getId(), device.getVolumeId());
+         // check volume size
+         assertEquals(volumeSize, volumes.iterator().next().getSize());
+         //check volume's snapshot id
+         assertEquals(snapshot.getId(), volumes.iterator().next().getSnapshotId());
+
+
+      } finally {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         ebsClient.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
+         ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
+         if (startedId != null) {
+            // ensure we didn't delete these resources!
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+         }
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+      }
+   }
+   
+   @Test(enabled = true)
+   public void testMapEphemeralDeviceToDeviceName() throws Exception {
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
+
+      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getKeyPairServices();
+
+      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
+
+      String tag = this.tag + "BDM3";
+
+      TemplateOptions options = client.templateOptions();
+
+      options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).noKeyPair();
+      options.as(EC2TemplateOptions.class).mapEphemeralDeviceToDeviceName("/dev/sdh", "ephemeral0");
+
+      String startedId = null;
+      try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
+         // create the security group
+         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Credentials creds = nodes.iterator().next().getCredentials();
+         assert creds == null;
+
+         NodeMetadata node = nodes.iterator().next();
+         startedId = node.getId();
+         
+         Map<String, BlockDevice> devices = instanceClient
+         .getBlockDeviceMappingForInstanceInRegion(node.getLocation()
+                 .getParent().getId(), node.getProviderId());
+
+         BlockDevice device = devices.get("/dev/sdh");
+         assertNotNull(device);
+
+      } finally {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         if (startedId != null) {
+            // ensure we didn't delete these resources!
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+         }
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+      }
+   }
+   
 
    protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
