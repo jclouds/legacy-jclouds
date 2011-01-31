@@ -19,6 +19,7 @@
 
 package org.jclouds.s3.domain;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,8 +36,8 @@ import com.google.common.collect.Collections2;
  * An Access Control List (ACL) describes the access control settings for a bucket or object in S3.
  * 
  * ACL settings comprise a set of {@link Grant}s, each of which specifies a {@link Permission} that
- * has been granted to a specific {@link Grantee}. If an payload tries to access or modify an item in
- * S3, the operation will be denied unless the item has ACL settings that explicitly permit that
+ * has been granted to a specific {@link Grantee}. If an payload tries to access or modify an item
+ * in S3, the operation will be denied unless the item has ACL settings that explicitly permit that
  * payload to perform that action.
  * 
  * 
@@ -80,7 +81,7 @@ public class AccessControlList {
     * @param grantee
     * @param permission
     */
-   public AccessControlList addPermission(Grantee grantee, Permission permission) {
+   public AccessControlList addPermission(Grantee grantee, String permission) {
       Grant grant = new Grant(grantee, permission);
       grants.add(grant);
       return this;
@@ -92,7 +93,7 @@ public class AccessControlList {
     * @param groupGranteeURI
     * @param permission
     */
-   public AccessControlList addPermission(GroupGranteeURI groupGranteeURI, Permission permission) {
+   public AccessControlList addPermission(URI groupGranteeURI, String permission) {
       return addPermission(new GroupGrantee(groupGranteeURI), permission);
    }
 
@@ -110,7 +111,7 @@ public class AccessControlList {
     * @param grantee
     * @param permission
     */
-   public AccessControlList revokePermission(Grantee grantee, Permission permission) {
+   public AccessControlList revokePermission(Grantee grantee, String permission) {
       Collection<Grant> grantsForGrantee = findGrantsForGrantee(grantee.getIdentifier());
       for (Grant grant : grantsForGrantee) {
          if (grant.getPermission().equals(permission)) {
@@ -134,7 +135,7 @@ public class AccessControlList {
     * @param groupGranteeURI
     * @param permission
     */
-   public AccessControlList revokePermission(GroupGranteeURI groupGranteeURI, Permission permission) {
+   public AccessControlList revokePermission(URI groupGranteeURI, String permission) {
       return revokePermission(new GroupGrantee(groupGranteeURI), permission);
    }
 
@@ -153,10 +154,10 @@ public class AccessControlList {
     * @param granteeId
     * @return the permissions assigned to a grantee, as identified by the given ID.
     */
-   public Collection<Permission> getPermissions(String granteeId) {
+   public Collection<String> getPermissions(String granteeId) {
       Collection<Grant> grantsForGrantee = findGrantsForGrantee(granteeId);
-      return Collections2.transform(grantsForGrantee, new Function<Grant, Permission>() {
-         public Permission apply(Grant g) {
+      return Collections2.transform(grantsForGrantee, new Function<Grant, String>() {
+         public String apply(Grant g) {
             return g.getPermission();
          }
       });
@@ -166,7 +167,7 @@ public class AccessControlList {
     * @param grantee
     * @return the permissions assigned to a grantee.
     */
-   public Collection<Permission> getPermissions(Grantee grantee) {
+   public Collection<String> getPermissions(Grantee grantee) {
       return getPermissions(grantee.getIdentifier());
    }
 
@@ -174,8 +175,8 @@ public class AccessControlList {
     * @param granteeURI
     * @return the permissions assigned to a group grantee.
     */
-   public Collection<Permission> getPermissions(GroupGranteeURI granteeURI) {
-      return getPermissions(granteeURI.getIdentifier());
+   public Collection<String> getPermissions(URI granteeURI) {
+      return getPermissions(granteeURI.toASCIIString());
    }
 
    /**
@@ -183,7 +184,7 @@ public class AccessControlList {
     * @param permission
     * @return true if the grantee has the given permission.
     */
-   public boolean hasPermission(String granteeId, Permission permission) {
+   public boolean hasPermission(String granteeId, String permission) {
       return getPermissions(granteeId).contains(permission);
    }
 
@@ -192,7 +193,7 @@ public class AccessControlList {
     * @param permission
     * @return true if the grantee has the given permission.
     */
-   public boolean hasPermission(Grantee grantee, Permission permission) {
+   public boolean hasPermission(Grantee grantee, String permission) {
       return hasPermission(grantee.getIdentifier(), permission);
    }
 
@@ -201,8 +202,8 @@ public class AccessControlList {
     * @param permission
     * @return true if the grantee has the given permission.
     */
-   public boolean hasPermission(GroupGranteeURI granteeURI, Permission permission) {
-      return getPermissions(granteeURI.getIdentifier()).contains(permission);
+   public boolean hasPermission(URI granteeURI, String permission) {
+      return getPermissions(granteeURI).contains(permission);
    }
 
    /**
@@ -226,8 +227,7 @@ public class AccessControlList {
     * @param cannedAP
     * @param ownerId
     */
-   public static AccessControlList fromCannedAccessPolicy(CannedAccessPolicy cannedAP,
-            String ownerId) {
+   public static AccessControlList fromCannedAccessPolicy(CannedAccessPolicy cannedAP, String ownerId) {
       AccessControlList acl = new AccessControlList();
       acl.setOwner(new CanonicalUser(ownerId));
 
@@ -251,16 +251,20 @@ public class AccessControlList {
    // Class and Enum declarations to represent Grants, Grantees and Permissions //
    // /////////////////////////////////////////////////////////////////////////////
 
-   public static enum Permission {
-      READ, WRITE, READ_ACP, WRITE_ACP, FULL_CONTROL;
+   public static interface Permission {
+      public static final String READ = "READ";
+      public static final String WRITE = "WRITE";
+      public static final String READ_ACP = "READ_ACP";
+      public static final String WRITE_ACP = "WRITE_ACP";
+      public static final String FULL_CONTROL = "FULL_CONTROL";
    };
 
    public static class Grant implements Comparable<Grant> {
 
       private Grantee grantee;
-      private final Permission permission;
+      private final String permission;
 
-      public Grant(Grantee grantee, Permission permission) {
+      public Grant(Grantee grantee, String permission) {
          this.grantee = grantee;
          this.permission = permission;
       }
@@ -274,7 +278,7 @@ public class AccessControlList {
          this.grantee = grantee;
       }
 
-      public Permission getPermission() {
+      public String getPermission() {
          return permission;
       }
 
@@ -417,38 +421,17 @@ public class AccessControlList {
       }
    }
 
-   public enum GroupGranteeURI {
-      ALL_USERS("http://acs.amazonaws.com/groups/global/AllUsers"), AUTHENTICATED_USERS(
-               "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"), LOG_DELIVERY(
-               "http://acs.amazonaws.com/groups/LogDelivery");
-
-      private final String uri;
-
-      GroupGranteeURI(String uri) {
-         this.uri = uri;
-      }
-
-      public String getIdentifier() {
-         return this.uri;
-      }
-
-      public static GroupGranteeURI fromURI(String uri) {
-         if (ALL_USERS.uri.equals(uri)) {
-            return ALL_USERS;
-         } else if (AUTHENTICATED_USERS.uri.equals(uri)) {
-            return AUTHENTICATED_USERS;
-         } else if (LOG_DELIVERY.uri.equals(uri)) {
-            return LOG_DELIVERY;
-         } else {
-            throw new IllegalArgumentException("No GroupGranteeURI constant matches " + uri);
-         }
-      }
+   public interface GroupGranteeURI {
+      public static final URI ALL_USERS = URI.create("http://acs.amazonaws.com/groups/global/AllUsers");
+      public static final URI AUTHENTICATED_USERS = URI
+               .create("http://acs.amazonaws.com/groups/global/AuthenticatedUsers");
+      public static final URI LOG_DELIVERY = URI.create("http://acs.amazonaws.com/groups/LogDelivery");
    }
 
    public static class GroupGrantee extends Grantee {
 
-      public GroupGrantee(GroupGranteeURI groupURI) {
-         super(groupURI.getIdentifier());
+      public GroupGrantee(URI groupURI) {
+         super(groupURI.toASCIIString());
       }
    }
 

@@ -312,7 +312,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    protected void assertContentEncoding(S3Object newObject, String string) {
-      assertEquals(newObject.getMetadata().getContentMetadata().getContentEncoding(), string);
+      assert (newObject.getPayload().getContentMetadata().getContentEncoding().indexOf(string) != -1) : newObject
+               .getPayload().getContentMetadata().getContentEncoding();
+      assert (newObject.getMetadata().getContentMetadata().getContentEncoding().indexOf(string) != -1) : newObject
+               .getMetadata().getContentMetadata().getContentEncoding();
    }
 
    @Test(groups = { "integration", "live" })

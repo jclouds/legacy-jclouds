@@ -20,23 +20,11 @@
 package org.jclouds.scaleup.storage.blobstore.config;
 
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.domain.Location;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class ScaleUpStorageBlobStoreContextModule extends S3BlobStoreContextModule {
-   // TODO: this is really a scality concern that is coupled to all installations of theirs
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   @Override
-   protected void bindBucketLocationStrategy() {
-      bind(new TypeLiteral<Function<BucketMetadata, Location>>() {
-      }).toInstance((Function) Functions.constant(null));
-   }
+  
 }

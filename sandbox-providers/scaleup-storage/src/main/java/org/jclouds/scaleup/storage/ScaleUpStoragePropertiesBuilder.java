@@ -20,6 +20,7 @@
 package org.jclouds.scaleup.storage;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -34,6 +35,7 @@ public class ScaleUpStoragePropertiesBuilder extends S3PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "DE");
       properties.setProperty(PROPERTY_ENDPOINT, "https://scs.scaleupstorage.com");
       return properties;
    }

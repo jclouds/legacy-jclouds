@@ -19,7 +19,10 @@
 
 package org.jclouds.scaleup.storage;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.s3.S3ClientLiveTest;
+import org.jclouds.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
 /**
@@ -29,5 +32,16 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "ScaleUpStorageClientLiveTest")
 public class ScaleUpStorageClientLiveTest extends S3ClientLiveTest {
+   // no support for content encoding
+   @Override
+   protected void assertContentEncoding(S3Object newObject, String string) {
+      assert (newObject.getPayload().getContentMetadata().getContentEncoding().indexOf(string) != -1);
+      assert (newObject.getMetadata().getContentMetadata().getContentEncoding().indexOf(string) != -1);
+   }
 
+   // no support for cache control
+   @Override
+   protected void assertCacheControl(S3Object newObject, String string) {
+      assertEquals(newObject.getMetadata().getCacheControl(), null);
+   }
 }

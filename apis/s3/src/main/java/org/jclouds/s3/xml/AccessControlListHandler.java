@@ -19,15 +19,15 @@
 
 package org.jclouds.s3.xml;
 
+import java.net.URI;
+
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.CanonicalUser;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grantee;
 import org.jclouds.s3.domain.AccessControlList.GroupGrantee;
-import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
-import org.jclouds.s3.domain.AccessControlList.Permission;
-import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 
 /**
@@ -72,18 +72,18 @@ public class AccessControlListHandler extends ParseSax.HandlerWithResult<AccessC
          } else if ("CanonicalUser".equals(currentGranteeType)) {
             currentGrantee = new CanonicalUserGrantee(currentId, currentDisplayName);
          } else if ("Group".equals(currentGranteeType)) {
-            currentGrantee = new GroupGrantee(GroupGranteeURI.fromURI(currentId));
+            currentGrantee = new GroupGrantee(URI.create(currentId));
          }
       } else if (qName.equals("Grant")) {
-         acl.addPermission(currentGrantee, Permission.valueOf(currentPermission));
+         acl.addPermission(currentGrantee, currentPermission);
       }
 
       else if (qName.equals("ID") || qName.equals("EmailAddress") || qName.equals("URI")) {
-         currentId = currentText.toString();
+         currentId = currentText.toString().trim();
       } else if (qName.equals("DisplayName")) {
-         currentDisplayName = currentText.toString();
+         currentDisplayName = currentText.toString().trim();
       } else if (qName.equals("Permission")) {
-         currentPermission = currentText.toString();
+         currentPermission = currentText.toString().trim();
       }
       currentText = new StringBuilder();
    }
