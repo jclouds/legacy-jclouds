@@ -22,7 +22,7 @@
 
 Current supported providers are:
    [ec2, aws-ec2, eucualyptus-partnercloud-ec2, cloudservers, 
-    cloudservers-uk, cloudservers-us,
+    cloudservers-uk, cloudservers-us, byon,
     trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus, 
     slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts, 
     openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
