@@ -21,6 +21,7 @@ package org.jclouds.openhosting;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ public class OpenHostingEast1PropertiesBuilder extends ElasticStackPropertiesBui
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-VA");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.east1.openhosting.com");
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       return properties;

@@ -22,6 +22,8 @@ package org.jclouds.elastichosts.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Set;
+
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -29,6 +31,7 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -75,4 +78,8 @@ public class ElasticHostsPeer1LondonTemplateBuilderLiveTest extends BaseTemplate
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("GB-LND");
+   }
 }

@@ -19,13 +19,21 @@
 
 package org.jclouds.aws.s3.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
+import java.util.Set;
+
+import org.jclouds.s3.blobstore.integration.S3ServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "AWSS3ServiceIntegrationLiveTest")
-public class AWSS3ServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
+@Test(groups = "live", testName = "AWSS3ServiceIntegrationLiveTest")
+public class AWSS3ServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US", "US-CA", "IE", "SG");
+   }
 
 }

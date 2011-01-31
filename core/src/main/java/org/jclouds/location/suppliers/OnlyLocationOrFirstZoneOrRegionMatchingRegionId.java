@@ -36,6 +36,8 @@ import org.jclouds.location.Region;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 
 /**
  * @author Adrian Cole
@@ -55,12 +57,12 @@ public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier
       @Override
       public boolean apply(Location input) {
          switch (input.getScope()) {
-         case ZONE:
-            return input.getParent().getId().equals(region);
-         case REGION:
-            return input.getId().equals(region);
-         default:
-            return false;
+            case ZONE:
+               return input.getParent().getId().equals(region);
+            case REGION:
+               return input.getId().equals(region);
+            default:
+               return false;
          }
       }
 
@@ -70,13 +72,13 @@ public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier
       }
    }
 
-   private final IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher;
+   private final Injector injector;
    private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   OnlyLocationOrFirstZoneOrRegionMatchingRegionId(IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher,
-         @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
-      this.matcher = checkNotNull(matcher, "matcher");
+   OnlyLocationOrFirstZoneOrRegionMatchingRegionId(Injector injector,
+            @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.injector = checkNotNull(injector, "injector");
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplier");
    }
 
@@ -86,7 +88,12 @@ public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier
       Set<? extends Location> locations = locationsSupplier.get();
       if (locationsSupplier.get().size() == 1)
          return getOnlyElement(locationsSupplier.get());
+      IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher = null;
       try {
+         String region = injector.getInstance(Key.get(String.class, Region.class));
+         if (region == null)
+            return Iterables.get(locationsSupplier.get(), 0);
+         matcher = injector.getInstance(IsRegionAndIdEqualsOrIsZoneParentIdEquals.class);
          Location toReturn = Iterables.find(locations, matcher);
          return toReturn.getScope() == LocationScope.REGION ? toReturn : toReturn.getParent();
       } catch (NoSuchElementException e) {

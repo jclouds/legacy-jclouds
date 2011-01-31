@@ -49,8 +49,8 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
-import org.jclouds.domain.Location;
 import org.jclouds.json.Json;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -76,6 +76,7 @@ import com.google.inject.name.Names;
 public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Override
    protected void configure() {
+      install(new LocationModule(authException));
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
@@ -127,9 +128,9 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
          checkNotNull(node, "node");
          checkNotNull(runScript, "runScript");
          checkNotNull(options, "options");
-         return !options.shouldWrapInInitScript() ? factory.exec(node, runScript, options)
-                  : (options.shouldBlockOnComplete() ? factory.backgroundAndBlockOnComplete(node, runScript, options)
-                           : factory.background(node, runScript, options));
+         return !options.shouldWrapInInitScript() ? factory.exec(node, runScript, options) : (options
+                  .shouldBlockOnComplete() ? factory.backgroundAndBlockOnComplete(node, runScript, options) : factory
+                  .background(node, runScript, options));
       }
 
       @Override
@@ -202,41 +203,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
                   @Override
                   public Set<? extends Image> get() {
                      return imageSupplier.get();
-                  }
-               });
-   }
-
-   @Provides
-   @Singleton
-   protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-            @Memoized Supplier<Set<? extends Location>> locations) {
-      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
-
-         @Override
-         public Map<String, ? extends Location> apply(Set<? extends Location> from) {
-            return Maps.uniqueIndex(from, new Function<Location, String>() {
-
-               @Override
-               public String apply(Location from) {
-                  return from.getId();
-               }
-
-            });
-         }
-
-      }, locations);
-   }
-
-   @Provides
-   @Singleton
-   @Memoized
-   protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Location>> locationSupplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-               new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return locationSupplier.get();
                   }
                });
    }

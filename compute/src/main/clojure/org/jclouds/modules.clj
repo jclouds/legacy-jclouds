@@ -65,7 +65,7 @@
   (.createContext (ComputeServiceContextFactory.)  spec))
 
 (^RestContextSpec defn context-spec [^StandaloneComputeServiceContextModule module]
-  (StandaloneComputeServiceContextSpec. "servermanager", "http://host", "1", "identity", "credential", module, (ImmutableSet/of)))
+  (StandaloneComputeServiceContextSpec. "servermanager", "http://host", "1", "", "identity", "credential", module, (ImmutableSet/of)))
 
 (defrecord NodeListComputeService
     [node-list]

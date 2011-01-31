@@ -33,11 +33,11 @@ public class ViComputeServiceContextSpec extends RestContextSpec<ComputeService,
 
    @SuppressWarnings("unchecked")
    public ViComputeServiceContextSpec(String endpoint, String identity, String credential, Iterable<Module> modules) {
-      super("vi", endpoint, "1", identity, credential, ComputeService.class, ComputeService.class,
-            PropertiesBuilder.class, (Class) ViComputeServiceContextBuilder.class, modules);
+      super("vi", endpoint, "1", "", identity, credential, ComputeService.class, ComputeService.class,
+               PropertiesBuilder.class, (Class) ViComputeServiceContextBuilder.class, modules);
    }
 
    public ViComputeServiceContextSpec(String endpoint, String identity, String credential) {
-      this(endpoint, identity, credential, ImmutableSet.<Module>of());
+      this(endpoint, identity, credential, ImmutableSet.<Module> of());
    }
 }

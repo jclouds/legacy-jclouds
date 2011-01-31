@@ -51,8 +51,8 @@ import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -71,7 +71,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Oleksiy Yarmula
  */
 public class EC2TemplateBuilderTest {
-   private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
+   private static final Location location = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
+            .description("us-east-1").build();
 
    public static final Hardware CC1_4XLARGE = cc1_4xlarge().location(location).supportsImageIds("us-east-1/cc-image")
             .build();

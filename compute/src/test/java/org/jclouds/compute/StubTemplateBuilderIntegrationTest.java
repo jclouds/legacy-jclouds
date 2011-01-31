@@ -19,7 +19,11 @@
 
 package org.jclouds.compute;
 
+import java.util.Set;
+
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -37,5 +41,10 @@ public class StubTemplateBuilderIntegrationTest extends BaseTemplateBuilderLiveT
    protected void setupCredentials() {
       identity = "stub";
       credential = "stub";
+   }
+
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of();
    }
 }

@@ -21,13 +21,13 @@ package org.jclouds.cloudservers.compute.config;
 
 import java.util.Set;
 
+import org.jclouds.cloudservers.compute.suppliers.CloudServersHardwareSupplier;
+import org.jclouds.cloudservers.compute.suppliers.CloudServersImageSupplier;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
-import org.jclouds.cloudservers.compute.suppliers.CloudServersHardwareSupplier;
-import org.jclouds.cloudservers.compute.suppliers.CloudServersImageSupplier;
-import org.jclouds.location.suppliers.SupplyPredefinedRegions;
+import org.jclouds.location.suppliers.JustProvider;
 
 import com.google.common.base.Supplier;
 
@@ -49,6 +49,6 @@ public class CloudServersBindComputeSuppliersByClass extends BindComputeSupplier
 
    @Override
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return SupplyPredefinedRegions.class;
+      return JustProvider.class;
    }
 }

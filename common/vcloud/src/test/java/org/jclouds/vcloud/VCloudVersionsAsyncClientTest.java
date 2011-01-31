@@ -39,7 +39,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
 
-
 /**
  * Tests behavior of {@code VCloudVersionsAsyncClient}
  * 
@@ -83,8 +82,8 @@ public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersions
 
    @Override
    public RestContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", VCloudVersionsClient.class,
-               VCloudVersionsAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1", "", "identity", "credential",
+               VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
    }
 
 }

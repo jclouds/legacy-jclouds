@@ -388,26 +388,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       checkFilters(request);
    }
-
-   public void testPutBucketEu() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array.newInstance(
-               PutBucketOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, "EU", "bucket");
-
-      assertRequestLineEquals(request, "PUT https://bucket." + url + "/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
-      assertPayloadEquals(request,
-               "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
-               "text/xml", false);
-
-      assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
-
-      checkFilters(request);
-   }
-
+   
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
 

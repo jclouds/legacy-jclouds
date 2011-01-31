@@ -38,8 +38,8 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.slicehost.compute.config.SlicehostComputeServiceDependenciesModule;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.xml.SliceHandlerTest;
@@ -55,7 +55,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class SliceToNodeMetadataTest {
-   Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+   Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
    public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {

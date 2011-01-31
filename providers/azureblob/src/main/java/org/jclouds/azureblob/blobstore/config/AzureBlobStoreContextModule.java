@@ -19,10 +19,6 @@
 
 package org.jclouds.azureblob.blobstore.config;
 
-import java.util.Set;
-
-import javax.inject.Singleton;
-
 import org.jclouds.azureblob.AzureBlobAsyncClient;
 import org.jclouds.azureblob.AzureBlobClient;
 import org.jclouds.azureblob.blobstore.AzureAsyncBlobStore;
@@ -37,17 +33,9 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.collect.Memoized;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.location.Provider;
+import org.jclouds.location.config.JustProviderLocationModule;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -61,6 +49,7 @@ public class AzureBlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
+      install(new JustProviderLocationModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AzureBlobStore.class).in(Scopes.SINGLETON);
@@ -68,20 +57,6 @@ public class AzureBlobStoreContextModule extends AbstractModule {
       }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
       bind(BlobRequestSigner.class).to(AzureBlobRequestSigner.class);
-   }
-
-   @Provides
-   @Singleton
-   @Memoized
-   Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
-      return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
-   }
-
-   @Provides
-   @Singleton
-   Supplier<Location> provideDefaultLocation(@Provider String providerName) {
-      return Suppliers
-               .<Location> ofInstance(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
    }
 
 }

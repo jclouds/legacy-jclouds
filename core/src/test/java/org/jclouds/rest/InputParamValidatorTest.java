@@ -51,12 +51,12 @@ public class InputParamValidatorTest {
    @SkipEncoding('/')
    class InputParamValidatorForm {
       @POST
-         @ParamValidators( { AllLowerCaseValidator.class })
+      @ParamValidators( { AllLowerCaseValidator.class })
       public void allParamsValidated(@PathParam("param1") String param1, @PathParam("param2") String param2) {
       }
 
       @POST
-         public void oneParamValidated(@PathParam("param1") String param1,
+      public void oneParamValidated(@PathParam("param1") String param1,
                @ParamValidators( { AllLowerCaseValidator.class }) @PathParam("param2") String param2) {
       }
    }
@@ -142,7 +142,7 @@ public class InputParamValidatorTest {
    void setupFactory() {
 
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:9999", "1", "userFoo", null, IntegrationTestClient.class,
+               "http://localhost:9999", "1", "", "userFoo", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       injector = createContextBuilder(contextSpec).buildInjector();

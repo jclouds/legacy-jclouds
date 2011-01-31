@@ -21,7 +21,7 @@ package org.jclouds.rackspace.cloudservers;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -37,7 +37,7 @@ public class CloudServersUSPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "US");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
       properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       return properties;

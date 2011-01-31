@@ -35,8 +35,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.suppliers.JustProvider;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
@@ -50,14 +49,14 @@ import com.google.common.collect.Iterables;
 public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
    private final Supplier<Map<String, Node>> nodes;
    private final NodeToNodeMetadata converter;
-   private final String providerName;
+   private final JustProvider locationSupplier;
 
    @Inject
    public BYONComputeServiceAdapter(Supplier<Map<String, Node>> nodes, NodeToNodeMetadata converter,
-            @org.jclouds.location.Provider String providerName) {
+            JustProvider locationSupplier) {
       this.nodes = checkNotNull(nodes, "nodes");
       this.converter = checkNotNull(converter, "converter");
-      this.providerName = checkNotNull(providerName, "providerName");
+      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
    }
 
    @Override
@@ -81,9 +80,10 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       return Iterables.transform(nodes.get().values(), converter);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return ImmutableSet.<Location> of(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
+      return (Iterable<Location>) locationSupplier.get();
    }
 
    @Override

@@ -40,8 +40,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.ImageType;
@@ -116,8 +116,8 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
          }));
       } catch (NoSuchElementException e) {
          System.err.printf("unknown region %s for image %s; not in %s", from.getRegion(), from.getId(), locations);
-         builder.location(new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(), defaultLocation
-                  .get().getParent()));
+         builder.location(new LocationBuilder().scope(LocationScope.REGION).id(from.getRegion()).description(
+                  from.getRegion()).parent(defaultLocation.get()).build());
       }
       builder.operatingSystem(osBuilder.build());
       return builder.build();

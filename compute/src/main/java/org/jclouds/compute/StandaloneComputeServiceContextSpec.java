@@ -29,25 +29,26 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class StandaloneComputeServiceContextSpec<D, N, H, I, L> extends RestContextSpec<D, D> {
-   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
-         String credential, Class<D> driverClass,
-         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass) {
-      this(provider, endpoint, apiVersion, identity, credential, driverClass, contextBuilderClass, ImmutableSet
-            .<Module> of());
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes,
+            String identity, String credential, Class<D> driverClass,
+            Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass) {
+      this(provider, endpoint, apiVersion, iso3166Codes, identity, credential, driverClass, contextBuilderClass,
+               ImmutableSet.<Module> of());
    }
 
-   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
-         String credential, Class<D> driverClass,
-         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
-      this(provider, endpoint, apiVersion, identity, credential, driverClass, PropertiesBuilder.class,
-            contextBuilderClass, modules);
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes,
+            String identity, String credential, Class<D> driverClass,
+            Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
+      this(provider, endpoint, apiVersion, iso3166Codes, identity, credential, driverClass, PropertiesBuilder.class,
+               contextBuilderClass, modules);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
-         String credential, Class<D> driverClass, Class<? extends PropertiesBuilder> propertiesBuilderClass,
-         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
-      super(provider, endpoint, apiVersion, identity, credential, driverClass, driverClass,
-            (Class) propertiesBuilderClass, (Class) contextBuilderClass, modules);
+   @SuppressWarnings( { "unchecked", "rawtypes" })
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes,
+            String identity, String credential, Class<D> driverClass,
+            Class<? extends PropertiesBuilder> propertiesBuilderClass,
+            Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
+      super(provider, endpoint, apiVersion, iso3166Codes, identity, credential, driverClass, driverClass,
+               (Class) propertiesBuilderClass, (Class) contextBuilderClass, modules);
    }
 }

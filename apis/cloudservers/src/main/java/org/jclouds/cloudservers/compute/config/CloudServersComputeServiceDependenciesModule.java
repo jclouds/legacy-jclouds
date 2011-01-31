@@ -20,7 +20,6 @@
 package org.jclouds.cloudservers.compute.config;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -41,8 +40,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.location.Region;
-import org.jclouds.location.config.ProvideRegionsViaProperties;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -82,8 +79,6 @@ public class CloudServersComputeServiceDependenciesModule extends AbstractModule
       bind(new TypeLiteral<RestContext<CloudServersClient, CloudServersAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<Set<String>>() {
-      }).annotatedWith(Region.class).toProvider(ProvideRegionsViaProperties.class).in(Scopes.SINGLETON);
    }
 
    @VisibleForTesting

@@ -19,12 +19,15 @@
 
 package org.jclouds.rimuhosting.miro.compute;
 
+import java.util.Set;
+
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -44,10 +47,15 @@ public class RimuHostingTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             return input.family != OsFamily.UBUNTU || //
-                  Float.parseFloat(input.version) > 10.04 || //
-                  (!(input.is64Bit) && Float.parseFloat(input.version) < 8.10);
+                     Float.parseFloat(input.version) > 10.04 || //
+                     (!(input.is64Bit) && Float.parseFloat(input.version) < 8.10);
          }
 
       };
+   }
+
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("NZ-AUK", "US-TX", "AU-NSW", "GB-LND");
    }
 }

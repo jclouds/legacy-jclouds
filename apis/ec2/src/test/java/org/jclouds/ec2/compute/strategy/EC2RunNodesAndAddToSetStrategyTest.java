@@ -39,8 +39,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -154,10 +154,12 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       verifyStrategy(strategy);
    }
 
-   private static final Location REGION_AP_SOUTHEAST_1 = new LocationImpl(LocationScope.REGION, Region.AP_SOUTHEAST_1,
-            Region.AP_SOUTHEAST_1, new LocationImpl(LocationScope.PROVIDER, "ec2", "ec2", null));
-   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationImpl(LocationScope.ZONE,
-            AvailabilityZone.AP_SOUTHEAST_1A, AvailabilityZone.AP_SOUTHEAST_1A, REGION_AP_SOUTHEAST_1);
+   private static final Location REGION_AP_SOUTHEAST_1 = new LocationBuilder().scope(LocationScope.REGION).id(
+            Region.AP_SOUTHEAST_1).description(Region.AP_SOUTHEAST_1).parent(
+            new LocationBuilder().scope(LocationScope.PROVIDER).id("ec2").description("ec2").build()).build();
+   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationBuilder().scope(LocationScope.ZONE).id(
+            AvailabilityZone.AP_SOUTHEAST_1A).description(AvailabilityZone.AP_SOUTHEAST_1A).parent(
+            REGION_AP_SOUTHEAST_1).build();
 
    // /////////////////////////////////////////////////////////////////////
    @SuppressWarnings("unchecked")

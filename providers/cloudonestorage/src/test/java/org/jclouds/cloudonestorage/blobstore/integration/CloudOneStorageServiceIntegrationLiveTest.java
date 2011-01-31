@@ -19,13 +19,20 @@
 
 package org.jclouds.cloudonestorage.blobstore.integration;
 
+import java.util.Set;
+
 import org.jclouds.atmos.blobstore.integration.AtmosServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "CloudOneStorageServiceIntegrationLiveTest")
+@Test(groups = "live", testName = "CloudOneStorageServiceIntegrationLiveTest")
 public class CloudOneStorageServiceIntegrationLiveTest extends AtmosServiceIntegrationLiveTest {
-
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-GA", "US-TX");
+   }
 }

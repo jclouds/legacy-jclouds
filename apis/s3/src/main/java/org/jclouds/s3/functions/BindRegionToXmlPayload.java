@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -49,14 +50,16 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
    private final Set<String> regions;
 
    @Inject
-   BindRegionToXmlPayload(@org.jclouds.location.Region String defaultRegion,
-         @org.jclouds.location.Region Set<String> regions) {
+   BindRegionToXmlPayload(@org.jclouds.location.Region @Nullable String defaultRegion,
+            @org.jclouds.location.Region Set<String> regions) {
       this.defaultRegion = defaultRegion;
       this.regions = regions;
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      if (defaultRegion == null)
+         return request;
       input = input == null ? defaultRegion : input;
       checkArgument(input instanceof String, "this binder is only valid for Region!");
       String constraint = (String) input;
@@ -70,10 +73,9 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
          logger.warn("region %s not in %s ", constraint, regions);
          value = constraint;
       }
-      String payload = String
-            .format(
-                  "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                  value);
+      String payload = String.format(
+               "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+               value);
       request = super.bindToRequest(request, payload);
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
       return request;

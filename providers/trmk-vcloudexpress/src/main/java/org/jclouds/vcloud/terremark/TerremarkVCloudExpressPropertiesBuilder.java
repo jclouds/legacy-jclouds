@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
 
@@ -36,6 +37,7 @@ public class TerremarkVCloudExpressPropertiesBuilder extends TerremarkVCloudProp
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "0.8a-ext1.6");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-FL");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "vCloudExpressExtensions");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "1.6");
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");

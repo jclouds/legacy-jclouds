@@ -19,15 +19,18 @@
 
 package org.jclouds.domain;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Running Operating system
+ * Description of where a resource is running. Note this can be physical or virtual.
  * 
  * @author Adrian Cole
  */
 public interface Location {
 
    /**
-    * Scope of the location, ex. region, datacenter
+    * Scope of the location, ex. region, zone, host
     * 
     */
    LocationScope getScope();
@@ -48,4 +51,16 @@ public interface Location {
     */
    Location getParent();
 
+   /**
+    * @return immutable set of metadata relating to this location
+    */
+   Map<String, Object> getMetadata();
+
+   /**
+    * @return if known, the IS0 3166 or 3166-2 divisions where this service may run. ex. a set of
+    *         strings like "US" or "US-CA"; otherwise returns an empty list.
+    * @see <a
+    *      href="http://www.iso.org/iso/country_codes/background_on_iso_3166/what_is_iso_3166.htm">3166</a>
+    */
+   Set<String> getIso3166Codes();
 }

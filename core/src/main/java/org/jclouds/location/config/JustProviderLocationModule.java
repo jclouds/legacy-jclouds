@@ -17,26 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.libvirt.compute.functions;
+package org.jclouds.location.config;
 
-import javax.inject.Singleton;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.libvirt.Datacenter;
+import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
+import org.jclouds.rest.AuthorizationException;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.TypeLiteral;
 
 /**
+ * 
  * @author Adrian Cole
+ * 
  */
-@Singleton
-public class LibvirtNodeToLocation implements Function<Datacenter, Location> {
+public class JustProviderLocationModule extends LocationModule {
+   public JustProviderLocationModule() {
+      super();
+   }
+
+   public JustProviderLocationModule(AtomicReference<AuthorizationException> authException) {
+      super(authException);
+   }
 
    @Override
-   public Location apply(Datacenter from) {
-      return new LocationImpl(LocationScope.ZONE, from.id + "", from.name, null);
+   protected void configure() {
+      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
+      }).to(JustProvider.class);
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZone.class);
+      super.configure();
    }
 
 }

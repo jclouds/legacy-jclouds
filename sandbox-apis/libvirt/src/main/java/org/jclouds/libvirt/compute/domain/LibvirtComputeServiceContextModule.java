@@ -41,10 +41,9 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
-import org.jclouds.libvirt.compute.functions.DatacenterToLocation;
 import org.jclouds.libvirt.compute.functions.DomainToHardware;
 import org.jclouds.libvirt.compute.functions.DomainToNodeMetadata;
 import org.jclouds.libvirt.compute.functions.LibvirtImageToImage;
@@ -71,16 +70,17 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 public class LibvirtComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<Connect, Connect, Domain, Domain, Image, Datacenter> {
+         ComputeServiceAdapterContextModule<Connect, Connect, Domain, Domain, Image, Location> {
 
    public LibvirtComputeServiceContextModule() {
       super(Connect.class, Connect.class);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<Domain, Domain, Image, Datacenter>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<Domain, Domain, Image, Location>>() {
       }).to(LibvirtComputeServiceAdapter.class);
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(OnlyLocationOrFirstZone.class);
@@ -90,8 +90,8 @@ public class LibvirtComputeServiceContextModule extends
       }).to(LibvirtImageToImage.class);
       bind(new TypeLiteral<Function<Domain, Hardware>>() {
       }).to(DomainToHardware.class);
-      bind(new TypeLiteral<Function<Datacenter, Location>>() {
-      }).to(DatacenterToLocation.class);
+      bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
 
       // bind(ComputeService.class).to(LibvirtComputeService.class);
    }

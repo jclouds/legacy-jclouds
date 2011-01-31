@@ -39,6 +39,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -172,6 +174,53 @@ public abstract class BaseTemplateBuilderLiveTest {
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+   }
+
+   protected abstract Set<String> getIso3166Codes();
+
+   @Test(groups = { "integration", "live" })
+   public void testGetAssignableLocations() throws Exception {
+      assertProvider(context.getProviderSpecificContext());
+      for (Location location : context.getComputeService().listAssignableLocations()) {
+         System.err.printf("location %s%n", location);
+         assert location.getId() != null : location;
+         assert location != location.getParent() : location;
+         assert location.getScope() != null : location;
+         switch (location.getScope()) {
+            case PROVIDER:
+               assertProvider(location);
+               break;
+            case REGION:
+               assertProvider(location.getParent());
+               assert location.getIso3166Codes().size() == 0
+                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
+                        + " ||" + location.getParent();
+               break;
+            case ZONE:
+               Location provider = location.getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getParent();
+               assertProvider(provider);
+               assert location.getIso3166Codes().size() == 0
+                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
+                        + " ||" + location.getParent();
+               break;
+            case HOST:
+               Location provider2 = location.getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getParent().getParent();
+               assertProvider(provider2);
+               break;
+         }
+      }
+   }
+
+   void assertProvider(Location provider) {
+      assertEquals(provider.getScope(), LocationScope.PROVIDER);
+      assertEquals(provider.getParent(), null);
+      assertEquals(provider.getIso3166Codes(), getIso3166Codes());
    }
 
    @AfterTest

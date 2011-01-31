@@ -25,6 +25,7 @@ import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE;
@@ -48,6 +49,7 @@ import java.util.Properties;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 
 /**
  * Builds properties used in Http engines
@@ -201,6 +203,7 @@ public class PropertiesBuilder {
 
    protected Properties defaultProperties() {
       Properties props = new Properties();
+      props.setProperty(PROPERTY_ISO3166_CODES, "");
       props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
       props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 0 + "");
       props.setProperty(PROPERTY_SO_TIMEOUT, 60000 + "");
@@ -225,6 +228,11 @@ public class PropertiesBuilder {
 
    public PropertiesBuilder endpoint(String endpoint) {
       properties.setProperty(PROPERTY_ENDPOINT, endpoint);
+      return this;
+   }
+
+   public PropertiesBuilder iso3166Codes(Iterable<String> codes) {
+      properties.setProperty(PROPERTY_ISO3166_CODES, Joiner.on(',').join(codes));
       return this;
    }
 

@@ -32,8 +32,8 @@ import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
@@ -46,7 +46,8 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class NodeToNodeMetadataTest {
-   public static final Location location = new LocationImpl(LocationScope.PROVIDER, "byon", "byon", null);
+   public static final Location location = new LocationBuilder().scope(LocationScope.PROVIDER).id("byon").description(
+            "byon").build();
 
    public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1")
             .location(location).state(NodeState.RUNNING).operatingSystem(

@@ -19,6 +19,7 @@
 
 package org.jclouds.location.config;
 
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
@@ -28,7 +29,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Splitter;
@@ -41,7 +41,7 @@ import com.google.inject.name.Names;
 
 /**
  * 
- * looks for properties bound to the naming convention jclouds.location.region.{@code regionId}.endpoint
+ * looks for properties bound to the naming convention jclouds.region.{@code regionId}.endpoint
  * 
  * @author Adrian Cole
  */
@@ -63,17 +63,14 @@ public class ProvideRegionToURIViaProperties implements javax.inject.Provider<Ma
          String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
          Builder<String, URI> regions = ImmutableMap.<String, URI> builder();
          for (String region : Splitter.on(',').split(regionString)) {
-            regions.put(
-                  region,
-                  URI.create(injector.getInstance(Key.get(String.class,
-                        Names.named(PROPERTY_REGION + "." + region + ".endpoint")))));
+            regions.put(region, URI.create(injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGION + "."
+                     + region + "." + ENDPOINT)))));
          }
          return regions.build();
       } catch (ConfigurationException e) {
          // this happens if regions property isn't set
          // services not run by AWS may not have regions, so this is ok.
-         return ImmutableMap.of(injector.getInstance(Key.get(String.class, Provider.class)),
-               injector.getInstance(Key.get(URI.class, Provider.class)));
+         return ImmutableMap.of();
       }
    }
 

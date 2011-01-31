@@ -60,9 +60,9 @@ public class ServerManagerExperimentLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory()
-               .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                     "servermanager", endpoint, apiversion, identity, credential, ServerManager.class,
-                     ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
+                  .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
+                           "servermanager", endpoint, apiversion, "", identity, credential, ServerManager.class,
+                           ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
          context.getComputeService().listNodes();
 

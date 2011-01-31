@@ -19,6 +19,8 @@
 
 package org.jclouds.location.suppliers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Set;
 
@@ -26,39 +28,35 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
-import org.jclouds.location.Region;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SupplyPredefinedRegions implements Supplier<Set<? extends Location>> {
-   private final Set<String> regions;
+public class JustProvider implements Supplier<Set<? extends Location>> {
    private final String providerName;
    private final URI endpoint;
+   private final Set<String> isoCodes;
 
    @Inject
-   SupplyPredefinedRegions(@Region Set<String> regions, @Provider String providerName, @Provider URI endpoint) {
-      this.regions = regions;
-      this.providerName = providerName;
-      this.endpoint = endpoint;
+   public JustProvider(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint) {
+      this.providerName = checkNotNull(providerName, "providerName");
+      this.endpoint = checkNotNull(endpoint, "endpoint");
+      this.isoCodes = checkNotNull(isoCodes, "isoCodes");
    }
 
    @Override
    public Set<? extends Location> get() {
-      Builder<Location> locations = ImmutableSet.builder();
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, endpoint.toASCIIString(), null);
-      for (String zone : regions) {
-         locations.add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), provider));
-      }
-      return locations.build();
+      return ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName).description(
+               endpoint.toASCIIString()).iso3166Codes(isoCodes).build());
    }
+
 }

@@ -20,6 +20,7 @@
 package org.jclouds.rackspace.cloudfiles;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
@@ -37,6 +38,7 @@ public class CloudFilesUSPropertiesBuilder extends SwiftPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "US");
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");
       return properties;
    }
 

@@ -35,12 +35,14 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.util.Modules2;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Module;
@@ -70,23 +72,24 @@ import com.google.inject.Module;
 public class RestContextFactory {
 
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async,
-         Class<PropertiesBuilder> propertiesBuilderClass, Class<RestContextBuilder<S, A>> contextBuilderClass,
-         Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async,
-            propertiesBuilderClass, contextBuilderClass, modules);
+            String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
+            Class<PropertiesBuilder> propertiesBuilderClass, Class<RestContextBuilder<S, A>> contextBuilderClass,
+            Iterable<Module> modules) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
+               propertiesBuilderClass, contextBuilderClass, modules);
    }
 
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async);
+            String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async, Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async,
-            PropertiesBuilder.class, (Class) RestContextBuilder.class, modules);
+            String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
+            Iterable<Module> modules) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
+               PropertiesBuilder.class, (Class) RestContextBuilder.class, modules);
    }
 
    private final static Properties NO_PROPERTIES = new Properties();
@@ -177,9 +180,9 @@ public class RestContextFactory {
 
    /**
     * 
-    * Identity will be found by searching {@code jclouds.identity} failing that
-    * {@code provider.identity} where provider corresponds to the parameter. Same pattern is used
-    * for credential ({@code jclouds.credential} failing that {@code provider.credential}).
+    * Identity will be found by searching {@code jclouds.identity} failing that {@code
+    * provider.identity} where provider corresponds to the parameter. Same pattern is used for
+    * credential ({@code jclouds.credential} failing that {@code provider.credential}).
     * 
     * @param <S>
     *           Type of the provider specific client
@@ -195,18 +198,18 @@ public class RestContextFactory {
     *           properties to pass to the context.
     */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider, Iterable<? extends Module> wiring,
-         Properties overrides) {
+            Properties overrides) {
       return createContextBuilder(provider, null, null, wiring, overrides);
    }
 
    @SuppressWarnings("unchecked")
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider, @Nullable String identity,
-         @Nullable String credential, Properties properties) {
+            @Nullable String credential, Properties properties) {
       return createContextBuilder(provider, identity, credential, EMPTY_LIST, properties);
    }
 
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider, @Nullable String identity,
-         @Nullable String credential, Iterable<? extends Module> wiring) {
+            @Nullable String credential, Iterable<? extends Module> wiring) {
       return createContextBuilder(provider, identity, credential, wiring, NO_PROPERTIES);
    }
 
@@ -226,7 +229,7 @@ public class RestContextFactory {
     * @return initialized context ready for use
     */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String providerName, @Nullable String identity,
-         @Nullable String credential, Iterable<? extends Module> wiring, Properties _overrides) {
+            @Nullable String credential, Iterable<? extends Module> wiring, Properties _overrides) {
       checkNotNull(wiring, "wiring");
       RestContextSpec<S, A> contextSpec = createContextSpec(providerName, identity, credential, wiring, _overrides);
       return createContextBuilder(contextSpec, _overrides);
@@ -239,43 +242,44 @@ public class RestContextFactory {
 
       props.setProperty(contextSpec.provider + ".endpoint", contextSpec.endpoint);
       props.setProperty(contextSpec.provider + ".apiversion", contextSpec.apiVersion);
+      props.setProperty(contextSpec.provider + "." + LocationConstants.ISO3166_CODES, contextSpec.iso3166Codes);
       props.setProperty(contextSpec.provider + ".identity", contextSpec.identity);
       if (contextSpec.credential != null)
          props.setProperty(contextSpec.provider + ".credential", contextSpec.credential);
       if (contextSpec.sync != null) {
          props.setProperty(contextSpec.provider + ".sync", contextSpec.sync.getName());
          props.setProperty(contextSpec.provider + ".async", checkNotNull(contextSpec.async, "contextSpec.async")
-               .getName());
+                  .getName());
       } else {
-         props.setProperty(contextSpec.provider + ".contextbuilder",
-               checkNotNull(contextSpec.contextBuilderClass, "contextSpec.contextBuilderClass").getName());
+         props.setProperty(contextSpec.provider + ".contextbuilder", checkNotNull(contextSpec.contextBuilderClass,
+                  "contextSpec.contextBuilderClass").getName());
 
-         props.setProperty(contextSpec.provider + ".propertiesbuilder",
-               checkNotNull(contextSpec.propertiesBuilderClass, "contextSpec.propertiesBuilderClass").getName());
+         props.setProperty(contextSpec.provider + ".propertiesbuilder", checkNotNull(
+                  contextSpec.propertiesBuilderClass, "contextSpec.propertiesBuilderClass").getName());
       }
       if (size(contextSpec.modules) > 0) {
-         props.setProperty(contextSpec.provider + ".modules",
-               Joiner.on(',').join(transform(contextSpec.modules, new Function<Module, String>() {
+         props.setProperty(contextSpec.provider + ".modules", Joiner.on(',').join(
+                  transform(contextSpec.modules, new Function<Module, String>() {
 
-                  @Override
-                  public String apply(Module from) {
-                     return from.getClass().getName();
-                  }
+                     @Override
+                     public String apply(Module from) {
+                        return from.getClass().getName();
+                     }
 
-               })));
+                  })));
       }
       return props;
    }
 
    @SuppressWarnings("unchecked")
    public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
-         Properties _overrides) {
+            Properties _overrides) {
       return createContextSpec(providerName, identity, credential, EMPTY_LIST, _overrides);
    }
 
    @SuppressWarnings("unchecked")
    public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
-         Iterable<? extends Module> wiring, Properties _overrides) {
+            Iterable<? extends Module> wiring, Properties _overrides) {
       checkNotNull(providerName, "providerName");
       checkNotNull(_overrides, "overrides");
 
@@ -283,11 +287,12 @@ public class RestContextFactory {
       props.putAll(this.properties);
       props.putAll(_overrides);
 
-      String endpoint = props.getProperty(providerName + ".endpoint", null);
+      String endpoint = props.getProperty(providerName + "." + LocationConstants.ENDPOINT, null);
+      String iso3166Codes = props.getProperty(providerName + "." + LocationConstants.ISO3166_CODES, null);
       String apiVersion = props.getProperty(providerName + ".apiversion", null);
       identity = props.getProperty(providerName + ".identity", props.getProperty("jclouds.identity", identity));
-      credential = loadCredentialOrDefault(props, providerName + ".credential",
-            loadCredentialOrDefault(props, "jclouds.credential", credential));
+      credential = loadCredentialOrDefault(props, providerName + ".credential", loadCredentialOrDefault(props,
+               "jclouds.credential", credential));
       String syncClassName = props.getProperty(providerName + ".sync", null);
       String asyncClassName = props.getProperty(providerName + ".async", null);
       Iterable<Module> modules = concat(Modules2.modulesForProviderInProperties(providerName, props), wiring);
@@ -306,8 +311,8 @@ public class RestContextFactory {
          assert false : "exception should have propogated " + e;
          return null;
       }
-      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, identity,
-            credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
+      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, iso3166Codes,
+               identity, credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
       return contextSpec;
    }
 
@@ -316,8 +321,8 @@ public class RestContextFactory {
          return properties.getProperty(property);
       else if (properties.containsKey(property + ".resource"))
          try {
-            return Strings2.toStringAndClose(RestContextFactory.class.getResourceAsStream(properties.getProperty(property
-                  + ".resource")));
+            return Strings2.toStringAndClose(RestContextFactory.class.getResourceAsStream(properties
+                     .getProperty(property + ".resource")));
          } catch (IOException e) {
             throw new RuntimeException("error reading resource: " + properties.getProperty(property + ".resource"));
          }
@@ -337,31 +342,33 @@ public class RestContextFactory {
 
    @SuppressWarnings("unchecked")
    public static <S, A> RestContextBuilder<S, A> createContextBuilder(RestContextSpec<S, A> contextSpec,
-         Properties overrides) {
+            Properties overrides) {
       return createContextBuilder(contextSpec, EMPTY_LIST, overrides);
    }
 
    public static <S, A> RestContextBuilder<S, A> createContextBuilder(RestContextSpec<S, A> contextSpec,
-         Iterable<Module> modules) {
+            Iterable<Module> modules) {
       return createContextBuilder(contextSpec, modules, NO_PROPERTIES);
    }
 
    public static <S, A> RestContextBuilder<S, A> createContextBuilder(RestContextSpec<S, A> contextSpec,
-         Iterable<Module> modules, Properties overrides) {
+            Iterable<Module> modules, Properties overrides) {
       try {
          PropertiesBuilder builder = contextSpec.propertiesBuilderClass.getConstructor(Properties.class).newInstance(
-               overrides);
+                  overrides);
 
          builder.provider(contextSpec.provider);
          if (contextSpec.apiVersion != null)
             builder.apiVersion(contextSpec.apiVersion);
+         if (contextSpec.iso3166Codes != null)
+            builder.iso3166Codes(Splitter.on('.').split(contextSpec.iso3166Codes));
          if (contextSpec.identity != null)
             builder.credentials(contextSpec.identity, contextSpec.credential);
          if (contextSpec.endpoint != null)
             builder.endpoint(contextSpec.endpoint);
 
          RestContextBuilder<S, A> contextBuilder = Providers.initContextBuilder(contextSpec.contextBuilderClass,
-               contextSpec.sync, contextSpec.async, builder.build());
+                  contextSpec.sync, contextSpec.async, builder.build());
 
          contextBuilder.withModules(concat(modules, contextSpec.modules));
 
@@ -399,7 +406,7 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, Iterable)
     */
    public <S, A> RestContext<S, A> createContext(String provider, Iterable<? extends Module> wiring,
-         Properties overrides) {
+            Properties overrides) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, wiring, overrides);
       return buildContextUnwrappingExceptions(builder);
    }
@@ -408,7 +415,7 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, String,String, Properties)
     */
    public <S, A> RestContext<S, A> createContext(String provider, @Nullable String identity,
-         @Nullable String credential, Properties properties) {
+            @Nullable String credential, Properties properties) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, identity, credential, properties);
       return buildContextUnwrappingExceptions(builder);
    }
@@ -417,7 +424,7 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable)
     */
    public <S, A> RestContext<S, A> createContext(String provider, @Nullable String identity,
-         @Nullable String credential, Iterable<? extends Module> wiring) {
+            @Nullable String credential, Iterable<? extends Module> wiring) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, identity, credential, wiring);
       return buildContextUnwrappingExceptions(builder);
    }
@@ -426,7 +433,7 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
     */
    public <S, A> RestContext<S, A> createContext(String provider, @Nullable String identity,
-         @Nullable String credential, Iterable<? extends Module> wiring, Properties overrides) {
+            @Nullable String credential, Iterable<? extends Module> wiring, Properties overrides) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, identity, credential, wiring, overrides);
       return buildContextUnwrappingExceptions(builder);
    }
@@ -459,7 +466,7 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(RestContextSpec, Iterable, Properties)
     */
    public static <S, A> RestContext<S, A> createContext(RestContextSpec<S, A> contextSpec, Iterable<Module> modules,
-         Properties overrides) {
+            Properties overrides) {
       RestContextBuilder<S, A> builder = createContextBuilder(contextSpec, modules, overrides);
       return buildContextUnwrappingExceptions(builder);
    }

@@ -90,7 +90,7 @@ public class RimuHostingClientLiveTest {
 
    @Test
    public void testPricingPlans() {
-      Set<PricingPlan> plans = connection.getPricingPlanList();
+      Set<? extends PricingPlan> plans = connection.getPricingPlanList();
       for (PricingPlan plan : plans) {
          if (plan.getId().equalsIgnoreCase("miro1")) {
             assertTrue(true);
@@ -102,7 +102,7 @@ public class RimuHostingClientLiveTest {
 
    @Test
    public void testImages() {
-      Set<Image> images = connection.getImageList();
+      Set<? extends Image> images = connection.getImageList();
       for (Image image : images) {
          if (image.getId().equalsIgnoreCase("lenny")) {
             assertTrue(true);

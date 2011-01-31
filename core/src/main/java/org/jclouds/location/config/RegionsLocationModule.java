@@ -17,26 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.libvirt.compute.functions;
+package org.jclouds.location.config;
 
-import javax.inject.Singleton;
+import java.util.Set;
 
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.libvirt.Datacenter;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZoneOrRegionMatchingRegionId;
+import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.TypeLiteral;
 
 /**
+ * 
  * @author Adrian Cole
+ * 
  */
-@Singleton
-public class DatacenterToLocation implements Function<Datacenter, Location> {
+public class RegionsLocationModule extends LocationModule {
 
    @Override
-   public Location apply(Datacenter from) {
-      return new LocationImpl(LocationScope.ZONE, from.id + "", from.name, null);
+   protected void configure() {
+      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
+      }).to(RegionToProviderOrJustProvider.class);
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZoneOrRegionMatchingRegionId.class);
+      super.configure();
    }
 
 }

@@ -19,8 +19,11 @@
 
 package org.jclouds.ec2.config;
 
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -51,8 +54,16 @@ import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
 import org.jclouds.rest.ConfiguresRestClient;
 
+import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 /**
  * Configures the EC2 connection.
@@ -96,19 +107,30 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    @Singleton
    public static class RegionIdsToURI implements javax.inject.Provider<Map<String, URI>> {
       private final AvailabilityZoneAndRegionClient client;
+      private final Injector injector;
 
       @Inject
-      public RegionIdsToURI(EC2Client client) {
+      public RegionIdsToURI(EC2Client client, Injector injector) {
          this.client = client.getAvailabilityZoneAndRegionServices();
+         this.injector = injector;
       }
 
       @Singleton
       @Region
       @Override
       public Map<String, URI> get() {
+         try {
+            String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
+            Set<String> regions = ImmutableSet.copyOf(Splitter.on(',').split(regionString));
+            if (regions.size() > 0)
+               return Maps.filterKeys(client.describeRegions(), Predicates.in(regions));
+         } catch (ConfigurationException e) {
+            // this happens if regions property isn't set
+            // services not run by AWS may not have regions, so this is ok.
+         }
          return client.describeRegions();
-      }
 
+      }
    }
 
    @Singleton

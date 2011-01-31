@@ -48,16 +48,16 @@ public class ServerManagerComputeServiceContextBuilderTest {
    @Test
    public void testCanBuildDirectly() {
       ComputeServiceContext context = new ServerManagerComputeServiceContextBuilder(new Properties())
-            .buildComputeServiceContext();
+               .buildComputeServiceContext();
       context.close();
    }
 
    @Test
    public void testCanBuildWithContextSpec() {
       ComputeServiceContext context = new ComputeServiceContextFactory()
-            .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                  "servermanager", "http://host", "1", "identity", "credential", ServerManager.class,
-                  ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
+               .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
+                        "servermanager", "http://host", "1", "", "identity", "credential", ServerManager.class,
+                        ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
       context.close();
    }
@@ -65,13 +65,13 @@ public class ServerManagerComputeServiceContextBuilderTest {
    @Test
    public void testCanBuildWithRestProperties() {
       Properties restProperties = new Properties();
-      restProperties.setProperty("servermanager.contextbuilder",
-            ServerManagerComputeServiceContextBuilder.class.getName());
+      restProperties.setProperty("servermanager.contextbuilder", ServerManagerComputeServiceContextBuilder.class
+               .getName());
       restProperties.setProperty("servermanager.endpoint", "http://host");
       restProperties.setProperty("servermanager.apiversion", "1");
 
       ComputeServiceContext context = new ComputeServiceContextFactory(restProperties).createContext("servermanager",
-            "identity", "credential");
+               "identity", "credential");
 
       context.close();
    }
@@ -79,7 +79,7 @@ public class ServerManagerComputeServiceContextBuilderTest {
    @Test
    public void testProviderSpecificContextIsCorrectType() {
       ComputeServiceContext context = new ServerManagerComputeServiceContextBuilder(new Properties())
-            .buildComputeServiceContext();
+               .buildComputeServiceContext();
       RestContext<ServerManager, ServerManager> providerContext = context.getProviderSpecificContext();
 
       assertEquals(providerContext.getApi().getClass(), ServerManager.class);

@@ -17,40 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.location.config;
+package org.jclouds.location;
 
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.location.Region;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
+import javax.inject.Qualifier;
 
 /**
+ * Related to a Iso3166 code
  * 
  * @author Adrian Cole
+ * 
  */
-@Singleton
-public class ProvideRegionsViaProperties implements javax.inject.Provider<Set<String>> {
-
-   private final Set<String> regions;
-
-   @Inject
-   ProvideRegionsViaProperties(@Named(PROPERTY_REGIONS) String regions) {
-      this.regions = ImmutableSet.copyOf(Splitter.on(',').split(regions));
-   }
-
-   @Singleton
-   @Region
-   @Override
-   public Set<String> get() {
-      return regions;
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Iso3166 {
 
 }

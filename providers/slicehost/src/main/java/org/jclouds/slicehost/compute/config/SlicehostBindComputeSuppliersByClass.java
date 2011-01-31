@@ -24,6 +24,8 @@ import java.util.Set;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.slicehost.compute.suppliers.SlicehostHardwareSupplier;
 import org.jclouds.slicehost.compute.suppliers.SlicehostImageSupplier;
 
@@ -44,5 +46,10 @@ public class SlicehostBindComputeSuppliersByClass extends BindComputeSuppliersBy
    @Override
    protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
       return SlicehostImageSupplier.class;
+   }
+
+   @Override
+   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
+      return JustProvider.class;
    }
 }

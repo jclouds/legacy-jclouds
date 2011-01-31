@@ -266,7 +266,7 @@ public abstract class BaseJettyTest {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
+               "http://localhost:" + testPort, "1", "", "identity", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
       return createContextBuilder(contextSpec, properties);
    }

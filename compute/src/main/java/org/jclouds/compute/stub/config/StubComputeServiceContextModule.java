@@ -26,8 +26,12 @@ import javax.inject.Singleton;
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -36,7 +40,7 @@ import com.google.inject.Provides;
 @SuppressWarnings("rawtypes")
 @SingleThreaded
 public class StubComputeServiceContextModule extends
-      JCloudsNativeComputeServiceAdapterContextModule<ConcurrentMap, ConcurrentMap> {
+         JCloudsNativeComputeServiceAdapterContextModule<ConcurrentMap, ConcurrentMap> {
 
    public StubComputeServiceContextModule() {
       super(ConcurrentMap.class, ConcurrentMap.class, StubComputeServiceAdapter.class);
@@ -51,6 +55,8 @@ public class StubComputeServiceContextModule extends
    @Override
    protected void configure() {
       install(new StubComputeServiceDependenciesModule());
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZone.class);
       super.configure();
    }
 }

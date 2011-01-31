@@ -36,6 +36,7 @@ public class RestContextSpec<S, A> {
    protected final String provider;
    protected final String endpoint;
    protected final String apiVersion;
+   protected final String iso3166Codes;
    protected final String identity;
    protected final String credential;
    protected final Class<S> sync;
@@ -44,30 +45,31 @@ public class RestContextSpec<S, A> {
    protected final Class<RestContextBuilder<S, A>> contextBuilderClass;
    protected final Iterable<Module> modules;
 
-   public RestContextSpec(String provider, String endpoint, String apiVersion, String identity, String credential,
-         Class<S> sync, Class<A> async, Class<PropertiesBuilder> propertiesBuilderClass,
-         Class<RestContextBuilder<S, A>> contextBuilderClass, Iterable<Module> modules) {
+   public RestContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes, String identity,
+            String credential, Class<S> sync, Class<A> async, Class<PropertiesBuilder> propertiesBuilderClass,
+            Class<RestContextBuilder<S, A>> contextBuilderClass, Iterable<Module> modules) {
       this.provider = checkNotNull(provider, "provider");
       this.endpoint = endpoint;
       this.apiVersion = apiVersion;
       this.identity = identity;
       this.credential = credential;
+      this.iso3166Codes = iso3166Codes;
       this.sync = sync;
       this.async = async;
       checkArgument(RestContextBuilder.class.isAssignableFrom(contextBuilderClass), contextBuilderClass.getName()
-            + " is not a subclass of " + RestContextBuilder.class.getName());
+               + " is not a subclass of " + RestContextBuilder.class.getName());
       checkArgument(PropertiesBuilder.class.isAssignableFrom(propertiesBuilderClass), propertiesBuilderClass.getName()
-            + " is not a subclass of " + PropertiesBuilder.class.getName());
+               + " is not a subclass of " + PropertiesBuilder.class.getName());
       this.propertiesBuilderClass = propertiesBuilderClass;
       this.contextBuilderClass = contextBuilderClass;
       this.modules = ImmutableList.copyOf(modules);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public RestContextSpec(String provider, String endpoint, String apiVersion, String identity, String credential,
-         Class<S> sync, Class<A> async) {
-      this(provider, endpoint, apiVersion, identity, credential, sync, async, PropertiesBuilder.class,
-            (Class) RestContextBuilder.class, EMPTY_LIST);
+   @SuppressWarnings( { "unchecked", "rawtypes" })
+   public RestContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes, String identity,
+            String credential, Class<S> sync, Class<A> async) {
+      this(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async, PropertiesBuilder.class,
+               (Class) RestContextBuilder.class, EMPTY_LIST);
    }
 
    /**
@@ -76,8 +78,8 @@ public class RestContextSpec<S, A> {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(provider, endpoint, apiVersion, identity, credential, sync, async,
-            propertiesBuilderClass, contextBuilderClass, modules);
+      return Objects.hashCode(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
+               propertiesBuilderClass, contextBuilderClass, modules);
    }
 
    /**
@@ -97,10 +99,10 @@ public class RestContextSpec<S, A> {
     */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("provider", provider).add("endpoint", endpoint)
-            .add("apiVersion", apiVersion).add("identity", identity).add("sync", sync).add("async", async)
-            .add("propertiesBuilderClass", propertiesBuilderClass).add("contextBuilderClass", contextBuilderClass)
-            .add("modules", modules).toString();
+      return Objects.toStringHelper(this).add("provider", provider).add("endpoint", endpoint).add("apiVersion",
+               apiVersion).add("iso3166Codes", iso3166Codes).add("identity", identity).add("sync", sync).add("async",
+               async).add("propertiesBuilderClass", propertiesBuilderClass).add("contextBuilderClass",
+               contextBuilderClass).add("modules", modules).toString();
    }
 
 }

@@ -19,13 +19,20 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
+import java.util.Set;
+
 import org.jclouds.cloudfiles.blobstore.integration.CloudFilesServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudFilesUKServiceIntegrationLiveTest")
 public class CloudFilesUKServiceIntegrationLiveTest extends CloudFilesServiceIntegrationLiveTest {
-
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("GB-SLG");
+   }
 }
