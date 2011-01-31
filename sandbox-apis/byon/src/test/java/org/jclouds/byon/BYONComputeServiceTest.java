@@ -73,12 +73,12 @@ public class BYONComputeServiceTest {
          assertEquals(supplier.get(), ImmutableMap.<String, Node> of(NodesFromYamlTest.TEST1.id,
                   NodesFromYamlTest.TEST1));
 
-         assertEquals(context.getComputeService().listNodes(), ImmutableSet.of(NodeToNodeMetadataTest.TEST1));
+         assertEquals(context.getComputeService().listNodes(), ImmutableSet.of(NodeToNodeMetadataTest
+                  .expectedNodeMetadataFromResource(endpoint)));
 
       } finally {
          if (context != null)
             context.close();
       }
    }
-
 }

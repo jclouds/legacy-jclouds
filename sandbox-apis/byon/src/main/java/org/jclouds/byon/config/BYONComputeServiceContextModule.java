@@ -32,7 +32,9 @@ import org.jclouds.byon.suppliers.NodesParsedFromSupplier;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.domain.Location;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -62,6 +64,8 @@ public class BYONComputeServiceContextModule extends
    @Override
    protected void configure() {
       super.configure();
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Supplier<Map<String, Node>>>() {
       }).to(NodesParsedFromSupplier.class);
       bind(new TypeLiteral<Supplier<InputStream>>() {

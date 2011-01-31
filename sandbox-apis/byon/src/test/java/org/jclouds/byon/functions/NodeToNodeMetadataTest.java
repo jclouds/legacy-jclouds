@@ -46,24 +46,30 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class NodeToNodeMetadataTest {
-   public static final Location location = new LocationBuilder().scope(LocationScope.PROVIDER).id("byon").description(
-            "byon").build();
+   public static Location expectedLocationFromResource(String resource) {
+      return new LocationBuilder().scope(LocationScope.PROVIDER).id("byon").description(resource).build();
+   }
 
-   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1")
-            .location(location).state(NodeState.RUNNING).operatingSystem(
-                     new OperatingSystemBuilder().description("redhat").family(OsFamily.RHEL).arch("x86")
-                              .version("5.3").build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com"))
-            .credentials(new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
+   public static NodeMetadata expectedNodeMetadataFromResource(String resource) {
+      Location location = expectedLocationFromResource(resource);
+
+      return new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1").location(location).state(
+               NodeState.RUNNING).operatingSystem(
+               new OperatingSystemBuilder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
+                        .build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com")).credentials(
+               new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
+   }
 
    @Test
    public void testNodesParse() throws Exception {
 
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
 
-      NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(location),
+      NodeToNodeMetadata parser = new NodeToNodeMetadata(
+               Suppliers.ofInstance(expectedLocationFromResource("location")),
                new SupplyFromProviderURIOrNodesProperty(URI.create("test")), credentialStore);
 
-      assertEquals(parser.apply(NodesFromYamlTest.TEST1), TEST1);
+      assertEquals(parser.apply(NodesFromYamlTest.TEST1), expectedNodeMetadataFromResource("location"));
       assertEquals(credentialStore, ImmutableMap.of("node#cluster-1", new Credentials("myUser", NodesFromYamlTest.key)));
 
    }
