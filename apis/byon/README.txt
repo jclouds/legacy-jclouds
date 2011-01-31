@@ -67,6 +67,9 @@ Here are the properties:
                        ex. file:///home/me/.ssh/id_rsa
                            classpath:///id_rsa
 
+Note that username and credentials are optional if a CredentialStoreModule is configured in 
+jclouds.
+
 === Example File ===
 
 nodes:
