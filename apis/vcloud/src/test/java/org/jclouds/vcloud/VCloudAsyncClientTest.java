@@ -119,6 +119,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
+   // see http://code.google.com/p/jclouds/issues/detail?id=402
+   @Test(enabled = false)
    public void testUpdateGuestConfiguration() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("updateGuestCustomizationOfVm", URI.class,
                GuestCustomizationSection.class);
