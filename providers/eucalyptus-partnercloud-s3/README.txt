@@ -18,9 +18,9 @@
 ====
 
 #
-# The jclouds provider for BlueLock's vCloud Director (http://www.bluelock.com/bluelock-cloud-hosting/vcloud-datacenter/) platform.
+# The jclouds provider for Eucalyptus Partner Cloud's Walrus  (http://www.eucalyptus.com/resources/AmazonAWS) service.
 #
-# Expects the jclouds vcloud API to be present on your application's classpath.
+# Expects the jclouds walrus API to be present on your application's classpath.
 #
 # TODO: Implementation status.
 # TODO: Supported features.

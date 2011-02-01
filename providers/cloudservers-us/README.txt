@@ -18,9 +18,9 @@
 ====
 
 #
-# The jclouds provider for BlueLock's vCloud Director (http://www.bluelock.com/bluelock-cloud-hosting/vcloud-datacenter/) platform.
+# The jclouds provider for Rackspace's US Cloud Servers (http://www.rackspacecloud.com/cloud_hosting_products/servers/).
 #
-# Expects the jclouds vcloud API to be present on your application's classpath.
+# Expects the jclouds cloudservers API to be present on your application's classpath.
 #
 # TODO: Implementation status.
 # TODO: Supported features.

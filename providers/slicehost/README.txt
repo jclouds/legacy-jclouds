@@ -18,9 +18,7 @@
 ====
 
 #
-# The jclouds provider for BlueLock's vCloud Director (http://www.bluelock.com/bluelock-cloud-hosting/vcloud-datacenter/) platform.
-#
-# Expects the jclouds vcloud API to be present on your application's classpath.
+# The jclouds provider for Slicehost (http://www.slicehost.com/).
 #
 # TODO: Implementation status.
 # TODO: Supported features.

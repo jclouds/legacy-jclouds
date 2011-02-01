@@ -18,10 +18,10 @@
 ====
 
 #
-# The jclouds provider for BlueLock's vCloud Director (http://www.bluelock.com/bluelock-cloud-hosting/vcloud-datacenter/) platform.
+# The jclouds provider for Terremark's vCloud Express (http://vcloudexpress.terremark.com/) platform.
 #
-# Expects the jclouds vcloud API to be present on your application's classpath.
+# Expects the jclouds vcloudexpress API to be present on your application's classpath.
 #
 # TODO: Implementation status.
 # TODO: Supported features.
-# TODO: Usage example.
+# See http://code.google.com/p/jclouds/wiki/QuickStartTerremark for example usage.

@@ -18,9 +18,9 @@
 ====
 
 #
-# The jclouds provider for BlueLock's vCloud Director (http://www.bluelock.com/bluelock-cloud-hosting/vcloud-datacenter/) platform.
+# The jclouds provider for Google Storage for Developers (http://code.google.com/apis/storage/).
 #
-# Expects the jclouds vcloud API to be present on your application's classpath.
+# Expects the jclouds s3 API to be present on your application's classpath.
 #
 # TODO: Implementation status.
 # TODO: Supported features.
