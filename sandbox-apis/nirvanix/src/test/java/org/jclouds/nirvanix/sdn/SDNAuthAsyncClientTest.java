@@ -47,7 +47,7 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
       Method method = SDNAuthAsyncClient.class.getMethod("authenticate", String.class, String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, "apple", "foo", "bar");
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/ws/Authentication/Login.ashx?output=json&appKey=apple&password=bar&username=foo HTTP/1.1");
+               "GET http://localhost:8080/ws/Authentication/Login.ashx?output=json&appKey=apple&password=bar&username=foo HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -69,8 +69,8 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
 
    @Override
    public RestContextSpec<SDNAuthClient, SDNAuthAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", SDNAuthClient.class,
-            SDNAuthAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1", "", "identity", "credential", SDNAuthClient.class,
+               SDNAuthAsyncClient.class);
    }
 
 }

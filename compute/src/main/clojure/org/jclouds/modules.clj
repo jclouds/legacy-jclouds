@@ -40,7 +40,7 @@
     (class ComputeService)
     (defrecord ClojureComputeServiceAdapter []
           org.jclouds.compute.JCloudsNativeComputeServiceAdapter
-          (^NodeMetadata runNodeWithTagAndNameAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]
+          (^NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials [this ^String group ^String name ^Template template ^Map credentialStore]
             ())
           (^Iterable listNodes [this ]
             ())

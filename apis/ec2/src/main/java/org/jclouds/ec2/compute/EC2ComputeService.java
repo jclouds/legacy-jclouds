@@ -46,7 +46,7 @@ import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -75,7 +75,7 @@ public class EC2ComputeService extends BaseComputeService {
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
             @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
@@ -96,26 +96,26 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    @VisibleForTesting
-   void deleteSecurityGroup(String region, String tag) {
-      Preconditions2.checkNotEmpty(tag, "tag");
-      String group = String.format("jclouds#%s#%s", tag, region);
-      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
-         logger.debug(">> deleting securityGroup(%s)", group);
+   void deleteSecurityGroup(String region, String group) {
+      Preconditions2.checkNotEmpty(group, "group");
+      String groupName = String.format("jclouds#%s#%s", group, region);
+      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
+         logger.debug(">> deleting securityGroup(%s)", groupName);
          try {
-            ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
+            ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
             // TODO: test this clear happens
-            securityGroupMap.remove(new RegionNameAndIngressRules(region, group, null, false));
-            logger.debug("<< deleted securityGroup(%s)", group);
+            securityGroupMap.remove(new RegionNameAndIngressRules(region, groupName, null, false));
+            logger.debug("<< deleted securityGroup(%s)", groupName);
          } catch (IllegalStateException e) {
-            logger.debug("<< inUse securityGroup(%s)", group);
+            logger.debug("<< inUse securityGroup(%s)", groupName);
          }
       }
    }
 
    @VisibleForTesting
-   void deleteKeyPair(String region, String tag) {
+   void deleteKeyPair(String region, String group) {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
-         if (keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", tag, region, "[0-9a-f]+"))) {
+         if (keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+"))) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
             ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
             // TODO: test this clear happens
@@ -134,8 +134,8 @@ public class EC2ComputeService extends BaseComputeService {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
       Map<String, String> regionTags = Maps.newHashMap();
       for (NodeMetadata nodeMetadata : deadOnes) {
-         if (nodeMetadata.getTag() != null)
-            regionTags.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getTag());
+         if (nodeMetadata.getGroup() != null)
+            regionTags.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
       }
       for (Entry<String, String> regionTag : regionTags.entrySet()) {
          cleanUpIncidentalResources(regionTag);

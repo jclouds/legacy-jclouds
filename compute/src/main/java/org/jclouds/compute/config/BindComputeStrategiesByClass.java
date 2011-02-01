@@ -19,15 +19,15 @@
 
 package org.jclouds.compute.config;
 
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -49,15 +49,15 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
       bindDestroyNodeStrategy(defineDestroyNodeStrategy());
    }
 
-   protected void bindRunNodesAndAddToSetStrategy(Class<? extends RunNodesAndAddToSetStrategy> clazz) {
-      bind(RunNodesAndAddToSetStrategy.class).to(clazz).in(Scopes.SINGLETON);
+   protected void bindRunNodesAndAddToSetStrategy(Class<? extends CreateNodesInGroupThenAddToSet> clazz) {
+      bind(CreateNodesInGroupThenAddToSet.class).to(clazz).in(Scopes.SINGLETON);
    }
 
    /**
-    * needed, if {@link RunNodesAndAddToSetStrategy} requires it
+    * needed, if {@link CreateNodesInGroupThenAddToSet} requires it
     */
-   protected void bindAddNodeWithTagStrategy(Class<? extends AddNodeWithTagStrategy> clazz) {
-      bind(AddNodeWithTagStrategy.class).to(clazz).in(Scopes.SINGLETON);
+   protected void bindAddNodeWithTagStrategy(Class<? extends CreateNodeWithGroupEncodedIntoName> clazz) {
+      bind(CreateNodeWithGroupEncodedIntoName.class).to(clazz).in(Scopes.SINGLETON);
    }
 
    protected void bindDestroyNodeStrategy(Class<? extends DestroyNodeStrategy> clazz) {
@@ -84,14 +84,14 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
       bind(ListNodesStrategy.class).to(clazz).in(Scopes.SINGLETON);
    }
 
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
+   protected Class<? extends CreateNodesInGroupThenAddToSet> defineRunNodesAndAddToSetStrategy() {
+      return CreateNodesWithGroupEncodedIntoNameThenAddToSet.class;
    }
 
    /**
-    * needed, if {@link RunNodesAndAddToSetStrategy} requires it
+    * needed, if {@link CreateNodesInGroupThenAddToSet} requires it
     */
-   protected abstract Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy();
+   protected abstract Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy();
 
    protected abstract Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy();
 

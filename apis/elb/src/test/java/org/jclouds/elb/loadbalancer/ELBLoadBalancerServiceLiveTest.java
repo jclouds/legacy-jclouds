@@ -65,7 +65,7 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       Set<? extends LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(null);
       assertNotNull(elbs);
       for (LoadBalancer elb : elbs) {
-         if (elb.getName().equals(tag))
+         if (elb.getName().equals(group))
             assertEquals(elb.getInstanceIds(), instanceIds);
       }
    }

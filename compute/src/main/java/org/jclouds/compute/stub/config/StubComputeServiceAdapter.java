@@ -80,13 +80,13 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   public NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String group, String name, Template template,
             Map<String, Credentials> credentialStore) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       String id = idProvider.get() + "";
       builder.ids(id);
       builder.name(name);
-      builder.tag(tag);
+      builder.group(group);
       builder.location(location.get());
       builder.imageId(template.getImage().getId());
       builder.operatingSystem(template.getImage().getOperatingSystem());

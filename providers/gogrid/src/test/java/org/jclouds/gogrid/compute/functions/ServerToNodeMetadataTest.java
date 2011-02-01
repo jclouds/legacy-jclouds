@@ -73,7 +73,7 @@ public class ServerToNodeMetadataTest {
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
-      expect(server.getName()).andReturn("tag-ff").atLeastOnce();
+      expect(server.getName()).andReturn("group-ff").atLeastOnce();
       expect(server.getState()).andReturn(ServerState.ON).atLeastOnce();
 
       expect(serverStateToNodeState.get(ServerState.ON)).andReturn(NodeState.RUNNING);
@@ -83,7 +83,7 @@ public class ServerToNodeMetadataTest {
 
       Map<String, Credentials> credentialsMap = createMock(Map.class);
       expect(client.getServerCredentialsList()).andReturn(credentialsMap);
-      expect(credentialsMap.get("tag-ff")).andReturn(new Credentials("user", "pass"));
+      expect(credentialsMap.get("group-ff")).andReturn(new Credentials("user", "pass"));
 
       expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
 
@@ -112,7 +112,7 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
       assertEquals(metadata.getImageId(), "2000");
-      assertEquals(metadata.getTag(), "tag");
+      assertEquals(metadata.getGroup(), "group");
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
       verify(caller);

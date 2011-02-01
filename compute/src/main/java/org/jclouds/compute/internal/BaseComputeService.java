@@ -76,7 +76,7 @@ import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
@@ -116,7 +116,7 @@ public class BaseComputeService implements ComputeService {
    private final Supplier<Set<? extends Location>> locations;
    private final ListNodesStrategy listNodesStrategy;
    private final GetNodeMetadataStrategy getNodeMetadataStrategy;
-   private final RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy;
+   private final CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy;
    private final RebootNodeStrategy rebootNodeStrategy;
    private final DestroyNodeStrategy destroyNodeStrategy;
    private final ResumeNodeStrategy resumeNodeStrategy;
@@ -135,7 +135,7 @@ public class BaseComputeService implements ComputeService {
             @Memoized Supplier<Set<? extends Image>> images,
             @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
@@ -178,45 +178,63 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template)
+   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count, Template template)
             throws RunNodesException {
-      checkNotNull(tag, "tag cannot be null");
+      return createNodesInGroup(group, count, template);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count, TemplateOptions templateOptions)
+            throws RunNodesException {
+      return createNodesInGroup(group, count, templateBuilder().any().options(templateOptions).build());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count) throws RunNodesException {
+      return createNodesInGroup(group, count, templateOptions());
+   }
+
+   @Override
+   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, Template template)
+            throws RunNodesException {
+      checkNotNull(group, "group cannot be null");
       checkNotNull(template.getLocation(), "location");
-      logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
-               count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
+      logger.debug(">> running %d node%s group(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
+               count > 1 ? "s" : "", group, template.getLocation().getId(), template.getImage().getId(), template
                         .getHardware().getId(), template.getOptions());
       Set<NodeMetadata> goodNodes = newLinkedHashSet();
       Map<NodeMetadata, Exception> badNodes = newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count, template, goodNodes, badNodes,
+      Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
                customizationResponses);
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "runNodesWithTag("
-               + tag + ")");
+               + group + ")");
       for (NodeMetadata node : concat(goodNodes, badNodes.keySet()))
          if (node.getCredentials() != null)
             credentialStore.put("node#" + node.getId(), node.getCredentials());
       if (executionExceptions.size() > 0 || badNodes.size() > 0) {
-         throw new RunNodesException(tag, count, template, goodNodes, executionExceptions, badNodes);
+         throw new RunNodesException(group, count, template, goodNodes, executionExceptions, badNodes);
       }
       return goodNodes;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
+   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, TemplateOptions templateOptions)
             throws RunNodesException {
-      return runNodesWithTag(tag, count, templateBuilder().any().options(templateOptions).build());
+      return createNodesInGroup(group, count, templateBuilder().any().options(templateOptions).build());
+
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException {
-      return runNodesWithTag(tag, count, templateOptions());
+   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count) throws RunNodesException {
+      return createNodesInGroup(group, count, templateOptions());
    }
 
    /**
@@ -492,6 +510,13 @@ public class BaseComputeService implements ComputeService {
       return runScriptOnNodesMatching(filter, runScript, RunScriptOptions.NONE);
    }
 
+   @Override
+   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
+            String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
+      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")),
+               RunScriptOptions.NONE);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -562,4 +587,5 @@ public class BaseComputeService implements ComputeService {
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
    }
+
 }

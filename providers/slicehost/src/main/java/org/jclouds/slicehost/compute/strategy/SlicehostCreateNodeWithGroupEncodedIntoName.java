@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Slice;
@@ -40,13 +40,13 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class SlicehostCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
    protected final SlicehostClient client;
    protected final Map<String, Credentials> credentialStore;
    protected final Function<Slice, NodeMetadata> sliceToNodeMetadata;
 
    @Inject
-   protected SlicehostAddNodeWithTagStrategy(SlicehostClient client, Map<String, Credentials> credentialStore,
+   protected SlicehostCreateNodeWithGroupEncodedIntoName(SlicehostClient client, Map<String, Credentials> credentialStore,
          Function<Slice, NodeMetadata> sliceToNodeMetadata) {
       this.client = checkNotNull(client, "client");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
@@ -54,7 +54,7 @@ public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       Slice from = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()),
             Integer.parseInt(template.getHardware().getProviderId()));
       credentialStore.put("node#" + from.getId(), new Credentials("root", from.getRootPassword()));

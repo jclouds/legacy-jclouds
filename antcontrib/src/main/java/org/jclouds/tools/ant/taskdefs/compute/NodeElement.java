@@ -27,7 +27,7 @@ import java.io.File;
  */
 public class NodeElement {
    private String id;
-   private String tag;
+   private String group;
    private String hardware;
    private String os;
    private String image;
@@ -147,12 +147,12 @@ public class NodeElement {
       return count;
    }
 
-   public void setTag(String tag) {
-      this.tag = tag;
+   public void setGroup(String group) {
+      this.group = group;
    }
 
-   public String getTag() {
-      return tag;
+   public String getGroup() {
+      return group;
    }
 
    public void setPrivatekeyfile(File privatekeyfile) {

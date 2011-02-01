@@ -38,7 +38,7 @@ import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.EC2Client;
@@ -60,7 +60,7 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
+public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThenAddToSet {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -79,7 +79,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    final Map<String, Credentials> credentialStore;
 
    @Inject
-   EC2RunNodesAndAddToSetStrategy(
+   EC2CreateNodesInGroupThenAddToSet(
             EC2Client client,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             @Named("PRESENT") Predicate<RunningInstance> instancePresent,
@@ -96,10 +96,10 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
-      Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag, count,
+      Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group, count,
                template);
       Iterable<String> ids = transform(started, instanceToId);
 
@@ -130,13 +130,13 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    // TODO write test for this
    @VisibleForTesting
-   Iterable<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
+   Iterable<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String group, int count,
             Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
-               tag, template);
+               group, template);
 
       int countStarted = 0;
       int tries = 0;

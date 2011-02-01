@@ -47,7 +47,7 @@ Here's an example of getting some compute configuration from rackspace:
     (pprint (nodes))
     (pprint (hardware-profiles)))
 
-Here's an example of creating and running a small linux node with the tag
+Here's an example of creating and running a small linux node in the group
 webserver:
 
   ;; create a compute service using ssh and log4j extensions
@@ -55,7 +55,7 @@ webserver:
     (compute-service
       provider provider-identity provider-credential :ssh :log4j))
 
-  (run-node \"webserver\" compute)
+  (create-node \"webserver\" compute)
 
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
@@ -144,11 +144,11 @@ See http://code.google.com/p/jclouds for details."
   ([#^ComputeService compute]
     (seq (.listNodesDetailsMatching compute (NodePredicates/all)))))
 
-(defn nodes-with-tag
-  "list details of all the nodes with the given tag."
-  ([tag] (nodes-with-tag tag *compute*))
-  ([#^String tag #^ComputeService compute]
-    (filter #(= (.getTag %) tag) (nodes-with-details compute))))
+(defn nodes-in-group
+  "list details of all the nodes in the given group."
+  ([group] (nodes-in-group group *compute*))
+  ([#^String group #^ComputeService compute]
+    (filter #(= (.getTag %) group) (nodes-with-details compute))))
 
 (defn images
   "Retrieve the available images for the compute context."
@@ -171,66 +171,66 @@ See http://code.google.com/p/jclouds for details."
            (slurp (str (. System getProperty "user.home") "/.ssh/id_rsa.pub"))))
          build)))
 
-(defn run-nodes
+(defn create-nodes
   "Create the specified number of nodes using the default or specified
    template.
 
   ;; Simplest way to add 2 small linux nodes to the group webserver is to run
-  (run-nodes \"webserver\" 2 compute)
+  (create-nodes \"webserver\" 2 compute)
 
-  ;; which is the same as wrapping the run-nodes command with an implicit
+  ;; which is the same as wrapping the create-nodes command with an implicit
   ;; compute service.
   ;; Note that this will actually add another 2 nodes to the set called
   ;; \"webserver\"
 
   (with-compute-service [compute]
-    (run-nodes \"webserver\" 2 ))
+    (create-nodes \"webserver\" 2 ))
 
   ;; which is the same as specifying the default template
   (with-compute-service [compute]
-    (run-nodes \"webserver\" 2 (default-template)))
+    (create-nodes \"webserver\" 2 (default-template)))
 
   ;; which, on gogrid, is the same as constructing the smallest centos template
   ;; that has no layered software
   (with-compute-service [compute]
-    (run-nodes \"webserver\" 2
+    (create-nodes \"webserver\" 2
       (build-template
         service
         {:os-family :centos :smallest true
          :image-name-matches \".*w/ None.*\"})))"
-  ([tag count]
-     (run-nodes tag count (default-template *compute*) *compute*))
-  ([tag count compute-or-template]
+  ([group count]
+     (create-nodes group count (default-template *compute*) *compute*))
+  ([group count compute-or-template]
      (if (compute-service? compute-or-template)
-       (run-nodes
-        tag count (default-template compute-or-template) compute-or-template)
-       (run-nodes tag count compute-or-template *compute*)))
-  ([tag count template #^ComputeService compute]
+       (create-nodes
+        group count (default-template compute-or-template) compute-or-template)
+       (create-nodes group count compute-or-template *compute*)))
+  ([group count template #^ComputeService compute]
      (seq
-      (.runNodesWithTag compute tag count template))))
+      (.createNodesInGroup compute group count template))))
 
-(defn run-node
+(defn create-node
   "Create a node using the default or specified template.
 
   ;; simplest way to add a small linux node to the group webserver is to run
-  (run-node \"webserver\" compute)
+  (create-node \"webserver\" compute)
 
-  ;; which is the same as wrapping the run-node command with an implicit compute
+  ;; which is the same as wrapping the create-node command with an implicit compute
   ;; service.
   ;; Note that this will actually add another node to the set called
   ;;  \"webserver\"
   (with-compute-service [compute]
-    (run-node \"webserver\" ))"
-  ([tag]
-     (first (run-nodes tag 1 (default-template *compute*) *compute*)))
-  ([tag compute-or-template]
+    (create-node \"webserver\" ))"
+  ([group]
+     (first (create-nodes group 1 (default-template *compute*) *compute*)))
+  ([group compute-or-template]
      (if (compute-service? compute-or-template)
        (first
-        (run-nodes
-         tag 1 (default-template compute-or-template) compute-or-template))
-       (first (run-nodes tag 1 compute-or-template *compute*))))
-  ([tag template compute]
-     (first (run-nodes tag 1 template compute))))
+        (create-nodes
+         group 1 (default-template compute-or-template) compute-or-template))
+       (first (create-nodes group 1 compute-or-template *compute*))))
+  ([group template compute]
+     (first (create-nodes group 1 template compute))))
 
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata, given its id."
@@ -238,11 +238,11 @@ See http://code.google.com/p/jclouds for details."
   ([id #^ComputeService compute]
      (.getNodeMetadata compute id)))
 
-(defn suspend-nodes-with-tag
-  "Reboot all the nodes with the given tag."
-  ([tag] (suspend-nodes-with-tag tag *compute*))
-  ([#^String tag #^ComputeService compute]
-    (.suspendNodesMatching compute (NodePredicates/withTag tag))))
+(defn suspend-nodes-in-group
+  "Reboot all the nodes in the given group."
+  ([group] (suspend-nodes-in-group group *compute*))
+  ([#^String group #^ComputeService compute]
+    (.suspendNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn suspend-node
   "Suspend a node, given its id."
@@ -250,11 +250,11 @@ See http://code.google.com/p/jclouds for details."
   ([id #^ComputeService compute]
      (.suspendNode compute id)))
 
-(defn resume-nodes-with-tag
-  "Suspend all the nodes with the given tag."
-  ([tag] (resume-nodes-with-tag tag *compute*))
-  ([#^String tag #^ComputeService compute]
-    (.resumeNodesMatching compute (NodePredicates/withTag tag))))
+(defn resume-nodes-in-group
+  "Suspend all the nodes in the given group."
+  ([group] (resume-nodes-in-group group *compute*))
+  ([#^String group #^ComputeService compute]
+    (.resumeNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn resume-node
   "Resume a node, given its id."
@@ -262,11 +262,11 @@ See http://code.google.com/p/jclouds for details."
   ([id #^ComputeService compute]
      (.resumeNode compute id)))
 
-(defn reboot-nodes-with-tag
-  "Reboot all the nodes with the given tag."
-  ([tag] (reboot-nodes-with-tag tag *compute*))
-  ([#^String tag #^ComputeService compute]
-    (.rebootNodesMatching compute (NodePredicates/withTag tag))))
+(defn reboot-nodes-in-group
+  "Reboot all the nodes in the given group."
+  ([group] (reboot-nodes-in-group group *compute*))
+  ([#^String group #^ComputeService compute]
+    (.rebootNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn reboot-node
   "Reboot a node, given its id."
@@ -274,11 +274,11 @@ See http://code.google.com/p/jclouds for details."
   ([id #^ComputeService compute]
      (.rebootNode compute id)))
 
-(defn destroy-nodes-with-tag
-  "Destroy all the nodes with the given tag."
-  ([tag] (destroy-nodes-with-tag tag *compute*))
-  ([#^String tag #^ComputeService compute]
-     (.destroyNodesMatching compute (NodePredicates/withTag tag))))
+(defn destroy-nodes-in-group
+  "Destroy all the nodes in the given group."
+  ([group] (destroy-nodes-in-group group *compute*))
+  ([#^String group #^ComputeService compute]
+     (.destroyNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn destroy-node
   "Destroy a node, given its id."
@@ -330,10 +330,10 @@ See http://code.google.com/p/jclouds for details."
   [#^NodeMetadata node]
   (.getPrivateAddresses node))
 
-(defn tag
-  "Returns a the node's tag"
+(defn group
+  "Returns a the node's group"
   [#^NodeMetadata node]
-  (.getTag node))
+  (.getGroup node))
 
 (defn hostname
   "Returns the compute node's name"
@@ -353,7 +353,7 @@ See http://code.google.com/p/jclouds for details."
 (define-accessors Template image hardware location options)
 (define-accessors Image version os-family os-description architecture)
 (define-accessors Hardware processors ram volumes)
-(define-accessors NodeMetadata "node" credentials hardware state tag)
+(define-accessors NodeMetadata "node" credentials hardware state group)
 
 (defn builder-options [builder]
   (or

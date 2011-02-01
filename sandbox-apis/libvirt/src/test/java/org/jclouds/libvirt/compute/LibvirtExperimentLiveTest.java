@@ -77,7 +77,7 @@ public class LibvirtExperimentLiveTest {
           * the default template via overriding a method in standalonecomputeservicexontextmodule
           */
 
-         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("tty", 1);
+         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().createNodesInGroup("tty", 1);
          for (NodeMetadata nodeMetadata : nodeMetadataSet) {
             /*
              * context.getComputeService().suspendNode(nodeMetadata.getId());

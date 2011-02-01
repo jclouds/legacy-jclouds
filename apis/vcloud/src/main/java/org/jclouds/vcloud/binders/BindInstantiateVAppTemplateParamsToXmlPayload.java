@@ -94,7 +94,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");

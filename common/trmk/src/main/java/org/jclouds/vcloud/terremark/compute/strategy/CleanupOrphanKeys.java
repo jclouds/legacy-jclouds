@@ -26,7 +26,7 @@ import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
-import static org.jclouds.compute.predicates.NodePredicates.withTag;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 
 import java.util.Map;
 
@@ -68,13 +68,13 @@ public class CleanupOrphanKeys {
          credentialStore.remove("node#" + node.getId());
          credentialStore.remove("node#" + node.getId() + "#adminPassword");
       }
-      Iterable<OrgAndName> orgTags = filter(transform(deadOnes, nodeToOrgAndName), notNull());
-      for (OrgAndName orgTag : orgTags) {
-         Iterable<? extends NodeMetadata> nodesInOrg = listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag
+      Iterable<OrgAndName> orgGroups = filter(transform(deadOnes, nodeToOrgAndName), notNull());
+      for (OrgAndName orgGroup : orgGroups) {
+         Iterable<? extends NodeMetadata> nodesInOrg = listNodes.listDetailsOnNodesMatching(parentLocationId(orgGroup
                   .getOrg().toASCIIString()));
-         Iterable<? extends NodeMetadata> nodesWithTag = filter(nodesInOrg, withTag(orgTag.getName()));
-         if (size(nodesWithTag) == 0 || all(nodesWithTag, TERMINATED))
-            deleteKeyPair.execute(orgTag);
+         Iterable<? extends NodeMetadata> nodesInGroup = filter(nodesInOrg, inGroup(orgGroup.getName()));
+         if (size(nodesInGroup) == 0 || all(nodesInGroup, TERMINATED))
+            deleteKeyPair.execute(orgGroup);
       }
    }
 

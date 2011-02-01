@@ -27,7 +27,6 @@ import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.location.config.LocationModule;
 import org.jclouds.vcloud.domain.Status;
 
 import com.google.common.annotations.VisibleForTesting;

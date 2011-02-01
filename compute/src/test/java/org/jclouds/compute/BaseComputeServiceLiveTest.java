@@ -99,7 +99,7 @@ import com.google.inject.Module;
 @Test(groups = { "integration", "live" }, sequential = true)
 public abstract class BaseComputeServiceLiveTest {
 
-   protected String tag;
+   protected String group;
 
    protected RetryablePredicate<IPSocket> socketTester;
    protected SortedSet<NodeMetadata> nodes;
@@ -132,10 +132,10 @@ public abstract class BaseComputeServiceLiveTest {
    @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setServiceDefaults();
-      if (tag == null)
-         tag = checkNotNull(provider, "provider");
-      if (tag.indexOf('-') == -1)
-         tag = tag + "-";
+      if (group == null)
+         group = checkNotNull(provider, "provider");
+      if (group.indexOf('-') == -1)
+         group = group + "-";
       setupCredentials();
       setupKeyPairForTest();
       initializeContextAndClient();
@@ -215,7 +215,7 @@ public abstract class BaseComputeServiceLiveTest {
    // starting this one alphabetically before create2nodes..
    @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String tag = this.tag + "r";
+      String tag = this.group + "r";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
@@ -267,19 +267,19 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
-         client.destroyNodesMatching(withTag(tag));
+         client.destroyNodesMatching(withTag(group));
       } catch (NoSuchElementException e) {
 
       }
       refreshTemplate();
       try {
-         nodes = newTreeSet(client.runNodesWithTag(tag, 2, template));
+         nodes = newTreeSet(client.runNodesWithTag(group, 2, template));
       } catch (RunNodesException e) {
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
       }
       assertEquals(nodes.size(), 2);
-      checkNodes(nodes, tag);
+      checkNodes(nodes, group);
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
       // credentials aren't always the same
@@ -324,8 +324,8 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
       refreshTemplate();
-      TreeSet<NodeMetadata> nodes = newTreeSet(client.runNodesWithTag(tag, 1, template));
-      checkNodes(nodes, tag);
+      TreeSet<NodeMetadata> nodes = newTreeSet(client.runNodesWithTag(group, 1, template));
+      checkNodes(nodes, group);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
       assertEquals(nodes.size(), 1);
@@ -375,7 +375,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
       Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
-               .listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED))),
+               .listNodesDetailsMatching(all()), and(withTag(group), not(TERMINATED))),
                new Function<NodeMetadata, String>() {
 
                   @Override
@@ -407,14 +407,14 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testGet")
    public void testReboot() throws Exception {
-      client.rebootNodesMatching(withTag(tag));// TODO test
+      client.rebootNodesMatching(withTag(group));// TODO test
       // validation
       testGet();
    }
 
    @Test(enabled = true, dependsOnMethods = "testReboot")
    public void testSuspendResume() throws Exception {
-      client.suspendNodesMatching(withTag(tag));
+      client.suspendNodesMatching(withTag(group));
 
       Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
 
@@ -430,7 +430,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       }) : stoppedNodes;
 
-      client.resumeNodesMatching(withTag(tag));
+      client.resumeNodesMatching(withTag(group));
       testGet();
    }
 
@@ -467,22 +467,22 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       int toDestroy = refreshNodes().size();
-      Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(withTag(tag));
+      Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(withTag(group));
       assertEquals(toDestroy, destroyed.size());
-      for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
+      for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
          assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
       }
    }
 
    private Set<? extends NodeMetadata> refreshNodes() {
-      return filter(client.listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED)));
+      return filter(client.listNodesDetailsMatching(all()), and(withTag(group), not(TERMINATED)));
    }
 
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
-      String tag = this.tag + "s";
+      String tag = this.group + "s";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
@@ -554,7 +554,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testOptionToNotBlock() throws Exception {
-      String tag = this.tag + "block";
+      String tag = this.group + "block";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {

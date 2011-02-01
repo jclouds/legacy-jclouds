@@ -20,7 +20,7 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPrivateIpsFromVApp;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPublicIpsFromVApp;
@@ -71,12 +71,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.uri(from.getHref());
       builder.name(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
-      String tag = parseTagFromName(from.getName());
-      builder.tag(tag);
-      if (logger.isTraceEnabled()) {
-         if (tag.startsWith("NOTAG#"))
-            logger.warn("failed to parse tag from name %s", from);
-      }
+      builder.group(parseGroupFromName(from.getName()));
       builder.operatingSystem(toComputeOs(from, null));
       builder.hardware(hardwareForVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));

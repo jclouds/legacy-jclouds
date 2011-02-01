@@ -83,8 +83,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).publicAddresses(
                ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(
-               ImmutableSet.of("174.129.81.68")).tag("NOTAG#i-0799056f").credentials(creds).imageId(
-               "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").build());
+               ImmutableSet.of("174.129.81.68")).credentials(creds).imageId("us-east-1/ami-82e4b5c7").id(
+               "us-east-1/i-0799056f").providerId("i-0799056f").build());
    }
 
    @Test
@@ -96,8 +96,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).publicAddresses(
                ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(
-               ImmutableSet.of("174.129.81.68")).tag("NOTAG#i-0799056f").imageId("us-east-1/ami-82e4b5c7").id(
-               "us-east-1/i-0799056f").providerId("i-0799056f").build());
+               ImmutableSet.of("174.129.81.68")).imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f")
+               .providerId("i-0799056f").build());
    }
 
    @Test
@@ -108,9 +108,8 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
-               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).tag(
-               "NOTAG#i-0799056f").imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f")
-               .providerId("i-0799056f").location(provider).build());
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").location(provider).build());
    }
 
    @Test
@@ -121,8 +120,8 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
-               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).tag(
-               "NOTAG#i-0799056f").imageId("us-east-1/ami-82e4b5c7").operatingSystem(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").operatingSystem(
                new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
                .providerId("i-0799056f").location(provider).build());
@@ -137,8 +136,8 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
-               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).tag(
-               "NOTAG#i-0799056f").imageId("us-east-1/ami-82e4b5c7").hardware(m1_small().build()).operatingSystem(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").hardware(m1_small().build()).operatingSystem(
                new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
                .providerId("i-0799056f").location(provider).build());
@@ -166,9 +165,9 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
-               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).tag(
-               "NOTAG#i-0799056f").imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f")
-               .providerId("i-0799056f").hardware(m1_small().build()).location(provider).build());
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").hardware(
+               m1_small().build()).location(provider).build());
    }
 
    protected RunningInstance firstInstanceFromResource(String resource) {

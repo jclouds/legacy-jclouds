@@ -60,7 +60,7 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   public NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore) {
       throw new UnsupportedOperationException();
    }

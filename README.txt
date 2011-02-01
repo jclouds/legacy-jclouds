@@ -95,7 +95,7 @@ Compute Example (Java):
   template = client.templateBuilder().osFamily(UBUNTU).smallest().build();
  
   // these nodes will be accessible via ssh when the call returns
-  nodes = client.runNodesWithTag("mycluster", 2, template);
+  nodes = client.createNodesInGroup("mycluster", 2, template);
 
 Compute Example (Clojure):
   (use 'org.jclouds.compute)
@@ -107,7 +107,7 @@ Compute Example (Clojure):
   ; use the default node template and launch a couple nodes
   ; these will have your ~/.ssh/id_rsa.pub authorized when complete
   (with-compute-service [compute]
-    (run-nodes "mycluster" 2))
+    (create-nodes "mycluster" 2))
  
 Downloads:
   * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-8.zip

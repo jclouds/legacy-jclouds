@@ -99,7 +99,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
       // setup mocks
-      EC2RunNodesAndAddToSetStrategy strategy = setupStrategy();
+      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy();
       InputParams input = new InputParams(location);
       InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
@@ -200,7 +200,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       }
    }
 
-   private void verifyStrategy(EC2RunNodesAndAddToSetStrategy strategy) {
+   private void verifyStrategy(EC2CreateNodesInGroupThenAddToSet strategy) {
       verify(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       verify(strategy.client);
       verify(strategy.instancePresent);
@@ -211,7 +211,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    }
 
    @SuppressWarnings("unchecked")
-   private EC2RunNodesAndAddToSetStrategy setupStrategy() {
+   private EC2CreateNodesInGroupThenAddToSet setupStrategy() {
       EC2Client client = createMock(EC2Client.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
@@ -219,11 +219,11 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       Function<RunningInstance, Credentials> instanceToCredentials = createMock(Function.class);
       Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
-      return new EC2RunNodesAndAddToSetStrategy(client, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+      return new EC2CreateNodesInGroupThenAddToSet(client, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
                instanceStateRunning, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
    }
 
-   private void replayStrategy(EC2RunNodesAndAddToSetStrategy strategy) {
+   private void replayStrategy(EC2CreateNodesInGroupThenAddToSet strategy) {
       replay(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       replay(strategy.client);
       replay(strategy.instancePresent);

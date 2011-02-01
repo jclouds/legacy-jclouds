@@ -31,7 +31,7 @@ public class OpenHostingEast1ComputeServiceLiveTest extends ElasticStackComputeS
 
    public OpenHostingEast1ComputeServiceLiveTest() {
       provider = "openhosting-east1";
-      tag = "openhosting";
+      group = "openhosting";
    }
 
 }

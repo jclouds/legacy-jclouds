@@ -20,14 +20,14 @@
 package org.jclouds.ibmdev.compute.config;
 
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudAddNodeWithTagStrategy;
+import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudCreateNodeWithGroupEncodedIntoName;
 import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudDestroyNodeStrategy;
 import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudGetNodeMetadataStrategy;
 import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudLifeCycleStrategy;
@@ -39,8 +39,8 @@ import org.jclouds.ibmdev.compute.strategy.IBMDeveloperCloudListNodesStrategy;
 public class IBMDeveloperCloudBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return IBMDeveloperCloudAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return IBMDeveloperCloudCreateNodeWithGroupEncodedIntoName.class;
    }
 
    @Override

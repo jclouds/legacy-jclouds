@@ -81,7 +81,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
    }
 
    @Override
-   public Domain runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   public Domain createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore) {
       try {
          String domainName = tag;

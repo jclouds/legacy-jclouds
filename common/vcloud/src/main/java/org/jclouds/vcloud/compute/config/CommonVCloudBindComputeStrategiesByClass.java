@@ -20,8 +20,8 @@
 package org.jclouds.vcloud.compute.config;
 
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 
 /**
  * @author Adrian Cole
@@ -29,8 +29,8 @@ import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStr
 public abstract class CommonVCloudBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
 
    @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
+   protected Class<? extends CreateNodesInGroupThenAddToSet> defineRunNodesAndAddToSetStrategy() {
+      return CreateNodesWithGroupEncodedIntoNameThenAddToSet.class;
    }
 
 }

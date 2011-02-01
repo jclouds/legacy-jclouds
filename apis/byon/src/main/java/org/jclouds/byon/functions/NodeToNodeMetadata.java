@@ -71,7 +71,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.ids(from.getId());
       builder.name(from.getName());
       builder.location(location.get());
-      builder.tag(from.getGroup());
+      builder.group(from.getGroup());
       // TODO add tags!
       builder.operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch()).family(
                OsFamily.fromValue(from.getOsFamily())).description(from.getOsDescription())

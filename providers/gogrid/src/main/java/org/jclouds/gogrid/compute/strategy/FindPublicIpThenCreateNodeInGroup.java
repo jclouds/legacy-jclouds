@@ -31,7 +31,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
@@ -49,7 +49,7 @@ import com.google.common.collect.Iterables;
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class FindPublicIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIntoName {
    private final GoGridClient client;
    private final Function<Hardware, String> sizeToRam;
    private final Function<Server, NodeMetadata> serverToNodeMetadata;
@@ -57,7 +57,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    private RetryablePredicate<Server> serverLatestJobCompletedShort;
 
    @Inject
-   protected GoGridAddNodeWithTagStrategy(GoGridClient client,
+   protected FindPublicIpThenCreateNodeInGroup(GoGridClient client,
             Function<Server, NodeMetadata> serverToNodeMetadata, Function<Hardware, String> sizeToRam,
             Timeouts timeouts) {
       this.client = client;
@@ -71,7 +71,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       Server addedServer = null;
       boolean notStarted = true;
       int numOfRetries = 20;

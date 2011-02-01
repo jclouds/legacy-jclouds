@@ -107,26 +107,26 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getInstanceServices();
 
-      String tag = this.tag + "o";
+      String group = this.group + "o";
 
       TemplateOptions options = client.templateOptions();
 
-      options.as(EC2TemplateOptions.class).securityGroups(tag);
-      options.as(EC2TemplateOptions.class).keyPair(tag);
+      options.as(EC2TemplateOptions.class).securityGroups(group);
+      options.as(EC2TemplateOptions.class).keyPair(group);
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+         securityGroupClient.createSecurityGroupInRegion(null, group, group);
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, group, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
+         KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
@@ -135,29 +135,29 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          RunningInstance instance = getInstance(instanceClient, startedId);
 
-         assertEquals(instance.getKeyName(), tag);
+         assertEquals(instance.getKeyName(), group);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + tag + "#"
-                  + instance.getRegion(), tag));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
+                  + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + tag + "#" + instance.getRegion()));
-         assert group.getIpPermissions().size() == 0 : group;
+         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
+                  "jclouds#" + group + "#" + instance.getRegion()));
+         assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
+         runScriptWithCreds(group, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
                   .getKeyMaterial()));
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
    }
 
@@ -173,7 +173,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getElasticBlockStoreServices();
 
-      String tag = this.tag + "e";
+      String group = this.group + "e";
       int volumeSize = 8;
 
       Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
@@ -200,7 +200,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                .mapEBSSnapshotToDeviceName("/dev/sdo", snapshot.getId(), volumeSize, true);
 
       try {
-         NodeMetadata node = Iterables.getOnlyElement(client.runNodesWithTag(tag, 1, template));
+         NodeMetadata node = Iterables.getOnlyElement(client.createNodesInGroup(group, 1, template));
 
          // TODO figure out how to validate the ephemeral drive. perhaps with df -k?
 
@@ -228,7 +228,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(snapshot.getId(), volume.getSnapshotId());
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(NodePredicates.inGroup(group));
          ebsClient.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
       }
    }
@@ -239,19 +239,19 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
+   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String group)
             throws InterruptedException {
       try {
-         for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
-            if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
-               securityGroupClient.deleteSecurityGroupInRegion(null, group.getName());
+         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
+            if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {
+               securityGroupClient.deleteSecurityGroupInRegion(null, secgroup.getName());
             }
       } catch (Exception e) {
 
       }
       try {
          for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
-            if (pair.getKeyName().startsWith("jclouds#" + tag) || pair.getKeyName().equals(tag)) {
+            if (pair.getKeyName().startsWith("jclouds#" + group) || pair.getKeyName().equals(group)) {
                keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
             }
       } catch (Exception e) {

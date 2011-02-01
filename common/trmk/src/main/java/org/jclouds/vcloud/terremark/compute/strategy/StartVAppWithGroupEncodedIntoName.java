@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
@@ -43,14 +43,14 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
    protected final TerremarkVCloudComputeClient computeClient;
    protected final TemplateToInstantiateOptions getOptions;
    protected final Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata;
    private final Map<String, Credentials> credentialStore;
 
    @Inject
-   protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudComputeClient computeClient,
+   protected StartVAppWithGroupEncodedIntoName(TerremarkVCloudComputeClient computeClient,
             Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions,
             Map<String, Credentials> credentialStore) {
       this.computeClient = computeClient;
@@ -60,7 +60,7 @@ public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStra
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
       VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());

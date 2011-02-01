@@ -109,7 +109,7 @@ public class CloudSigmaComputeServiceAdapter implements
    }
 
    @Override
-   public ServerInfo runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
       logger.debug(">> imaging boot drive source(%s) bytes(%d)", template.getImage().getId(), bootSize);

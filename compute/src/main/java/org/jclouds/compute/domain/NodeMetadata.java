@@ -37,11 +37,17 @@ public interface NodeMetadata extends ComputeMetadata {
 
    /**
     * Tag used for all resources that belong to the same logical group. run, destroy commands are
-    * scoped to tag.
+    * scoped to group.
     * 
-    * @return tag for this node, or null, if not a part of a group
+    * @return group for this node, or null, if not a part of a group
     * 
     */
+   String getGroup();
+
+   /**
+    * @see #getGroup
+    */
+   @Deprecated
    String getTag();
 
    /**

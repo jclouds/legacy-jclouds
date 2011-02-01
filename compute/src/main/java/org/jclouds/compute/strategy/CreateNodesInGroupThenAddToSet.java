@@ -26,19 +26,18 @@ import java.util.concurrent.Future;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.ImplementedBy;
 
 /**
- * creates futures that correlate to
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class)
-public interface RunNodesAndAddToSetStrategy {
+@ImplementedBy(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class)
+public interface CreateNodesInGroupThenAddToSet {
 
-   Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+   Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
 }

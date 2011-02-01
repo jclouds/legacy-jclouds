@@ -60,7 +60,7 @@ import com.google.inject.Module;
 public abstract class BaseLoadBalancerServiceLiveTest {
 
    protected SshClient.Factory sshFactory;
-   protected String tag;
+   protected String group;
 
    protected RetryablePredicate<IPSocket> socketTester;
    protected Set<? extends NodeMetadata> nodes;
@@ -126,8 +126,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setServiceDefaults();
-      if (tag == null)
-         tag = checkNotNull(provider, "provider");
+      if (group == null)
+         group = checkNotNull(provider, "provider");
       setupCredentials();
       initializeContext();
       initializeComputeContext();
@@ -166,7 +166,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    @BeforeGroups(groups = { "integration", "live" }, dependsOnMethods = "setupClient")
    public void createNodes() throws RunNodesException {
       try {
-         nodes = computeContext.getComputeService().runNodesWithTag(tag, 2);
+         nodes = computeContext.getComputeService().createNodesInGroup(group, 2);
       } catch (RunNodesException e) {
          nodes = e.getSuccessfulNodes();
          throw e;
@@ -177,7 +177,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    public void testLoadBalanceNodesMatching() throws Exception {
 
       // create load balancers
-      loadbalancer = context.getLoadBalancerService().createLoadBalancerInLocation(null, tag, "HTTP", 80, 80, nodes);
+      loadbalancer = context.getLoadBalancerService().createLoadBalancerInLocation(null, group, "HTTP", 80, 80, nodes);
       assertNotNull(loadbalancer);
       validateNodesInLoadBalancer();
 
@@ -197,7 +197,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
          context.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
       }
       if (nodes != null) {
-         computeContext.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+         computeContext.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       }
       computeContext.close();
       context.close();

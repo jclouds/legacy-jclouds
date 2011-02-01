@@ -52,7 +52,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
 
    @Override
    public void setServiceDefaults() {
-      tag = "vcx";
+      group = "vcx";
    }
 
    @Test

@@ -199,13 +199,13 @@ public class PlacementGroupClientLiveTest {
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
                .runScript(buildScript(template.getImage().getOperatingSystem()));
 
-      String tag = PREFIX + "cccluster";
-      context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+      String group = PREFIX + "cccluster";
+      context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       // TODO make this not lookup an explicit region
-      client.getPlacementGroupServices().deletePlacementGroupInRegion(null, "jclouds#" + tag + "#us-east-1");
+      client.getPlacementGroupServices().deletePlacementGroupInRegion(null, "jclouds#" + group + "#us-east-1");
 
       try {
-         Set<? extends NodeMetadata> nodes = context.getComputeService().runNodesWithTag(tag, 1, template);
+         Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(group, 1, template);
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
@@ -215,7 +215,7 @@ public class PlacementGroupClientLiveTest {
          System.err.println(e.getNodeErrors().keySet());
          Throwables.propagate(e);
       } finally {
-         context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       }
    }
 

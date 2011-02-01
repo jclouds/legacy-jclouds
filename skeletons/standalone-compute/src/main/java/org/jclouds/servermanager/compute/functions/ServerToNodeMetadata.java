@@ -20,7 +20,7 @@
 package org.jclouds.servermanager.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +78,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.ids(from.id + "");
       builder.name(from.name);
       builder.location(findLocationForServer.apply(from));
-      builder.tag(parseTagFromName(from.name));
+      builder.group(parseGroupFromName(from.name));
       builder.imageId(from.imageId + "");
       Image image = findImageForServer.apply(from);
       if (image != null)

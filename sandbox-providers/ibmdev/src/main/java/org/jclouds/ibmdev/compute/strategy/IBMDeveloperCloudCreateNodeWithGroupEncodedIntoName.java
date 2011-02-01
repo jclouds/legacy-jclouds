@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 import org.jclouds.ibmdev.domain.Instance;
 
@@ -37,22 +37,22 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class IBMDeveloperCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class IBMDeveloperCloudCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
 
    private final IBMDeveloperCloudClient client;
    private final Function<Instance, NodeMetadata> instanceToNodeMetadata;
 
    @Inject
-   protected IBMDeveloperCloudAddNodeWithTagStrategy(IBMDeveloperCloudClient client,
+   protected IBMDeveloperCloudCreateNodeWithGroupEncodedIntoName(IBMDeveloperCloudClient client,
          Function<Instance, NodeMetadata> instanceToNodeMetadata) {
       this.client = checkNotNull(client, "client");
       this.instanceToNodeMetadata = checkNotNull(instanceToNodeMetadata, "instanceToNodeMetadata");
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       Instance instance = client.createInstanceInLocation(template.getLocation().getId(), name, template.getImage()
-            .getProviderId(), template.getHardware().getProviderId(), authorizePublicKey(tag));
+            .getProviderId(), template.getHardware().getProviderId(), authorizePublicKey(group));
       return instanceToNodeMetadata.apply(client.getInstance(instance.getId()));
    }
 }

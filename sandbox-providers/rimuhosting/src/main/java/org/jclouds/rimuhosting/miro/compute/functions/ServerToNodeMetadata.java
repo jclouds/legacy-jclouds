@@ -20,7 +20,7 @@
 package org.jclouds.rimuhosting.miro.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -97,7 +97,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.name(from.getName());
       Location location = findLocationWithId(from.getLocation().getId());
       builder.location(location);
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from, location));
       builder.hardware(null);// TODO

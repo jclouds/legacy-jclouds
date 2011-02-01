@@ -88,13 +88,13 @@ public class CleanupOrphanKeysTest {
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
       Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "group");
 
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
                .andReturn(ImmutableSet.of(nodeMetadata));
-      expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
+      expect(nodeMetadata.getGroup()).andReturn(orgTag.getName()).atLeastOnce();
       expect(nodeMetadata.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
       expectCleanupCredentialStore(strategy, nodeMetadata);
 
@@ -115,13 +115,13 @@ public class CleanupOrphanKeysTest {
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
       Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "group");
 
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
                .andReturn(ImmutableSet.of(nodeMetadata));
-      expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
+      expect(nodeMetadata.getGroup()).andReturn(orgTag.getName()).atLeastOnce();
       expect(nodeMetadata.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
       strategy.deleteKeyPair.execute(orgTag);
       expectCleanupCredentialStore(strategy, nodeMetadata);
@@ -149,7 +149,7 @@ public class CleanupOrphanKeysTest {
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
       Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "group");
 
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();

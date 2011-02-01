@@ -20,7 +20,7 @@
 package org.jclouds.vi.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -83,7 +83,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          builder.providerId(from.getConfig().getLocationId() + "");
          builder.name(from.getName());
          builder.location(findLocationForVirtualMachine.apply(from));
-         builder.tag(parseTagFromName(from.getName()));
+         builder.group(parseGroupFromName(from.getName()));
 
          builder.operatingSystem(new OperatingSystemBuilder()
          	.name(from.getConfig().getGuestFullName())

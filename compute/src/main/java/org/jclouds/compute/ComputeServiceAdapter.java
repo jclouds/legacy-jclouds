@@ -60,7 +60,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
     * @see ComputeService#runNodesWithTag(String, int, Template)
     * @see ComputeServiceContext#getCredentialStore
     */
-   N runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   N createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore);
 
    /**

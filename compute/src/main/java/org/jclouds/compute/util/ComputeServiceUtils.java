@@ -103,12 +103,11 @@ public class ComputeServiceUtils {
 
    /**
     * 
-    * 
-    * @return NOTAG#+from if tag cannot be parsed
+    * @return null if group cannot be parsed
     */
-   public static String parseTagFromName(String from) {
+   public static String parseGroupFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
-      return matcher.find() ? matcher.group(1) : "NOTAG#" + from;
+      return matcher.find() ? matcher.group(1) : null;
    }
 
    public static double getCores(Hardware input) {

@@ -31,7 +31,7 @@ public class ServerloveManchesterComputeServiceLiveTest extends ElasticStackComp
 
    public ServerloveManchesterComputeServiceLiveTest() {
       provider = "serverlove-z1-man";
-      tag = "serverlove";
+      group = "serverlove";
    }
 
 }

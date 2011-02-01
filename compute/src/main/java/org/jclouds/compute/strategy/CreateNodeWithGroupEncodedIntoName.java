@@ -27,21 +27,21 @@ import org.jclouds.compute.domain.Template;
  * 
  * @author Adrian Cole
  */
-public interface AddNodeWithTagStrategy {
+public interface CreateNodeWithGroupEncodedIntoName {
 
    /**
     * create a node given the name and template parameters such as imageid, hardwareid, and
     * locationid.
     * 
-    * @param tag
-    *           tag supplied by the user
+    * @param group
+    *           group name supplied by the user
     * @param name
-    *           supplied by {@link RunNodesAndAddToSetStrategy } and must have the tag encoded into
+    *           supplied by {@link CreateNodesInGroupThenAddToSet } and must have the tag encoded into
     *           it.
     * @param template
     *           supplied by the user
     * @return NodeMetadata from the new object, most likely in some pending state.
     */
-   NodeMetadata addNodeWithTag(String tag, String name, Template template);
+   NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template);
 
 }

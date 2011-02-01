@@ -23,16 +23,16 @@ import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.EC2RebootNodeStrategy;
-import org.jclouds.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
+import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.ec2.compute.strategy.EC2ResumeNodeStrategy;
 import org.jclouds.ec2.compute.strategy.EC2SuspendNodeStrategy;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 
@@ -41,23 +41,23 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
  */
 public class EC2BindComputeStrategiesByClass extends BindComputeStrategiesByClass {
    @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EC2RunNodesAndAddToSetStrategy.class;
+   protected Class<? extends CreateNodesInGroupThenAddToSet> defineRunNodesAndAddToSetStrategy() {
+      return EC2CreateNodesInGroupThenAddToSet.class;
    }
 
    /**
-    * not needed, as {@link EC2RunNodesAndAddToSetStrategy} is used and is already set-based.
+    * not needed, as {@link EC2CreateNodesInGroupThenAddToSet} is used and is already set-based.
     */
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
       return null;
    }
 
    /**
-    * not needed, as {@link EC2RunNodesAndAddToSetStrategy} is used and is already set-based.
+    * not needed, as {@link EC2CreateNodesInGroupThenAddToSet} is used and is already set-based.
     */
    @Override
-   protected void bindAddNodeWithTagStrategy(Class<? extends AddNodeWithTagStrategy> clazz) {
+   protected void bindAddNodeWithTagStrategy(Class<? extends CreateNodeWithGroupEncodedIntoName> clazz) {
    }
 
    @Override

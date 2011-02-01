@@ -32,7 +32,7 @@ public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiv
    public AWSELBLoadBalancerServiceLiveTest() {
       provider = "aws-elb";
       computeProvider = "aws-ec2";
-      tag = "elb";
+      group = "elb";
    }
 
 }

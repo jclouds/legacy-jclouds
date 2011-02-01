@@ -34,10 +34,10 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 
 import com.google.common.collect.Multimap;
@@ -46,13 +46,13 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTagIntoNameRunNodesAndAddToSetStrategy {
+public class CreateKeyCreateNodesWithGroupEncodedIntoNameThenAddToSet extends CreateNodesWithGroupEncodedIntoNameThenAddToSet {
    private final IBMDeveloperCloudClient client;
    private final Map<String, String> credentialsMap;
 
    @Inject
-   protected CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet(
-            AddNodeWithTagStrategy addNodeWithTagStrategy,
+   protected CreateKeyCreateNodesWithGroupEncodedIntoNameThenAddToSet(
+            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
             ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
@@ -65,21 +65,21 @@ public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTag
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       String keyAsText = template.getOptions().getPublicKey();
       if (keyAsText != null) {
          template.getOptions().dontAuthorizePublicKey();
          try {
-            client.addPublicKey(tag, keyAsText);
+            client.addPublicKey(group, keyAsText);
          } catch (IllegalStateException e) {
             // must not have been found
-            client.updatePublicKey(tag, keyAsText);
+            client.updatePublicKey(group, keyAsText);
          }
       } else {
-         credentialsMap.put(tag, client.generateKeyPair(tag).getKeyMaterial());
+         credentialsMap.put(group, client.generateKeyPair(group).getKeyMaterial());
       }
-      return super.execute(tag, count, template, goodNodes, badNodes, customizationResponses);
+      return super.execute(group, count, template, goodNodes, badNodes, customizationResponses);
    }
 
 }

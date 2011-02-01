@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.rimuhosting.miro.compute.strategy;
+package org.jclouds.cloudservers.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,39 +28,35 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
-import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
-import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.domain.Server;
 
 import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-   protected final RimuHostingClient client;
+public class CloudServersCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
+   protected final CloudServersClient client;
    protected final Map<String, Credentials> credentialStore;
    protected final Function<Server, NodeMetadata> serverToNodeMetadata;
 
    @Inject
-   protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client, Map<String, Credentials> credentialStore,
+   protected CloudServersCreateNodeWithGroupEncodedIntoName(CloudServersClient client, Map<String, Credentials> credentialStore,
             Function<Server, NodeMetadata> serverToNodeMetadata) {
-      this.client = client;
-      this.credentialStore = credentialStore;
-      this.serverToNodeMetadata = serverToNodeMetadata;
+      this.client = checkNotNull(client, "client");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.serverToNodeMetadata = checkNotNull(serverToNodeMetadata, "serverToNodeMetadata");
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
-      NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage().getProviderId(),
-               "imageId"), checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
-      Server from = client.getServer(serverResponse.getServer().getId());
-      credentialStore.put("node#" + from.getId(), new Credentials("root", serverResponse.getNewInstanceRequest()
-               .getCreateOptions().getPassword()));
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
+      Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer
+               .parseInt(template.getHardware().getProviderId()));
+      credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
       return serverToNodeMetadata.apply(from);
    }
 

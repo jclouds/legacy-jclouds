@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
@@ -41,13 +41,13 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
    protected final VCloudExpressClient client;
    protected final VCloudExpressComputeClient computeClient;
    protected final Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata;
 
    @Inject
-   protected VCloudExpressAddNodeWithTagStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
+   protected StartVAppWithGroupEncodedIntoName(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
          Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata) {
       this.client = client;
       this.computeClient = computeClient;
@@ -55,7 +55,7 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
             template.getHardware().getRam()).disk(
             (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));

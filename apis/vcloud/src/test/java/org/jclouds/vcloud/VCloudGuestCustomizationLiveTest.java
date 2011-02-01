@@ -50,7 +50,7 @@ import com.google.inject.Module;
 
 /**
  * This tests that we can use guest customization as an alternative to bootstrapping with ssh. There
- * are a few advantages to this, including the fact that it can work inside google appengine where
+ * are a few advangroupes to this, including the fact that it can work inside google appengine where
  * network sockets (ssh:22) are prohibited.
  * 
  * @author Adrian Cole
@@ -110,7 +110,7 @@ public class VCloudGuestCustomizationLiveTest {
    @Test
    public void testExtendedOptionsWithCustomizationScript() throws Exception {
 
-      String tag = "customize";
+      String group = "customize";
       String script = "cat > /root/foo.txt<<EOF\nI love candy\nEOF\n";
 
       TemplateOptions options = client.templateOptions();
@@ -119,7 +119,7 @@ public class VCloudGuestCustomizationLiveTest {
       NodeMetadata node = null;
       try {
 
-         node = getOnlyElement(client.runNodesWithTag(tag, 1, options));
+         node = getOnlyElement(client.createNodesInGroup(group, 1, options));
 
          IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
 

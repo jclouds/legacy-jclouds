@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
@@ -50,7 +50,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn implements CreateNodeWithGroupEncodedIntoName {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -60,7 +60,7 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    protected final Predicate<URI> successTester;
 
    @Inject
-   protected VCloudAddNodeWithTagStrategy(Predicate<URI> successTester, VCloudClient client,
+   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(Predicate<URI> successTester, VCloudClient client,
             GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.successTester = successTester;
@@ -68,7 +68,7 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    @Override
-   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+   public NodeMetadata createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
                template.getHardware().getRam()).disk(
                (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));

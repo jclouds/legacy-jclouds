@@ -46,7 +46,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class TestCanRecreateTagLiveTest {
+public class TestCanRecreateGroupLiveTest {
 
    private ComputeServiceContext context;
    protected String provider = "ec2";
@@ -85,21 +85,21 @@ public class TestCanRecreateTagLiveTest {
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
    }
 
-   public void testCanRecreateTag() throws Exception {
+   public void testCanRecreateGroup() throws Exception {
 
       String tag = PREFIX + "recreate";
-      context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+      context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
 
       try {
          Template template = context.getComputeService().templateBuilder().locationId("us-west-1").build();
-         context.getComputeService().runNodesWithTag(tag, 1, template);
-         context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
-         context.getComputeService().runNodesWithTag(tag, 1, template);
+         context.getComputeService().createNodesInGroup(tag, 1, template);
+         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
+         context.getComputeService().createNodesInGroup(tag, 1, template);
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());
          Throwables.propagate(e);
       } finally {
-         context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
       }
    }
 

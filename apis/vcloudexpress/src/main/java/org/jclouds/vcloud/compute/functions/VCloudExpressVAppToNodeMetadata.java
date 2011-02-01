@@ -20,7 +20,7 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +75,7 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.uri(from.getHref());
       builder.name(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
       builder.operatingSystem(from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType
                .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null);
       builder.hardware(hardwareForVCloudExpressVApp.apply(from));

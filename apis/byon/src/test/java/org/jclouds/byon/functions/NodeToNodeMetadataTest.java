@@ -53,7 +53,7 @@ public class NodeToNodeMetadataTest {
    public static NodeMetadata expectedNodeMetadataFromResource(String resource) {
       Location location = expectedLocationFromResource(resource);
 
-      return new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("cluster-1").location(location).state(
+      return new NodeMetadataBuilder().ids("cluster-1").group("hadoop").name("cluster-1").location(location).state(
                NodeState.RUNNING).operatingSystem(
                new OperatingSystemBuilder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
                         .build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com")).credentials(

@@ -38,7 +38,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    public EucalyptusComputeServiceLiveTest() {
       provider = "eucalyptus";
       // security groups must be <30 characters
-      tag = "eu";
+      group = "eu";
    }
 
    @Override

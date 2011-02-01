@@ -52,7 +52,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public AWSEC2ComputeServiceLiveTest() {
       provider = "aws-ec2";
-      tag = "ec2";
+      group = "ec2";
    }
 
    @Override
@@ -67,29 +67,29 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getInstanceServices();
 
-      String tag = this.tag + "o";
+      String group = this.group + "o";
 
       TemplateOptions options = client.templateOptions();
 
       // Date before = new Date();
 
-      options.as(AWSEC2TemplateOptions.class).securityGroups(tag);
-      options.as(AWSEC2TemplateOptions.class).keyPair(tag);
+      options.as(AWSEC2TemplateOptions.class).securityGroups(group);
+      options.as(AWSEC2TemplateOptions.class).keyPair(group);
       options.as(AWSEC2TemplateOptions.class).enableMonitoring();
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+         securityGroupClient.createSecurityGroupInRegion(null, group, group);
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, group, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
+         KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
@@ -98,7 +98,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
 
-         assertEquals(instance.getKeyName(), tag);
+         assertEquals(instance.getKeyName(), group);
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
 
          // TODO when the cloudwatchclient is finished
@@ -117,26 +117,26 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // }
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + tag + "#"
-                  + instance.getRegion(), tag));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
+                  + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + tag + "#" + instance.getRegion()));
-         assert group.getIpPermissions().size() == 0 : group;
+         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
+                  "jclouds#" +group + "#" + instance.getRegion()));
+         assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
+         runScriptWithCreds(group, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
                   .getKeyMaterial()));
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
       
    }
@@ -157,26 +157,26 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
             .getInstanceServices();
 
-      String tag = this.tag + "g";
+      String group = this.group + "g";
 
       TemplateOptions options = client.templateOptions();
 
-      // options.as(AWSEC2TemplateOptions.class).securityGroups(tag);
-      options.as(AWSEC2TemplateOptions.class).keyPair(tag);
+      // options.as(AWSEC2TemplateOptions.class).securityGroups(group);
+      options.as(AWSEC2TemplateOptions.class).keyPair(group);
       options.as(AWSEC2TemplateOptions.class).subnetId(subnetId);
 
       String startedId = null;
       String nodeId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
 
          // create the security group
-         // securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+         // securityGroupClient.createSecurityGroupInRegion(null, group, group);
 
          // create a keypair to pass in as well
-         keyPairClient.createKeyPairInRegion(null, tag);
+         keyPairClient.createKeyPairInRegion(null, group);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
 
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
@@ -194,9 +194,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
             client.destroyNode(nodeId);
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
    }
 

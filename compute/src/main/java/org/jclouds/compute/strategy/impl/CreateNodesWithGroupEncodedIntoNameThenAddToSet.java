@@ -44,10 +44,10 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -59,7 +59,7 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Singleton
-public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
+public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNodesInGroupThenAddToSet {
 
    private class AddNode implements Callable<NodeMetadata> {
       private final String name;
@@ -78,7 +78,7 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
          logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)",
                   template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
                            .getProviderId());
-         node = addNodeWithTagStrategy.addNodeWithTag(tag, name, template);
+         node = addNodeWithTagStrategy.createNodeWithGroupEncodedIntoName(tag, name, template);
          logger.debug("<< %s node(%s)", node.getState(), node.getId());
          return node;
       }
@@ -92,15 +92,15 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final AddNodeWithTagStrategy addNodeWithTagStrategy;
+   protected final CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy;
    protected final ListNodesStrategy listNodesStrategy;
    protected final String nodeNamingConvention;
    protected final ExecutorService executor;
    protected final CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory;
 
    @Inject
-   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(
-            AddNodeWithTagStrategy addNodeWithTagStrategy,
+   protected CreateNodesWithGroupEncodedIntoNameThenAddToSet(
+            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
             ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,

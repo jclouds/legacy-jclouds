@@ -29,7 +29,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -114,7 +114,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
    @Provides
    @Singleton
-   protected AddNodeWithTagStrategy defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+   protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 
