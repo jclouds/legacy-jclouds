@@ -18,7 +18,9 @@
 ====
 
 #
-# The jclouds API for VMware vCloud (http://www.vmware.com/products/vcloud/).
+# The jclouds API for Eucalyptus Systems' EC2 flavour (http://www.eucalyptus.com/).
+#
+# Expects the jclouds EC2 API to be present on your application's classpath.
 #
 # TODO: Implementation status.
 # TODO: Supported features.

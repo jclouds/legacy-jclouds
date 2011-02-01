@@ -18,7 +18,7 @@
 ====
 
 #
-# The jclouds API for VMware vCloud (http://www.vmware.com/products/vcloud/).
+# The jclouds API for Amazon's S3 (http://aws.amazon.com/s3/).
 #
 # TODO: Implementation status.
 # TODO: Supported features.

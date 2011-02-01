@@ -18,7 +18,7 @@
 ====
 
 #
-# The jclouds API for VMware vCloud (http://www.vmware.com/products/vcloud/).
+# The jclouds API for OpenStack's Swift (http://swift.openstack.org/).
 #
 # TODO: Implementation status.
 # TODO: Supported features.
