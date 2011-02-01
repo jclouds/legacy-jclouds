@@ -53,6 +53,44 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? (as-compute-service *compute*)))
   (is (compute-service? (as-compute-service (compute-context *compute*)))))
 
+(deftest nodes-test
+  (is (empty? (nodes)))
+  (is (create-node "fred" (build-template
+         *compute* {} )))
+  (is (= 1 (count (nodes))))
+  (is (= 1 (count (nodes-in-group "fred"))))
+  (suspend-nodes-in-group "fred")
+  (is (suspended? (first (nodes-in-group "fred"))))
+  (resume-nodes-in-group "fred")
+  (is (running? (first (nodes-in-group "fred"))))
+  (reboot-nodes-in-group "fred")
+  (is (running? (first (nodes-in-group "fred"))))
+  (is (create-nodes "fred" 2 (build-template
+         *compute* {} )))
+  (is (= 3 (count (nodes-in-group "fred"))))
+  (is (= "fred" (group (first (nodes)))))
+  (destroy-nodes-in-group "fred")
+  (is (terminated? (first (nodes-in-group "fred")))))
+
+(deftest nodes-test-deprecated
+  (is (empty? (nodes)))
+  (is (run-node "deprecated" (build-template
+         *compute* {} )))
+  (is (= 1 (count (nodes))))
+  (is (= 1 (count (nodes-with-tag "deprecated"))))
+  (suspend-nodes-with-tag "deprecated")
+  (is (suspended? (first (nodes-with-tag "deprecated"))))
+  (resume-nodes-with-tag "deprecated")
+  (is (running? (first (nodes-with-tag "deprecated"))))
+  (reboot-nodes-with-tag "deprecated")
+  (is (running? (first (nodes-with-tag "deprecated"))))
+  (is (run-nodes "deprecated" 2 (build-template
+         *compute* {} )))
+  (is (= 3 (count (nodes-with-tag "deprecated"))))
+  (is (= "deprecated" (tag (first (nodes)))))
+  (destroy-nodes-with-tag "deprecated")
+  (is (terminated? (first (nodes-with-tag "deprecated")))))
+
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]
     (testing "nullary"

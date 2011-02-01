@@ -82,6 +82,8 @@ See http://code.google.com/p/jclouds for details."
           :only [wall-hack-field]
           :rename {wall-hack-field get-field}])))
 
+(defmacro deprecate-fwd [old-name new-name] `(defn ~old-name {:deprecated "beta-9"} [& args#] (apply ~new-name args#)))
+
 (defn compute-service
   "Create a logged in context."
   ([#^String provider #^String provider-identity #^String provider-credential
@@ -150,6 +152,8 @@ See http://code.google.com/p/jclouds for details."
   ([#^String group #^ComputeService compute]
     (filter #(= (.getTag %) group) (nodes-with-details compute))))
 
+(deprecate-fwd nodes-with-tag nodes-in-group)
+
 (defn images
   "Retrieve the available images for the compute context."
   ([] (images *compute*))
@@ -209,6 +213,8 @@ See http://code.google.com/p/jclouds for details."
      (seq
       (.createNodesInGroup compute group count template))))
 
+(deprecate-fwd run-nodes create-nodes)
+
 (defn create-node
   "Create a node using the default or specified template.
 
@@ -232,6 +238,8 @@ See http://code.google.com/p/jclouds for details."
   ([group template compute]
      (first (create-nodes group 1 template compute))))
 
+(deprecate-fwd run-node create-node)
+
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata, given its id."
   ([id] (node-details id *compute*))
@@ -243,6 +251,8 @@ See http://code.google.com/p/jclouds for details."
   ([group] (suspend-nodes-in-group group *compute*))
   ([#^String group #^ComputeService compute]
     (.suspendNodesMatching compute (NodePredicates/inGroup group))))
+
+(deprecate-fwd suspend-nodes-with-tag suspend-nodes-in-group)
 
 (defn suspend-node
   "Suspend a node, given its id."
@@ -256,6 +266,8 @@ See http://code.google.com/p/jclouds for details."
   ([#^String group #^ComputeService compute]
     (.resumeNodesMatching compute (NodePredicates/inGroup group))))
 
+(deprecate-fwd resume-nodes-with-tag resume-nodes-in-group)
+
 (defn resume-node
   "Resume a node, given its id."
   ([id] (resume-node id *compute*))
@@ -268,6 +280,8 @@ See http://code.google.com/p/jclouds for details."
   ([#^String group #^ComputeService compute]
     (.rebootNodesMatching compute (NodePredicates/inGroup group))))
 
+(deprecate-fwd reboot-nodes-with-tag reboot-nodes-in-group)
+
 (defn reboot-node
   "Reboot a node, given its id."
   ([id] (reboot-node id *compute*))
@@ -279,6 +293,8 @@ See http://code.google.com/p/jclouds for details."
   ([group] (destroy-nodes-in-group group *compute*))
   ([#^String group #^ComputeService compute]
      (.destroyNodesMatching compute (NodePredicates/inGroup group))))
+
+(deprecate-fwd destroy-nodes-with-tag destroy-nodes-in-group)
 
 (defn destroy-node
   "Destroy a node, given its id."
@@ -334,6 +350,8 @@ See http://code.google.com/p/jclouds for details."
   "Returns a the node's group"
   [#^NodeMetadata node]
   (.getGroup node))
+
+(deprecate-fwd tag group)
 
 (defn hostname
   "Returns the compute node's name"
