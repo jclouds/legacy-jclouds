@@ -18,6 +18,6 @@
 ====
 
 #
-# Sets up most commonly requested options for enterprise java support
+# Sets up most commonly requested options for enterprise Java support.
 #
 # TODO: Usage example.
