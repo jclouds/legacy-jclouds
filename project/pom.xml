@@ -251,23 +251,23 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
-	    <dependency>
-	      <groupId>org.clojure</groupId>
-	      <artifactId>clojure</artifactId>
-	      <version>1.2.0</version>
-          <optional>true</optional>
-	    </dependency>
-	    <dependency>
-	      <groupId>org.clojure</groupId>
-	      <artifactId>clojure-contrib</artifactId>
-	      <version>1.2.0</version>
-          <optional>true</optional>
-	    </dependency>
         <dependency>
-          <groupId>swank-clojure</groupId>
-          <artifactId>swank-clojure</artifactId>
-          <version>1.2.1</version>
-          <scope>test</scope>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>1.2.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure-contrib</artifactId>
+            <version>1.2.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>swank-clojure</groupId>
+            <artifactId>swank-clojure</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -409,7 +409,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <additionalJOption>-J-Xmx128m</additionalJOption>
+                    <additionalJOption>-J-Xmx256m</additionalJOption>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <quiet>true</quiet>
                     <links>
@@ -628,14 +628,15 @@ pageTracker._trackPageview();
                                     <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
                                     <descriptors>
                                         <descriptor>src-descriptor.xml</descriptor>
-                                        <descriptor>jar-with-dependencies-descriptor.xml</descriptor>
+                                        <descriptor>provided-dependencies-descriptor.xml</descriptor>                                        
+                                        <descriptor>jar-with-dependencies-no-core-no-apis-descriptor.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>${project.groupId}</groupId>
+                                <groupId>org.jclouds</groupId>
                                 <artifactId>jclouds-assemblies</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
