@@ -28,7 +28,7 @@
       LICENSE.txt
       README.txt
       core
-         + lib <- core, blobstore, compute and loadbalancer JARs and dependencies for core
+         + lib <- core, blobstore, compute (w/scriptbuilder) and loadbalancer JARs and dependencies for core
          + docs <- javadoc for core, blobstore, compute and loadbalancer         
          + src <- expanded or source jar for core, blobstore, compute and loadbalancer
       drivers
@@ -86,6 +86,13 @@
             <outputDirectory>core/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>scriptbuilder/target</directory>
+            <includes>
+                <include>jclouds-scriptbuilder-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>core/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>compute/target</directory>
             <includes>
                 <include>jclouds-compute-${project.version}.jar</include>
@@ -114,6 +121,13 @@
             <outputDirectory>core/src</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>scriptbuilder/target</directory>
+            <includes>
+                <include>jclouds-scriptbuilder-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>core/src</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>compute/target</directory>
             <includes>
                 <include>jclouds-compute-${project.version}-sources.jar</include>
@@ -133,6 +147,10 @@
         </fileSet>    
         <fileSet>
             <directory>blobstore/target/apidocs</directory>
+            <outputDirectory>core/docs</outputDirectory>            
+        </fileSet>    
+        <fileSet>
+            <directory>scriptbuilder/target/apidocs</directory>
             <outputDirectory>core/docs</outputDirectory>            
         </fileSet>    
         <fileSet>
