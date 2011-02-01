@@ -37,7 +37,6 @@
        <module>byon</module>
        <module>s3</module>
        <module>ec2</module>
-       <module>elb</module>
        <module>walrus</module>
        <module>eucalyptus</module>
        <module>swift</module>
