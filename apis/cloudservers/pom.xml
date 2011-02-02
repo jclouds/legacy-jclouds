@@ -80,6 +80,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.42</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>

@@ -54,6 +54,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.42</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
