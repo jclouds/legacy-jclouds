@@ -1,0 +1,4 @@
+resource 6e2d1f6a-03c8-422b-bc8e-d744612cf46a
+type vlan
+user f2e19d5c-eaa1-44e5-94aa-dc194594bd7b
+name My VLAN1

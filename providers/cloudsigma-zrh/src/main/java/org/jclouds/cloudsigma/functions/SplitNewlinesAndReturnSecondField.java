@@ -19,11 +19,6 @@
 
 package org.jclouds.cloudsigma.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
-
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -33,23 +28,40 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+public class SplitNewlinesAndReturnSecondField extends SplitNewlines {
 
    @Inject
-   protected SplitNewlines(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   SplitNewlinesAndReturnSecondField(ReturnStringIf2xx returnStringIf200) {
+      super(returnStringIf200);
    }
 
    @Override
    public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+      return ImmutableSet.copyOf(Iterables.filter(
+            Iterables.transform(super.apply(response), new Function<String, String>() {
+
+               @Override
+               public String apply(String arg0) {
+                  if (arg0 == null)
+                     return null;
+                  Iterable<String> parts = Splitter.on(' ').split(arg0);
+                  if (Iterables.size(parts) == 2)
+                     return Iterables.get(parts, 1);
+                  else if (Iterables.size(parts) == 1)
+                     return Iterables.get(parts, 0);
+                  return null;
+               }
+
+            }), Predicates.notNull()));
    }
 }

@@ -45,10 +45,28 @@ public class Servers {
     * @return a builder for a persistent 1Ghz 512m server with DHCP enabled network.
     */
    public static Server.Builder small(String name, String driveUuuid, String vncPassword) {
+      return smallWithStaticIP(name, driveUuuid, vncPassword, "auto");
+   }
+
+   /**
+    * Helper to create a small persistent server
+    * 
+    * @param name
+    *           what to name the server
+    * @param driveUuuid
+    *           id of the boot drive
+    * @param vncPassword
+    *           password for vnc
+    * @param ip
+    *           static IP
+    * @return a builder for a persistent 1Ghz 512m server with DHCP enabled network.
+    */
+   public static Server.Builder smallWithStaticIP(String name, String driveUuuid, String vncPassword, String ip) {
       return new Server.Builder().name(name).cpu(1000).mem(512).persistent(true)
             .devices(ImmutableMap.of("ide:0:0", new IDEDevice.Builder(0, 0).uuid(driveUuuid).build()))
             .bootDeviceIds(ImmutableSet.of("ide:0:0"))
-            .nics(ImmutableSet.of(new NIC.Builder().model(Model.E1000).dhcp("auto").build()))
+            .nics(ImmutableSet.of(new NIC.Builder().model(Model.E1000).dhcp(ip).build()))
             .vnc(new VNC(null, vncPassword, false));
    }
+
 }

@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudsigma.binders.BindCloneDriveOptionsToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindDriveDataToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindDriveToPlainTextString;
+import org.jclouds.cloudsigma.binders.BindNameToPayload;
 import org.jclouds.cloudsigma.binders.BindServerToPlainTextString;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
@@ -38,12 +39,19 @@ import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.domain.StaticIPInfo;
+import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToProfileInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToStaticIPInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToVLANInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet;
 import org.jclouds.cloudsigma.functions.SplitNewlines;
+import org.jclouds.cloudsigma.functions.SplitNewlinesAndReturnSecondField;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
@@ -242,4 +250,98 @@ public interface CloudSigmaAsyncClient {
    @Path("/drives/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#createVLAN
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
+   @Path("/resources/vlan/create")
+   ListenableFuture<VLANInfo> createVLAN(@BinderParam(BindNameToPayload.class) String name);
+
+   /**
+    * @see CloudSigmaClient#listVLANInfo
+    */
+   @GET
+   @Path("/resources/vlan/info")
+   @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet.class)
+   ListenableFuture<Set<VLANInfo>> listVLANInfo();
+
+   /**
+    * @see CloudSigmaClient#getVLANInfo
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
+   @Path("/resources/vlan/{uuid}/info")
+   ListenableFuture<VLANInfo> getVLANInfo(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#setVLANConfiguration
+    */
+   @POST
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
+   @Path("/resources/vlan/{uuid}/set")
+   ListenableFuture<VLANInfo> renameVLAN(@PathParam("uuid") String uuid,
+         @BinderParam(BindNameToPayload.class) String name);
+
+   /**
+    * @see CloudSigmaClient#listVLANs
+    */
+   @GET
+   @Path("/resources/vlan/list")
+   @ResponseParser(SplitNewlinesAndReturnSecondField.class)
+   ListenableFuture<Set<String>> listVLANs();
+
+   /**
+    * @see CloudSigmaClient#destroyVLAN
+    */
+   @POST
+   @Path("/resources/vlan/{uuid}/destroy")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> destroyVLAN(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#createStaticIP
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToStaticIPInfo.class)
+   @Path("/resources/ip/create")
+   ListenableFuture<StaticIPInfo> createStaticIP();
+
+   /**
+    * @see CloudSigmaClient#listStaticIPInfo
+    */
+   @GET
+   @Path("/resources/ip/info")
+   @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet.class)
+   ListenableFuture<Set<StaticIPInfo>> listStaticIPInfo();
+
+   /**
+    * @see CloudSigmaClient#getStaticIPInfo
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToStaticIPInfo.class)
+   @Path("/resources/ip/{uuid}/info")
+   ListenableFuture<StaticIPInfo> getStaticIPInfo(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#listStaticIPs
+    */
+   @GET
+   @Path("/resources/ip/list")
+   @ResponseParser(SplitNewlinesAndReturnSecondField.class)
+   ListenableFuture<Set<String>> listStaticIPs();
+
+   /**
+    * @see CloudSigmaClient#destroyStaticIP
+    */
+   @POST
+   @Path("/resources/ip/{uuid}/destroy")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> destroyStaticIP(@PathParam("uuid") String uuid);
+
 }

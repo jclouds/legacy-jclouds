@@ -19,37 +19,41 @@
 
 package org.jclouds.cloudsigma.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
+import java.util.Map;
 
-import java.util.Set;
-
-import javax.inject.Inject;
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.cloudsigma.domain.VLANInfo;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+public class MapToVLANInfo implements Function<Map<String, String>, VLANInfo> {
 
-   @Inject
-   protected SplitNewlines(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
-   }
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    @Override
-   public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+   public VLANInfo apply(Map<String, String> from) {
+      if (from.size() == 0)
+         return null;
+      if (from.size() == 0)
+         return null;
+      VLANInfo.Builder builder = new VLANInfo.Builder();
+      builder.uuid(from.get("resource"));
+      builder.name(from.get("name"));
+      builder.user(from.get("user"));
+     try {
+         return builder.build();
+      } catch (NullPointerException e) {
+         logger.trace("entry missing data: %s; %s", e.getMessage(), from);
+         return null;
+      }
    }
 }
