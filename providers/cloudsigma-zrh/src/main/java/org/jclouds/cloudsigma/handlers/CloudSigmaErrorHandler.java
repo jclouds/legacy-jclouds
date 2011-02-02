@@ -64,6 +64,8 @@ public class CloudSigmaErrorHandler implements HttpErrorHandler {
             if ((command.getCurrentRequest().getEndpoint().getPath().endsWith("/info"))
                   || (message != null && message.indexOf("could not be found") != -1))
                exception = new ResourceNotFoundException(message, exception);
+            else if (message != null && message.indexOf("currently in use") != -1)
+               exception = new IllegalStateException(message, exception);
             else
                exception = new IllegalArgumentException(message, exception);
             break;

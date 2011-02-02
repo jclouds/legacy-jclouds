@@ -33,9 +33,14 @@ import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToProfileInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToStaticIPInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToVLANInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet;
 import org.jclouds.cloudsigma.functions.SplitNewlines;
+import org.jclouds.cloudsigma.functions.SplitNewlinesAndReturnSecondField;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -77,6 +82,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       checkFilters(httpRequest);
 
    }
+
    public void testListStandardDrives() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("listStandardDrives");
       HttpRequest httpRequest = processor.createRequest(method);
@@ -208,8 +214,8 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
 
    public void testSetDriveData() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("setDriveData", String.class, DriveData.class);
-      HttpRequest httpRequest = processor.createRequest(method, "100",
-            new DriveData.Builder().name("foo").size(10000l).use(ImmutableList.of("production", "candy")).build());
+      HttpRequest httpRequest = processor.createRequest(method, "100", new DriveData.Builder().name("foo").size(10000l)
+            .use(ImmutableList.of("production", "candy")).build());
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -283,8 +289,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
 
    public void testCreateServer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("createServer", Server.class);
-      HttpRequest httpRequest = processor.createRequest(method,
-            BindServerToPlainTextStringTest.SERVER);
+      HttpRequest httpRequest = processor.createRequest(method, BindServerToPlainTextStringTest.SERVER);
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -300,8 +305,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
 
    public void testSetServerConfiguration() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("setServerConfiguration", String.class, Server.class);
-      HttpRequest httpRequest = processor.createRequest(method, "100",
-            BindServerToPlainTextStringTest.SERVER);
+      HttpRequest httpRequest = processor.createRequest(method, "100", BindServerToPlainTextStringTest.SERVER);
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -427,6 +431,202 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/uuid/destroy HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListVLANs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("listVLANs");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // now make sure request filters apply by replaying
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/list HTTP/1.1");
+      // for example, using basic authentication, we should get "only one"
+      // header
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // TODO: insert expected response class, which probably extends ParseJson
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlinesAndReturnSecondField.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListVLANInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("listVLANInfo");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetVLANInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("getVLANInfo", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "uuid");
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/uuid/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateVLAN() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("createVLAN", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "poohbear");
+
+      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/create HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "name poohbear\n", "text/plain", false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testRenameVLAN() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("renameVLAN", String.class, String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "100", "poohbear");
+
+      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/100/set HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "name poohbear\n", "text/plain", false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDestroyVLAN() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("destroyVLAN", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "uuid");
+
+      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/uuid/destroy HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListStaticIPs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("listStaticIPs");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // now make sure request filters apply by replaying
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/list HTTP/1.1");
+      // for example, using basic authentication, we should get "only one"
+      // header
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // TODO: insert expected response class, which probably extends ParseJson
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlinesAndReturnSecondField.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListStaticIPInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("listStaticIPInfo");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetStaticIPInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("getStaticIPInfo", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "uuid");
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/uuid/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToStaticIPInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateStaticIP() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("createStaticIP");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/ip/create HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToStaticIPInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDestroyStaticIP() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("destroyStaticIP", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "uuid");
+
+      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/ip/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

@@ -28,6 +28,8 @@ import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.domain.StaticIPInfo;
+import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -40,7 +42,7 @@ import org.jclouds.concurrent.Timeout;
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface CloudSigmaClient  {
+public interface CloudSigmaClient {
 
    /**
     * Get profile info
@@ -48,14 +50,14 @@ public interface CloudSigmaClient  {
     * @return info or null, if not found
     */
    ProfileInfo getProfileInfo();
-   
+
    /**
     * list of server uuids in your account
     * 
     * @return or empty set if no servers are found
     */
    Set<String> listServers();
-   
+
    /**
     * Get all servers info
     * 
@@ -220,5 +222,88 @@ public interface CloudSigmaClient  {
     */
    DriveInfo cloneDrive(String sourceUuid, String newName, CloneDriveOptions... options);
 
+   /**
+    * list of vlan uuids in your account
+    * 
+    * @return or empty set if no vlans are found
+    */
+   Set<String> listVLANs();
+
+   /**
+    * Get all vlans info
+    * 
+    * @return or empty set if no vlans are found
+    */
+   Set<? extends VLANInfo> listVLANInfo();
+
+   /**
+    * @param uuid
+    *           what to get
+    * @return null, if not found
+    */
+   VLANInfo getVLANInfo(String uuid);
+
+   /**
+    * create a new vlan
+    * 
+    * @param vlan
+    * @return newly created vlan
+    */
+   VLANInfo createVLAN(String name);
+
+   /**
+    * set vlan configuration
+    * 
+    * @param uuid
+    *           what vlan to change
+    * @param newName
+    *           what the new name is
+    * @return new data
+    */
+   VLANInfo renameVLAN(String uuid, String newName);
+
+   /**
+    * Destroy a vlan
+    * 
+    * @param uuid
+    *           what to destroy
+    */
+   void destroyVLAN(String uuid);
+
+   /**
+    * list of ip uuids in your account
+    * 
+    * @return or empty set if no ips are found
+    */
+   Set<String> listStaticIPs();
+
+   /**
+    * Get all ips info
+    * 
+    * @return or empty set if no ips are found
+    */
+   Set<? extends StaticIPInfo> listStaticIPInfo();
+
+   /**
+    * @param uuid
+    *           what to get
+    * @return null, if not found
+    */
+   StaticIPInfo getStaticIPInfo(String uuid);
+
+   /**
+    * create a new ip
+    * 
+    * @return newly created ip
+    */
+   StaticIPInfo createStaticIP();
+
+   /**
+    * Destroy a ip
+    * 
+    * @param uuid
+    *           what to destroy
+    */
+   void destroyStaticIP(String uuid);
 
 }
