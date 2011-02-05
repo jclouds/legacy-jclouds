@@ -97,6 +97,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
@@ -764,6 +765,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<? extends Set<String>> testUnwrap4();
 
+      @GET
+      @Path("/")
+      @Unwrap(depth = 2)
+      @Consumes(MediaType.APPLICATION_JSON)
+      ListenableFuture<? extends Set<String>> testUnwrapDepth2();
+
       @Target( { ElementType.METHOD })
       @Retention(RetentionPolicy.RUNTIME)
       @HttpMethod("ROWDY")
@@ -931,6 +938,21 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))),
                ImmutableSet.of("0.7.0", "0.7.1"));
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testUnwrapDepth2() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("testUnwrapDepth2");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValue.class);
+      // now test that it works!
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+               .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok",
+               newStringPayload("{\"runit\":{\"runit\":[\"0.7.0\",\"0.7.1\"]}}"))), ImmutableSet.of("0.7.0", "0.7.1"));
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {

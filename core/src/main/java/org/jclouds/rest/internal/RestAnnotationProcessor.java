@@ -87,6 +87,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
@@ -783,10 +784,17 @@ public class RestAnnotationProcessor<T> {
                returnVal = method.getGenericReturnType();
             }
             ParameterizedType parserType;
-            if (method.isAnnotationPresent(Unwrap.class))
-               parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
-            else
+            if (method.isAnnotationPresent(Unwrap.class)) {
+               int nestingLevel = method.getAnnotation(Unwrap.class).depth();
+               if (nestingLevel == 1)
+                  parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
+               else if (nestingLevel == 2)
+                  parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
+               else
+                  throw new IllegalStateException("nesting level " + nestingLevel + " not yet supported for @Unwrap");
+            } else {
                parserType = Types.newParameterizedType(ParseJson.class, returnVal);
+            }
             return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
          } else if (method.getReturnType().equals(String.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {

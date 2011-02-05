@@ -35,4 +35,19 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 public @interface Unwrap {
+   /**
+    * level to unwrap.
+    * 
+    * ex. if default (1)
+    * 
+    * { "foo" :"bar" } becomes "bar"
+    * 
+    * ex. if (2)
+    * 
+    * { "foo" : {"bar" : "baz} } becomes "baz"
+    * 
+    * @return nestingLevel
+    */
+   int depth() default 1;
+
 }
