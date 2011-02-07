@@ -88,6 +88,7 @@ import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
@@ -785,13 +786,17 @@ public class RestAnnotationProcessor<T> {
             }
             ParameterizedType parserType;
             if (method.isAnnotationPresent(Unwrap.class)) {
-               int nestingLevel = method.getAnnotation(Unwrap.class).depth();
-               if (nestingLevel == 1)
+               int depth = method.getAnnotation(Unwrap.class).depth();
+               Class edgeCollection = method.getAnnotation(Unwrap.class).edgeCollection();
+               if (depth == 1 && edgeCollection == Map.class)
                   parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
-               else if (nestingLevel == 2)
+               else if (depth == 2 && edgeCollection == Map.class)
                   parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
+               else if (depth == 3 && edgeCollection == Set.class)
+                  parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValueInSet.class, returnVal);
                else
-                  throw new IllegalStateException("nesting level " + nestingLevel + " not yet supported for @Unwrap");
+                  throw new IllegalStateException(String.format(
+                           "depth(%d) edgeCollection(%s) not yet supported for @Unwrap", depth, edgeCollection));
             } else {
                parserType = Types.newParameterizedType(ParseJson.class, returnVal);
             }

@@ -24,9 +24,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
- * Unwraps the only value in the json reponse
+ * Unwraps the only value in a nested json reponse
  * 
  * ex. { "foo" :"bar" } becomes "bar"
  * 
@@ -44,10 +45,27 @@ public @interface Unwrap {
     * 
     * ex. if (2)
     * 
-    * { "foo" : {"bar" : "baz} } becomes "baz"
+    * { "foo" : {"bar" : ["baz"]} } becomes ["baz"]
     * 
     * @return nestingLevel
     */
    int depth() default 1;
+
+   /**
+    * final collection type
+    * 
+    * ex. if depth(2), edgeCollection(Map.class)
+    * 
+    * { "foo" : {"bar" : ["baz"]} } becomes ["baz"]
+    * 
+    * ex. if depth(3), edgeCollection(Set.class)
+    * 
+    * { "foo" : {"bar" : ["baz"]} } becomes "baz"
+    * 
+    * <h4>Note</h4> only Map and Set are valid
+    * 
+    * @return
+    */
+   Class<?> edgeCollection() default Map.class;
 
 }
