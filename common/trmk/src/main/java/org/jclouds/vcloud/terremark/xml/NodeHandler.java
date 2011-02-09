@@ -54,18 +54,21 @@ public class NodeHandler extends HandlerWithResult<Node> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Href") && currentOrNull() != null) {
-         location = URI.create(currentOrNull());
-      } else if (qName.equals("Name")) {
-         serviceName = currentOrNull();
-      } else if (qName.equals("Port")) {
-         port = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Enabled")) {
-         enabled = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("IpAddress")) {
-         address = currentOrNull();
-      } else if (qName.equals("Description")) {
-         description = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Href")) {
+            location = URI.create(current);
+         } else if (qName.equals("Name")) {
+            serviceName = current;
+         } else if (qName.equals("Port")) {
+            port = Integer.parseInt(current);
+         } else if (qName.equals("Enabled")) {
+            enabled = Boolean.parseBoolean(current);
+         } else if (qName.equals("IpAddress")) {
+            address = current;
+         } else if (qName.equals("Description")) {
+            description = current;
+         }
       }
       currentText = new StringBuilder();
    }

@@ -53,16 +53,19 @@ public class KeyPairHandler extends HandlerWithResult<KeyPair> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Href") && currentOrNull() != null) {
-         location = URI.create(currentOrNull());
-      } else if (qName.equals("Name")) {
-         this.name = currentOrNull();
-      } else if (qName.equals("IsDefault")) {
-         isDefault = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("PrivateKey")) {
-         privateKey = currentOrNull();
-      } else if (qName.equals("FingerPrint")) {
-         fingerPrint = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Href")) {
+            location = URI.create(current);
+         } else if (qName.equals("Name")) {
+            this.name = current;
+         } else if (qName.equals("IsDefault")) {
+            isDefault = Boolean.parseBoolean(current);
+         } else if (qName.equals("PrivateKey")) {
+            privateKey = current;
+         } else if (qName.equals("FingerPrint")) {
+            fingerPrint = current;
+         }
       }
       currentText = new StringBuilder();
    }
