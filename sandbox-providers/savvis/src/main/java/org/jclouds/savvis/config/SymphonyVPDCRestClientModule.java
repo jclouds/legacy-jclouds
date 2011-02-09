@@ -19,6 +19,8 @@
 
 package org.jclouds.savvis.config;
 
+import java.net.URI;
+
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
@@ -31,6 +33,7 @@ import org.jclouds.savvis.handlers.SymphonyVPDCErrorHandler;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
+import org.jclouds.vcloud.domain.Org;
 
 import com.google.inject.Provides;
 
@@ -52,7 +55,15 @@ public class SymphonyVPDCRestClientModule extends
    protected VCloudExpressClient provideVCloudClient(SymphonyVPDCClient in) {
       return in;
    }
-
+   
+   @Override
+   protected URI provideDefaultTasksList(Org org) {
+	   if(org.getTasksList() != null){
+		   return org.getTasksList().getHref();
+	   }else{
+		   return URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/tasksList");
+	   }
+   }
    
    
    @Override
