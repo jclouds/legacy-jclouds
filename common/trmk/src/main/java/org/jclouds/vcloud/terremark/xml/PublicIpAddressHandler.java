@@ -52,10 +52,13 @@ public class PublicIpAddressHandler extends HandlerWithResult<PublicIpAddress> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Href") && currentOrNull() != null) {
-         location = URI.create(currentOrNull());
-      } else if (qName.equals("Name")) {
-         address = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Href")) {
+            location = URI.create(current);
+         } else if (qName.equals("Name")) {
+            address = current;
+         }
       }
       currentText = new StringBuilder();
    }

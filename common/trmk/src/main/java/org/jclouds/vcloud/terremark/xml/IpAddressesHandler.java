@@ -53,8 +53,7 @@ public class IpAddressesHandler extends ParseSax.HandlerWithResult<Set<IpAddress
       return addresses;
    }
 
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (attributes.getIndex("xsi:nil") != -1) {
          skip = true;
          return;
@@ -65,12 +64,15 @@ public class IpAddressesHandler extends ParseSax.HandlerWithResult<Set<IpAddress
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (qName.equals("Name")) {
-         address = currentOrNull();
-      } else if (qName.equals("Status")) {
-         status = IpAddress.Status.fromValue(currentOrNull());
-      } else if (!skip && qName.equals("Server")) {
-         server = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Name")) {
+            address = current;
+         } else if (qName.equals("Status")) {
+            status = IpAddress.Status.fromValue(current);
+         } else if (!skip && qName.equals("Server")) {
+            server = current;
+         }
       } else if (qName.equals("IpAddress")) {
          addresses.add(new IpAddress(address, status, server));
          address = null;

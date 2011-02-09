@@ -43,13 +43,21 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "InternetServicesHandlerTest")
 public class InternetServicesHandlerTest extends BaseHandlerTest {
 
-   public void test2() throws UnknownHostException {
+   public void test() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/InternetServices.xml");
 
       Set<InternetService> result = factory.create(injector.getInstance(InternetServicesHandler.class)).parse(is);
       assertEquals(result, ImmutableSet.of(new InternetService("IS_for_Jim2", URI
-            .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"), new PublicIpAddress(
-            "10.1.22.159", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")), 45,
-            Protocol.HTTP, false, 1, "Some test service")));
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"),
+               new PublicIpAddress("10.1.22.159", URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")), 45,
+               Protocol.HTTP, false, 1, "Some test service")));
+   }
+
+   public void test2() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/terremark/InternetServices-2.xml");
+
+      Set<InternetService> result = factory.create(injector.getInstance(InternetServicesHandler.class)).parse(is);
+      assertEquals(result.size(), 6);
    }
 }
