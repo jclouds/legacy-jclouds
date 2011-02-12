@@ -29,6 +29,8 @@ import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.OfferingClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
 import org.jclouds.cloudstack.features.TemplateClient;
+import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
+import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
@@ -58,6 +60,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
             .put(TemplateClient.class, TemplateAsyncClient.class)//
             .put(OfferingClient.class, OfferingAsyncClient.class)//
             .put(NetworkClient.class, NetworkAsyncClient.class)//
+         .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
             .build();
 
    public CloudStackRestClientModule() {

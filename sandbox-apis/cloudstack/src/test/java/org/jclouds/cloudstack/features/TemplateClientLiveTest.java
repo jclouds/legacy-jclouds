@@ -41,8 +41,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testListTemplates() throws Exception {
       Set<Template> response = client.getTemplateClient().listTemplates();
       assert null != response;
-      long zoneCount = response.size();
-      assertTrue(zoneCount >= 0);
+      long templateCount = response.size();
+      assertTrue(templateCount >= 0);
       for (Template template : response) {
          Template newDetails = Iterables.getOnlyElement(client.getTemplateClient().listTemplates(
                   ListTemplatesOptions.Builder.id(template.getId())));
@@ -58,7 +58,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert template.getAccount() != null : template;
          assert template.getZone() != null : template;
          assert template.getZoneId() != null : template;
-         assert template.getStatus() != null : template;
+         assert template.getStatus() == null : template;
          assert template.getType() != null && template.getType() != Template.Type.UNRECOGNIZED : template;
          assert template.getHypervisor() != null : template;
          assert template.getDomain() != null : template;

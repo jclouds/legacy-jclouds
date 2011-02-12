@@ -22,6 +22,7 @@ package org.jclouds.cloudstack;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
+import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -58,4 +59,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    NetworkAsyncClient getNetworkClient();
+   
+   /**
+    * Provides asynchronous access to VirtualMachine features.
+    */
+   @Delegate
+   VirtualMachineAsyncClient getVirtualMachineClient();
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
 import org.jclouds.cloudstack.features.TemplateClient;
+import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -62,4 +63,9 @@ public interface CloudStackClient {
    @Delegate
    NetworkClient getNetworkClient();
 
+   /**
+    * Provides synchronous access to VirtualMachine features.
+    */
+   @Delegate
+   VirtualMachineClient getVirtualMachineClient();
 }
