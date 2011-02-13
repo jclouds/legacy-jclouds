@@ -38,42 +38,42 @@ import com.google.common.collect.ImmutableList;
 public class ListServiceOfferingsOptionsTest {
 
    public void testId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListServiceOfferingsOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListServiceOfferingsOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testName() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().name("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("name"));
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().name("name");
+      assertEquals(ImmutableList.of("name"), options.buildQueryParameters().get("name"));
    }
 
    public void testNameStatic() {
-      ListServiceOfferingsOptions options = name("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("name"));
+      ListServiceOfferingsOptions options = name("name");
+      assertEquals(ImmutableList.of("name"), options.buildQueryParameters().get("name"));
    }
 
    public void testDomainId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListServiceOfferingsOptions options = domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListServiceOfferingsOptions options = domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testVirtualMachineId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().virtualMachineId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("virtualmachineid"));
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().virtualMachineId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListServiceOfferingsOptions options = virtualMachineId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("virtualmachineid"));
+      ListServiceOfferingsOptions options = virtualMachineId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 }

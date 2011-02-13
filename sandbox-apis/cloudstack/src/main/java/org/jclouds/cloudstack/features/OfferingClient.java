@@ -56,7 +56,7 @@ public interface OfferingClient {
     *           offering to get
     * @return service offering or null if not found
     */
-   ServiceOffering getServiceOffering(String id);
+   ServiceOffering getServiceOffering(long id);
 
    /**
     * Lists disk offerings
@@ -74,7 +74,7 @@ public interface OfferingClient {
     *           offering to get
     * @return disk offering or null if not found
     */
-   DiskOffering getDiskOffering(String id);
+   DiskOffering getDiskOffering(long id);
 
    /**
     * Lists service offerings
@@ -92,5 +92,5 @@ public interface OfferingClient {
     *           offering to get
     * @return service offering or null if not found
     */
-   NetworkOffering getNetworkOffering(String id);
+   NetworkOffering getNetworkOffering(long id);
 }

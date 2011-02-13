@@ -68,6 +68,6 @@ public interface NetworkAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Network> getNetwork(@QueryParam("id") String id);
+   ListenableFuture<Network> getNetwork(@QueryParam("id") long id);
 
 }

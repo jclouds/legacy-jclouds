@@ -75,23 +75,23 @@ public class ListNetworksOptionsTest {
    }
 
    public void testId() {
-      ListNetworksOptions options = new ListNetworksOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworksOptions options = new ListNetworksOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListNetworksOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworksOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainId() {
-      ListNetworksOptions options = new ListNetworksOptions().domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListNetworksOptions options = new ListNetworksOptions().domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListNetworksOptions options = domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListNetworksOptions options = domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountId() {
@@ -115,23 +115,23 @@ public class ListNetworksOptionsTest {
    }
 
    public void testName() {
-      ListNetworksOptions options = new ListNetworksOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworksOptions options = new ListNetworksOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListNetworksOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworksOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testZoneId() {
-      ListNetworksOptions options = new ListNetworksOptions().zoneId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("zoneid"));
+      ListNetworksOptions options = new ListNetworksOptions().zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListNetworksOptions options = zoneId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("zoneid"));
+      ListNetworksOptions options = zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testType() {

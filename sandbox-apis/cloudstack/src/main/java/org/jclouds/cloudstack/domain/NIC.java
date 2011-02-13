@@ -28,7 +28,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class NIC {
-   private String id;
+   private long id;
    @SerializedName("broadcasturi")
    private URI broadcastURI;
    private String gateway;
@@ -40,7 +40,7 @@ public class NIC {
    private URI isolationURI;
    private String netmask;
    @SerializedName("networkid")
-   private String networkId;
+   private long networkId;
    @SerializedName("traffictype")
    private TrafficType trafficType;
    @SerializedName("type")
@@ -54,8 +54,8 @@ public class NIC {
 
    }
 
-   public NIC(String id, URI broadcastURI, String gateway, String iPAddress, boolean isDefault, URI isolationURI,
-         String netmask, String networkId, TrafficType trafficType, GuestIPType guestIPType) {
+   public NIC(long id, URI broadcastURI, String gateway, String iPAddress, boolean isDefault, URI isolationURI,
+         String netmask, long networkId, TrafficType trafficType, GuestIPType guestIPType) {
       this.id = id;
       this.broadcastURI = broadcastURI;
       this.gateway = gateway;
@@ -71,7 +71,7 @@ public class NIC {
    /**
     * the ID of the nic
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -120,7 +120,7 @@ public class NIC {
    /**
     * the ID of the corresponding network
     */
-   public String getNetworkId() {
+   public long getNetworkId() {
       return networkId;
    }
 
@@ -146,11 +146,11 @@ public class NIC {
       result = prime * result + ((broadcastURI == null) ? 0 : broadcastURI.hashCode());
       result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
       result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (isDefault ? 1231 : 1237);
       result = prime * result + ((isolationURI == null) ? 0 : isolationURI.hashCode());
       result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
-      result = prime * result + ((networkId == null) ? 0 : networkId.hashCode());
+      result = prime * result + (int) (networkId ^ (networkId >>> 32));
       result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
       return result;
    }
@@ -181,10 +181,7 @@ public class NIC {
          return false;
       if (guestIPType != other.guestIPType)
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (isDefault != other.isDefault)
          return false;
@@ -198,10 +195,7 @@ public class NIC {
             return false;
       } else if (!netmask.equals(other.netmask))
          return false;
-      if (networkId == null) {
-         if (other.networkId != null)
-            return false;
-      } else if (!networkId.equals(other.networkId))
+      if (networkId != other.networkId)
          return false;
       if (trafficType != other.trafficType)
          return false;

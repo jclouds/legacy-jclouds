@@ -37,8 +37,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the virtual machine
     */
-   public ListVirtualMachinesOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+   public ListVirtualMachinesOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -64,8 +64,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           the ID of the domain associated with the virtual machine
     */
-   public ListVirtualMachinesOptions domainId(String domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId));
+   public ListVirtualMachinesOptions domainId(long domainId) {
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
    }
@@ -77,8 +77,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param domain
     *           domain id
     */
-   public ListVirtualMachinesOptions accountInDomain(String account, String domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+   public ListVirtualMachinesOptions accountInDomain(long account, long domain) {
+      this.queryParameters.replaceValues("account", ImmutableSet.of(account + ""));
       return domainId(domain);
    }
 
@@ -86,8 +86,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param groupId
     *           list virtual machines by groupId.
     */
-   public ListVirtualMachinesOptions groupId(String groupId) {
-      this.queryParameters.replaceValues("groupid", ImmutableSet.of(groupId));
+   public ListVirtualMachinesOptions groupId(long groupId) {
+      this.queryParameters.replaceValues("groupid", ImmutableSet.of(groupId + ""));
       return this;
 
    }
@@ -96,8 +96,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param hostId
     *           list virtual machines by hostId.
     */
-   public ListVirtualMachinesOptions hostId(String hostId) {
-      this.queryParameters.replaceValues("hostid", ImmutableSet.of(hostId));
+   public ListVirtualMachinesOptions hostId(long hostId) {
+      this.queryParameters.replaceValues("hostid", ImmutableSet.of(hostId + ""));
       return this;
 
    }
@@ -106,8 +106,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param networkId
     *           list virtual machines by networkId.
     */
-   public ListVirtualMachinesOptions networkId(String networkId) {
-      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId));
+   public ListVirtualMachinesOptions networkId(long networkId) {
+      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
 
    }
@@ -116,8 +116,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param podId
     *           list virtual machines by podId.
     */
-   public ListVirtualMachinesOptions podId(String podId) {
-      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId));
+   public ListVirtualMachinesOptions podId(long podId) {
+      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
 
    }
@@ -126,8 +126,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param zoneId
     *           list virtual machines by zoneId.
     */
-   public ListVirtualMachinesOptions zoneId(String zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId));
+   public ListVirtualMachinesOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
    }
@@ -147,7 +147,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#accountInDomain
        */
-      public static ListVirtualMachinesOptions accountInDomain(String account, String domain) {
+      public static ListVirtualMachinesOptions accountInDomain(long account, long domain) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -155,7 +155,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#domainId
        */
-      public static ListVirtualMachinesOptions domainId(String id) {
+      public static ListVirtualMachinesOptions domainId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.domainId(id);
       }
@@ -163,7 +163,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#id
        */
-      public static ListVirtualMachinesOptions id(String id) {
+      public static ListVirtualMachinesOptions id(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.id(id);
       }
@@ -187,7 +187,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#groupId
        */
-      public static ListVirtualMachinesOptions groupId(String id) {
+      public static ListVirtualMachinesOptions groupId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.groupId(id);
       }
@@ -195,7 +195,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#hostId
        */
-      public static ListVirtualMachinesOptions hostId(String id) {
+      public static ListVirtualMachinesOptions hostId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.hostId(id);
       }
@@ -203,7 +203,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#networkId
        */
-      public static ListVirtualMachinesOptions networkId(String id) {
+      public static ListVirtualMachinesOptions networkId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.networkId(id);
       }
@@ -211,7 +211,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#podId
        */
-      public static ListVirtualMachinesOptions podId(String id) {
+      public static ListVirtualMachinesOptions podId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.podId(id);
       }
@@ -219,7 +219,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#zoneId
        */
-      public static ListVirtualMachinesOptions zoneId(String id) {
+      public static ListVirtualMachinesOptions zoneId(long id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.zoneId(id);
       }

@@ -32,14 +32,14 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class ServiceOffering {
-   private String id;
+   private long id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    @SerializedName("cpunumber")
    private int cpuNumber;
    @SerializedName("cpuspeed")
@@ -51,7 +51,7 @@ public class ServiceOffering {
    private StorageType storageType;
    private String tags;
 
-   public ServiceOffering(String id, String name, String displayText, Date created, String domain, String domainId,
+   public ServiceOffering(long id, String name, String displayText, Date created, String domain, long domainId,
             int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags) {
       this.id = id;
       this.name = name;
@@ -79,7 +79,7 @@ public class ServiceOffering {
     * 
     * @return the id of the service offering
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -120,7 +120,7 @@ public class ServiceOffering {
     * 
     * @return the domain id of the service offering
     */
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -181,9 +181,9 @@ public class ServiceOffering {
       result = prime * result + ((created == null) ? 0 : created.hashCode());
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + (haSupport ? 1231 : 1237);
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + memory;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
@@ -219,17 +219,11 @@ public class ServiceOffering {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
       if (haSupport != other.haSupport)
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (memory != other.memory)
          return false;
@@ -238,10 +232,7 @@ public class ServiceOffering {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (storageType == null) {
-         if (other.storageType != null)
-            return false;
-      } else if (!storageType.equals(other.storageType))
+      if (storageType != other.storageType)
          return false;
       if (tags == null) {
          if (other.tags != null)

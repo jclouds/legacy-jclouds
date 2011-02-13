@@ -68,6 +68,6 @@ public interface ZoneAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Zone> getZone(@QueryParam("id") String id);
+   ListenableFuture<Zone> getZone(@QueryParam("id") long id);
 
 }

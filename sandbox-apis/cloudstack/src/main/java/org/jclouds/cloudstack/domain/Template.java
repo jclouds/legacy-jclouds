@@ -58,23 +58,23 @@ public class Template {
       }
    }
 
-   private String id;
+   private long id;
    @SerializedName("displaytext")
    private String displayText;
    private String domain;
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    private String account;
    @SerializedName("accountid")
-   private String accountId;
+   private long accountId;
    @SerializedName("zonename")
    private String zone;
    @SerializedName("zoneid")
-   private String zoneId;
+   private long zoneId;
    @SerializedName("ostypename")
    private String OSType;
    @SerializedName("ostypeid")
-   private String OSTypeId;
+   private long OSTypeId;
    private String name;
    @SerializedName("templatetype")
    private Type type;
@@ -100,15 +100,15 @@ public class Template {
    private boolean passwordEnabled;
    @Nullable
    @SerializedName("jobid")
-   private String jobId;
+   private Long jobId;
    @SerializedName("jobstatus")
    private String jobStatus;
 
-   public Template(String id, String displayText, String domain, String domainId, String account, String accountId,
-            String zone, String zoneId, String oSType, String oSTypeId, String name, Type type, String status,
+   public Template(long id, String displayText, String domain, long domainId, String account, long accountId,
+            String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status,
             Format format, String hypervisor, Long size, Date created, Date removed, boolean crossZones,
             boolean bootable, boolean extractable, boolean featured, boolean ispublic, boolean ready,
-            boolean passwordEnabled, String jobId, String jobStatus) {
+            boolean passwordEnabled, Long jobId, String jobStatus) {
       this.id = id;
       this.displayText = displayText;
       this.domain = domain;
@@ -150,7 +150,7 @@ public class Template {
     * 
     * @return Template id
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -174,7 +174,7 @@ public class Template {
     * 
     * @return the ID of the domain to which the template beLongs
     */
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -190,7 +190,7 @@ public class Template {
     * 
     * @return the ID of the account to which the template beLongs
     */
-   public String getAccountId() {
+   public long getAccountId() {
       return accountId;
    }
 
@@ -206,7 +206,7 @@ public class Template {
     * 
     * @return the ID of the zone to which the template beLongs
     */
-   public String getZoneId() {
+   public long getZoneId() {
       return zoneId;
    }
 
@@ -222,7 +222,7 @@ public class Template {
     * 
     * @return the ID of the OS type to which the template beLongs
     */
-   public String getOSTypeId() {
+   public long getOSTypeId() {
       return OSTypeId;
    }
 
@@ -352,7 +352,7 @@ public class Template {
     *         acting on the template
     */
    @Nullable
-   public String getJobId() {
+   public Long getJobId() {
       return jobId;
    }
 
@@ -369,20 +369,20 @@ public class Template {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((OSType == null) ? 0 : OSType.hashCode());
-      result = prime * result + ((OSTypeId == null) ? 0 : OSTypeId.hashCode());
+      result = prime * result + (int) (OSTypeId ^ (OSTypeId >>> 32));
       result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((accountId == null) ? 0 : accountId.hashCode());
+      result = prime * result + (int) (accountId ^ (accountId >>> 32));
       result = prime * result + (bootable ? 1231 : 1237);
       result = prime * result + ((created == null) ? 0 : created.hashCode());
       result = prime * result + (crossZones ? 1231 : 1237);
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + (extractable ? 1231 : 1237);
       result = prime * result + (featured ? 1231 : 1237);
       result = prime * result + ((format == null) ? 0 : format.hashCode());
       result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (ispublic ? 1231 : 1237);
       result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
       result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
@@ -394,7 +394,7 @@ public class Template {
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((zone == null) ? 0 : zone.hashCode());
-      result = prime * result + ((zoneId == null) ? 0 : zoneId.hashCode());
+      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
       return result;
    }
 
@@ -412,20 +412,14 @@ public class Template {
             return false;
       } else if (!OSType.equals(other.OSType))
          return false;
-      if (OSTypeId == null) {
-         if (other.OSTypeId != null)
-            return false;
-      } else if (!OSTypeId.equals(other.OSTypeId))
+      if (OSTypeId != other.OSTypeId)
          return false;
       if (account == null) {
          if (other.account != null)
             return false;
       } else if (!account.equals(other.account))
          return false;
-      if (accountId == null) {
-         if (other.accountId != null)
-            return false;
-      } else if (!accountId.equals(other.accountId))
+      if (accountId != other.accountId)
          return false;
       if (bootable != other.bootable)
          return false;
@@ -446,29 +440,20 @@ public class Template {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
       if (extractable != other.extractable)
          return false;
       if (featured != other.featured)
          return false;
-      if (format == null) {
-         if (other.format != null)
-            return false;
-      } else if (!format.equals(other.format))
+      if (format != other.format)
          return false;
       if (hypervisor == null) {
          if (other.hypervisor != null)
             return false;
       } else if (!hypervisor.equals(other.hypervisor))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (ispublic != other.ispublic)
          return false;
@@ -506,20 +491,14 @@ public class Template {
             return false;
       } else if (!status.equals(other.status))
          return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
+      if (type != other.type)
          return false;
       if (zone == null) {
          if (other.zone != null)
             return false;
       } else if (!zone.equals(other.zone))
          return false;
-      if (zoneId == null) {
-         if (other.zoneId != null)
-            return false;
-      } else if (!zoneId.equals(other.zoneId))
+      if (zoneId != other.zoneId)
          return false;
       return true;
    }

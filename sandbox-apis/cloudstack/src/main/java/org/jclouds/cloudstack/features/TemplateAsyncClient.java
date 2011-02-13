@@ -78,6 +78,6 @@ public interface TemplateAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Template> getTemplate(@QueryParam("id") String id);
+   ListenableFuture<Template> getTemplate(@QueryParam("id") long id);
 
 }

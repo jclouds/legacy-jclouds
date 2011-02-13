@@ -41,70 +41,70 @@ import com.google.common.collect.ImmutableList;
 public class ListTemplatesOptionsTest {
 
    public void testId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListTemplatesOptions options = new ListTemplatesOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListTemplatesOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListTemplatesOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListTemplatesOptions options = new ListTemplatesOptions().domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListTemplatesOptions options = domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListTemplatesOptions options = domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain("moo", "goo");
-      assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("account"));
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain(5, 6);
+      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListTemplatesOptions options = accountInDomain("moo", "goo");
-      assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("account"));
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListTemplatesOptions options = accountInDomain(5, 6);
+      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testHypervisor() {
-      ListTemplatesOptions options = new ListTemplatesOptions().hypervisor("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("hypervisor"));
+      ListTemplatesOptions options = new ListTemplatesOptions().hypervisor("KVM");
+      assertEquals(ImmutableList.of("KVM"), options.buildQueryParameters().get("hypervisor"));
    }
 
    public void testHypervisorStatic() {
-      ListTemplatesOptions options = hypervisor("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("hypervisor"));
+      ListTemplatesOptions options = hypervisor("KVM");
+      assertEquals(ImmutableList.of("KVM"), options.buildQueryParameters().get("hypervisor"));
    }
 
    public void testName() {
-      ListTemplatesOptions options = new ListTemplatesOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListTemplatesOptions options = new ListTemplatesOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListTemplatesOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListTemplatesOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testZoneId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().zoneId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("zoneid"));
+      ListTemplatesOptions options = new ListTemplatesOptions().zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListTemplatesOptions options = zoneId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("zoneid"));
+      ListTemplatesOptions options = zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testFilterDefault() {
-      assertEquals(ImmutableList.of("executable"), new ListTemplatesOptions().buildQueryParameters().get(
-               "templatefilter"));
+      assertEquals(ImmutableList.of("executable"),
+            new ListTemplatesOptions().buildQueryParameters().get("templatefilter"));
    }
 
    public void testFilter() {

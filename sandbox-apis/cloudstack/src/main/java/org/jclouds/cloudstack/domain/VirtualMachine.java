@@ -54,7 +54,7 @@ public class VirtualMachine {
 
    }
 
-   private String id;
+   private long id;
    private String account;
    @SerializedName("cpunumber")
    private long cpuCount;
@@ -67,30 +67,30 @@ public class VirtualMachine {
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    @SerializedName("forvirtualnetwork")
    private boolean usesVirtualNetwork;
    private String group;
    @SerializedName("groupid")
-   private String groupId;
+   private long groupId;
    @SerializedName("guestosid")
-   private String guestOSId;
+   private long guestOSId;
    @SerializedName("haenable")
    private boolean HAEnabled;
    @SerializedName("hostid")
-   private String hostId;
+   private long hostId;
    private String hostname;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("isodisplaytext")
    private String ISODisplayText;
    @SerializedName("isoid")
-   private String ISOId;
+   private long ISOId;
    @SerializedName("isoname")
    private String ISOName;
    @SerializedName("jobid")
    @Nullable
-   private String jobId;
+   private Long jobId;
    @SerializedName("jobstatus")
    @Nullable
    private String jobStatus;
@@ -105,37 +105,37 @@ public class VirtualMachine {
    @SerializedName("passwordenabled")
    private boolean passwordEnabled;
    @SerializedName("rootdeviceid")
-   private String rootDeviceId;
+   private long rootDeviceId;
    @SerializedName("rootdevicetype")
    private String rootDeviceType;
    @SerializedName("securitygrouplist")
    private String securityGroupList;
    @SerializedName("serviceofferingid")
-   private String serviceOfferingId;
+   private long serviceOfferingId;
    @SerializedName("serviceofferingname")
    private String serviceOfferingName;
    private State state;
    @SerializedName("templatedisplaytext")
    private String templateDisplayText;
    @SerializedName("templateid")
-   private String templateId;
+   private long templateId;
    @SerializedName("templatename")
    private String templateName;
    @SerializedName("zoneid")
-   private String zoneId;
+   private long zoneId;
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("nic")
    private Set<? extends NIC> nics = ImmutableSet.<NIC> of();
    private String hypervisor;
 
-   public VirtualMachine(String id, String account, long cpuCount, long cpuSpeed, long cpuUsed, String displayName,
-         Date created, String domain, String domainId, boolean usesVirtualNetwork, String group, String groupId,
-         String guestOSId, boolean hAEnabled, String hostId, String hostname, String iPAddress, String iSODisplayText,
-         String iSOId, String iSOName, String jobId, String jobStatus, long memory, String name, Long networkKbsRead,
-         Long networkKbsWrite, String password, boolean passwordEnabled, String rootDeviceId, String rootDeviceType,
-         Set<String> securityGroupList, String serviceOfferingId, String serviceOfferingName, State state,
-         String templateDisplayText, String templateId, String templateName, String zoneId, String zoneName,
+   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, long cpuUsed, String displayName,
+         Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
+         long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
+         long iSOId, String iSOName, Long jobId, String jobStatus, long memory, String name, Long networkKbsRead,
+         Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
+         Set<String> securityGroupList, long serviceOfferingId, String serviceOfferingName, State state,
+         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName,
          Set<? extends NIC> nics, String hypervisor) {
       this.id = id;
       this.account = account;
@@ -190,7 +190,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the virtual machine
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -247,7 +247,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the domain in which the virtual machine exists
     */
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -268,14 +268,14 @@ public class VirtualMachine {
    /**
     * @return the group ID of the virtual machine
     */
-   public String getGroupId() {
+   public long getGroupId() {
       return groupId;
    }
 
    /**
     * @return Os type ID of the virtual machine
     */
-   public String getGuestOSId() {
+   public long getGuestOSId() {
       return guestOSId;
    }
 
@@ -289,7 +289,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the host for the virtual machine
     */
-   public String getHostId() {
+   public long getHostId() {
       return hostId;
    }
 
@@ -317,7 +317,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the ISO attached to the virtual machine
     */
-   public String getISOId() {
+   public long getISOId() {
       return ISOId;
    }
 
@@ -333,7 +333,7 @@ public class VirtualMachine {
     *         pending jobs are acting on the virtual machine
     */
    @Nullable
-   public String getJobId() {
+   public Long getJobId() {
       return jobId;
    }
 
@@ -391,7 +391,7 @@ public class VirtualMachine {
    /**
     * @return device ID of the root volume
     */
-   public String getRootDeviceId() {
+   public long getRootDeviceId() {
       return rootDeviceId;
    }
 
@@ -413,7 +413,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the service offering of the virtual machine
     */
-   public String getServiceOfferingId() {
+   public long getServiceOfferingId() {
       return serviceOfferingId;
    }
 
@@ -442,7 +442,7 @@ public class VirtualMachine {
     * @return the ID of the template for the virtual machine. A -1 is returned if the virtual
     *         machine was created from an ISO file.
     */
-   public String getTemplateId() {
+   public long getTemplateId() {
       return templateId;
    }
 
@@ -456,7 +456,7 @@ public class VirtualMachine {
    /**
     * @return the ID of the availablility zone for the virtual machine
     */
-   public String getZoneId() {
+   public long getZoneId() {
       return zoneId;
    }
 
@@ -488,7 +488,7 @@ public class VirtualMachine {
       result = prime * result + (HAEnabled ? 1231 : 1237);
       result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
       result = prime * result + ((ISODisplayText == null) ? 0 : ISODisplayText.hashCode());
-      result = prime * result + ((ISOId == null) ? 0 : ISOId.hashCode());
+      result = prime * result + (int) (ISOId ^ (ISOId >>> 32));
       result = prime * result + ((ISOName == null) ? 0 : ISOName.hashCode());
       result = prime * result + ((account == null) ? 0 : account.hashCode());
       result = prime * result + (int) (cpuCount ^ (cpuCount >>> 32));
@@ -497,14 +497,14 @@ public class VirtualMachine {
       result = prime * result + ((created == null) ? 0 : created.hashCode());
       result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + ((group == null) ? 0 : group.hashCode());
-      result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-      result = prime * result + ((guestOSId == null) ? 0 : guestOSId.hashCode());
-      result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
+      result = prime * result + (int) (groupId ^ (groupId >>> 32));
+      result = prime * result + (int) (guestOSId ^ (guestOSId >>> 32));
+      result = prime * result + (int) (hostId ^ (hostId >>> 32));
       result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
       result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
       result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
       result = prime * result + (int) (memory ^ (memory >>> 32));
@@ -514,17 +514,17 @@ public class VirtualMachine {
       result = prime * result + ((nics == null) ? 0 : nics.hashCode());
       result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + (passwordEnabled ? 1231 : 1237);
-      result = prime * result + ((rootDeviceId == null) ? 0 : rootDeviceId.hashCode());
+      result = prime * result + (int) (rootDeviceId ^ (rootDeviceId >>> 32));
       result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
       result = prime * result + ((securityGroupList == null) ? 0 : securityGroupList.hashCode());
-      result = prime * result + ((serviceOfferingId == null) ? 0 : serviceOfferingId.hashCode());
+      result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
       result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((templateDisplayText == null) ? 0 : templateDisplayText.hashCode());
-      result = prime * result + ((templateId == null) ? 0 : templateId.hashCode());
+      result = prime * result + (int) (templateId ^ (templateId >>> 32));
       result = prime * result + ((templateName == null) ? 0 : templateName.hashCode());
       result = prime * result + (usesVirtualNetwork ? 1231 : 1237);
-      result = prime * result + ((zoneId == null) ? 0 : zoneId.hashCode());
+      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
       result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
       return result;
    }
@@ -550,10 +550,7 @@ public class VirtualMachine {
             return false;
       } else if (!ISODisplayText.equals(other.ISODisplayText))
          return false;
-      if (ISOId == null) {
-         if (other.ISOId != null)
-            return false;
-      } else if (!ISOId.equals(other.ISOId))
+      if (ISOId != other.ISOId)
          return false;
       if (ISOName == null) {
          if (other.ISOName != null)
@@ -589,30 +586,18 @@ public class VirtualMachine {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
       if (group == null) {
          if (other.group != null)
             return false;
       } else if (!group.equals(other.group))
          return false;
-      if (groupId == null) {
-         if (other.groupId != null)
-            return false;
-      } else if (!groupId.equals(other.groupId))
+      if (groupId != other.groupId)
          return false;
-      if (guestOSId == null) {
-         if (other.guestOSId != null)
-            return false;
-      } else if (!guestOSId.equals(other.guestOSId))
+      if (guestOSId != other.guestOSId)
          return false;
-      if (hostId == null) {
-         if (other.hostId != null)
-            return false;
-      } else if (!hostId.equals(other.hostId))
+      if (hostId != other.hostId)
          return false;
       if (hostname == null) {
          if (other.hostname != null)
@@ -624,10 +609,7 @@ public class VirtualMachine {
             return false;
       } else if (!hypervisor.equals(other.hypervisor))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (jobId == null) {
          if (other.jobId != null)
@@ -668,10 +650,7 @@ public class VirtualMachine {
          return false;
       if (passwordEnabled != other.passwordEnabled)
          return false;
-      if (rootDeviceId == null) {
-         if (other.rootDeviceId != null)
-            return false;
-      } else if (!rootDeviceId.equals(other.rootDeviceId))
+      if (rootDeviceId != other.rootDeviceId)
          return false;
       if (rootDeviceType == null) {
          if (other.rootDeviceType != null)
@@ -683,10 +662,7 @@ public class VirtualMachine {
             return false;
       } else if (!securityGroupList.equals(other.securityGroupList))
          return false;
-      if (serviceOfferingId == null) {
-         if (other.serviceOfferingId != null)
-            return false;
-      } else if (!serviceOfferingId.equals(other.serviceOfferingId))
+      if (serviceOfferingId != other.serviceOfferingId)
          return false;
       if (serviceOfferingName == null) {
          if (other.serviceOfferingName != null)
@@ -700,10 +676,7 @@ public class VirtualMachine {
             return false;
       } else if (!templateDisplayText.equals(other.templateDisplayText))
          return false;
-      if (templateId == null) {
-         if (other.templateId != null)
-            return false;
-      } else if (!templateId.equals(other.templateId))
+      if (templateId != other.templateId)
          return false;
       if (templateName == null) {
          if (other.templateName != null)
@@ -712,10 +685,7 @@ public class VirtualMachine {
          return false;
       if (usesVirtualNetwork != other.usesVirtualNetwork)
          return false;
-      if (zoneId == null) {
-         if (other.zoneId != null)
-            return false;
-      } else if (!zoneId.equals(other.zoneId))
+      if (zoneId != other.zoneId)
          return false;
       if (zoneName == null) {
          if (other.zoneName != null)

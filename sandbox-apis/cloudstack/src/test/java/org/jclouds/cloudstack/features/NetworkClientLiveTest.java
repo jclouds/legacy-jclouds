@@ -49,7 +49,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
                ListNetworksOptions.Builder.id(network.getId())));
          assertEquals(network, newDetails);
          assertEquals(network, client.getNetworkClient().getNetwork(network.getId()));
-         assert network.getId() != null : network;
+         assert network.getId() > 0 : network;
          assert network.getName() != null : network;
          assert network.getDNS().size() != 0 : network;
          assert network.getGuestIPType() != null && network.getGuestIPType() != GuestIPType.UNRECOGNIZED : network;
@@ -59,15 +59,15 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          assert network.getNetworkDomain() != null : network;
          assert network.getNetworkOfferingAvailability() != null : network;
          assert network.getNetworkOfferingDisplayText() != null : network;
-         assert network.getNetworkOfferingId() != null : network;
+         assert network.getNetworkOfferingId() > 0 : network;
          assert network.getNetworkOfferingName() != null : network;
          assert network.getRelated() != null : network;
          assert network.getServices().size() != 0 : network;
          assert network.getState() != null : network;
          assert network.getTrafficType() != null : network;
-         assert network.getZoneId() != null : network;
+         assert network.getZoneId() > 0 : network;
          assert network.getDomain() != null : network;
-         assert network.getDomainId() != null : network;
+         assert network.getDomainId() > 0 : network;
          switch (network.getGuestIPType()) {
          case VIRTUAL:
             assert network.getNetmask() == null : network;

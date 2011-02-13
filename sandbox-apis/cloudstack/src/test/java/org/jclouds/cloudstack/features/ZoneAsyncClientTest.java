@@ -47,7 +47,7 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listZones HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listZones HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -56,8 +56,8 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listZones&apiKey=apiKey&signature=hNz838u4Z1ofz9vRaqYo9GDv1Io%3D HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listZones&apiKey=apiKey&signature=hNz838u4Z1ofz9vRaqYo9GDv1Io%3D HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -71,11 +71,11 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
 
    public void testListZonesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListZonesOptions.Builder.available(true).domainId(
-               "domainId").id("id"));
+      HttpRequest httpRequest = processor.createRequest(method, ListZonesOptions.Builder.available(true).domainId(5)
+            .id(6));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listZones&available=true&domainid=domainId&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listZones&available=true&domainid=5&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -88,11 +88,11 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
    }
 
    public void testGetZone() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ZoneAsyncClient.class.getMethod("getZone", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "id");
+      Method method = ZoneAsyncClient.class.getMethod("getZone", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 6);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listZones&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listZones&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

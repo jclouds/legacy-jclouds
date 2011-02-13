@@ -75,8 +75,8 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
     * @param id
     *           list networks by id
     */
-   public ListNetworksOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+   public ListNetworksOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -95,8 +95,8 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           domain ID of the account owning a VLAN
     */
-   public ListNetworksOptions domainId(String domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId));
+   public ListNetworksOptions domainId(long domainId) {
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
    }
@@ -105,8 +105,8 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
     * @param zoneId
     *           the Zone ID of the network
     */
-   public ListNetworksOptions zoneId(String zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId));
+   public ListNetworksOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
    }
@@ -156,7 +156,7 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworksOptions#domainId
        */
-      public static ListNetworksOptions domainId(String id) {
+      public static ListNetworksOptions domainId(long id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.domainId(id);
       }
@@ -172,7 +172,7 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworksOptions#id
        */
-      public static ListNetworksOptions id(String id) {
+      public static ListNetworksOptions id(long id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.id(id);
       }
@@ -180,7 +180,7 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworksOptions#zoneId
        */
-      public static ListNetworksOptions zoneId(String id) {
+      public static ListNetworksOptions zoneId(long id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.zoneId(id);
       }

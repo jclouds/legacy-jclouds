@@ -37,33 +37,33 @@ import com.google.common.collect.ImmutableList;
 public class ListDiskOfferingsOptionsTest {
 
    public void testId() {
-      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListDiskOfferingsOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListDiskOfferingsOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testName() {
-      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().name("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("name"));
+      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().name("foo");
+      assertEquals(ImmutableList.of("foo"), options.buildQueryParameters().get("name"));
    }
 
    public void testNameStatic() {
-      ListDiskOfferingsOptions options = name("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("name"));
+      ListDiskOfferingsOptions options = name("foo");
+      assertEquals(ImmutableList.of("foo"), options.buildQueryParameters().get("name"));
    }
 
    public void testDomainId() {
-      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListDiskOfferingsOptions options = domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListDiskOfferingsOptions options = domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
 }

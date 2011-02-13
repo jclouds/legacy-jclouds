@@ -68,6 +68,6 @@ public interface VirtualMachineAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") String id);
+   ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") long id);
 
 }

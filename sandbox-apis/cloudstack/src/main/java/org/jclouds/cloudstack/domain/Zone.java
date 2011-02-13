@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class Zone {
-   private String id;
+   private long id;
    private String description;
    @SerializedName("displaytext")
    private String displayText;
@@ -45,7 +45,7 @@ public class Zone {
    private String domain;
    @Nullable
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    @SerializedName("guestcidraddress")
    private String guestCIDRAddress;
    @SerializedName("internaldns1")
@@ -67,7 +67,7 @@ public class Zone {
 
    }
 
-   public Zone(String id, String description, String displayText, List<String> DNS, String domain, String domainId,
+   public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
             String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
             String vLAN) {
       this.id = id;
@@ -90,7 +90,7 @@ public class Zone {
     * 
     * @return Zone id
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -136,7 +136,7 @@ public class Zone {
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -203,9 +203,9 @@ public class Zone {
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + ((guestCIDRAddress == null) ? 0 : guestCIDRAddress.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + ((internalDNS1 == null) ? 0 : internalDNS1.hashCode());
       result = prime * result + ((internalDNS2 == null) ? 0 : internalDNS2.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -253,20 +253,14 @@ public class Zone {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
       if (guestCIDRAddress == null) {
          if (other.guestCIDRAddress != null)
             return false;
       } else if (!guestCIDRAddress.equals(other.guestCIDRAddress))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (internalDNS1 == null) {
          if (other.internalDNS1 != null)
@@ -283,10 +277,7 @@ public class Zone {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (networkType == null) {
-         if (other.networkType != null)
-            return false;
-      } else if (!networkType.equals(other.networkType))
+      if (networkType != other.networkType)
          return false;
       if (status == null) {
          if (other.status != null)

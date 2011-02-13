@@ -37,8 +37,8 @@ import com.google.common.collect.ImmutableList;
 public class ListZonesOptionsTest {
 
    public void testId() {
-      ListZonesOptions options = new ListZonesOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListZonesOptions options = new ListZonesOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testAvailable() {
@@ -47,13 +47,13 @@ public class ListZonesOptionsTest {
    }
 
    public void testDomainId() {
-      ListZonesOptions options = new ListZonesOptions().domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListZonesOptions options = new ListZonesOptions().domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testIdStatic() {
-      ListZonesOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListZonesOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testAvailableStatic() {
@@ -62,7 +62,7 @@ public class ListZonesOptionsTest {
    }
 
    public void testDomainIdStatic() {
-      ListZonesOptions options = domainId("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("domainid"));
+      ListZonesOptions options = domainId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

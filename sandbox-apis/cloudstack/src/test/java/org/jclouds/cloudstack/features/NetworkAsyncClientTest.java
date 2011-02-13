@@ -47,7 +47,7 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworks HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listNetworks HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -61,11 +61,11 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
 
    public void testListNetworksOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NetworkAsyncClient.class.getMethod("listNetworks", ListNetworksOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListNetworksOptions.Builder.type(NetworkType.ADVANCED).domainId(
-               "domainId").id("id"));
+      HttpRequest httpRequest = processor.createRequest(method, ListNetworksOptions.Builder.type(NetworkType.ADVANCED)
+            .domainId(6).id(5));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworks&type=Advanced&domainid=domainId&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listNetworks&type=Advanced&domainid=6&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -78,11 +78,11 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
    }
 
    public void testGetNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NetworkAsyncClient.class.getMethod("getNetwork", String.class);
+      Method method = NetworkAsyncClient.class.getMethod("getNetwork", long.class);
       HttpRequest httpRequest = processor.createRequest(method, "id");
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworks&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listNetworks&id=id HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

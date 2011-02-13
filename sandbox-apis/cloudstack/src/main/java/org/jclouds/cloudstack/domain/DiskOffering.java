@@ -32,21 +32,21 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class DiskOffering {
-   private String id;
+   private long id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    @SerializedName("disksize")
    private int diskSize;
    @SerializedName("iscustomized")
    private boolean customized;
    private String tags;
 
-   public DiskOffering(String id, String name, String displayText, Date created, String domain, String domainId,
+   public DiskOffering(long id, String name, String displayText, Date created, String domain, long domainId,
             int diskSize, boolean customized, Set<String> tags) {
       this.id = id;
       this.name = name;
@@ -71,7 +71,7 @@ public class DiskOffering {
     * 
     * @return the id of the disk offering
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -112,7 +112,7 @@ public class DiskOffering {
     * 
     * @return the domain id of the disk offering
     */
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -149,8 +149,8 @@ public class DiskOffering {
       result = prime * result + diskSize;
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       return result;
@@ -184,15 +184,9 @@ public class DiskOffering {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (name == null) {
          if (other.name != null)

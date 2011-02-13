@@ -48,7 +48,7 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -62,11 +62,10 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
 
    public void testListDiskOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListDiskOfferingsOptions.Builder.domainId("domainId")
-               .id("id"));
+      HttpRequest httpRequest = processor.createRequest(method, ListDiskOfferingsOptions.Builder.domainId(6).id(5));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&domainid=domainId&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&domainid=6&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -79,11 +78,11 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getDiskOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "id");
+      Method method = OfferingAsyncClient.class.getMethod("getDiskOffering", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -100,7 +99,7 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -114,12 +113,12 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
 
    public void testListNetworkOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListNetworkOfferingsOptions.Builder.availability(
-               "Default").isShared(true).id("id"));
+      HttpRequest httpRequest = processor.createRequest(method,
+            ListNetworkOfferingsOptions.Builder.availability("Default").isShared(true).id(6));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&availability=Default&isshared=true&id=id HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&availability=Default&isshared=true&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -132,11 +131,11 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetNetworkOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getNetworkOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "id");
+      Method method = OfferingAsyncClient.class.getMethod("getNetworkOffering", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -153,7 +152,7 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -167,12 +166,12 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
 
    public void testListServiceOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OfferingAsyncClient.class.getMethod("listServiceOfferings", ListServiceOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListServiceOfferingsOptions.Builder.virtualMachineId(
-               "vmId").domainId("domainId").id("id"));
+      HttpRequest httpRequest = processor.createRequest(method, ListServiceOfferingsOptions.Builder.virtualMachineId(4)
+            .domainId(5).id(6));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&virtualmachineid=vmId&domainid=domainId&id=id HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&virtualmachineid=4&domainid=5&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -185,11 +184,11 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetServiceOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getServiceOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "id");
+      Method method = OfferingAsyncClient.class.getMethod("getServiceOffering", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

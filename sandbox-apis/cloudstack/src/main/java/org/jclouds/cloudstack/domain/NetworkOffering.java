@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class NetworkOffering {
-   private String id;
+   private long id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
@@ -50,7 +50,7 @@ public class NetworkOffering {
    private TrafficType trafficType;
    private String tags;
 
-   public NetworkOffering(String id, String name, String displayText, @Nullable Date created, String availability,
+   public NetworkOffering(long id, String name, String displayText, @Nullable Date created, String availability,
             boolean supportsVLAN, @Nullable Integer maxConnections, boolean isDefault, TrafficType trafficType,
             Set<String> tags) {
       this.id = id;
@@ -77,7 +77,7 @@ public class NetworkOffering {
     * 
     * @return the id of the network offering
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -163,7 +163,7 @@ public class NetworkOffering {
       result = prime * result + ((availability == null) ? 0 : availability.hashCode());
       result = prime * result + ((created == null) ? 0 : created.hashCode());
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (isDefault ? 1231 : 1237);
       result = prime * result + ((maxConnections == null) ? 0 : maxConnections.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -197,10 +197,7 @@ public class NetworkOffering {
             return false;
       } else if (!displayText.equals(other.displayText))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (id != other.id)
          return false;
       if (isDefault != other.isDefault)
          return false;
@@ -221,10 +218,7 @@ public class NetworkOffering {
             return false;
       } else if (!tags.equals(other.tags))
          return false;
-      if (trafficType == null) {
-         if (other.trafficType != null)
-            return false;
-      } else if (!trafficType.equals(other.trafficType))
+      if (trafficType != other.trafficType)
          return false;
       return true;
    }

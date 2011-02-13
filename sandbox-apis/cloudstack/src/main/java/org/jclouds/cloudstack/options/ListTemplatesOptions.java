@@ -50,8 +50,8 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
     * @param id
     *           the template ID
     */
-   public ListTemplatesOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+   public ListTemplatesOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -62,8 +62,8 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
     * @param domain
     *           domain id
     */
-   public ListTemplatesOptions accountInDomain(String account, String domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+   public ListTemplatesOptions accountInDomain(long account, long domain) {
+      this.queryParameters.replaceValues("account", ImmutableSet.of(account + ""));
       return domainId(domain);
    }
 
@@ -81,8 +81,8 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
     *           list all templates in specified domain. If used with the account parameter, lists
     *           all templates for an account in the specified domain.
     */
-   public ListTemplatesOptions domainId(String domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId));
+   public ListTemplatesOptions domainId(long domainId) {
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
    }
@@ -91,8 +91,8 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
     * @param zoneId
     *           list templates by zoneId.
     */
-   public ListTemplatesOptions zoneId(String zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId));
+   public ListTemplatesOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
    }
@@ -119,7 +119,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListTemplatesOptions#domainId
        */
-      public static ListTemplatesOptions domainId(String id) {
+      public static ListTemplatesOptions domainId(long id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.domainId(id);
       }
@@ -127,7 +127,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListTemplatesOptions#accountInDomain
        */
-      public static ListTemplatesOptions accountInDomain(String account, String domain) {
+      public static ListTemplatesOptions accountInDomain(long account, long domain) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -135,7 +135,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListTemplatesOptions#id
        */
-      public static ListTemplatesOptions id(String id) {
+      public static ListTemplatesOptions id(long id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.id(id);
       }
@@ -151,7 +151,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListTemplatesOptions#zoneId
        */
-      public static ListTemplatesOptions zoneId(String id) {
+      public static ListTemplatesOptions zoneId(long id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.zoneId(id);
       }

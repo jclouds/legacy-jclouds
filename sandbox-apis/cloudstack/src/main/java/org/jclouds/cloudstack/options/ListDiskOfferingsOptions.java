@@ -37,8 +37,8 @@ public class ListDiskOfferingsOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the disk offering
     */
-   public ListDiskOfferingsOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+   public ListDiskOfferingsOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -46,8 +46,8 @@ public class ListDiskOfferingsOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           the ID of the domain associated with the disk offering
     */
-   public ListDiskOfferingsOptions domainId(String domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId));
+   public ListDiskOfferingsOptions domainId(long domainId) {
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
    }
@@ -74,7 +74,7 @@ public class ListDiskOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListDiskOfferingsOptions#domainId
        */
-      public static ListDiskOfferingsOptions domainId(String id) {
+      public static ListDiskOfferingsOptions domainId(long id) {
          ListDiskOfferingsOptions options = new ListDiskOfferingsOptions();
          return options.domainId(id);
       }
@@ -82,7 +82,7 @@ public class ListDiskOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListDiskOfferingsOptions#id
        */
-      public static ListDiskOfferingsOptions id(String id) {
+      public static ListDiskOfferingsOptions id(long id) {
          ListDiskOfferingsOptions options = new ListDiskOfferingsOptions();
          return options.id(id);
       }

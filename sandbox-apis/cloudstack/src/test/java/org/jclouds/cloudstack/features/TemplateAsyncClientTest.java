@@ -47,7 +47,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -61,12 +61,12 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
 
    public void testListTemplatesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TemplateAsyncClient.class.getMethod("listTemplates", ListTemplatesOptions.class);
-      HttpRequest httpRequest = processor.createRequest(method, ListTemplatesOptions.Builder.accountInDomain(
-               "accountId", "domainId").hypervisor("xen").filter(TemplateFilter.FEATURED));
+      HttpRequest httpRequest = processor.createRequest(method, ListTemplatesOptions.Builder.accountInDomain(5, 6)
+            .hypervisor("xen").filter(TemplateFilter.FEATURED));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&account=accountId&domainid=domainId&hypervisor=xen&templatefilter=featured HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&account=5&domainid=6&hypervisor=xen&templatefilter=featured HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -79,11 +79,11 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testGetTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TemplateAsyncClient.class.getMethod("getTemplate", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "id");
+      Method method = TemplateAsyncClient.class.getMethod("getTemplate", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable&id=id HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

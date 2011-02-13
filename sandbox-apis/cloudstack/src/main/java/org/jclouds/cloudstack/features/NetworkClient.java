@@ -52,6 +52,6 @@ public interface NetworkClient {
     *           network to get
     * @return network or null if not found
     */
-   Network getNetwork(String id);
+   Network getNetwork(long id);
 
 }

@@ -72,7 +72,7 @@ public interface OfferingAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServiceOffering> getServiceOffering(@QueryParam("id") String id);
+   ListenableFuture<ServiceOffering> getServiceOffering(@QueryParam("id") long id);
 
    /**
     * @see OfferingClient#listDiskOfferings
@@ -92,7 +92,7 @@ public interface OfferingAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<DiskOffering> getDiskOffering(@QueryParam("id") String id);
+   ListenableFuture<DiskOffering> getDiskOffering(@QueryParam("id") long id);
 
    /**
     * @see NetworkOfferingClient#listNetworkOfferings
@@ -112,6 +112,6 @@ public interface OfferingAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<NetworkOffering> getNetworkOffering(@QueryParam("id") String id);
+   ListenableFuture<NetworkOffering> getNetworkOffering(@QueryParam("id") long id);
 
 }

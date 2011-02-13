@@ -37,7 +37,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class Network {
-   private String id;
+   private long id;
    private String account;
    @SerializedName("broadcastdomaintype")
    private String broadcastDomainType;
@@ -52,7 +52,7 @@ public class Network {
    private String domain;
    @Nullable
    @SerializedName("domainid")
-   private String domainId;
+   private long domainId;
    @SerializedName("endip")
    private String endIP;
    private String gateway;
@@ -67,10 +67,10 @@ public class Network {
    private String networkDomain;
    @SerializedName("networkofferingavailability")
    private String networkOfferingAvailability;
-   @SerializedName("networkofferingid")
+   @SerializedName("networkofferingdisplaytext")
    private String networkOfferingDisplayText;
    @SerializedName("networkofferingid")
-   private String networkOfferingId;
+   private long networkOfferingId;
    @SerializedName("networkofferingname")
    private String networkOfferingName;
    private String related;
@@ -85,7 +85,7 @@ public class Network {
    @SerializedName("traffictype")
    private TrafficType trafficType;
    @SerializedName("zoneid")
-   private String zoneId;
+   private long zoneId;
    @SerializedName("service")
    private Set<? extends NetworkService> services = ImmutableSet.<NetworkService> of();
 
@@ -97,12 +97,12 @@ public class Network {
 
    }
 
-   public Network(String id, String account, String broadcastDomainType, URI broadcastURI, String displayText,
-            List<String> DNS, String domain, String domainId, String endIP, String gateway, boolean isDefault,
-            boolean isShared, boolean isSystem, String netmask, String networkDomain,
-            String networkOfferingAvailability, String networkOfferingDisplayText, String networkOfferingId,
-            String networkOfferingName, String related, String startIP, String name, String state, GuestIPType type,
-            String vLAN, TrafficType trafficType, String zoneId, Set<? extends NetworkService> services) {
+   public Network(long id, String account, String broadcastDomainType, URI broadcastURI, String displayText,
+         List<String> DNS, String domain, long domainId, String endIP, String gateway, boolean isDefault,
+         boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
+         String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, String related,
+         String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
+         long zoneId, Set<? extends NetworkService> services) {
       this.id = id;
       this.account = account;
       this.broadcastDomainType = broadcastDomainType;
@@ -138,7 +138,7 @@ public class Network {
     * 
     * @return network id
     */
-   public String getId() {
+   public long getId() {
       return id;
    }
 
@@ -200,7 +200,7 @@ public class Network {
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
-   public String getDomainId() {
+   public long getDomainId() {
       return domainId;
    }
 
@@ -320,7 +320,7 @@ public class Network {
     * 
     * @return network offering id the network is created from
     */
-   public String getNetworkOfferingId() {
+   public long getNetworkOfferingId() {
       return networkOfferingId;
    }
 
@@ -352,7 +352,7 @@ public class Network {
     * 
     * @return zone id of the network
     */
-   public String getZoneId() {
+   public long getZoneId() {
       return zoneId;
    }
 
@@ -376,10 +376,11 @@ public class Network {
       result = prime * result + ((broadcastURI == null) ? 0 : broadcastURI.hashCode());
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((domainId == null) ? 0 : domainId.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + ((endIP == null) ? 0 : endIP.hashCode());
       result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (isDefault ? 1231 : 1237);
       result = prime * result + (isShared ? 1231 : 1237);
       result = prime * result + (isSystem ? 1231 : 1237);
@@ -388,15 +389,14 @@ public class Network {
       result = prime * result + ((networkDomain == null) ? 0 : networkDomain.hashCode());
       result = prime * result + ((networkOfferingAvailability == null) ? 0 : networkOfferingAvailability.hashCode());
       result = prime * result + ((networkOfferingDisplayText == null) ? 0 : networkOfferingDisplayText.hashCode());
-      result = prime * result + ((networkOfferingId == null) ? 0 : networkOfferingId.hashCode());
+      result = prime * result + (int) (networkOfferingId ^ (networkOfferingId >>> 32));
       result = prime * result + ((networkOfferingName == null) ? 0 : networkOfferingName.hashCode());
       result = prime * result + ((related == null) ? 0 : related.hashCode());
       result = prime * result + ((services == null) ? 0 : services.hashCode());
       result = prime * result + ((startIP == null) ? 0 : startIP.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
-      result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
-      result = prime * result + ((zoneId == null) ? 0 : zoneId.hashCode());
+      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
       return result;
    }
 
@@ -449,10 +449,7 @@ public class Network {
             return false;
       } else if (!domain.equals(other.domain))
          return false;
-      if (domainId == null) {
-         if (other.domainId != null)
-            return false;
-      } else if (!domainId.equals(other.domainId))
+      if (domainId != other.domainId)
          return false;
       if (endIP == null) {
          if (other.endIP != null)
@@ -464,10 +461,9 @@ public class Network {
             return false;
       } else if (!gateway.equals(other.gateway))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
+      if (guestIPType != other.guestIPType)
+         return false;
+      if (id != other.id)
          return false;
       if (isDefault != other.isDefault)
          return false;
@@ -500,10 +496,7 @@ public class Network {
             return false;
       } else if (!networkOfferingDisplayText.equals(other.networkOfferingDisplayText))
          return false;
-      if (networkOfferingId == null) {
-         if (other.networkOfferingId != null)
-            return false;
-      } else if (!networkOfferingId.equals(other.networkOfferingId))
+      if (networkOfferingId != other.networkOfferingId)
          return false;
       if (networkOfferingName == null) {
          if (other.networkOfferingName != null)
@@ -530,35 +523,24 @@ public class Network {
             return false;
       } else if (!state.equals(other.state))
          return false;
-      if (trafficType == null) {
-         if (other.trafficType != null)
-            return false;
-      } else if (!trafficType.equals(other.trafficType))
+      if (trafficType != other.trafficType)
          return false;
-      if (guestIPType == null) {
-         if (other.guestIPType != null)
-            return false;
-      } else if (!guestIPType.equals(other.guestIPType))
-         return false;
-      if (zoneId == null) {
-         if (other.zoneId != null)
-            return false;
-      } else if (!zoneId.equals(other.zoneId))
+      if (zoneId != other.zoneId)
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "Network [id=" + id + ", state=" + state + ", name=" + name + ", displayText=" + displayText + ", guestIPType="
-               + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN + ", account="
-               + account + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway="
-               + gateway + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI
-               + ", services=" + services + ", domain=" + domain + ", domainId=" + domainId + ", isDefault="
-               + isDefault + ", isShared=" + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId="
-               + zoneId + ", networkDomain=" + networkDomain + ", networkOfferingAvailability="
-               + networkOfferingAvailability + ", networkOfferingDisplayText=" + networkOfferingDisplayText
-               + ", networkOfferingId=" + networkOfferingId + ", networkOfferingName=" + networkOfferingName + "]";
+      return "[id=" + id + ", state=" + state + ", name=" + name + ", displayText=" + displayText + ", guestIPType="
+            + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN + ", account="
+            + account + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
+            + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI + ", services="
+            + services + ", domain=" + domain + ", domainId=" + domainId + ", isDefault=" + isDefault + ", isShared="
+            + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", networkDomain="
+            + networkDomain + ", networkOfferingAvailability=" + networkOfferingAvailability
+            + ", networkOfferingDisplayText=" + networkOfferingDisplayText + ", networkOfferingId=" + networkOfferingId
+            + ", networkOfferingName=" + networkOfferingName + "]";
    }
 
 }

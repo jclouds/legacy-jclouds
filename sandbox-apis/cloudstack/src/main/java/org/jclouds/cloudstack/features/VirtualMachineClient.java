@@ -52,5 +52,5 @@ public interface VirtualMachineClient {
     *           VirtualMachine to get
     * @return VirtualMachine or null if not found
     */
-   VirtualMachine getVirtualMachine(String id);
+   VirtualMachine getVirtualMachine(long id);
 }

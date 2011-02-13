@@ -38,8 +38,8 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the network offering
     */
-   public ListNetworkOfferingsOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+   public ListNetworkOfferingsOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id+""));
       return this;
    }
 
@@ -159,7 +159,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworkOfferingsOptions#id
        */
-      public static ListNetworkOfferingsOptions id(String id) {
+      public static ListNetworkOfferingsOptions id(long id) {
          ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
          return options.id(id);
       }

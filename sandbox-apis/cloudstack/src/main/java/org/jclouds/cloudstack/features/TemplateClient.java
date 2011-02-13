@@ -61,5 +61,5 @@ public interface TemplateClient {
     *           template to get
     * @return template or null if not found
     */
-   Template getTemplate(String id);
+   Template getTemplate(long id);
 }

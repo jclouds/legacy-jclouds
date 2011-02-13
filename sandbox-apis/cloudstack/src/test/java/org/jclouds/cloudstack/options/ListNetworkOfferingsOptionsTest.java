@@ -51,7 +51,6 @@ public class ListNetworkOfferingsOptionsTest {
       assertEquals(ImmutableList.of("true"), options.buildQueryParameters().get("isdefault"));
    }
 
-
    public void testIsShared() {
       ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().isShared(true);
       assertEquals(ImmutableList.of("true"), options.buildQueryParameters().get("isshared"));
@@ -63,13 +62,13 @@ public class ListNetworkOfferingsOptionsTest {
    }
 
    public void testId() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListNetworkOfferingsOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworkOfferingsOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testSpecifyVLAN() {
@@ -103,23 +102,23 @@ public class ListNetworkOfferingsOptionsTest {
    }
 
    public void testName() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListNetworkOfferingsOptions options = id("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("id"));
+      ListNetworkOfferingsOptions options = id(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDisplayText() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().displayText("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("displaytext"));
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().displayText("text");
+      assertEquals(ImmutableList.of("text"), options.buildQueryParameters().get("displaytext"));
    }
 
    public void testDisplayTextStatic() {
-      ListNetworkOfferingsOptions options = displayText("goo");
-      assertEquals(ImmutableList.of("goo"), options.buildQueryParameters().get("displaytext"));
+      ListNetworkOfferingsOptions options = displayText("text");
+      assertEquals(ImmutableList.of("text"), options.buildQueryParameters().get("displaytext"));
    }
 
 }
