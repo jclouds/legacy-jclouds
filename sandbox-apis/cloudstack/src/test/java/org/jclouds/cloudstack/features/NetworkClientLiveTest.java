@@ -46,7 +46,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(networkCount >= 0);
       for (Network network : response) {
          Network newDetails = Iterables.getOnlyElement(client.getNetworkClient().listNetworks(
-                  ListNetworksOptions.Builder.id(network.getId())));
+               ListNetworksOptions.Builder.id(network.getId())));
          assertEquals(network, newDetails);
          assertEquals(network, client.getNetworkClient().getNetwork(network.getId()));
          assert network.getId() != null : network;
@@ -55,8 +55,6 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          assert network.getGuestIPType() != null && network.getGuestIPType() != GuestIPType.UNRECOGNIZED : network;
          assert network.getAccount() != null : network;
          assert network.getBroadcastDomainType() != null : network;
-//         TODO understand when this is null and for what reason
-//         assert network.getBroadcastURI() != null : network;
          assert network.getDisplayText() != null : network;
          assert network.getNetworkDomain() != null : network;
          assert network.getNetworkOfferingAvailability() != null : network;
@@ -71,23 +69,23 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          assert network.getDomain() != null : network;
          assert network.getDomainId() != null : network;
          switch (network.getGuestIPType()) {
-            case VIRTUAL:
-               assert network.getNetmask() == null : network;
-               assert network.getGateway() == null : network;
-               assert network.getVLAN() == null : network;
-               assert network.getStartIP() == null : network;
-               assert network.getEndIP() == null : network;
-               break;
-            case DIRECT:
-               assert network.getNetmask() != null : network;
-               assert network.getGateway() != null : network;
-               assert network.getVLAN() != null : network;
-               assert network.getStartIP() != null : network;
-               assert network.getEndIP() != null : network;
-               break;
+         case VIRTUAL:
+            assert network.getNetmask() == null : network;
+            assert network.getGateway() == null : network;
+            assert network.getVLAN() == null : network;
+            assert network.getStartIP() == null : network;
+            assert network.getEndIP() == null : network;
+            break;
+         case DIRECT:
+            assert network.getNetmask() != null : network;
+            assert network.getGateway() != null : network;
+            assert network.getVLAN() != null : network;
+            assertEquals(network.getBroadcastURI(), "vlan://" + network.getVLAN());
+            assert network.getStartIP() != null : network;
+            assert network.getEndIP() != null : network;
+            break;
          }
 
       }
    }
-
 }
