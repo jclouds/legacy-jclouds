@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
@@ -40,6 +41,14 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
       long asyncJobCount = response.size();
       assertTrue(asyncJobCount >= 0);
       for (AsyncJob asyncJob : response) {
+         AsyncJob query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());
+         assertEquals(query.getId(), asyncJob.getId());
+         assert query.getStatus() >= 0 : query;
+         assert query.getResultCode() >= 0 : query;
+         assert query.getResultType() != null : query;
+         assert query.getProgress() >= 0 : query;
+         assert query.getResult() != null : query;
+
          assert asyncJob.getId() > 0 : asyncJob;
          assert asyncJob.getAccountId() >= 0 : asyncJob;
          assert asyncJob.getCmd() != null : asyncJob;
@@ -49,7 +58,7 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
          assert asyncJob.getInstanceType() == null : asyncJob;
          assert asyncJob.getResultType() == null : asyncJob;
          // end
-         if (asyncJob.getProgress() != null) {
+         if (asyncJob.getProgress() > 0) {
             assert asyncJob.getResult() == null : asyncJob;
             assert asyncJob.getResultCode() == -1 : asyncJob;
          } else {

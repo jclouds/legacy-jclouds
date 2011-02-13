@@ -44,4 +44,13 @@ public interface AsyncJobClient {
     * @return asyncJobs matching query, or empty set, if no asyncJobs are found
     */
    Set<AsyncJob> listAsyncJobs(ListAsyncJobsOptions... options);
+
+   /**
+    * get a specific asyncJob by id
+    * 
+    * @param id
+    *           asyncJob to get
+    * @return asyncJob or null if not found
+    */
+   AsyncJob getAsyncJob(long id);
 }

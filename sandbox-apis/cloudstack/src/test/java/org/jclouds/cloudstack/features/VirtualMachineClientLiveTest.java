@@ -43,10 +43,10 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateDestroyVirtualMachine() throws Exception {
       VirtualMachine vm = null;
       try {
-         long serviceOfferingId = Iterables.get(client.getOfferingClient().listServiceOfferings(), 0).getId();
-         long templateId = Iterables.get(client.getTemplateClient().listTemplates(), 0).getId();
-         long zoneId = Iterables.get(client.getZoneClient().listZones(), 0).getId();
-         long networkId = Iterables.get(client.getNetworkClient().listNetworks(), 0).getId();
+         long serviceOfferingId = 1;//Iterables.get(client.getOfferingClient().listServiceOfferings(), 0).getId();
+         long templateId = 2;//Iterables.get(client.getTemplateClient().listTemplates(), 0).getId();
+         long zoneId = 1;//Iterables.get(client.getZoneClient().listZones(), 0).getId();
+         long networkId = 204;//Iterables.get(client.getNetworkClient().listNetworks(), 0).getId();
          System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, networkId %d%n", serviceOfferingId, templateId, zoneId, networkId);
          AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId, zoneId,  DeployVirtualMachineOptions.Builder.networkId(networkId));
          System.out.println("job: " + job);

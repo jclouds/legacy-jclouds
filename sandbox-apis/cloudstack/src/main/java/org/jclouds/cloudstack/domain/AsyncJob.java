@@ -40,8 +40,8 @@ public class AsyncJob {
    private long instanceId = -1;
    @SerializedName("jobinstancetype")
    private String instanceType;
-   @SerializedName("jobinstancetype")
-   private String progress;
+   @SerializedName("jobprocstatus")
+   private int progress = -1;
    @SerializedName("jobresult")
    private Map<String, Object> result = ImmutableMap.of();
    @SerializedName("jobresultcode")
@@ -54,7 +54,7 @@ public class AsyncJob {
    private int userId = -1;
 
    public AsyncJob(int accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         String progress, Map<String, Object> result, int resultCode, String resultType, int status, int userId) {
+         int progress, Map<String, Object> result, int resultCode, String resultType, int status, int userId) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -122,7 +122,7 @@ public class AsyncJob {
    /**
     * @return the progress information of the PENDING job
     */
-   public String getProgress() {
+   public int getProgress() {
       return progress;
    }
 
@@ -171,7 +171,7 @@ public class AsyncJob {
       result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (int) (instanceId ^ (instanceId >>> 32));
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
-      result = prime * result + ((progress == null) ? 0 : progress.hashCode());
+      result = prime * result + progress;
       result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
       result = prime * result + resultCode;
       result = prime * result + ((resultType == null) ? 0 : resultType.hashCode());
@@ -210,10 +210,7 @@ public class AsyncJob {
             return false;
       } else if (!instanceType.equals(other.instanceType))
          return false;
-      if (progress == null) {
-         if (other.progress != null)
-            return false;
-      } else if (!progress.equals(other.progress))
+      if (progress != other.progress)
          return false;
       if (result == null) {
          if (other.result != null)

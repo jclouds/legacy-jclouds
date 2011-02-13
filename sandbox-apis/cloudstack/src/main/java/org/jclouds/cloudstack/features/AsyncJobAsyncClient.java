@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
@@ -33,6 +34,7 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -57,5 +59,15 @@ public interface AsyncJobAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<AsyncJob>> listAsyncJobs(ListAsyncJobsOptions... options);
+  
+   /**
+    * @see AsyncJobClient#getAsyncJob
+    */
+   @GET
+   @QueryParams(keys = "command", values = "queryAsyncJobResult")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<AsyncJob> getAsyncJob(@QueryParam("jobid") long id);
 
 }
