@@ -22,7 +22,9 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -53,4 +55,28 @@ public interface VirtualMachineClient {
     * @return VirtualMachine or null if not found
     */
    VirtualMachine getVirtualMachine(long id);
+
+   /**
+    * Creates and automatically starts a virtual machine based on a service offering, disk offering,
+    * and template.
+    * 
+    * @param serviceOfferingId
+    *           the ID of the service offering for the virtual machine
+    * @param templateId
+    *           the ID of the template for the virtual machine
+    * @param zoneId
+    *           availability zone for the virtual machine
+    * @return virtual machine
+    */
+   AsyncCreateResponse deployVirtualMachine(long serviceOfferingId, long templateId, long zoneId,
+         DeployVirtualMachineOptions... options);
+
+   /**
+    * Destroys a virtual machine. Once destroyed, only the administrator can recover it.
+    * 
+    * @param id
+    *           vm to destroy
+    * @return job id related to destroying the VM, or null if resource was not found
+    */
+   Long destroyVirtualMachine(long id);
 }

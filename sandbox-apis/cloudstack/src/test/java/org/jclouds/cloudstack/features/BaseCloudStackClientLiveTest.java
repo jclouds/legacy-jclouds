@@ -45,6 +45,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class BaseCloudStackClientLiveTest {
+   protected String prefix = System.getProperty("user.name");
 
    protected CloudStackClient client;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
@@ -57,11 +58,11 @@ public class BaseCloudStackClientLiveTest {
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-               + ".identity must be set.  ex. apiKey");
+            + ".identity must be set.  ex. apiKey");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential must be set.  ex. secretKey");
+            + ".credential must be set.  ex. secretKey");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
-               + ".endpoint must be set.  ex. http://localhost:8080/client/api");
+            + ".endpoint must be set.  ex. http://localhost:8080/client/api");
       apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
@@ -82,7 +83,7 @@ public class BaseCloudStackClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+            overrides);
 
       client = context.getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);

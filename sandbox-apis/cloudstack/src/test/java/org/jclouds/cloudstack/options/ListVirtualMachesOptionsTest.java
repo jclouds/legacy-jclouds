@@ -84,14 +84,14 @@ public class ListVirtualMachesOptionsTest {
    }
 
    public void testAccountInDomainId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().accountInDomain(5, 6);
-      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().accountInDomain("adrian", 6);
+      assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListVirtualMachinesOptions options = accountInDomain(5, 6);
-      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      ListVirtualMachinesOptions options = accountInDomain("adrian", 6);
+      assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 

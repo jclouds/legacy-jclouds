@@ -77,8 +77,8 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
     * @param domain
     *           domain id
     */
-   public ListVirtualMachinesOptions accountInDomain(long account, long domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account + ""));
+   public ListVirtualMachinesOptions accountInDomain(String account, long domain) {
+      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
       return domainId(domain);
    }
 
@@ -147,7 +147,7 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListVirtualMachinesOptions#accountInDomain
        */
-      public static ListVirtualMachinesOptions accountInDomain(long account, long domain) {
+      public static ListVirtualMachinesOptions accountInDomain(String account, long domain) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.accountInDomain(account, domain);
       }

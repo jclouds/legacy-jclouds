@@ -27,8 +27,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -108,8 +106,6 @@ public class VirtualMachine {
    private long rootDeviceId;
    @SerializedName("rootdevicetype")
    private String rootDeviceType;
-   @SerializedName("securitygrouplist")
-   private String securityGroupList;
    @SerializedName("serviceofferingid")
    private long serviceOfferingId;
    @SerializedName("serviceofferingname")
@@ -126,17 +122,19 @@ public class VirtualMachine {
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("nic")
-   private Set<? extends NIC> nics = ImmutableSet.<NIC> of();
+   private Set<NIC> nics = ImmutableSet.<NIC> of();
    private String hypervisor;
+   @SerializedName("securitygroup")
+   private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
    public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, long cpuUsed, String displayName,
          Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
          long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
          long iSOId, String iSOName, Long jobId, String jobStatus, long memory, String name, Long networkKbsRead,
          Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
-         Set<String> securityGroupList, long serviceOfferingId, String serviceOfferingName, State state,
+         Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
          String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName,
-         Set<? extends NIC> nics, String hypervisor) {
+         Set<NIC> nics, String hypervisor) {
       this.id = id;
       this.account = account;
       this.cpuCount = cpuCount;
@@ -167,7 +165,7 @@ public class VirtualMachine {
       this.passwordEnabled = passwordEnabled;
       this.rootDeviceId = rootDeviceId;
       this.rootDeviceType = rootDeviceType;
-      this.securityGroupList = Joiner.on(',').join(checkNotNull(securityGroupList, "securityGroupList"));
+      this.securityGroups =ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
       this.serviceOfferingId = serviceOfferingId;
       this.serviceOfferingName = serviceOfferingName;
       this.state = state;
@@ -405,9 +403,8 @@ public class VirtualMachine {
    /**
     * @return list of security groups associated with the virtual machine
     */
-   public Set<String> getSecurityGroupList() {
-      return securityGroupList == null ? ImmutableSet.<String> of() : ImmutableSet.copyOf(Splitter.on(',').split(
-            securityGroupList));
+   public Set<SecurityGroup> getSecurityGroups() {
+      return securityGroups;
    }
 
    /**
@@ -470,7 +467,7 @@ public class VirtualMachine {
    /**
     * @return the list of nics associated with vm
     */
-   public Set<? extends NIC> getNICs() {
+   public Set<NIC> getNICs() {
       return nics;
    }
 
@@ -516,7 +513,7 @@ public class VirtualMachine {
       result = prime * result + (passwordEnabled ? 1231 : 1237);
       result = prime * result + (int) (rootDeviceId ^ (rootDeviceId >>> 32));
       result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
-      result = prime * result + ((securityGroupList == null) ? 0 : securityGroupList.hashCode());
+      result = prime * result + ((securityGroups == null) ? 0 : securityGroups.hashCode());
       result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
       result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
@@ -657,10 +654,10 @@ public class VirtualMachine {
             return false;
       } else if (!rootDeviceType.equals(other.rootDeviceType))
          return false;
-      if (securityGroupList == null) {
-         if (other.securityGroupList != null)
+      if (securityGroups == null) {
+         if (other.securityGroups != null)
             return false;
-      } else if (!securityGroupList.equals(other.securityGroupList))
+      } else if (!securityGroups.equals(other.securityGroups))
          return false;
       if (serviceOfferingId != other.serviceOfferingId)
          return false;
@@ -705,7 +702,7 @@ public class VirtualMachine {
             + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory + ", name=" + name
             + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite + ", password=" + password
             + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType="
-            + rootDeviceType + ", securityGroupList=" + securityGroupList + ", serviceOfferingId=" + serviceOfferingId
+            + rootDeviceType + ", securityGroups=" + securityGroups + ", serviceOfferingId=" + serviceOfferingId
             + ", serviceOfferingName=" + serviceOfferingName + ", state=" + state + ", templateDisplayText="
             + templateDisplayText + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId="
             + zoneId + ", zoneName=" + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + "]";

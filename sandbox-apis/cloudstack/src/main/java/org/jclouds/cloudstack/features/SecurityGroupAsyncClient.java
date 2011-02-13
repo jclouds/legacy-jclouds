@@ -26,17 +26,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
-import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,53 +43,49 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to cloudstack via their REST API.
  * <p/>
  * 
- * @see VirtualMachineClient
+ * @see OfferingClient
  * @see <a href="http://download.cloud.com/releases/2.2/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface VirtualMachineAsyncClient {
+public interface SecurityGroupAsyncClient {
 
    /**
-    * @see VirtualMachineClient#listVirtualMachines
+    * @see SecurityGroupClient#listSecurityGroups
     */
    @GET
-   @QueryParams(keys = "command", values = "listVirtualMachines")
+   @QueryParams(keys = "command", values = "listSecurityGroups")
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VirtualMachine>> listVirtualMachines(ListVirtualMachinesOptions... options);
+   ListenableFuture<Set<SecurityGroup>> listSecurityGroups(ListSecurityGroupsOptions... options);
 
    /**
-    * @see VirtualMachineClient#getVirtualMachine
+    * @see SecurityGroupClient#getSecurityGroup
     */
    @GET
-   @QueryParams(keys = "command", values = "listVirtualMachines")
+   @QueryParams(keys = "command", values = "listSecurityGroups")
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") long id);
 
    /**
-    * @see VirtualMachineClient#deployVirtualMachine
+    * @see SecurityGroupClient#createSecurityGroup
     */
    @GET
-   @QueryParams(keys = "command", values = "deployVirtualMachine")
-   @Unwrap
+   @QueryParams(keys = "command", values = "createSecurityGroup")
+   @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> deployVirtualMachine(@QueryParam("serviceofferingid") long serviceOfferingId,
-         @QueryParam("templateid") long templateId, @QueryParam("zoneid") long zoneId,
-         DeployVirtualMachineOptions... options);
+   ListenableFuture<SecurityGroup> createSecurityGroup(@QueryParam("name") String name);
 
    /**
-    * @see VirtualMachineClient#destroyVirtualMachine
+    * @see SecurityGroupClient#deleteSecurityGroup
     */
    @GET
-   @QueryParams(keys = "command", values = "destroyVirtualMachine")
-   @Unwrap(depth = 2)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Long> destroyVirtualMachine(@QueryParam("id") long id);
+   @QueryParams(keys = "command", values = "deleteSecurityGroup")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteSecurityGroup(@QueryParam("id") long id);
 
 }

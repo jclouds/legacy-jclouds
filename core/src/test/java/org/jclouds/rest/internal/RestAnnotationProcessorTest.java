@@ -774,6 +774,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @GET
       @Path("/")
+      @Unwrap(depth = 2)
+      @Consumes(MediaType.APPLICATION_JSON)
+      ListenableFuture<Long> testUnwrapDepth2Long();
+
+      @GET
+      @Path("/")
       @Unwrap(depth = 3, edgeCollection = Set.class)
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<String> testUnwrapDepth3();
@@ -960,9 +966,24 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(parser.apply(new HttpResponse(200, "ok",
             newStringPayload("{\"runit\":{\"runit\":[\"0.7.0\",\"0.7.1\"]}}"))), ImmutableSet.of("0.7.0", "0.7.1"));
-      
+
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{}}"))),
             ImmutableSet.<String> of());
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testUnwrapDepth2Long() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("testUnwrapDepth2Long");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValue.class);
+      // now test that it works!
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+            .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok",
+            newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
    }
 
    @SuppressWarnings("unchecked")

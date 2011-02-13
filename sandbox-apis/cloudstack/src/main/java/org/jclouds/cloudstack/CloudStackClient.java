@@ -21,8 +21,10 @@ package org.jclouds.cloudstack;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
+import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneClient;
@@ -68,4 +70,16 @@ public interface CloudStackClient {
     */
    @Delegate
    VirtualMachineClient getVirtualMachineClient();
+
+   /**
+    * Provides synchronous access to SecurityGroup features.
+    */
+   @Delegate
+   SecurityGroupClient getSecurityGroupClient();
+
+   /**
+    * Provides synchronous access to AsyncJob features.
+    */
+   @Delegate
+   AsyncJobClient getAsyncJobClient();
 }

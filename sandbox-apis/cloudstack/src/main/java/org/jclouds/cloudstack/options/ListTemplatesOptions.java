@@ -62,7 +62,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
     * @param domain
     *           domain id
     */
-   public ListTemplatesOptions accountInDomain(long account, long domain) {
+   public ListTemplatesOptions accountInDomain(String account, long domain) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account + ""));
       return domainId(domain);
    }
@@ -127,7 +127,7 @@ public class ListTemplatesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListTemplatesOptions#accountInDomain
        */
-      public static ListTemplatesOptions accountInDomain(long account, long domain) {
+      public static ListTemplatesOptions accountInDomain(String account, long domain) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.accountInDomain(account, domain);
       }

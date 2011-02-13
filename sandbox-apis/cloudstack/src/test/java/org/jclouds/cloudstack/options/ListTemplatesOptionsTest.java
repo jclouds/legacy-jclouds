@@ -61,14 +61,14 @@ public class ListTemplatesOptionsTest {
    }
 
    public void testAccountInDomainId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain(5, 6);
-      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain("adrian", 6);
+      assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListTemplatesOptions options = accountInDomain(5, 6);
-      assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("account"));
+      ListTemplatesOptions options = accountInDomain("adrian", 6);
+      assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
