@@ -25,10 +25,7 @@ import java.io.IOException;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists;
-import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,9 +45,7 @@ public class BiggerThanPageSizeTest {
    public void test() throws IOException {
       blobstore.createContainerInLocation(null, "goodies");
       for (int i = 0; i < 1001; i++) {
-         Blob blob = blobstore.newBlob(i + "");
-         blob.setPayload(i + "");
-         blobstore.putBlob("goodies", blob);
+         blobstore.putBlob("goodies", blobstore.blobBuilder(i + "").payload(i + "").build());
       }
       assertEquals(blobstore.countBlobs("goodies"), 1001);
       blobstore.clearContainer("goodies");
@@ -60,9 +55,7 @@ public class BiggerThanPageSizeTest {
    public void testStrategies() throws IOException {
       blobstore.createContainerInLocation(null, "poo");
       for (int i = 0; i < 1001; i++) {
-         Blob blob = blobstore.newBlob(i + "");
-         blob.setPayload(i + "");
-         blobstore.putBlob("poo", blob);
+         blobstore.putBlob("poo", blobstore.blobBuilder(i + "").payload(i + "").build());
       }
 
       ListContainerAndRecurseThroughFolders lister = new ListContainerAndRecurseThroughFolders(

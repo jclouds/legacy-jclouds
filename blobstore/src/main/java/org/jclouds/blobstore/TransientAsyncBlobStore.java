@@ -19,6 +19,7 @@
 
 package org.jclouds.blobstore;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getCausalChain;
@@ -125,7 +126,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
          ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
          ConcurrentMap<String, Location> containerToLocation, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
-         IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
+         IfDirectoryReturnNameStrategy ifDirectoryReturnName, Factory blobFactory, BlobUtils blobUtils,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations) {
       super(context, blobUtils, service, defaultLocation, locations);
@@ -487,6 +488,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<String> putBlob(String containerName, Blob in) {
+      checkArgument(containerName != null, "containerName must be set");
+      checkArgument(in != null, "blob must be set");
       ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
       if (container == null) {
          new IllegalStateException("containerName not found: " + containerName);
@@ -513,6 +516,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    protected Blob createUpdatedCopyOfBlob(Blob in) {
+      checkNotNull(in, "blob");
+      checkNotNull(in.getPayload(), "blob.payload");
       ByteArrayPayload payload = (in.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(in
             .getPayload()) : null;
       if (payload == null)

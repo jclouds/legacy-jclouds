@@ -20,11 +20,12 @@
 package org.jclouds.blobstore.config;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
-import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -65,10 +66,12 @@ public class BlobStoreMapModule extends AbstractModule {
       PutBlobsStrategy putBlobsStrategy;
       @Inject
       ListContainerAndRecurseThroughFolders listStrategy;
+      @Inject
+      Provider<BlobBuilder> blobBuilders;
 
       public BlobMap create(String containerName, ListContainerOptions options) {
-         return new BlobMapImpl(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy,
-                  listStrategy, containerName, options);
+         return new BlobMapImpl(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
+               containerName, options, blobBuilders);
       }
 
    }
@@ -77,7 +80,7 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       BlobStore connection;
       @Inject
-      Blob.Factory blobFactory;
+      Provider<BlobBuilder> blobBuilders;
       @Inject
       GetBlobsInListStrategy getAllBlobs;
       @Inject
@@ -90,9 +93,8 @@ public class BlobStoreMapModule extends AbstractModule {
       ListContainerAndRecurseThroughFolders listStrategy;
 
       public InputStreamMap create(String containerName, ListContainerOptions options) {
-         return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, listStrategy,
-                  containsValueStrategy, putBlobsStrategy, containerName, options,
-                  crypto);
+         return new InputStreamMapImpl(connection, blobBuilders, getAllBlobs, listStrategy, containsValueStrategy,
+               putBlobsStrategy, containerName, options, crypto);
       }
 
    }

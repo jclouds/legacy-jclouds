@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -73,6 +74,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -97,7 +99,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @SuppressWarnings("unchecked")
    public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
       byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
-               .getResourceAsStream("/const.txt.gz")));
+            .getResourceAsStream("/const.txt.gz")));
       InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams.newInputStreamSupplier(oneConstitution);
 
       InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
@@ -120,24 +122,24 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          Map<Integer, Future<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
-            responses.put(i, Futures.compose(context.getAsyncBlobStore().getBlob(containerName, key),
-                     new Function<Blob, Void>() {
+            responses.put(i,
+                  Futures.compose(context.getAsyncBlobStore().getBlob(containerName, key), new Function<Blob, Void>() {
 
-                        @Override
-                        public Void apply(Blob from) {
-                           try {
-                              assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
-                              checkContentDisposition(from, expectedContentDisposition);
-                           } catch (IOException e) {
-                              Throwables.propagate(e);
-                           }
-                           return null;
+                     @Override
+                     public Void apply(Blob from) {
+                        try {
+                           assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                           checkContentDisposition(from, expectedContentDisposition);
+                        } catch (IOException e) {
+                           Throwables.propagate(e);
                         }
+                        return null;
+                     }
 
-                     }, this.exec));
+                  }, this.exec));
          }
          Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
-                  "get constitution");
+               "get constitution");
          assert exceptions.size() == 0 : exceptions;
 
       } finally {
@@ -147,13 +149,11 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    private void uploadConstitution(String containerName, String key, String contentDisposition) throws IOException {
-      Blob sourceObject = context.getBlobStore().newBlob(key);
-      sourceObject.setPayload(oneHundredOneConstitutions.getInput());
-      sourceObject.getMetadata().getContentMetadata().setContentType("text/plain");
-      sourceObject.getMetadata().getContentMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
-      sourceObject.getMetadata().getContentMetadata().setContentLength(oneHundredOneConstitutionsLength);
-      sourceObject.getMetadata().getContentMetadata().setContentDisposition(contentDisposition);
-      context.getBlobStore().putBlob(containerName, sourceObject);
+      context.getBlobStore().putBlob(
+            containerName,
+            context.getBlobStore().blobBuilder(key).payload(oneHundredOneConstitutions.getInput())
+                  .contentType("text/plain").contentMD5(oneHundredOneConstitutionsMD5)
+                  .contentLength(oneHundredOneConstitutionsLength).contentDisposition(contentDisposition).build());
    }
 
    @Test(groups = { "integration", "live" })
@@ -364,8 +364,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @DataProvider(name = "delete")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
-               { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" },
+            { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "delete")
@@ -382,17 +382,19 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    private void assertContainerEmptyDeleting(String containerName, String key) {
       Iterable<? extends StorageMetadata> listing = Iterables.filter(context.getBlobStore().list(containerName),
-               new Predicate<StorageMetadata>() {
+            new Predicate<StorageMetadata>() {
 
-                  @Override
-                  public boolean apply(StorageMetadata input) {
-                     return input.getType() == StorageType.BLOB;
-                  }
+               @Override
+               public boolean apply(StorageMetadata input) {
+                  return input.getType() == StorageType.BLOB;
+               }
 
-               });
-      assertEquals(Iterables.size(listing), 0, String.format(
-               "deleting %s, we still have %s blobs left in container %s, using encoding %s", key, Iterables
-                        .size(listing), containerName, LOCAL_ENCODING));
+            });
+      assertEquals(
+            Iterables.size(listing),
+            0,
+            String.format("deleting %s, we still have %s blobs left in container %s, using encoding %s", key,
+                  Iterables.size(listing), containerName, LOCAL_ENCODING));
    }
 
    @Test(groups = { "integration", "live" })
@@ -412,21 +414,20 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       String realObject = Strings2.toStringAndClose(new FileInputStream("pom.xml"));
 
       return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
-               { "string", "text/xml", realObject, realObject },
-               { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
+            { "string", "text/xml", realObject, realObject },
+            { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject) throws InterruptedException,
-            IOException {
-      Blob blob = context.getBlobStore().newBlob(key);
-      blob.setPayload(Payloads.newPayload(content));
-      blob.getMetadata().getContentMetadata().setContentType(type);
-      addContentMetadata(blob);
-
+         IOException {
+      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder(key).payload(Payloads.newPayload(content))
+            .contentType(type);
+      addContentMetadata(blobBuilder);
       if (content instanceof InputStream) {
-         Payloads.calculateMD5(blob, context.utils().crypto().md5());
+         blobBuilder.calculateMD5();
       }
+      Blob blob = blobBuilder.build();
       String containerName = getContainerName();
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, blob));
@@ -444,14 +445,15 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      Blob blob = context.getBlobStore().newBlob("streaming");
-      blob.setPayload(new StreamingPayload(new WriteTo() {
+      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder("streaming").payload(new StreamingPayload(new WriteTo() {
          @Override
          public void writeTo(OutputStream outstream) throws IOException {
             outstream.write("foo".getBytes());
          }
       }));
-      addContentMetadata(blob);
+      addContentMetadata(blobBuilder);
+      
+      Blob blob = blobBuilder.build();
 
       String containerName = getContainerName();
       try {
@@ -476,40 +478,40 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       checkContentLanguage(blob, "en");
    }
 
-   private void addContentMetadata(Blob blob) {
-      blob.getMetadata().getContentMetadata().setContentType("text/csv");
-      blob.getMetadata().getContentMetadata().setContentDisposition("attachment; filename=photo.jpg");
-      blob.getMetadata().getContentMetadata().setContentEncoding("gzip");
-      blob.getMetadata().getContentMetadata().setContentLanguage("en");
+   private void addContentMetadata(PayloadBlobBuilder blobBuilder) {
+      blobBuilder.contentType("text/csv");
+      blobBuilder.contentDisposition("attachment; filename=photo.jpg");
+      blobBuilder.contentEncoding("gzip");
+      blobBuilder.contentLanguage("en");
    }
 
    protected void checkContentType(Blob blob, String contentType) {
       assert blob.getPayload().getContentMetadata().getContentType().startsWith(contentType) : blob.getPayload()
-               .getContentMetadata().getContentType();
+            .getContentMetadata().getContentType();
       assert blob.getMetadata().getContentMetadata().getContentType().startsWith(contentType) : blob.getMetadata()
-               .getContentMetadata().getContentType();
+            .getContentMetadata().getContentType();
    }
 
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
       assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
-               .getPayload().getContentMetadata().getContentDisposition();
+            .getPayload().getContentMetadata().getContentDisposition();
       assert blob.getMetadata().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
-               .getMetadata().getContentMetadata().getContentDisposition();
+            .getMetadata().getContentMetadata().getContentDisposition();
 
    }
 
    protected void checkContentEncoding(Blob blob, String contentEncoding) {
       assert (blob.getPayload().getContentMetadata().getContentEncoding().indexOf(contentEncoding) != -1) : blob
-               .getPayload().getContentMetadata().getContentEncoding();
+            .getPayload().getContentMetadata().getContentEncoding();
       assert (blob.getMetadata().getContentMetadata().getContentEncoding().indexOf(contentEncoding) != -1) : blob
-               .getMetadata().getContentMetadata().getContentEncoding();
+            .getMetadata().getContentMetadata().getContentEncoding();
    }
 
    protected void checkContentLanguage(Blob blob, String contentLanguage) {
       assert blob.getPayload().getContentMetadata().getContentLanguage().startsWith(contentLanguage) : blob
-               .getPayload().getContentMetadata().getContentLanguage();
+            .getPayload().getContentMetadata().getContentLanguage();
       assert blob.getMetadata().getContentMetadata().getContentLanguage().startsWith(contentLanguage) : blob
-               .getMetadata().getContentMetadata().getContentLanguage();
+            .getMetadata().getContentMetadata().getContentLanguage();
    }
 
    protected volatile static Crypto crypto;
@@ -526,15 +528,11 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @Test(groups = { "integration", "live" })
    public void testMetadata() throws InterruptedException, IOException {
       String key = "hello";
-
-      Blob blob = context.getBlobStore().newBlob(key);
-      blob.setPayload(TEST_STRING);
-      blob.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to
       // normalize the
       // providers.
-      blob.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      Payloads.calculateMD5(blob, context.utils().crypto().md5());
+      Blob blob = context.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+            .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).calculateMD5().build();
       String containerName = getContainerName();
       try {
          assertNull(context.getBlobStore().blobMetadata(containerName, "powderpuff"));
@@ -562,7 +560,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void validateMetadata(BlobMetadata metadata) throws IOException {
       assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata()
-               .getContentType();
+            .getContentType();
       assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       checkMD5(metadata);

@@ -19,15 +19,15 @@
 
 package org.jclouds.blobstore.strategy.internal;
 
+import static org.jclouds.io.Payloads.newByteArrayPayload;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
-import org.jclouds.io.Payloads;
 
 import com.google.inject.Inject;
 
@@ -44,18 +44,17 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX)
    protected String directorySuffix = "";
-   private final BlobStore connection;
+   private final BlobStore blobStore;
 
    @Inject
-   MarkerFileMkdirStrategy(BlobStore connection) {
-      this.connection = connection;
+   MarkerFileMkdirStrategy(BlobStore blobStore) {
+      this.blobStore = blobStore;
    }
 
    public void execute(String containerName, String directory) {
-      Blob blob = connection.newBlob(directory + directorySuffix);
-      blob.setPayload(Payloads.newByteArrayPayload(new byte[] {}));
-      blob.getPayload().getContentMetadata().setContentType("application/directory");
-      blob.getMetadata().setType(StorageType.RELATIVE_PATH);
-      connection.putBlob(containerName, blob);
+      blobStore.putBlob(
+            containerName,
+            blobStore.blobBuilder(directory + directorySuffix).type(StorageType.RELATIVE_PATH)
+                  .payload(newByteArrayPayload(new byte[] {})).contentType("application/directory").build());
    }
 }

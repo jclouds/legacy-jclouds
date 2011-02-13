@@ -36,7 +36,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ObjectToBlob implements Function<AtmosObject, Blob> {
-   private final Blob.Factory blobFactory;
+   private final Factory blobFactory;
    private final ObjectToBlobMetadata object2BlobMd;
 
    @Inject

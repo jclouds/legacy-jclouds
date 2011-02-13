@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -47,7 +48,13 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#newBlob
     */
+   @Deprecated
    Blob newBlob(String name);
+
+   /**
+    * @see BlobStore#blobBuilder
+    */
+   BlobBuilder blobBuilder(String name);
 
    /**
     * @see BlobStore#listAssignableLocations

@@ -46,7 +46,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
    private static final String sysHttpStreamETag = System.getProperty("jclouds.blobstore.httpstream.md5");
 
    @Test
-   @Parameters( { "jclouds.blobstore.httpstream.url", "jclouds.blobstore.httpstream.md5" })
+   @Parameters({ "jclouds.blobstore.httpstream.url", "jclouds.blobstore.httpstream.md5" })
    public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag) throws Exception {
       httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl, "httpStreamUrl");
 
@@ -61,10 +61,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       long length = connection.getContentLength();
       InputStream input = connection.getInputStream();
 
-      Blob blob = context.getBlobStore().newBlob(name);
-      blob.setPayload(input);
-      blob.getPayload().getContentMetadata().setContentLength(length);
-      blob.getPayload().getContentMetadata().setContentMD5(md5);
+      Blob blob = context.getBlobStore().blobBuilder(name).payload(input).contentLength(length).contentMD5(md5).build();
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);

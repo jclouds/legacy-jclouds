@@ -35,7 +35,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ObjectToBlob implements Function<S3Object, Blob> {
-   private final Blob.Factory blobFactory;
+   private final Factory blobFactory;
    private final ObjectToBlobMetadata object2BlobMd;
 
    @Inject

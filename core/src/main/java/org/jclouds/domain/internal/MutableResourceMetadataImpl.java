@@ -48,7 +48,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
    private Map<String, String> userMetadata;
 
    public MutableResourceMetadataImpl() {
-      userMetadata = Maps.newHashMap();
+      userMetadata = Maps.newLinkedHashMap();
    }
 
    public MutableResourceMetadataImpl(ResourceMetadata<T> from) {

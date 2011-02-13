@@ -89,7 +89,7 @@ public class Payloads {
    }
 
    public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams,
-            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
+         @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
       return new UrlEncodedFormPayload(formParams, sorter, skips);
    }
 
@@ -109,14 +109,16 @@ public class Payloads {
    public static Payload calculateMD5(Payload payload, MessageDigest md5) throws IOException {
       checkNotNull(payload, "payload");
       if (!payload.isRepeatable()) {
-         String oldContentType = payload.getContentMetadata().getContentType();
+         MutableContentMetadata oldContentMetadata = payload.getContentMetadata();
          Payload oldPayload = payload;
          try {
             payload = newByteArrayPayload(toByteArray(payload));
          } finally {
             oldPayload.release();
          }
-         payload.getContentMetadata().setContentType(oldContentType);
+         oldContentMetadata.setContentLength(payload.getContentMetadata().getContentLength());
+         oldContentMetadata.setContentMD5(payload.getContentMetadata().getContentMD5());
+         payload.setContentMetadata(oldContentMetadata);
       }
       payload.getContentMetadata().setContentMD5(CryptoStreams.digest(payload, md5));
       return payload;

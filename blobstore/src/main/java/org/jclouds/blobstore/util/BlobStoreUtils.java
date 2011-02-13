@@ -80,7 +80,8 @@ public class BlobStoreUtils {
    }
 
    public static Blob newBlob(BlobStore blobStore, StorageMetadata blobMeta) {
-      Blob blob = checkNotNull(blobStore, "blobStore").newBlob(checkNotNull(blobMeta, "blobMeta").getName());
+      Blob blob = checkNotNull(blobStore, "blobStore").blobBuilder(checkNotNull(blobMeta, "blobMeta").getName())
+            .userMetadata(blobMeta.getUserMetadata()).build();
       if (blobMeta instanceof BlobMetadata) {
          HttpUtils.copy(((BlobMetadata) blobMeta).getContentMetadata(), blob.getMetadata().getContentMetadata());
       }
@@ -89,7 +90,6 @@ public class BlobStoreUtils {
       blob.getMetadata().setLastModified(blobMeta.getLastModified());
       blob.getMetadata().setLocation(blobMeta.getLocation());
       blob.getMetadata().setUri(blobMeta.getUri());
-      blob.getMetadata().setUserMetadata(blobMeta.getUserMetadata());
       return blob;
    }
 

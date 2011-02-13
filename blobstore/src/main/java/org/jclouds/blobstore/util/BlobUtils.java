@@ -20,6 +20,7 @@
 package org.jclouds.blobstore.util;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 
@@ -31,6 +32,7 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BlobUtilsImpl.class)
 public interface BlobUtils {
+   BlobBuilder blobBuilder();
 
    Blob newBlob(String name);
 

@@ -19,22 +19,28 @@
 
 package org.jclouds.blobstore.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
+
 import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Map representation of a live connection to a Blob Service.
@@ -45,36 +51,59 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
+   public static class CorrectBlobName implements Function<java.util.Map.Entry<? extends String, ? extends Blob>, Blob> {
+      private final Function<String, String> prefixer;
+
+      public CorrectBlobName(Function<String, String> prefixer) {
+         this.prefixer = checkNotNull(prefixer, "prefixer");
+      }
+
+      @Override
+      public Blob apply(java.util.Map.Entry<? extends String, ? extends Blob> arg0) {
+         return apply(arg0.getKey(), arg0.getValue());
+      }
+
+      public Blob apply(String key, Blob blob) {
+         blob.getMetadata().setName(prefixer.apply(key));
+         return blob;
+      }
+   }
+
+   private final CorrectBlobName correctBlobName;
+   private final Provider<BlobBuilder> blobBuilders;
 
    @Inject
    public BlobMapImpl(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
-            ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            ListContainerAndRecurseThroughFolders listStrategy, String containerName, ListContainerOptions options) {
+         ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
+         ListContainerAndRecurseThroughFolders listStrategy, String containerName, ListContainerOptions options,
+         Provider<BlobBuilder> blobBuilders) {
       super(blobstore, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy, containerName, options);
+      this.correctBlobName = new CorrectBlobName(prefixer);
+      this.blobBuilders = checkNotNull(blobBuilders, "blobBuilders");
    }
 
    @Override
    public Blob get(Object key) {
-      String realKey = prefixer.apply(key.toString());
+      String realKey = prefixer.apply(checkNotNull(key, "key").toString());
       Blob blob = blobstore.getBlob(containerName, realKey);
       return blob != null ? stripPrefix(blob) : null;
    }
 
    @Override
    public Blob put(String key, Blob value) {
-      Blob returnVal = getLastValue(key);
-      blobstore.putBlob(containerName, value);
+      Blob returnVal = getLastValue(checkNotNull(key, "key"));
+      blobstore.putBlob(containerName, correctBlobName.apply(key, value));
       return returnVal;
    }
 
    @Override
    public void putAll(Map<? extends String, ? extends Blob> map) {
-      putBlobsStrategy.execute(containerName, map.values());
+      putBlobsStrategy.execute(containerName, transform(checkNotNull(map, "map").entrySet(), correctBlobName));
    }
 
    @Override
    public Blob remove(Object key) {
-      Blob old = getLastValue(key);
+      Blob old = getLastValue(checkNotNull(key, "key"));
       String realKey = prefixer.apply(key.toString());
       blobstore.removeBlob(containerName, realKey);
       return old;
@@ -83,7 +112,7 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    private Blob getLastValue(Object key) {
       Blob old;
       try {
-         old = get(key);
+         old = get(checkNotNull(key, "key"));
       } catch (KeyNotFoundException e) {
          old = null;
       }
@@ -92,12 +121,16 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
 
    @Override
    public Collection<Blob> values() {
-      return Sets.newLinkedHashSet(getAllBlobs.execute(containerName, options));
+      return ImmutableSet.copyOf(getAllBlobs.execute(containerName, options));
    }
 
    @Override
    public Blob newBlob(String name) {
-      return blobstore.newBlob(name);
+      return blobBuilder().name(name).build();
    }
 
+   @Override
+   public BlobBuilder blobBuilder() {
+      return blobBuilders.get();
+   }
 }

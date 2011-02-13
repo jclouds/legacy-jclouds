@@ -244,17 +244,14 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    protected String addBlobToContainer(String sourceContainer, String key, String payload, String contentType) {
-      Blob sourceObject = context.getBlobStore().newBlob(key);
-      sourceObject.setPayload(payload);
-      sourceObject.getMetadata().getContentMetadata().setContentType(contentType);
+      Blob sourceObject = context.getBlobStore().blobBuilder(key).payload(payload).contentType(contentType).build();
       return addBlobToContainer(sourceContainer, sourceObject);
    }
 
    protected void add5BlobsUnderPathAnd5UnderRootToContainer(String sourceContainer) {
       for (Entry<String, String> entry : Iterables.concat(fiveStrings.entrySet(), fiveStringsUnderPath.entrySet())) {
-         Blob sourceObject = context.getBlobStore().newBlob(entry.getKey());
-         sourceObject.setPayload(entry.getValue());
-         sourceObject.getMetadata().getContentMetadata().setContentType("text/xml");
+         Blob sourceObject = context.getBlobStore().blobBuilder(entry.getKey()).payload(entry.getValue())
+               .contentType("text/xml").build();
          addBlobToContainer(sourceContainer, sourceObject);
       }
    }

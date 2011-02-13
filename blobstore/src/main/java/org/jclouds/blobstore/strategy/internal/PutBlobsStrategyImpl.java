@@ -68,7 +68,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
 
    @Override
    public void execute(String containerName, Iterable<? extends Blob> blobs) {
-      Map<Blob, Future<?>> responses = Maps.newHashMap();
+      Map<Blob, Future<?>> responses = Maps.newLinkedHashMap();
       for (Blob blob : blobs) {
          responses.put(blob, ablobstore.putBlob(containerName, blob));
       }

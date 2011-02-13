@@ -20,6 +20,7 @@
 package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
@@ -34,8 +35,18 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BlobMapImpl.class)
 public interface BlobMap extends ListableMap<String, Blob> {
-
+   /**
+    * @see #blobBuilder
+    * @param name
+    */
+   @Deprecated
    Blob newBlob(String name);
+
+   /**
+    * 
+    * @return builder for creating new {@link Blob}s
+    */
+   BlobBuilder blobBuilder();
 
    public static interface Factory {
       BlobMap create(String containerName, ListContainerOptions options);

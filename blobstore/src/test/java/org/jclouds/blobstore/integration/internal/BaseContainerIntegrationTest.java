@@ -40,8 +40,9 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
@@ -60,8 +61,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          context.getBlobStore().createContainerInLocation(null, containerName);
 
-         Blob blob = context.getBlobStore().newBlob("hello");
-         blob.setPayload(TEST_STRING);
+         Blob blob = context.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build();
          context.getBlobStore().putBlob(containerName, blob);
 
          context.getBlobStore().createContainerInLocation(null, containerName);
@@ -74,27 +74,22 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    @Test(groups = { "integration", "live" })
    public void testWithDetails() throws InterruptedException, IOException {
       String key = "hello";
-
-      Blob object = context.getBlobStore().newBlob(key);
-      object.setPayload(TEST_STRING);
-      object.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
-      // NOTE all metadata in jclouds comes out as lowercase, in an effort to
-      // normalize the
-      // providers.
-      object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      Payloads.calculateMD5(object, context.utils().crypto().md5());
       String containerName = getContainerName();
       try {
-         addBlobToContainer(containerName, object);
+         addBlobToContainer(containerName,
+         // NOTE all metadata in jclouds comes out as lowercase, in an effort to
+         // normalize the providers.
+               context.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+                     .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).calculateMD5().build());
          validateContent(containerName, key);
 
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(1).withDetails());
+               maxResults(1).withDetails());
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
          assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata()
-                  .getContentType();
+               .getContentType();
          assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
          checkMD5(metadata);
@@ -134,7 +129,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          container = context.getBlobStore().list(containerName, afterMarker(marker));
          assertEquals(container.getNextMarker(), null);
          assert container.size() == 25 : String.format("size should have been 25, but was %d: %s", container.size(),
-                  container);
+               container);
          assert container.getNextMarker() == null;
 
       } finally {
@@ -305,7 +300,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          public void run() {
             try {
                assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
-                        + " still exists";
+                     + " still exists";
             } catch (Exception e) {
                propagateIfPossible(e);
             }
@@ -315,7 +310,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException,
-            UnsupportedEncodingException {
+         UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
@@ -329,9 +324,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void addAlphabetUnderRoot(String containerName) throws InterruptedException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
-         Blob blob = context.getBlobStore().newBlob(letter + "");
-         blob.setPayload(letter + "content");
-         context.getBlobStore().putBlob(containerName, blob);
+         context.getBlobStore().putBlob(containerName,
+               context.getBlobStore().blobBuilder(letter + "").payload(letter + "content").build());
       }
       assertContainerSize(containerName, 26);
 
@@ -351,17 +345,15 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void add15UnderRoot(String containerName) throws InterruptedException {
       for (int i = 0; i < 15; i++) {
-         Blob blob = context.getBlobStore().newBlob(i + "");
-         blob.setPayload(i + "content");
-         context.getBlobStore().putBlob(containerName, blob);
+         context.getBlobStore().putBlob(containerName,
+               context.getBlobStore().blobBuilder(i + "").payload(i + "content").build());
       }
    }
 
    protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
-         Blob blob = context.getBlobStore().newBlob(prefix + "/" + i);
-         blob.setPayload(i + "content");
-         context.getBlobStore().putBlob(containerName, blob);
+         context.getBlobStore().putBlob(containerName,
+               context.getBlobStore().blobBuilder(prefix + "/" + i).payload(i + "content").build());
       }
    }
 }

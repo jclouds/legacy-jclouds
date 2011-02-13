@@ -34,6 +34,7 @@ import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -61,8 +62,8 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            @Memoized Supplier<Set<? extends Location>> locations) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+         @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
@@ -81,6 +82,14 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    @Override
    public Blob newBlob(String name) {
       return blobUtils.newBlob(name);
+   }
+
+   /**
+    * invokes {@link BlobUtilsImpl#blobBuilder }
+    */
+   @Override
+   public BlobBuilder blobBuilder(String name) {
+      return blobUtils.blobBuilder().name(name);
    }
 
    /**
@@ -201,12 +210,12 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    public ListenableFuture<Void> createDirectory(final String containerName, final String directory) {
 
       return blobUtils.directoryExists(containerName, directory) ? Futures.immediateFuture((Void) null)
-               : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
-                  public Void call() throws Exception {
-                     blobUtils.createDirectory(containerName, directory);
-                     return null;
-                  }
-               }), service);
+            : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+               public Void call() throws Exception {
+                  blobUtils.createDirectory(containerName, directory);
+                  return null;
+               }
+            }), service);
    }
 
    /**
