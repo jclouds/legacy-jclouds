@@ -26,12 +26,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudsigma.binders.BindCloneDriveOptionsToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindDriveDataToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindDriveToPlainTextString;
-import org.jclouds.cloudsigma.binders.BindNameToPayload;
 import org.jclouds.cloudsigma.binders.BindServerToPlainTextString;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
@@ -57,7 +57,8 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -108,8 +109,8 @@ public interface CloudSigmaAsyncClient {
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/clone")
    @MapBinder(BindCloneDriveOptionsToPlainTextString.class)
-   ListenableFuture<DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid,
-         @MapPayloadParam("name") String newName, CloneDriveOptions... options);
+   ListenableFuture<DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid, @PayloadParam("name") String newName,
+         CloneDriveOptions... options);
 
    /**
     * @see CloudSigmaClient#getProfileInfo
@@ -258,7 +259,9 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
    @Path("/resources/vlan/create")
-   ListenableFuture<VLANInfo> createVLAN(@BinderParam(BindNameToPayload.class) String name);
+   @Payload("name {name}\n")
+   @Produces(MediaType.TEXT_PLAIN)
+   ListenableFuture<VLANInfo> createVLAN(@PayloadParam("name") String name);
 
    /**
     * @see CloudSigmaClient#listVLANInfo
@@ -283,8 +286,9 @@ public interface CloudSigmaAsyncClient {
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
    @Path("/resources/vlan/{uuid}/set")
-   ListenableFuture<VLANInfo> renameVLAN(@PathParam("uuid") String uuid,
-         @BinderParam(BindNameToPayload.class) String name);
+   @Payload("name {name}\n")
+   @Produces(MediaType.TEXT_PLAIN)
+   ListenableFuture<VLANInfo> renameVLAN(@PathParam("uuid") String uuid, @PayloadParam("name") String name);
 
    /**
     * @see CloudSigmaClient#listVLANs

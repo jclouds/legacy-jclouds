@@ -118,12 +118,12 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
-import org.jclouds.rest.annotations.MapPayloadParams;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PartParam;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -517,18 +517,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @POST
       @Path("/{foo}")
-      public void postWithPath(@PathParam("foo") @MapPayloadParam("fooble") String path, MapBinder content);
+      public void postWithPath(@PathParam("foo") @PayloadParam("fooble") String path, MapBinder content);
 
       @POST
       @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
-      public void postWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path);
+      public void postWithMethodBinder(@PathParam("foo") @PayloadParam("fooble") String path);
 
       @POST
       @Path("/{foo}")
-      @MapPayloadParams(keys = "rat", values = "atat")
+      @PayloadParams(keys = "rat", values = "atat")
       @MapBinder(BindToJsonPayload.class)
-      public void postWithMethodBinderAndDefaults(@PathParam("foo") @MapPayloadParam("fooble") String path);
+      public void postWithMethodBinderAndDefaults(@PathParam("foo") @PayloadParam("fooble") String path);
+
+      @POST
+      @Path("/{foo}")
+      @PayloadParams(keys = "rat", values = "atat")
+      @org.jclouds.rest.annotations.Payload("name {fooble}")
+      @Produces(MediaType.TEXT_PLAIN)
+      public void testPayload(@PathParam("foo") @PayloadParam("fooble") String path);
    }
 
    public void testCreatePostRequest() throws SecurityException, NoSuchMethodException, IOException {
@@ -592,6 +599,15 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"fooble\":\"data\",\"rat\":\"atat\"}", "application/json", false);
+   }
+
+   public void testCreatePostWithPayload() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("testPayload", String.class);
+      HttpRequest request = factory(TestPost.class).createRequest(method, "data");
+
+      assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, "name data", "text/plain", false);
    }
 
    static interface TestMultipartForm {
@@ -714,7 +730,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @PUT
       @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
-      void putWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path);
+      void putWithMethodBinder(@PathParam("foo") @PayloadParam("fooble") String path);
 
       @PUT
       @Path("/{foo}")
@@ -725,7 +741,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
       @Consumes(MediaType.APPLICATION_JSON)
-      Wrapper putWithMethodBinderConsumes(@PathParam("foo") @MapPayloadParam("fooble") String path);
+      Wrapper putWithMethodBinderConsumes(@PathParam("foo") @PayloadParam("fooble") String path);
 
       @GET
       @Path("/")

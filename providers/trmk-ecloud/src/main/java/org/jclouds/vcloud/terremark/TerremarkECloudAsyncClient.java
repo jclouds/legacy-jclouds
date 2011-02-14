@@ -40,7 +40,7 @@ import javax.ws.rs.Produces;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
@@ -112,8 +112,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @MapBinder(AddInternetServiceOptions.class)
    @Override
    ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@EndpointParam URI existingIpId,
-            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
+            @PayloadParam("name") String serviceName, @PayloadParam("protocol") Protocol protocol,
+            @PayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
@@ -174,8 +174,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(KeyPairHandler.class)
    @MapBinder(BindCreateKeyToXmlPayload.class)
    ListenableFuture<? extends KeyPair> generateKeyPairInOrg(
-            @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @MapPayloadParam("name") String name,
-            @MapPayloadParam("isDefault") boolean makeDefault);
+            @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @PayloadParam("name") String name,
+            @PayloadParam("isDefault") boolean makeDefault);
 
    /**
     * @see TerremarkECloudClient#getKeyPair

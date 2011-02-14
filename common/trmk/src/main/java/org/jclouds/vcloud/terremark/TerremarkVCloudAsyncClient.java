@@ -47,7 +47,7 @@ import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -191,8 +191,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @XMLResponseParser(VCloudExpressVAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VCloudExpressVApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
-            @MapPayloadParam("template") URI template,
-            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+            @PayloadParam("template") URI template,
+            @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
             InstantiateVAppTemplateOptions... options);
 
    /**
@@ -215,8 +215,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@EndpointParam URI publicIpId,
-            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
+            @PayloadParam("name") String serviceName, @PayloadParam("protocol") Protocol protocol,
+            @PayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#deletePublicIp
@@ -280,8 +280,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @XMLResponseParser(NodeHandler.class)
    @MapBinder(AddNodeOptions.class)
    ListenableFuture<? extends Node> addNode(@EndpointParam URI internetServiceId,
-            @MapPayloadParam("ipAddress") String ipAddress, @MapPayloadParam("name") String name,
-            @MapPayloadParam("port") int port, AddNodeOptions... options);
+            @PayloadParam("ipAddress") String ipAddress, @PayloadParam("name") String name,
+            @PayloadParam("port") int port, AddNodeOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getNodes
@@ -310,8 +310,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @Consumes(NODESERVICE_XML)
    @XMLResponseParser(NodeHandler.class)
    @MapBinder(BindNodeConfigurationToXmlPayload.class)
-   ListenableFuture<? extends Node> configureNode(@EndpointParam URI nodeId, @MapPayloadParam("name") String name,
-            @MapPayloadParam("enabled") boolean enabled, @Nullable @MapPayloadParam("description") String description);
+   ListenableFuture<? extends Node> configureNode(@EndpointParam URI nodeId, @PayloadParam("name") String name,
+            @PayloadParam("enabled") boolean enabled, @Nullable @PayloadParam("description") String description);
 
    /**
     * @see TerremarkVCloudExpressClient#deleteNode

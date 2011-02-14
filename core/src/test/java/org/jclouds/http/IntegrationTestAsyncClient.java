@@ -42,7 +42,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -143,7 +143,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}")
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
+   ListenableFuture<String> postJson(@PathParam("id") String id, @PayloadParam("key") String toPut);
 
    @POST
    @Path("/objects/{id}/action/{action}")

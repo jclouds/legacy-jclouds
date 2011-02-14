@@ -59,7 +59,7 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
@@ -162,8 +162,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<Server> createServer(@MapPayloadParam("name") String name, @MapPayloadParam("imageId") int imageId,
-            @MapPayloadParam("flavorId") int flavorId, CreateServerOptions... options);
+   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageId") int imageId,
+            @PayloadParam("flavorId") int flavorId, CreateServerOptions... options);
 
    /**
     * @see CloudServersClient#rebuildServer
@@ -181,8 +181,8 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/ips/public/{address}")
    @MapBinder(BindSharedIpGroupToJsonPayload.class)
    ListenableFuture<Void> shareIp(@PathParam("address") String addressToShare,
-            @PathParam("id") int serverToTosignBindressTo, @MapPayloadParam("sharedIpGroupId") int sharedIpGroup,
-            @MapPayloadParam("configureServer") boolean configureServer);
+            @PathParam("id") int serverToTosignBindressTo, @PayloadParam("sharedIpGroupId") int sharedIpGroup,
+            @PayloadParam("configureServer") boolean configureServer);
 
    /**
     * @see CloudServersClient#unshareIp
@@ -270,8 +270,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @MapBinder(BindCreateImageToJsonPayload.class)
    @Path("/images")
-   ListenableFuture<Image> createImageFromServer(@MapPayloadParam("imageName") String imageName,
-            @MapPayloadParam("serverId") int serverId);
+   ListenableFuture<Image> createImageFromServer(@PayloadParam("imageName") String imageName,
+            @PayloadParam("serverId") int serverId);
 
    /**
     * @see CloudServersClient#listSharedIpGroups
@@ -304,7 +304,7 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    @MapBinder(CreateSharedIpGroupOptions.class)
-   ListenableFuture<SharedIpGroup> createSharedIpGroup(@MapPayloadParam("name") String name,
+   ListenableFuture<SharedIpGroup> createSharedIpGroup(@PayloadParam("name") String name,
             CreateSharedIpGroupOptions... options);
 
    /**

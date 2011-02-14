@@ -32,7 +32,7 @@ import javax.ws.rs.QueryParam;
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -118,8 +118,8 @@ public interface SlicehostAsyncClient {
    @Path("/slices.xml")
    @MapBinder(BindCreateSliceToXmlPayload.class)
    @XMLResponseParser(SliceHandler.class)
-   ListenableFuture<Slice> createSlice(@MapPayloadParam("name") String name, @MapPayloadParam("image_id") int imageId,
-            @MapPayloadParam("flavor_id") int flavorId);
+   ListenableFuture<Slice> createSlice(@PayloadParam("name") String name, @PayloadParam("image_id") int imageId,
+            @PayloadParam("flavor_id") int flavorId);
 
    /**
     * @see SlicehostClient#rebuildSliceFromImage

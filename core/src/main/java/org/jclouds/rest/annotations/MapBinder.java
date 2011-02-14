@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 public @interface MapBinder {
 
    /**
-    * How to bind {@link MapPayloadParam} values, if there is no {@link MapBinder} in the method
+    * How to bind {@link PayloadParam} values, if there is no {@link MapBinder} in the method
     * definition
     */
    Class<? extends org.jclouds.rest.MapBinder> value();
