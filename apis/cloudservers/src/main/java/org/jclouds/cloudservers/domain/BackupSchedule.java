@@ -65,7 +65,7 @@ public class BackupSchedule {
 
    @Override
    public String toString() {
-      return "BackupSchedule [daily=" + daily + ", enabled=" + enabled + ", weekly=" + weekly + "]";
+      return "[daily=" + daily + ", enabled=" + enabled + ", weekly=" + weekly + "]";
    }
 
    @Override

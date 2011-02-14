@@ -37,6 +37,8 @@ import javax.ws.rs.Path;
 public @interface Payload {
 
    /**
+    * Note that if you'd like curly braces literally in the payload, urlencode them first.
+    * 
     * @see Path#value()
     * @see PayloadParam
     */

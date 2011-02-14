@@ -49,11 +49,16 @@ public class BindMapToStringPayload implements MapBinder {
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast( request);
-      UriBuilder builder = uriBuilders.get();
-      builder.path(r.getJavaMethod().getAnnotation(Payload.class).value());
-      URI fake = builder.buildFromMap(postParams);
-      return (R) request.toBuilder().payload(Payloads.newStringPayload(fake.getPath())).build();
+      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(request);
+      String payload = r.getJavaMethod().getAnnotation(Payload.class).value();
+      if (postParams.size() > 0) {
+         UriBuilder builder = uriBuilders.get();
+         builder.uri(URI.create("http://test/"));
+         builder.path(payload);
+         URI fake = builder.buildFromMap(postParams);
+         payload = fake.getPath().substring(1);
+      }
+      return (R) request.toBuilder().payload(Payloads.newStringPayload(payload)).build();
    }
 
    @Override
