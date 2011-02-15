@@ -43,6 +43,13 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>jsch</id>
+            <url>http://jsch.sourceforge.net/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -66,7 +73,7 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.43</version>
+            <version>0.1.44</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
