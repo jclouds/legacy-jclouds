@@ -23,7 +23,7 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <html>
 <head>
-<title>jclouds: multi-cloud framework</title>
+<title>jclouds: multi-cloud library</title>
 </head>
 <body>
 <h2>Status List</h2>
