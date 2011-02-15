@@ -36,7 +36,7 @@
     <description>JClouds Sample for Google App Engine</description>
 
     <properties>
-        <appengine.applicationid>aws-common-demo</appengine.applicationid>
+        <appengine.applicationid>jclouds-aws-demo</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
         <jclouds.test.listener></jclouds.test.listener>
