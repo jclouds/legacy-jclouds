@@ -60,8 +60,8 @@
   />
 
   <input
-    message="Which provider would you like to use (transient,atmos,azureblob,cloudfiles,s3)?"
-    validargs="transient,atmos,azureblob,cloudfiles,s3"
+    message="Which provider would you like to use (transient,googlestorage,cloudonestorage,synaptic-storage,azureblob,cloudfiles-us,cloudfiles-uk,aws-s3,eucalyptus-partnercloud-s3,scaleup-storage)?"
+    validargs="transient,googlestorage,cloudonestorage,synaptic-storage,azureblob,cloudfiles-us,cloudfiles-uk,aws-s3,eucalyptus-partnercloud-s3,scaleup-storage"
     addproperty="provider"
   />
 
