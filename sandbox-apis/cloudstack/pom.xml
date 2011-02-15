@@ -31,9 +31,9 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.api</groupId>
-    <artifactId>deltacloud</artifactId>
-    <name>jclouds deltacloud core</name>
-    <description>jclouds components to access deltacloud</description>
+    <artifactId>cloudstack</artifactId>
+    <name>jclouds cloudstack core</name>
+    <description>jclouds components to access cloudstack</description>
     
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -47,12 +47,10 @@
     </repositories>
     
     <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.deltacloud.endpoint>http://localhost:3001/api</test.deltacloud.endpoint>
-        <test.deltacloud.apiversion>0.1.0</test.deltacloud.apiversion>
-        <test.deltacloud.identity>mockuser</test.deltacloud.identity>
-        <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
+        <test.cloudstack.endpoint>http://localhost:8080/client/api</test.cloudstack.endpoint>
+        <test.cloudstack.apiversion>2.2</test.cloudstack.apiversion>
+        <test.cloudstack.identity>FIXME_apiKey</test.cloudstack.identity>
+        <test.cloudstack.credential>FIXME_secretKey</test.cloudstack.credential>
     </properties>
     <dependencies>
         <dependency>
@@ -76,7 +74,7 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.43</version>
+            <version>0.1.42</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -110,24 +108,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.deltacloud.endpoint</name>
-                                            <value>${test.deltacloud.endpoint}</value>
+                                            <name>test.cloudstack.endpoint</name>
+                                            <value>${test.cloudstack.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.deltacloud.apiversion</name>
-                                            <value>${test.deltacloud.apiversion}</value>
+                                            <name>test.cloudstack.apiversion</name>
+                                            <value>${test.cloudstack.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.deltacloud.identity</name>
-                                            <value>${test.deltacloud.identity}</value>
+                                            <name>test.cloudstack.identity</name>
+                                            <value>${test.cloudstack.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.deltacloud.credential</name>
-                                            <value>${test.deltacloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.cloudstack.credential</name>
+                                            <value>${test.cloudstack.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
