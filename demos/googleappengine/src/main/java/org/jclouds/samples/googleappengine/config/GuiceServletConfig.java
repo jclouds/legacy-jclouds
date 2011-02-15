@@ -34,7 +34,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllStatusController;
 
 import com.google.common.collect.ImmutableSet;
@@ -64,7 +64,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       props.setProperty(PROPERTY_TIMEOUT_SCRIPT_COMPLETE, "25000");
       props.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, "25000");
 
-      ImmutableSet<Module> modules = ImmutableSet.<Module> of(new GoogleAppEngineConfigurationModule());
+      // note that this module hooks into the async urlfetchservice
+      ImmutableSet<Module> modules = ImmutableSet.<Module> of(new AsyncGoogleAppEngineConfigurationModule());
 
       blobsStoreContexts = ImmutableSet.<BlobStoreContext> of(new BlobStoreContextFactory().createContext("aws-s3",
             modules, props));
