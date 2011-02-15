@@ -1,5 +1,0 @@
-provider=ec2
-driver=aws
-identity=accesscredentialid
-credential=secretaccesscredential
-tag=we_create_and_delete_based_on_credential_and_security_group_name_not_instance_id
