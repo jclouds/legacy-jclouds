@@ -1,7 +1,0 @@
-provider=vcloud
-driver=vcloud
-# note you need to change this to the correct endpoint
-vcloud.endpoint=https://vcloud_host_you_want/api
-identity=user@your_org
-credential=password
-tag=name_of_your_vapp

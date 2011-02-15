@@ -1,5 +1,0 @@
-provider=trmk-ecloud
-driver=terremark
-identity=user@youregistered.com
-credential=password
-tag=name_of_your_vapp
