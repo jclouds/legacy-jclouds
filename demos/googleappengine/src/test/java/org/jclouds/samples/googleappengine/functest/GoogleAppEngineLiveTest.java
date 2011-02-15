@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 
 /**
  * Starts up the Google App Engine for Java Development environment and deploys an application which
- * tests S3.
+ * tests Amazon EC2 and S3.
  * 
  * @author Adrian Cole
  */
@@ -49,10 +49,10 @@ public class GoogleAppEngineLiveTest {
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
-               "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
-               "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("test.aws.identity"),
+               "test.aws.identity");
+      String credential = checkNotNull(System.getProperty("test.aws.credential"),
+               "test.aws.credential");
 
       /**
        * Since both s3 and ec2 use the same credentials, we can take a shortcut and specify both
