@@ -29,29 +29,27 @@ data.
 our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-us,
+our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory),
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
                           cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
-                          openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
-                          vcloudexpress (generic), stub (in-memory)
+                          openhosting-east1, serverlove-z1-man, skalicloud-sdg-my
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
 
-our blobstore api supports: aws-s3, cloudfiles (generic), cloudfiles-us, cloudfiles-uk,
+our blobstore api supports: aws-s3, cloudfiles-us, cloudfiles-uk, filesystem,
                             azureblob, atmos (generic), synaptic-storage, scaleup-storage,
-                            cloudonestorage, s3 (generic), walrus(generic), googlestorage, 
-                            eucalyptus-partnercloud-s3, swift (generic), transient (in-mem), 
-                            filesystem (on-disk)
+                            cloudonestorage, walrus(generic), googlestorage, 
+                            eucalyptus-partnercloud-s3, swift (generic), transient (in-mem)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,
-                          azurequeue, simpledb, scaleup-storage as well as a async-http-client
+                          azurequeue, simpledb, cloudstack as well as a async-http-client
                           driver in the sandbox
 
 
