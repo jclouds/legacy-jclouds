@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.ec2;
 
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
 import static org.jclouds.aws.domain.Region.EU_WEST_1;
@@ -62,7 +63,8 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "7");
       properties.setProperty("jclouds.ssh.retryable_messages",
-               "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
+            "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
       // amazon, alestic, canonical, and rightscale
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "137112412989,063491364108,099720109477,411009282317");

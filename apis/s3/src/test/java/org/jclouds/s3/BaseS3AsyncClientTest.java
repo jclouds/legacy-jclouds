@@ -73,8 +73,18 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
    protected String provider = "s3";
 
    @Override
+   protected Properties getProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(provider + ".endpoint", "https://s3.amazonaws.com");
+      overrides.setProperty(provider + ".propertiesbuilder", S3PropertiesBuilder.class.getName());
+      overrides.setProperty(provider + ".contextbuilder", S3ContextBuilder.class.getName());
+      return overrides;
+   }
+
+   @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
+            new Properties());
    }
 
 }

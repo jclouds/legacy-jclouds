@@ -70,7 +70,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest {
 
    @Override
    protected Properties getProperties() {
-      Properties properties = new Properties();
+      Properties properties = super.getProperties();
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;

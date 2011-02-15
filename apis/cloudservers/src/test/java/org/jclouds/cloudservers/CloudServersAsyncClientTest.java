@@ -20,7 +20,6 @@
 package org.jclouds.cloudservers;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -55,8 +54,8 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -890,16 +889,17 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    protected String provider = "cloudservers";
 
    @Override
-   public RestContextSpec<CloudServersClient, CloudServersAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "user", "password", new Properties());
+   public RestContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
    }
 
    @Override
    protected Properties getProperties() {
-      Properties properties = new Properties();
-      properties.setProperty(PROPERTY_REGIONS, "US");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://auth");
-      properties.setProperty(PROPERTY_API_VERSION, "1");
-      return properties;
+      Properties overrides = new Properties();
+      overrides.setProperty(PROPERTY_REGIONS, "US");
+      overrides.setProperty(PROPERTY_API_VERSION, "1");
+      overrides.setProperty(provider + ".endpoint", "https://auth");
+      overrides.setProperty(provider + ".contextbuilder", CloudServersContextBuilder.class.getName());
+      return overrides;
    }
 }

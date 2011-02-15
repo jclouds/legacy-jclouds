@@ -29,6 +29,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "unit")
 public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
+
    @RequiresHttp
    @ConfiguresRestClient
    protected static class StubAWSEC2RestClientModule extends AWSEC2RestClientModule {
@@ -46,8 +47,8 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
          @Override
          public Map<String, URI> get() {
             return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                              .create("https://ec2.us-west-1.amazonaws.com"));
+                  Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
+                  URI.create("https://ec2.us-west-1.amazonaws.com"));
          }
       }
 

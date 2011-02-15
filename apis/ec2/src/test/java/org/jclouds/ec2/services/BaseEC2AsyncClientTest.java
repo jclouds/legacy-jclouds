@@ -31,6 +31,8 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2ContextBuilder;
+import org.jclouds.ec2.EC2PropertiesBuilder;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.http.HttpRequest;
@@ -115,8 +117,18 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    protected String provider = "ec2";
 
    @Override
+   protected Properties getProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(provider + ".endpoint", "https://ec2.us-east-1.amazonaws.com");
+      overrides.setProperty(provider + ".propertiesbuilder", EC2PropertiesBuilder.class.getName());
+      overrides.setProperty(provider + ".contextbuilder", EC2ContextBuilder.class.getName());
+      return overrides;
+   }
+
+   @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
+            new Properties());
    }
 
 }
