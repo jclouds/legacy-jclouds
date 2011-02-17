@@ -38,6 +38,23 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
+    <repositories>
+        <!-- TODO to be removed when the dependencies are in central -->
+        <repository>
+            <id>jersey</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>gson</id>
+            <url>http://google-gson.googlecode.com/svn/mavenrepo</url>
+        </repository>
+        <repository>
+            <id>oauth</id>
+            <name>OAuth Repository</name>
+            <url>http://oauth.googlecode.com/svn/code/maven</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>net.oauth.core</groupId>
@@ -73,8 +90,8 @@
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
-            <artifactId>inject</artifactId>
-            <version>1.0</version>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
