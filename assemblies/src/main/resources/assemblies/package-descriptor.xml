@@ -28,39 +28,29 @@
       LICENSE.txt
       README.txt
       core
-         + docs <- javadoc for core, blobstore, and compute
-         + lib <- core, blobstore, and compute jars and dependencies for core
-         + src <- expanded or source jar for core, blobstore, and compute
-      profiles
-         + enterprise
-            + README.txt <- how to use the profile
-            + lib <- not core
-            + docs <- not core
-            + src <- not core
-      extensions
+         + lib <- core, blobstore, compute (w/scriptbuilder) and loadbalancer JARs and dependencies for core
+         + docs <- javadoc for core, blobstore, compute and loadbalancer         
+         + src <- expanded or source jar for core, blobstore, compute and loadbalancer
+      drivers
          + log4j
-            + README.txt <- how to use the extension
-            + lib <- not core
-            + docs <- not core
-            + src <- not core
+            + README.txt <- how to use the driver
+            + lib <- excl. core
+            + docs <- excl. core
+            + src <- excl. core
+      apis
+         + s3
+            + README.txt <- status of this API
+            + lib <- excl. core
+            + docs <- excl. core
+            + src <- excl. core            
       providers
-         + rackspace
+         + trmk-vcloudexpress
             + README.txt <- status of this provider (what is implemented/not implemented) 
-            + lib <- not core
-            + docs <- not core
-            + src <- not core
-      tools <- integrations with other tools
-         + antcontrib
-            + README.txt <- how to use the tool
-            + lib <- not core
-            + docs <- not core
-            + src <- not core
-      samples <- includes samples and demos
-         + tweetstore
-            + README.txt <- how to build and run the sample
-            + src <- just demo
+            + lib <- excl. core and implemented API(s)
+            + docs <- excl. core and implemented API(s)
+            + src <- excl. core and implemented API(s)
         
-      see http://code.google.com/p/jclouds/issues/detail?id=127
+      see http://code.google.com/p/jclouds/issues/detail?id=458
     -->
     <fileSets>
         <!-- "loose" files -->
@@ -77,6 +67,7 @@
                 <include>LICENSE.txt</include>
             </includes>
             <filtered>true</filtered>
+            <outputDirectory />
         </fileSet>    
           
         <!-- core -->
@@ -95,12 +86,26 @@
             <outputDirectory>core/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>scriptbuilder/target</directory>
+            <includes>
+                <include>jclouds-scriptbuilder-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>core/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>compute/target</directory>
             <includes>
                 <include>jclouds-compute-${project.version}.jar</include>
             </includes>
             <outputDirectory>core/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>loadbalancer/target</directory>
+            <includes>
+                <include>jclouds-loadbalancer-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>core/lib</outputDirectory>
+        </fileSet>        
         <fileSet>
             <directory>core/target</directory>
             <includes>
@@ -116,12 +121,26 @@
             <outputDirectory>core/src</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>scriptbuilder/target</directory>
+            <includes>
+                <include>jclouds-scriptbuilder-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>core/src</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>compute/target</directory>
             <includes>
                 <include>jclouds-compute-${project.version}-sources.jar</include>
             </includes>
             <outputDirectory>core/src</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>loadbalancer/target</directory>
+            <includes>
+                <include>jclouds-loadbalancer-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>core/src</outputDirectory>
+        </fileSet>        
         <fileSet>
             <directory>core/target/apidocs</directory>
             <outputDirectory>core/docs</outputDirectory>            
@@ -131,536 +150,1320 @@
             <outputDirectory>core/docs</outputDirectory>            
         </fileSet>    
         <fileSet>
+            <directory>scriptbuilder/target/apidocs</directory>
+            <outputDirectory>core/docs</outputDirectory>            
+        </fileSet>    
+        <fileSet>
             <directory>compute/target/apidocs</directory>
             <outputDirectory>core/docs</outputDirectory>            
         </fileSet>    
+        <fileSet>
+            <directory>loadbalancer/target/apidocs</directory>
+            <outputDirectory>core/docs</outputDirectory>            
+        </fileSet>
         
-        <!-- providers: atmos -->
+        <!-- drivers: apachehc -->
         <fileSet>
-            <directory>atmos/target</directory>
+            <directory>drivers/apachehc/target</directory>
             <includes>
-                <include>jclouds-atmos-${project.version}.jar</include>
+                <include>jclouds-apachehc-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>providers/atmos/lib</outputDirectory>
+            <outputDirectory>drivers/apachehc/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>atmos/target</directory>
+            <directory>drivers/apachehc/target/jclouds-apachehc-${project.version}-provided-dependencies</directory>
             <includes>
-                <include>jclouds-atmos-${project.version}-sources.jar</include>
+                <include>*.jar</include>
             </includes>
-            <outputDirectory>providers/atmos/src</outputDirectory>
+            <outputDirectory>drivers/apachehc/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>atmos/target/apidocs</directory>
-            <outputDirectory>providers/atmos/docs</outputDirectory>            
+            <directory>drivers/apachehc/target</directory>
+            <includes>
+                <include>jclouds-apachehc-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/apachehc/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/apachehc/target/apidocs</directory>
+            <outputDirectory>drivers/apachehc/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/apachehc</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/apachehc</outputDirectory>            
+        </fileSet>        
+        
+        <!-- drivers: bouncycastle -->
+        <fileSet>
+            <directory>drivers/bouncycastle/target</directory>
+            <includes>
+                <include>jclouds-bouncycastle-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/bouncycastle/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/bouncycastle/target/jclouds-bouncycastle-${project.version}-provided-dependencies</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>drivers/bouncycastle/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
+            <directory>drivers/bouncycastle/target</directory>
+            <includes>
+                <include>jclouds-bouncycastle-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/bouncycastle/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/bouncycastle/target/apidocs</directory>
+            <outputDirectory>drivers/bouncycastle/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/bouncycastle</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/bouncycastle</outputDirectory>            
+        </fileSet>
+        
+        <!-- drivers: enterprise -->
+        <fileSet>
+            <directory>drivers/enterprise/target</directory>
+            <includes>
+                <include>jclouds-enterprise-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/enterprise/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/enterprise/target</directory>
+            <includes>
+                <include>jclouds-enterprise-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/enterprise/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/enterprise/target/apidocs</directory>
+            <outputDirectory>drivers/enterprise/docs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/enterprise</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/enterprise</outputDirectory>
+        </fileSet>
+
+        <!-- drivers: gae -->
+        <fileSet>
+            <directory>drivers/gae/target</directory>
+            <includes>
+                <include>jclouds-gae-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/gae/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/gae/target</directory>
+            <includes>
+                <include>jclouds-gae-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/gae/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/gae/target/apidocs</directory>
+            <outputDirectory>drivers/gae/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/gae</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/gae</outputDirectory>            
+        </fileSet>
+
+        <!-- drivers: joda -->
+        <fileSet>
+            <directory>drivers/joda/target</directory>
+            <includes>
+                <include>jclouds-joda-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/joda/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/joda/target/jclouds-joda-${project.version}-provided-dependencies</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>drivers/joda/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
+            <directory>drivers/joda/target</directory>
+            <includes>
+                <include>jclouds-joda-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/joda/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/joda/target/apidocs</directory>
+            <outputDirectory>drivers/joda/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/joda</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/joda</outputDirectory>            
+        </fileSet>
+        
+        <!-- drivers: jsch -->
+        <fileSet>
+            <directory>drivers/jsch/target</directory>
+            <includes>
+                <include>jclouds-jsch-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/jsch/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/jsch/target/jclouds-jsch-${project.version}-provided-dependencies</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>drivers/jsch/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
+            <directory>drivers/jsch/target</directory>
+            <includes>
+                <include>jclouds-jsch-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/jsch/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/jsch/target/apidocs</directory>
+            <outputDirectory>drivers/jsch/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/jsch</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/jsch</outputDirectory>            
+        </fileSet>
+        
+        <!-- drivers: log4j -->
+        <fileSet>
+            <directory>drivers/log4j/target</directory>
+            <includes>
+                <include>jclouds-log4j-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>drivers/log4j/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/log4j/target/jclouds-log4j-${project.version}-provided-dependencies</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>drivers/log4j/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
+            <directory>drivers/log4j/target</directory>
+            <includes>
+                <include>jclouds-log4j-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>drivers/log4j/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>drivers/log4j/target/apidocs</directory>
+            <outputDirectory>drivers/log4j/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>drivers/log4j</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>drivers/log4j</outputDirectory>            
+        </fileSet>
+                
+        <!-- APIs: atmos -->
+        <fileSet>
+            <directory>apis/atmos/target</directory>
+            <includes>
+                <include>atmos-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/atmos/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/atmos/target</directory>
+            <includes>
+                <include>atmos-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/atmos/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/atmos/target/apidocs</directory>
+            <outputDirectory>apis/atmos/docs</outputDirectory>            
         </fileSet>   
         <fileSet>
-            <directory>atmos</directory>
+            <directory>apis/atmos</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/atmos</outputDirectory>            
-        </fileSet>              
-         
-        <!-- providers: aws -->
-        <fileSet>
-            <directory>aws/core/target</directory>
-            <includes>
-                <include>jclouds-aws-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/aws/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/core/target</directory>
-            <includes>
-                <include>jclouds-aws-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/aws/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/core/target/apidocs</directory>
-            <outputDirectory>providers/aws/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>aws/core</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/aws</outputDirectory>            
-        </fileSet>         
- 
-        <!-- providers: azure -->
-        <fileSet>
-            <directory>azure/target</directory>
-            <includes>
-                <include>jclouds-azure-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/azure/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>azure/target</directory>
-            <includes>
-                <include>jclouds-azure-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/azure/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>azure/target/apidocs</directory>
-            <outputDirectory>providers/azure/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>azure</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/azure</outputDirectory>            
+            <outputDirectory>apis/atmos</outputDirectory>            
         </fileSet>
         
-        <!-- providers: slicehost -->
+        <!-- APIs: byon -->
         <fileSet>
-            <directory>slicehost/target</directory>
+            <directory>apis/byon/target</directory>
             <includes>
-                <include>jclouds-slicehost-${project.version}.jar</include>
+                <include>byon-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>providers/slicehost/lib</outputDirectory>
+            <outputDirectory>apis/byon/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>slicehost/target</directory>
+            <directory>apis/byon/target</directory>
             <includes>
-                <include>jclouds-slicehost-${project.version}-sources.jar</include>
+                <include>byon-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>providers/slicehost/src</outputDirectory>
+            <outputDirectory>apis/byon/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>slicehost/target/apidocs</directory>
-            <outputDirectory>providers/slicehost/docs</outputDirectory>            
-        </fileSet>
+            <directory>apis/byon/target/apidocs</directory>
+            <outputDirectory>apis/byon/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>slicehost</directory>
+            <directory>apis/byon</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/slicehost</outputDirectory>            
-        </fileSet> 
+            <outputDirectory>apis/byon</outputDirectory>            
+        </fileSet>
         
-        <!-- providers: rackspace -->
+        <!-- APIs: cloudfiles -->
         <fileSet>
-            <directory>rackspace/target</directory>
+            <directory>apis/cloudfiles/target</directory>
             <includes>
-                <include>jclouds-rackspace-${project.version}.jar</include>
+                <include>cloudfiles-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>providers/rackspace/lib</outputDirectory>
+            <outputDirectory>apis/cloudfiles/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>rackspace/target</directory>
+            <directory>apis/cloudfiles/target</directory>
             <includes>
-                <include>jclouds-rackspace-${project.version}-sources.jar</include>
+                <include>cloudfiles-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>providers/rackspace/src</outputDirectory>
+            <outputDirectory>apis/cloudfiles/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>rackspace/target/apidocs</directory>
-            <outputDirectory>providers/rackspace/docs</outputDirectory>            
-        </fileSet>
+            <directory>apis/cloudfiles/target/apidocs</directory>
+            <outputDirectory>apis/cloudfiles/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>rackspace</directory>
+            <directory>apis/cloudfiles</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/rackspace</outputDirectory>            
-        </fileSet> 
+            <outputDirectory>apis/cloudfiles</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: cloudservers -->
+        <fileSet>
+            <directory>apis/cloudservers/target</directory>
+            <includes>
+                <include>cloudservers-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/cloudservers/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/cloudservers/target</directory>
+            <includes>
+                <include>cloudservers-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/cloudservers/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/cloudservers/target/apidocs</directory>
+            <outputDirectory>apis/cloudservers/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/cloudservers</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/cloudservers</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: ec2 -->
+        <fileSet>
+            <directory>apis/ec2/target</directory>
+            <includes>
+                <include>ec2-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/ec2/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/ec2/target</directory>
+            <includes>
+                <include>ec2-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/ec2/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/ec2/target/apidocs</directory>
+            <outputDirectory>apis/ec2/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/ec2</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/ec2</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: elasticstack -->
+        <fileSet>
+            <directory>elasticstack/target</directory>
+            <includes>
+                <include>elasticstack-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/elasticstack/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>elasticstack/target</directory>
+            <includes>
+                <include>elasticstack-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/elasticstack/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>elasticstack/target/apidocs</directory>
+            <outputDirectory>apis/elasticstack/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>elasticstack</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/elasticstack</outputDirectory>            
+        </fileSet>
+
+        <!-- APIs: elb -->
+        <fileSet>
+            <directory>apis/elb/target</directory>
+            <includes>
+                <include>elb-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/elb/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/elb/target</directory>
+            <includes>
+                <include>elb-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/elb/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/elb/target/apidocs</directory>
+            <outputDirectory>apis/elb/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/elb</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/elb</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: eucalyptus -->
+        <fileSet>
+            <directory>apis/eucalyptus/target</directory>
+            <includes>
+                <include>eucalyptus-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/eucalyptus/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/eucalyptus/target</directory>
+            <includes>
+                <include>eucalyptus-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/eucalyptus/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/eucalyptus/target/apidocs</directory>
+            <outputDirectory>apis/eucalyptus/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/eucalyptus</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/eucalyptus</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: filesystem -->
+        <fileSet>
+            <directory>apis/filesystem/target</directory>
+            <includes>
+                <include>filesystem-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/filesystem/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/filesystem/target</directory>
+            <includes>
+                <include>filesystem-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/filesystem/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/filesystem/target/apidocs</directory>
+            <outputDirectory>apis/filesystem/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/filesystem</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/filesystem</outputDirectory>            
+        </fileSet>        
+        
+        <!-- APIs: s3 -->
+        <fileSet>
+            <directory>apis/s3/target</directory>
+            <includes>
+                <include>s3-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/s3/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/s3/target</directory>
+            <includes>
+                <include>s3-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/s3/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/s3/target/apidocs</directory>
+            <outputDirectory>apis/s3/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/s3</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/s3</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: swift -->
+        <fileSet>
+            <directory>apis/swift/target</directory>
+            <includes>
+                <include>swift-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/swift/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/swift/target</directory>
+            <includes>
+                <include>swift-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/swift/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/swift/target/apidocs</directory>
+            <outputDirectory>apis/swift/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/swift</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/swift</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: vcloud -->
+        <fileSet>
+            <directory>apis/vcloud/target</directory>
+            <includes>
+                <include>vcloud-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/vcloud/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/vcloud/target</directory>
+            <includes>
+                <include>vcloud-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/vcloud/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/vcloud/target/apidocs</directory>
+            <outputDirectory>apis/vcloud/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/vcloud</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/vcloud</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: vcloudexpress -->
+        <fileSet>
+            <directory>apis/vcloudexpress/target</directory>
+            <includes>
+                <include>vcloudexpress-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/vcloudexpress/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/vcloudexpress/target</directory>
+            <includes>
+                <include>vcloudexpress-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/vcloudexpress/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/vcloudexpress/target/apidocs</directory>
+            <outputDirectory>apis/vcloudexpress/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/vcloudexpress</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/vcloudexpress</outputDirectory>            
+        </fileSet>
+        
+        <!-- APIs: walrus -->
+        <fileSet>
+            <directory>apis/walrus/target</directory>
+            <includes>
+                <include>walrus-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>apis/walrus/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/walrus/target</directory>
+            <includes>
+                <include>walrus-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>apis/walrus/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>apis/walrus/target/apidocs</directory>
+            <outputDirectory>apis/walrus/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>apis/walrus</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>apis/walrus</outputDirectory>            
+        </fileSet>
+        
+        <!-- providers: aws-ec2 -->
+        <fileSet>
+            <directory>providers/aws-ec2/target</directory>
+            <includes>
+                <include>aws-ec2-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-ec2/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-ec2/target</directory>
+            <includes>
+                <include>aws-ec2-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-ec2/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-ec2/target/apidocs</directory>
+            <outputDirectory>providers/aws-ec2/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/aws-ec2</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/aws-ec2</outputDirectory>            
+        </fileSet>
+        
+        <!-- providers: aws-elb -->
+        <fileSet>
+            <directory>providers/aws-elb/target</directory>
+            <includes>
+                <include>aws-elb-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-elb/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-elb/target</directory>
+            <includes>
+                <include>aws-elb-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-elb/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-elb/target/apidocs</directory>
+            <outputDirectory>providers/aws-elb/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/aws-elb</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/aws-elb</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: aws-s3 -->
+        <fileSet>
+            <directory>providers/aws-s3/target</directory>
+            <includes>
+                <include>aws-s3-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-s3/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-s3/target</directory>
+            <includes>
+                <include>aws-s3-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/aws-s3/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/aws-s3/target/apidocs</directory>
+            <outputDirectory>providers/aws-s3/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/aws-s3</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/aws-s3</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: azureblob -->
+        <fileSet>
+            <directory>providers/azureblob/target</directory>
+            <includes>
+                <include>azureblob-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/azureblob/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/azureblob/target</directory>
+            <includes>
+                <include>azureblob-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/azureblob/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/azureblob/target/apidocs</directory>
+            <outputDirectory>providers/azureblob/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/azureblob</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/azureblob</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: bluelock-vcdirector -->
+        <fileSet>
+            <directory>providers/bluelock-vcdirector/target</directory>
+            <includes>
+                <include>bluelock-vcdirector-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock-vcdirector/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/bluelock-vcdirector/target</directory>
+            <includes>
+                <include>bluelock-vcdirector-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock-vcdirector/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/bluelock-vcdirector/target/apidocs</directory>
+            <outputDirectory>providers/bluelock-vcdirector/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/bluelock-vcdirector</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/bluelock-vcdirector</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudfiles-uk -->
+        <fileSet>
+            <directory>providers/cloudfiles-uk/target</directory>
+            <includes>
+                <include>cloudfiles-uk-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-uk/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudfiles-uk/target</directory>
+            <includes>
+                <include>cloudfiles-uk-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-uk/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudfiles-uk/target/apidocs</directory>
+            <outputDirectory>providers/cloudfiles-uk/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudfiles-uk</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-uk</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudfiles-us -->
+        <fileSet>
+            <directory>providers/cloudfiles-us/target</directory>
+            <includes>
+                <include>cloudfiles-us-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-us/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudfiles-us/target</directory>
+            <includes>
+                <include>cloudfiles-us-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-us/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudfiles-us/target/apidocs</directory>
+            <outputDirectory>providers/cloudfiles-us/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudfiles-us</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudfiles-us</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudonestorage -->
+        <fileSet>
+            <directory>providers/cloudonestorage/target</directory>
+            <includes>
+                <include>cloudonestorage-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudonestorage/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudonestorage/target</directory>
+            <includes>
+                <include>cloudonestorage-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudonestorage/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudonestorage/target/apidocs</directory>
+            <outputDirectory>providers/cloudonestorage/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudonestorage</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudonestorage</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudservers-uk -->
+        <fileSet>
+            <directory>providers/cloudservers-uk/target</directory>
+            <includes>
+                <include>cloudservers-uk-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-uk/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudservers-uk/target</directory>
+            <includes>
+                <include>cloudservers-uk-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-uk/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudservers-uk/target/apidocs</directory>
+            <outputDirectory>providers/cloudservers-uk/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudservers-uk</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-uk</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudservers-us -->
+        <fileSet>
+            <directory>providers/cloudservers-us/target</directory>
+            <includes>
+                <include>cloudservers-us-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-us/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudservers-us/target</directory>
+            <includes>
+                <include>cloudservers-us-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-us/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudservers-us/target/apidocs</directory>
+            <outputDirectory>providers/cloudservers-us/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudservers-us</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudservers-us</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: cloudsigma-zrh -->
+        <fileSet>
+            <directory>providers/cloudsigma-zrh/target</directory>
+            <includes>
+                <include>cloudsigma-zrh-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudsigma-zrh/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudsigma-zrh/target</directory>
+            <includes>
+                <include>cloudsigma-zrh-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/cloudsigma-zrh/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/cloudsigma-zrh/target/apidocs</directory>
+            <outputDirectory>providers/cloudsigma-zrh/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/cloudsigma-zrh</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/cloudsigma-zrh</outputDirectory>            
+        </fileSet>   
+        
+        <!-- providers: elastichosts-lon-b -->
+        <fileSet>
+            <directory>providers/elastichosts-lon-b/target</directory>
+            <includes>
+                <include>elastichosts-lon-b-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-b/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-lon-b/target</directory>
+            <includes>
+                <include>elastichosts-lon-b-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-b/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-lon-b/target/apidocs</directory>
+            <outputDirectory>providers/elastichosts-lon-b/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/elastichosts-lon-b</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-b</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: elastichosts-lon-p -->
+        <fileSet>
+            <directory>providers/elastichosts-lon-p/target</directory>
+            <includes>
+                <include>elastichosts-lon-p-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-p/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-lon-p/target</directory>
+            <includes>
+                <include>elastichosts-lon-p-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-p/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-lon-p/target/apidocs</directory>
+            <outputDirectory>providers/elastichosts-lon-p/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/elastichosts-lon-p</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-lon-p</outputDirectory>            
+        </fileSet>
+        
+        <!-- providers: elastichosts-sat-p -->
+        <fileSet>
+            <directory>providers/elastichosts-sat-p/target</directory>
+            <includes>
+                <include>elastichosts-sat-p-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-sat-p/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-sat-p/target</directory>
+            <includes>
+                <include>elastichosts-sat-p-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-sat-p/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/elastichosts-sat-p/target/apidocs</directory>
+            <outputDirectory>providers/elastichosts-sat-p/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/elastichosts-sat-p</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/elastichosts-sat-p</outputDirectory>            
+        </fileSet>
+        
+        <!-- providers: eucalyptus-partnercloud-ec2 -->
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-ec2/target</directory>
+            <includes>
+                <include>eucalyptus-partnercloud-ec2-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-ec2/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-ec2/target</directory>
+            <includes>
+                <include>eucalyptus-partnercloud-ec2-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-ec2/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-ec2/target/apidocs</directory>
+            <outputDirectory>providers/eucalyptus-partnercloud-ec2/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-ec2</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-ec2</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: eucalyptus-partnercloud-s3 -->
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-s3/target</directory>
+            <includes>
+                <include>eucalyptus-partnercloud-s3-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-s3/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-s3/target</directory>
+            <includes>
+                <include>eucalyptus-partnercloud-s3-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-s3/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-s3/target/apidocs</directory>
+            <outputDirectory>providers/eucalyptus-partnercloud-s3/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/eucalyptus-partnercloud-s3</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/eucalyptus-partnercloud-s3</outputDirectory>            
+        </fileSet>     
         
         <!-- providers: gogrid -->
         <fileSet>
-            <directory>gogrid/target</directory>
+            <directory>providers/gogrid/target</directory>
             <includes>
-                <include>jclouds-gogrid-${project.version}.jar</include>
+                <include>gogrid-${project.version}-jar-with-dependencies.jar</include>
             </includes>
             <outputDirectory>providers/gogrid/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>gogrid/target</directory>
+            <directory>providers/gogrid/target</directory>
             <includes>
-                <include>jclouds-gogrid-${project.version}-sources.jar</include>
+                <include>gogrid-${project.version}-sources.jar</include>
             </includes>
             <outputDirectory>providers/gogrid/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>gogrid/target/apidocs</directory>
+            <directory>providers/gogrid/target/apidocs</directory>
             <outputDirectory>providers/gogrid/docs</outputDirectory>            
-        </fileSet>
+        </fileSet>   
         <fileSet>
-            <directory>gogrid</directory>
+            <directory>providers/gogrid</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
             <outputDirectory>providers/gogrid</outputDirectory>            
-        </fileSet> 
-        
-        <!-- providers: rimuhosting -->
-        <fileSet>
-            <directory>rimuhosting/target</directory>
-            <includes>
-                <include>jclouds-rimuhosting-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/rimuhosting/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>rimuhosting/target</directory>
-            <includes>
-                <include>jclouds-rimuhosting-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/rimuhosting/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>rimuhosting/target/apidocs</directory>
-            <outputDirectory>providers/rimuhosting/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>rimuhosting</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/rimuhosting</outputDirectory>            
-        </fileSet> 
-        
-        <!-- providers: bluelock -->
-        <fileSet>
-            <directory>vcloud/core/target</directory>
-            <includes>
-                <include>jclouds-vcloud-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/vcloud/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/core/target</directory>
-            <includes>
-                <include>jclouds-vcloud-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/vcloud/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/vcloud/target/apidocs</directory>
-            <outputDirectory>providers/vcloud/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/core</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/vcloud</outputDirectory>            
         </fileSet>     
         
-        <!-- providers: bluelock -->
+        <!-- providers: googlestorage -->
         <fileSet>
-            <directory>vcloud/core/target</directory>
+            <directory>providers/googlestorage/target</directory>
             <includes>
-                <include>jclouds-vcloud-${project.version}.jar</include>
+                <include>googlestorage-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>providers/bluelock/lib</outputDirectory>
+            <outputDirectory>providers/googlestorage/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>vcloud/core/target</directory>
+            <directory>providers/googlestorage/target</directory>
             <includes>
-                <include>jclouds-vcloud-${project.version}-sources.jar</include>
+                <include>googlestorage-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>providers/bluelock/src</outputDirectory>
+            <outputDirectory>providers/googlestorage/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>vcloud/bluelock/target</directory>
-            <includes>
-                <include>jclouds-bluelock-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/bluelock/lib</outputDirectory>
-        </fileSet>
+            <directory>providers/googlestorage/target/apidocs</directory>
+            <outputDirectory>providers/googlestorage/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>vcloud/bluelock/target</directory>
-            <includes>
-                <include>jclouds-bluelock-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/bluelock/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/bluelock/target/apidocs</directory>
-            <outputDirectory>providers/bluelock/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/bluelock</directory>
+            <directory>providers/googlestorage</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/bluelock</outputDirectory>            
+            <outputDirectory>providers/googlestorage</outputDirectory>            
         </fileSet>     
         
-        <!-- providers: terremark -->
+        <!-- providers: openhosting-east1 -->
         <fileSet>
-            <directory>vcloud/core/target</directory>
+            <directory>providers/openhosting-east1/target</directory>
             <includes>
-                <include>jclouds-vcloud-${project.version}.jar</include>
+                <include>openhosting-east1-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>providers/terremark/lib</outputDirectory>
+            <outputDirectory>providers/openhosting-east1/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>vcloud/core/target</directory>
+            <directory>providers/openhosting-east1/target</directory>
             <includes>
-                <include>jclouds-vcloud-${project.version}-sources.jar</include>
+                <include>openhosting-east1-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>providers/terremark/src</outputDirectory>
+            <outputDirectory>providers/openhosting-east1/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>vcloud/terremark/target</directory>
-            <includes>
-                <include>jclouds-terremark-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/terremark/lib</outputDirectory>
-        </fileSet>
+            <directory>providers/openhosting-east1/target/apidocs</directory>
+            <outputDirectory>providers/openhosting-east1/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>vcloud/terremark/target</directory>
-            <includes>
-                <include>jclouds-terremark-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/terremark/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/terremark/target/apidocs</directory>
-            <outputDirectory>providers/terremark/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/terremark</directory>
+            <directory>providers/openhosting-east1</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/terremark</outputDirectory>            
+            <outputDirectory>providers/openhosting-east1</outputDirectory>            
         </fileSet>     
         
-        <!-- extensions: bouncycastle -->
+        <!-- providers: scaleup-storage -->
         <fileSet>
-            <directory>extensions/bouncycastle/target</directory>
+            <directory>providers/scaleup-storage/target</directory>
             <includes>
-                <include>jclouds-bouncycastle-${project.version}-jar-with-dependencies.jar</include>
+                <include>scaleup-storage-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>extensions/bouncycastle/lib</outputDirectory>
+            <outputDirectory>providers/scaleup-storage/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/bouncycastle/target</directory>
+            <directory>providers/scaleup-storage/target</directory>
             <includes>
-                <include>jclouds-bouncycastle-${project.version}-sources.jar</include>
+                <include>scaleup-storage-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/bouncycastle/src</outputDirectory>
+            <outputDirectory>providers/scaleup-storage/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/bouncycastle/target/apidocs</directory>
-            <outputDirectory>extensions/bouncycastle/docs</outputDirectory>            
-        </fileSet>
+            <directory>providers/scaleup-storage/target/apidocs</directory>
+            <outputDirectory>providers/scaleup-storage/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>extensions/bouncycastle</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>extensions/bouncycastle</outputDirectory>            
-        </fileSet>
-                
-        <!-- extensions: enterprise -->
-        <fileSet>
-            <directory>extensions/enterprise/target</directory>
-            <includes>
-                <include>jclouds-enterprise-${project.version}-jar-with-dependencies.jar</include>
-            </includes>
-            <outputDirectory>extensions/enterprise/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>extensions/enterprise/target</directory>
-            <includes>
-                <include>jclouds-enterprise-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>extensions/enterprise/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>extensions/enterprise/target/apidocs</directory>
-            <outputDirectory>extensions/enterprise/docs</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>extensions/enterprise</directory>
+            <directory>providers/scaleup-storage</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/enterprise</outputDirectory>
-        </fileSet>
-
-        <!-- extensions: gae -->
+            <outputDirectory>providers/scaleup-storage</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: serverlove-z1-man -->
         <fileSet>
-            <directory>extensions/gae/target</directory>
+            <directory>providers/serverlove-z1-man/target</directory>
             <includes>
-                <include>jclouds-gae-${project.version}.jar</include>
+                <include>serverlove-z1-man-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>extensions/gae/lib</outputDirectory>
+            <outputDirectory>providers/serverlove-z1-man/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/gae/target</directory>
+            <directory>providers/serverlove-z1-man/target</directory>
             <includes>
-                <include>jclouds-gae-${project.version}-sources.jar</include>
+                <include>serverlove-z1-man-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/gae/src</outputDirectory>
+            <outputDirectory>providers/serverlove-z1-man/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/gae/target/apidocs</directory>
-            <outputDirectory>extensions/gae/docs</outputDirectory>            
-        </fileSet>
+            <directory>providers/serverlove-z1-man/target/apidocs</directory>
+            <outputDirectory>providers/serverlove-z1-man/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>extensions/gae</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>extensions/gae</outputDirectory>            
-        </fileSet>
-
-        <!-- extensions: joda -->
-        <fileSet>
-            <directory>extensions/joda/target</directory>
-            <includes>
-                <include>jclouds-joda-${project.version}-jar-with-dependencies.jar</include>
-            </includes>
-            <outputDirectory>extensions/joda/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>extensions/joda/target</directory>
-            <includes>
-                <include>jclouds-joda-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>extensions/joda/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>extensions/joda/target/apidocs</directory>
-            <outputDirectory>extensions/joda/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>extensions/joda</directory>
+            <directory>providers/serverlove-z1-man</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/joda</outputDirectory>            
-        </fileSet>
-
-        <!-- extensions: apachehc -->
+            <outputDirectory>providers/serverlove-z1-man</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: skalicloud-sdg-my -->
         <fileSet>
-            <directory>extensions/apachehc/target</directory>
+            <directory>providers/skalicloud-sdg-my/target</directory>
             <includes>
-                <include>jclouds-apachehc-${project.version}.jar</include>
+                <include>skalicloud-sdg-my-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>extensions/apachehc/lib</outputDirectory>
+            <outputDirectory>providers/skalicloud-sdg-my/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/apachehc/target</directory>
+            <directory>providers/skalicloud-sdg-my/target</directory>
             <includes>
-                <include>jclouds-apachehc-${project.version}-sources.jar</include>
+                <include>skalicloud-sdg-my-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/apachehc/src</outputDirectory>
+            <outputDirectory>providers/skalicloud-sdg-my/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/apachehc/target/apidocs</directory>
-            <outputDirectory>extensions/apachehc/docs</outputDirectory>            
-        </fileSet>
+            <directory>providers/skalicloud-sdg-my/target/apidocs</directory>
+            <outputDirectory>providers/skalicloud-sdg-my/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>extensions/apachehc</directory>
+            <directory>providers/skalicloud-sdg-my</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/apachehc</outputDirectory>            
+            <outputDirectory>providers/skalicloud-sdg-my</outputDirectory>            
         </fileSet>
         
-        <!-- extensions: jsch -->
+        <!-- providers: slicehost -->
         <fileSet>
-            <directory>extensions/ssh/jsch/target</directory>
+            <directory>providers/slicehost/target</directory>
             <includes>
-                <include>jclouds-jsch-${project.version}.jar</include>
+                <include>slicehost-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>extensions/jsch/lib</outputDirectory>
+            <outputDirectory>providers/slicehost/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/ssh/jsch/target</directory>
+            <directory>providers/slicehost/target</directory>
             <includes>
-                <include>jclouds-jsch-${project.version}-sources.jar</include>
+                <include>slicehost-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/jsch/src</outputDirectory>
+            <outputDirectory>providers/slicehost/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/ssh/jsch/target/apidocs</directory>
-            <outputDirectory>extensions/jsch/docs</outputDirectory>            
-        </fileSet>
+            <directory>providers/slicehost/target/apidocs</directory>
+            <outputDirectory>providers/slicehost/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>extensions/ssh/jsch</directory>
+            <directory>providers/slicehost</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/jsch</outputDirectory>            
+            <outputDirectory>providers/slicehost</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: synaptic-storage -->
+        <fileSet>
+            <directory>providers/synaptic-storage/target</directory>
+            <includes>
+                <include>synaptic-storage-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/synaptic-storage/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/synaptic-storage/target</directory>
+            <includes>
+                <include>synaptic-storage-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/synaptic-storage/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>providers/synaptic-storage/target/apidocs</directory>
+            <outputDirectory>providers/synaptic-storage/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/synaptic-storage</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/synaptic-storage</outputDirectory>            
         </fileSet>
         
-        <!-- extensions: log4j -->
+        <!-- providers: trmk-ecloud -->
         <fileSet>
-            <directory>extensions/log4j/target</directory>
+            <directory>providers/trmk-ecloud/target</directory>
             <includes>
-                <include>jclouds-log4j-${project.version}.jar</include>
+                <include>trmk-ecloud-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>extensions/log4j/lib</outputDirectory>
+            <outputDirectory>providers/trmk-ecloud/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/log4j/target</directory>
+            <directory>providers/trmk-ecloud/target</directory>
             <includes>
-                <include>jclouds-log4j-${project.version}-sources.jar</include>
+                <include>trmk-ecloud-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/log4j/src</outputDirectory>
+            <outputDirectory>providers/trmk-ecloud/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/log4j/target/apidocs</directory>
-            <outputDirectory>extensions/log4j/docs</outputDirectory>            
-        </fileSet>
+            <directory>providers/trmk-ecloud/target/apidocs</directory>
+            <outputDirectory>providers/trmk-ecloud/docs</outputDirectory>            
+        </fileSet>   
         <fileSet>
-            <directory>extensions/log4j</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>extensions/log4j</outputDirectory>            
-        </fileSet>
-
-        <!-- tools: antcontrib -->
-        <fileSet>
-            <directory>tools/antcontrib/target</directory>
-            <includes>
-                <include>jclouds-antcontrib-${project.version}-jar-with-dependencies.jar</include>
-            </includes>
-            <outputDirectory>tools/antcontrib/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/antcontrib/target</directory>
-            <includes>
-                <include>jclouds-antcontrib-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>tools/antcontrib/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/antcontrib/target/apidocs</directory>
-            <outputDirectory>tools/antcontrib/docs</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/antcontrib</directory>
+            <directory>providers/trmk-ecloud</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>tools/antcontrib</outputDirectory>
-        </fileSet>
+            <outputDirectory>providers/trmk-ecloud</outputDirectory>            
+        </fileSet>     
         
-        <!-- samples -->
+        <!-- providers: trmk-vcloudexpress -->
         <fileSet>
-            <directory>demos/gae-tweetstore/target/jclouds-demo-gae-tweetstore</directory>
-            <outputDirectory>samples/gae-tweetstore</outputDirectory>            
+            <directory>providers/trmk-vcloudexpress/target</directory>
+            <includes>
+                <include>trmk-vcloudexpress-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>providers/trmk-vcloudexpress/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>aws/demos/createandlistbuckets/target/jclouds-aws-demo-createandlistbuckets-src</directory>
-            <outputDirectory>samples/aws/createandlistbuckes</outputDirectory>
+            <directory>providers/trmk-vcloudexpress/target</directory>
+            <includes>
+                <include>trmk-vcloudexpress-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/trmk-vcloudexpress/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>aws/demos/googleappengine/target/jclouds-aws-demo-googleappengine-src</directory>
-            <outputDirectory>samples/aws/googleappengine</outputDirectory>
-        </fileSet>                
-    </fileSets>
+            <directory>providers/trmk-vcloudexpress/target/apidocs</directory>
+            <outputDirectory>providers/trmk-vcloudexpress/docs</outputDirectory>            
+        </fileSet>   
+        <fileSet>
+            <directory>providers/trmk-vcloudexpress</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/trmk-vcloudexpress</outputDirectory>            
+        </fileSet>     
+    </fileSets>        
 </assembly>

@@ -19,15 +19,12 @@
 
 package org.jclouds.epc.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.jclouds.walrus.blobstore.WalrusBlobMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest")
-public class EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
-   public EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest() {
-      containerCount = 5;
-   }
+public class EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest extends WalrusBlobMapIntegrationLiveTest {
 }

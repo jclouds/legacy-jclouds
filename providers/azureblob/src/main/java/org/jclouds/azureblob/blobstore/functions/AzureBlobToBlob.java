@@ -35,7 +35,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class AzureBlobToBlob implements Function<AzureBlob, Blob> {
-   private final Blob.Factory blobFactory;
+   private final Factory blobFactory;
    private final BlobPropertiesToBlobMetadata blobPr2BlobMd;
 
    @Inject

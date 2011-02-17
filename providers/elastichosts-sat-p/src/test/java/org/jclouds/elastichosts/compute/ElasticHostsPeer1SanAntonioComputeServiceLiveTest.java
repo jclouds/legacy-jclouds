@@ -31,7 +31,7 @@ public class ElasticHostsPeer1SanAntonioComputeServiceLiveTest extends ElasticSt
 
    public ElasticHostsPeer1SanAntonioComputeServiceLiveTest() {
       provider = "elastichosts-sat-p";
-      tag = "elastichosts";
+      group = "elastichosts";
    }
 
 }

@@ -24,6 +24,10 @@ package org.jclouds.location.reference;
  * @author Adrian Cole
  */
 public interface LocationConstants {
-   public static final String PROPERTY_REGIONS = "jclouds.location.regions";
-   public static final String PROPERTY_REGION = "jclouds.location.region";
+   public static final String ENDPOINT = "endpoint";
+   public static final String ISO3166_CODES = "iso3166-codes";
+   public static final String PROPERTY_REGIONS = "jclouds.regions";
+   public static final String PROPERTY_REGION = "jclouds.region";
+   public static final String PROPERTY_ZONES = "jclouds.zones";
+   public static final String PROPERTY_ZONE = "jclouds.zone";
 }

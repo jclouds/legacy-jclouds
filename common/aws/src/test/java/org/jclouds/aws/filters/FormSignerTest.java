@@ -51,7 +51,7 @@ import com.google.inject.name.Names;
 public class FormSignerTest {
    @SuppressWarnings("unchecked")
    public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("provider", "endpoint",
-            "apiVersion", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
+            "apiVersion", "", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
             (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
                      new AbstractModule() {
                         @Override

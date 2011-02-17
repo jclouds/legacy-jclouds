@@ -19,52 +19,39 @@
 
 package org.jclouds.samples.googleappengine.functions;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.StatusResult;
 
 import com.google.common.base.Function;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 @Singleton
-public class ComputeServiceContextToStatusResult implements
-      Function<String, StatusResult> {
-
-   @Inject
-   private Map<String, ComputeServiceContext> contexts;
+public class ComputeServiceContextToStatusResult implements Function<ComputeServiceContext, StatusResult> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public StatusResult apply(final String contextName) {
-      final ComputeServiceContext context = contexts.get(contextName);
-      final String host = context.getProviderSpecificContext().getEndpoint()
-            .getHost();
+   public StatusResult apply(ComputeServiceContext in) {
+      String host = in.getProviderSpecificContext().getEndpoint().getHost();
       String status;
       String name = "not found";
       try {
          long start = System.currentTimeMillis();
-         // set options that don't block so that we can avoid
-         // DeadLineExceededExceptions
-         TemplateOptions options = context.getComputeService()
-               .templateOptions().blockUntilRunning(false);
 
-         // set the name to the default template to show that
-         // it works
-         name = context.getComputeService().templateBuilder().options(options)
-               .build().toString();
+         name = String.format("%d nodes", in.getComputeService().listNodes().size());
 
          status = ((System.currentTimeMillis() - start) + "ms");
       } catch (Exception e) {
-         logger.error(e, "Error listing service %s", contextName);
+         logger.error(e, "Error listing context %s", in);
          status = (e.getMessage());
       }
-      return new StatusResult(contextName, host, name, status);
+      return new StatusResult(in.getProviderSpecificContext().getId(), host, name, status);
    }
 }

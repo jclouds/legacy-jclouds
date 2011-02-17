@@ -42,13 +42,13 @@ import com.google.inject.Provides;
 public abstract class CommonVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder()
-         .put(Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING)
-         .put(Status.RESOLVED, NodeState.PENDING).put(Status.ERROR, NodeState.ERROR)
-         .put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED, NodeState.PENDING)
-         .put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN, NodeState.UNRECOGNIZED)
-         .put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT, NodeState.PENDING)
-         .put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED, NodeState.PENDING).build();
+   static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder().put(
+            Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING).put(Status.RESOLVED, NodeState.PENDING)
+            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED,
+                     NodeState.PENDING).put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN,
+                     NodeState.UNRECOGNIZED).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
+                     NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED,
+                     NodeState.PENDING).build();
 
    @Singleton
    @Provides

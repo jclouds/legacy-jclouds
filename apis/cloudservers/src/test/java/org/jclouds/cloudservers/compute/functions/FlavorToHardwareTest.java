@@ -23,16 +23,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.jclouds.cloudservers.domain.Flavor;
+import org.jclouds.cloudservers.functions.ParseFlavorFromJsonResponseTest;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.cloudservers.domain.Flavor;
-import org.jclouds.cloudservers.functions.ParseFlavorFromJsonResponseTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -42,20 +42,14 @@ import com.google.common.collect.ImmutableList;
  */
 @Test(groups = "unit")
 public class FlavorToHardwareTest {
-   Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+   Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
    public void test() throws UnknownHostException {
-      assertEquals(
-            convertFlavor(),
-            new HardwareBuilder()
-                  .ids("1")
-                  .name("256 MB Server")
-                  .processors(ImmutableList.of(new Processor(1.0, 1.0)))
-                  .ram(256)
-                  .volumes(
-                        ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
-                              .bootDevice(true).build())).build());
+      assertEquals(convertFlavor(), new HardwareBuilder().ids("1").name("256 MB Server").processors(
+               ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
+               ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true).bootDevice(true)
+                        .build())).build());
    }
 
    public static Hardware convertFlavor() {

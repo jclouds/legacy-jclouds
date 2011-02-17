@@ -28,7 +28,6 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -44,8 +43,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.libvirt.Datacenter;
+import org.jclouds.domain.Location;
 import org.jclouds.libvirt.Image;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
@@ -60,7 +58,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -73,225 +70,226 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domain, Domain, Image, Datacenter> {
+public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domain, Domain, Image, Location> {
 
-	private final Connect client;
+   private final Connect client;
 
-	@Inject
-	public LibvirtComputeServiceAdapter(Connect client, @Named(PROPERTY_LIBVIRT_DOMAIN_DIR) String domainDir) {
-		this.client = checkNotNull(client, "client");
-		System.out.println(domainDir);
-	}
+   @Inject
+   public LibvirtComputeServiceAdapter(Connect client, @Named(PROPERTY_LIBVIRT_DOMAIN_DIR) String domainDir) {
+      this.client = checkNotNull(client, "client");
+      System.out.println(domainDir);
+   }
 
-	@Override
-	public Domain runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
-			Map<String, Credentials> credentialStore) {
-		try {
-			String domainName = tag;
-			Domain domain = client.domainLookupByName(domainName);
-			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(domain.getXMLDesc(0))));
-			Document doc = builder.getDocument();
-			String xpathString = "//devices/disk[@device='disk']/source/@file";
-			XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpathString);
-			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-			String diskFileName = nodes.item(0).getNodeValue();
-			StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-			
-			// cloning volume
-			String poolName = storageVol.storagePoolLookupByVolume().getName();
-			StoragePool storagePool = client.storagePoolLookupByName(poolName);
-			StorageVol clonedVol = null;
-			boolean cloned = false;
-			int retry = 0;
-			while(!cloned && retry<10) {
-				try {
-					clonedVol = cloneVolume(storagePool, storageVol);
-					cloned = true;
-				} catch (LibvirtException e) {
-					retry++;
-					Thread.sleep(1000);
-				}	
-			}
-			// define Domain
-			String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0), clonedVol);
-			Domain newDomain = client.domainDefineXML(xmlFinal);
-			newDomain.create();
-			// store the credentials so that later functions can use them
-			credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));				
-			return newDomain;
-		} catch (LibvirtException e) {
-			return propogate(e);
-		} catch (Exception e) {
-			return propogate(e);
-		}
-	}
+   @Override
+   public Domain createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
+            Map<String, Credentials> credentialStore) {
+      try {
+         String domainName = tag;
+         Domain domain = client.domainLookupByName(domainName);
+         XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(domain.getXMLDesc(0))));
+         Document doc = builder.getDocument();
+         String xpathString = "//devices/disk[@device='disk']/source/@file";
+         XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpathString);
+         NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+         String diskFileName = nodes.item(0).getNodeValue();
+         StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
 
-	@Override
-	public Iterable<Domain> listHardwareProfiles() {
-		return listNodes();
-	}
+         // cloning volume
+         String poolName = storageVol.storagePoolLookupByVolume().getName();
+         StoragePool storagePool = client.storagePoolLookupByName(poolName);
+         StorageVol clonedVol = null;
+         boolean cloned = false;
+         int retry = 0;
+         while (!cloned && retry < 10) {
+            try {
+               clonedVol = cloneVolume(storagePool, storageVol);
+               cloned = true;
+            } catch (LibvirtException e) {
+               retry++;
+               Thread.sleep(1000);
+            }
+         }
+         // define Domain
+         String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0), clonedVol);
+         Domain newDomain = client.domainDefineXML(xmlFinal);
+         newDomain.create();
+         // store the credentials so that later functions can use them
+         credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
+         return newDomain;
+      } catch (LibvirtException e) {
+         return propogate(e);
+      } catch (Exception e) {
+         return propogate(e);
+      }
+   }
 
-	@Override
-	public Iterable<Image> listImages() {
-		int i = 1;
-		try {
-			String[] domains = client.listDefinedDomains();
-			List<Image> images = Lists.newArrayList();
-			for (String domainName : domains) {
-				images.add(new Image(i++, domainName));
-			}
-			return images;
-		} catch (Exception e) {
-			return propogate(e);
-		}
-	}
+   @Override
+   public Iterable<Domain> listHardwareProfiles() {
+      return listNodes();
+   }
 
-	@Override
-	public Iterable<Domain> listNodes() {
-		try {
-			List<Domain> domains = Lists.newArrayList();
-			for (String domain : client.listDefinedDomains()) {
-				domains.add(client.domainLookupByName(domain));
-			}
-			return domains;
-		} catch (LibvirtException e) {
-			return propogate(e);
-		}
-	}
+   @Override
+   public Iterable<Image> listImages() {
+      int i = 1;
+      try {
+         String[] domains = client.listDefinedDomains();
+         List<Image> images = Lists.newArrayList();
+         for (String domainName : domains) {
+            images.add(new Image(i++, domainName));
+         }
+         return images;
+      } catch (Exception e) {
+         return propogate(e);
+      }
+   }
 
-	@Override
-	public Iterable<Datacenter> listLocations() {
-		return ImmutableSet.of(new Datacenter(1, "SFO"));
-	}
+   @Override
+   public Iterable<Domain> listNodes() {
+      try {
+         List<Domain> domains = Lists.newArrayList();
+         for (String domain : client.listDefinedDomains()) {
+            domains.add(client.domainLookupByName(domain));
+         }
+         return domains;
+      } catch (LibvirtException e) {
+         return propogate(e);
+      }
+   }
 
-	@Override
-	public Domain getNode(String id) {
-		Domain d = null;
-		try {
-			d = client.domainLookupByUUIDString(id);
-		} catch (LibvirtException e) {
-			if (e.getMessage().indexOf("Domain not found: no domain with matching uuid") != -1)
-				return null;
-			propogate(e);
-		}
-		return d;
-	}
+   @Override
+   public Iterable<Location> listLocations() {
+      return ImmutableSet.of();
+   }
 
-	@Override
-	public void destroyNode(String id) {
-		try {
-			client.domainLookupByUUIDString(id).destroy();
+   @Override
+   public Domain getNode(String id) {
+      Domain d = null;
+      try {
+         d = client.domainLookupByUUIDString(id);
+      } catch (LibvirtException e) {
+         if (e.getMessage().indexOf("Domain not found: no domain with matching uuid") != -1)
+            return null;
+         propogate(e);
+      }
+      return d;
+   }
 
-				XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(
-						client.domainLookupByUUIDString(id).getXMLDesc(0)
-				)));
-				String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute("file");
-				StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-				storageVol.delete(0);
-				client.domainLookupByUUIDString(id).undefine();
+   @Override
+   public void destroyNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).destroy();
 
-		} catch (LibvirtException e) {
-			propogate(e);
-		} catch (Exception e) {
-			propogate(e);
-		} 
-	}
+         XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(client.domainLookupByUUIDString(id)
+                  .getXMLDesc(0))));
+         String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute(
+                  "file");
+         StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
+         storageVol.delete(0);
+         client.domainLookupByUUIDString(id).undefine();
 
-	@Override
-	public void rebootNode(String id) {
-		try {
-			client.domainLookupByUUIDString(id).reboot(0);
-		} catch (LibvirtException e) {
-			propogate(e);
-		}
-	}
+      } catch (LibvirtException e) {
+         propogate(e);
+      } catch (Exception e) {
+         propogate(e);
+      }
+   }
 
-	protected <T> T propogate(LibvirtException e) {
-		Throwables.propagate(e);
-		assert false;
-		return null;
-	}
+   @Override
+   public void rebootNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).reboot(0);
+      } catch (LibvirtException e) {
+         propogate(e);
+      }
+   }
 
-	protected <T> T propogate(Exception e) {
-		Throwables.propagate(e);
-		assert false;
-		return null;
-	}
-	
-	private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
-	XPathExpressionException, ParserConfigurationException, SAXException, IOException, TransformerException {
-		return storagePool.storageVolCreateXMLFrom(generateClonedVolumeXML(from.getXMLDesc(0)), from, 0);
-	}
-	
-	@Override
-	public void resumeNode(String id) {
-		try {
-			client.domainLookupByUUIDString(id).resume();
-		} catch (LibvirtException e) {
-			propogate(e);
-		}      
-	}
+   protected <T> T propogate(LibvirtException e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
+   }
 
-	@Override
-	public void suspendNode(String id) {
-		try {
-			client.domainLookupByUUIDString(id).suspend();
-		} catch (LibvirtException e) {
-			propogate(e);
-		}      
-	}	
+   protected <T> T propogate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
+   }
 
-	private static String generateClonedVolumeXML(String fromXML) throws ParserConfigurationException, SAXException,
-	IOException, XPathExpressionException, TransformerException {
+   private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
+            XPathExpressionException, ParserConfigurationException, SAXException, IOException, TransformerException {
+      return storagePool.storageVolCreateXMLFrom(generateClonedVolumeXML(from.getXMLDesc(0)), from, 0);
+   }
 
-		Properties outputProperties = generateOutputXMLProperties();
-		XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
-		String nodeNamingConvention = "%s-%s";
-		String tag = "-clone";
-		String suffix = String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
-		builder.xpathFind("//volume/name").t(suffix);
-		builder.xpathFind("//volume/key").t(suffix);
-		builder.xpathFind("//volume/target/path").t(suffix);
+   @Override
+   public void resumeNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).resume();
+      } catch (LibvirtException e) {
+         propogate(e);
+      }
+   }
 
-		return builder.asString(outputProperties);
-	}
+   @Override
+   public void suspendNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).suspend();
+      } catch (LibvirtException e) {
+         propogate(e);
+      }
+   }
 
-	private static String generateClonedDomainXML(String fromXML, StorageVol clonedVol) throws ParserConfigurationException, SAXException,
-	IOException, XPathExpressionException, TransformerException, LibvirtException {
+   private static String generateClonedVolumeXML(String fromXML) throws ParserConfigurationException, SAXException,
+            IOException, XPathExpressionException, TransformerException {
 
-		Properties outputProperties = generateOutputXMLProperties();
+      Properties outputProperties = generateOutputXMLProperties();
+      XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
+      String nodeNamingConvention = "%s-%s";
+      String tag = "-clone";
+      String suffix = String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
+      builder.xpathFind("//volume/name").t(suffix);
+      builder.xpathFind("//volume/key").t(suffix);
+      builder.xpathFind("//volume/target/path").t(suffix);
 
-		XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
+      return builder.asString(outputProperties);
+   }
 
-		String nodeNamingConvention = "%s-%s";
-		String tag = "-clone";
-		String suffix = String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
-		builder.xpathFind("//domain/name").t(suffix);
-		// change uuid domain
-		Element oldChild = builder.xpathFind("//domain/uuid").getElement();
-		Node newNode = oldChild.cloneNode(true);
-		newNode.getFirstChild().setNodeValue(UUID.randomUUID().toString());
-		builder.getDocument().getDocumentElement().replaceChild(newNode, oldChild);
+   private static String generateClonedDomainXML(String fromXML, StorageVol clonedVol)
+            throws ParserConfigurationException, SAXException, IOException, XPathExpressionException,
+            TransformerException, LibvirtException {
 
-		//String fromVolPath = builder.xpathFind("//domain/devices/disk/source").getElement().getAttribute("file");
-		builder.xpathFind("//domain/devices/disk/source").a("file", clonedVol.getPath());
-		// generate valid MAC address
-		String fromMACaddress = builder.xpathFind("//domain/devices/interface/mac").getElement().getAttribute("address");
-		String lastMACoctet = Integer.toHexString(new SecureRandom().nextInt(255));			
-		builder.xpathFind("//domain/devices/interface/mac").a("address", 
-				fromMACaddress.substring(0, fromMACaddress.lastIndexOf(":")+1) + lastMACoctet
-		);
-		return builder.asString(outputProperties);
-	}
-	
-	private static Properties generateOutputXMLProperties() {
-		Properties outputProperties = new Properties();
-		// Explicitly identify the output as an XML document
-		outputProperties.put(javax.xml.transform.OutputKeys.METHOD, "xml");
-		// Pretty-print the XML output (doesn't work in all cases)
-		outputProperties.put(javax.xml.transform.OutputKeys.INDENT, "yes");
-		// Get 2-space indenting when using the Apache transformer
-		outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2");
-		return outputProperties;
-	}
+      Properties outputProperties = generateOutputXMLProperties();
+
+      XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
+
+      String nodeNamingConvention = "%s-%s";
+      String tag = "-clone";
+      String suffix = String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
+      builder.xpathFind("//domain/name").t(suffix);
+      // change uuid domain
+      Element oldChild = builder.xpathFind("//domain/uuid").getElement();
+      Node newNode = oldChild.cloneNode(true);
+      newNode.getFirstChild().setNodeValue(UUID.randomUUID().toString());
+      builder.getDocument().getDocumentElement().replaceChild(newNode, oldChild);
+
+      // String fromVolPath =
+      // builder.xpathFind("//domain/devices/disk/source").getElement().getAttribute("file");
+      builder.xpathFind("//domain/devices/disk/source").a("file", clonedVol.getPath());
+      // generate valid MAC address
+      String fromMACaddress = builder.xpathFind("//domain/devices/interface/mac").getElement().getAttribute("address");
+      String lastMACoctet = Integer.toHexString(new SecureRandom().nextInt(255));
+      builder.xpathFind("//domain/devices/interface/mac").a("address",
+               fromMACaddress.substring(0, fromMACaddress.lastIndexOf(":") + 1) + lastMACoctet);
+      return builder.asString(outputProperties);
+   }
+
+   private static Properties generateOutputXMLProperties() {
+      Properties outputProperties = new Properties();
+      // Explicitly identify the output as an XML document
+      outputProperties.put(javax.xml.transform.OutputKeys.METHOD, "xml");
+      // Pretty-print the XML output (doesn't work in all cases)
+      outputProperties.put(javax.xml.transform.OutputKeys.INDENT, "yes");
+      // Get 2-space indenting when using the Apache transformer
+      outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2");
+      return outputProperties;
+   }
 }

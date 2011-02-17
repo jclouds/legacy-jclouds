@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>r07</version>
+            <version>r08</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -112,7 +112,7 @@
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
-                            <!-- override the default execution inherited from project -->
+                            <!-- overrides the default execution inherited from project -->
                             <execution>
                                 <id>jar-with-dependencies</id>
                                 <phase>package</phase>
@@ -121,7 +121,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>core-jar-with-dependencies-descriptor.xml</descriptor>
+                                        <descriptor>jar-with-dependencies-descriptor.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>

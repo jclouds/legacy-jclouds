@@ -22,19 +22,22 @@ package org.jclouds.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 /**
- * Idpayload of the object
  * 
  * @author Adrian Cole
  */
 public class LocationImpl implements Location, Serializable {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -280558162576368264L;
 
@@ -42,28 +45,65 @@ public class LocationImpl implements Location, Serializable {
    private final String id;
    private final String description;
    private final Location parent;
+   private final Set<String> iso3166Codes;
+   private final Map<String, Object> metadata;
 
-   public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent) {
+   public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent,
+            Iterable<String> iso3166Codes, Map<String, Object> metadata) {
       this.scope = checkNotNull(scope, "scope");
       this.id = checkNotNull(id, "id");
       this.description = checkNotNull(description, "description");
+      this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+      this.iso3166Codes = ImmutableSet.copyOf(checkNotNull(iso3166Codes, "iso3166Codes"));
       this.parent = parent;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public LocationScope getScope() {
       return scope;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getId() {
       return id;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getDescription() {
       return description;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Location getParent() {
       return parent;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getIso3166Codes() {
+      return iso3166Codes;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Map<String, Object> getMetadata() {
+      return metadata;
    }
 
    @Override
@@ -72,6 +112,8 @@ public class LocationImpl implements Location, Serializable {
       int result = 1;
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((iso3166Codes == null) ? 0 : iso3166Codes.hashCode());
+      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((parent == null) ? 0 : parent.hashCode());
       result = prime * result + ((scope == null) ? 0 : scope.hashCode());
       return result;
@@ -96,6 +138,16 @@ public class LocationImpl implements Location, Serializable {
             return false;
       } else if (!id.equals(other.id))
          return false;
+      if (iso3166Codes == null) {
+         if (other.iso3166Codes != null)
+            return false;
+      } else if (!iso3166Codes.equals(other.iso3166Codes))
+         return false;
+      if (metadata == null) {
+         if (other.metadata != null)
+            return false;
+      } else if (!metadata.equals(other.metadata))
+         return false;
       if (parent == null) {
          if (other.parent != null)
             return false;
@@ -112,7 +164,8 @@ public class LocationImpl implements Location, Serializable {
    @Override
    public String toString() {
       return "[id=" + id + ", scope=" + scope + ", description=" + description + ", parent="
-               + ((parent == null) ? null : parent.getId()) + "]";
+               + ((parent == null) ? null : parent.getId()) + ", iso3166Codes=" + iso3166Codes + ", metadata="
+               + metadata + "]";
    }
 
 }

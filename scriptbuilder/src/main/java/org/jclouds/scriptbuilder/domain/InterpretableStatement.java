@@ -72,4 +72,9 @@ public class InterpretableStatement implements Statement {
          return false;
       return true;
    }
+
+   @Override
+   public String toString() {
+      return "[statements=" + Arrays.toString(statements) + "]";
+   }
 }

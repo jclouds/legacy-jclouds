@@ -37,7 +37,6 @@ public class BlockDevice {
    private final boolean deleteOnTermination;
 
    public BlockDevice(String volumeId, Status attachmentStatus, Date attachTime, boolean deleteOnTermination) {
-      super();
       this.volumeId = volumeId;
       this.attachmentStatus = attachmentStatus;
       this.attachTime = attachTime;

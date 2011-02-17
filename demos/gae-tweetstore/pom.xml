@@ -20,15 +20,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.jclouds</groupId>
-		<artifactId>jclouds-demos-project</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>jclouds-demo-gae-tweetstore</artifactId>
+	<groupId>org.jclouds.demos</groupId>
+	<artifactId>gae-replicator</artifactId>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>JClouds TweetStore for Google App Engine</name>
-	<description>JClouds TweetStore for Google App Engine</description>
+	<name>JClouds example to replicate the contents of a container</name>
+	<description>JClouds example to replicate the contents of a container</description>
 
 	<properties>
 		<!--
@@ -36,22 +33,18 @@
 			extraction of appengine-java-sdk
 		-->
 		<appengine.home>YOUR_APPENGINE_HOME</appengine.home>
-		<appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
+		<appengine.applicationid>jclouds-replicate</appengine.applicationid>
 		<devappserver.address>localhost</devappserver.address>
 		<devappserver.port>8088</devappserver.port>
-		<jclouds.tweetstore.blobstores>cloudfiles,googlestorage,s3,azureblob</jclouds.tweetstore.blobstores>
-		<jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>
+		<jclouds.replicate.source>googlestorage</jclouds.replicate.source>
+		<jclouds.replicate.destinations>cloudfiles-us,aws-s3,azureblob</jclouds.replicate.destinations>
+		<jclouds.replicate.container>jclouds-replicate</jclouds.replicate.container>
 	</properties>
 
 	<dependencies>
 		<dependency>
-                         <groupId>org.twitter4j</groupId>
-                         <artifactId>twitter4j-core</artifactId>
-                         <version>[2.1,)</version>
-       		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-blobstore</artifactId>
+			<artifactId>jclouds-allblobstore</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -77,33 +70,18 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
+			<version>1.2.16</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds.provider</groupId>
-			<artifactId>aws-s3</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-azure</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-rackspace</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-gae</artifactId>
+			<groupId>org.jclouds.driver</groupId>
+			<artifactId>gae</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice-servlet</artifactId>
-			<version>3.0-snapshot-20101120</version>
+			<version>3.0-RC2</version>
 		</dependency>
 		<dependency>
 			<groupId>displaytag</groupId>
@@ -132,35 +110,62 @@
 			<groupId>javax.servlet</groupId>
 			<version>1.1.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-el_1.0_spec</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-jsp_2.1_spec</artifactId>
-			<version>1.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-servlet_2.5_spec</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-api-labs</artifactId>
-			<version>1.3.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-tools-api</artifactId>
-			<version>1.3.5</version>
-			<scope>system</scope>
-			<systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
-		</dependency>
+
+    <!-- Google App Engine API -->
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-1.0-sdk</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+
+    <!-- Google App Engine Runtime Dependencies -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <version>1.1.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jpa_3.0_spec</artifactId>
+      <version>1.1.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.appengine.orm</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>2.3-eb</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>1.1.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.appengine.orm</groupId>
+      <artifactId>datanucleus-appengine</artifactId>
+      <version>1.0.8</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-jpa</artifactId>
+      <version>1.1.5</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- App Engine Runtime Dependencies-->
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-tools-sdk</artifactId>
+      <version>1.4.2</version>
+    </dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -238,14 +243,6 @@
 								<configuration>
 									<systemProperties>
 										<property>
-											<name>test.twitter.identity</name>
-											<value>${test.twitter.identity}</value>
-										</property>
-										<property>
-											<name>test.twitter.credential</name>
-											<value>${test.twitter.credential}</value>
-										</property>
-										<property>
 											<name>test.azureblob.identity</name>
 											<value>${test.azureblob.identity}</value>
 										</property>
@@ -254,20 +251,20 @@
 											<value>${test.azureblob.credential}</value>
 										</property>
 										<property>
-											<name>test.cloudfiles.identity</name>
-											<value>${test.cloudfiles.identity}</value>
+											<name>test.cloudfiles-us.identity</name>
+											<value>${test.cloudfiles-us.identity}</value>
 										</property>
 										<property>
-											<name>test.cloudfiles.credential</name>
-											<value>${test.cloudfiles.credential}</value>
+											<name>test.cloudfiles-us.credential</name>
+											<value>${test.cloudfiles-us.credential}</value>
 										</property>
 										<property>
-											<name>test.s3.identity</name>
-											<value>${test.s3.identity}</value>
+											<name>test.aws-s3.identity</name>
+											<value>${test.aws-s3.identity}</value>
 										</property>
 										<property>
-											<name>test.s3.credential</name>
-											<value>${test.s3.credential}</value>
+											<name>test.aws-s3.credential</name>
+											<value>${test.aws-s3.credential}</value>
 										</property>
 										<property>
 											<name>test.googlestorage.identity</name>
@@ -290,12 +287,16 @@
 											<value>${devappserver.port}</value>
 										</property>
 										<property>
-											<name>jclouds.tweetstore.blobstores</name>
-											<value>${jclouds.tweetstore.blobstores}</value>
+											<name>jclouds.replicate.source</name>
+											<value>${jclouds.replicate.source}</value>
 										</property>
 										<property>
-											<name>jclouds.tweetstore.container</name>
-											<value>${jclouds.tweetstore.container}</value>
+											<name>jclouds.replicate.destinations</name>
+											<value>${jclouds.replicate.destinations}</value>
+										</property>
+										<property>
+											<name>jclouds.replicate.container</name>
+											<value>${jclouds.replicate.container}</value>
 										</property>
 										<property>
 											<name>warfile</name>

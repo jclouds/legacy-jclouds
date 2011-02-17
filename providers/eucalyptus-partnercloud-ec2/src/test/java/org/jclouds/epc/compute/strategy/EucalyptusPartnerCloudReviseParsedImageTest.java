@@ -31,8 +31,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.domain.Image;
@@ -86,7 +86,8 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                .build());
    }
 
-   static Location defaultLocation = new LocationImpl(LocationScope.REGION, "us-east-1", "us-east-1", null);
+   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
+            "us-east-1").build();
 
    public static Set<org.jclouds.compute.domain.Image> convertImages(String resource) {
 
@@ -97,7 +98,7 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
       EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
                Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-                        .ofInstance(defaultLocation), "ec2", new EucalyptusPartnerCloudReviseParsedImage(map));
+                        .ofInstance(defaultLocation), new EucalyptusPartnerCloudReviseParsedImage(map));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }
 

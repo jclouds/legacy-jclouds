@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
+import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
 
 /**
@@ -37,19 +38,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    public EucalyptusComputeServiceLiveTest() {
       provider = "eucalyptus";
       // security groups must be <30 characters
-      tag = "eu";
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testExtendedOptionsAndLogin() throws Exception {
-      // euc does not support monitoring
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testExtendedOptionsNoKeyPair() throws Exception {
-      // euc does not support multiple security groups
+      group = "eu";
    }
 
    @Override
@@ -58,6 +47,35 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+   }
+
+   @Override
+   @Test(enabled = true, dependsOnMethods = "testReboot")
+   public void testSuspendResume() throws Exception {
+      try {
+         super.testSuspendResume();
+         assert false;
+      } catch (HttpResponseException e) {
+         // ebs backed not yet available
+      }
+   }
+
+   @Override
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testListNodes() throws Exception {
+      super.testListNodes();
+   }
+
+   @Override
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testGetNodesWithDetails() throws Exception {
+      super.testGetNodesWithDetails();
+   }
+
+   @Override
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   public void testDestroyNodes() {
+      super.testDestroyNodes();
    }
 
 }

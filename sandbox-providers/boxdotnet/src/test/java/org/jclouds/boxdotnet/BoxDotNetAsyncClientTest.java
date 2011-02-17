@@ -123,7 +123,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
    @Override
    public RestContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
-      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity", "credential",
-            BoxDotNetClient.class, BoxDotNetAsyncClient.class);
+      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "", "identity", "credential",
+               BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
 }

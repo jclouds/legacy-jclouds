@@ -20,7 +20,6 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -39,11 +38,12 @@ import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.functions.BlobStoreContextToStatusResult;
 import org.jclouds.samples.googleappengine.functions.ComputeServiceContextToStatusResult;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
- * Shows an example of how to use @{link BlobStoreContext} injected with Guice.
+ * Shows an example of how to use {@link BlobStoreContext} and {@link ComputeServiceContext}
+ * injected with Guice.
  * 
  * @author Adrian Cole
  */
@@ -51,8 +51,8 @@ import com.google.common.collect.Sets;
 public class GetAllStatusController extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
-   private final Map<String, BlobStoreContext> blobsStoreContexts;
-   private final Map<String, ComputeServiceContext> computeServiceContexts;
+   private final Iterable<BlobStoreContext> blobsStoreContexts;
+   private final Iterable<ComputeServiceContext> computeServiceContexts;
    private final BlobStoreContextToStatusResult blobStoreContextToContainerResult;
    private final ComputeServiceContextToStatusResult computeServiceContextToContainerResult;
 
@@ -60,10 +60,10 @@ public class GetAllStatusController extends HttpServlet {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   GetAllStatusController(Map<String, BlobStoreContext> blobsStoreContexts,
-            Map<String, ComputeServiceContext> computeServiceContexts,
-            BlobStoreContextToStatusResult blobStoreContextToContainerResult,
-            ComputeServiceContextToStatusResult computeServiceContextToContainerResult) {
+   GetAllStatusController(Iterable<BlobStoreContext> blobsStoreContexts,
+         Iterable<ComputeServiceContext> computeServiceContexts,
+         BlobStoreContextToStatusResult blobStoreContextToContainerResult,
+         ComputeServiceContextToStatusResult computeServiceContextToContainerResult) {
       this.blobsStoreContexts = blobsStoreContexts;
       this.computeServiceContexts = computeServiceContexts;
       this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;
@@ -71,12 +71,10 @@ public class GetAllStatusController extends HttpServlet {
    }
 
    @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       try {
          addStatusResultsToRequest(request);
-         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(
-                  "/WEB-INF/jsp/status.jsp");
+         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/jsp/status.jsp");
          dispatcher.forward(request, response);
       } catch (Exception e) {
          logger.error(e, "Error listing status");
@@ -84,12 +82,13 @@ public class GetAllStatusController extends HttpServlet {
       }
    }
 
-   private void addStatusResultsToRequest(HttpServletRequest request) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      request.setAttribute("status", Sets
-               .newTreeSet(Iterables.concat(Iterables.transform(blobsStoreContexts.keySet(),
-                        blobStoreContextToContainerResult), Iterables.transform(
-                        computeServiceContexts.keySet(), computeServiceContextToContainerResult))));
+   private void addStatusResultsToRequest(HttpServletRequest request) throws InterruptedException, ExecutionException,
+         TimeoutException {
+      request.setAttribute(
+            "status",
+            ImmutableSet.copyOf(Iterables.concat(
+                  Iterables.transform(blobsStoreContexts, blobStoreContextToContainerResult),
+                  Iterables.transform(computeServiceContexts, computeServiceContextToContainerResult))));
    }
 
 }

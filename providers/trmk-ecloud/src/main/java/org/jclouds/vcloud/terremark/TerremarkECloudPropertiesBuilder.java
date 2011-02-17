@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
@@ -36,10 +37,11 @@ public class TerremarkECloudPropertiesBuilder extends TerremarkVCloudPropertiesB
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.6");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-FL,NL-NH");
+      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.7");
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.enterprisecloud.terremark.com/api");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "eCloudExtensions");
-      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.6");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.7");
       // for some reason the centos template is very slow to deploy
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 720l * 1000l + "");
       return properties;

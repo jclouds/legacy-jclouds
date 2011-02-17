@@ -63,6 +63,7 @@ public class ParseAzureErrorFromXmlContentTest {
             "", IllegalArgumentException.class);
    }
 
+   
    @Test
    public void test412WithTextHtmlHttpResponseException() {
       assertCodeMakes(

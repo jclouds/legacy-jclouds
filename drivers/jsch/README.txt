@@ -18,7 +18,7 @@
 ====
 
 #
-# An extension to use JSch (http://www.jcraft.com/jsch/) as the SSH connection provider
+# A driver to use JSch (http://www.jcraft.com/jsch/) as the SSH connection provider
 # for jclouds.
 #
 # TODO: Usage example.

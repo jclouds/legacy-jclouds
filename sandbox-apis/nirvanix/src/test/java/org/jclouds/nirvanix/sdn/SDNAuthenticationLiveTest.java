@@ -74,7 +74,7 @@ public class SDNAuthenticationLiveTest {
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      RestContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
+      RestContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint, "1", "", identity,
                credential, SDNAuthClient.class, SDNAuthAsyncClient.class);
 
       context = createContextBuilder(

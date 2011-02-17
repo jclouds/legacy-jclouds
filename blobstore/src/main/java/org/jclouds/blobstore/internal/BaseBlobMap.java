@@ -19,11 +19,15 @@
 
 package org.jclouds.blobstore.internal;
 
+import static com.google.common.base.Functions.identity;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.ListableMap;
@@ -39,9 +43,7 @@ import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implements core Map functionality with a {@link BlobStore}
@@ -88,26 +90,19 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
       }
    }
 
-   static class PassThrough<T> implements Function<T, T> {
-      public T apply(T from) {
-         return from;
-      }
-   }
-
    @Inject
    public BaseBlobMap(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
-            ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            ListContainerAndRecurseThroughFolders listStrategy, String containerName,
-            ListContainerOptions options) {
+         ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
+         ListContainerAndRecurseThroughFolders listStrategy, String containerName, ListContainerOptions options) {
       this.blobstore = checkNotNull(blobstore, "blobstore");
       this.containerName = checkNotNull(containerName, "container");
       checkArgument(containerName.indexOf('/') == -1,
-               "please specify directory path using the option: inDirectory, not encoded in the container name");
+            "please specify directory path using the option: inDirectory, not encoded in the container name");
       this.options = checkNotNull(options, "options") instanceof ImmutableListContainerOptions ? options
-               : new ImmutableListContainerOptions(options);
+            : new ImmutableListContainerOptions(options);
       String dir = options.getDir();
       if (dir == null) {
-         prefixer = new PassThrough<String>();
+         prefixer = identity();
          pathStripper = prefixer;
       } else {
          prefixer = new PrefixKey(dir, "/");
@@ -122,13 +117,12 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
 
    @Override
    public Set<java.util.Map.Entry<String, V>> entrySet() {
-      return Sets.newHashSet(Iterables.transform(list(),
-               new Function<BlobMetadata, Map.Entry<String, V>>() {
-                  @Override
-                  public java.util.Map.Entry<String, V> apply(BlobMetadata from) {
-                     return new Entry(pathStripper.apply(from.getName()));
-                  }
-               }));
+      return ImmutableSet.copyOf(transform(list(), new Function<BlobMetadata, Map.Entry<String, V>>() {
+         @Override
+         public java.util.Map.Entry<String, V> apply(BlobMetadata from) {
+            return new Entry(pathStripper.apply(from.getName()));
+         }
+      }));
    }
 
    public class Entry implements java.util.Map.Entry<String, V> {
@@ -187,7 +181,7 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
 
    @Override
    public Set<String> keySet() {
-      return Sets.newHashSet(Iterables.transform(list(), new Function<BlobMetadata, String>() {
+      return ImmutableSet.copyOf(transform(list(), new Function<BlobMetadata, String>() {
          @Override
          public String apply(BlobMetadata from) {
             return from.getName();
@@ -197,7 +191,7 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
 
    @Override
    public boolean containsKey(Object key) {
-      String realKey = prefixer.apply(key.toString());
+      String realKey = prefixer.apply(checkNotNull(key, "key").toString());
       return blobstore.blobExists(containerName, realKey);
    }
 
@@ -207,21 +201,20 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
    }
 
    public Iterable<? extends BlobMetadata> list() {
-      return Iterables.transform(listStrategy.execute(containerName, options),
-               new Function<BlobMetadata, BlobMetadata>() {
-                  public BlobMetadata apply(BlobMetadata from) {
-                     MutableBlobMetadata md = new MutableBlobMetadataImpl(from);
-                     if (options.getDir() != null)
-                        md.setName(pathStripper.apply(from.getName()));
-                     return md;
-                  }
+      return transform(listStrategy.execute(containerName, options), new Function<BlobMetadata, BlobMetadata>() {
+         public BlobMetadata apply(BlobMetadata from) {
+            MutableBlobMetadata md = new MutableBlobMetadataImpl(from);
+            if (options.getDir() != null)
+               md.setName(pathStripper.apply(from.getName()));
+            return md;
+         }
 
-               });
+      });
    }
 
    @Override
    public String toString() {
-      return "BaseBlobMap [containerName=" + containerName + ", options=" + options + "]";
+      return "[containerName=" + containerName + ", options=" + options + "]";
    }
 
 }

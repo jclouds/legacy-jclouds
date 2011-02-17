@@ -54,19 +54,22 @@ public class RestContextFactoryTest {
 
    public void testBuilder() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
+               "http://localhost", "1", "", "dummy", null, IntegrationTestClient.class,
+               IntegrationTestAsyncClient.class);
 
       createContextBuilder(contextSpec);
    }
 
-   public void testBuilderProperties() {
+   public void testBuilderPropertiesWithIso3166() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
+               "http://localhost", "1", "US-CA", "dummy", null, IntegrationTestClient.class,
+               IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.apiversion"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
+      assertEquals(props.getProperty("test.iso3166-codes"), "US-CA");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), IntegrationTestClient.class.getName());
       assertEquals(props.getProperty("test.async"), IntegrationTestAsyncClient.class.getName());
@@ -79,8 +82,8 @@ public class RestContextFactoryTest {
 
    public void testBuilderPropertiesWithCredential() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", "credential", IntegrationTestClient.class,
-            IntegrationTestAsyncClient.class);
+               "http://localhost", "1", "", "dummy", "credential", IntegrationTestClient.class,
+               IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
@@ -100,8 +103,8 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithContextBuilder() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
-            (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
+               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
@@ -121,8 +124,8 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithModule() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
-            (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
+               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
@@ -142,8 +145,8 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithModules() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
-            (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
+               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
@@ -155,7 +158,7 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.propertiesbuilder"), PropertiesBuilder.class.getName());
       assertEquals(props.getProperty("test.contextbuilder"), IntegrationTestContextBuilder.class.getName());
       assertEquals(props.getProperty("test.modules"),
-            "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
+               "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
 
       new RestContextFactory().createContext(provider, props);
    }
@@ -164,21 +167,24 @@ public class RestContextFactoryTest {
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
       props.setProperty("test.apiversion", "1");
+      props.setProperty("test.iso3166-codes", "US");
       props.setProperty("jclouds.identity", "foo");
       props.setProperty("jclouds.credential", "bar");
 
       props.setProperty("test.propertiesbuilder", PropertiesBuilder.class.getName());
       props.setProperty("test.contextbuilder", IntegrationTestContextBuilder.class.getName());
       props.setProperty("jclouds.modules",
-            "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
+               "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
 
       new RestContextFactory() {
 
          @SuppressWarnings("hiding")
          @Override
          public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
-               Iterable<? extends Module> wiring, Properties _overrides) {
-            RestContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
+                  Iterable<? extends Module> wiring, Properties _overrides) {
+            RestContextSpec<S, A> spec = super
+                     .createContextSpec(providerName, identity, credential, wiring, _overrides);
+            assertEquals(spec.iso3166Codes, "US");
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
             assertEquals(Iterables.size(spec.modules), 2);
@@ -189,28 +195,31 @@ public class RestContextFactoryTest {
    }
 
    public void testBuilderPropertiesJCloudsScopeWithProviderIdentityAndFileCredential() throws IOException {
-      
+
       File file = File.createTempFile("foo", "bar");
       file.deleteOnExit();
       Files.write("bar", file, Charsets.UTF_8);
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
       props.setProperty("test.apiversion", "1");
+      props.setProperty("test.iso3166-codes", "US");
       props.setProperty("test.identity", "foo");
       props.setProperty("test.credential.file", file.getAbsolutePath());
 
       props.setProperty("test.propertiesbuilder", PropertiesBuilder.class.getName());
       props.setProperty("test.contextbuilder", IntegrationTestContextBuilder.class.getName());
       props.setProperty("jclouds.modules",
-            "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
+               "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
 
       new RestContextFactory() {
 
          @SuppressWarnings("hiding")
          @Override
          public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
-               Iterable<? extends Module> wiring, Properties _overrides) {
-            RestContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
+                  Iterable<? extends Module> wiring, Properties _overrides) {
+            RestContextSpec<S, A> spec = super
+                     .createContextSpec(providerName, identity, credential, wiring, _overrides);
+            assertEquals(spec.iso3166Codes, "US");
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
             assertEquals(Iterables.size(spec.modules), 2);
@@ -241,16 +250,16 @@ public class RestContextFactoryTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testBuilderPropertiesWithWrongConfig() {
-      @SuppressWarnings({ "unused", "rawtypes" })
+      @SuppressWarnings( { "unused", "rawtypes" })
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-            "http://localhost", "1", "dummy", null, (Class) null, (Class) null,
-            (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);
+               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null,
+               (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);
    }
 
    @RequiresHttp
    @ConfiguresRestClient
    public static class IntegrationTestRestClientModule extends
-         RestClientModule<IntegrationTestClient, IntegrationTestAsyncClient> {
+            RestClientModule<IntegrationTestClient, IntegrationTestAsyncClient> {
 
       public IntegrationTestRestClientModule() {
          super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
@@ -259,7 +268,7 @@ public class RestContextFactoryTest {
    }
 
    public static class IntegrationTestContextBuilder extends
-         RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> {
+            RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> {
 
       public IntegrationTestContextBuilder(Properties props) {
          super(IntegrationTestClient.class, IntegrationTestAsyncClient.class, props);

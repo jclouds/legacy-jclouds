@@ -31,7 +31,7 @@
     </parent>
     <groupId>org.jclouds.provider</groupId>
     <artifactId>azureblob</artifactId>
-    <name>jcloud azureblob provider</name>
+    <name>jclouds Azure Storage provider</name>
     <description>jclouds components to access Azure Blob Service</description>
 
     <properties>

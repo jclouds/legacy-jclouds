@@ -20,7 +20,6 @@
 package org.jclouds.s3;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
@@ -49,7 +48,6 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
       return properties;
    }

@@ -22,12 +22,16 @@ package org.jclouds.rest.internal;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
@@ -35,6 +39,7 @@ import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
@@ -57,11 +62,12 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final String apiVersion;
    private final Utils utils;
    private final Map<String, Credentials> credentialStore;
+   private final Set<String> iso3166Codes;
 
    @Inject
    protected RestContextImpl(Closer closer, Map<String, Credentials> credentialStore, Utils utils, Injector injector,
-         TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
-         @Identity String identity, @ApiVersion String apiVersion) {
+            TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
+            @Identity String identity, @ApiVersion String apiVersion, @Iso3166 Set<String> iso3166Codes) {
       this.credentialStore = credentialStore;
       this.utils = utils;
       this.asyncApi = injector.getInstance(Key.get(asyncApi));
@@ -71,6 +77,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       this.identity = identity;
       this.provider = provider;
       this.apiVersion = apiVersion;
+      this.iso3166Codes = iso3166Codes;
    }
 
    /**
@@ -123,11 +130,6 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    }
 
    @Override
-   public String getProvider() {
-      return provider;
-   }
-
-   @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
@@ -172,8 +174,8 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Override
    public String toString() {
-      return " [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion + ", identity="
-            + identity + "]";
+      return " [id=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion + ", identity=" + identity
+               + ", iso3166Codes=" + iso3166Codes + "]";
    }
 
    @Override
@@ -184,5 +186,35 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    @Override
    public Map<String, Credentials> credentialStore() {
       return credentialStore;
+   }
+
+   @Override
+   public String getDescription() {
+      return null;
+   }
+
+   @Override
+   public String getId() {
+      return provider;
+   }
+
+   @Override
+   public Set<String> getIso3166Codes() {
+      return iso3166Codes;
+   }
+
+   @Override
+   public Map<String, Object> getMetadata() {
+      return ImmutableMap.<String, Object> of("endpoint", endpoint, "apiVersion", apiVersion, "identity", identity);
+   }
+
+   @Override
+   public Location getParent() {
+      return null;
+   }
+
+   @Override
+   public LocationScope getScope() {
+      return LocationScope.PROVIDER;
    }
 }

@@ -33,7 +33,6 @@ import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.ec2.xml.ImageIdHandler;
 import org.jclouds.ec2.xml.PermissionHandler;
-import org.jclouds.ec2.xml.ProductCodesHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -222,23 +221,6 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       checkFilters(request);
    }
 
-   public void testGetProductCodesForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AMIAsyncClient.class.getMethod("getProductCodesForImageInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2010-06-15&Action=DescribeImageAttribute&Attribute=productCodes&ImageId=imageId",
-               "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, ProductCodesHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
    public void testGetBlockDeviceMappingsForImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion", String.class,
                String.class);
@@ -328,44 +310,6 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertPayloadEquals(request,
                "Version=2010-06-15&Action=ResetImageAttribute&Attribute=launchPermission&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
-      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
-   public void testAddProductCodesToImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AMIAsyncClient.class.getMethod("addProductCodesToImageInRegion", String.class, Iterable.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("code1", "code2"), "imageId");
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=add&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
-               "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
-   public void testRemoveProductCodesFromImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AMIAsyncClient.class.getMethod("removeProductCodesFromImageInRegion", String.class,
-               Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("code1", "code2"), "imageId");
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=remove&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
-               "application/x-www-form-urlencoded", false);
-
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);

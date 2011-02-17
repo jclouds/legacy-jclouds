@@ -43,8 +43,7 @@ import org.jclouds.encryption.internal.Base64;
  * <code>
  * 
  * @author Adrian Cole
- * @see <a
- *      href=
+ * @see <a href=
  *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-form-RunInstances.html"
  *      />
  */
@@ -91,22 +90,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
 
    String getSecurityGroup() {
       return getFirstFormOrNull("SecurityGroup.1");
-   }
-
-   /**
-    * Specifies the name of an existing placement group you want to launch the instance into (for
-    * cluster compute instances).
-    * 
-    * @param placementGroup
-    *           name of an existing placement group
-    */
-   public RunInstancesOptions inPlacementGroup(String placementGroup) {
-      formParameters.put("Placement.GroupName", checkNotNull(placementGroup, "placementGroup"));
-      return this;
-   }
-
-   String getPlacementGroup() {
-      return getFirstFormOrNull("Placement.GroupName");
    }
 
    /**
@@ -164,57 +147,33 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    }
 
    /**
-    * Enables monitoring for the instance.
-    */
-   public RunInstancesOptions enableMonitoring() {
-      formParameters.put("Monitoring.Enabled", "true");
-      return this;
-   }
-
-   String getMonitoringEnabled() {
-      return getFirstFormOrNull("Monitoring.Enabled");
-   }
-
-   /**
-    * Specifies the subnet ID within which to launch the instance(s) for Amazon Virtual Private
-    * Cloud.
-    */
-   public RunInstancesOptions withSubnetId(String subnetId) {
-      formParameters.put("SubnetId", checkNotNull(subnetId, "subnetId"));
-      return this;
-   }
-
-   String getSubnetId() {
-      return getFirstFormOrNull("SubnetId");
-   }
-   
-   /**
     * Specifies the Block Device Mapping for the instance
-    *
+    * 
     */
-   
-   public RunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
-       int i = 1;
-       for(BlockDeviceMapping mapping: mappings)
-       {
-           checkNotNull(mapping.getDeviceName(), "deviceName");
-           formParameters.put(String.format("BlockDeviceMapping.%d.DeviceName", i), mapping.getDeviceName());
-           if(mapping.getVirtualName() != null)
-               formParameters.put(String.format("BlockDeviceMapping.%d.VirtualName", i), mapping.getVirtualName());
-           if(mapping.getEbsSnapshotId() != null)
-               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.SnapshotId", i), mapping.getEbsSnapshotId());
-           if(mapping.getEbsVolumeSize() != null)
-               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.VolumeSize", i), String.valueOf(mapping.getEbsVolumeSize()));
-           if(mapping.getEbsNoDevice() != null)
-               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.NoDevice", i), String.valueOf(mapping.getEbsNoDevice()));
-           if(mapping.getEbsDeleteOnTermination() != null)
-               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.DeleteOnTermination", i), String.valueOf(mapping.getEbsDeleteOnTermination()));
-               
-           i++;
-       }
-       return this;
-    }
 
+   public RunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
+      int i = 1;
+      for (BlockDeviceMapping mapping : checkNotNull(mappings, "mappings")) {
+         checkNotNull(mapping.getDeviceName(), "deviceName");
+         formParameters.put(String.format("BlockDeviceMapping.%d.DeviceName", i), mapping.getDeviceName());
+         if (mapping.getVirtualName() != null)
+            formParameters.put(String.format("BlockDeviceMapping.%d.VirtualName", i), mapping.getVirtualName());
+         if (mapping.getEbsSnapshotId() != null)
+            formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.SnapshotId", i), mapping.getEbsSnapshotId());
+         if (mapping.getEbsVolumeSize() != null)
+            formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.VolumeSize", i), String.valueOf(mapping
+                     .getEbsVolumeSize()));
+         if (mapping.getEbsNoDevice() != null)
+            formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.NoDevice", i), String.valueOf(mapping
+                     .getEbsNoDevice()));
+         if (mapping.getEbsDeleteOnTermination() != null)
+            formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.DeleteOnTermination", i), String
+                     .valueOf(mapping.getEbsDeleteOnTermination()));
+
+         i++;
+      }
+      return this;
+   }
 
    public static class Builder {
       /**
@@ -231,14 +190,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       public static RunInstancesOptions withSecurityGroup(String securityGroup) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withSecurityGroup(securityGroup);
-      }
-
-      /**
-       * @see RunInstancesOptions#inPlacementGroup(String)
-       */
-      public static RunInstancesOptions inPlacementGroup(String placementGroup) {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.inPlacementGroup(placementGroup);
       }
 
       /**
@@ -266,29 +217,13 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       }
 
       /**
-       * @see RunInstancesOptions#enableMonitoring()
-       */
-      public static RunInstancesOptions enableMonitoring() {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.enableMonitoring();
-      }
-
-      /**
-       * @see RunInstancesOptions#withSubnetId(String)
-       */
-      public static RunInstancesOptions withSubnetId(String subnetId) {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.withSubnetId(subnetId);
-      }
-
-      /**
        * @see RunInstancesOptions#withRamdisk(String)
        */
       public static RunInstancesOptions withRamdisk(String ramdiskId) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withRamdisk(ramdiskId);
       }
-      
+
       /**
        * @see RunInstancesOptions#withBlockDeviceMappings(Set<BlockDeviceMapping> mappings)
        */

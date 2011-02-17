@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
@@ -79,12 +80,13 @@ public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Provides
    @Singleton
+   @Nullable
    @Region
    protected String getDefaultRegion(@Provider URI uri, @Region Map<String, URI> map, LoggerFactory logFactory) {
       String region = ImmutableBiMap.copyOf(map).inverse().get(uri);
-      if (region == null) {
+      if (region == null && map.size() > 0) {
          logFactory.getLogger(getClass().getName()).warn(
-               "failed to find region for current endpoint %s in %s; choosing first: %s", uri, map, region);
+                  "failed to find region for current endpoint %s in %s; choosing first: %s", uri, map, region);
          region = get(map.keySet(), 0);
       }
       return region;

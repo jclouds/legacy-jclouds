@@ -21,7 +21,7 @@ package org.jclouds.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>
 
    @Override
    public Set<? extends T> get() {
-      return newHashSet(transform(backingSupplier.get(), converter));
+      return newLinkedHashSet(transform(backingSupplier.get(), converter));
    }
 
 }

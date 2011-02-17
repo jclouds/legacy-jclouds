@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -115,7 +116,13 @@ public class Throwables2Test {
       Exception e = new AuthorizationException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
-
+   
+   @Test(expectedExceptions = InsufficientResourcesException.class)
+   public void testPropagateStandardExceptionInsufficientResourcesException() throws Exception {
+      Exception e = new InsufficientResourcesException();
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+   }
+   
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
       Exception e = new ResourceNotFoundException();

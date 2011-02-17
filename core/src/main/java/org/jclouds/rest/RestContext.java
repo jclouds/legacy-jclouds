@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.Beta;
@@ -40,7 +41,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(RestContextImpl.class)
-public interface RestContext<S, A> {
+public interface RestContext<S, A> extends Location {
 
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
@@ -59,6 +60,10 @@ public interface RestContext<S, A> {
 
    URI getEndpoint();
 
+   String getApiVersion();
+
+   String getIdentity();
+
    /**
     * retrieves a list of credentials for resources created within this context, keyed on {@code id}
     * of the resource. We are testing this approach for resources such as compute nodes, where you
@@ -70,12 +75,6 @@ public interface RestContext<S, A> {
 
    @Beta
    Map<String, Credentials> credentialStore();
-
-   String getIdentity();
-
-   String getProvider();
-
-   String getApiVersion();
 
    Utils getUtils();
 

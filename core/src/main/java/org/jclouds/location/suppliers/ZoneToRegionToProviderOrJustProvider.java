@@ -21,8 +21,8 @@ package org.jclouds.location.suppliers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,50 +30,61 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Zone;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ZoneToRegionToProviderOrJustProvider implements Supplier<Set<? extends Location>> {
+public class ZoneToRegionToProviderOrJustProvider extends RegionToProviderOrJustProvider {
    private final Map<String, String> zoneToRegion;
-   private final String providerName;
+   private Map<String, Set<String>> isoCodesById;
 
    @Inject
-   ZoneToRegionToProviderOrJustProvider(@Zone Map<String, String> zoneToRegion, @Provider String providerName) {
-      this.zoneToRegion = checkNotNull(zoneToRegion, "zoneToRegion");
-      this.providerName = checkNotNull(providerName, "providerName");
+   ZoneToRegionToProviderOrJustProvider(@Iso3166 Set<String> isoCodes, @Provider String providerName,
+            @Provider URI endpoint, @Iso3166 Map<String, Set<String>> isoCodesById,
+            @Zone Map<String, String> zoneToRegion) {
+      super(isoCodes, providerName, endpoint, ImmutableSet.copyOf(checkNotNull(zoneToRegion, "zoneToRegion").values()),
+               isoCodesById);
+      this.zoneToRegion = zoneToRegion;
+      this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
    }
 
    @Override
    public Set<? extends Location> get() {
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      if (zoneToRegion.size() == 0)
-         return ImmutableSet.of(provider);
-      Set<Location> providers = newLinkedHashSet();
-      for (String region : newLinkedHashSet(zoneToRegion.values())) {
-         providers.add(new LocationImpl(LocationScope.REGION, region, region, provider));
-      }
-      ImmutableMap<String, Location> idToLocation = uniqueIndex(providers, new Function<Location, String>() {
+      Builder<Location> locations = buildJustProviderOrRegions();
+      ImmutableMap<String, Location> idToLocation = uniqueIndex(locations.build(), new Function<Location, String>() {
          @Override
          public String apply(Location from) {
             return from.getId();
          }
       });
+      if (zoneToRegion.size() == 1)
+         return locations.build();
       for (String zone : zoneToRegion.keySet()) {
-         providers.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(zoneToRegion.get(zone))));
+         Location parent = idToLocation.get(zoneToRegion.get(zone));
+         LocationBuilder builder = new LocationBuilder().scope(LocationScope.ZONE).id(zone).description(zone).parent(
+                  parent);
+         if (isoCodesById.containsKey(zone))
+            builder.iso3166Codes(isoCodesById.get(zone));
+         // be cautious.. only inherit iso codes if the parent is a region
+         // regions may be added dynamically, and we prefer to inherit an
+         // empty set of codes from a region, then a provider, whose code
+         // are likely hard-coded.
+         else if (parent.getScope() == LocationScope.REGION)
+            builder.iso3166Codes(parent.getIso3166Codes());
+         locations.add(builder.build());
       }
-      return providers;
+      return locations.build();
    }
-
 }

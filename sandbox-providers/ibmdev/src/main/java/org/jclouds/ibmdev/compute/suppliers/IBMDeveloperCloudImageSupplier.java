@@ -77,7 +77,7 @@ public class IBMDeveloperCloudImageSupplier implements Supplier<Set<? extends Im
                      new OperatingSystemBuilder()
                            .family((image.getPlatform().indexOf("Red Hat") != -1) ? OsFamily.RHEL : OsFamily.SUSE)
                            .arch(image.getPlatform()).is64Bit(image.getPlatform().indexOf("32") == -1).build())
-               .description(image.getDescription()).version(image.getCreatedTime().getTime() + "")
+               .description(image.getName()).version(image.getCreatedTime().getTime() + "")
                .defaultCredentials(new Credentials("idcuser", null)).build());
       }
 

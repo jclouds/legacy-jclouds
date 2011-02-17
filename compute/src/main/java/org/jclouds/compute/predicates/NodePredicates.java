@@ -42,8 +42,7 @@ import com.google.common.collect.Sets;
  */
 public class NodePredicates {
 
-   private static class ParentLocationId implements
-         Predicate<ComputeMetadata> {
+   private static class ParentLocationId implements Predicate<ComputeMetadata> {
       private final String id;
 
       private ParentLocationId(String id) {
@@ -156,8 +155,7 @@ public class NodePredicates {
    }
 
    /**
-    * Return nodes with the specific ids Note: returns all nodes, regardless of
-    * the state.
+    * Return nodes with the specific ids Note: returns all nodes, regardless of the state.
     * 
     * @param ids
     *           ids of the resources
@@ -187,49 +185,65 @@ public class NodePredicates {
    }
 
    /**
-    * Return nodes with specified tag. Note: returns all nodes, regardless of
-    * the state.
+    * Return nodes in the specified group. Note: returns all nodes, regardless of the state.
     * 
-    * @param tag
-    *           tag to match the items
+    * @param group
+    *           group to match the items
     * @return predicate
     */
-   public static Predicate<NodeMetadata> withTag(final String tag) {
-      Preconditions2.checkNotEmpty(tag, "Tag must be defined");
+   public static Predicate<NodeMetadata> inGroup(final String group) {
+      Preconditions2.checkNotEmpty(group, "group must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
-            return tag.equals(nodeMetadata.getTag());
+            return group.equals(nodeMetadata.getGroup());
          }
 
          @Override
          public String toString() {
-            return "withTag(" + tag + ")";
+            return "inGroup(" + group + ")";
          }
       };
    }
 
    /**
-    * Return nodes with specified tag that are in the NODE_RUNNING state.
     * 
-    * @param tag
-    *           tag to match the items
+    * @see #inGroup(String)
+    */
+   @Deprecated
+   public static Predicate<NodeMetadata> withTag(final String tag) {
+      return inGroup(tag);
+   }
+
+   /**
+    * Return nodes with specified group that are in the NODE_RUNNING state.
+    * 
+    * @param group
+    *           group to match the items
     * @return predicate
     */
-   public static Predicate<NodeMetadata> runningWithTag(final String tag) {
-      Preconditions2.checkNotEmpty(tag, "Tag must be defined");
+   public static Predicate<NodeMetadata> runningInGroup(final String group) {
+      Preconditions2.checkNotEmpty(group, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
-            return tag.equals(nodeMetadata.getTag())
-                  && nodeMetadata.getState() == NodeState.RUNNING;
+            return group.equals(nodeMetadata.getGroup()) && nodeMetadata.getState() == NodeState.RUNNING;
          }
 
          @Override
          public String toString() {
-            return "runningWithTag(" + tag + ")";
+            return "runningInGroup(" + group + ")";
          }
       };
+   }
+
+   /**
+    * 
+    * @see #inGroup(String)
+    */
+   @Deprecated
+   public static Predicate<NodeMetadata> runningWithTag(final String tag) {
+      return runningInGroup(tag);
    }
 
    /**

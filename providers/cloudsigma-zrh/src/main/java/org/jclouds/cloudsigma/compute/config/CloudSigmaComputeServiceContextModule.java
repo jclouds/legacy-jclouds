@@ -52,11 +52,13 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.collect.MapMaker;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -101,7 +103,8 @@ public class CloudSigmaComputeServiceContextModule
       }).to(FindImageForId.class);
       bind(new TypeLiteral<Function<String, OsFamilyVersion64Bit>>() {
       }).to(ParseOsFamilyVersion64BitFromImageName.class);
-
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZone.class);
    }
 
    @Provides

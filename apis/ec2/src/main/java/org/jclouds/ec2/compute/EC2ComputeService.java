@@ -19,8 +19,6 @@
 
 package org.jclouds.ec2.compute;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -32,7 +30,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
@@ -49,7 +46,7 @@ import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -58,9 +55,6 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.ec2.domain.PlacementGroup;
-import org.jclouds.ec2.domain.PlacementGroup.State;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -76,14 +70,12 @@ public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final Map<RegionAndName, String> securityGroupMap;
-   private final Map<RegionAndName, String> placementGroupMap;
-   private final Predicate<PlacementGroup> placementGroupDeleted;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
             @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
@@ -92,9 +84,7 @@ public class EC2ComputeService extends BaseComputeService {
             @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-            Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-            @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
-            @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
+            Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
                stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
@@ -102,57 +92,30 @@ public class EC2ComputeService extends BaseComputeService {
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
-      this.placementGroupMap = placementGroupMap;
-      this.placementGroupDeleted = placementGroupDeleted;
+
    }
 
    @VisibleForTesting
-   void deletePlacementGroup(String region, String tag) {
-      Preconditions2.checkNotEmpty(tag, "tag");
-      String group = String.format("jclouds#%s#%s", tag, region);
-      try {
-         if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
-            logger.debug(">> deleting placementGroup(%s)", group);
-            try {
-               ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
-               checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
-                        String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
-               placementGroupMap.remove(new RegionAndName(region, group));
-               logger.debug("<< deleted placementGroup(%s)", group);
-            } catch (AWSResponseException e) {
-               if (e.getError().getCode().equals("InvalidPlacementGroup.InUse")) {
-                  logger.debug("<< inUse placementGroup(%s)", group);
-               } else {
-                  throw e;
-               }
-            }
+   void deleteSecurityGroup(String region, String group) {
+      Preconditions2.checkNotEmpty(group, "group");
+      String groupName = String.format("jclouds#%s#%s", group, region);
+      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
+         logger.debug(">> deleting securityGroup(%s)", groupName);
+         try {
+            ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+            // TODO: test this clear happens
+            securityGroupMap.remove(new RegionNameAndIngressRules(region, groupName, null, false));
+            logger.debug("<< deleted securityGroup(%s)", groupName);
+         } catch (IllegalStateException e) {
+            logger.debug("<< inUse securityGroup(%s)", groupName);
          }
-      } catch (UnsupportedOperationException e) {
-      } catch (HttpResponseException e) {
-         // Eucalyptus does not support placement groups yet.
-         if (!(e.getResponse().getStatusCode() == 400 && context.getProviderSpecificContext().getProvider().equals(
-                  "eucalyptus")))
-            throw e;
       }
    }
 
    @VisibleForTesting
-   void deleteSecurityGroup(String region, String tag) {
-      Preconditions2.checkNotEmpty(tag, "tag");
-      String group = String.format("jclouds#%s#%s", tag, region);
-      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
-         logger.debug(">> deleting securityGroup(%s)", group);
-         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
-         // TODO: test this clear happens
-         securityGroupMap.remove(new RegionNameAndIngressRules(region, group, null, false));
-         logger.debug("<< deleted securityGroup(%s)", group);
-      }
-   }
-
-   @VisibleForTesting
-   void deleteKeyPair(String region, String tag) {
+   void deleteKeyPair(String region, String group) {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
-         if (keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", tag, region, "[0-9a-f]+"))) {
+         if (keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+"))) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
             ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
             // TODO: test this clear happens
@@ -171,15 +134,18 @@ public class EC2ComputeService extends BaseComputeService {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
       Map<String, String> regionTags = Maps.newHashMap();
       for (NodeMetadata nodeMetadata : deadOnes) {
-         if (nodeMetadata.getTag() != null)
-            regionTags.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getTag());
+         if (nodeMetadata.getGroup() != null)
+            regionTags.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
       }
       for (Entry<String, String> regionTag : regionTags.entrySet()) {
-         deleteKeyPair(regionTag.getKey(), regionTag.getValue());
-         deleteSecurityGroup(regionTag.getKey(), regionTag.getValue());
-         deletePlacementGroup(regionTag.getKey(), regionTag.getValue());
+         cleanUpIncidentalResources(regionTag);
       }
       return deadOnes;
+   }
+
+   protected void cleanUpIncidentalResources(Entry<String, String> regionTag) {
+      deleteKeyPair(regionTag.getKey(), regionTag.getValue());
+      deleteSecurityGroup(regionTag.getKey(), regionTag.getValue());
    }
 
    /**

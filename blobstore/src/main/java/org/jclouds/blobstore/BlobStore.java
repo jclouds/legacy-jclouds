@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -47,9 +48,17 @@ public interface BlobStore {
 
    /**
     * creates a new blob with the specified name.
+    * @see #blobBuilder
     */
+   @Deprecated
    Blob newBlob(String name);
-
+   
+   /**
+    * 
+    * @return builder for creating new {@link Blob}s
+    */
+   BlobBuilder blobBuilder(String name);
+   
    /**
     * The get locations command returns all the valid locations for containers. A location has a
     * scope, which is typically region or zone. A region is a general area, like eu-west, where a

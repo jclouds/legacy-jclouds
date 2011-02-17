@@ -189,19 +189,19 @@ public class ComputeTask extends Task {
    private void list(ComputeService computeService) {
       log("list");
       for (ComputeMetadata node : computeService.listNodes()) {
-         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getProviderId(), node.getName()));
+         log(String.format("   location=%s, id=%s, group=%s", node.getLocation(), node.getProviderId(), node.getName()));
       }
    }
 
    private void create(ComputeService computeService) throws RunNodesException, IOException {
-      String tag = nodeElement.getTag();
+      String group = nodeElement.getGroup();
 
-      log(String.format("create tag: %s, count: %d, hardware: %s, os: %s", tag, nodeElement.getCount(), nodeElement
+      log(String.format("create group: %s, count: %d, hardware: %s, os: %s", group, nodeElement.getCount(), nodeElement
                .getHardware(), nodeElement.getOs()));
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 
-      for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(), template)) {
+      for (NodeMetadata createdNode : computeService.createNodesInGroup(group, nodeElement.getCount(), template)) {
          logDetails(computeService, createdNode);
          addNodeDetailsAsProjectProperties(createdNode);
       }
@@ -223,8 +223,8 @@ public class ComputeTask extends Task {
          log(String.format("reboot id: %s", nodeElement.getId()));
          computeService.rebootNode(nodeElement.getId());
       } else {
-         log(String.format("reboot tag: %s", nodeElement.getTag()));
-         computeService.rebootNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
+         log(String.format("reboot group: %s", nodeElement.getGroup()));
+         computeService.rebootNodesMatching(NodePredicates.inGroup(nodeElement.getGroup()));
       }
    }
 
@@ -233,8 +233,8 @@ public class ComputeTask extends Task {
          log(String.format("destroy id: %s", nodeElement.getId()));
          computeService.destroyNode(nodeElement.getId());
       } else {
-         log(String.format("destroy tag: %s", nodeElement.getTag()));
-         computeService.destroyNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
+         log(String.format("destroy group: %s", nodeElement.getGroup()));
+         computeService.destroyNodesMatching(NodePredicates.inGroup(nodeElement.getGroup()));
       }
    }
 
@@ -243,9 +243,9 @@ public class ComputeTask extends Task {
          log(String.format("get id: %s", nodeElement.getId()));
          logDetails(computeService, computeService.getNodeMetadata(nodeElement.getId()));
       } else {
-         log(String.format("get tag: %s", nodeElement.getTag()));
+         log(String.format("get group: %s", nodeElement.getGroup()));
          for (ComputeMetadata node : Iterables.filter(computeService.listNodesDetailsMatching(NodePredicates.all()),
-                  NodePredicates.withTag(nodeElement.getTag()))) {
+                  NodePredicates.inGroup(nodeElement.getGroup()))) {
             logDetails(computeService, node);
          }
       }
@@ -254,8 +254,8 @@ public class ComputeTask extends Task {
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node) : computeService
                .getNodeMetadata(node.getId());
-      log(String.format("   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, hardware=%s",
-               metadata.getProviderId(), metadata.getName(), metadata.getTag(), metadata.getLocation(), metadata
+      log(String.format("   node id=%s, name=%s, group=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, hardware=%s",
+               metadata.getProviderId(), metadata.getName(), metadata.getGroup(), metadata.getLocation(), metadata
                         .getState(), ComputeTaskUtils.ipOrEmptyString(metadata.getPublicAddresses()),
                ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getHardware()));
    }

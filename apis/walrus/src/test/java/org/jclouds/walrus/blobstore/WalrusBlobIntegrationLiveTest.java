@@ -20,21 +20,41 @@
 package org.jclouds.walrus.blobstore;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.s3.blobstore.integration.S3BlobIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "WalrusBlobIntegrationLiveTest")
-public class WalrusBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+@Test(groups = "live", testName = "WalrusBlobIntegrationLiveTest")
+public class WalrusBlobIntegrationLiveTest extends S3BlobIntegrationLiveTest {
 
+   // no support for content encoding
    @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
+   protected void checkContentEncoding(Blob blob, String contentEncoding) {
+      assert blob.getPayload().getContentMetadata().getContentEncoding() == null;
+      assert blob.getMetadata().getContentMetadata().getContentEncoding() == null;
    }
 
+   // no support for content language
+   @Override
+   protected void checkContentLanguage(Blob blob, String contentLanguage) {
+      assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
+      assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
+   }
+
+   // double range not supported
+   @Test(groups = { "integration", "live" })
+   @Override
+   public void testGetTwoRanges() throws InterruptedException, IOException {
+
+   }
+
+   // range not supported
+   @Test(groups = { "integration", "live" })
+   @Override
+   public void testGetRange() throws InterruptedException, IOException {
+   }
 }

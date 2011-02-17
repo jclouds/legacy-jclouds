@@ -1,0 +1,104 @@
+<Catalog
+    href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/vdc/691/catalog"
+    type="application/vnd.vmware.vcloud.catalog+xml" name="Opscode, Inc. Catalog"
+    xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <CatalogItems>
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/36-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5 (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/35-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5 (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/346-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5.5 x32" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/347-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5.5 x64" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/233-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Red Hat Enterprise Linux 5 (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/107-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Red Hat Enterprise Linux 5 (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/348-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Red Hat Enterprise Linux 5.5 x32" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/349-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Red Hat Enterprise Linux 5.5 x64" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/6-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Sun Solaris 10 (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/103-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu 8.04 LTS (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/55-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu 8.04 LTS (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/350-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu Server 10.04 x32" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/351-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu Server 10.04 x64" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/325-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2003 Std. R2 SQL 2005 Std. (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/335-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2003 Std. R2 SQL 2008 Std. (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/340-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2008 R2 Std wSQL 2008 R2 Std (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/341-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2008 R2 Std wSQL 2008 R2 Web (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/336-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2008 Std wSQL 2008 Std (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/327-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows 2008 Std wSQL 2008 Web (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/249-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2003 R2 Enterprise Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/248-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2003 R2 Enterprise Edition (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/281-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2003 R2 Standard Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/280-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2003 R2 Standard Edition (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/261-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Enterprise Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/307-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Enterprise Edition (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/256-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 R2 Enterprise Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/322-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 R2 Standard Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/270-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 R2 Web Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/269-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Standard Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/267-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Standard Edition (x86)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/277-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Web Edition (x64)" />
+        <CatalogItem
+            href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.7/catalogItem/276-691"
+            type="application/vnd.vmware.vcloud.catalogItem+xml" name="-Windows Server 2008 Web Edition (x86)" />
+    </CatalogItems>
+</Catalog>

@@ -45,10 +45,14 @@ import com.google.inject.Provides;
 public class EC2ComputeServiceContextModule extends BaseComputeServiceContextModule {
    @Override
    protected void configure() {
-      install(new EC2ComputeServiceDependenciesModule());
+      installDependencies();
       install(new EC2BindComputeStrategiesByClass());
       install(new EC2BindComputeSuppliersByClass());
       super.configure();
+   }
+   
+   protected void installDependencies(){
+      install(new EC2ComputeServiceDependenciesModule());
    }
 
    @Provides

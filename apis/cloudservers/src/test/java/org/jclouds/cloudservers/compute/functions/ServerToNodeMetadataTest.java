@@ -25,6 +25,10 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceDependenciesModule;
+import org.jclouds.cloudservers.domain.Server;
+import org.jclouds.cloudservers.domain.ServerStatus;
+import org.jclouds.cloudservers.functions.ParseServerFromJsonResponseTest;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
@@ -38,12 +42,8 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceDependenciesModule;
-import org.jclouds.cloudservers.domain.Server;
-import org.jclouds.cloudservers.domain.ServerStatus;
-import org.jclouds.cloudservers.functions.ParseServerFromJsonResponseTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
@@ -56,7 +56,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ServerToNodeMetadataTest {
-   Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+   Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
    public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {
@@ -68,19 +68,17 @@ public class ServerToNodeMetadataTest {
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of("node#1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+               .<String, Credentials> of("node#1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images),
+               Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG#sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").credentials(
-               creds).location(
-               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                 "description", null))).userMetadata(
-               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
+               .imageId("2").id("1234").providerId("1234").name("sample-server").credentials(creds).location(
+                        new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
+                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 
    @Test
@@ -97,12 +95,11 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG#sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").location(
-               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                 "description", null))).userMetadata(
-               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
+               .imageId("2").id("1234").providerId("1234").name("sample-server").location(
+                        new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
+                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
@@ -121,14 +118,13 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG#sample-server").imageId("2").operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2").is64Bit(
-                        true).build()).id("1234").providerId("1234").name("sample-server").location(
-               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                 "description", null))).userMetadata(
-               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
+               .imageId("2").operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                                 .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
+                        new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
+                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
@@ -146,17 +142,16 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG#sample-server").imageId("2").hardware(
-               new HardwareBuilder().ids("1").name("256 MB Server").processors(
-                        ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
-                        ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
-                                 .bootDevice(true).build())).build()).operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2").is64Bit(
-                        true).build()).id("1234").providerId("1234").name("sample-server").location(
-               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                 "description", null))).userMetadata(
-               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
+               .imageId("2").hardware(
+                        new HardwareBuilder().ids("1").name("256 MB Server").processors(
+                                 ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
+                                 ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
+                                          .bootDevice(true).build())).build()).operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                                 .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
+                        new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
+                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 }

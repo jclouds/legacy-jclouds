@@ -18,7 +18,7 @@
 ====
 
 #
-# The jclouds provider for VMware vCloud (http://www.vmware.com/solutions/cloud-computing/vcloud.html).
+# The jclouds API for VMware vCloud (http://www.vmware.com/products/vcloud/).
 #
 # TODO: Implementation status.
 # TODO: Supported features.

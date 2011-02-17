@@ -21,7 +21,6 @@ package org.jclouds.ec2.compute.options;
 
 import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.authorizePublicKey;
 import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.blockOnPort;
-import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.enableMonitoring;
 import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.inboundPorts;
 import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.installPrivateKey;
 import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.keyPair;
@@ -170,26 +169,6 @@ public class EC2TemplateOptionsTest {
       EC2TemplateOptions options = noKeyPair();
       assertEquals(options.getKeyPair(), null);
       assert !options.shouldAutomaticallyCreateKeyPair();
-   }
-
-   @Test
-   public void testMonitoringEnabledDefault() {
-      EC2TemplateOptions options = new EC2TemplateOptions();
-      assert !options.isMonitoringEnabled();
-   }
-
-   @Test
-   public void testMonitoringEnabled() {
-      EC2TemplateOptions options = new EC2TemplateOptions();
-      options.enableMonitoring();
-      assert options.isMonitoringEnabled();
-   }
-
-   @Test
-   public void testEnableMonitoringStatic() {
-      EC2TemplateOptions options = enableMonitoring();
-      assertEquals(options.getKeyPair(), null);
-      assert options.isMonitoringEnabled();
    }
 
    // superclass tests

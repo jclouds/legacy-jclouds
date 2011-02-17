@@ -27,11 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -61,7 +60,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          assertConsistencyAwareMapSize(map, 5);
          Collection<InputStream> values = map.values();
          assertEquals(values.size(), 5);
-         Set<String> valuesAsString = new HashSet<String>();
+         Set<String> valuesAsString = Sets.newLinkedHashSet();
          for (InputStream stream : values) {
             valuesAsString.add(Strings2.toStringAndClose(stream));
          }
@@ -77,7 +76,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
       String containerName = getContainerName();
       try {
          InputStreamMap map = createMap(context, containerName);
-         Set<String> keySet = Sets.newHashSet();
+         Set<String> keySet = Sets.newLinkedHashSet();
          for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
          }

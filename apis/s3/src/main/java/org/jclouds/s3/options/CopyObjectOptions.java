@@ -262,7 +262,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       checkState(metadataPrefix != null, "metadataPrefix should have been injected!");
       Multimap<String, String> returnVal = LinkedHashMultimap.create();
       for (Entry<String, String> entry : headers.entries()) {
-         returnVal.put(entry.getKey().replace("aws", headerTag), entry.getValue());
+         returnVal.put(entry.getKey().replace("amz", headerTag), entry.getValue());
       }
       if (metadata != null) {
          for (String key : metadata.keySet()) {

@@ -39,6 +39,8 @@
         <test.eucalyptus-partnercloud-ec2.apiversion>2010-06-15</test.eucalyptus-partnercloud-ec2.apiversion>
         <test.eucalyptus-partnercloud-ec2.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-ec2.identity>
         <test.eucalyptus-partnercloud-ec2.credential>FIXME_CREDENTIAL</test.eucalyptus-partnercloud-ec2.credential>
+        <!--  corresponds to image manifest and also virt + "-cluster" zone -->
+        <test.eucalyptus-partnercloud-ec2.virtualization-type>kvm</test.eucalyptus-partnercloud-ec2.virtualization-type>
     </properties>
 
     <dependencies>
@@ -84,6 +86,12 @@
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.44</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -133,6 +141,10 @@
                                         <property>
                                             <name>test.eucalyptus-partnercloud-ec2.credential</name>
                                             <value>${test.eucalyptus-partnercloud-ec2.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.eucalyptus-partnercloud-ec2.virtualization-type</name>
+                                            <value>${test.eucalyptus-partnercloud-ec2.virtualization-type}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

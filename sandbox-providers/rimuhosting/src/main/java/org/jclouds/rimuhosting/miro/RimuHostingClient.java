@@ -49,7 +49,7 @@ public interface RimuHostingClient {
     * 
     * @see Image
     */
-   Set<Image> getImageList();
+   Set<? extends Image> getImageList();
 
    /**
     * Returns a list of servers that belong to this identity.
@@ -57,14 +57,14 @@ public interface RimuHostingClient {
     * @return An empty set if there are no servers.
     * @see Server
     */
-   Set<Server> getServerList();
+   Set<? extends Server> getServerList();
 
    /**
     * Returns a list of pricing plans that can be used for server creation.
     * 
     * @see PricingPlan
     */
-   Set<PricingPlan> getPricingPlanList();
+   Set<? extends PricingPlan> getPricingPlanList();
 
    /**
     * This operation creates a node based on its name, imageId and planId.

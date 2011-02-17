@@ -31,7 +31,7 @@ public class CloudServersUKComputeServiceLiveTest extends CloudServersComputeSer
 
    public CloudServersUKComputeServiceLiveTest() {
       provider = "cloudservers-uk";
-      tag = "cs";
+      group = "cs";
    }
 
 }

@@ -70,31 +70,34 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Href") && currentOrNull() != null) {
-         if (inPublicIpAddress)
-            addressLocation = URI.create(currentOrNull());
-         else
-            location = URI.create(currentOrNull());
-      } else if (qName.equals("Name")) {
-         if (inPublicIpAddress)
-            address = currentOrNull();
-         else
-            serviceName = currentOrNull();
-      } else if (qName.equals("PublicIpAddress")) {
+      String current = currentOrNull();
+      if (qName.equals("PublicIpAddress")) {
          publicIpAddress = new PublicIpAddress(address, addressLocation);
          address = null;
          addressLocation = null;
          inPublicIpAddress = false;
-      } else if (qName.equals("Port")) {
-         port = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Protocol")) {
-         protocol = Protocol.valueOf(currentOrNull());
-      } else if (qName.equals("Enabled")) {
-         enabled = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("Timeout")) {
-         timeout = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Description")) {
-         description = currentOrNull();
+      } else if (current != null) {
+         if (qName.equals("Href")) {
+            if (inPublicIpAddress)
+               addressLocation = URI.create(current);
+            else
+               location = URI.create(current);
+         } else if (qName.equals("Name")) {
+            if (inPublicIpAddress)
+               address = current;
+            else
+               serviceName = current;
+         } else if (qName.equals("Port")) {
+            port = Integer.parseInt(current);
+         } else if (qName.equals("Protocol")) {
+            protocol = Protocol.valueOf(current);
+         } else if (qName.equals("Enabled")) {
+            enabled = Boolean.parseBoolean(current);
+         } else if (qName.equals("Timeout")) {
+            timeout = Integer.parseInt(current);
+         } else if (qName.equals("Description")) {
+            description = current;
+         }
       }
       currentText = new StringBuilder();
    }

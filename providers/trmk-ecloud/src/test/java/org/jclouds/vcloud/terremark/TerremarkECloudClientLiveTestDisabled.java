@@ -21,34 +21,32 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
-import java.net.URI;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.suppliers.TerremarkECloudInternetServiceAndPublicIpAddressSupplier;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true)
+@Test(groups = "live", enabled = true, sequential = true)
 public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {
       this.provider = "trmk-ecloud";
       this.itemName = "Ubuntu 8.04 LTS (x86)";
+      expectedOs = "Ubuntu Linux (32-bit)";
    }
 
    @Override
@@ -62,13 +60,9 @@ public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTe
    }
 
    @Override
-   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(URI vdc) {
-      PublicIpAddress ip = TerremarkECloudClient.class.cast(tmClient).activatePublicIpInVDC(
-               tmClient.findVDCInOrgNamed(null, null).getHref());
-      InternetService is = tmClient.addInternetServiceToExistingIp(ip.getId(), "SSH", Protocol.TCP, 22);
-      Map<InternetService, PublicIpAddress> result = ImmutableMap.<InternetService, PublicIpAddress> of(is, ip);
-      Entry<InternetService, PublicIpAddress> entry = Iterables.getOnlyElement(result.entrySet());
-      return entry;
+   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
+      return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(tmClient))
+               .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 
 }

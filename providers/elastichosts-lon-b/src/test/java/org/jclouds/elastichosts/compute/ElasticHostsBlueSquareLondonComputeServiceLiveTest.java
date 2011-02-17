@@ -31,7 +31,7 @@ public class ElasticHostsBlueSquareLondonComputeServiceLiveTest extends ElasticS
 
    public ElasticHostsBlueSquareLondonComputeServiceLiveTest() {
       provider = "elastichosts-lon-b";
-      tag = "elastichosts";
+      group = "elastichosts";
    }
 
 }

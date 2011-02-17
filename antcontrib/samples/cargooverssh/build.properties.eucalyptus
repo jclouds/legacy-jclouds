@@ -1,7 +1,0 @@
-provider=eucalyptus
-driver=aws
-# note you need to change this to the correct endpoint
-eucalyptus.endpoint=http://173.205.188.130:8773/services/Eucalyptus
-identity=accesskey
-credential=secret
-tag=name_of_your_cluster_or_instance

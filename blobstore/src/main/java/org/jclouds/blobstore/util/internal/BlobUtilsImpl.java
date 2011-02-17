@@ -22,9 +22,11 @@ package org.jclouds.blobstore.util.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
@@ -41,7 +43,7 @@ import org.jclouds.blobstore.util.BlobUtils;
 @Singleton
 public class BlobUtilsImpl implements BlobUtils {
 
-   protected final Blob.Factory blobFactory;
+   protected final Provider<BlobBuilder> blobBuilders;
    protected final ClearListStrategy clearContainerStrategy;
    protected final GetDirectoryStrategy getDirectoryStrategy;
    protected final MkdirStrategy mkdirStrategy;
@@ -49,10 +51,10 @@ public class BlobUtilsImpl implements BlobUtils {
    protected final CountListStrategy countBlobsStrategy;
 
    @Inject
-   protected BlobUtilsImpl(Blob.Factory blobFactory, ClearListStrategy clearContainerStrategy,
-            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
-            CountListStrategy countBlobsStrategy, DeleteDirectoryStrategy rmDirStrategy) {
-      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
+   protected BlobUtilsImpl(Provider<BlobBuilder> blobBuilders, ClearListStrategy clearContainerStrategy,
+         GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy, CountListStrategy countBlobsStrategy,
+         DeleteDirectoryStrategy rmDirStrategy) {
+      this.blobBuilders = checkNotNull(blobBuilders, "blobBuilders");
       this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
       this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
       this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
@@ -60,10 +62,14 @@ public class BlobUtilsImpl implements BlobUtils {
       this.countBlobsStrategy = checkNotNull(countBlobsStrategy, "countBlobsStrategy");
    }
 
+   @Override
    public Blob newBlob(String name) {
-      Blob blob = blobFactory.create(null);
-      blob.getMetadata().setName(name);
-      return blob;
+      return blobBuilder().name(name).build();
+   }
+
+   @Override
+   public BlobBuilder blobBuilder() {
+      return blobBuilders.get();
    }
 
    public boolean directoryExists(String containerName, String directory) {

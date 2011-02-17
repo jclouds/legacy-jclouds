@@ -36,8 +36,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.domain.Ip;
@@ -73,16 +73,17 @@ public class ServerToNodeMetadataTest {
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
-      expect(server.getName()).andReturn("tag-ff").atLeastOnce();
+      expect(server.getName()).andReturn("group-ff").atLeastOnce();
       expect(server.getState()).andReturn(ServerState.ON).atLeastOnce();
 
       expect(serverStateToNodeState.get(ServerState.ON)).andReturn(NodeState.RUNNING);
-      LocationImpl location = new LocationImpl(LocationScope.ZONE, "1", "US-West-1", null);
+
+      Location location = new LocationBuilder().scope(LocationScope.ZONE).id("1").description("US-West-1").build();
       Map<String, ? extends Location> locations = ImmutableMap.<String, Location> of("1", location);
 
       Map<String, Credentials> credentialsMap = createMock(Map.class);
       expect(client.getServerCredentialsList()).andReturn(credentialsMap);
-      expect(credentialsMap.get("tag-ff")).andReturn(new Credentials("user", "pass"));
+      expect(credentialsMap.get("group-ff")).andReturn(new Credentials("user", "pass"));
 
       expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
 
@@ -105,13 +106,13 @@ public class ServerToNodeMetadataTest {
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
-               .<Set< ? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
+               .<Set<? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
                .<Map<String, ? extends Location>> ofInstance(locations));
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
       assertEquals(metadata.getImageId(), "2000");
-      assertEquals(metadata.getTag(), "tag");
+      assertEquals(metadata.getGroup(), "group");
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
       verify(caller);

@@ -87,7 +87,7 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 	}
 
 	@Override
-	public VirtualMachine runNodeWithTagAndNameAndStoreCredentials(String tag,
+	public VirtualMachine createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag,
 			String name, Template template,
 			Map<String, Credentials> credentialStore) {
 		try {

@@ -33,11 +33,11 @@ public class LibvirtComputeServiceContextSpec extends RestContextSpec<ComputeSer
 
    @SuppressWarnings("unchecked")
    public LibvirtComputeServiceContextSpec(String endpoint, String identity, String credential, Iterable<Module> modules) {
-      super("libvirt", endpoint, "1", identity, credential, ComputeService.class, ComputeService.class,
-            PropertiesBuilder.class, (Class) LibvirtComputeServiceContextBuilder.class, modules);
+      super("libvirt", endpoint, "1", "", identity, credential, ComputeService.class, ComputeService.class,
+               PropertiesBuilder.class, (Class) LibvirtComputeServiceContextBuilder.class, modules);
    }
 
    public LibvirtComputeServiceContextSpec(String endpoint, String identity, String credential) {
-      this(endpoint, identity, credential, ImmutableSet.<Module>of());
+      this(endpoint, identity, credential, ImmutableSet.<Module> of());
    }
 }

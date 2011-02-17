@@ -19,15 +19,21 @@
 
 package org.jclouds.epc.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
+import java.util.Set;
+
+import org.jclouds.walrus.blobstore.WalrusServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest")
-public class EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
-   public EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest() {
-      containerCount = 5;
+@Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest")
+public class EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest extends WalrusServiceIntegrationLiveTest {
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-CA");
    }
+
 }

@@ -52,7 +52,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
 
    @Override
    public void setServiceDefaults() {
-      tag = "te";
+      group = "te";
    }
 
    @Test

@@ -31,7 +31,7 @@ public class ElasticHostsPeer1LondonComputeServiceLiveTest extends ElasticStackC
 
    public ElasticHostsPeer1LondonComputeServiceLiveTest() {
       provider = "elastichosts-lon-p";
-      tag = "elastichosts";
+      group = "elastichosts";
    }
 
 }

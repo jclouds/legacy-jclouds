@@ -22,7 +22,8 @@ package org.jclouds.aws.ec2;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.aws.ec2.config.AWSEC2ComputeServiceContextModule;
+import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
+import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.ec2.EC2ContextBuilder;
 
 import com.google.inject.Module;
@@ -35,6 +36,11 @@ public class AWSEC2ContextBuilder extends EC2ContextBuilder {
 
    public AWSEC2ContextBuilder(Properties props) {
       super(props);
+   }
+
+   @Override
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new AWSEC2RestClientModule());
    }
 
    @Override

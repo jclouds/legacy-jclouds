@@ -25,34 +25,32 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Set;
 
+import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.domain.MonitoringState;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.location.Region;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 /**
  * Tests behavior of {@code DescribeInstancesResponseHandler}
  * 
  * @author Adrian Cole
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "DescribeInstancesResponseHandlerTest")
 public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
@@ -68,17 +66,18 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testWhenRunning() throws UnknownHostException {
 
-      Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
-
-      contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"),
-            ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"), "0",
-                  "ec2-174-129-81-68.compute-1.amazonaws.com", "ami-1fd73376", "i-0799056f", InstanceState.RUNNING,
-                  InstanceType.M1_SMALL, "174.129.81.68", "aki-a71cf9ce", "adriancole.ec21", dateService
-                        .iso8601DateParse("2009-11-09T03:00:34.000Z"), MonitoringState.DISABLED,
-                  AvailabilityZone.US_EAST_1C, null, "paravirtual", null, "ip-10-243-42-70.ec2.internal",
-                  "10.243.42.70", ImmutableSet.<String> of(), "ari-a51cf9cc", null, null, null, null,
-                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, BlockDevice> of())), "993194456877",
-            null, "r-a3c508cb"));
+      Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
+               ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(new RunningInstance.Builder().region(
+                        defaultRegion).groupId("adriancole.ec2ingress").amiLaunchIndex("0").dnsName(
+                        "ec2-174-129-81-68.compute-1.amazonaws.com").imageId("ami-82e4b5c7").instanceId("i-0799056f")
+                        .instanceState(InstanceState.RUNNING).instanceType(InstanceType.M1_SMALL).ipAddress(
+                                 "174.129.81.68").kernelId("aki-a71cf9ce").keyName("adriancole.ec21").launchTime(
+                                 dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"))
+                        // MonitoringState.DISABLED,
+                        .availabilityZone(AvailabilityZone.US_EAST_1C).virtualizationType("paravirtual")
+                        .privateDnsName("ip-10-243-42-70.ec2.internal").privateIpAddress("10.243.42.70").ramdiskId(
+                                 "ari-a51cf9cc").rootDeviceType(RootDeviceType.INSTANCE_STORE).build()),
+               "993194456877", null, "r-a3c508cb"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_running.xml");
 
@@ -86,82 +85,54 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
    }
 
    public void testApplyInputStream() {
-
-      Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
-
-      contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
-            new RunningInstance(defaultRegion, ImmutableSet.of("default"), "23",
-                  "ec2-72-44-33-4.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64341", InstanceState.RUNNING,
-                  InstanceType.M1_LARGE, (String) null, "aki-ba3adfd3", "example-key-name", dateService
-                        .iso8601DateParse("2007-08-07T11:54:42.000Z"), MonitoringState.DISABLED,
-                  AvailabilityZone.US_EAST_1B, null, "paravirtual", null, "10-251-50-132.ec2.internal", null,
-                  ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null, null, RootDeviceType.INSTANCE_STORE,
-                  null, ImmutableMap.<String, BlockDevice> of()),
-            new RunningInstance(defaultRegion, ImmutableSet.of("default"), "23",
-                  "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64435", InstanceState.RUNNING,
-                  InstanceType.M1_LARGE, (String) null, "aki-ba3adfd3", "example-key-name", dateService
-                        .iso8601DateParse("2007-08-07T11:54:42.000Z"), MonitoringState.DISABLED,
-                  AvailabilityZone.US_EAST_1B, null, "paravirtual", null, "10-251-50-134.ec2.internal", null,
-                  ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null, null, RootDeviceType.INSTANCE_STORE,
-                  null, ImmutableMap.<String, BlockDevice> of())), "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null,
-            "r-44a5402d"));
+      Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
+               ImmutableSet.of("default"), ImmutableSet.of(new RunningInstance.Builder().region(defaultRegion).groupId(
+                        "default").amiLaunchIndex("23").dnsName("ec2-72-44-33-4.compute-1.amazonaws.com").imageId(
+                        "ami-6ea54007").instanceId("i-28a64341").instanceState(InstanceState.RUNNING).instanceType(
+                        InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name").launchTime(
+                        dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
+                        // MonitoringState.DISABLED,
+                        .availabilityZone(AvailabilityZone.US_EAST_1B).virtualizationType("paravirtual")
+                        .privateDnsName("10-251-50-132.ec2.internal")// product codes
+                        // ImmutableSet.of("774F4FF8")
+                        .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build(),
+                        new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("23")
+                                 .dnsName("ec2-72-44-33-6.compute-1.amazonaws.com").imageId("ami-6ea54007").instanceId(
+                                          "i-28a64435").instanceState(InstanceState.RUNNING).instanceType(
+                                          InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name")
+                                 .launchTime(dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
+                                 // MonitoringState.DISABLED,
+                                 .availabilityZone(AvailabilityZone.US_EAST_1B).virtualizationType("paravirtual")
+                                 .privateDnsName("10-251-50-134.ec2.internal")// product codes
+                                 // ImmutableSet.of("774F4FF8")
+                                 .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build()),
+               "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null, "r-44a5402d"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances.xml");
 
       assertEquals(result, contents);
    }
 
-   @Test(enabled = false)
-   // TODO not sure why equals fails
-   public void testApplyInputStreamEuc() {
-
-      Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
-
-      contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet
-            .of(new RunningInstance(defaultRegion, ImmutableSet.of("jclouds#euc"), "1", null, "emi-9ACB1363",
-                  "i-3FFA0762", InstanceState.SHUTTING_DOWN, InstanceType.M1_LARGE, null, "eki-6CBD12F2",
-                  "jclouds#euc-17", dateService.iso8601DateParse("2010-06-16T03:06:19.000Z"), MonitoringState.DISABLED,
-                  "open", null, "paravirtual", null, "10.7.0.179", null, ImmutableSet.<String> of(), "eri-A97113E4",
-                  null, null, null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                        .<String, BlockDevice> of())), "jclouds", null, "r-4D2A08AD"));
-
-      Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_euc.xml");
-
-      assertEquals(result, contents);
-   }
-
-   public void testApplyInputStreamNovaNoAvailabilityZone() {
-      Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
-
-      contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet
-            .of(new RunningInstance(defaultRegion, ImmutableSet.<String> of(), "0", null, "ami-82e4b5c7", "i-9slweygo",
-                  InstanceState.TERMINATED, InstanceType.M1_SMALL, null, null, "nebulatanimislam", dateService
-                        .iso8601SecondsDateParse("2010-09-09T18:09:42Z"), null, null, null, "paravirtual", null, null,
-                  "10.128.207.5", ImmutableSet.<String> of("None"), null, null, null, null, null,
-                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, BlockDevice> of())), "tislam1", null,
-            "r-opqeylmj"));
-
-      Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_nova.xml");
-
-      assertEquals(result, contents);
-   }
-
    public void testEBS() throws UnknownHostException {
 
-      Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
-
-      contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("adriancole.ec2ebsingress"),
-            ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet.of("adriancole.ec2ebsingress"), "0",
-                  "ec2-75-101-203-146.compute-1.amazonaws.com", "ami-849875ed", "i-e564438d", InstanceState.RUNNING,
-                  InstanceType.M1_SMALL, "75.101.203.146", "aki-a71cf9ce", "adriancole.ec2ebs1", dateService
-                        .iso8601DateParse("2009-12-30T04:06:23.000Z"), MonitoringState.DISABLED,
-                  AvailabilityZone.US_EAST_1B, "placement", "hvm", null, "domU-12-31-39-09-CE-53.compute-1.internal",
-                  "10.210.209.157", ImmutableSet.<String> of(), "ari-a51cf9cc", null, null, null, null,
-                  RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, BlockDevice> of(
-                        "/dev/sda1",
-                        new BlockDevice("vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
-                              .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)))), "993194456877", null,
-            "r-596dd731"));
+      Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
+               ImmutableSet.of("adriancole.ec2ebsingress"), ImmutableSet.of(new RunningInstance.Builder().region(
+                        defaultRegion).groupId("adriancole.ec2ebsingress").amiLaunchIndex("0").dnsName(
+                        "ec2-75-101-203-146.compute-1.amazonaws.com").imageId("ami-849875ed").instanceId("i-e564438d")
+                        .instanceState(InstanceState.RUNNING).instanceType(InstanceType.M1_SMALL).ipAddress(
+                                 "75.101.203.146").kernelId("aki-a71cf9ce")
+                        .keyName("adriancole.ec2ebs1")
+                        .launchTime(dateService.iso8601DateParse("2009-12-30T04:06:23.000Z"))
+                        // MonitoringState.DISABLED
+                        .availabilityZone(AvailabilityZone.US_EAST_1B)
+                        // "placement"
+                        .virtualizationType("hvm").privateDnsName("domU-12-31-39-09-CE-53.compute-1.internal")
+                        .privateIpAddress("10.210.209.157").ramdiskId("ari-a51cf9cc")
+                        .rootDeviceType(RootDeviceType.EBS).rootDeviceName("/dev/sda1").device(
+                                 "/dev/sda1",
+                                 new BlockDevice("vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
+                                          .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)).build()),
+               "993194456877", null, "r-596dd731"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_ebs.xml");
 
@@ -178,7 +149,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       });
       ParseSax<Set<Reservation<? extends RunningInstance>>> parser = (ParseSax<Set<Reservation<? extends RunningInstance>>>) injector
-            .getInstance(ParseSax.Factory.class).create(injector.getInstance(DescribeInstancesResponseHandler.class));
+               .getInstance(ParseSax.Factory.class)
+               .create(injector.getInstance(DescribeInstancesResponseHandler.class));
       return parser;
    }
 

@@ -1,0 +1,15 @@
+nodes:
+    - id: cluster-1
+      name: cluster-1
+      description: accounting analytics cluster
+      hostname: cluster-1.mydomain.com
+      os_arch: x86
+      os_family: rhel
+      os_description: redhat
+      os_version: 5.3
+      group: hadoop
+      tags:
+          - vanilla
+      username: myUser
+      credential_url: classpath:///testkey.txt
+      sudo_password: happy bear

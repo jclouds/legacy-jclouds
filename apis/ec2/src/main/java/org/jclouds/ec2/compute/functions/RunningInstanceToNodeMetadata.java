@@ -89,8 +89,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       String providerId = checkNotNull(instance, "instance").getId();
       builder.providerId(providerId);
       builder.id(instance.getRegion() + "/" + providerId);
-      String tag = getTagForInstance(instance);
-      builder.tag(tag);
+      String group = getGroupForInstance(instance);
+      builder.group(group);
       builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + providerId));
       builder.state(instanceToNodeState.get(instance.getInstanceState()));
       builder.publicAddresses(NullSafeCollections.nullSafeSet(instance.getIpAddress()));
@@ -157,10 +157,10 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    @VisibleForTesting
-   String getTagForInstance(final RunningInstance instance) {
-      String tag = String.format("NOTAG#%s", instance.getId());// default
+   String getGroupForInstance(final RunningInstance instance) {
+      String group = null;
       try {
-         tag = Iterables.getOnlyElement(Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
+         group = Iterables.getOnlyElement(Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
 
             @Override
             public boolean apply(String input) {
@@ -169,13 +169,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
          })).substring(8).replaceAll("#" + instance.getRegion() + "$", "");
       } catch (NoSuchElementException e) {
-         logger.debug("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
+         logger.debug("no group parsed from %s's security groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
          logger
-                  .debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance
+                  .debug("too many groups match %s; %s's security groups: %s", "jclouds#", instance.getId(), instance
                            .getGroupIds());
       }
-      return tag;
+      return group;
    }
 
    @VisibleForTesting

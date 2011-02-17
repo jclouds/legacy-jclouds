@@ -35,12 +35,14 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.util.Modules2;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Module;
@@ -70,22 +72,23 @@ import com.google.inject.Module;
 public class RestContextFactory {
 
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async,
+         String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
          Class<PropertiesBuilder> propertiesBuilderClass, Class<RestContextBuilder<S, A>> contextBuilderClass,
          Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async,
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
             propertiesBuilderClass, contextBuilderClass, modules);
    }
 
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async);
+         String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String identity, String credential, Class<S> sync, Class<A> async, Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async,
+         String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
+         Iterable<Module> modules) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
             PropertiesBuilder.class, (Class) RestContextBuilder.class, modules);
    }
 
@@ -239,6 +242,7 @@ public class RestContextFactory {
 
       props.setProperty(contextSpec.provider + ".endpoint", contextSpec.endpoint);
       props.setProperty(contextSpec.provider + ".apiversion", contextSpec.apiVersion);
+      props.setProperty(contextSpec.provider + "." + LocationConstants.ISO3166_CODES, contextSpec.iso3166Codes);
       props.setProperty(contextSpec.provider + ".identity", contextSpec.identity);
       if (contextSpec.credential != null)
          props.setProperty(contextSpec.provider + ".credential", contextSpec.credential);
@@ -283,7 +287,8 @@ public class RestContextFactory {
       props.putAll(this.properties);
       props.putAll(_overrides);
 
-      String endpoint = props.getProperty(providerName + ".endpoint", null);
+      String endpoint = props.getProperty(providerName + "." + LocationConstants.ENDPOINT, null);
+      String iso3166Codes = props.getProperty(providerName + "." + LocationConstants.ISO3166_CODES, null);
       String apiVersion = props.getProperty(providerName + ".apiversion", null);
       identity = props.getProperty(providerName + ".identity", props.getProperty("jclouds.identity", identity));
       credential = loadCredentialOrDefault(props, providerName + ".credential",
@@ -301,13 +306,18 @@ public class RestContextFactory {
          propertiesBuilderClass = Providers.resolvePropertiesBuilderClass(providerName, props);
          sync = (Class<S>) (syncClassName != null ? Class.forName(syncClassName) : null);
          async = (Class<A>) (syncClassName != null ? Class.forName(asyncClassName) : null);
+      } catch (IllegalArgumentException e) {
+         throw new IllegalArgumentException(
+               String.format(
+                     "provider %s not configured or supported. consider one of the following, as the provider name may have changed:%n%s%nIf you are sure that provider name is correct, check that the maven dependency org.jclouds.provider/%s is loaded.",
+                     providerName, Providers.getSupportedProviders(), providerName), e);
       } catch (Exception e) {
          propagate(e);
          assert false : "exception should have propogated " + e;
          return null;
       }
-      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, identity,
-            credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
+      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, iso3166Codes,
+            identity, credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
       return contextSpec;
    }
 
@@ -316,8 +326,8 @@ public class RestContextFactory {
          return properties.getProperty(property);
       else if (properties.containsKey(property + ".resource"))
          try {
-            return Strings2.toStringAndClose(RestContextFactory.class.getResourceAsStream(properties.getProperty(property
-                  + ".resource")));
+            return Strings2.toStringAndClose(RestContextFactory.class.getResourceAsStream(properties
+                  .getProperty(property + ".resource")));
          } catch (IOException e) {
             throw new RuntimeException("error reading resource: " + properties.getProperty(property + ".resource"));
          }
@@ -355,6 +365,8 @@ public class RestContextFactory {
          builder.provider(contextSpec.provider);
          if (contextSpec.apiVersion != null)
             builder.apiVersion(contextSpec.apiVersion);
+         if (contextSpec.iso3166Codes != null)
+            builder.iso3166Codes(Splitter.on('.').split(contextSpec.iso3166Codes));
          if (contextSpec.identity != null)
             builder.credentials(contextSpec.identity, contextSpec.credential);
          if (contextSpec.endpoint != null)

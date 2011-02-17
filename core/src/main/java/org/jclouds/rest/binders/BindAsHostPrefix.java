@@ -21,7 +21,8 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.net.InternetDomainName.isValid;
+import static com.google.common.net.InternetDomainName.fromLenient;
+import static com.google.common.net.InternetDomainName.isValidLenient;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,9 +52,9 @@ public class BindAsHostPrefix implements Binder {
    @SuppressWarnings("unchecked")
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkNotNull(payload, "hostprefix");
-      checkArgument(isValid(request.getEndpoint().getHost()), "this is only valid for hostnames: " + request);
+      checkArgument(isValidLenient(request.getEndpoint().getHost()), "this is only valid for hostnames: " + request);
       UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
-      InternetDomainName name = InternetDomainName.from(request.getEndpoint().getHost()).child(payload.toString());
+      InternetDomainName name = fromLenient(request.getEndpoint().getHost()).child(payload.toString());
       builder.host(name.name());
       return (R) request.toBuilder().endpoint(builder.build()).build();
    }

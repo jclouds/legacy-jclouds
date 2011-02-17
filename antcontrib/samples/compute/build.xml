@@ -21,7 +21,7 @@
 
 <project name="compute" default="dump" basedir="." xmlns:artifact="urn:maven-artifact-ant">
   <property file="build.properties" />
-  <property name="jclouds.version" value="1.0-SNAPSHOT" />
+  <property name="jclouds.version" value="1.0-beta-9a" />
   <property name="privatekeyfile" value="${user.home}/.ssh/id_rsa" />
   <property name="publickeyfile" value="${user.home}/.ssh/id_rsa.pub" />
 
@@ -30,29 +30,21 @@
   <get src="http://opensource.become.com/apache//maven/binaries/maven-ant-tasks-2.1.1.jar" dest="build/maven-ant-tasks.jar"/>
 
   <input
-    message="Which provider would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
-    validargs="ec2,cloudservers,vcloud,trmk-ecloud,trmk-vcloudexpress,eucalyptus,bluelock-vcdirector,gogrid,rimuhosting"
+    message="Which provider would you like to use (aws-ec2, bluelock-vcdirector, cloudservers-uk, cloudservers-us, cloudsigma-zrh, eucalyptus-partnercloud-ec2, elastichosts-lon-b, elastichosts-lon-p, elastichosts-sat-p, gogrid, openhosting-east1, serverlove-z1-man, skalicloud-sdg-my, slicehost, trmk-ecloud, trmk-vcloudexpress)?"
+    validargs="aws-ec2,bluelock-vcdirector,cloudservers-uk,cloudservers-us,cloudsigma-zrh,eucalyptus-partnercloud-ec2,elastichosts-lon-b,elastichosts-lon-p,elastichosts-sat-p,gogrid,openhosting-east1,serverlove-z1-man,skalicloud-sdg-my,slicehost,trmk-ecloud,trmk-vcloudexpress"
     addproperty="provider"
-  />
-
-  <input
-    message="Which driver does ${provider} use?"
-    validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,ibmdev,rimuhosting"
-    addproperty="driver"
   />
 
   <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
-  <artifact:remoteRepository id="jclouds.repository" url="http://repo1.maven.org/maven2" />
   <artifact:remoteRepository id="jclouds-snapshot.repository" url="https://oss.sonatype.org/content/repositories/snapshots" />
 
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="${jclouds.version}" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="${jclouds.version}" />
+    <dependency groupId="org.jclouds.provider" artifactId="${provider}" version="${jclouds.version}" />
     <localRepository refid="local.repository" />
-    <remoteRepository refid="jclouds.repository" />
     <remoteRepository refid="jclouds-snapshot.repository" />
   </artifact:dependencies>
 
@@ -94,9 +86,9 @@
     <compute actions="list-locations,list-sizes,list-images,list-details" provider="${jclouds.compute.url}" />
   </target>
 
-  <target name="reboot" depends="reboot-id,reboot-tag" />
+  <target name="reboot" depends="reboot-id,reboot-group" />
 
-  <target name="reboot-id" description="reboot the node ${id}" unless="tag">
+  <target name="reboot-id" description="reboot the node ${id}" unless="group">
 
     <input
       message="Which node do you wish to reboot"
@@ -108,21 +100,21 @@
     </compute>
   </target>
 
-  <target name="reboot-tag" description="reboot the nodes with tag ${tag}" unless="id" >
+  <target name="reboot-group" description="reboot the nodes with group ${group}" unless="id" >
 
     <input
-      message="Which tag do you wish to reboot"
-      addproperty="tag"
+      message="Which group do you wish to reboot"
+      addproperty="group"
     />
 
     <compute actions="reboot" provider="${jclouds.compute.url}">
-      <nodes tag="${tag}" />
+      <nodes group="${group}" />
     </compute>
   </target>
 
-  <target name="destroy" depends="destroy-id,destroy-tag" />
+  <target name="destroy" depends="destroy-id,destroy-group" />
 
-  <target name="destroy-id" description="destroy the node ${id}" unless="tag">
+  <target name="destroy-id" description="destroy the node ${id}" unless="group">
 
     <input
       message="Which node do you wish to destroy"
@@ -134,21 +126,21 @@
     </compute>
   </target>
 
-  <target name="destroy-tag" description="destroy the nodes with tag ${tag}" unless="id" >
+  <target name="destroy-group" description="destroy the nodes with group ${group}" unless="id" >
 
     <input
-      message="Which tag do you wish to destroy"
-      addproperty="tag"
+      message="Which group do you wish to destroy"
+      addproperty="group"
     />
 
     <compute actions="destroy" provider="${jclouds.compute.url}">
-      <nodes tag="${tag}" />
+      <nodes group="${group}" />
     </compute>
   </target>
 
-  <target name="get" depends="get-tag,get-id" />
+  <target name="get" depends="get-group,get-id" />
 
-  <target name="get-id" description="get the node ${id}" unless="tag">
+  <target name="get-id" description="get the node ${id}" unless="group">
 
     <input
       message="Which node do you wish to get"
@@ -160,32 +152,32 @@
     </compute>
   </target>
 
-  <target name="get-tag" description="get the nodes with tag ${tag}" unless="id" >
+  <target name="get-group" description="get the nodes with group ${group}" unless="id" >
 
     <input
-      message="Which tag do you wish to get"
-      addproperty="tag"
+      message="Which group do you wish to get"
+      addproperty="group"
     />
 
     <compute actions="get" provider="${jclouds.compute.url}">
-      <nodes tag="${tag}" />
+      <nodes group="${group}" />
     </compute>
   </target>
 
   <property name="location" value="" />
-  <target name="create" description="create the node ${tag}">
+  <target name="create" description="create the node ${group}">
     <property name="privatekeyfile" value="${user.home}/.ssh/id_rsa" />
     <property name="publickeyfile" value="${user.home}/.ssh/id_rsa.pub" />
     <property name="os" value="UBUNTU" />
     <property name="count" value="1" />
 
     <input
-      message="What do you want to tag your nodes with?"
-      addproperty="tag"
+      message="What do you want to group your nodes with?"
+      addproperty="group"
     />
 
     <compute actions="create" provider="${jclouds.compute.url}">
-      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${tag}" count="${count}" os="${os}" hardware="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" group="${group}" count="${count}" os="${os}" hardware="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

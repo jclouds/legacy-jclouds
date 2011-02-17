@@ -19,13 +19,21 @@
 
 package org.jclouds.googlestorage.blobstore;
 
+import java.util.Set;
+
 import org.jclouds.s3.blobstore.integration.S3ServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "GoogleStorageServiceIntegrationLiveTest")
+@Test(groups = "live", testName = "GoogleStorageServiceIntegrationLiveTest")
 public class GoogleStorageServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US");
+   }
 
 }

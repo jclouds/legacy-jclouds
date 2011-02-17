@@ -44,7 +44,7 @@ public class SplitNewlines implements Function<HttpResponse, Set<String>> {
    private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
-   SplitNewlines(ReturnStringIf2xx returnStringIf200) {
+   protected SplitNewlines(ReturnStringIf2xx returnStringIf200) {
       this.returnStringIf200 = returnStringIf200;
    }
 

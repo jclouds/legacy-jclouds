@@ -20,6 +20,10 @@
 package org.jclouds.epc;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -31,9 +35,14 @@ import org.jclouds.eucalyptus.EucalyptusPropertiesBuilder;
  * @author Adrian Cole
  */
 public class EucalyptusPartnerCloudPropertiesBuilder extends EucalyptusPropertiesBuilder {
+
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
+      properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
       properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Eucalyptus");
       return properties;
    }

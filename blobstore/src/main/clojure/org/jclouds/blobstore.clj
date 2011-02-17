@@ -21,7 +21,7 @@
   "A clojure binding for the jclouds BlobStore.
 
 Current supported services are:
-   [transient, filesystem, s3, azureblob, atmos, cloudfiles, walrus,
+   [transient, filesystem, azureblob, atmos, walrus, scaleup-storage,
     googlestorage, synaptic, peer1-storage, aws-s3, eucalyptus-partnercloud-s3,
     cloudfiles-us, cloudfiles-uk, swift]
 

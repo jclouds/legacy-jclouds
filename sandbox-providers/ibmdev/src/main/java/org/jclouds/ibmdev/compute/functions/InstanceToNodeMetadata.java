@@ -20,7 +20,7 @@
 package org.jclouds.ibmdev.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -86,12 +86,12 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    @Override
    public NodeMetadata apply(Instance from) {
       //TODO hardware
-      String tag = parseTagFromName(from.getName());
+      String group = parseGroupFromName(from.getName());
       Set<String> ipSet = from.getIp() != null ? ImmutableSet.of(from.getIp()) : ImmutableSet.<String> of();
       Image image = images.get().get(from.getImageId());
-      String key = tag != null ? credentialsMap.get(tag) : null;
+      String key = group != null ? credentialsMap.get(group) : null;
       return new NodeMetadataBuilder().ids(from.getId() + "").name(from.getName())
-            .location(locations.get().get(image.getLocation())).tag(tag).imageId(from.getImageId())
+            .location(locations.get().get(image.getLocation())).group(group).imageId(from.getImageId())
             .state(instanceStateToNodeState.get(from.getStatus()))
             .operatingSystem(image != null ? image.getOperatingSystem() : null).publicAddresses(ipSet)
             .credentials(new Credentials(image.getDefaultCredentials().identity, key)).build();

@@ -19,7 +19,7 @@
 
 package org.jclouds.walrus.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.s3.blobstore.integration.S3BlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "WalrusBlobSignerLiveTest")
-public class WalrusBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+public class WalrusBlobSignerLiveTest extends S3BlobSignerLiveTest {
 
 }

@@ -71,8 +71,9 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    }
 
    public ListBucketResponse getResult() {
-      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker, maxResults, delimiter,
-               isTruncated, commonPrefixes);
+      return new ListBucketResponseImpl(bucketName, contents, prefix, marker,
+               (isTruncated && nextMarker == null) ? currentKey : nextMarker, maxResults, delimiter, isTruncated,
+               commonPrefixes);
    }
 
    private boolean inCommonPrefixes;

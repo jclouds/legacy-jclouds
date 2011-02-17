@@ -63,7 +63,7 @@ public class VCloudComputeUtils {
    }
 
    public static CIMOperatingSystem toComputeOs(org.jclouds.vcloud.domain.ovf.OperatingSystemSection os) {
-      return new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(os.getId()), null, null, os.getDescription());
+      return new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(os.getId()), "", null, os.getDescription());
    }
 
    public static Credentials getCredentialsFrom(VApp vApp) {

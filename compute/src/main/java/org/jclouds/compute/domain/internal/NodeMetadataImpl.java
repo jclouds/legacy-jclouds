@@ -55,7 +55,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Nullable
    private final Credentials credentials;
    @Nullable
-   private final String tag;
+   private final String group;
    @Nullable
    private final String imageId;
    @Nullable
@@ -64,12 +64,12 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware,
+            Map<String, String> userMetadata, @Nullable String group, @Nullable Hardware hardware,
             @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
             Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
             @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
-      this.tag = tag;
+      this.group = group;
       this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
@@ -86,7 +86,15 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     */
    @Override
    public String getTag() {
-      return tag;
+      return getGroup();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getGroup() {
+      return group;
    }
 
    /**
@@ -163,7 +171,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName()
+      return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getTag() + ", name=" + getName()
                + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
                + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
                + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
@@ -178,7 +186,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + loginPort;
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
-      result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+      result = prime * result + ((group == null) ? 0 : group.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
@@ -208,10 +216,10 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
             return false;
       } else if (!publicAddresses.equals(other.publicAddresses))
          return false;
-      if (tag == null) {
-         if (other.tag != null)
+      if (group == null) {
+         if (other.group != null)
             return false;
-      } else if (!tag.equals(other.tag))
+      } else if (!group.equals(other.group))
          return false;
       if (imageId == null) {
          if (other.imageId != null)

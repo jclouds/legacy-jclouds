@@ -32,12 +32,11 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.binders.BindProductCodesToIndexedFormParams;
 import org.jclouds.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Permission;
+import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.options.CreateImageOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.RegisterImageBackedByEbsOptions;
@@ -46,7 +45,6 @@ import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.ec2.xml.ImageIdHandler;
 import org.jclouds.ec2.xml.PermissionHandler;
-import org.jclouds.ec2.xml.ProductCodesHandler;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -79,7 +77,8 @@ public interface AMIAsyncClient {
    @XMLResponseParser(DescribeImagesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<? extends Image>> describeImagesInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, DescribeImagesOptions... options);
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+            DescribeImagesOptions... options);
 
    /**
     * @see AMIClient#createImageInRegion
@@ -88,7 +87,8 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateImage")
    @XMLResponseParser(ImageIdHandler.class)
-   ListenableFuture<String> createImageInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+   ListenableFuture<String> createImageInRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("Name") String name, @FormParam("InstanceId") String instanceId, CreateImageOptions... options);
 
    /**
@@ -97,7 +97,8 @@ public interface AMIAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeregisterImage")
-   ListenableFuture<Void> deregisterImageInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+   ListenableFuture<Void> deregisterImageInRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("ImageId") String imageId);
 
    /**
@@ -174,17 +175,6 @@ public interface AMIAsyncClient {
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#getProductCodesForImageInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "productCodes" })
-   @XMLResponseParser(ProductCodesHandler.class)
-   ListenableFuture<Set<String>> getProductCodesForImageInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("ImageId") String imageId);
-
-   /**
     * @see AMIClient#getBlockDeviceMappingsForImageInRegion
     */
    @POST
@@ -193,28 +183,5 @@ public interface AMIAsyncClient {
    @XMLResponseParser(BlockDeviceMappingHandler.class)
    ListenableFuture<Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("ImageId") String imageId);
-
-   /**
-    * @see AMIClient#addProductCodesToImageInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "add",
-            "productCodes" })
-   ListenableFuture<Void> addProductCodesToImageInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
-            @FormParam("ImageId") String imageId);
-
-   /**
-    * @see AMIClient#removeProductCodesToImageInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "remove",
-            "productCodes" })
-   ListenableFuture<Void> removeProductCodesFromImageInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
 }

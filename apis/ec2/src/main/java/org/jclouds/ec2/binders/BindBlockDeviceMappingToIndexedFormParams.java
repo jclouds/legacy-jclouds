@@ -45,10 +45,10 @@ public class BindBlockDeviceMappingToIndexedFormParams implements Binder {
    private static final String volumeIdPattern = "BlockDeviceMapping.%d.Ebs.VolumeId";
    private static final String deleteOnTerminationPattern = "BlockDeviceMapping.%d.Ebs.DeleteOnTermination";
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Map");
-      @SuppressWarnings("unchecked")
       Map<String, BlockDevice> blockDeviceMapping = (Map<String, BlockDevice>) input;
 
       com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();

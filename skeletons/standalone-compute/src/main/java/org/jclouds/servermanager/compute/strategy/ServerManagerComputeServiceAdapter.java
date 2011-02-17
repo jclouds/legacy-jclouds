@@ -34,7 +34,7 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    }
 
    @Override
-   public Server runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   public Server createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore) {
       // create the backend object using parameters from the template.
       Server from = client.createServerInDC(template.getLocation().getId(), name,

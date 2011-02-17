@@ -32,8 +32,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Provider;
 
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -43,8 +41,10 @@ import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.domain.internal.TemplateBuilderImplTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -89,7 +89,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemand() {
-      Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
+      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
@@ -142,7 +142,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemandWithoutRegionEncodedIntoId() {
-      Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
+      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
@@ -179,7 +179,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testParseOnDemandNotFound() {
-      Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
+      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));

@@ -42,11 +42,10 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    private final Utils utils;
    private final Map<String, Credentials> credentialStore;
 
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings( { "unchecked" })
    @Inject
    public ComputeServiceContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore,
-         Utils utils,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
+            Utils utils, @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
       this.credentialStore = credentialStore;
       this.utils = utils;
       this.providerSpecificContext = providerSpecificContext;
@@ -57,7 +56,7 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
       return computeService;
    }
 
-   @SuppressWarnings({ "unchecked", "hiding" })
+   @SuppressWarnings( { "unchecked", "hiding" })
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
       return (RestContext<S, A>) providerSpecificContext;
@@ -67,7 +66,7 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    public void close() {
       providerSpecificContext.close();
    }
-   
+
    @Override
    public Utils getUtils() {
       return utils();

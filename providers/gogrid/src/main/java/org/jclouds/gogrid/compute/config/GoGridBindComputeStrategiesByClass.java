@@ -20,14 +20,14 @@
 package org.jclouds.gogrid.compute.config;
 
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.gogrid.compute.strategy.GoGridAddNodeWithTagStrategy;
+import org.jclouds.gogrid.compute.strategy.FindPublicIpThenCreateNodeInGroup;
 import org.jclouds.gogrid.compute.strategy.GoGridDestroyNodeStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridGetNodeMetadataStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridLifeCycleStrategy;
@@ -40,8 +40,8 @@ import org.jclouds.gogrid.compute.strategy.GoGridListNodesStrategy;
  */
 public class GoGridBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return GoGridAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return FindPublicIpThenCreateNodeInGroup.class;
    }
 
    @Override

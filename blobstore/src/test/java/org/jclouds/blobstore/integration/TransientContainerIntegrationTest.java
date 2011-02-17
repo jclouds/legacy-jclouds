@@ -19,6 +19,7 @@
 
 package org.jclouds.blobstore.integration;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
@@ -31,7 +32,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author James Murty
@@ -44,22 +45,19 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
    public void testNotWithDetails() throws InterruptedException {
 
       String key = "hello";
-
-      Blob object = context.getBlobStore().newBlob(key);
-      object.setPayload(TEST_STRING);
-      object.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
-      object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
+      Blob blob = context.getBlobStore().blobBuilder("hello").userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+            .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).build();
+
       String containerName = getContainerName();
       try {
-         addBlobToContainer(containerName, object);
+         addBlobToContainer(containerName, blob);
          validateContent(containerName, key);
 
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(1));
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(1));
 
-         BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
+         BlobMetadata metadata = (BlobMetadata) getOnlyElement(container);
          // transient container should be lenient and not return metadata on undetailed listing.
 
          assertEquals(metadata.getUserMetadata().size(), 0);

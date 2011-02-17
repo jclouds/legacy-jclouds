@@ -21,6 +21,7 @@ package org.jclouds.elastichosts;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ public class ElasticHostsPeer1SanAntonioPropertiesBuilder extends ElasticStackPr
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-TX");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.sat-p.elastichosts.com");
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       return properties;

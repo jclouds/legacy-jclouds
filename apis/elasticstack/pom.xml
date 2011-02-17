@@ -70,6 +70,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.44</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
@@ -86,7 +92,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
+            <version>1.2.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>

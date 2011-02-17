@@ -20,7 +20,7 @@
 package org.jclouds.slicehost.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -104,7 +104,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       builder.ids(from.getId() + "");
       builder.name(from.getName());
       builder.location(location.get());
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));

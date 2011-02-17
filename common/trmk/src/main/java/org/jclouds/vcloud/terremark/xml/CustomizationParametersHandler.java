@@ -39,17 +39,19 @@ public class CustomizationParametersHandler extends HandlerWithResult<Customizat
 
    @Override
    public CustomizationParameters getResult() {
-      return new CustomizationParameters(customizeNetwork, customizePassword,
-            customizeSSH);
+      return new CustomizationParameters(customizeNetwork, customizePassword, customizeSSH);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("CustomizeNetwork")) {
-         customizeNetwork = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("CustomizePassword")) {
-         customizePassword = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("CustomizeSSH")) {
-         customizeSSH = Boolean.parseBoolean(currentOrNull());
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("CustomizeNetwork")) {
+            customizeNetwork = Boolean.parseBoolean(current);
+         } else if (qName.equals("CustomizePassword")) {
+            customizePassword = Boolean.parseBoolean(current);
+         } else if (qName.equals("CustomizeSSH")) {
+            customizeSSH = Boolean.parseBoolean(current);
+         }
       }
       currentText = new StringBuilder();
    }

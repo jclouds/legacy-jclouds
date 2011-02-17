@@ -285,7 +285,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.internetService+xml\n");
       assertPayloadEquals(request, Strings2.toStringAndClose(
                getClass().getResourceAsStream("/terremark/CreateInternetService-test2.xml")).replace(
-               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.6"),
+               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.7"),
                "application/vnd.tmrk.ecloud.internetService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -305,7 +305,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.internetService+xml\n");
       assertPayloadEquals(request, Strings2.toStringAndClose(
                getClass().getResourceAsStream("/terremark/CreateInternetService-options-test.xml")).replace(
-               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.6"),
+               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.7"),
                "application/vnd.tmrk.ecloud.internetService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
@@ -324,7 +324,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(request, Strings2.toStringAndClose(
                getClass().getResourceAsStream("/terremark/CreateNodeService-test2.xml")).replace(
-               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.6"), "application/vnd.tmrk.vCloud.nodeService+xml",
+               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.7"), "application/vnd.tmrk.vCloud.nodeService+xml",
                false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -345,7 +345,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
 
       assertPayloadEquals(request, Strings2.toStringAndClose(
                getClass().getResourceAsStream("/terremark/CreateNodeService-options-test.xml")).replace(
-               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.6"), "application/vnd.tmrk.vCloud.nodeService+xml",
+               "vCloudExpressExtensions-1.6", "eCloudExtensions-2.7"), "application/vnd.tmrk.vCloud.nodeService+xml",
                false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
@@ -380,7 +380,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(
                request,
-               "<NodeService xmlns=\"urn:tmrk:eCloudExtensions-2.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>name</Name><Enabled>true</Enabled><Description>eggs</Description></NodeService>",
+               "<NodeService xmlns=\"urn:tmrk:eCloudExtensions-2.7\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>name</Name><Enabled>true</Enabled><Description>eggs</Description></NodeService>",
                "application/vnd.tmrk.vCloud.nodeService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
@@ -399,7 +399,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(
                request,
-               "<NodeService xmlns=\"urn:tmrk:eCloudExtensions-2.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>name</Name><Enabled>true</Enabled></NodeService>",
+               "<NodeService xmlns=\"urn:tmrk:eCloudExtensions-2.7\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>name</Name><Enabled>true</Enabled></NodeService>",
                "application/vnd.tmrk.vCloud.nodeService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);

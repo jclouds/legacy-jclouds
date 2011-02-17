@@ -50,6 +50,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
@@ -57,42 +63,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-joda</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api</artifactId>
-            <version>1.3.5</version>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-ssl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-stubs</artifactId>
-            <version>1.3.5</version>
+            <version>1.4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-testing</artifactId>
-            <version>1.3.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-local-runtime</artifactId>
-            <version>1.3.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-ssl</artifactId>
+            <version>1.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -31,6 +31,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -45,19 +46,16 @@ public class FilesystemContainerIntegrationTest extends BaseContainerIntegration
 
       String key = "hello";
 
-      Blob object = context.getBlobStore().newBlob(key);
-      object.setPayload(TEST_STRING);
-      object.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
-      object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
+      Blob object = context.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+            .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).build();
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
          validateContent(containerName, key);
 
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(1));
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(1));
 
          BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
          // transient container should be lenient and not return metadata on undetailed listing.

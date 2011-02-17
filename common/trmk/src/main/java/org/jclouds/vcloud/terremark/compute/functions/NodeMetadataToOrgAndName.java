@@ -61,12 +61,12 @@ public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndNa
 
    @Override
    public OrgAndName apply(NodeMetadata from) {
-      if (from.getTag() != null) {
+      if (from.getGroup() != null) {
          Org org = client.findOrgNamed(vdcToOrg.get().get(from.getLocation().getId()));
          if (org == null) {
             logger.warn("did not find an association for vdc %s in %s", from.getLocation().getId(), vdcToOrg);
          } else {
-            return new OrgAndName(org.getHref(), from.getTag());
+            return new OrgAndName(org.getHref(), from.getGroup());
          }
       }
       return null;

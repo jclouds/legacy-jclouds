@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Permission;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
@@ -32,7 +33,6 @@ import org.jclouds.ec2.options.CreateImageOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.RegisterImageBackedByEbsOptions;
 import org.jclouds.ec2.options.RegisterImageOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to EC2 via their REST API.
@@ -59,22 +59,6 @@ public interface AMIClient {
     */
    @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    Set<? extends Image> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
-
-   /**
-    * Returns the Product Codes of an image.
-    * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param imageId
-    *           The ID of the AMI for which an attribute will be described
-    * @see #describeImages
-    * @see #modifyImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html"
-    *      />
-    * @see DescribeImagesOptions
-    */
-   Set<String> getProductCodesForImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Returns a map of device name to block device for the image.
@@ -114,8 +98,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html"
     *      />
     */
-   String createImageInRegion(@Nullable String region, String name, String instanceId,
-            CreateImageOptions... options);
+   String createImageInRegion(@Nullable String region, String name, String instanceId, CreateImageOptions... options);
 
    /**
     * 
@@ -201,7 +184,7 @@ public interface AMIClient {
     */
    String registerUnixImageBackedByEbsInRegion(@Nullable String region, String name, String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
-   
+
    /**
     * Returns the {@link Permission}s of an image.
     * 
@@ -276,40 +259,4 @@ public interface AMIClient {
    void removeLaunchPermissionsFromImageInRegion(@Nullable String region, Iterable<String> userIds,
             Iterable<String> userGroups, String imageId);
 
-   /**
-    * Adds {@code productCode}s to an AMI.
-    * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param productCodes
-    *           Product Codes
-    * @param imageId
-    *           The AMI ID.
-    * 
-    * @see #removeProductCodesFromImage
-    * @see #describeImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
-    *      />
-    */
-   void addProductCodesToImageInRegion(@Nullable String region, Iterable<String> productCodes, String imageId);
-
-   /**
-    * Removes {@code productCode}s from an AMI.
-    * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param productCodes
-    *           Product Codes
-    * @param imageId
-    *           The AMI ID.
-    * 
-    * @see #addProductCodesToImage
-    * @see #describeImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
-    *      />
-    */
-   void removeProductCodesFromImageInRegion(@Nullable String region, Iterable<String> productCodes,
-            String imageId);
 }

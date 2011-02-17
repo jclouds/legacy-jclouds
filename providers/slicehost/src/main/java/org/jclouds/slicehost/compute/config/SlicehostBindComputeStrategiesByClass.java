@@ -20,14 +20,14 @@
 package org.jclouds.slicehost.compute.config;
 
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostAddNodeWithTagStrategy;
+import org.jclouds.slicehost.compute.strategy.SlicehostCreateNodeWithGroupEncodedIntoName;
 import org.jclouds.slicehost.compute.strategy.SlicehostDestroyNodeStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostGetNodeMetadataStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostListNodesStrategy;
@@ -41,8 +41,8 @@ import org.jclouds.slicehost.compute.strategy.SlicehostLifeCycleStrategy;
 public class SlicehostBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return SlicehostAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return SlicehostCreateNodeWithGroupEncodedIntoName.class;
    }
 
    @Override

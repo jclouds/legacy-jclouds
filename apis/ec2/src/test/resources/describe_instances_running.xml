@@ -12,7 +12,7 @@
             <instancesSet>
                 <item>
                     <instanceId>i-0799056f</instanceId>
-                    <imageId>ami-1fd73376</imageId>
+                    <imageId>ami-82e4b5c7</imageId>
                     <instanceState>
                         <code>16</code>
                         <name>running</name>

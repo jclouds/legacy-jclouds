@@ -20,7 +20,7 @@
 package org.jclouds.libvirt.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class DomainToNodeMetadata implements Function<Domain, NodeMetadata> {
          builder.providerId(from.getID() + "");
          builder.name(from.getName());
          builder.location(findLocationForDomain.apply(from));
-         builder.tag(parseTagFromName(from.getName()));
+         builder.group(parseGroupFromName(from.getName()));
 
          builder.operatingSystem(new OperatingSystemBuilder().description(from.getOSType()).build());
          builder.hardware(findHardwareForDomain.apply(from));

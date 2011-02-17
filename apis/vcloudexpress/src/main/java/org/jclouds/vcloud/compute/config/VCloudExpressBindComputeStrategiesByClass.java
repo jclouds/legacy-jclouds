@@ -19,14 +19,14 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
+import org.jclouds.vcloud.compute.strategy.StartVAppWithGroupEncodedIntoName;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
@@ -38,8 +38,8 @@ import org.jclouds.vcloud.compute.strategy.VCloudExpressLifeCycleStrategy;
 public class VCloudExpressBindComputeStrategiesByClass extends CommonVCloudBindComputeStrategiesByClass {
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return VCloudExpressAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return StartVAppWithGroupEncodedIntoName.class;
    }
 
    @Override

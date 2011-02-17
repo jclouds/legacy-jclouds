@@ -41,12 +41,12 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.libvirt.Connect;
@@ -61,69 +61,60 @@ import com.jamesmurty.utils.XMLBuilder;
 /**
  * 
  * @author andrea turli
- *
+ * 
  */
 @Singleton
 public class LibvirtComputeService extends BaseComputeService {
 
-	private final Connect client;
-	
-	@Inject
-	protected LibvirtComputeService(ComputeServiceContext context,
-			Map<String, Credentials> credentialStore,
-			@Memoized Supplier<Set<? extends Image>> images,
-			@Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
-			@Memoized Supplier<Set<? extends Location>> locations,
-			ListNodesStrategy listNodesStrategy,
-			GetNodeMetadataStrategy getNodeMetadataStrategy,
-			RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-			RebootNodeStrategy rebootNodeStrategy,
-			DestroyNodeStrategy destroyNodeStrategy,
-			ResumeNodeStrategy resumeNodeStrategy,
-			SuspendNodeStrategy suspendNodeStrategy,
-			Provider<TemplateBuilder> templateBuilderProvider,
-			Provider<TemplateOptions> templateOptionsProvider,
-			@Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-			@Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-			@Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended, ComputeUtils utils,
-			Timeouts timeouts, 
-			@Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-			Connect client) {
-		super(context, credentialStore, images, hardwareProfiles, locations,
-				listNodesStrategy, getNodeMetadataStrategy,
-				runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
-				resumeNodeStrategy, suspendNodeStrategy, templateBuilderProvider,
-				templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
-				utils, timeouts, executor);
-		
-		this.client = client;
-		
-	}
+   private final Connect client;
 
-	@Override
-	public void destroyNode(String id) {
-		super.destroyNode(id);
-		//eliminateDomain(id);
-	}
-	
-	private void eliminateDomain(String id) {
-		try {
-			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(
-					client.domainLookupByUUIDString(id).getXMLDesc(0)
-			)));
-			String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute("file");
-			StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-			storageVol.delete(0);
-			client.domainLookupByUUIDString(id).undefine();
-		} catch (Exception e) {
-			propogate(e);
-		}
-	}
-	
-	protected <T> T propogate(Exception e) {
-		Throwables.propagate(e);
-		assert false;
-		return null;
-	}
-	
+   @Inject
+   protected LibvirtComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
+            @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, Connect client) {
+      super(context, credentialStore, images, hardwareProfiles, locations, listNodesStrategy, getNodeMetadataStrategy,
+               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
+               suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
+               nodeSuspended, initScriptRunnerFactory, timeouts, executor);
+
+      this.client = client;
+
+   }
+
+   @Override
+   public void destroyNode(String id) {
+      super.destroyNode(id);
+      // eliminateDomain(id);
+   }
+
+   private void eliminateDomain(String id) {
+      try {
+         XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(client.domainLookupByUUIDString(id)
+                  .getXMLDesc(0))));
+         String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute(
+                  "file");
+         StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
+         storageVol.delete(0);
+         client.domainLookupByUUIDString(id).undefine();
+      } catch (Exception e) {
+         propogate(e);
+      }
+   }
+
+   protected <T> T propogate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
+   }
+
 }

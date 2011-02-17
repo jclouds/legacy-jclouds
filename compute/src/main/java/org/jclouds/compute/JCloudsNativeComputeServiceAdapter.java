@@ -40,7 +40,7 @@ public interface JCloudsNativeComputeServiceAdapter extends
     * {@inheritDoc}
     */
    @Override
-   NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+   NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore);
 
    /**

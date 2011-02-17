@@ -20,9 +20,9 @@
 package org.jclouds.googlestorage;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -39,9 +39,8 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "GOOG1");
       properties.setProperty(PROPERTY_HEADER_TAG, "goog");
-      properties.setProperty(PROPERTY_REGIONS, "GoogleStorage");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US");
       properties.setProperty(PROPERTY_ENDPOINT, "https://commondatastorage.googleapis.com");
-      properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage", "https://commondatastorage.googleapis.com");
       return properties;
    }
 

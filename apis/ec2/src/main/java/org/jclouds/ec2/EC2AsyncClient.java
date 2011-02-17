@@ -25,8 +25,6 @@ import org.jclouds.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.ec2.services.InstanceAsyncClient;
 import org.jclouds.ec2.services.KeyPairAsyncClient;
-import org.jclouds.ec2.services.MonitoringAsyncClient;
-import org.jclouds.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
@@ -68,18 +66,6 @@ public interface EC2AsyncClient {
     */
    @Delegate
    SecurityGroupAsyncClient getSecurityGroupServices();
-
-   /**
-    * Provides asynchronous access to PlacementGroup services.
-    */
-   @Delegate
-   PlacementGroupAsyncClient getPlacementGroupServices();
-
-   /**
-    * Provides asynchronous access to Monitoring services.
-    */
-   @Delegate
-   MonitoringAsyncClient getMonitoringServices();
 
    /**
     * Provides asynchronous access to Windows services.

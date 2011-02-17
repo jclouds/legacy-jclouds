@@ -19,20 +19,17 @@
 
 package org.jclouds.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Sets.newHashSet;
-
 import java.util.Set;
 
 import javax.inject.Singleton;
 
+import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -41,7 +38,6 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -64,36 +60,34 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
       this.asyncClientType = asyncClientType;
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
-      bindDefaultLocation();
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to((TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
-            asyncClientType))).in(Scopes.SINGLETON);
+      }).to(
+               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class,
+                        syncClientType, asyncClientType))).in(Scopes.SINGLETON);
    }
 
-   public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
-      private final Supplier<Iterable<F>> backingSupplier;
-      private final Function<F, T> converter;
+   @Provides
+   @Singleton
+   protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
+            Function<L, Location> transformer) {
+      return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
 
-      public TransformingSetSupplier(Supplier<Iterable<F>> backingSupplier, Function<F, T> converter) {
-         this.backingSupplier = checkNotNull(backingSupplier, "backingSupplier");
-         this.converter = checkNotNull(converter, "converter");
-      }
+         @Override
+         public Iterable<L> get() {
+            return adapter.listLocations();
+         }
 
-      @Override
-      public Set<? extends T> get() {
-         return newHashSet(transform(backingSupplier.get(), converter));
-      }
-
+      }, transformer);
    }
 
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<H, Hardware> transformer) {
+            Function<H, Hardware> transformer) {
       return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
          @Override
@@ -107,7 +101,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<I, Image> transformer) {
+            Function<I, Image> transformer) {
       return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
 
          @Override
@@ -118,28 +112,9 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
       }, transformer);
    }
 
-   protected void bindDefaultLocation() {
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
-   }
-
    @Provides
    @Singleton
-   protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<L, Location> transformer) {
-      return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
-
-         @Override
-         public Iterable<L> get() {
-            return adapter.listLocations();
-         }
-
-      }, transformer);
-   }
-
-   @Provides
-   @Singleton
-   protected AddNodeWithTagStrategy defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+   protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 

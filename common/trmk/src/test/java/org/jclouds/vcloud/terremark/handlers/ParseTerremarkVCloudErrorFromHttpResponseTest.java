@@ -24,6 +24,7 @@ import java.net.URI;
 import org.jclouds.http.BaseHttpErrorHandlerTest;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -72,6 +73,12 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
    }
 
    @Test
+   public void test403SetsInsufficientResourcesException() {
+      assertCodeMakes("GET", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"), 403,
+               "There are no additional Public IPs available", "", InsufficientResourcesException.class);
+   }
+
+   @Test
    public void test501SetsNotImplementedMakesUnsupportedOperationException() {
       assertCodeMakes("POST", URI
                .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/vapp/49373/action/undeploy"),
@@ -87,11 +94,12 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
 
    @Test
    public void testKeyAlreadyExistsSetsIllegalStateException() {
-      assertCodeMakes("POST", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys"), 400,
+      assertCodeMakes("POST", URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys"), 400,
                "Security key with name livetest exists.", "Security key with name livetest exists.",
                IllegalStateException.class);
    }
-   
+
    @Override
    protected Class<? extends HttpErrorHandler> getHandlerClass() {
       return ParseTerremarkVCloudErrorFromHttpResponse.class;

@@ -38,7 +38,7 @@ import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -126,8 +126,8 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VCloudExpressVAppHandler.class)
    @MapBinder(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VCloudExpressVApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
-            @MapPayloadParam("template") URI template,
-            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+            @PayloadParam("template") URI template,
+            @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
             InstantiateVAppTemplateOptions... options);
 
    /**
@@ -139,8 +139,8 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @MapPayloadParam("vApp") URI toClone,
-            @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
+   ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @PayloadParam("vApp") URI toClone,
+            @PayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);
 
    /**

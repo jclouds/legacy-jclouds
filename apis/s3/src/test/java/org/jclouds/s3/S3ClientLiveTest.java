@@ -86,6 +86,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
+   protected URL getObjectURL(String containerName, String key) throws Exception {
+      URL url = new URL(String.format("http://%s.%s/%s", containerName, context.getProviderSpecificContext()
+               .getEndpoint().getHost(), key));
+      return url;
+   }
+
    public void testPutCannedAccessPolicyPublic() throws Exception {
       String containerName = getContainerName();
       try {
@@ -97,7 +103,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
 
          withAcl(CannedAccessPolicy.PUBLIC_READ));
 
-         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", containerName, key));
+         URL url = this.getObjectURL(containerName, key);
          Strings2.toStringAndClose(url.openStream());
       } finally {
          returnContainer(containerName);
@@ -117,7 +123,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
 
          validateContent(destinationContainer, destinationKey);
 
-         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", destinationContainer, destinationKey));
+         URL url = getObjectURL(destinationContainer, destinationKey);
          Strings2.toStringAndClose(url.openStream());
 
       } finally {
@@ -292,14 +298,24 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          getApi().putObject(containerName, object);
 
          S3Object newObject = validateObject(containerName, key);
-
-         assert (newObject.getMetadata().getCacheControl().indexOf("no-cache") != -1) : newObject.getMetadata()
-                  .getCacheControl();
+         assertCacheControl(newObject, "no-cache");
          assertEquals(newObject.getMetadata().getContentMetadata().getContentDisposition(),
                   "attachment; filename=hello.txt");
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   protected void assertCacheControl(S3Object newObject, String string) {
+      assert (newObject.getMetadata().getCacheControl().indexOf(string) != -1) : newObject.getMetadata()
+               .getCacheControl();
+   }
+
+   protected void assertContentEncoding(S3Object newObject, String string) {
+      assert (newObject.getPayload().getContentMetadata().getContentEncoding().indexOf(string) != -1) : newObject
+               .getPayload().getContentMetadata().getContentEncoding();
+      assert (newObject.getMetadata().getContentMetadata().getContentEncoding().indexOf(string) != -1) : newObject
+               .getMetadata().getContentMetadata().getContentEncoding();
    }
 
    @Test(groups = { "integration", "live" })
@@ -314,8 +330,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          getApi().putObject(containerName, object);
          S3Object newObject = validateObject(containerName, key);
-
-         assertEquals(newObject.getMetadata().getContentMetadata().getContentEncoding(), "x-compress");
+         assertContentEncoding(newObject, "x-compress");
       } finally {
          returnContainer(containerName);
       }

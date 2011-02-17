@@ -47,8 +47,8 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
-import org.jclouds.rest.annotations.MapPayloadParams;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -154,8 +154,8 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
-            @MapPayloadParam("template") URI template,
-            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+            @PayloadParam("template") URI template,
+            @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
             InstantiateVAppTemplateOptions... options);
 
    /**
@@ -167,8 +167,8 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @MapPayloadParam("vApp") URI toClone,
-            @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
+   ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @PayloadParam("vApp") URI toClone,
+            @PayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);
 
    /**
@@ -181,8 +181,8 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VAppTemplateHandler.class)
    @MapBinder(BindCaptureVAppParamsToXmlPayload.class)
    ListenableFuture<? extends VAppTemplate> captureVAppInVDC(@EndpointParam URI vdc,
-            @MapPayloadParam("vApp") URI toCapture,
-            @MapPayloadParam("templateName") @ParamValidators(DnsNameValidator.class) String templateName,
+            @PayloadParam("vApp") URI toCapture,
+            @PayloadParam("templateName") @ParamValidators(DnsNameValidator.class) String templateName,
             CaptureVAppOptions... options);
 
    /**
@@ -246,7 +246,7 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @Produces(DEPLOYVAPPPARAMS_XML)
    @Path("/action/deploy")
    @MapBinder(BindDeployVAppParamsToXmlPayload.class)
-   @MapPayloadParams(keys = "powerOn", values = "true")
+   @PayloadParams(keys = "powerOn", values = "true")
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> deployAndPowerOnVAppOrVm(@EndpointParam URI vAppOrVmId);
 
@@ -269,7 +269,7 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @Produces(UNDEPLOYVAPPPARAMS_XML)
    @Path("/action/undeploy")
    @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
-   @MapPayloadParams(keys = "saveState", values = "true")
+   @PayloadParams(keys = "saveState", values = "true")
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> undeployAndSaveStateOfVAppOrVm(@EndpointParam URI vAppOrVmId);
 

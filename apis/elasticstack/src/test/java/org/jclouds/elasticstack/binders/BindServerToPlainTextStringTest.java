@@ -76,8 +76,6 @@ public class BindServerToPlainTextStringTest {
       protected void configure() {
          bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
          }).to(ServerToMap.class);
-         bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
-         }).to(ServerToMap.class);
       }
 
    }).getInstance(BindServerToPlainTextString.class);

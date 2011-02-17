@@ -19,14 +19,18 @@
 
 package org.jclouds.filesystem.util.internal;
 
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.inject.Inject;
 
 /**
  * Implements the {@link BlobUtils} interfaced and act as a bridge to
@@ -36,44 +40,48 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class FileSystemBlobUtilsImpl implements BlobUtils {
 
-    protected final FilesystemStorageStrategy storageStrategy;
+   protected final FilesystemStorageStrategy storageStrategy;
+   protected final Provider<BlobBuilder> blobBuilders;
 
-    @Inject
-    public FileSystemBlobUtilsImpl(
-            FilesystemStorageStrategy storageStrategy) {
-        this.storageStrategy = checkNotNull(storageStrategy, "Filesystem Storage Strategy");
-    }
+   @Inject
+   public FileSystemBlobUtilsImpl(FilesystemStorageStrategy storageStrategy, Provider<BlobBuilder> blobBuilders) {
+      this.storageStrategy = checkNotNull(storageStrategy, "Filesystem Storage Strategy");
+      this.blobBuilders = checkNotNull(blobBuilders, "Filesystem  blobBuilders");
+   }
 
+   @Override
+   public Blob newBlob(String name) {
+      return blobBuilder().name(name).build();
+   }
 
+   @Override
+   public BlobBuilder blobBuilder() {
+      return blobBuilders.get();
+   }
 
-    @Override
-    public Blob newBlob(String name) {
-        return storageStrategy.newBlob(name);
-    }
+   @Override
+   public boolean directoryExists(String containerName, String directory) {
+      return storageStrategy.directoryExists(containerName, directory);
+   }
 
-    @Override
-    public boolean directoryExists(String containerName, String directory) {
-        return storageStrategy.directoryExists(containerName, directory);
-    }
+   @Override
+   public void createDirectory(String containerName, String directory) {
+      storageStrategy.createDirectory(containerName, directory);
+   }
 
-    @Override
-    public void createDirectory(String containerName, String directory) {
-        storageStrategy.createDirectory(containerName, directory);
-    }
+   @Override
+   public long countBlobs(String container, ListContainerOptions options) {
+      return storageStrategy.countBlobs(container, options);
+   }
 
-    @Override
-    public long countBlobs(String container, ListContainerOptions options) {
-        return storageStrategy.countBlobs(container, options);
-    }
+   @Override
+   public void clearContainer(String container, ListContainerOptions options) {
+      storageStrategy.clearContainer(container, options);
+   }
 
-    @Override
-    public void clearContainer(String container, ListContainerOptions options) {
-        storageStrategy.clearContainer(container, options);
-    }
-
-    @Override
-    public void deleteDirectory(String container, String directory) {
-        storageStrategy.deleteDirectory(container, directory);
-    }
+   @Override
+   public void deleteDirectory(String container, String directory) {
+      storageStrategy.deleteDirectory(container, directory);
+   }
 
 }

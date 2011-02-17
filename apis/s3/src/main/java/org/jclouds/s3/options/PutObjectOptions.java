@@ -73,7 +73,7 @@ public class PutObjectOptions extends BaseHttpRequestOptions {
        checkState(headerTag != null, "headerTag should have been injected!");
        Multimap<String, String> returnVal = LinkedHashMultimap.create();
        for (Entry<String, String> entry : headers.entries()) {
-          returnVal.put(entry.getKey().replace("aws", headerTag), entry.getValue());
+          returnVal.put(entry.getKey().replace("amz", headerTag), entry.getValue());
        }
        return returnVal;
     }

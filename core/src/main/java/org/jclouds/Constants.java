@@ -19,6 +19,9 @@
 
 package org.jclouds;
 
+import org.jclouds.domain.Location;
+import org.jclouds.location.reference.LocationConstants;
+
 /**
  * Constants used in jclouds services.
  * 
@@ -194,12 +197,22 @@ public interface Constants {
     * api.
     */
    public static final String PROPERTY_ENDPOINT = "jclouds.endpoint";
+
    /**
     * String property.
     * <p/>
     * Explicitly sets the login identity into a provider
     */
    public static final String PROPERTY_IDENTITY = "jclouds.identity";
+
+   /**
+    * String property. default("")
+    * <p/>
+    * comma-delimited iso 3166 codes; ex. US-CA,US
+    * 
+    * @see Location#getIso3166Codes
+    */
+   public static final String PROPERTY_ISO3166_CODES = "jclouds." + LocationConstants.ISO3166_CODES;
 
    /**
     * String property.

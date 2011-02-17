@@ -37,8 +37,8 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
@@ -101,8 +101,8 @@ public class AMIClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
+      context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getAMIServices();
    }
 
@@ -221,10 +221,6 @@ public class AMIClientLiveTest {
 
    public void testGetLaunchPermissionForImage() {
       System.out.println(client.getLaunchPermissionForImageInRegion(null, imageId));
-   }
-
-   public void testGetProductCodesForImage() {
-      System.out.println(client.getProductCodesForImageInRegion(null, imageId));
    }
 
    @Test(enabled = false)

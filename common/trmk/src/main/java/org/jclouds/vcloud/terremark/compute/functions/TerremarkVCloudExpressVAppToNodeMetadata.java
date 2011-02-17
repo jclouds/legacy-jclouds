@@ -69,7 +69,7 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
       NodeMetadata node = super.apply(from);
       if (node == null)
          return null;
-      if (node.getTag() != null) {
+      if (node.getGroup() != null) {
          node = installCredentialsFromCache(node);
       }
       return node;
@@ -94,7 +94,7 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
 
    OrgAndName getOrgAndNameFromNode(NodeMetadata node) {
       URI orgId = URI.create(node.getLocation().getParent().getId());
-      OrgAndName orgAndName = new OrgAndName(orgId, node.getTag());
+      OrgAndName orgAndName = new OrgAndName(orgId, node.getGroup());
       return orgAndName;
    }
 

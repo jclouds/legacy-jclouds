@@ -20,6 +20,7 @@
 package org.jclouds.cloudsigma;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -32,6 +33,7 @@ public class CloudSigmaZurichPropertiesBuilder extends CloudSigmaPropertiesBuild
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "CH-ZH");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.cloudsigma.com");
       return properties;
    }

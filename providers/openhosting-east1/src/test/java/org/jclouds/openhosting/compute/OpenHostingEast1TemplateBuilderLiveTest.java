@@ -23,6 +23,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
@@ -31,6 +32,7 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -49,11 +51,16 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL) || //
-                     (input.family == OsFamily.CENTOS && !(input.version.equals("5.5") && input.is64Bit)) || //
-                     (input.family == OsFamily.UBUNTU && !(input.version.equals("10.10") && input.is64Bit)) || //
-            (input.family == OsFamily.WINDOWS) //
-            );
+            switch (input.family) {
+               case UBUNTU:
+                  return !(input.version.equals("") && input.is64Bit)
+                           && !(input.version.equals("10.10") && input.is64Bit);
+               case CENTOS:
+                  return !(input.version.equals("") && input.is64Bit)
+                           && !(input.version.equals("5.5") && input.is64Bit);
+               default:
+                  return true;
+            }
          }
 
       };
@@ -69,4 +76,8 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-VA");
+   }
 }

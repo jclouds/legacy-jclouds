@@ -21,6 +21,7 @@ package org.jclouds.azureblob;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.util.Properties;
@@ -39,6 +40,7 @@ public class AzureBlobPropertiesBuilder extends AzureStoragePropertiesBuilder {
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(PROPERTY_API_VERSION, "2009-09-19");
       properties.setProperty(PROPERTY_ENDPOINT, "https://{identity}.blob.core.windows.net");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-TX,US-IL,IE-D,SG,NL-NH,HK");
       return properties;
    }
 

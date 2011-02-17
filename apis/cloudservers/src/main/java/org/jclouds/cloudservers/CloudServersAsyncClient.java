@@ -32,16 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.cloudservers.binders.BindAdminPassToJsonPayload;
 import org.jclouds.cloudservers.binders.BindBackupScheduleToJsonPayload;
-import org.jclouds.cloudservers.binders.BindConfirmResizeToJsonPayload;
-import org.jclouds.cloudservers.binders.BindCreateImageToJsonPayload;
-import org.jclouds.cloudservers.binders.BindRebootTypeToJsonPayload;
-import org.jclouds.cloudservers.binders.BindResizeFlavorToJsonPayload;
-import org.jclouds.cloudservers.binders.BindRevertResizeToJsonPayload;
-import org.jclouds.cloudservers.binders.BindServerNameToJsonPayload;
-import org.jclouds.cloudservers.binders.BindSharedIpGroupToJsonPayload;
 import org.jclouds.cloudservers.domain.Addresses;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.Flavor;
@@ -53,13 +44,15 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
+import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
@@ -82,8 +75,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding( { '/', '=' })
-@RequestFilters( { AuthenticateRequest.class, AddTimestampQuery.class })
+@SkipEncoding({ '/', '=' })
+@RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(ServerManagement.class)
 public interface CloudServersAsyncClient {
 
@@ -123,8 +116,9 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   ListenableFuture<Void> rebootServer(@PathParam("id") int id,
-            @BinderParam(BindRebootTypeToJsonPayload.class) RebootType rebootType);
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"reboot\":%7B\"type\":\"{type}\"%7D%7D")
+   ListenableFuture<Void> rebootServer(@PathParam("id") int id, @PayloadParam("type") RebootType rebootType);
 
    /**
     * @see CloudServersClient#resizeServer
@@ -132,8 +126,9 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   ListenableFuture<Void> resizeServer(@PathParam("id") int id,
-            @BinderParam(BindResizeFlavorToJsonPayload.class) int flavorId);
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"resize\":%7B\"flavorId\":{flavorId}%7D%7D")
+   ListenableFuture<Void> resizeServer(@PathParam("id") int id, @PayloadParam("flavorId") int flavorId);
 
    /**
     * @see CloudServersClient#confirmResizeServer
@@ -142,7 +137,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @Produces(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> confirmResizeServer(@PathParam("id") @BinderParam(BindConfirmResizeToJsonPayload.class) int id);
+   @Payload("{\"confirmResize\":null}")
+   ListenableFuture<Void> confirmResizeServer(@PathParam("id") int id);
 
    /**
     * @see CloudServersClient#revertResizeServer
@@ -151,7 +147,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @Produces(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> revertResizeServer(@PathParam("id") @BinderParam(BindRevertResizeToJsonPayload.class) int id);
+   @Payload("{\"revertResize\":null}")
+   ListenableFuture<Void> revertResizeServer(@PathParam("id") int id);
 
    /**
     * @see CloudServersClient#createServer
@@ -162,8 +159,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<Server> createServer(@MapPayloadParam("name") String name, @MapPayloadParam("imageId") int imageId,
-            @MapPayloadParam("flavorId") int flavorId, CreateServerOptions... options);
+   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageId") int imageId,
+         @PayloadParam("flavorId") int flavorId, CreateServerOptions... options);
 
    /**
     * @see CloudServersClient#rebuildServer
@@ -179,10 +176,11 @@ public interface CloudServersAsyncClient {
     */
    @PUT
    @Path("/servers/{id}/ips/public/{address}")
-   @MapBinder(BindSharedIpGroupToJsonPayload.class)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"shareIp\":%7B\"sharedIpGroupId\":{sharedIpGroupId},\"configureServer\":{configureServer}%7D%7D")
    ListenableFuture<Void> shareIp(@PathParam("address") String addressToShare,
-            @PathParam("id") int serverToTosignBindressTo, @MapPayloadParam("sharedIpGroupId") int sharedIpGroup,
-            @MapPayloadParam("configureServer") boolean configureServer);
+         @PathParam("id") int serverToTosignBindressTo, @PayloadParam("sharedIpGroupId") int sharedIpGroup,
+         @PayloadParam("configureServer") boolean configureServer);
 
    /**
     * @see CloudServersClient#unshareIp
@@ -191,23 +189,25 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/ips/public/{address}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> unshareIp(@PathParam("address") String addressToShare,
-            @PathParam("id") int serverToTosignBindressTo);
+         @PathParam("id") int serverToTosignBindressTo);
 
    /**
     * @see CloudServersClient#changeAdminPass
     */
    @PUT
    @Path("/servers/{id}")
-   ListenableFuture<Void> changeAdminPass(@PathParam("id") int id,
-            @BinderParam(BindAdminPassToJsonPayload.class) String adminPass);
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"server\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
+   ListenableFuture<Void> changeAdminPass(@PathParam("id") int id, @PayloadParam("adminPass") String adminPass);
 
    /**
     * @see CloudServersClient#renameServer
     */
    @PUT
    @Path("/servers/{id}")
-   ListenableFuture<Void> renameServer(@PathParam("id") int id,
-            @BinderParam(BindServerNameToJsonPayload.class) String newName);
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"server\":%7B\"name\":\"{name}\"%7D%7D")
+   ListenableFuture<Void> renameServer(@PathParam("id") int id, @PayloadParam("name") String newName);
 
    /**
     * @see CloudServersClient#listFlavors
@@ -268,10 +268,11 @@ public interface CloudServersAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @MapBinder(BindCreateImageToJsonPayload.class)
    @Path("/images")
-   ListenableFuture<Image> createImageFromServer(@MapPayloadParam("imageName") String imageName,
-            @MapPayloadParam("serverId") int serverId);
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"image\":%7B\"serverId\":{serverId},\"name\":\"{name}\"%7D%7D")
+   ListenableFuture<Image> createImageFromServer(@PayloadParam("name") String imageName,
+         @PayloadParam("serverId") int serverId);
 
    /**
     * @see CloudServersClient#listSharedIpGroups
@@ -304,8 +305,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    @MapBinder(CreateSharedIpGroupOptions.class)
-   ListenableFuture<SharedIpGroup> createSharedIpGroup(@MapPayloadParam("name") String name,
-            CreateSharedIpGroupOptions... options);
+   ListenableFuture<SharedIpGroup> createSharedIpGroup(@PayloadParam("name") String name,
+         CreateSharedIpGroupOptions... options);
 
    /**
     * @see CloudServersClient#deleteSharedIpGroup
@@ -340,7 +341,7 @@ public interface CloudServersAsyncClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
    ListenableFuture<Void> replaceBackupSchedule(@PathParam("id") int id,
-            @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
+         @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
 
    /**
     * @see CloudServersClient#listAddresses

@@ -19,13 +19,20 @@
 
 package org.jclouds.azureblob.blobstore.integration;
 
+import java.util.Set;
+
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live")
 public class AzureBlobServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
-
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-TX", "US-IL", "IE-D", "SG", "NL-NH", "HK");
+   }
 }

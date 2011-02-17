@@ -42,15 +42,15 @@ public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> imp
    private static final long serialVersionUID = -9051777593518861395L;
    private final String region;
    private final Set<String> groupIds = Sets.newLinkedHashSet();
-   private final @Nullable
-   String ownerId;
-   private final @Nullable
-   String requesterId;
-   private final @Nullable
-   String reservationId;
+   @Nullable
+   private final String ownerId;
+   @Nullable
+   private final String requesterId;
+   @Nullable
+   private final String reservationId;
 
-   public Reservation(String region, Iterable<String> groupIds, Iterable<T> instances,
-            @Nullable String ownerId, @Nullable String requesterId, @Nullable String reservationId) {
+   public Reservation(String region, Iterable<String> groupIds, Iterable<T> instances, @Nullable String ownerId,
+            @Nullable String requesterId, @Nullable String reservationId) {
       this.region = checkNotNull(region, "region");
       Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       Iterables.addAll(this, checkNotNull(instances, "instances"));

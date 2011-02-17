@@ -97,7 +97,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
       // Walrus
       if (lastModified.startsWith("20")) {
-         metadata.setLastModified(dateParser.iso8601DateParse(lastModified));
+         metadata.setLastModified(dateParser.iso8601DateParse(lastModified.replace("+0000", "Z")));
       } else {
          metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
       }

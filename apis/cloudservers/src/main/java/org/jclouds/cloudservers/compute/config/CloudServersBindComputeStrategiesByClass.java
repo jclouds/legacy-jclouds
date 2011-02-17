@@ -20,14 +20,14 @@
 package org.jclouds.cloudservers.compute.config;
 
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.cloudservers.compute.strategy.CloudServersAddNodeWithTagStrategy;
+import org.jclouds.cloudservers.compute.strategy.CloudServersCreateNodeWithGroupEncodedIntoName;
 import org.jclouds.cloudservers.compute.strategy.CloudServersDestroyNodeStrategy;
 import org.jclouds.cloudservers.compute.strategy.CloudServersGetNodeMetadataStrategy;
 import org.jclouds.cloudservers.compute.strategy.CloudServersListNodesStrategy;
@@ -41,8 +41,8 @@ import org.jclouds.cloudservers.compute.strategy.CloudServersLifeCycleStrategy;
 public class CloudServersBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return CloudServersAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return CloudServersCreateNodeWithGroupEncodedIntoName.class;
    }
 
    @Override

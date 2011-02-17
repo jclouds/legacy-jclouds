@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.bluelock;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.util.Properties;
@@ -35,6 +36,7 @@ public class BlueLockVCloudDirectorPropertiesBuilder extends VCloudPropertiesBui
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IN");
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcenterprise.bluelock.com/api");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01");
       return properties;

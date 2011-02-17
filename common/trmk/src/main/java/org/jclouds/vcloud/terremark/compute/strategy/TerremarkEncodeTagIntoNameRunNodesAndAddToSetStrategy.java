@@ -33,10 +33,10 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 
@@ -48,13 +48,13 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends EncodeTagIntoNameRunNodesAndAddToSetStrategy {
+public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
    private final CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise;
 
    @Inject
    protected TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy(
-            AddNodeWithTagStrategy addNodeWithTagStrategy,
+            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
             ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,

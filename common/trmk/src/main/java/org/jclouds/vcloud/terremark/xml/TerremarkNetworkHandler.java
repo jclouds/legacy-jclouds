@@ -60,26 +60,29 @@ public class TerremarkNetworkHandler extends HandlerWithResult<TerremarkNetwork>
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Href") && currentOrNull() != null) {
-         href = URI.create(currentOrNull());
-      } else if (qName.equals("Id")) {
-         id = currentOrNull();
-      } else if (qName.equals("Name")) {
-         this.name = currentOrNull();
-      } else if (qName.equals("RnatAddress")) {
-         rnatAddress = currentOrNull();
-      } else if (qName.equals("Address")) {
-         address = currentOrNull();
-      } else if (qName.equals("BroadcastAddress")) {
-         broadcastAddress = currentOrNull();
-      } else if (qName.equals("GatewayAddress")) {
-         gatewayAddress = currentOrNull();
-      } else if (qName.equals("NetworkType")) {
-         networkType = TerremarkNetwork.Type.fromValue(currentOrNull());
-      } else if (qName.equals("Vlan")) {
-         vlan = currentOrNull();
-      } else if (qName.equals("FriendlyName")) {
-         friendlyName = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Href")) {
+            href = URI.create(current);
+         } else if (qName.equals("Id")) {
+            id = current;
+         } else if (qName.equals("Name")) {
+            this.name = current;
+         } else if (qName.equals("RnatAddress")) {
+            rnatAddress = current;
+         } else if (qName.equals("Address")) {
+            address = current;
+         } else if (qName.equals("BroadcastAddress")) {
+            broadcastAddress = current;
+         } else if (qName.equals("GatewayAddress")) {
+            gatewayAddress = current;
+         } else if (qName.equals("NetworkType")) {
+            networkType = TerremarkNetwork.Type.fromValue(current);
+         } else if (qName.equals("Vlan")) {
+            vlan = current;
+         } else if (qName.equals("FriendlyName")) {
+            friendlyName = current;
+         }
       }
       currentText = new StringBuilder();
    }

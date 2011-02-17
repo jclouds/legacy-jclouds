@@ -20,11 +20,14 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -57,9 +60,16 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return input.family == OsFamily.RHEL || //
-                  (input.family == OsFamily.CENTOS && !input.version.matches("5.[42]")) || //
-                  (input.family == OsFamily.WINDOWS && !input.version.matches("200[38]"));
+            switch (input.family) {
+               case UBUNTU:
+                  return false;
+               case CENTOS:
+                  return !(input.version.matches("5.[42]") || input.version.equals(""));
+               case WINDOWS:
+                  return !(input.version.matches("200[38]") || input.version.equals(""));
+               default:
+                  return true;
+            }
          }
 
       };
@@ -69,13 +79,12 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderM1SMALLWithDescription() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-            .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+               .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20110122");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
@@ -86,8 +95,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderCanUseImageIdAndhardwareId() {
 
-      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
-            .hardwareId(InstanceType.M2_2XLARGE).build();
+      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").hardwareId(
+               InstanceType.M2_2XLARGE).build();
 
       System.out.println(template.getHardware());
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -119,11 +128,12 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderMicro() throws IOException {
 
-      Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO).build();
+      Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
+               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.10").os64Bit(true).build();
 
       assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
-      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
-      assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
+      assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(microTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(microTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(microTemplate.getLocation().getId(), "us-east-1");
@@ -139,8 +149,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          // set owners to nothing
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -164,6 +174,42 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          if (context != null)
             context.close();
       }
+   }
+
+   @Test
+   public void testTemplateBuilderWithLessRegions() throws IOException {
+      ComputeServiceContext context = null;
+      try {
+         Properties overrides = setupProperties();
+         // set regions to only 1
+         overrides.setProperty(PROPERTY_REGIONS, Region.US_EAST_1);
+
+         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), overrides);
+
+         assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();
+
+         Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
+         System.out.println(template.getHardware());
+         assert (template.getImage().getProviderId().startsWith("ami-")) : template;
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
+         assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
+         assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
+         assertEquals(template.getLocation().getId(), "us-east-1");
+         assertEquals(getCores(template.getHardware()), 2.0d);
+         assertEquals(template.getHardware().getId(), "m1.large"); // because it is 64bit
+
+      } finally {
+         if (context != null)
+            context.close();
+      }
+   }
+
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-VA", "US-CA", "IE", "SG");
    }
 
 }

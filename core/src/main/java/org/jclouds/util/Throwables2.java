@@ -28,12 +28,12 @@ import java.util.NoSuchElementException;
 
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Throwables;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
-
 
 /**
  * General utilities used in jclouds code.
@@ -72,9 +72,9 @@ public class Throwables2 {
    }
 
    // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Class[] exceptionTypes,
-         Exception exception) throws Exception {
+            Exception exception) throws Exception {
       for (Class type : exceptionTypes) {
          Throwable throwable = getFirstThrowableOfType(exception, type);
          if (throwable != null) {
@@ -82,8 +82,8 @@ public class Throwables2 {
          }
       }
       for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
-            UnsupportedOperationException.class, IllegalArgumentException.class, AuthorizationException.class,
-            ResourceNotFoundException.class, HttpResponseException.class }) {
+               UnsupportedOperationException.class, IllegalArgumentException.class, AuthorizationException.class,
+               ResourceNotFoundException.class, InsufficientResourcesException.class, HttpResponseException.class }) {
          Throwable throwable = getFirstThrowableOfType(exception, propagatableExceptionType);
          if (throwable != null) {
             throw (Exception) throwable;
@@ -101,7 +101,5 @@ public class Throwables2 {
       assert false : "exception should have propogated " + e;
       return null;
    }
- 
-
 
 }

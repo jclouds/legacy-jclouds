@@ -19,14 +19,14 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
+import org.jclouds.vcloud.compute.strategy.InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
@@ -36,8 +36,8 @@ import org.jclouds.vcloud.compute.strategy.VCloudLifeCycleStrategy;
  */
 public class VCloudBindComputeStrategiesByClass extends CommonVCloudBindComputeStrategiesByClass {
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return VCloudAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn.class;
    }
 
    @Override

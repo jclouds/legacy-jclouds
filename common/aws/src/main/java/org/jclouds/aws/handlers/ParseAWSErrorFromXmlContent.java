@@ -82,7 +82,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
             }
          }
          message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-               response.getStatusLine());
+                  response.getStatusLine());
          exception = refineException(command, response, exception, error, message);
       } finally {
          releasePayload(response);
@@ -91,33 +91,36 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    }
 
    protected Exception refineException(HttpCommand command, HttpResponse response, Exception exception, AWSError error,
-         String message) {
+            String message) {
       switch (response.getStatusCode()) {
-      case 400:
-         if (error != null && error.getCode() != null && (error.getCode().equals("UnsupportedOperation")))
-            exception = new UnsupportedOperationException(message, exception);
-         if (error != null && error.getCode() != null
-               && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
-            exception = new ResourceNotFoundException(message, exception);
-         else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
-               .getCode().endsWith(".Duplicate"))) || (message != null && (message.indexOf("already exists") != -1)))
-            exception = new IllegalStateException(message, exception);
-         else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
+         case 400:
+            if (error != null && error.getCode() != null && (error.getCode().equals("UnsupportedOperation")))
+               exception = new UnsupportedOperationException(message, exception);
+            if (error != null && error.getCode() != null
+                     && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
+               exception = new ResourceNotFoundException(message, exception);
+            else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
+                     .getCode().endsWith(".Duplicate")
+                     | error.getCode().endsWith(".InUse")))
+                     || (message != null && (message.indexOf("already exists") != -1 || message.indexOf("is in use") != -1)))
+               exception = new IllegalStateException(message, exception);
+            else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
+               exception = new AuthorizationException(message, exception);
+            else if (message != null
+                     && (message.indexOf("Invalid id") != -1 || message.indexOf("Failed to bind") != -1))
+               exception = new IllegalArgumentException(message, exception);
+            break;
+         case 401:
+         case 403:
             exception = new AuthorizationException(message, exception);
-         else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
-            exception = new IllegalArgumentException(message, exception);
-         break;
-      case 401:
-      case 403:
-         exception = new AuthorizationException(message, exception);
-         break;
-      case 404:
-         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-            exception = new ResourceNotFoundException(message, exception);
-         }
-         break;
-      case 409:
-         exception = new IllegalStateException(message, exception);
+            break;
+         case 404:
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               exception = new ResourceNotFoundException(message, exception);
+            }
+            break;
+         case 409:
+            exception = new IllegalStateException(message, exception);
       }
       return exception;
    }

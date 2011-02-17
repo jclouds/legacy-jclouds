@@ -19,17 +19,16 @@
 
 package org.jclouds.s3.xml;
 
+import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.Grantee;
 import org.jclouds.s3.domain.AccessControlList.GroupGrantee;
-import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
-import org.jclouds.s3.domain.AccessControlList.Permission;
-import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -78,10 +77,10 @@ public class BucketLoggingHandler extends ParseSax.HandlerWithResult<BucketLoggi
          } else if ("CanonicalUser".equals(currentGranteeType)) {
             currentGrantee = new CanonicalUserGrantee(currentId, currentDisplayName);
          } else if ("Group".equals(currentGranteeType)) {
-            currentGrantee = new GroupGrantee(GroupGranteeURI.fromURI(currentId));
+            currentGrantee = new GroupGrantee(URI.create(currentId));
          }
       } else if (qName.equals("Grant")) {
-         targetGrants.add(new Grant(currentGrantee, Permission.valueOf(currentPermission)));
+         targetGrants.add(new Grant(currentGrantee, currentPermission));
       } else if (qName.equals("ID") || qName.equals("EmailAddress") || qName.equals("URI")) {
          currentId = currentText.toString().trim();
       } else if (qName.equals("DisplayName")) {

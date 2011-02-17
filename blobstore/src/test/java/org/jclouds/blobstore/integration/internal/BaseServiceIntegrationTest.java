@@ -31,6 +31,7 @@ import org.jclouds.domain.LocationScope;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -61,11 +62,9 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
                   PageSet<? extends StorageMetadata> list = context.getBlobStore().list();
                   assert Iterables.any(list, new Predicate<StorageMetadata>() {
                      public boolean apply(StorageMetadata md) {
-                        return containerName.equals(md.getName())
-                                 && location.equals(md.getLocation());
+                        return containerName.equals(md.getName()) && location.equals(md.getLocation());
                      }
-                  }) : String.format("container %s/%s not found in list %s", location,
-                           containerName, list);
+                  }) : String.format("container %s/%s not found in list %s", location, containerName, list);
                }
 
             });
@@ -75,10 +74,14 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of();
+   }
+
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      for (Location location : context.getBlobStore()
-               .listAssignableLocations()) {
+      assertProvider(context.getProviderSpecificContext());
+      for (Location location : context.getBlobStore().listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;
@@ -89,6 +92,9 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
                break;
             case REGION:
                assertProvider(location.getParent());
+               assert location.getIso3166Codes().size() == 0
+                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
+                        + " ||" + location.getParent();
                break;
             case ZONE:
                Location provider = location.getParent().getParent();
@@ -96,6 +102,9 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
                if (provider == null)
                   provider = location.getParent();
                assertProvider(provider);
+               assert location.getIso3166Codes().size() == 0
+                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
+                        + " ||" + location.getParent();
                break;
             case HOST:
                Location provider2 = location.getParent().getParent().getParent();
@@ -108,9 +117,10 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   public void assertProvider(Location provider) {
+   void assertProvider(Location provider) {
       assertEquals(provider.getScope(), LocationScope.PROVIDER);
       assertEquals(provider.getParent(), null);
+      assertEquals(provider.getIso3166Codes(), getIso3166Codes());
    }
 
 }

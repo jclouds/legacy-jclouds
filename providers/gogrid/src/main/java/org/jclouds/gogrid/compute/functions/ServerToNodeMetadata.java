@@ -20,7 +20,7 @@
 package org.jclouds.gogrid.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -109,7 +109,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.ids(from.getId() + "");
       builder.name(from.getName());
       builder.location(locations.get().get(from.getDatacenter().getId() + ""));
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
       builder.hardware(parseHardware(from));
       builder.imageId(from.getImage().getId() + "");
 

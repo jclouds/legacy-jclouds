@@ -23,22 +23,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
-import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-import com.google.inject.name.Named;
 
 /**
  * 

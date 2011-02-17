@@ -26,7 +26,6 @@ import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIM
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
@@ -35,10 +34,9 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllStatusController;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
 import com.google.inject.Guice;
@@ -49,14 +47,14 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Setup Logging and create Injector for use in testing S3.
+ * Setup Logging and create {@link Injector} for use in testing Amazon EC2 and S3.
  * 
  * @author Adrian Cole
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   private Map<String, BlobStoreContext> blobsStoreContexts;
-   private Map<String, ComputeServiceContext> computeServiceContexts;
+   private Iterable<BlobStoreContext> blobsStoreContexts;
+   private Iterable<ComputeServiceContext> computeServiceContexts;
 
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -66,20 +64,19 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       props.setProperty(PROPERTY_TIMEOUT_SCRIPT_COMPLETE, "25000");
       props.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, "25000");
 
-      ImmutableSet<Module> modules = ImmutableSet
-               .<Module> of(new GoogleAppEngineConfigurationModule());
+      // note that this module hooks into the async urlfetchservice
+      ImmutableSet<Module> modules = ImmutableSet.<Module> of(new AsyncGoogleAppEngineConfigurationModule());
 
-      blobsStoreContexts = ImmutableMap.<String, BlobStoreContext> of("s3",
-               new BlobStoreContextFactory().createContext("s3", modules, props));
-      computeServiceContexts = ImmutableMap.<String, ComputeServiceContext> of("ec2",
-               new ComputeServiceContextFactory().createContext("ec2", modules, props));
+      blobsStoreContexts = ImmutableSet.<BlobStoreContext> of(new BlobStoreContextFactory().createContext("aws-s3",
+            modules, props));
+      computeServiceContexts = ImmutableSet.<ComputeServiceContext> of(new ComputeServiceContextFactory()
+            .createContext("aws-ec2", modules, props));
 
       super.contextInitialized(servletContextEvent);
    }
 
    private Properties loadJCloudsProperties(ServletContextEvent servletContextEvent) {
-      InputStream input = servletContextEvent.getServletContext().getResourceAsStream(
-               "/WEB-INF/jclouds.properties");
+      InputStream input = servletContextEvent.getServletContext().getResourceAsStream("/WEB-INF/jclouds.properties");
       Properties props = new Properties();
       try {
          props.load(input);
@@ -96,9 +93,9 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
+            bind(new TypeLiteral<Iterable<BlobStoreContext>>() {
             }).toInstance(GuiceServletConfig.this.blobsStoreContexts);
-            bind(new TypeLiteral<Map<String, ComputeServiceContext>>() {
+            bind(new TypeLiteral<Iterable<ComputeServiceContext>>() {
             }).toInstance(GuiceServletConfig.this.computeServiceContexts);
             serve("*.check").with(GetAllStatusController.class);
             requestInjection(this);
@@ -110,10 +107,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext context : blobsStoreContexts.values()) {
+      for (BlobStoreContext context : blobsStoreContexts) {
          context.close();
       }
-      for (ComputeServiceContext context : computeServiceContexts.values()) {
+      for (ComputeServiceContext context : computeServiceContexts) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);

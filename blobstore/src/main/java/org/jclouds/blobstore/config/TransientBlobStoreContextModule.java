@@ -19,7 +19,6 @@
 
 package org.jclouds.blobstore.config;
 
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,15 +33,9 @@ import org.jclouds.blobstore.TransientBlobRequestSigner;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.location.Provider;
+import org.jclouds.location.config.JustProviderLocationModule;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -70,6 +63,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       }).toInstance(containerToLocation);
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
+      install(new JustProviderLocationModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
    }
@@ -78,19 +72,5 @@ public class TransientBlobStoreContextModule extends AbstractModule {
    @Singleton
    BlobStore provide(TransientBlobStore in) {
       return in;
-   }
-
-   @Provides
-   @Singleton
-   @Memoized
-   Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
-      return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
-   }
-
-   @Provides
-   @Singleton
-   Supplier<Location> provideDefaultLocation(@Provider String providerName) {
-      return Suppliers
-               .<Location> ofInstance(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
    }
 }

@@ -63,8 +63,8 @@ public class OpenStackAuthAsyncClientTest extends RestClientTest<OpenStackAuthAs
 
    @Override
    public RestContextSpec<OpenStackAuthClient, OpenStackAuthAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1.0", "identity", "credential", OpenStackAuthClient.class,
-               OpenStackAuthAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1.0", "", "identity", "credential",
+               OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
    }
 
    @Override

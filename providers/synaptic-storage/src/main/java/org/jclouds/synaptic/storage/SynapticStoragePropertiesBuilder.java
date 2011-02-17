@@ -21,6 +21,7 @@ package org.jclouds.synaptic.storage;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -37,6 +38,7 @@ public class SynapticStoragePropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://storage.synaptic.att.com");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-VA,US-TX");
       properties.setProperty(PROPERTY_API_VERSION, "1.3.0");
       return properties;
    }

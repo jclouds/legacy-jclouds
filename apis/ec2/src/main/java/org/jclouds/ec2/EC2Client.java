@@ -21,17 +21,15 @@ package org.jclouds.ec2;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.ElasticIPAddressClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.ec2.services.MonitoringClient;
-import org.jclouds.ec2.services.PlacementGroupClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsClient;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -70,18 +68,6 @@ public interface EC2Client {
     */
    @Delegate
    SecurityGroupClient getSecurityGroupServices();
-
-   /**
-    * Provides synchronous access to PlacementGroup services.
-    */
-   @Delegate
-   PlacementGroupClient getPlacementGroupServices();
-
-   /**
-    * Provides synchronous access to Monitoring services.
-    */
-   @Delegate
-   MonitoringClient getMonitoringServices();
 
    /**
     * Provides asynchronous access to Windows services.

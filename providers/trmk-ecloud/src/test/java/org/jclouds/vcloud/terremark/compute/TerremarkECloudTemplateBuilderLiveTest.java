@@ -23,6 +23,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
@@ -31,6 +32,7 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -49,12 +51,23 @@ public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderL
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL) || //
-                  (input.family == OsFamily.CENTOS && !input.version.equals("5.5")) || //
-                  (input.family == OsFamily.UBUNTU &&( !input.version.equals("10.04")&&!input.version.equals("8.04"))) || //
-            (input.family == OsFamily.WINDOWS && (input.version.equals("2008 SP2") || input.version.equals("2008 R2"))));
+            switch (input.family) {
+               case RHEL:
+                  return !input.version.equals("") && !input.version.matches("5.[50]");
+               case SOLARIS:
+                  return !input.is64Bit;
+               case CENTOS:
+                  return !input.version.equals("") && !input.version.matches("5.[50]");
+               case UBUNTU:
+                  return !input.version.equals("") && !input.version.equals("10.04") && !input.version.equals("8.04");
+               case WINDOWS:
+                  return !input.version.equals("") && !input.version.equals("2003 R2") //
+                           && !(input.version.equals("2008") && !input.is64Bit) //
+                           && !(input.version.matches("2008( R2)?") && input.is64Bit);
+               default:
+                  return true;
+            }
          }
-
       };
    }
 
@@ -65,7 +78,10 @@ public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderL
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-
    }
 
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-FL", "NL-NH");
+   }
 }

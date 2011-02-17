@@ -140,7 +140,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          boolean returnVal = true;
          if (location != null && input.getLocation() != null)
             returnVal = location.equals(input.getLocation()) || location.getParent() != null
-                     && location.getParent().equals(input.getLocation());
+                     && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
+                     && location.getParent().getParent().equals(input.getLocation());
          return returnVal;
       }
 
@@ -497,19 +498,24 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder locationId(final String locationId) {
-      this.location = Iterables.find(locations.get(), new Predicate<Location>() {
+      Set<? extends Location> locations = this.locations.get();
+      try {
+         this.location = Iterables.find(locations, new Predicate<Location>() {
 
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(locationId);
-         }
+            @Override
+            public boolean apply(Location input) {
+               return input.getId().equals(locationId);
+            }
 
-         @Override
-         public String toString() {
-            return "locationId(" + locationId + ")";
-         }
+            @Override
+            public String toString() {
+               return "locationId(" + locationId + ")";
+            }
 
-      });
+         });
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("location id %s not found in: %s", locationId, locations));
+      }
       return this;
    }
 

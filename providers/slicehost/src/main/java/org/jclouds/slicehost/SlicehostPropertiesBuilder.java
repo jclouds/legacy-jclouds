@@ -21,6 +21,7 @@ package org.jclouds.slicehost;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ public class SlicehostPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX,US-MO");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.slicehost.com");
       properties.setProperty(PROPERTY_API_VERSION, "1.4.1.1");
       properties.setProperty("jclouds.ssh.max_retries", "8");

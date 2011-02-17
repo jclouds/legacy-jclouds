@@ -21,7 +21,9 @@ package org.jclouds.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -31,18 +33,26 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.SecurityGroup;
+import org.jclouds.ec2.domain.Snapshot;
+import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -68,7 +78,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testImagesResolveCorrectly() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getId(), defaultTemplate.getImage().getLocation().getId() + "/"
-            + defaultTemplate.getImage().getProviderId());
+               + defaultTemplate.getImage().getProviderId());
       Template byId = client.templateBuilder().imageId(defaultTemplate.getImage().getId()).build();
       assertEquals(byId.getImage(), defaultTemplate.getImage());
    }
@@ -89,37 +99,34 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
+               .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
+               .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
+               .getInstanceServices();
 
-      String tag = this.tag + "o";
+      String group = this.group + "o";
 
       TemplateOptions options = client.templateOptions();
 
-//      Date before = new Date();
-
-      options.as(EC2TemplateOptions.class).securityGroups(tag);
-      options.as(EC2TemplateOptions.class).keyPair(tag);
-      options.as(EC2TemplateOptions.class).enableMonitoring();
+      options.as(EC2TemplateOptions.class).securityGroups(group);
+      options.as(EC2TemplateOptions.class).keyPair(group);
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+         securityGroupClient.createSecurityGroupInRegion(null, group, group);
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, group, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
+         KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
@@ -128,181 +135,123 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          RunningInstance instance = getInstance(instanceClient, startedId);
 
-         assertEquals(instance.getKeyName(), tag);
-//         checkMonitoringEnabled(before, instance);
+         assertEquals(instance.getKeyName(), group);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()),
-               ImmutableSortedSet.<String> of("jclouds#" + tag + "#" + instance.getRegion(), tag));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
+                  + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-               "jclouds#" + tag + "#" + instance.getRegion()));
-         assert group.getIpPermissions().size() == 0 : group;
+         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
+                  "jclouds#" + group + "#" + instance.getRegion()));
+         assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, first.getOperatingSystem(),
-               new Credentials(first.getCredentials().identity, result.getKeyMaterial()));
+         runScriptWithCreds(group, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
+                  .getKeyMaterial()));
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
    }
 
-//   private void checkMonitoringEnabled(Date before, RunningInstance instance) {
-//      assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
-//
-//      RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory().createContext(
-//            "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
-//
-//      try {
-//         Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-//               "CPUUtilization", before, new Date(), 60, "Average");
-//         assert datapoints != null;
-//      } finally {
-//         monitoringContext.close();
-//      }
-//   }
-
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testExtendedOptionsNoKeyPair() throws Exception {
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
-
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
+   /**
+    * Note we cannot use the micro size as it has no ephemeral space.
+    */
+   @Test(enabled = true)
+   public void testMapEBS() throws Exception {
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
+               .getInstanceServices();
 
-      String tag = this.tag + "k";
+      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+               .getElasticBlockStoreServices();
 
-      TemplateOptions options = client.templateOptions();
+      String group = this.group + "e";
+      int volumeSize = 8;
 
-      options.as(EC2TemplateOptions.class).securityGroups(tag);
-      options.as(EC2TemplateOptions.class).noKeyPair();
+      Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
-      String startedId = null;
+         @Override
+         public boolean apply(Location arg0) {
+            return arg0.getScope() == LocationScope.ZONE;
+         }
+
+      });
+
+      // create volume only to make a snapshot
+      Volume volume = ebsClient.createVolumeInAvailabilityZone(zone.getId(), 4);
+      Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
+      ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
+
+      Template template = context.getComputeService().templateBuilder().locationId(volume.getRegion()).hardwareId(
+               InstanceType.M1_SMALL).imageDescriptionMatches(".*ebs.*").build();
+
+      template.getOptions().as(EC2TemplateOptions.class)//
+               // .unmapDeviceNamed("/dev/foo)
+               .mapEphemeralDeviceToDeviceName("/dev/sdm", "ephemeral0")//
+               .mapNewVolumeToDeviceName("/dev/sdn", volumeSize, true)//
+               .mapEBSSnapshotToDeviceName("/dev/sdo", snapshot.getId(), volumeSize, true);
+
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         NodeMetadata node = Iterables.getOnlyElement(client.createNodesInGroup(group, 1, template));
 
-         // create the security group
-         securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+         // TODO figure out how to validate the ephemeral drive. perhaps with df -k?
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
-         Credentials creds = nodes.iterator().next().getCredentials();
-         assert creds == null;
+         Map<String, BlockDevice> devices = instanceClient.getBlockDeviceMappingForInstanceInRegion(node.getLocation()
+                  .getParent().getId(), node.getProviderId());
 
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
+         BlockDevice device = devices.get("/dev/sdn");
+         // check delete on termination
+         assertTrue(device.isDeleteOnTermination());
 
-         RunningInstance instance = getInstance(instanceClient, startedId);
+         volume = Iterables.getOnlyElement(ebsClient.describeVolumesInRegion(node.getLocation().getParent().getId(),
+                  device.getVolumeId()));
+         // check volume size
+         assertEquals(volumeSize, volume.getSize());
 
-         assertEquals(instance.getKeyName(), null);
+         device = devices.get("/dev/sdo");
+         // check delete on termination
+         assertTrue(device.isDeleteOnTermination());
 
-         // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()),
-               ImmutableSortedSet.<String> of(tag, String.format("jclouds#%s#%s", tag, instance.getRegion())));
-
-         // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-               String.format("jclouds#%s#%s", tag, instance.getRegion())));
-         assert group.getIpPermissions().size() == 0 : group;
+         volume = Iterables.getOnlyElement(ebsClient.describeVolumesInRegion(node.getLocation().getParent().getId(),
+                  device.getVolumeId()));
+         // check volume size
+         assertEquals(volumeSize, volume.getSize());
+         // check volume's snapshot id
+         assertEquals(snapshot.getId(), volume.getSnapshotId());
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
-         if (startedId != null) {
-            // ensure we didn't delete these resources!
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
-         }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+         client.destroyNodesMatching(NodePredicates.inGroup(group));
+         ebsClient.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testExtendedOptionsWithSubnetId() throws Exception {
-
-      String subnetId = System.getProperty("test.subnetId");
-      if (subnetId == null) {
-         // Skip test and return
-         return;
-      }
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
-
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
-
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
-
-      String tag = this.tag + "g";
-
-      TemplateOptions options = client.templateOptions();
-
-      // options.as(EC2TemplateOptions.class).securityGroups(tag);
-      options.as(EC2TemplateOptions.class).keyPair(tag);
-      options.as(EC2TemplateOptions.class).subnetId(subnetId);
-
-      String startedId = null;
-      String nodeId = null;
-      try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
-
-         // create the security group
-         // securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-
-         // create a keypair to pass in as well
-         keyPairClient.createKeyPairInRegion(null, tag);
-
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
-
-         NodeMetadata first = Iterables.get(nodes, 0);
-         assert first.getCredentials() != null : first;
-         assert first.getCredentials().identity != null : first;
-
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
-         nodeId = Iterables.getOnlyElement(nodes).getId();
-
-         RunningInstance instance = getInstance(instanceClient, startedId);
-
-         assertEquals(instance.getSubnetId(), subnetId);
-
-      } finally {
-         if (nodeId != null)
-            client.destroyNode(nodeId);
-         if (startedId != null) {
-            // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-         }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
-      }
-   }
-
-   private RunningInstance getInstance(InstanceClient instanceClient, String id) {
+   protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
-            .describeInstancesInRegion(null, id)));
+               .describeInstancesInRegion(null, id)));
       return instance;
    }
 
-   private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
-         throws InterruptedException {
+   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String group)
+            throws InterruptedException {
       try {
-         for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
-            if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
-               securityGroupClient.deleteSecurityGroupInRegion(null, group.getName());
+         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
+            if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {
+               securityGroupClient.deleteSecurityGroupInRegion(null, secgroup.getName());
             }
       } catch (Exception e) {
 
       }
       try {
          for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
-            if (pair.getKeyName().startsWith("jclouds#" + tag) || pair.getKeyName().equals(tag)) {
+            if (pair.getKeyName().startsWith("jclouds#" + group) || pair.getKeyName().equals(group)) {
                keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
             }
       } catch (Exception e) {

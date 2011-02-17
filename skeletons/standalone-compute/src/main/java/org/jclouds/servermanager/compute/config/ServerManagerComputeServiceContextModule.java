@@ -55,8 +55,6 @@ public class ServerManagerComputeServiceContextModule extends
       super.configure();
       bind(new TypeLiteral<ComputeServiceAdapter<Server, Hardware, Image, Datacenter>>() {
       }).to(ServerManagerComputeServiceAdapter.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
@@ -65,5 +63,7 @@ public class ServerManagerComputeServiceContextModule extends
       }).to(ServerManagerHardwareToHardware.class);
       bind(new TypeLiteral<Function<Datacenter, Location>>() {
       }).to(DatacenterToLocation.class);
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(OnlyLocationOrFirstZone.class);
    }
 }

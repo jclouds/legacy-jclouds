@@ -29,27 +29,12 @@
         <dependencySet>
             <unpack>true</unpack>
             <scope>runtime</scope>
-            <excludes>
-                <exclude>org.jclouds:jclouds-core</exclude>
-                <exclude>org.jclouds:jclouds-blobstore</exclude>
-                <exclude>org.jclouds:jclouds-compute</exclude>
-            </excludes>
-            <!-- exclude all transitive dependencies of core too -->
-            <useTransitiveFiltering>true</useTransitiveFiltering>
         </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
             <directory>${project.build.outputDirectory}</directory>
             <outputDirectory />
-        </fileSet>
-        <!-- Hack to get Maven assembly to build even if there are no files to include.
-          See http://jira.codehaus.org/browse/MASSEMBLY-457. -->
-        <fileSet>
-            <includes>
-                <include>pom.xml</include>
-            </includes>
-            <outputDirectory>META-INF/maven/${project.groupId}/${project.artifactId}</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

@@ -60,8 +60,7 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
       HttpRequest request = processor.createRequest(method);
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
-            + ": application/vnd.vmware.vcloud.orgList+xml\n");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.orgList+xml\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
@@ -100,16 +99,16 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
 
       };
    }
+
    @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
    public interface VCloudLoginClient {
 
       VCloudSession login();
    }
 
-
    @Override
    public RestContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential", VCloudLoginClient.class,
-            VCloudLoginAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080/login", "1", "", "identity", "credential",
+               VCloudLoginClient.class, VCloudLoginAsyncClient.class);
    }
 }

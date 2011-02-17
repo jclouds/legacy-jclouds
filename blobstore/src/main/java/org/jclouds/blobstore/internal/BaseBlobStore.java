@@ -30,6 +30,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -54,7 +55,7 @@ public abstract class BaseBlobStore implements BlobStore {
 
    @Inject
    protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-            @Memoized Supplier<Set<? extends Location>> locations) {
+         @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
@@ -72,6 +73,14 @@ public abstract class BaseBlobStore implements BlobStore {
    @Override
    public Blob newBlob(String name) {
       return blobUtils.newBlob(name);
+   }
+
+   /**
+    * invokes {@link BlobUtilsImpl#blobBuilder }
+    */
+   @Override
+   public BlobBuilder blobBuilder(String name) {
+      return blobUtils.blobBuilder().name(name);
    }
 
    /**

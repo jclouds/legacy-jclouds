@@ -19,7 +19,7 @@
 
 package org.jclouds.epc.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.walrus.blobstore.WalrusBlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,8 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobSignerLiveTest")
-public class EucalyptusPartnerCloudWalrusBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-   public EucalyptusPartnerCloudWalrusBlobSignerLiveTest() {
-      containerCount = 5;
-   }
+public class EucalyptusPartnerCloudWalrusBlobSignerLiveTest extends WalrusBlobSignerLiveTest {
+
 }

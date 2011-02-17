@@ -19,58 +19,72 @@
 
 package org.jclouds.rimuhosting.miro.compute.suppliers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
-import org.jclouds.logging.Logger;
+import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.domain.DataCenter;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingLocationSupplier implements Supplier<Set<? extends Location>> {
+public class RimuHostingLocationSupplier extends JustProvider {
 
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
    private final RimuHostingClient sync;
-   private final String providerName;
+   private final Map<String, Set<String>> isoCodesById;
 
    @Inject
-   RimuHostingLocationSupplier(RimuHostingClient sync, @Provider String providerName) {
-      this.providerName = providerName;
-      this.sync = sync;
+   RimuHostingLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
+            RimuHostingClient sync, @Iso3166 Map<String, Set<String>> isoCodesById) {
+      super(isoCodes, providerName, endpoint);
+      this.sync = checkNotNull(sync, "sync");
+      this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
    }
 
    @Override
    public Set<? extends Location> get() {
-      final Set<Location> locations = Sets.newHashSet();
-      logger.debug(">> providing locations");
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      for (final PricingPlan from : sync.getPricingPlanList()) {
-         try {
-            locations.add(new LocationImpl(LocationScope.ZONE, from.getDataCenter().getId(), from.getDataCenter()
-                     .getName(), provider));
-         } catch (NullPointerException e) {
-            logger.warn("datacenter not present in " + from.getId());
+      Builder<Location> locations = ImmutableSet.builder();
+      Iterable<DataCenter> list = Iterables.filter(Iterables.transform(sync.getPricingPlanList(),
+               new Function<PricingPlan, DataCenter>() {
+
+                  @Override
+                  public DataCenter apply(PricingPlan arg0) {
+                     return arg0.getDataCenter();
+                  }
+
+               }), Predicates.<DataCenter>notNull());
+      Location provider = Iterables.getOnlyElement(super.get());
+      if (Iterables.size(list) == 0)
+         locations.add(provider);
+      else
+         for (DataCenter from : list) {
+            LocationBuilder builder = new LocationBuilder().scope(LocationScope.ZONE).id(from.getId()).description(
+                     from.getName()).parent(provider);
+            if (isoCodesById.containsKey(from.getId()))
+               builder.iso3166Codes(isoCodesById.get(from.getId()));
+            locations.add(builder.build());
          }
-      }
-      logger.debug("<< locations(%d)", locations.size());
-      return locations;
+      return locations.build();
    }
 }

@@ -22,6 +22,8 @@ package org.jclouds.vcloud.terremark.compute.config;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.vcloud.compute.functions.ParseOsFromVAppTemplateName;
+import org.jclouds.vcloud.terremark.compute.functions.TerremarkECloudParseOsFromVAppTemplateName;
 import org.jclouds.vcloud.terremark.suppliers.InternetServiceAndPublicIpAddressSupplier;
 import org.jclouds.vcloud.terremark.suppliers.TerremarkECloudInternetServiceAndPublicIpAddressSupplier;
 
@@ -32,6 +34,14 @@ import com.google.inject.Injector;
  */
 public class TerremarkECloudComputeServiceContextModule extends TerremarkVCloudComputeServiceContextModule {
 
+   @Override
+   protected void configure() {
+      bind(InternetServiceAndPublicIpAddressSupplier.class).to(
+               TerremarkECloudInternetServiceAndPublicIpAddressSupplier.class);
+      bind(ParseOsFromVAppTemplateName.class).to(TerremarkECloudParseOsFromVAppTemplateName.class);
+      super.configure();
+   }
+
    // as of 6-nov-2010 only centos has ssh key injection in the images.
    // ssh key injection in ubuntu is targeted for dec-2010 or sooner
    @Override
@@ -39,10 +49,4 @@ public class TerremarkECloudComputeServiceContextModule extends TerremarkVCloudC
       return template.osFamily(CENTOS).os64Bit(true);
    }
 
-   @Override
-   protected void configure() {
-      bind(InternetServiceAndPublicIpAddressSupplier.class).to(
-               TerremarkECloudInternetServiceAndPublicIpAddressSupplier.class);
-      super.configure();
-   }
 }

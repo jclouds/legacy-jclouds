@@ -23,8 +23,6 @@ import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTempl
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -33,17 +31,16 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.suppliers.TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
@@ -52,16 +49,6 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", sequential = true)
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
-
-   @Override
-   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(URI vdc) {
-      InternetService is = TerremarkVCloudExpressClient.class.cast(tmClient).addInternetServiceToVDC(
-               tmClient.findVDCInOrgNamed(null, null).getHref(), "SSH", Protocol.TCP, 22);
-      PublicIpAddress ip = is.getPublicIpAddress();
-      Map<InternetService, PublicIpAddress> result = ImmutableMap.<InternetService, PublicIpAddress> of(is, ip);
-      Entry<InternetService, PublicIpAddress> entry = Iterables.getOnlyElement(result.entrySet());
-      return entry;
-   }
 
    KeyPair key;
 
@@ -113,5 +100,11 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    @Override
    protected TerremarkInstantiateVAppTemplateOptions createInstantiateOptions() {
       return processorCount(1).memory(512).sshKeyFingerprint(key.getFingerPrint());
+   }
+
+   @Override
+   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
+      return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(TerremarkVCloudExpressClient.class
+               .cast(tmClient)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 }

@@ -1,0 +1,20 @@
+nodes:
+    - id: cluster-1
+      name: cluster-1
+      description: accounting analytics cluster
+      hostname: cluster-1.mydomain.com
+      os_arch: x86
+      os_family: rhel
+      os_description: redhat
+      os_version: 5.3
+      group: hadoop
+      tags:
+          - vanilla
+      username: myUser
+      credential: |
+                  -----BEGIN RSA PRIVATE KEY-----
+                  MIIEowIBAAKCAQEAuzaE6azgUxwESX1rCGdJ5xpdrc1XC311bOGZBCE8NA+CpFh2
+                  u01Vfv68NC4u6LFgdXSY1vQt6hiA5TNqQk0TyVfFAunbXgTekF6XqDPQUf1nq9aZ
+                  lMvo4vlaLDKBkhG5HJE/pIa0iB+RMZLS0GhxsIWerEDmYdHKM25o
+                  -----END RSA PRIVATE KEY-----
+      sudo_password: happy bear

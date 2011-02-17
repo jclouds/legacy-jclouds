@@ -20,6 +20,7 @@
 package org.jclouds.compute;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -98,8 +99,8 @@ public interface ComputeService {
 
    /**
     * 
-    * The compute api treats nodes as a group based on a tag you specify. Using this tag, you can
-    * choose to operate one or many nodes as a logical unit without regard to the implementation
+    * The compute api treats nodes as a group based on the name you specify. Using this group, you
+    * can choose to operate one or many nodes as a logical unit without regard to the implementation
     * details of the cloud.
     * <p/>
     * 
@@ -119,7 +120,7 @@ public interface ComputeService {
     * If resources such as security groups are needed, they will be reused or created for you.
     * Inbound port 22 will always be opened up.
     * 
-    * @param tag
+    * @param group
     *           - common identifier to group nodes by, cannot contain hyphens
     * @param count
     *           - how many to fire up.
@@ -131,19 +132,38 @@ public interface ComputeService {
     *            when there's a problem applying options to nodes. Note that successful and failed
     *            nodes are a part of this exception, so be sure to inspect this carefully.
     */
+   Set<? extends NodeMetadata> createNodesInGroup(String group, int count, Template template) throws RunNodesException;
+
+   /**
+    * Like {@link ComputeService#createNodesInGroup(String,int,Template)}, except that the template
+    * is default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
+    */
+   Set<? extends NodeMetadata> createNodesInGroup(String group, int count, TemplateOptions templateOptions)
+            throws RunNodesException;
+
+   /**
+    * Like {@link ComputeService#createNodesInGroup(String,int,TemplateOptions)}, except that the
+    * options are default, as specified in {@link ComputeService#templateOptions}.
+    */
+   Set<? extends NodeMetadata> createNodesInGroup(String group, int count) throws RunNodesException;
+
+   /**
+    * @see #createNodesInGroup(String , int , Template )
+    */
+   @Deprecated
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template) throws RunNodesException;
 
    /**
-    * Like {@link ComputeService#runNodesWithTag(String,int,Template)}, except that the template is
-    * default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
+    * @see #createNodesInGroup(String , int , TemplateOptions )
     */
+   @Deprecated
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
             throws RunNodesException;
 
    /**
-    * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)}, except that the
-    * options are default, as specified in {@link ComputeService#templateOptions}.
+    * @see #createNodesInGroup(String , int )
     */
+   @Deprecated
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
 
    /**
@@ -271,6 +291,13 @@ public interface ComputeService {
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             Statement runScript) throws RunScriptOnNodesException;
+
+   /**
+    * 
+    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
+    */
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript,
+            RunScriptOptions options) throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific predicate.

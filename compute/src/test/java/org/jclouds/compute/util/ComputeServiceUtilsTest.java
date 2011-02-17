@@ -19,7 +19,7 @@
 
 package org.jclouds.compute.util;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -41,7 +41,7 @@ public class ComputeServiceUtilsTest {
 
    @Test
    public void testParseTagFromName() {
-      assertEquals(parseTagFromName("gogrid--849"), "gogrid-");
+      assertEquals(parseGroupFromName("gogrid--849"), "gogrid-");
 
    }
    @Test

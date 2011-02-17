@@ -29,8 +29,8 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.xml.FlavorHandlerTest;
 import org.testng.annotations.Test;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableList;
  */
 @Test(groups = "unit")
 public class FlavorToHardwareTest {
-   Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+   Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
    public void test() throws UnknownHostException {

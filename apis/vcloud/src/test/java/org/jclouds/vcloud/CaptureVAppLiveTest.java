@@ -51,7 +51,7 @@ public class CaptureVAppLiveTest {
 
 
    protected ComputeService client;
-   protected String tag = System.getProperty("user.name") + "cap";
+   protected String group = System.getProperty("user.name") + "cap";
 
    protected String provider = "vcloud";
    protected String identity;
@@ -94,7 +94,7 @@ public class CaptureVAppLiveTest {
       VAppTemplate vappTemplate = null;
       try {
 
-         node = getOnlyElement(client.runNodesWithTag(tag, 1));
+         node = getOnlyElement(client.createNodesInGroup(group, 1));
 
          VCloudClient vcloudApi = VCloudClient.class.cast(client.getContext().getProviderSpecificContext().getApi());
 
@@ -117,7 +117,7 @@ public class CaptureVAppLiveTest {
          // vdc is equiv to the node's location
          // vapp uri is the same as the node's id
          vappTemplate = vcloudApi.captureVAppInVDC(URI.create(node.getLocation().getId()), URI.create(node.getId()),
-                  tag);
+                  group);
 
          task = vappTemplate.getTasks().get(0);
 

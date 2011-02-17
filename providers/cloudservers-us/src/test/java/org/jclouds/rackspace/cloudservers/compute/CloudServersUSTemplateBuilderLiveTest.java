@@ -22,6 +22,8 @@ package org.jclouds.rackspace.cloudservers.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Set;
+
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -29,6 +31,7 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -47,12 +50,17 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return (input.family != OsFamily.WINDOWS && !input.is64Bit) || //
-                     input.family == OsFamily.RHEL || //
-                     (input.family == OsFamily.UBUNTU && input.version.equals("11.04")) || //
-                     (input.family == OsFamily.CENTOS && input.version.matches("5.[23]")) || //
-                     (input.family == OsFamily.WINDOWS && input.version.equals("2008")) || //
-                     (input.family == OsFamily.WINDOWS && input.version.equals("2008 R2") && !input.is64Bit);
+            switch (input.family) {
+               case UBUNTU:
+                  return input.version.equals("11.04") || input.version.equals("8.04") || !input.is64Bit;
+               case CENTOS:
+                  return input.version.matches("5.[023]") || !input.is64Bit;
+               case WINDOWS:
+                  return input.version.equals("2008") || input.version.indexOf("2003") != -1
+                           || (input.version.equals("2008 R2") && !input.is64Bit);
+               default:
+                  return true;
+            }
          }
 
       };
@@ -64,7 +72,12 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "US");
+      assertEquals(defaultTemplate.getLocation().getId(), provider);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+   }
+
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-IL", "US-TX");
    }
 }

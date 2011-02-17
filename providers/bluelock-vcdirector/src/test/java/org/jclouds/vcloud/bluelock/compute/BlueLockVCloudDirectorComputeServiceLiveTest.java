@@ -43,7 +43,7 @@ public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeS
 
    @Override
    public void setServiceDefaults() {
-      tag = "director";
+      group = "director";
    }
 
    @Test

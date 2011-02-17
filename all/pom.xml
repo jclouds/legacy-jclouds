@@ -39,10 +39,5 @@
             <artifactId>jclouds-allblobstore</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>aws-elb</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>

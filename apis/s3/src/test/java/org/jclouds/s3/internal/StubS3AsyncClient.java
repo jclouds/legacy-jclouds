@@ -37,6 +37,20 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.concurrent.Futures;
+import org.jclouds.date.DateService;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
@@ -59,20 +73,6 @@ import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.TransientAsyncBlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.concurrent.Futures;
-import org.jclouds.date.DateService;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -140,7 +140,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
       region = region == null ? Region.US_STANDARD : region;
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions() : optionsList[0];
       keyToAcl.put(name, options.getAcl());
-      return blobStore.createContainerInLocation(new LocationImpl(LocationScope.REGION, region, region, null), name);
+      return blobStore.createContainerInLocation(new LocationBuilder().scope(LocationScope.REGION).id(region)
+               .description(region).build(), name);
    }
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {

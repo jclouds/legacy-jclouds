@@ -20,7 +20,7 @@
 package org.jclouds.rimuhosting.miro.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -38,8 +38,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
@@ -59,6 +57,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Resource
    protected Logger logger = Logger.NULL;
    protected final Map<String, Credentials> credentialStore;
+   protected final Supplier<Set<? extends Location>> locations;
    protected final Function<Server, Iterable<String>> getPublicAddresses;
    protected final Map<RunningState, NodeState> runningStateToNodeState;
    protected final Supplier<Set<? extends Image>> images;
@@ -82,9 +81,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-            Map<String, Credentials> credentialStore, Map<RunningState, NodeState> runningStateToNodeState,
-            @Memoized Supplier<Set<? extends Image>> images) {
+            @Memoized Supplier<Set<? extends Location>> locations, Map<String, Credentials> credentialStore,
+            Map<RunningState, NodeState> runningStateToNodeState, @Memoized Supplier<Set<? extends Image>> images) {
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
+      this.locations = checkNotNull(locations, "locations");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
@@ -95,11 +95,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
       builder.name(from.getName());
-      // TODO properly look up location
-      LocationImpl location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from.getLocation()
-               .getName(), null);
+      Location location = findLocationWithId(from.getLocation().getId());
       builder.location(location);
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from, location));
       builder.hardware(null);// TODO
@@ -109,7 +107,25 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       return builder.build();
    }
 
-   protected OperatingSystem parseOperatingSystem(Server from, LocationImpl location) {
+   private Location findLocationWithId(final String locationId) {
+      try {
+         Location location = Iterables.find(locations.get(), new Predicate<Location>() {
+
+            @Override
+            public boolean apply(Location input) {
+               return input.getId().equals(locationId);
+            }
+
+         });
+         return location;
+
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't match instance location %s in: %s", locationId, locations.get());
+         return null;
+      }
+   }
+
+   protected OperatingSystem parseOperatingSystem(Server from, Location location) {
       try {
          return Iterables.find(images.get(), new FindImageForServer(location, from)).getOperatingSystem();
       } catch (NoSuchElementException e) {

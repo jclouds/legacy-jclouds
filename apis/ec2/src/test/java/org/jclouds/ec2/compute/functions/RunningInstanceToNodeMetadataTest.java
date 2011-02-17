@@ -36,8 +36,8 @@ import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.InstanceState;
@@ -67,7 +67,8 @@ public class RunningInstanceToNodeMetadataTest {
 
    }
 
-   Location provider = new LocationImpl(LocationScope.REGION, "us-east-1", "description", null);
+   static Location provider = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
+            .description("us-east-1").build();
 
    @Test
    public void testApplyWhereTagDoesntMatchAndImageHardwareAndLocationNotFoundButCredentialsFound()
@@ -76,14 +77,14 @@ public class RunningInstanceToNodeMetadataTest {
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
                .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of(
-               "node#us-east-1/i-9slweygo", creds));
+               "node#us-east-1/i-0799056f", creds));
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).publicAddresses(
-               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo")
-               .credentials(creds).imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-9slweygo")
-               .providerId("i-9slweygo").build());
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).publicAddresses(
+               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(
+               ImmutableSet.of("174.129.81.68")).credentials(creds).imageId("us-east-1/ami-82e4b5c7").id(
+               "us-east-1/i-0799056f").providerId("i-0799056f").build());
    }
 
    @Test
@@ -91,11 +92,12 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
                .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).publicAddresses(
-               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo")
-               .imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-9slweygo").providerId("i-9slweygo").build());
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).publicAddresses(
+               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(
+               ImmutableSet.of("174.129.81.68")).imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f")
+               .providerId("i-0799056f").build());
    }
 
    @Test
@@ -103,11 +105,11 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet.of(provider),
                ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-82e4b5c7").id(
-               "us-east-1/i-9slweygo").providerId("i-9slweygo").location(provider).build());
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").location(provider).build());
    }
 
    @Test
@@ -115,14 +117,14 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet.of(provider),
                EC2ImageParserTest.convertImages("/amzn_images.xml"), ImmutableMap.<String, Credentials> of());
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-82e4b5c7")
-               .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual")
-                                 .description("137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id(
-                        "us-east-1/i-9slweygo").providerId("i-9slweygo").location(provider).build());
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").operatingSystem(
+               new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
+                        "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
+               .providerId("i-0799056f").location(provider).build());
    }
 
    @Test
@@ -131,14 +133,14 @@ public class RunningInstanceToNodeMetadataTest {
                .of(provider), EC2ImageParserTest.convertImages("/amzn_images.xml"), ImmutableMap
                .<String, Credentials> of());
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-82e4b5c7").hardware(
-               m1_small().build()).operatingSystem(
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").hardware(m1_small().build()).operatingSystem(
                new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
-                        "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-9slweygo")
-               .providerId("i-9slweygo").location(provider).build());
+                        "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
+               .providerId("i-0799056f").location(provider).build());
    }
 
    @Test
@@ -160,11 +162,12 @@ public class RunningInstanceToNodeMetadataTest {
                .of(provider), ImmutableMap.<String, Credentials> of(),
                EC2ComputeServiceDependenciesModule.instanceToNodeState, instanceToImage);
 
-      RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
+      RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-82e4b5c7").id(
-               "us-east-1/i-9slweygo").providerId("i-9slweygo").hardware(m1_small().build()).location(provider).build());
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
+               ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
+               "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").hardware(
+               m1_small().build()).location(provider).build());
    }
 
    protected RunningInstance firstInstanceFromResource(String resource) {

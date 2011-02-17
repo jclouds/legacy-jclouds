@@ -42,6 +42,8 @@ import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.domain.ServerStatus;
+import org.jclouds.cloudsigma.domain.StaticIPInfo;
+import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
@@ -72,7 +74,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", sequential = true)
 public class CloudSigmaClientLiveTest {
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
@@ -124,15 +126,55 @@ public class CloudSigmaClientLiveTest {
    }
 
    @Test
-   public void testListServers() throws Exception {
-      Set<String> servers = client.listServers();
-      assertNotNull(servers);
-   }
-
-   @Test
    public void testGetProfileInfo() throws Exception {
       ProfileInfo profile = client.getProfileInfo();
       assertNotNull(profile);
+   }
+
+   @Test
+   public void testListVLANs() throws Exception {
+      Set<String> vlans = client.listVLANs();
+      assertNotNull(vlans);
+   }
+
+   @Test
+   public void testListVLANInfo() throws Exception {
+      Set<? extends VLANInfo> vlans = client.listVLANInfo();
+      assertNotNull(vlans);
+   }
+
+   @Test
+   public void testGetVLAN() throws Exception {
+      for (String vlanUUID : client.listVLANs()) {
+         assert !"".equals(vlanUUID);
+         assertNotNull(client.getVLANInfo(vlanUUID));
+      }
+   }
+
+   @Test
+   public void testListStaticIPs() throws Exception {
+      Set<String> ips = client.listStaticIPs();
+      assertNotNull(ips);
+   }
+
+   @Test
+   public void testListStaticIPInfo() throws Exception {
+      Set<? extends StaticIPInfo> ips = client.listStaticIPInfo();
+      assertNotNull(ips);
+   }
+
+   @Test
+   public void testGetStaticIP() throws Exception {
+      for (String ipUUID : client.listStaticIPs()) {
+         assert !"".equals(ipUUID);
+         assertNotNull(client.getStaticIPInfo(ipUUID));
+      }
+   }
+
+   @Test
+   public void testListServers() throws Exception {
+      Set<String> servers = client.listServers();
+      assertNotNull(servers);
    }
 
    @Test
@@ -221,6 +263,47 @@ public class CloudSigmaClientLiveTest {
       assertEquals(drive2.getReaders(), ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"));
       assertEquals(drive2.getUse(), ImmutableSet.of("networking", "security", "gateway"));
       drive = drive2;
+   }
+
+   @Test
+   public void testCreateAndDestroyVLAN() throws Exception {
+      VLANInfo vlan = client.createVLAN(prefix);
+      String id = vlan.getUuid();
+      try {
+         vlan = client.getVLANInfo(vlan.getUuid());
+         assertEquals(vlan.getName(), prefix);
+
+         vlan = client.renameVLAN(vlan.getUuid(), prefix + "2");
+         // test that rename didn't work :)
+         assertEquals(vlan.getName(), prefix);
+         vlan = client.getVLANInfo(vlan.getUuid());
+         assertEquals(vlan.getName(), prefix);
+      } finally {
+         client.destroyVLAN(id);
+      }
+   }
+
+   @Test
+   public void testCreateAndDestroyStaticIP() throws Exception {
+      StaticIPInfo ip = client.createStaticIP();
+      String id = ip.getAddress();
+      try {
+         ip = client.getStaticIPInfo(ip.getAddress());
+         assertNotNull(ip);
+         Logger.getAnonymousLogger().info("preparing drive");
+         prepareDrive();
+
+         Server serverRequest = Servers.smallWithStaticIP(prefix, drive.getUuid(), vncPassword, ip.getAddress())
+               .build();
+
+         Logger.getAnonymousLogger().info("starting server");
+         server = client.createServer(serverRequest);
+         assertEquals(server.getNics().get(0).getDhcp(), ip.getAddress());
+      } finally {
+         client.destroyServer(server.getUuid());
+         client.destroyDrive(drive.getUuid());
+         client.destroyStaticIP(id);
+      }
    }
 
    protected ServerInfo server;

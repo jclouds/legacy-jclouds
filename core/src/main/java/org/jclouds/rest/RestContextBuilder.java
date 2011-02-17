@@ -20,17 +20,30 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Splitter.on;
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.inject.Scopes.SINGLETON;
+import static com.google.inject.name.Names.bindProperties;
+import static com.google.inject.util.Types.newParameterizedType;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.Constants.PROPERTY_PROVIDER;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -41,7 +54,9 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
+import org.jclouds.location.config.ProvideIso3166CodesByLocationIdViaProperties;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.annotations.Api;
@@ -55,17 +70,13 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
-import com.google.inject.util.Types;
 
 /**
  * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
@@ -94,18 +105,25 @@ public class RestContextBuilder<S, A> {
          Properties toBind = new Properties();
          toBind.putAll(checkNotNull(properties, "properties"));
          toBind.putAll(System.getProperties());
-         Names.bindProperties(binder(), toBind);
+         bindProperties(binder(), toBind);
          bind(String.class).annotatedWith(Provider.class).toInstance(
-               checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
+                  checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
          bind(URI.class).annotatedWith(Provider.class).toInstance(
-               URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT), PROPERTY_ENDPOINT)));
+                  URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT), PROPERTY_ENDPOINT)));
+         bind(new TypeLiteral<Set<String>>() {
+         }).annotatedWith(Iso3166.class).toInstance(
+                  ImmutableSet.copyOf(filter(on(',').split(
+                           checkNotNull(toBind.getProperty(PROPERTY_ISO3166_CODES), PROPERTY_ISO3166_CODES)),
+                           not(equalTo("")))));
+         bind(new TypeLiteral<Map<String, Set<String>>>() {
+         }).annotatedWith(Iso3166.class).toProvider(ProvideIso3166CodesByLocationIdViaProperties.class);
          if (toBind.containsKey(PROPERTY_API))
             bind(String.class).annotatedWith(Api.class).toInstance(toBind.getProperty(PROPERTY_API));
          if (toBind.containsKey(PROPERTY_API_VERSION))
             bind(String.class).annotatedWith(ApiVersion.class).toInstance(toBind.getProperty(PROPERTY_API_VERSION));
          if (toBind.containsKey(PROPERTY_IDENTITY))
             bind(String.class).annotatedWith(Identity.class).toInstance(
-                  checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
+                     checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
          if (toBind.containsKey(PROPERTY_CREDENTIAL))
             bind(String.class).annotatedWith(Credential.class).toInstance(toBind.getProperty(PROPERTY_CREDENTIAL));
       }
@@ -124,7 +142,7 @@ public class RestContextBuilder<S, A> {
    }
 
    public RestContextBuilder<S, A> withModules(Iterable<Module> modules) {
-      Iterables.addAll(this.modules, modules);
+      addAll(this.modules, modules);
       return this;
    }
 
@@ -142,7 +160,7 @@ public class RestContextBuilder<S, A> {
 
    @VisibleForTesting
    protected void addLoggingModuleIfNotPresent(List<Module> modules) {
-      if (!Iterables.any(modules, Predicates.instanceOf(LoggingModule.class)))
+      if (!any(modules, instanceOf(LoggingModule.class)))
          modules.add(new JDKLoggingModule());
    }
 
@@ -153,7 +171,7 @@ public class RestContextBuilder<S, A> {
    }
 
    private boolean nothingConfiguresAnHttpService(List<Module> modules) {
-      return (!Iterables.any(modules, new Predicate<Module>() {
+      return (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class);
          }
@@ -163,7 +181,7 @@ public class RestContextBuilder<S, A> {
 
    @VisibleForTesting
    protected void addContextModuleIfNotPresent(List<Module> modules) {
-      if (!Iterables.any(modules, new Predicate<Module>() {
+      if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresRestContext.class);
          }
@@ -177,20 +195,20 @@ public class RestContextBuilder<S, A> {
    protected void addContextModule(List<Module> modules) {
       modules.add(new AbstractModule() {
 
-         @SuppressWarnings({ "unchecked", "rawtypes" })
+         @SuppressWarnings( { "unchecked", "rawtypes" })
          @Override
          protected void configure() {
             bind(
-                  (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContext.class, syncClientType,
-                        asyncClientType))).to(
-                  TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType, asyncClientType)))
-                  .in(Scopes.SINGLETON);
+                     (TypeLiteral) TypeLiteral.get(newParameterizedType(RestContext.class, syncClientType,
+                              asyncClientType))).to(
+                     TypeLiteral.get(newParameterizedType(RestContextImpl.class, syncClientType, asyncClientType))).in(
+                     SINGLETON);
 
          }
 
          public String toString() {
-            return String.format("configure rest context %s->%s", syncClientType.getSimpleName(),
-                  asyncClientType.getSimpleName());
+            return String.format("configure rest context %s->%s", syncClientType.getSimpleName(), asyncClientType
+                     .getSimpleName());
          }
 
       });
@@ -208,7 +226,7 @@ public class RestContextBuilder<S, A> {
    }
 
    private boolean atLeastOneModuleRequiresHttp(List<Module> modules) {
-      return Iterables.any(modules, new Predicate<Module>() {
+      return any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(RequiresHttp.class);
          }
@@ -223,7 +241,7 @@ public class RestContextBuilder<S, A> {
    }
 
    private boolean restClientModulePresent(List<Module> modules) {
-      return Iterables.any(modules, new Predicate<Module>() {
+      return any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresRestClient.class);
          }
@@ -237,20 +255,20 @@ public class RestContextBuilder<S, A> {
 
    @VisibleForTesting
    protected void addExecutorServiceIfNotPresent(List<Module> modules) {
-      if (!Iterables.any(modules, new Predicate<Module>() {
+      if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class);
          }
       }
 
       )) {
-         if (Iterables.any(modules, new Predicate<Module>() {
+         if (any(modules, new Predicate<Module>() {
             public boolean apply(Module input) {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
             modules.add(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors
-                  .sameThreadExecutor()));
+                     .sameThreadExecutor()));
          } else {
             modules.add(new ExecutorServiceModule());
          }
@@ -259,7 +277,7 @@ public class RestContextBuilder<S, A> {
 
    @VisibleForTesting
    protected void addCredentialStoreIfNotPresent(List<Module> modules) {
-      if (!Iterables.any(modules, new Predicate<Module>() {
+      if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresCredentialStore.class);
          }
@@ -278,7 +296,7 @@ public class RestContextBuilder<S, A> {
    @SuppressWarnings("unchecked")
    public <T extends RestContext<S, A>> T buildContext() {
       Injector injector = buildInjector();
-      return (T) injector.getInstance(Key.get(Types.newParameterizedType(RestContext.class, syncClientType,
-            asyncClientType)));
+      return (T) injector
+               .getInstance(Key.get(newParameterizedType(RestContext.class, syncClientType, asyncClientType)));
    }
 }

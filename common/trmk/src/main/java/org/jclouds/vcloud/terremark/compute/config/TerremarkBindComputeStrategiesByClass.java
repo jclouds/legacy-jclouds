@@ -19,23 +19,23 @@
 
 package org.jclouds.vcloud.terremark.compute.config;
 
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.vcloud.compute.config.VCloudExpressBindComputeStrategiesByClass;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudAddNodeWithTagStrategy;
+import org.jclouds.vcloud.terremark.compute.strategy.StartVAppWithGroupEncodedIntoName;
 
 /**
  * @author Adrian Cole
  */
 public class TerremarkBindComputeStrategiesByClass extends VCloudExpressBindComputeStrategiesByClass {
    @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
+   protected Class<? extends CreateNodesInGroupThenAddToSet> defineRunNodesAndAddToSetStrategy() {
       return TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
    }
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return TerremarkVCloudAddNodeWithTagStrategy.class;
+   protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
+      return StartVAppWithGroupEncodedIntoName.class;
    }
 }

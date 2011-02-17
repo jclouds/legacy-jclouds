@@ -86,6 +86,18 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
                .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
    }
 
+
+   @Test
+   public void testSetLastModifiedIso8601() {
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+               HttpHeaders.LAST_MODIFIED, "2011-01-28T17:35:08.000+0000"));
+      MutableBlobMetadata metadata = blobMetadataProvider.get();
+      parser.parseLastModifiedOrThrowException(from, metadata);
+      assertEquals(metadata.getLastModified(), new SimpleDateFormatDateService()
+               .iso8601DateParse("2011-01-28T17:35:08.000Z"));
+   }
+
+   
    @Test(expectedExceptions = HttpException.class)
    public void testSetLastModifiedException() {
       HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));

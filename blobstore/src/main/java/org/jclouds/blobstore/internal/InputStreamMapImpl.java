@@ -30,11 +30,13 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
@@ -66,12 +68,11 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    protected final Crypto crypto;
 
    @Inject
-   public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
-            GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
-            ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            String containerName, ListContainerOptions options, Crypto crypto) {
-      super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
-               containerName, options);
+   public InputStreamMapImpl(BlobStore connection, Provider<BlobBuilder> blobBuilders,
+         GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
+         ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy, String containerName,
+         ListContainerOptions options, Crypto crypto) {
+      super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy, containerName, options);
       this.crypto = crypto;
    }
 
@@ -96,12 +97,11 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
 
    @Override
    public Collection<InputStream> values() {
-      return newArrayList(transform(getAllBlobs.execute(containerName, options),
-               new Function<Blob, InputStream>() {
-                  public InputStream apply(Blob from) {
-                     return getInputStreamOrNull(from);
-                  }
-               }));
+      return newArrayList(transform(getAllBlobs.execute(containerName, options), new Function<Blob, InputStream>() {
+         public InputStream apply(Blob from) {
+            return getInputStreamOrNull(from);
+         }
+      }));
    }
 
    @Override
@@ -132,22 +132,21 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     */
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
-      putBlobsStrategy.execute(containerName, transform(map.entrySet(),
-               new Function<Map.Entry<? extends String, ? extends Object>, Blob>() {
-                  @Override
-                  public Blob apply(Map.Entry<? extends String, ? extends Object> from) {
-                     String name = from.getKey();
-                     Object value = from.getValue();
-                     return newBlobWithMD5(name, value);
-                  }
+      putBlobsStrategy.execute(containerName,
+            transform(map.entrySet(), new Function<Map.Entry<? extends String, ? extends Object>, Blob>() {
+               @Override
+               public Blob apply(Map.Entry<? extends String, ? extends Object> from) {
+                  String name = from.getKey();
+                  Object value = from.getValue();
+                  return newBlobWithMD5(name, value);
+               }
 
-               }));
+            }));
    }
 
    @VisibleForTesting
    Blob newBlobWithMD5(String name, Object value) {
-      Blob blob = blobstore.newBlob(prefixer.apply(name));
-      blob.setPayload(newPayload(value));
+      Blob blob = blobstore.blobBuilder(prefixer.apply(name)).payload(newPayload(value)).build();
       try {
          Payloads.calculateMD5(blob, crypto.md5());
       } catch (IOException e) {

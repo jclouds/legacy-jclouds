@@ -20,7 +20,7 @@
 package org.jclouds.elasticstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.List;
 import java.util.Map;
@@ -92,7 +92,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.ids(from.getUuid());
       builder.name(from.getName());
       builder.location(locationSupplier.get());
-      builder.tag(parseTagFromName(from.getName()));
+      builder.group(parseGroupFromName(from.getName()));
 
       String imageId = getImageIdFromServer.apply(from);
       if (imageId != null) {

@@ -1,0 +1,155 @@
+<InternetServices xmlns="urn:tmrk:eCloudExtensions-2.6"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <InternetService>
+        <Id>18792</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/18792</Href>
+        <Name>cl960b-62752757-443</Name>
+        <PublicIpAddress>
+            <Id>29232</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/29232</Href>
+            <Name>209.251.180.145</Name>
+        </PublicIpAddress>
+        <Port>443</Port>
+        <Protocol>TCP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout>2</Timeout>
+        <Description />
+        <RedirectURL />
+        <Monitor i:nil="true" />
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>SourceIP</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+    <InternetService>
+        <Id>19264</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/19264</Href>
+        <Name>OpenVPN</Name>
+        <PublicIpAddress>
+            <Id>36648</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/36648</Href>
+            <Name>209.251.180.245</Name>
+        </PublicIpAddress>
+        <Port>1194</Port>
+        <Protocol>UDP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout>2</Timeout>
+        <Description />
+        <RedirectURL />
+        <Monitor i:nil="true" />
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>SourceIP</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+    <InternetService>
+        <Id>20870</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/20870</Href>
+        <Name>cid6b2-64d1f1e8-443</Name>
+        <PublicIpAddress>
+            <Id>40097</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/40097</Href>
+            <Name>209.251.181.14</Name>
+        </PublicIpAddress>
+        <Port>443</Port>
+        <Protocol>TCP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout>2</Timeout>
+        <Description />
+        <RedirectURL />
+        <Monitor i:nil="true" />
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>SourceIP</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+    <InternetService>
+        <Id>21170</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/21170</Href>
+        <Name>cic908-6b6a0ac2-443</Name>
+        <PublicIpAddress>
+            <Id>40162</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/40162</Href>
+            <Name>209.251.181.16</Name>
+        </PublicIpAddress>
+        <Port>443</Port>
+        <Protocol>TCP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout i:nil="true" />
+        <Description />
+        <RedirectURL />
+        <Monitor>
+            <MonitorType>Disabled</MonitorType>
+            <UrlSendString i:nil="true" />
+            <HttpHeader i:nil="true" />
+            <ReceiveString i:nil="true" />
+            <Interval>0</Interval>
+            <ResponseTimeOut>0</ResponseTimeOut>
+            <DownTime>0</DownTime>
+            <Retries>0</Retries>
+            <IsEnabled>true</IsEnabled>
+        </Monitor>
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>None</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+    <InternetService>
+        <Id>21319</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/21319</Href>
+        <Name>ci7eeb-7a6baa70-443</Name>
+        <PublicIpAddress>
+            <Id>40203</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/40203</Href>
+            <Name>209.251.181.17</Name>
+        </PublicIpAddress>
+        <Port>443</Port>
+        <Protocol>TCP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout>2</Timeout>
+        <Description />
+        <RedirectURL />
+        <Monitor>
+            <MonitorType>Disabled</MonitorType>
+            <UrlSendString i:nil="true" />
+            <HttpHeader i:nil="true" />
+            <ReceiveString i:nil="true" />
+            <Interval>0</Interval>
+            <ResponseTimeOut>0</ResponseTimeOut>
+            <DownTime>0</DownTime>
+            <Retries>0</Retries>
+            <IsEnabled>true</IsEnabled>
+        </Monitor>
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>SourceIP</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+    <InternetService>
+        <Id>13798</Id>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/internetService/13798</Href>
+        <Name>cl8116-4df02afd-443</Name>
+        <PublicIpAddress>
+            <Id>48625</Id>
+            <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.6/extensions/publicIp/48625</Href>
+            <Name>209.251.181.60</Name>
+        </PublicIpAddress>
+        <Port>443</Port>
+        <Protocol>TCP</Protocol>
+        <Enabled>true</Enabled>
+        <Timeout>2</Timeout>
+        <Description />
+        <RedirectURL />
+        <Monitor i:nil="true" />
+        <IsBackupService>false</IsBackupService>
+        <BackupService i:nil="true" />
+        <BackupOf />
+        <PersistenceType>SourceIP</PersistenceType>
+        <TrustedNetworkGroup i:nil="true" />
+    </InternetService>
+</InternetServices>
