@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what asyncJobs information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2/api/user/listAsyncJobs.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listAsyncJobs.html" />
  * @author Adrian Cole
  */
 public class ListAsyncJobsOptions extends BaseHttpRequestOptions {

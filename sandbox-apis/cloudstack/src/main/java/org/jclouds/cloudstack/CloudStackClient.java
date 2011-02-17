@@ -36,7 +36,7 @@ import org.jclouds.rest.annotations.Delegate;
  * <p/>
  * 
  * @see CloudStackAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2/api/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)

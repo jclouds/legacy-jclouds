@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what zones information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2/api/user/listZones.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listZones.html" />
  * @author Adrian Cole
  */
 public class ListZonesOptions extends BaseHttpRequestOptions {

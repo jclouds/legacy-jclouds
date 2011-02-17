@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what virtual machines information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2/api/user/listVirtualMachines.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listVirtualMachines.html" />
  * @author Adrian Cole
  */
 public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {

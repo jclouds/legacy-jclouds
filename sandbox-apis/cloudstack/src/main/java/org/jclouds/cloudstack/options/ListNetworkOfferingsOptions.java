@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what network offerings are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2/api/user/listNetworkOfferings.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listNetworkOfferings.html" />
  * @author Adrian Cole
  */
 public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {

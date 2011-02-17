@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what disk offerings are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2/api/user/deployVirtualMachine.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/deployVirtualMachine.html" />
  * @author Adrian Cole
  */
 public class DeployVirtualMachineOptions extends BaseHttpRequestOptions {
