@@ -20,11 +20,13 @@
 package org.jclouds.vcloud.terremark;
 
 import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
@@ -54,5 +56,7 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
    TerremarkOrgNetwork getNetwork(URI network);
 
    TerremarkNetwork getTerremarkNetwork(URI network);
+   
+   Set<IpAddress> getIpAddresses(URI network);
 
 }

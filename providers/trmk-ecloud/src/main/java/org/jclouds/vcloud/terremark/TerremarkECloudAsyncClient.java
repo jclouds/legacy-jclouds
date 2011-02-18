@@ -23,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICESLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
+import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.IPADDRESS_LIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.KEYSLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.PUBLICIP_XML;
 
@@ -50,6 +51,7 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.terremark.binders.BindCreateKeyToXmlPayload;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -61,6 +63,7 @@ import org.jclouds.vcloud.terremark.functions.VDCURIToPublicIPsEndpoint;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
+import org.jclouds.vcloud.terremark.xml.IpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairByNameHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
@@ -239,4 +242,13 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends TerremarkNetwork> getTerremarkNetwork(@EndpointParam URI network);
+   
+   /**
+    * @see TerremarkECloudClient#getIpAddresses
+    */
+   @GET
+   @Consumes(IPADDRESS_LIST_XML)
+   @XMLResponseParser(IpAddressesHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<? extends Set<IpAddress>> getIpAddresses(@EndpointParam URI network);
 }
