@@ -1811,7 +1811,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
       assertEquals(request.getHeaders().get(HttpHeaders.IF_MODIFIED_SINCE),
             Collections.singletonList(dateService.rfc822DateFormat(date)));
    }
@@ -1825,7 +1825,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
       assertEquals(request.getHeaders().get(HttpHeaders.IF_MODIFIED_SINCE),
             Collections.singletonList(dateService.rfc822DateFormat(date)));
    }
@@ -1842,7 +1842,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions.class);
       HttpRequest request = factory(TestRequest.class).createRequest(method, new Object[] { "1", options });
       assertRequestLineEquals(request, "GET http://localhost:9999/1?prefix=1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: localhost\n");
+      assertNonPayloadHeadersEqual(request, "Host: localhost:9999\n");
       assertPayloadEquals(request, null, null, false);
    }
 
@@ -1879,7 +1879,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       HttpRequest request = factory(TestRequest.class).createRequest(method, "1", options);
 
       assertRequestLineEquals(request, "PUT http://localhost:9999/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: localhost\n");
+      assertNonPayloadHeadersEqual(request, "Host: localhost:9999\n");
       assertPayloadEquals(request, "foo", "application/unknown", false);
    }
 
@@ -1938,7 +1938,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
    }
 
    public interface TestVirtualHost {
@@ -1961,7 +1961,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
    }
 
    @Test

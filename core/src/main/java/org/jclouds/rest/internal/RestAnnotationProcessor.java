@@ -441,8 +441,12 @@ public class RestAnnotationProcessor<T> {
       if (r != null)
          headers.putAll(r.getHeaders());
 
-      if (shouldAddHostHeader(method))
-         headers.put(HOST, endpoint.getHost());
+      if (shouldAddHostHeader(method)) {
+         StringBuilder hostHeader = new StringBuilder(endpoint.getHost());
+         if (endpoint.getPort() != -1)
+            hostHeader.append(":").append(endpoint.getPort());
+         headers.put(HOST, hostHeader.toString());
+      }
 
       Payload payload = null;
       HttpRequestOptions options = findOptionsIn(method, args);
