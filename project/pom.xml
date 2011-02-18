@@ -78,45 +78,13 @@
 
     <repositories>
         <repository>
-            <id>jclouds-googlecode-deploy</id>
-            <url>http://jclouds.googlecode.com/svn/repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
             <snapshots>
                 <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>googlecode.java-xmlbuilder</id>
-            <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>clojure</id>
-            <url>http://build.clojure.org/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sonatype-github-releases</id>
-            <url>http://oss.sonatype.org/content/repositories/github-releases</url>
-            <snapshots>
-                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
@@ -137,12 +105,6 @@
             <url>file://${basedir}/target/dist/site/jclouds-testing/</url>
         </site>
     </distributionManagement>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jclouds-googlecode-deploy</id>
-            <url>http://jclouds.googlecode.com/svn/repo</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <developers>
         <developer>
@@ -264,7 +226,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>swank-clojure</groupId>
+            <groupId>com.github.technomancy</groupId>
             <artifactId>swank-clojure</artifactId>
             <version>1.2.1</version>
             <scope>test</scope>

@@ -40,6 +40,7 @@
     </scm>
 
     <repositories>
+        <!-- TODO to be removed when the dependencies are in central -->
         <repository>
             <id>jersey</id>
             <url>http://download.java.net/maven/2</url>
@@ -90,8 +91,8 @@
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
-            <artifactId>inject</artifactId>
-            <version>1.0</version>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
