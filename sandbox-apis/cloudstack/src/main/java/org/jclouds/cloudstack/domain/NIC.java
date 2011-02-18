@@ -28,6 +28,79 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class NIC {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private URI broadcastURI;
+      private String gateway;
+      private String IPAddress;
+      private boolean isDefault;
+      private URI isolationURI;
+      private String netmask;
+      private long networkId;
+      private TrafficType trafficType;
+      private GuestIPType guestIPType;
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder broadcastURI(URI broadcastURI) {
+         this.broadcastURI = broadcastURI;
+         return this;
+      }
+
+      public Builder gateway(String gateway) {
+         this.gateway = gateway;
+         return this;
+      }
+
+      public Builder IPAddress(String IPAddress) {
+         this.IPAddress = IPAddress;
+         return this;
+      }
+
+      public Builder isDefault(boolean isDefault) {
+         this.isDefault = isDefault;
+         return this;
+      }
+
+      public Builder isolationURI(URI isolationURI) {
+         this.isolationURI = isolationURI;
+         return this;
+      }
+
+      public Builder netmask(String netmask) {
+         this.netmask = netmask;
+         return this;
+      }
+
+      public Builder networkId(long networkId) {
+         this.networkId = networkId;
+         return this;
+      }
+
+      public Builder trafficType(TrafficType trafficType) {
+         this.trafficType = trafficType;
+         return this;
+      }
+
+      public Builder guestIPType(GuestIPType guestIPType) {
+         this.guestIPType = guestIPType;
+         return this;
+      }
+
+      public NIC build() {
+         return new NIC(id, broadcastURI, gateway, IPAddress, isDefault, isolationURI, netmask, networkId, trafficType,
+               guestIPType);
+
+      }
+   }
+
    private long id;
    @SerializedName("broadcasturi")
    private URI broadcastURI;

@@ -35,6 +35,267 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class VirtualMachine {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String account;
+      private long cpuCount;
+      private long cpuSpeed;
+      private Long cpuUsed;
+      private String displayName;
+      private Date created;
+      private String domain;
+      private long domainId;
+      private boolean usesVirtualNetwork;
+      private String group;
+      private long groupId;
+      private long guestOSId;
+      private boolean HAEnabled;
+      private long hostId;
+      private String hostname;
+      private String IPAddress;
+      private String ISODisplayText;
+      private long ISOId;
+      private String ISOName;
+      private Long jobId;
+      private Integer jobStatus;
+      private long memory;
+      private String name;
+      private Long networkKbsRead;
+      private Long networkKbsWrite;
+      private String password;
+      private boolean passwordEnabled;
+      private long rootDeviceId;
+      private String rootDeviceType;
+      private long serviceOfferingId;
+      private String serviceOfferingName;
+      private State state;
+      private String templateDisplayText;
+      private long templateId;
+      private String templateName;
+      private long zoneId;
+      private String zoneName;
+      private Set<NIC> nics = ImmutableSet.<NIC> of();
+      private String hypervisor;
+      private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder cpuCount(long cpuCount) {
+         this.cpuCount = cpuCount;
+         return this;
+      }
+
+      public Builder cpuSpeed(long cpuSpeed) {
+         this.cpuSpeed = cpuSpeed;
+         return this;
+      }
+
+      public Builder cpuUsed(long cpuUsed) {
+         this.cpuUsed = cpuUsed;
+         return this;
+      }
+
+      public Builder displayName(String displayName) {
+         this.displayName = displayName;
+         return this;
+      }
+
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder usesVirtualNetwork(boolean usesVirtualNetwork) {
+         this.usesVirtualNetwork = usesVirtualNetwork;
+         return this;
+      }
+
+      public Builder group(String group) {
+         this.group = group;
+         return this;
+      }
+
+      public Builder groupId(long groupId) {
+         this.groupId = groupId;
+         return this;
+      }
+
+      public Builder guestOSId(long guestOSId) {
+         this.guestOSId = guestOSId;
+         return this;
+      }
+
+      public Builder isHAEnabled(boolean HAEnabled) {
+         this.HAEnabled = HAEnabled;
+         return this;
+      }
+
+      public Builder hostId(long hostId) {
+         this.hostId = hostId;
+         return this;
+      }
+
+      public Builder hostname(String hostname) {
+         this.hostname = hostname;
+         return this;
+      }
+
+      public Builder IPAddress(String IPAddress) {
+         this.IPAddress = IPAddress;
+         return this;
+      }
+
+      public Builder ISODisplayText(String ISODisplayText) {
+         this.ISODisplayText = ISODisplayText;
+         return this;
+      }
+
+      public Builder ISOId(long ISOId) {
+         this.ISOId = ISOId;
+         return this;
+      }
+
+      public Builder ISOName(String ISOName) {
+         this.ISOName = ISOName;
+         return this;
+      }
+
+      public Builder jobId(Long jobId) {
+         this.jobId = jobId;
+         return this;
+      }
+
+      public Builder jobStatus(int jobStatus) {
+         this.jobStatus = jobStatus;
+         return this;
+      }
+
+      public Builder memory(long memory) {
+         this.memory = memory;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder networkKbsRead(Long networkKbsRead) {
+         this.networkKbsRead = networkKbsRead;
+         return this;
+      }
+
+      public Builder networkKbsWrite(Long networkKbsWrite) {
+         this.networkKbsWrite = networkKbsWrite;
+         return this;
+      }
+
+      public Builder password(String password) {
+         this.password = password;
+         return this;
+      }
+
+      public Builder passwordEnabled(boolean passwordEnabled) {
+         this.passwordEnabled = passwordEnabled;
+         return this;
+      }
+
+      public Builder rootDeviceId(long rootDeviceId) {
+         this.rootDeviceId = rootDeviceId;
+         return this;
+      }
+
+      public Builder rootDeviceType(String rootDeviceType) {
+         this.rootDeviceType = rootDeviceType;
+         return this;
+      }
+
+      public Builder serviceOfferingId(long serviceOfferingId) {
+         this.serviceOfferingId = serviceOfferingId;
+         return this;
+      }
+
+      public Builder serviceOfferingName(String serviceOfferingName) {
+         this.serviceOfferingName = serviceOfferingName;
+         return this;
+      }
+
+      public Builder state(State state) {
+         this.state = state;
+         return this;
+      }
+
+      public Builder templateDisplayText(String templateDisplayText) {
+         this.templateDisplayText = templateDisplayText;
+         return this;
+      }
+
+      public Builder templateId(long templateId) {
+         this.templateId = templateId;
+         return this;
+      }
+
+      public Builder templateName(String templateName) {
+         this.templateName = templateName;
+         return this;
+      }
+
+      public Builder zoneId(long zoneId) {
+         this.zoneId = zoneId;
+         return this;
+      }
+
+      public Builder zoneName(String zoneName) {
+         this.zoneName = zoneName;
+         return this;
+      }
+
+      public Builder nics(Iterable<NIC> nics) {
+         this.nics = ImmutableSet.<NIC> copyOf(checkNotNull(nics, "nics"));
+         return this;
+      }
+
+      public Builder hypervisor(String hypervisor) {
+         this.hypervisor = hypervisor;
+         return this;
+      }
+
+      public Builder securityGroups(Set<SecurityGroup> securityGroups) {
+         this.securityGroups = ImmutableSet.<SecurityGroup> copyOf(checkNotNull(securityGroups, "securityGroups"));
+         return this;
+      }
+
+      public VirtualMachine build() {
+         return new VirtualMachine(id, account, cpuCount, cpuSpeed, cpuUsed, displayName, created, domain, domainId,
+               usesVirtualNetwork, group, groupId, guestOSId, HAEnabled, hostId, hostname, IPAddress, ISODisplayText,
+               ISOId, ISOName, jobId, jobStatus, memory, name, networkKbsRead, networkKbsWrite, password,
+               passwordEnabled, rootDeviceId, rootDeviceType, securityGroups, serviceOfferingId, serviceOfferingName,
+               state, templateDisplayText, templateId, templateName, zoneId, zoneName, nics, hypervisor);
+      }
+   }
+
    public static enum State {
       STARTING, RUNNING, STOPPING, STOPPED, DESTROYED, EXPUNGING, MIGRATING, ERROR, UNKNOWN, SHUTDOWNED, UNRECOGNIZED;
       @Override
@@ -91,7 +352,7 @@ public class VirtualMachine {
    private Long jobId;
    @SerializedName("jobstatus")
    @Nullable
-   private String jobStatus;
+   private Integer jobStatus;
    private long memory;
    private String name;
    @SerializedName("networkkbsread")
@@ -127,14 +388,14 @@ public class VirtualMachine {
    @SerializedName("securitygroup")
    private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, long cpuUsed, String displayName,
+   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, Long cpuUsed, String displayName,
          Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
          long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
-         long iSOId, String iSOName, Long jobId, String jobStatus, long memory, String name, Long networkKbsRead,
+         long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
          Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
          Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
-         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName,
-         Set<NIC> nics, String hypervisor) {
+         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName, Set<NIC> nics,
+         String hypervisor) {
       this.id = id;
       this.account = account;
       this.cpuCount = cpuCount;
@@ -165,7 +426,7 @@ public class VirtualMachine {
       this.passwordEnabled = passwordEnabled;
       this.rootDeviceId = rootDeviceId;
       this.rootDeviceType = rootDeviceType;
-      this.securityGroups =ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
+      this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
       this.serviceOfferingId = serviceOfferingId;
       this.serviceOfferingName = serviceOfferingName;
       this.state = state;
@@ -339,7 +600,7 @@ public class VirtualMachine {
     * @return shows the current pending asynchronous job status
     */
    @Nullable
-   public String getJobStatus() {
+   public Integer getJobStatus() {
       return jobStatus;
    }
 
@@ -694,18 +955,19 @@ public class VirtualMachine {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed + ", cpuUsed="
-            + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain + ", domainId="
-            + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group + ", groupId=" + groupId
-            + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId + ", hostname=" + hostname
-            + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText + ", ISOId=" + ISOId + ", ISOName="
-            + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory + ", name=" + name
-            + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite + ", password=" + password
-            + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType="
-            + rootDeviceType + ", securityGroups=" + securityGroups + ", serviceOfferingId=" + serviceOfferingId
+      return "[id=" + id + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed
+            + ", cpuUsed=" + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain
+            + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group
+            + ", groupId=" + groupId + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId
+            + ", hostname=" + hostname + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText + ", ISOId="
+            + ISOId + ", ISOName=" + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory
+            + ", name=" + name + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite
+            + ", password=" + password + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId
+            + ", rootDeviceType=" + rootDeviceType + ", serviceOfferingId=" + serviceOfferingId
             + ", serviceOfferingName=" + serviceOfferingName + ", state=" + state + ", templateDisplayText="
             + templateDisplayText + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId="
-            + zoneId + ", zoneName=" + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + "]";
+            + zoneId + ", zoneName=" + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + ", securityGroups="
+            + securityGroups + "]";
    }
 
 }
