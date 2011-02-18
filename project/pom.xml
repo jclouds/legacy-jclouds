@@ -197,6 +197,11 @@
                 <artifactId>jetty-ssl</artifactId>
                 <version>7.0.0.pre5</version>
             </dependency>
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>0.1.44-1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
