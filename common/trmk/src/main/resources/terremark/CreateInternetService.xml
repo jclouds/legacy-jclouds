@@ -6,4 +6,5 @@
 	<Port>{port}</Port>
 	<Enabled>{enabled}</Enabled>
 	{description}
+	{monitor}
 </CreateInternetServiceRequest>

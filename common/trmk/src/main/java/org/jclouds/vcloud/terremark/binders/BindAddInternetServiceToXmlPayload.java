@@ -63,8 +63,19 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "protocol", protocol, "port", port, "enabled", enabled, "ns", ns));
       payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
-            : String.format("\n    <Description>%s</Description>", description));
+            : String.format("\n\t<Description>%s</Description>", description));
+      payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("monitor"), getMonitorString(postParams));
       return stringBinder.bindToRequest(request, payload);
+   }
+   
+   private String getMonitorString(Map<String, String> postParams)
+   {
+      // Sending no <Monitor> element to Terremark will result in default behavior, which is to create a monitor.
+      String monitor = postParams.get("monitor");
+      if (monitor == null || "true".equalsIgnoreCase(monitor)) {
+          return "";
+      }
+      return "\n\t<Monitor><MonitorType>Disabled</MonitorType></Monitor>";
    }
 
    @Override

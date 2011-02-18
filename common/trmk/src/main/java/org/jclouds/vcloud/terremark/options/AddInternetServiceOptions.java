@@ -38,12 +38,17 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
    String description = null;
    @VisibleForTesting
    String enabled = "true";
+   @VisibleForTesting
+   Boolean monitorEnabled = null;
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       Map<String, String> copy = Maps.newHashMap();
       copy.putAll(postParams);
       copy.put("description", description);
       copy.put("enabled", enabled);
+      if (monitorEnabled != null) {
+         copy.put("monitor", monitorEnabled.toString());
+      }
       return super.bindToRequest(request, copy);
    }
 
@@ -51,12 +56,15 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
       this.enabled = "false";
       return this;
    }
-
+   public AddInternetServiceOptions monitorDisabled() {
+      this.monitorEnabled = false;
+      return this;
+   }
    public AddInternetServiceOptions withDescription(String description) {
       this.description = description;
       return this;
    }
-
+   
    public static class Builder {
 
       /**
@@ -67,6 +75,14 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
          return options.withDescription(description);
       }
 
+      /**
+       * @see AddInternetServiceOptions#monitorDisabled()
+       */
+      public static AddInternetServiceOptions monitorDisabled() {
+         AddInternetServiceOptions options = new AddInternetServiceOptions();
+         return options.monitorDisabled();
+      }
+      
       /**
        * @see AddInternetServiceOptions#disabled()
        */
