@@ -72,7 +72,6 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.44</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
