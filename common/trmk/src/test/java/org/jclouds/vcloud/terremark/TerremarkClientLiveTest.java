@@ -33,8 +33,9 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -46,8 +47,8 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.jclouds.vcloud.VCloudExpressMediaType;
@@ -65,9 +66,11 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
+import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -102,6 +105,17 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
                .getHref())) {
          assertNotNull(tmClient.getNodes(service.getId()));
       }
+   }
+   
+   @Test
+   public void testCreateInternetServiceMonitorDisabled() throws Exception {
+      VDC vdc = tmClient.findVDCInOrgNamed(null, null);
+      Set<PublicIpAddress> publicIpAddresses = tmClient.getPublicIpsAssociatedWithVDC(vdc.getHref());
+      PublicIpAddress publicIp = publicIpAddresses.iterator().next();
+      System.out.println("PublicIP: " + publicIp.getAddress());
+      
+      tmClient.addInternetServiceToExistingIp(publicIp.getId(), PREFIX + "-no-monitoring", Protocol.TCP, 1234, 
+                                              AddInternetServiceOptions.Builder.monitorDisabled());
    }
 
    @Test

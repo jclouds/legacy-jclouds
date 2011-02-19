@@ -5,6 +5,7 @@
 	<Protocol>TCP</Protocol>
 	<Port>22</Port>
 	<Enabled>false</Enabled>
-	
-    <Description>yahoo</Description>
+
+	<Description>yahoo</Description>
+	<Monitor><MonitorType>Disabled</MonitorType></Monitor>
 </CreateInternetServiceRequest>

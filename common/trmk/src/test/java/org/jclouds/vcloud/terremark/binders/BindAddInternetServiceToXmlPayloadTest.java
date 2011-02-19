@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark.binders;
 
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,6 +82,41 @@ public class BindAddInternetServiceToXmlPayloadTest {
       map.put("description", "name TCP 22");
       binder.bindToRequest(request, map);
       assertEquals(request.getPayload().getRawContent(), expected);
-
    }
+   
+   public void testDisableMonitoringEnabled() throws IOException {
+       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+       BindAddInternetServiceToXmlPayload binder = injector
+                .getInstance(BindAddInternetServiceToXmlPayload.class);
+
+       Map<String, String> map = Maps.newHashMap();
+       map.put("name", "name");
+       map.put("protocol", "TCP");
+       map.put("port", "22");
+       map.put("enabled", "true");
+       
+       map.put("monitor", "true");
+       
+       binder.bindToRequest(request, map);
+       String rawContent = (String) request.getPayload().getRawContent();
+       assertTrue(rawContent.indexOf("<MonitorType>Disabled</MonitorType>") == -1); 
+    }
+
+   public void testDisableMonitoringDisabled() throws IOException {
+       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+       BindAddInternetServiceToXmlPayload binder = injector
+                .getInstance(BindAddInternetServiceToXmlPayload.class);
+
+       Map<String, String> map = Maps.newHashMap();
+       map.put("name", "name");
+       map.put("protocol", "TCP");
+       map.put("port", "22");
+       map.put("enabled", "true");
+       
+       map.put("monitor", "false");
+       
+       binder.bindToRequest(request, map);
+       String rawContent = (String) request.getPayload().getRawContent();
+       assertTrue(rawContent.indexOf("<MonitorType>Disabled</MonitorType>") != -1);
+    }
 }

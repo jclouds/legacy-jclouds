@@ -67,4 +67,15 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.keysList+xml"
     */
    public final static MediaType KEYSLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.keysList+xml");
+   
+   
+   /**
+    * "application/vnd.tmrk.ecloud.ipAddressList+xml"
+    */
+   public final static String IPADDRESS_LIST_XML = "application/vnd.tmrk.ecloud.ipAddressList+xml";
+   
+   /**
+    * "application/vnd.tmrk.ecloud.ipAddressList+xml"
+    */
+   public final static MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.ipAddressList+xml");
 }
