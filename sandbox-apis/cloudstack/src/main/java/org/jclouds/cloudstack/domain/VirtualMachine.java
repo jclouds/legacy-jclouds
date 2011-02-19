@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class VirtualMachine {
+public class VirtualMachine implements Comparable<VirtualMachine> {
    public static Builder builder() {
       return new Builder();
    }
@@ -400,7 +400,7 @@ public class VirtualMachine {
       this.account = account;
       this.cpuCount = cpuCount;
       this.cpuSpeed = cpuSpeed;
-      this.cpuUsed = cpuUsed + "";
+      this.cpuUsed = cpuUsed != null ? cpuUsed + "" : null;
       this.displayName = displayName;
       this.created = created;
       this.domain = domain;
@@ -777,7 +777,6 @@ public class VirtualMachine {
       result = prime * result + ((securityGroups == null) ? 0 : securityGroups.hashCode());
       result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
       result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((templateDisplayText == null) ? 0 : templateDisplayText.hashCode());
       result = prime * result + (int) (templateId ^ (templateId >>> 32));
       result = prime * result + ((templateName == null) ? 0 : templateName.hashCode());
@@ -927,8 +926,6 @@ public class VirtualMachine {
             return false;
       } else if (!serviceOfferingName.equals(other.serviceOfferingName))
          return false;
-      if (state != other.state)
-         return false;
       if (templateDisplayText == null) {
          if (other.templateDisplayText != null)
             return false;
@@ -955,19 +952,22 @@ public class VirtualMachine {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed
-            + ", cpuUsed=" + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain
-            + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group
-            + ", groupId=" + groupId + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId
-            + ", hostname=" + hostname + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText + ", ISOId="
-            + ISOId + ", ISOName=" + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory
-            + ", name=" + name + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite
-            + ", password=" + password + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId
-            + ", rootDeviceType=" + rootDeviceType + ", serviceOfferingId=" + serviceOfferingId
-            + ", serviceOfferingName=" + serviceOfferingName + ", state=" + state + ", templateDisplayText="
-            + templateDisplayText + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId="
-            + zoneId + ", zoneName=" + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + ", securityGroups="
-            + securityGroups + "]";
+      return "[id=" + id + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed + ", cpuUsed="
+            + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain + ", domainId="
+            + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group + ", groupId=" + groupId
+            + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId + ", hostname=" + hostname
+            + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText + ", ISOId=" + ISOId + ", ISOName="
+            + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory + ", name=" + name
+            + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite + ", password=" + password
+            + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType="
+            + rootDeviceType + ", serviceOfferingId=" + serviceOfferingId + ", serviceOfferingName="
+            + serviceOfferingName + ", state=" + state + ", templateDisplayText=" + templateDisplayText
+            + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId=" + zoneId + ", zoneName="
+            + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + ", securityGroups=" + securityGroups + "]";
    }
 
+   @Override
+   public int compareTo(VirtualMachine arg0) {
+      return new Long(id).compareTo(arg0.getId());
+   }
 }

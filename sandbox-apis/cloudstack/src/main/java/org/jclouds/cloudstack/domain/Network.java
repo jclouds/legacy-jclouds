@@ -29,14 +29,195 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class Network {
+public class Network implements Comparable<Network> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String account;
+      private String broadcastDomainType;
+      private URI broadcastURI;
+      private String displayText;
+      private List<String> DNS = ImmutableList.of();
+      private String domain;
+      private long domainId;
+      private String endIP;
+      private String gateway;
+      private boolean isDefault;
+      private boolean isShared;
+      private boolean isSystem;
+      private String netmask;
+      private String networkDomain;
+      private String networkOfferingAvailability;
+      private String networkOfferingDisplayText;
+      private long networkOfferingId;
+      private String networkOfferingName;
+      private long related;
+      private String startIP;
+      private String name;
+      private String state;
+      private GuestIPType guestIPType;
+      private String VLAN;
+      private TrafficType trafficType;
+      private long zoneId;
+      private Set<? extends NetworkService> services = ImmutableSet.<NetworkService> of();
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder broadcastDomainType(String broadcastDomainType) {
+         this.broadcastDomainType = broadcastDomainType;
+         return this;
+      }
+
+      public Builder broadcastURI(URI broadcastURI) {
+         this.broadcastURI = broadcastURI;
+         return this;
+      }
+
+      public Builder displayText(String displayText) {
+         this.displayText = displayText;
+         return this;
+      }
+
+      public Builder DNS(List<String> DNS) {
+         this.DNS = ImmutableList.copyOf(checkNotNull(DNS, "DNS"));
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder endIP(String endIP) {
+         this.endIP = endIP;
+         return this;
+      }
+
+      public Builder gateway(String gateway) {
+         this.gateway = gateway;
+         return this;
+      }
+
+      public Builder isDefault(boolean isDefault) {
+         this.isDefault = isDefault;
+         return this;
+      }
+
+      public Builder isShared(boolean isShared) {
+         this.isShared = isShared;
+         return this;
+      }
+
+      public Builder isSystem(boolean isSystem) {
+         this.isSystem = isSystem;
+         return this;
+      }
+
+      public Builder netmask(String netmask) {
+         this.netmask = netmask;
+         return this;
+      }
+
+      public Builder networkDomain(String networkDomain) {
+         this.networkDomain = networkDomain;
+         return this;
+      }
+
+      public Builder networkOfferingAvailability(String networkOfferingAvailability) {
+         this.networkOfferingAvailability = networkOfferingAvailability;
+         return this;
+      }
+
+      public Builder networkOfferingDisplayText(String networkOfferingDisplayText) {
+         this.networkOfferingDisplayText = networkOfferingDisplayText;
+         return this;
+      }
+
+      public Builder networkOfferingId(long networkOfferingId) {
+         this.networkOfferingId = networkOfferingId;
+         return this;
+      }
+
+      public Builder networkOfferingName(String networkOfferingName) {
+         this.networkOfferingName = networkOfferingName;
+         return this;
+      }
+
+      public Builder related(long related) {
+         this.related = related;
+         return this;
+      }
+
+      public Builder startIP(String startIP) {
+         this.startIP = startIP;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder state(String state) {
+         this.state = state;
+         return this;
+      }
+
+      public Builder guestIPType(GuestIPType guestIPType) {
+         this.guestIPType = guestIPType;
+         return this;
+      }
+
+      public Builder VLAN(String VLAN) {
+         this.VLAN = VLAN;
+         return this;
+      }
+
+      public Builder trafficType(TrafficType trafficType) {
+         this.trafficType = trafficType;
+         return this;
+      }
+
+      public Builder zoneId(long zoneId) {
+         this.zoneId = zoneId;
+         return this;
+      }
+
+      public Builder services(Set<? extends NetworkService> services) {
+         this.services = ImmutableSet.<NetworkService> copyOf(checkNotNull(services, "services"));
+         return this;
+      }
+
+      public Network build() {
+         return new Network(id, account, broadcastDomainType, broadcastURI, displayText, DNS, domain, domainId, endIP,
+               gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability,
+               networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state,
+               guestIPType, VLAN, trafficType, zoneId, services);
+      }
+   }
+
    private long id;
    private String account;
    @SerializedName("broadcastdomaintype")
@@ -73,7 +254,7 @@ public class Network {
    private long networkOfferingId;
    @SerializedName("networkofferingname")
    private String networkOfferingName;
-   private String related;
+   private long related;
    @SerializedName("startip")
    private String startIP;
    private String name;
@@ -100,7 +281,7 @@ public class Network {
    public Network(long id, String account, String broadcastDomainType, URI broadcastURI, String displayText,
          List<String> DNS, String domain, long domainId, String endIP, String gateway, boolean isDefault,
          boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
-         String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, String related,
+         String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, long related,
          String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
          long zoneId, Set<? extends NetworkService> services) {
       this.id = id;
@@ -179,7 +360,7 @@ public class Network {
     * @return the external DNS for the network
     */
    public List<String> getDNS() {
-      Builder<String> builder = ImmutableList.builder();
+      ImmutableList.Builder<String> builder = ImmutableList.builder();
       if (DNS1 != null && !"".equals(DNS1))
          builder.add(DNS1);
       if (DNS2 != null && !"".equals(DNS2))
@@ -336,7 +517,7 @@ public class Network {
     * 
     * @return related to what other network configuration
     */
-   public String getRelated() {
+   public long getRelated() {
       return related;
    }
 
@@ -391,7 +572,7 @@ public class Network {
       result = prime * result + ((networkOfferingDisplayText == null) ? 0 : networkOfferingDisplayText.hashCode());
       result = prime * result + (int) (networkOfferingId ^ (networkOfferingId >>> 32));
       result = prime * result + ((networkOfferingName == null) ? 0 : networkOfferingName.hashCode());
-      result = prime * result + ((related == null) ? 0 : related.hashCode());
+      result = prime * result + (int) (related ^ (related >>> 32));
       result = prime * result + ((services == null) ? 0 : services.hashCode());
       result = prime * result + ((startIP == null) ? 0 : startIP.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
@@ -503,10 +684,7 @@ public class Network {
             return false;
       } else if (!networkOfferingName.equals(other.networkOfferingName))
          return false;
-      if (related == null) {
-         if (other.related != null)
-            return false;
-      } else if (!related.equals(other.related))
+      if (related != other.related)
          return false;
       if (services == null) {
          if (other.services != null)
@@ -543,4 +721,8 @@ public class Network {
             + ", networkOfferingName=" + networkOfferingName + "]";
    }
 
+   @Override
+   public int compareTo(Network arg0) {
+      return new Long(id).compareTo(arg0.getId());
+   }
 }

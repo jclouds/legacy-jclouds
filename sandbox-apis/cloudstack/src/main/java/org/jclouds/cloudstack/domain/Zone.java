@@ -26,14 +26,97 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class Zone {
+public class Zone implements Comparable<Zone> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String description;
+      private String displayText;
+      private List<String> DNS = ImmutableList.of();
+      private String domain;
+      private long domainId;
+      private String guestCIDRAddress;
+      private List<String> internalDNS = ImmutableList.of();
+      private String name;
+      private NetworkType networkType;
+      private String status;
+      private String VLAN;
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public Builder displayText(String displayText) {
+         this.displayText = displayText;
+         return this;
+      }
+
+      public Builder DNS(List<String> DNS) {
+         this.DNS = ImmutableList.copyOf(checkNotNull(DNS, "DNS"));
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder guestCIDRAddress(String guestCIDRAddress) {
+         this.guestCIDRAddress = guestCIDRAddress;
+         return this;
+      }
+
+      public Builder internalDNS(List<String> internalDNS) {
+         this.internalDNS = ImmutableList.copyOf(checkNotNull(internalDNS, "internalDNS"));
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder networkType(NetworkType networkType) {
+         this.networkType = networkType;
+         return this;
+      }
+
+      public Builder status(String status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder VLAN(String VLAN) {
+         this.VLAN = VLAN;
+         return this;
+      }
+
+      public Zone build() {
+         return new Zone(id, description, displayText, DNS, domain, domainId, guestCIDRAddress, internalDNS, name,
+               networkType, status, VLAN);
+      }
+   }
+
    private long id;
    private String description;
    @SerializedName("displaytext")
@@ -68,8 +151,8 @@ public class Zone {
    }
 
    public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
-            String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
-            String vLAN) {
+         String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
+         String vLAN) {
       this.id = id;
       this.description = description;
       this.displayText = displayText;
@@ -115,7 +198,7 @@ public class Zone {
     * @return the external DNS for the Zone
     */
    public List<String> getDNS() {
-      Builder<String> builder = ImmutableList.builder();
+      ImmutableList.Builder<String> builder = ImmutableList.builder();
       if (DNS1 != null && !"".equals(DNS1))
          builder.add(DNS1);
       if (DNS2 != null && !"".equals(DNS2))
@@ -153,7 +236,7 @@ public class Zone {
     * @return the internal DNS for the Zone
     */
    public List<String> getInternalDNS() {
-      Builder<String> builder = ImmutableList.builder();
+      ImmutableList.Builder<String> builder = ImmutableList.builder();
       if (internalDNS1 != null && !"".equals(internalDNS1))
          builder.add(internalDNS1);
       if (internalDNS2 != null && !"".equals(internalDNS2))
@@ -290,8 +373,13 @@ public class Zone {
    @Override
    public String toString() {
       return "[id=" + id + ", status=" + status + ", name=" + name + ", description=" + description + ", displayText="
-               + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
-               + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS() + ", internalDNS="
-               + getInternalDNS() + "]";
+            + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
+            + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS() + ", internalDNS="
+            + getInternalDNS() + "]";
+   }
+
+   @Override
+   public int compareTo(Zone arg0) {
+      return new Long(id).compareTo(arg0.getId());
    }
 }

@@ -61,7 +61,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          assert network.getNetworkOfferingDisplayText() != null : network;
          assert network.getNetworkOfferingId() > 0 : network;
          assert network.getNetworkOfferingName() != null : network;
-         assert network.getRelated() != null : network;
+         assert network.getRelated() > 0 : network;
          assert network.getServices().size() != 0 : network;
          assert network.getState() != null : network;
          assert network.getTrafficType() != null : network;

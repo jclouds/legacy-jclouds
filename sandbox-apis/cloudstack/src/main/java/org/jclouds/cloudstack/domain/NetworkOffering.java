@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -33,7 +35,85 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class NetworkOffering {
+public class NetworkOffering implements Comparable<NetworkOffering> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String name;
+      private String displayText;
+      private Date created;
+      private String availability;
+      private Integer maxConnections;
+      private int networkRate;
+      private boolean isDefault;
+      private boolean supportsVLAN;
+      private TrafficType trafficType;
+      private Set<String> tags = ImmutableSet.of();
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder displayText(String displayText) {
+         this.displayText = displayText;
+         return this;
+      }
+
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder availability(String availability) {
+         this.availability = availability;
+         return this;
+      }
+
+      public Builder maxConnections(Integer maxConnections) {
+         this.maxConnections = maxConnections;
+         return this;
+      }
+
+      public Builder isDefault(boolean isDefault) {
+         this.isDefault = isDefault;
+         return this;
+      }
+
+      public Builder networkRate(int networkRate) {
+         this.networkRate = networkRate;
+         return this;
+      }
+
+      public Builder supportsVLAN(boolean supportsVLAN) {
+         this.supportsVLAN = supportsVLAN;
+         return this;
+      }
+
+      public Builder trafficType(TrafficType trafficType) {
+         this.trafficType = trafficType;
+         return this;
+      }
+
+      public Builder tags(Set<String> tags) {
+         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+         return this;
+      }
+
+      public NetworkOffering build() {
+         return new NetworkOffering(id, name, displayText, created, availability, supportsVLAN, maxConnections,
+               isDefault, trafficType, networkRate, tags);
+      }
+   }
+
    private long id;
    private String name;
    @SerializedName("displaytext")
@@ -48,11 +128,13 @@ public class NetworkOffering {
    private boolean supportsVLAN;
    @SerializedName("traffictype")
    private TrafficType trafficType;
+   @SerializedName("networkrate")
+   private int networkRate = -1;
    private String tags;
 
    public NetworkOffering(long id, String name, String displayText, @Nullable Date created, String availability,
-            boolean supportsVLAN, @Nullable Integer maxConnections, boolean isDefault, TrafficType trafficType,
-            Set<String> tags) {
+         boolean supportsVLAN, @Nullable Integer maxConnections, boolean isDefault, TrafficType trafficType,
+         int networkRate, Set<String> tags) {
       this.id = id;
       this.name = name;
       this.displayText = displayText;
@@ -62,7 +144,8 @@ public class NetworkOffering {
       this.maxConnections = maxConnections;
       this.isDefault = isDefault;
       this.trafficType = trafficType;
-      this.tags = Joiner.on(',').join(tags);
+      this.networkRate = networkRate;
+      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
    }
 
    /**
@@ -150,6 +233,14 @@ public class NetworkOffering {
 
    /**
     * 
+    * @return data transfer rate in megabits per second allowed.
+    */
+   public int getNetworkRate() {
+      return networkRate;
+   }
+
+   /**
+    * 
     * @return the tags for the network offering
     */
    public Set<String> getTags() {
@@ -226,8 +317,13 @@ public class NetworkOffering {
    @Override
    public String toString() {
       return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", created=" + created
-               + ", maxConnections=" + maxConnections + ", trafficType=" + trafficType + ", isDefault=" + isDefault
-               + ", availability=" + availability + ", supportsVLAN=" + supportsVLAN + ", tags=" + tags + "]";
+            + ", maxConnections=" + maxConnections + ", trafficType=" + trafficType + ", isDefault=" + isDefault
+            + ", availability=" + availability + ", supportsVLAN=" + supportsVLAN + ", tags=" + getTags() + "]";
+   }
+
+   @Override
+   public int compareTo(NetworkOffering arg0) {
+      return new Long(id).compareTo(arg0.getId());
    }
 
 }

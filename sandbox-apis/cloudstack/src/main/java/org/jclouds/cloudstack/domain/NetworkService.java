@@ -21,8 +21,12 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -31,26 +35,19 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class NetworkService {
-   public static class Capability {
+   // internal only to match json type
+   private static class Capability {
 
       private String name;
       private String value;
 
-      Capability() {
+      private Capability() {
 
       }
 
-      public Capability(String name, String value) {
-         this.name = checkNotNull(name, "name");
-         this.value = checkNotNull(value, "value");
-      }
-
-      public String getName() {
-         return name;
-      }
-
-      public String getValue() {
-         return value;
+      private Capability(String name, String value) {
+         this.name = name;
+         this.value = value;
       }
 
       @Override
@@ -99,17 +96,28 @@ public class NetworkService {
 
    }
 
-   public NetworkService(String name, Set<? extends NetworkService.Capability> capabilities) {
+   public NetworkService(String name) {
+      this(name, ImmutableMap.<String, String> of());
+   }
+
+   public NetworkService(String name, Map<String, String> capabilities) {
       this.name = checkNotNull(name, "name");
-      this.capabilities = ImmutableSet.copyOf(checkNotNull(capabilities, "capabilities"));
+      ImmutableSet.Builder<Capability> internal = ImmutableSet.<Capability> builder();
+      for (Entry<String, String> capabililty : checkNotNull(capabilities, "capabilities").entrySet())
+         internal.add(new Capability(capabililty.getKey(), capabililty.getValue()));
+      this.capabilities = internal.build();
    }
 
    public String getName() {
       return name;
    }
 
-   public Set<? extends NetworkService.Capability> getCapabilities() {
-      return capabilities;
+   public Map<String, String> getCapabilities() {
+      Builder<String, String> returnVal = ImmutableMap.<String, String> builder();
+      for (Capability capability : capabilities) {
+         returnVal.put(capability.name, capability.value);
+      }
+      return returnVal.build();
    }
 
    @Override

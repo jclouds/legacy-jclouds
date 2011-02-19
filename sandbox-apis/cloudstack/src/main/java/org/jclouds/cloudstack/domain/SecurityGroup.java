@@ -30,7 +30,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class SecurityGroup {
+public class SecurityGroup implements Comparable<SecurityGroup> {
    private long id;
    private String account;
    private String name;
@@ -178,4 +178,8 @@ public class SecurityGroup {
             + domain + ", domainId=" + domainId + ", ingressRules=" + ingressRules + "]";
    }
 
+   @Override
+   public int compareTo(SecurityGroup arg0) {
+      return new Long(id).compareTo(arg0.getId());
+   }
 }

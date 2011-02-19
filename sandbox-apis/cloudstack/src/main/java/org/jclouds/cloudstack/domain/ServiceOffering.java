@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -31,7 +33,92 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class ServiceOffering {
+public class ServiceOffering implements Comparable<ServiceOffering> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+
+      private long id;
+      private String name;
+      private String displayText;
+      private Date created;
+      private String domain;
+      private long domainId;
+      private int cpuNumber;
+      private int cpuSpeed;
+      private int memory;
+      private boolean haSupport;
+      private StorageType storageType;
+      private Set<String> tags = ImmutableSet.of();
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder displayText(String displayText) {
+         this.displayText = displayText;
+         return this;
+      }
+
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder cpuNumber(int cpuNumber) {
+         this.cpuNumber = cpuNumber;
+         return this;
+      }
+
+      public Builder cpuSpeed(int cpuSpeed) {
+         this.cpuSpeed = cpuSpeed;
+         return this;
+      }
+
+      public Builder memory(int memory) {
+         this.memory = memory;
+         return this;
+      }
+
+      public Builder haSupport(boolean haSupport) {
+         this.haSupport = haSupport;
+         return this;
+      }
+
+      public Builder storageType(StorageType storageType) {
+         this.storageType = storageType;
+         return this;
+      }
+
+      public Builder tags(Set<String> tags) {
+         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+         return this;
+      }
+
+      public ServiceOffering build() {
+         return new ServiceOffering(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory,
+               haSupport, storageType, tags);
+      }
+   }
+
    private long id;
    private String name;
    @SerializedName("displaytext")
@@ -52,7 +139,7 @@ public class ServiceOffering {
    private String tags;
 
    public ServiceOffering(long id, String name, String displayText, Date created, String domain, long domainId,
-            int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags) {
+         int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags) {
       this.id = id;
       this.name = name;
       this.displayText = displayText;
@@ -64,7 +151,7 @@ public class ServiceOffering {
       this.memory = memory;
       this.haSupport = haSupport;
       this.storageType = storageType;
-      this.tags = Joiner.on(',').join(tags);
+      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
    }
 
    /**
@@ -245,8 +332,14 @@ public class ServiceOffering {
    @Override
    public String toString() {
       return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", created=" + created + ", cpuNumber="
-               + cpuNumber + ", cpuSpeed=" + cpuSpeed + ", memory=" + memory + ", storageType=" + storageType
-               + ", haSupport=" + haSupport + ", domain=" + domain + ", domainId=" + domainId + ", tags=" + tags + "]";
+            + cpuNumber + ", cpuSpeed=" + cpuSpeed + ", memory=" + memory + ", storageType=" + storageType
+            + ", haSupport=" + haSupport + ", domain=" + domain + ", domainId=" + domainId + ", tags=" + getTags()
+            + "]";
+   }
+
+   @Override
+   public int compareTo(ServiceOffering arg0) {
+      return new Long(id).compareTo(arg0.getId());
    }
 
 }

@@ -19,8 +19,9 @@
 
 package org.jclouds.cloudstack.domain;
 
-import java.util.Date;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -30,7 +31,200 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class Template {
+public class Template implements Comparable<Template> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      @SerializedName("displaytext")
+      private String displayText;
+      private String domain;
+      @SerializedName("domainid")
+      private long domainId;
+      private String account;
+      @SerializedName("accountid")
+      private long accountId;
+      @SerializedName("zonename")
+      private String zone;
+      @SerializedName("zoneid")
+      private long zoneId;
+      @SerializedName("ostypename")
+      private String OSType;
+      @SerializedName("ostypeid")
+      private long OSTypeId;
+      private String name;
+      @SerializedName("templatetype")
+      private Type type;
+      private String status;
+      private Format format;
+      private String hypervisor;
+      private Long size;
+      private Date created;
+      private Date removed;
+      @SerializedName("crossZones")
+      private boolean crossZones;
+      @SerializedName("bootable")
+      private boolean bootable;
+      @SerializedName("isextractable")
+      private boolean extractable;
+      @SerializedName("isfeatured")
+      private boolean featured;
+      @SerializedName("ispublic")
+      private boolean isPublic;
+      @SerializedName("isready")
+      private boolean ready;
+      @SerializedName("passwordenabled")
+      private boolean passwordEnabled;
+      @Nullable
+      @SerializedName("jobid")
+      private Long jobId;
+      @SerializedName("jobstatus")
+      private String jobStatus;
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder displayText(String displayText) {
+         this.displayText = displayText;
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder accountId(long accountId) {
+         this.accountId = accountId;
+         return this;
+      }
+
+      public Builder zone(String zone) {
+         this.zone = zone;
+         return this;
+      }
+
+      public Builder zoneId(long zoneId) {
+         this.zoneId = zoneId;
+         return this;
+      }
+
+      public Builder OSType(String OSType) {
+         this.OSType = OSType;
+         return this;
+      }
+
+      public Builder OSTypeId(long OSTypeId) {
+         this.OSTypeId = OSTypeId;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder type(Type type) {
+         this.type = type;
+         return this;
+      }
+
+      public Builder status(String status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder format(Format format) {
+         this.format = format;
+         return this;
+      }
+
+      public Builder hypervisor(String hypervisor) {
+         this.hypervisor = hypervisor;
+         return this;
+      }
+
+      public Builder size(Long size) {
+         this.size = size;
+         return this;
+      }
+
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder removed(Date removed) {
+         this.removed = removed;
+         return this;
+      }
+
+      public Builder crossZones(boolean crossZones) {
+         this.crossZones = crossZones;
+         return this;
+      }
+
+      public Builder bootable(boolean bootable) {
+         this.bootable = bootable;
+         return this;
+      }
+
+      public Builder extractable(boolean extractable) {
+         this.extractable = extractable;
+         return this;
+      }
+
+      public Builder featured(boolean featured) {
+         this.featured = featured;
+         return this;
+      }
+
+      public Builder isPublic(boolean isPublic) {
+         this.isPublic = isPublic;
+         return this;
+      }
+
+      public Builder ready(boolean ready) {
+         this.ready = ready;
+         return this;
+      }
+
+      public Builder passwordEnabled(boolean passwordEnabled) {
+         this.passwordEnabled = passwordEnabled;
+         return this;
+      }
+
+      public Builder jobId(Long jobId) {
+         this.jobId = jobId;
+         return this;
+      }
+
+      public Builder jobStatus(String jobStatus) {
+         this.jobStatus = jobStatus;
+         return this;
+      }
+
+      public Template build() {
+         return new Template(id, displayText, domain, domainId, account, accountId, zone, zoneId, OSType, OSTypeId,
+               name, type, status, format, hypervisor, size, created, removed, crossZones, bootable, extractable,
+               featured, isPublic, ready, passwordEnabled, jobId, jobStatus);
+      }
+
+   }
 
    public enum Type {
 
@@ -105,10 +299,10 @@ public class Template {
    private String jobStatus;
 
    public Template(long id, String displayText, String domain, long domainId, String account, long accountId,
-            String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status,
-            Format format, String hypervisor, Long size, Date created, Date removed, boolean crossZones,
-            boolean bootable, boolean extractable, boolean featured, boolean ispublic, boolean ready,
-            boolean passwordEnabled, Long jobId, String jobStatus) {
+         String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status, Format format,
+         String hypervisor, Long size, Date created, Date removed, boolean crossZones, boolean bootable,
+         boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, Long jobId,
+         String jobStatus) {
       this.id = id;
       this.displayText = displayText;
       this.domain = domain;
@@ -506,12 +700,16 @@ public class Template {
    @Override
    public String toString() {
       return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", format=" + format + ", type=" + type
-               + ", hypervisor=" + hypervisor + ", size=" + size + ", status=" + status + ", created=" + created
-               + ", removed=" + removed + ", OSType=" + OSType + ", OSTypeId=" + OSTypeId + ", account=" + account
-               + ", accountId=" + accountId + ", domain=" + domain + ", domainId=" + domainId + ", zone=" + zone
-               + ", zoneId=" + zoneId + ", ready=" + ready + ", bootable=" + bootable + ", crossZones=" + crossZones
-               + ", extractable=" + extractable + ", featured=" + featured + ", ispublic=" + ispublic
-               + ", passwordEnabled=" + passwordEnabled + ", jobId=" + jobId + ", jobStatus=" + jobStatus + "]";
+            + ", hypervisor=" + hypervisor + ", size=" + size + ", status=" + status + ", created=" + created
+            + ", removed=" + removed + ", OSType=" + OSType + ", OSTypeId=" + OSTypeId + ", account=" + account
+            + ", accountId=" + accountId + ", domain=" + domain + ", domainId=" + domainId + ", zone=" + zone
+            + ", zoneId=" + zoneId + ", ready=" + ready + ", bootable=" + bootable + ", crossZones=" + crossZones
+            + ", extractable=" + extractable + ", featured=" + featured + ", ispublic=" + ispublic
+            + ", passwordEnabled=" + passwordEnabled + ", jobId=" + jobId + ", jobStatus=" + jobStatus + "]";
    }
 
+   @Override
+   public int compareTo(Template arg0) {
+      return new Long(id).compareTo(arg0.getId());
+   }
 }
