@@ -4,8 +4,9 @@
 	<Name>name</Name>
 	<Protocol>TCP</Protocol>
 	<Port>22</Port>
-	<Enabled>true</Enabled>
+	<Enabled>false</Enabled>
 	
-	<Description>name TCP 22</Description>
+	<Description>yahoo</Description>
 	
+	<Monitor><MonitorType>Disabled</MonitorType></Monitor>
 </CreateInternetServiceRequest>

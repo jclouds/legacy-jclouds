@@ -25,7 +25,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.vcloud.terremark.binders.BindAddInternetServiceToXmlPayload;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -40,31 +40,34 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
    String enabled = "true";
    @VisibleForTesting
    Boolean monitorEnabled = null;
+
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      Map<String, String> copy = Maps.newHashMap();
+      ImmutableMap.Builder<String, String> copy = ImmutableMap.<String, String> builder();
       copy.putAll(postParams);
-      copy.put("description", description);
+      if (description != null)
+         copy.put("description", description);
       copy.put("enabled", enabled);
-      if (monitorEnabled != null) {
+      if (monitorEnabled != null)
          copy.put("monitor", monitorEnabled.toString());
-      }
-      return super.bindToRequest(request, copy);
+      return super.bindToRequest(request, copy.build());
    }
 
    public AddInternetServiceOptions disabled() {
       this.enabled = "false";
       return this;
    }
+
    public AddInternetServiceOptions monitorDisabled() {
       this.monitorEnabled = false;
       return this;
    }
+
    public AddInternetServiceOptions withDescription(String description) {
       this.description = description;
       return this;
    }
-   
+
    public static class Builder {
 
       /**
@@ -82,7 +85,7 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
          AddInternetServiceOptions options = new AddInternetServiceOptions();
          return options.monitorDisabled();
       }
-      
+
       /**
        * @see AddInternetServiceOptions#disabled()
        */

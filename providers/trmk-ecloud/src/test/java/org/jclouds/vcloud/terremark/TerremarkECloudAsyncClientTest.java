@@ -299,12 +299,12 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       Method method = TerremarkECloudAsyncClient.class.getMethod("addInternetServiceToExistingIp", URI.class,
                String.class, Protocol.class, int.class, AddInternetServiceOptions[].class);
       HttpRequest request = processor.createRequest(method, URI.create("https://vcloud/extensions/publicIp/12"),
-               "name", Protocol.TCP, 22, disabled().withDescription("yahoo"), AddInternetServiceOptions.Builder.monitorDisabled());
+               "name", Protocol.TCP, 22, disabled().withDescription("yahoo").monitorDisabled());
 
       assertRequestLineEquals(request, "POST https://vcloud/extensions/publicIp/12/internetServices HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.internetService+xml\n");
       assertPayloadEquals(request, Strings2.toStringAndClose(
-               getClass().getResourceAsStream("/terremark/CreateInternetService-options-test.xml")).replace(
+               getClass().getResourceAsStream("/CreateInternetService-options-test.xml")).replace(
                "vCloudExpressExtensions-1.6", "eCloudExtensions-2.7"),
                "application/vnd.tmrk.ecloud.internetService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
