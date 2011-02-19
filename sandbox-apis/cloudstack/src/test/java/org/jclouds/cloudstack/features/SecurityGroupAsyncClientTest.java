@@ -107,7 +107,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValueInSet.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 

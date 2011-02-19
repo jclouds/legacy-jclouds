@@ -25,7 +25,72 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class IngressRule {
+public class IngressRule implements Comparable<IngressRule> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String account;
+      private String CIDR;
+      private int endPort;
+      private int ICMPCode;
+      private int ICMPType;
+      private String protocol;
+      private long id;
+      private String securityGroupName;
+      private int startPort;
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder CIDR(String CIDR) {
+         this.CIDR = CIDR;
+         return this;
+      }
+
+      public Builder endPort(int endPort) {
+         this.endPort = endPort;
+         return this;
+      }
+
+      public Builder ICMPCode(int ICMPCode) {
+         this.ICMPCode = ICMPCode;
+         return this;
+      }
+
+      public Builder ICMPType(int ICMPType) {
+         this.ICMPType = ICMPType;
+         return this;
+      }
+
+      public Builder protocol(String protocol) {
+         this.protocol = protocol;
+         return this;
+      }
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder securityGroupName(String securityGroupName) {
+         this.securityGroupName = securityGroupName;
+         return this;
+      }
+
+      public Builder startPort(int startPort) {
+         this.startPort = startPort;
+         return this;
+      }
+
+      public IngressRule build() {
+         return new IngressRule(account, CIDR, endPort, ICMPCode, ICMPType, protocol, id, securityGroupName, startPort);
+      }
+   }
+
    private String account;
    @SerializedName("cidr")
    private String CIDR;
@@ -189,4 +254,8 @@ public class IngressRule {
             + ICMPCode + ", ICMPType=" + ICMPType + "]";
    }
 
+   @Override
+   public int compareTo(IngressRule arg0) {
+      return new Long(id).compareTo(arg0.getId());
+   }
 }

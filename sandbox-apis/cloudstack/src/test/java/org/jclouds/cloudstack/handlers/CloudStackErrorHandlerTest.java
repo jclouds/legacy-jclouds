@@ -71,6 +71,12 @@ public class CloudStackErrorHandlerTest {
    }
 
    @Test
+   public void test431MakesIllegalStateException() {
+      assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 431, "", "Method Not Allowed",
+            IllegalStateException.class);
+   }
+
+   @Test
    public void test409MakesIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 409, "", "Conflict", IllegalStateException.class);
    }

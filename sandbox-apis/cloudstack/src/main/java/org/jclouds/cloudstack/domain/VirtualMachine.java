@@ -773,7 +773,6 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + (passwordEnabled ? 1231 : 1237);
       result = prime * result + (int) (rootDeviceId ^ (rootDeviceId >>> 32));
-      result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
       result = prime * result + ((securityGroups == null) ? 0 : securityGroups.hashCode());
       result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
       result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
@@ -909,11 +908,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return false;
       if (rootDeviceId != other.rootDeviceId)
          return false;
-      if (rootDeviceType == null) {
-         if (other.rootDeviceType != null)
-            return false;
-      } else if (!rootDeviceType.equals(other.rootDeviceType))
-         return false;
+      // rootDeviceType and state are volatile
       if (securityGroups == null) {
          if (other.securityGroups != null)
             return false;

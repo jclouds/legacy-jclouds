@@ -65,7 +65,7 @@ public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
     * @param securityGroupName
     *           lists security groups by name
     */
-   public ListSecurityGroupsOptions securityGroupName(String securityGroupName) {
+   public ListSecurityGroupsOptions named(String securityGroupName) {
       this.queryParameters.replaceValues("securitygroupname", ImmutableSet.of(securityGroupName));
       return this;
    }
@@ -92,11 +92,11 @@ public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see ListSecurityGroupsOptions#securityGroupName
+       * @see ListSecurityGroupsOptions#named
        */
-      public static ListSecurityGroupsOptions securityGroupName(String securityGroupName) {
+      public static ListSecurityGroupsOptions named(String securityGroupName) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
-         return options.securityGroupName(securityGroupName);
+         return options.named(securityGroupName);
       }
 
       /**

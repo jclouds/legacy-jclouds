@@ -70,6 +70,7 @@ public class CloudStackErrorHandler implements HttpErrorHandler {
             exception = new IllegalArgumentException(message, exception);
             break;
          case 409:
+         case 431:
             exception = new IllegalStateException(message, exception);
             break;
          }

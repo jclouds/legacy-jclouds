@@ -31,6 +31,59 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class SecurityGroup implements Comparable<SecurityGroup> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String account;
+      private String name;
+      private String description;
+      private String domain;
+      private long domainId;
+      private Set<IngressRule> ingressRules = ImmutableSet.of();
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
+         return this;
+      }
+
+      public Builder ingressRules(Set<IngressRule> ingressRules) {
+         this.ingressRules = ImmutableSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
+         return this;
+      }
+
+      public SecurityGroup build() {
+         return new SecurityGroup(id, account, name, description, domain, domainId, ingressRules);
+      }
+   }
+
    private long id;
    private String account;
    private String name;

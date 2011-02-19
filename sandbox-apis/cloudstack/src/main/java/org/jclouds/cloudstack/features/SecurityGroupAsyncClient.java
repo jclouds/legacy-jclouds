@@ -76,7 +76,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "createSecurityGroup")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<SecurityGroup> createSecurityGroup(@QueryParam("name") String name);
 

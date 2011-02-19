@@ -22,7 +22,7 @@ package org.jclouds.cloudstack.options;
 import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.account;
 import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.id;
-import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.securityGroupName;
+import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.named;
 import static org.jclouds.cloudstack.options.ListSecurityGroupsOptions.Builder.virtualMachineId;
 import static org.testng.Assert.assertEquals;
 
@@ -59,12 +59,12 @@ public class ListSecurityGroupsOptionsTest {
    }
 
    public void testName() {
-      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().securityGroupName("securityGroupName");
+      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().named("securityGroupName");
       assertEquals(ImmutableList.of("securityGroupName"), options.buildQueryParameters().get("securitygroupname"));
    }
 
    public void testNameStatic() {
-      ListSecurityGroupsOptions options = securityGroupName("securityGroupName");
+      ListSecurityGroupsOptions options = named("securityGroupName");
       assertEquals(ImmutableList.of("securityGroupName"), options.buildQueryParameters().get("securitygroupname"));
    }
 
