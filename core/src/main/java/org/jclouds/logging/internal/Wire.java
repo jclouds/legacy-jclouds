@@ -20,6 +20,8 @@
 package org.jclouds.logging.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.io.Payloads.newPayload;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,11 +35,9 @@ import javax.annotation.Resource;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.common.io.FileBackedOutputStream;
 
 /**
@@ -101,8 +101,8 @@ public abstract class Wire {
       } catch (IOException e) {
          throw new RuntimeException("Error tapping line", e);
       } finally {
-         Closeables.closeQuietly(out);
-         Closeables.closeQuietly(instream);
+         closeQuietly(out);
+         closeQuietly(instream);
       }
    }
 
@@ -112,14 +112,19 @@ public abstract class Wire {
 
    public void input(PayloadEnclosing request) {
       Payload oldContent = request.getPayload();
-      Payload wiredPayload = Payloads.newPayload(input(oldContent.getInput()));
+      Payload wiredPayload = newPayload(input(oldContent.getInput()));
       copyPayloadMetadata(oldContent, wiredPayload);
       request.setPayload(wiredPayload);
    }
 
    public void output(PayloadEnclosing request) {
       Payload oldContent = request.getPayload();
-      Payload wiredPayload = Payloads.newPayload(output(oldContent.getRawContent()));
+      Payload wiredPayload;
+      try {
+         wiredPayload = newPayload(output(oldContent.getRawContent()));
+      } catch (UnsupportedOperationException e) {
+         wiredPayload = newPayload(output(oldContent.getInput()));
+      }
       copyPayloadMetadata(oldContent, wiredPayload);
       request.setPayload(wiredPayload);
    }
@@ -150,9 +155,8 @@ public abstract class Wire {
       } else if (data instanceof File) {
          output(((File) data));
          return data;
-      } else {
-         throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }
+      throw new UnsupportedOperationException("Content not supported " + data.getClass());
    }
 
    private void output(final File out) {
@@ -164,7 +168,7 @@ public abstract class Wire {
       } catch (FileNotFoundException e) {
          logger.error(e, "Error tapping file: %s", out);
       } finally {
-         Closeables.closeQuietly(in);
+         closeQuietly(in);
       }
    }
 

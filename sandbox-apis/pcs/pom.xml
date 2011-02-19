@@ -30,7 +30,7 @@
     </parent>
     <groupId>org.jclouds.api</groupId>
     <artifactId>pcs</artifactId>
-    <name>jclouds mezeo cloud storage platform v2 core</name>
+    <name>jclouds mezeo cloud storage platform core</name>
     <description>jclouds Core components to access mezeo pcs2</description>
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -57,7 +57,19 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -83,7 +95,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>:%s/
+                        <executions>
                             <execution>
                                 <id>integration</id>
                                 <phase>integration-test</phase>
