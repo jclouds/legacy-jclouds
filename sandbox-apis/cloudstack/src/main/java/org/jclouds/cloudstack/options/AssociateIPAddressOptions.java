@@ -34,21 +34,15 @@ public class AssociateIPAddressOptions extends BaseHttpRequestOptions {
    public static final AssociateIPAddressOptions NONE = new AssociateIPAddressOptions();
 
    /**
-    * @param domainId
-    *           the ID of the domain to associate with this IP address
-    */
-   public AssociateIPAddressOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
-      return this;
-
-   }
-
-   /**
+    * 
     * @param account
-    *           the account to associate with this IP address
+    *           an optional account for the ip address
+    * @param domain
+    *           domain id
     */
-   public AssociateIPAddressOptions account(String account) {
+   public AssociateIPAddressOptions accountInDomain(String account, long domain) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
       return this;
    }
 
@@ -63,21 +57,12 @@ public class AssociateIPAddressOptions extends BaseHttpRequestOptions {
    }
 
    public static class Builder {
-
       /**
-       * @see AssociateIPAddressOptions#account
+       * @see AssociateIPAddressOptions#accountInDomain
        */
-      public static AssociateIPAddressOptions account(String account) {
+      public static AssociateIPAddressOptions accountInDomain(String account, long domain) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
-         return options.account(account);
-      }
-
-      /**
-       * @see AssociateIPAddressOptions#domainId
-       */
-      public static AssociateIPAddressOptions domainId(long id) {
-         AssociateIPAddressOptions options = new AssociateIPAddressOptions();
-         return options.domainId(id);
+         return options.accountInDomain(account, domain);
       }
 
       /**

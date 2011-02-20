@@ -46,8 +46,9 @@ public class DeployVirtualMachineOptions extends BaseHttpRequestOptions {
     *           domain id
     */
    public DeployVirtualMachineOptions accountInDomain(String account, long domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account + ""));
-      return domainId(domain);
+      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+      this.queryParameters.replaceValues("domain", ImmutableSet.of(domain + ""));
+      return this;
    }
 
    /**
@@ -72,15 +73,6 @@ public class DeployVirtualMachineOptions extends BaseHttpRequestOptions {
     */
    public DeployVirtualMachineOptions displayName(String displayName) {
       this.queryParameters.replaceValues("displayname", ImmutableSet.of(displayName));
-      return this;
-   }
-
-   /**
-    * @param domainId
-    *           an optional domainId for the virtual machine
-    */
-   public DeployVirtualMachineOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }
 
@@ -206,14 +198,6 @@ public class DeployVirtualMachineOptions extends BaseHttpRequestOptions {
       public static DeployVirtualMachineOptions displayName(String displayName) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.displayName(displayName);
-      }
-
-      /**
-       * @see DeployVirtualMachineOptions#domainId
-       */
-      public static DeployVirtualMachineOptions domainId(long id) {
-         DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
-         return options.domainId(id);
       }
 
       /**
