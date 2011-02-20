@@ -1,0 +1,1 @@
+{ "listpublicipaddressesresponse" : { "publicipaddress" : [  {"id":30,"ipaddress":"72.52.126.59","allocated":"2011-02-19T21:15:01-0800","zoneid":1,"zonename":"San Jose 1","issourcenat":false,"account":"adrian","domainid":1,"domain":"ROOT","forvirtualnetwork":true,"isstaticnat":false,"associatednetworkid":204,"networkid":200,"state":"Allocated"} ] } }

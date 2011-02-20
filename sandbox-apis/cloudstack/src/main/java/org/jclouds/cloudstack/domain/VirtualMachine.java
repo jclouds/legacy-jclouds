@@ -513,7 +513,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the virtual network for the service offering
     */
-   public boolean isUsesVirtualNetwork() {
+   public boolean usesVirtualNetwork() {
       return usesVirtualNetwork;
    }
 

@@ -21,6 +21,7 @@ package org.jclouds.cloudstack;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
@@ -82,4 +83,10 @@ public interface CloudStackClient {
     */
    @Delegate
    AsyncJobClient getAsyncJobClient();
+
+   /**
+    * Provides synchronous access to Address features.
+    */
+   @Delegate
+   AddressClient getAddressClient();
 }

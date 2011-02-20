@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack;
 
+import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
@@ -79,4 +80,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    AsyncJobAsyncClient getAsyncJobClient();
+
+   /**
+    * Provides asynchronous access to Address features.
+    */
+   @Delegate
+   AddressAsyncClient getAddressClient();
 }

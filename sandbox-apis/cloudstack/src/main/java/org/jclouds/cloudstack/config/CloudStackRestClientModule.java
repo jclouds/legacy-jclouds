@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.features.AddressAsyncClient;
+import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
@@ -60,14 +62,15 @@ import com.google.common.collect.ImmutableMap;
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ZoneClient.class, ZoneAsyncClient.class)//
-         .put(TemplateClient.class, TemplateAsyncClient.class)//
-         .put(OfferingClient.class, OfferingAsyncClient.class)//
-         .put(NetworkClient.class, NetworkAsyncClient.class)//
-         .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
-         .build();
+            .put(ZoneClient.class, ZoneAsyncClient.class)//
+            .put(TemplateClient.class, TemplateAsyncClient.class)//
+            .put(OfferingClient.class, OfferingAsyncClient.class)//
+            .put(NetworkClient.class, NetworkAsyncClient.class)//
+            .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
+            .put(AddressClient.class, AddressAsyncClient.class)//
+            .build();
 
    public CloudStackRestClientModule() {
       super(CloudStackClient.class, CloudStackAsyncClient.class, DELEGATE_MAP);
