@@ -21,6 +21,7 @@ package org.jclouds.cloudstack;
 
 import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
+import org.jclouds.cloudstack.features.NATAsyncClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
@@ -86,4 +87,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    AddressAsyncClient getAddressClient();
+
+   /**
+    * Provides asynchronous access to NAT features.
+    */
+   @Delegate
+   NATAsyncClient getNATClient();
 }

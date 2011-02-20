@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
@@ -89,4 +90,10 @@ public interface CloudStackClient {
     */
    @Delegate
    AddressClient getAddressClient();
+
+   /**
+    * Provides synchronous access to NAT features.
+    */
+   @Delegate
+   NATClient getNATClient();
 }

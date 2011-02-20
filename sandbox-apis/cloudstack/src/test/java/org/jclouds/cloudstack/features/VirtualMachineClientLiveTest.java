@@ -26,8 +26,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
@@ -40,12 +40,8 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
-import org.jclouds.cloudstack.predicates.JobComplete;
-import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
-import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -60,19 +56,6 @@ import com.google.common.collect.Ordering;
 @Test(groups = "live", sequential = true, testName = "VirtualMachineClientLiveTest")
 public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm = null;
-   private RetryablePredicate<Long> jobComplete;
-   private RetryablePredicate<VirtualMachine> virtualMachineRunning;
-   private RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
-
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
-      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
-      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5,
-               TimeUnit.SECONDS);
-      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5,
-               TimeUnit.SECONDS);
-   }
 
    static final Ordering<ServiceOffering> DEFAULT_SIZE_ORDERING = new Ordering<ServiceOffering>() {
       public int compare(ServiceOffering left, ServiceOffering right) {
@@ -81,7 +64,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    };
 
-   public void testCreateDestroyVirtualMachine() throws Exception {
+   public static VirtualMachine createVirtualMachine(CloudStackClient client, RetryablePredicate<Long> jobComplete,
+            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       final Zone zone = get(client.getZoneClient().listZones(), 0);
 
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
@@ -121,11 +105,19 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
                zone.getId(), options);
       assert jobComplete.apply(job.getJobId());
-      vm = client.getVirtualMachineClient().getVirtualMachine(job.getId());
+      VirtualMachine vm = client.getVirtualMachineClient().getVirtualMachine(job.getId());
+      if (vm.isPasswordEnabled())
+         assert vm.getPassword() != null : vm;
       assert virtualMachineRunning.apply(vm);
       assertEquals(vm.getServiceOfferingId(), serviceOfferingId);
       assertEquals(vm.getTemplateId(), templateId);
       assertEquals(vm.getZoneId(), zone.getId());
+      return vm;
+   }
+
+   public void testCreateDestroyVirtualMachine() throws Exception {
+      vm = createVirtualMachine(client, jobComplete, virtualMachineRunning);
+
       assertEquals(vm.getRootDeviceType(), "NetworkFilesystem");
       checkVm(vm);
    }
