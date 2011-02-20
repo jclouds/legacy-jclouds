@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
@@ -96,4 +97,10 @@ public interface CloudStackClient {
     */
    @Delegate
    NATClient getNATClient();
+
+   /**
+    * Provides synchronous access to Firewall features.
+    */
+   @Delegate
+   FirewallClient getFirewallClient();
 }

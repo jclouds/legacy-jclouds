@@ -24,60 +24,53 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
-import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
-import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
+import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
- * Provides synchronous access to CloudStack IPForwardingRule features.
+ * Provides synchronous access to CloudStack PortForwardingRule features.
  * <p/>
  * 
- * @see IPForwardingRuleAsyncClient
+ * @see PortForwardingRuleAsyncClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface NATClient {
+public interface FirewallClient {
    /**
-    * List the ip forwarding rules
+    * List the port forwarding rules
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return IPForwardingRulees matching query, or empty set, if no IPForwardingRulees are found
+    * @return PortForwardingRulees matching query, or empty set, if no PortForwardingRulees are
+    *         found
     */
-   Set<PortForwardingRule> listIPForwardingRules(ListIPForwardingRulesOptions... options);
+   Set<PortForwardingRule> listPortForwardingRules(ListPortForwardingRulesOptions... options);
 
    /**
-    * get a specific IPForwardingRule by id
-    * 
-    * @param id
-    *           IPForwardingRule to get
-    * @return IPForwardingRule or null if not found
-    */
-   PortForwardingRule getIPForwardingRule(long id);
-
-   /**
-    * Creates an ip forwarding rule
+    * Creates an port forwarding rule
     * 
     * @param virtualMachineId
-    *           the virtual machine this rule applies to.
-    * 
+    *           the ID of the virtual machine for the port forwarding rule
     * @param IPAddressId
-    *           the public IP address id of the forwarding rule, already associated via associateIp
+    *           the public IP address id of the forwarding rule, already associated via
+    *           associatePort
     * @param protocol
     *           the protocol for the rule. Valid values are TCP or UDP.
-    * @param startPort
-    *           the start port for the rule
+    * @param privatePort
+    *           the private port of the port forwarding rule
+    * @param publicPort
+    *           the public port of the port forwarding rule
     * @return response used to track creation
     */
-   AsyncCreateResponse createIPForwardingRuleForVirtualMachine(long virtualMachineId, long IPAddressId,
-            String protocol, int startPort, CreateIPForwardingRuleOptions... options);
+   AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long virtualMachineId, long IPAddressId,
+            String protocol, int privatePort, int publicPort);
 
    /**
-    * Deletes an ip forwarding rule
+    * Deletes an port forwarding rule
     * 
     * @param id
     *           the id of the forwarding rule
     */
-   void deleteIPForwardingRule(long id);
+   void deletePortForwardingRule(long id);
 }

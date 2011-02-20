@@ -25,7 +25,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class IPForwardingRule implements Comparable<IPForwardingRule> {
+public class PortForwardingRule implements Comparable<PortForwardingRule> {
    public static Builder builder() {
       return new Builder();
    }
@@ -92,8 +92,8 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
-      public IPForwardingRule build() {
-         return new IPForwardingRule(id, IPAddress, IPAddressId, privatePort, protocol, publicPort, state,
+      public PortForwardingRule build() {
+         return new PortForwardingRule(id, IPAddress, IPAddressId, privatePort, protocol, publicPort, state,
                   virtualMachineDisplayName, virtualMachineId, virtualMachineName);
       }
    }
@@ -107,7 +107,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    private int privatePort;
    private String protocol;
    @SerializedName("publicport")
-   public int publicPort;
+   public String publicPort;
    private String state;
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
@@ -116,7 +116,12 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
 
-   public IPForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, String protocol,
+   // for deserializer
+   PortForwardingRule() {
+
+   }
+
+   public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, String protocol,
             int publicPort, String state, String virtualMachineDisplayName, long virtualMachineId,
             String virtualMachineName) {
       this.id = id;
@@ -124,7 +129,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       this.IPAddressId = iPAddressId;
       this.privatePort = privatePort;
       this.protocol = protocol;
-      this.publicPort = publicPort;
+      this.publicPort = publicPort+"";
       this.state = state;
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
@@ -132,7 +137,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    @Override
-   public int compareTo(IPForwardingRule arg0) {
+   public int compareTo(PortForwardingRule arg0) {
       return new Long(id).compareTo(arg0.getId());
    }
 
@@ -181,7 +186,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
     * @return the public port for the port forwarding rule
     */
    public int getPublicPort() {
-      return publicPort;
+      return Integer.parseInt(publicPort);
    }
 
    /**
@@ -225,7 +230,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + privatePort;
       result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      result = prime * result + publicPort;
+      result = prime * result + ((publicPort == null) ? 0 : publicPort.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((virtualMachineDisplayName == null) ? 0 : virtualMachineDisplayName.hashCode());
       result = prime * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
@@ -241,7 +246,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      IPForwardingRule other = (IPForwardingRule) obj;
+      PortForwardingRule other = (PortForwardingRule) obj;
       if (IPAddress == null) {
          if (other.IPAddress != null)
             return false;
@@ -258,7 +263,10 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
             return false;
       } else if (!protocol.equals(other.protocol))
          return false;
-      if (publicPort != other.publicPort)
+      if (publicPort == null) {
+         if (other.publicPort != null)
+            return false;
+      } else if (!publicPort.equals(other.publicPort))
          return false;
       if (state == null) {
          if (other.state != null)

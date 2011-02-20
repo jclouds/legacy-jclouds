@@ -46,7 +46,7 @@ public class CreateIPForwardingRuleOptions extends BaseHttpRequestOptions {
    public static class Builder {
 
       /**
-       * @see CreateIPForwardingRuleOptions#endPort
+       * @see CreatePortForwardingRuleOptions#endPort
        */
       public static CreateIPForwardingRuleOptions endPort(int endPort) {
          CreateIPForwardingRuleOptions options = new CreateIPForwardingRuleOptions();

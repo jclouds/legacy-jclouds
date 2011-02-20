@@ -57,9 +57,13 @@ public class ListIPForwardingRulesOptions extends BaseHttpRequestOptions {
     * @param account
     *           the account associated with the ip forwarding rule. Must be used with the domainId
     *           parameter.
+    * 
+    * @param domain
+    *           domain id
     */
-   public ListIPForwardingRulesOptions account(String account) {
+   public ListIPForwardingRulesOptions accountInDomain(String account, long domain) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
       return this;
    }
 
@@ -86,11 +90,11 @@ public class ListIPForwardingRulesOptions extends BaseHttpRequestOptions {
    public static class Builder {
 
       /**
-       * @see ListIPForwardingRulesOptions#account
+       * @see ListIPForwardingRulesOptions#accountInDomain
        */
-      public static ListIPForwardingRulesOptions account(String account) {
+      public static ListIPForwardingRulesOptions accountInDomain(String account, long domain) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
-         return options.account(account);
+         return options.accountInDomain(account, domain);
       }
 
       /**

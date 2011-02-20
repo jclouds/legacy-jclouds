@@ -47,7 +47,7 @@ public class DeployVirtualMachineOptions extends BaseHttpRequestOptions {
     */
    public DeployVirtualMachineOptions accountInDomain(String account, long domain) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));
-      this.queryParameters.replaceValues("domain", ImmutableSet.of(domain + ""));
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
       return this;
    }
 

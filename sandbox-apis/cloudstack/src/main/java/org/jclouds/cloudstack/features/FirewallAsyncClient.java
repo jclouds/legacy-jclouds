@@ -29,14 +29,12 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
-import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
+import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,52 +43,42 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to cloudstack via their REST API.
  * <p/>
  * 
- * @see NATClient
+ * @see FirewallClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface NATAsyncClient {
+public interface FirewallAsyncClient {
 
    /**
-    * @see NATClient#listIPForwardingRules
+    * @see FirewallClient#listPortForwardingRules
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @QueryParams(keys = "command", values = "listPortForwardingRules")
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<PortForwardingRule>> listIPForwardingRules(ListIPForwardingRulesOptions... options);
+   ListenableFuture<Set<PortForwardingRule>> listPortForwardingRules(ListPortForwardingRulesOptions... options);
 
    /**
-    * @see NATClient#getIPForwardingRule
+    * @see FirewallClient#createPortForwardingRuleForVirtualMachine
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PortForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
-
-   /**
-    * @see NATClient#createIPForwardingRuleForVirtualMachine
-    */
-   @GET
-   @QueryParams(keys = "command", values = "createIpForwardingRule")
+   @QueryParams(keys = "command", values = "createPortForwardingRule")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createIPForwardingRuleForVirtualMachine(
+   ListenableFuture<AsyncCreateResponse> createPortForwardingRuleForVirtualMachine(
             @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
-            @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
-            CreateIPForwardingRuleOptions... options);
+            @QueryParam("protocol") String protocol, @QueryParam("privateport") int privatePort,
+            @QueryParam("publicport") int publicPort);
 
    /**
-    * @see NATClient#deleteIpForwardingRule
+    * @see FirewallClient#deletePortForwardingRule
     */
    @GET
-   @QueryParams(keys = "command", values = "deleteIpForwardingRule")
+   @QueryParams(keys = "command", values = "deletePortForwardingRule")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteIPForwardingRule(@QueryParam("id") long id);
+   ListenableFuture<Void> deletePortForwardingRule(@QueryParam("id") long id);
 
 }

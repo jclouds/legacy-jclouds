@@ -19,7 +19,7 @@
 
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.find;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -29,19 +29,20 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
 import org.jclouds.net.IPSocket;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
+
 /**
- * Tests behavior of {@code NATClientLiveTest}
+ * Tests behavior of {@code FirewallClientLiveTest}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "NATClientLiveTest")
-public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
+@Test(groups = "live", sequential = true, testName = "FirewallClientLiveTest")
+public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private PortForwardingRule rule;
@@ -54,12 +55,11 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
    }
 
-   public void testCreateIPForwardingRule() throws Exception {
-      // TODO check for 1-1 Nat feature
-      AsyncCreateResponse job = client.getNATClient().createIPForwardingRuleForVirtualMachine(vm.getId(), ip.getId(),
-               "tcp", 22);
+   public void testCreatePortForwardingRule() throws Exception {
+      AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
+               ip.getId(), "tcp", 22, 22);
       assert jobComplete.apply(job.getJobId());
-      rule = client.getNATClient().getIPForwardingRule(job.getId());
+      rule = findRuleWithId(job.getId());
       assertEquals(rule.getIPAddressId(), ip.getId());
       assertEquals(rule.getVirtualMachineId(), vm.getId());
       assertEquals(rule.getPublicPort(), 22);
@@ -72,7 +72,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (rule != null) {
-         client.getNATClient().deleteIPForwardingRule(rule.getId());
+         client.getFirewallClient().deletePortForwardingRule(rule.getId());
       }
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
@@ -83,20 +83,30 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       super.tearDown();
    }
 
-   public void testListIPForwardingRules() throws Exception {
-      Set<PortForwardingRule> response = client.getNATClient().listIPForwardingRules();
+   public void testListPortForwardingRules() throws Exception {
+      Set<PortForwardingRule> response = client.getFirewallClient().listPortForwardingRules();
       assert null != response;
       assertTrue(response.size() >= 0);
-      for (PortForwardingRule rule : response) {
-         PortForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
-                  ListIPForwardingRulesOptions.Builder.id(rule.getId())));
+      for (final PortForwardingRule rule : response) {
+         PortForwardingRule newDetails = findRuleWithId(rule.getId());
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);
       }
    }
 
+   private PortForwardingRule findRuleWithId(final long id) {
+      return find(client.getFirewallClient().listPortForwardingRules(), new Predicate<PortForwardingRule>() {
+
+         @Override
+         public boolean apply(PortForwardingRule arg0) {
+            return arg0.getId() == id;
+         }
+
+      });
+   }
+
    protected void checkRule(PortForwardingRule rule) {
-      assertEquals(rule.getId(), client.getNATClient().getIPForwardingRule(rule.getId()).getId());
+      assertEquals(rule.getId(), findRuleWithId(rule.getId()).getId());
       assert rule.getId() > 0 : rule;
       assert rule.getIPAddress() != null : rule;
       assert rule.getIPAddressId() > 0 : rule;
@@ -104,9 +114,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       assert rule.getProtocol() != null : rule;
       assert rule.getPublicPort() > 0 : rule;
       assert rule.getState() != null : rule;
-      assert rule.getVirtualMachineDisplayName() != null : rule;
       assert rule.getVirtualMachineId() > 0 : rule;
       assert rule.getVirtualMachineName() != null : rule;
-
    }
 }
