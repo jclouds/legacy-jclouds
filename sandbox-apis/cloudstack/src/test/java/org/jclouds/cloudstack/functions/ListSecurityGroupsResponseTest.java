@@ -59,26 +59,22 @@ public class ListSecurityGroupsResponseTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/listsecuritygroupsresponse.json");
 
-      Set<SecurityGroup> expects = ImmutableSet.<SecurityGroup> of(
-            SecurityGroup
-                  .builder()
-                  .id(3)
-                  .name("default")
-                  .description("Default Security Group")
-                  .account("adrian")
-                  .domainId(1)
-                  .domain("ROOT")
-                  .ingressRules(
-                        ImmutableSet.of(
-                              IngressRule.builder().id(8).protocol("tcp").startPort(22).endPort(22).CIDR("0.0.0.0/32")
-                                    .build(), IngressRule.builder().id(9).protocol("icmp").ICMPType(-1).ICMPCode(-1)
-                                    .securityGroupName("default").account("adrian").build())).build(),
+      Set<SecurityGroup> expects = ImmutableSet.<SecurityGroup> of(SecurityGroup.builder().id(3).name("default")
+               .description("Default Security Group").account("adrian").domainId(1).domain("ROOT").ingressRules(
+                        ImmutableSet.of(IngressRule.builder().id(8).protocol("tcp").startPort(22).endPort(22).CIDR(
+                                 "0.0.0.0/32").build(),
 
-            SecurityGroup.builder().id(15).name("adriancole").account("adrian").domainId(1).domain("ROOT").build());
+                        IngressRule.builder().id(9).protocol("icmp").ICMPType(-1).ICMPCode(-1).securityGroupName(
+                                 "default").account("adrian").build(),
+
+                        IngressRule.builder().id(10).protocol("tcp").startPort(80).endPort(80).securityGroupName(
+                                 "default").account("adrian").build())).build(),
+
+      SecurityGroup.builder().id(15).name("adriancole").account("adrian").domainId(1).domain("ROOT").build());
 
       UnwrapOnlyNestedJsonValue<Set<SecurityGroup>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<SecurityGroup>>>() {
-            }));
+               .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<SecurityGroup>>>() {
+               }));
       Set<SecurityGroup> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(Sets.newHashSet(response), expects);

@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -28,19 +26,26 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.predicates.JobComplete;
+import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
+import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
+import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -54,12 +59,25 @@ import com.google.common.collect.Ordering;
  */
 @Test(groups = "live", sequential = true, testName = "VirtualMachineClientLiveTest")
 public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
-   VirtualMachine vm = null;
+   private VirtualMachine vm = null;
+   private RetryablePredicate<Long> jobComplete;
+   private RetryablePredicate<VirtualMachine> virtualMachineRunning;
+   private RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
+
+   @BeforeGroups(groups = "live")
+   public void setupClient() {
+      super.setupClient();
+      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
+      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5,
+               TimeUnit.SECONDS);
+      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5,
+               TimeUnit.SECONDS);
+   }
 
    static final Ordering<ServiceOffering> DEFAULT_SIZE_ORDERING = new Ordering<ServiceOffering>() {
       public int compare(ServiceOffering left, ServiceOffering right) {
-         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber())
-               .compare(left.getMemory(), right.getMemory()).result();
+         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber()).compare(left.getMemory(),
+                  right.getMemory()).result();
       }
    };
 
@@ -78,7 +96,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       }).getId();
 
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
-      if (zone.getNetworkType() == NetworkType.ADVANCED)
+      if (zone.getNetworkType() == NetworkType.ADVANCED) {
          options.networkId(find(client.getNetworkClient().listNetworks(), new Predicate<Network>() {
 
             @Override
@@ -87,41 +105,49 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             }
 
          }).getId());
+      } else {
+         options.securityGroupId(find(client.getSecurityGroupClient().listSecurityGroups(),
+                  new Predicate<SecurityGroup>() {
+
+                     @Override
+                     public boolean apply(SecurityGroup arg0) {
+                        return arg0.getName().equals("default");
+                     }
+
+                  }).getId());
+      }
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
-            zone.getId(), options);
+               zone.getId(), options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
-            zone.getId(), options);
+               zone.getId(), options);
+      assert jobComplete.apply(job.getJobId());
       vm = client.getVirtualMachineClient().getVirtualMachine(job.getId());
+      assert virtualMachineRunning.apply(vm);
       assertEquals(vm.getServiceOfferingId(), serviceOfferingId);
       assertEquals(vm.getTemplateId(), templateId);
       assertEquals(vm.getZoneId(), zone.getId());
-      assert or(equalTo("NetworkFilesystem"), equalTo("Not created")).apply(vm.getRootDeviceType()) : vm;
+      assertEquals(vm.getRootDeviceType(), "NetworkFilesystem");
       checkVm(vm);
-
    }
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vm != null) {
-         try {
-            Long job = client.getVirtualMachineClient().destroyVirtualMachine(vm.getId());
-            assert job != null;
-            assertEquals(client.getVirtualMachineClient().getVirtualMachine(vm.getId()), null);
-         } catch (AssertionError e) {
-            e.printStackTrace();
-         }
+         Long job = client.getVirtualMachineClient().destroyVirtualMachine(vm.getId());
+         assert job != null;
+         assert jobComplete.apply(job);
+         assert virtualMachineDestroyed.apply(vm);
       }
       super.tearDown();
    }
 
    public void testListVirtualMachines() throws Exception {
       Set<VirtualMachine> response = client.getVirtualMachineClient().listVirtualMachines();
-      System.out.println(response);
       assert null != response;
       assertTrue(response.size() >= 0);
       for (VirtualMachine vm : response) {
          VirtualMachine newDetails = getOnlyElement(client.getVirtualMachineClient().listVirtualMachines(
-               ListVirtualMachinesOptions.Builder.id(vm.getId())));
+                  ListVirtualMachinesOptions.Builder.id(vm.getId())));
          assertEquals(vm.getId(), newDetails.getId());
          checkVm(vm);
       }
@@ -159,22 +185,22 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          assert nic.getTrafficType() != null : vm;
          assert nic.getGuestIPType() != null : vm;
          switch (vm.getState()) {
-         case RUNNING:
-            assert nic.getNetmask() != null : vm;
-            assert nic.getGateway() != null : vm;
-            assert nic.getIPAddress() != null : vm;
-            break;
-         default:
-            if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
+            case RUNNING:
                assert nic.getNetmask() != null : vm;
                assert nic.getGateway() != null : vm;
                assert nic.getIPAddress() != null : vm;
-            } else {
-               assert nic.getNetmask() == null : vm;
-               assert nic.getGateway() == null : vm;
-               assert nic.getIPAddress() == null : vm;
-            }
-            break;
+               break;
+            default:
+               if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
+                  assert nic.getNetmask() != null : vm;
+                  assert nic.getGateway() != null : vm;
+                  assert nic.getIPAddress() != null : vm;
+               } else {
+                  assert nic.getNetmask() == null : vm;
+                  assert nic.getGateway() == null : vm;
+                  assert nic.getIPAddress() == null : vm;
+               }
+               break;
          }
 
       }
