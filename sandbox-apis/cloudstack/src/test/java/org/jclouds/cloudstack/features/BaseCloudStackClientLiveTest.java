@@ -27,6 +27,10 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.predicates.JobComplete;
+import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
+import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -55,7 +59,10 @@ public class BaseCloudStackClientLiveTest {
    protected String endpoint;
    protected String apiversion;
    protected Predicate<IPSocket> socketTester;
-
+   protected RetryablePredicate<Long> jobComplete;
+   protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
+   protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
+   
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
             + ".identity must be set.  ex. apiKey");
@@ -87,6 +94,11 @@ public class BaseCloudStackClientLiveTest {
 
       client = context.getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
+      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
+      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5,
+               TimeUnit.SECONDS);
+      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5,
+               TimeUnit.SECONDS);
    }
 
    @AfterGroups(groups = "live")

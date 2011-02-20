@@ -19,7 +19,7 @@
 
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -27,7 +27,9 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
@@ -36,6 +38,8 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code PublicIPAddressClientLiveTest}
@@ -54,13 +58,28 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testAssociateDisassociatePublicIPAddress() throws Exception {
-      final Zone zone = get(client.getZoneClient().listZones(), 0);
+      ip = createPublicIPAddress(client, jobComplete);
+      checkIP(ip);
+   }
 
+   public static PublicIPAddress createPublicIPAddress(CloudStackClient client, RetryablePredicate<Long> jobComplete) {
+      Zone zone = find(client.getZoneClient().listZones(), new Predicate<Zone>() {
+
+         @Override
+         public boolean apply(Zone arg0) {
+            return arg0.getNetworkType() == NetworkType.ADVANCED;
+         }
+
+         @Override
+         public String toString() {
+            return "networkType(ADVANCED)";
+         }
+      });
       AsyncCreateResponse job = client.getAddressClient().associateIPAddress(zone.getId());
       assert jobComplete.apply(job.getJobId());
-      ip = client.getAddressClient().getPublicIPAddress(job.getId());
+      PublicIPAddress ip = client.getAddressClient().getPublicIPAddress(job.getId());
       assertEquals(ip.getZoneId(), zone.getId());
-      checkIP(ip);
+      return ip;
    }
 
    @AfterGroups(groups = "live")

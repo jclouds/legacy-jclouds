@@ -27,6 +27,8 @@ import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.NATAsyncClient;
+import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
@@ -70,6 +72,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
             .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
             .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
             .put(AddressClient.class, AddressAsyncClient.class)//
+            .put(NATClient.class, NATAsyncClient.class)//
             .build();
 
    public CloudStackRestClientModule() {
