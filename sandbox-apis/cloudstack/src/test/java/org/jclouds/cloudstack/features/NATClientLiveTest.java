@@ -26,11 +26,14 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
+import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -44,29 +47,43 @@ import org.testng.annotations.Test;
 public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
-   private PortForwardingRule rule;
+   private IPForwardingRule rule;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
-      prefix += "rule";
+      prefix += "nat";
       ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
    }
 
    public void testCreateIPForwardingRule() throws Exception {
-      // TODO check for 1-1 Nat feature
+
+      assert !ip.isStaticNAT();
+      client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
+      ip = client.getAddressClient().getPublicIPAddress(ip.getId());
+      assert ip.isStaticNAT();
+
       AsyncCreateResponse job = client.getNATClient().createIPForwardingRuleForVirtualMachine(vm.getId(), ip.getId(),
                "tcp", 22);
       assert jobComplete.apply(job.getJobId());
       rule = client.getNATClient().getIPForwardingRule(job.getId());
       assertEquals(rule.getIPAddressId(), ip.getId());
       assertEquals(rule.getVirtualMachineId(), vm.getId());
-      assertEquals(rule.getPublicPort(), 22);
+      assertEquals(rule.getStartPort(), 22);
       assertEquals(rule.getProtocol(), "tcp");
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
       socketTester.apply(socket);
+      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      try {
+         client.connect();
+         ExecResponse exec = client.exec("echo hello");
+         assertEquals(exec.getOutput().trim(), "hello");
+      } finally {
+         if (client != null)
+            client.disconnect();
+      }
    }
 
    @AfterGroups(groups = "live")
@@ -84,27 +101,26 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListIPForwardingRules() throws Exception {
-      Set<PortForwardingRule> response = client.getNATClient().listIPForwardingRules();
+      Set<IPForwardingRule> response = client.getNATClient().listIPForwardingRules();
       assert null != response;
       assertTrue(response.size() >= 0);
-      for (PortForwardingRule rule : response) {
-         PortForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
+      for (IPForwardingRule rule : response) {
+         IPForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
                   ListIPForwardingRulesOptions.Builder.id(rule.getId())));
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);
       }
    }
 
-   protected void checkRule(PortForwardingRule rule) {
+   protected void checkRule(IPForwardingRule rule) {
       assertEquals(rule.getId(), client.getNATClient().getIPForwardingRule(rule.getId()).getId());
       assert rule.getId() > 0 : rule;
       assert rule.getIPAddress() != null : rule;
       assert rule.getIPAddressId() > 0 : rule;
-      assert rule.getPrivatePort() > 0 : rule;
+      assert rule.getStartPort() > 0 : rule;
       assert rule.getProtocol() != null : rule;
-      assert rule.getPublicPort() > 0 : rule;
+      assert rule.getEndPort() > 0 : rule;
       assert rule.getState() != null : rule;
-      assert rule.getVirtualMachineDisplayName() != null : rule;
       assert rule.getVirtualMachineId() > 0 : rule;
       assert rule.getVirtualMachineName() != null : rule;
 

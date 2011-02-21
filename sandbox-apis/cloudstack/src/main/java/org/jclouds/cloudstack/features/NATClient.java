@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
 import org.jclouds.concurrent.Timeout;
@@ -45,7 +45,7 @@ public interface NATClient {
     *           if present, how to constrain the list.
     * @return IPForwardingRulees matching query, or empty set, if no IPForwardingRulees are found
     */
-   Set<PortForwardingRule> listIPForwardingRules(ListIPForwardingRulesOptions... options);
+   Set<IPForwardingRule> listIPForwardingRules(ListIPForwardingRulesOptions... options);
 
    /**
     * get a specific IPForwardingRule by id
@@ -54,7 +54,7 @@ public interface NATClient {
     *           IPForwardingRule to get
     * @return IPForwardingRule or null if not found
     */
-   PortForwardingRule getIPForwardingRule(long id);
+   IPForwardingRule getIPForwardingRule(long id);
 
    /**
     * Creates an ip forwarding rule
@@ -79,5 +79,7 @@ public interface NATClient {
     * @param id
     *           the id of the forwarding rule
     */
-   void deleteIPForwardingRule(long id);
+   Long deleteIPForwardingRule(long id);
+
+   AsyncCreateResponse enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
 }

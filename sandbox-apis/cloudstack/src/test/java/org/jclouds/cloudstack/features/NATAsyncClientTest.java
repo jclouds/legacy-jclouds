@@ -25,14 +25,12 @@ import java.lang.reflect.Method;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -68,8 +66,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, ListIPForwardingRulesOptions.Builder
                .virtualMachineId(3));
 
-      assertRequestLineEquals(
-               httpRequest,
+      assertRequestLineEquals(httpRequest,
                "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&virtualmachineid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
@@ -105,7 +102,8 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
                String.class, int.class, CreateIPForwardingRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22);
 
-      assertRequestLineEquals(httpRequest,
+      assertRequestLineEquals(
+               httpRequest,
                "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&startport=22 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
@@ -125,8 +123,26 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22, CreateIPForwardingRuleOptions.Builder
                .endPort(22));
 
-      assertRequestLineEquals(httpRequest,
+      assertRequestLineEquals(
+               httpRequest,
                "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&startport=22&endport=22 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testEnableStaticNATForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = NATAsyncClient.class.getMethod("enableStaticNATForVirtualMachine", long.class, long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 5, 6);
+
+      assertRequestLineEquals(httpRequest,
+               "GET http://localhost:8080/client/api?response=json&command=enableStaticNat&virtualmachineid=5&ipaddressid=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -144,12 +160,12 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
       assertRequestLineEquals(httpRequest,
                "GET http://localhost:8080/client/api?response=json&command=deleteIpForwardingRule&id=5 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 

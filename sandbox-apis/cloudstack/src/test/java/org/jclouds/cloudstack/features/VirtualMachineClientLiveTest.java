@@ -117,7 +117,6 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testCreateDestroyVirtualMachine() throws Exception {
       vm = createVirtualMachine(client, jobComplete, virtualMachineRunning);
-
       assertEquals(vm.getRootDeviceType(), "NetworkFilesystem");
       checkVm(vm);
    }

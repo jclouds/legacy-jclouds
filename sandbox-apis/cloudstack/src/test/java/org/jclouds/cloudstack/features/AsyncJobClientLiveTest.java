@@ -53,11 +53,6 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
          assert asyncJob.getAccountId() >= 0 : asyncJob;
          assert asyncJob.getCmd() != null : asyncJob;
          assert asyncJob.getCreated() != null : asyncJob;
-         // seemingly unused fields
-         assert asyncJob.getInstanceId() == -1 : asyncJob;
-         assert asyncJob.getInstanceType() == null : asyncJob;
-         assert asyncJob.getResultType() == null : asyncJob;
-         // end
          if (asyncJob.getProgress() > 0) {
             assert asyncJob.getResult() == null : asyncJob;
             assert asyncJob.getResultCode() == -1 : asyncJob;

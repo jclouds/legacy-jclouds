@@ -27,7 +27,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
@@ -37,7 +37,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -61,7 +60,7 @@ public interface NATAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<PortForwardingRule>> listIPForwardingRules(ListIPForwardingRulesOptions... options);
+   ListenableFuture<Set<IPForwardingRule>> listIPForwardingRules(ListIPForwardingRulesOptions... options);
 
    /**
     * @see NATClient#getIPForwardingRule
@@ -71,7 +70,7 @@ public interface NATAsyncClient {
    @Unwrap(depth = 3, edgeCollection = Set.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PortForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
+   ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
 
    /**
     * @see NATClient#createIPForwardingRuleForVirtualMachine
@@ -86,11 +85,23 @@ public interface NATAsyncClient {
             CreateIPForwardingRuleOptions... options);
 
    /**
-    * @see NATClient#deleteIpForwardingRule
+    * @see NATClient#enableStaticNATForVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "enableStaticNat")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> enableStaticNATForVirtualMachine(
+            @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
+
+   /**
+    * @see NATClient#deleteIPForwardingRule
     */
    @GET
    @QueryParams(keys = "command", values = "deleteIpForwardingRule")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteIPForwardingRule(@QueryParam("id") long id);
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Long> deleteIPForwardingRule(@QueryParam("id") long id);
 
 }

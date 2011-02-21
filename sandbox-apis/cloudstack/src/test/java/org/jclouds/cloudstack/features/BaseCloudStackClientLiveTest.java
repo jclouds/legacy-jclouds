@@ -20,6 +20,7 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -31,17 +32,22 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
@@ -62,15 +68,31 @@ public class BaseCloudStackClientLiveTest {
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
-   
+   protected SshClient.Factory sshFactory;
+
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-            + ".identity must be set.  ex. apiKey");
+               + ".identity must be set.  ex. apiKey");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential must be set.  ex. secretKey");
+               + ".credential must be set.  ex. secretKey");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
-            + ".endpoint must be set.  ex. http://localhost:8080/client/api");
+               + ".endpoint must be set.  ex. http://localhost:8080/client/api");
       apiversion = System.getProperty("test." + provider + ".apiversion");
+   }
+
+   protected void checkSSH(String address, int port) {
+      IPSocket socket = new IPSocket(address, port);
+      socketTester.apply(socket);
+      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      try {
+         client.connect();
+         ExecResponse exec = client.exec("echo hello");
+         System.out.println(exec);
+         assertEquals(exec.getOutput().trim(), "hello");
+      } finally {
+         if (client != null)
+            client.disconnect();
+      }
    }
 
    protected Properties setupProperties() {
@@ -90,9 +112,10 @@ public class BaseCloudStackClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+               overrides);
 
       client = context.getApi();
+      sshFactory = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
       jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5,

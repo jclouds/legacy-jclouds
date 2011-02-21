@@ -29,7 +29,10 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
+import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -67,6 +70,15 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
       socketTester.apply(socket);
+      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      try {
+         client.connect();
+         ExecResponse exec = client.exec("echo hello");
+         assertEquals(exec.getOutput().trim(), "hello");
+      } finally {
+         if (client != null)
+            client.disconnect();
+      }
    }
 
    @AfterGroups(groups = "live")
