@@ -42,7 +42,7 @@ public interface FirewallClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return PortForwardingRulees matching query, or empty set, if no PortForwardingRulees are
+    * @return PortForwardingRules matching query, or empty set, if no PortForwardingRulees are
     *         found
     */
    Set<PortForwardingRule> listPortForwardingRules(ListPortForwardingRulesOptions... options);

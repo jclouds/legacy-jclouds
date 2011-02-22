@@ -1,0 +1,130 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agred to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * Se the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
+package org.jclouds.cloudstack.features;
+
+import static com.google.common.collect.Iterables.find;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
+import org.jclouds.cloudstack.domain.LoadBalancerRule;
+import org.jclouds.cloudstack.domain.PublicIPAddress;
+import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+
+/**
+ * Tests behavior of {@code LoadBalancerClientLiveTest}
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "live", sequential = true, testName = "LoadBalancerClientLiveTest")
+public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
+   private PublicIPAddress ip = null;
+   private VirtualMachine vm;
+   private LoadBalancerRule rule;
+
+   @BeforeGroups(groups = "live")
+   public void setupClient() {
+      super.setupClient();
+      prefix += "rule";
+      ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
+      vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+   }
+
+   public void testCreateLoadBalancerRule() throws Exception {
+      rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN, prefix,
+               22, 22);
+      assert (rule.getPublicIPId() == ip.getId()) : rule;
+      assertEquals(rule.getPublicPort(), 22);
+      assertEquals(rule.getPrivatePort(), 22);
+      assertEquals(rule.getAlgorithm(), Algorithm.LEASTCONN);
+      assertEquals(rule.getName(), prefix);
+      assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
+      checkRule(rule);
+      // IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
+      // socketTester.apply(socket);
+      // SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      // try {
+      // client.connect();
+      // ExecResponse exec = client.exec("echo hello");
+      // assertEquals(exec.getOutput().trim(), "hello");
+      // } finally {
+      // if (client != null)
+      // client.disconnect();
+      // }
+   }
+
+   @AfterGroups(groups = "live")
+   protected void tearDown() {
+      if (rule != null) {
+         assert jobComplete.apply(client.getLoadBalancerClient().deleteLoadBalancerRule(rule.getId()));
+      }
+      if (ip != null) {
+         client.getAddressClient().disassociateIPAddress(ip.getId());
+      }
+      if (vm != null) {
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+      }
+      super.tearDown();
+   }
+
+   public void testListLoadBalancerRules() throws Exception {
+      Set<LoadBalancerRule> response = client.getLoadBalancerClient().listLoadBalancerRules();
+      assert null != response;
+      assertTrue(response.size() >= 0);
+      for (final LoadBalancerRule rule : response) {
+         LoadBalancerRule newDetails = findRuleWithId(rule.getId());
+         assertEquals(rule.getId(), newDetails.getId());
+         checkRule(rule);
+      }
+   }
+
+   private LoadBalancerRule findRuleWithId(final long id) {
+      return find(client.getLoadBalancerClient().listLoadBalancerRules(), new Predicate<LoadBalancerRule>() {
+
+         @Override
+         public boolean apply(LoadBalancerRule arg0) {
+            return arg0.getId() == id;
+         }
+
+      });
+   }
+
+   protected void checkRule(LoadBalancerRule rule) {
+      assertEquals(rule.getId(), findRuleWithId(rule.getId()).getId());
+      assert rule.getId() > 0 : rule;
+      assert rule.getAccount() != null : rule;
+      assert rule.getAlgorithm() != null : rule;
+      assert rule.getPrivatePort() > 0 : rule;
+      assert rule.getPublicPort() > 0 : rule;
+      assert rule.getDomain() != null : rule;
+      assert rule.getDomainId() > 0 : rule;
+      assert rule.getState() != null : rule;
+      assert rule.getName() != null : rule;
+      assert rule.getPublicIP() != null : rule;
+      assert rule.getPublicIPId() > 0 : rule;
+   }
+}

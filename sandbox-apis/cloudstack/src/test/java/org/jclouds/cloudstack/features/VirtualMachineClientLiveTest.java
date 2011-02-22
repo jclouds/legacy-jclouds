@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -45,7 +47,6 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import static com.google.common.base.Predicates.*;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 
@@ -76,7 +77,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          @Override
          public boolean apply(Template arg0) {
             return arg0.getZoneId() == zone.getId() && arg0.isFeatured() && arg0.isReady()
-                     && arg0.getOSType().equals("Ubuntu 10.04 (64-bit)");
+                     && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (32-bit)")).apply(arg0.getOSType());
          }
 
       }).getId();
