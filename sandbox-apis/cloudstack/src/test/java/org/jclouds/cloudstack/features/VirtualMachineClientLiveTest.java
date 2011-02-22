@@ -45,6 +45,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import static com.google.common.base.Predicates.*;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 
@@ -74,7 +75,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
          @Override
          public boolean apply(Template arg0) {
-            return arg0.getZoneId() == zone.getId() && arg0.isFeatured() && arg0.isReady();
+            return arg0.getZoneId() == zone.getId() && arg0.isFeatured() && arg0.isReady()
+                     && arg0.getOSType().equals("Ubuntu 10.04 (64-bit)");
          }
 
       }).getId();
@@ -115,10 +117,33 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       return vm;
    }
 
-   public void testCreateDestroyVirtualMachine() throws Exception {
+   public void testCreateVirtualMachine() throws Exception {
       vm = createVirtualMachine(client, jobComplete, virtualMachineRunning);
-      assertEquals(vm.getRootDeviceType(), "NetworkFilesystem");
+      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN")).apply(vm.getRootDeviceType()) : vm;
       checkVm(vm);
+   }
+
+   @Test(dependsOnMethods = "testCreateVirtualMachine")
+   public void testLifeCycle() throws Exception {
+      Long job = client.getVirtualMachineClient().stopVirtualMachine(vm.getId());
+      assert jobComplete.apply(job);
+      vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
+      assertEquals(vm.getState(), VirtualMachine.State.STOPPED);
+
+      job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
+      assert jobComplete.apply(job);
+      vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
+      // TODO: check if error or not base on isPasswordEnabled
+
+      job = client.getVirtualMachineClient().startVirtualMachine(vm.getId());
+      assert jobComplete.apply(job);
+      vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
+      assertEquals(vm.getState(), VirtualMachine.State.RUNNING);
+
+      job = client.getVirtualMachineClient().rebootVirtualMachine(vm.getId());
+      assert jobComplete.apply(job);
+      vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
+      assertEquals(vm.getState(), VirtualMachine.State.RUNNING);
    }
 
    @AfterGroups(groups = "live")

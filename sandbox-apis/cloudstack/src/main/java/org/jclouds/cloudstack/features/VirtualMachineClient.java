@@ -69,7 +69,63 @@ public interface VirtualMachineClient {
     * @return virtual machine
     */
    AsyncCreateResponse deployVirtualMachine(long serviceOfferingId, long templateId, long zoneId,
-         DeployVirtualMachineOptions... options);
+            DeployVirtualMachineOptions... options);
+
+   /**
+    * Reboots a virtual machine.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long rebootVirtualMachine(long id);
+
+   /**
+    * Starts a virtual machine.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long startVirtualMachine(long id);
+
+   /**
+    * Stops a virtual machine.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long stopVirtualMachine(long id);
+
+   /**
+    * Resets the password for virtual machine. The virtual machine must be in a "Stopped" state and
+    * the template must already support this feature for this command to take effect.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long resetPasswordForVirtualMachine(long id);
+
+   /**
+    * Changes the service offering for a virtual machine. The virtual machine must be in a "Stopped"
+    * state for this command to take effect.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long changeServiceForVirtualMachine(long id);
+
+   /**
+    * Updates parameters of a virtual machine.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @return job id related to destroying the VM
+    */
+   Long updateVirtualMachine(long id);
 
    /**
     * Destroys a virtual machine. Once destroyed, only the administrator can recover it.

@@ -80,8 +80,62 @@ public interface VirtualMachineAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> deployVirtualMachine(@QueryParam("serviceofferingid") long serviceOfferingId,
-         @QueryParam("templateid") long templateId, @QueryParam("zoneid") long zoneId,
-         DeployVirtualMachineOptions... options);
+            @QueryParam("templateid") long templateId, @QueryParam("zoneid") long zoneId,
+            DeployVirtualMachineOptions... options);
+
+   /**
+    * @see VirtualMachineClient#rebootVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "rebootVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> rebootVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#startVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "startVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> startVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#stopVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "stopVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> stopVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#resetPasswordForVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "resetPasswordForVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> resetPasswordForVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#changeServiceForVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "changeServiceForVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> changeServiceForVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#updateVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateVirtualMachine")
+   @Unwrap(depth = 2)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> updateVirtualMachine(@QueryParam("id") long id);
 
    /**
     * @see VirtualMachineClient#destroyVirtualMachine
