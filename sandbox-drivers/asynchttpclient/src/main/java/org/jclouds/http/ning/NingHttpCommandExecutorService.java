@@ -59,6 +59,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
+import com.ning.http.client.generators.InputStreamBodyGenerator;
 
 /**
  * Todo Write me
@@ -78,8 +79,8 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
    @Inject
    public NingHttpCommandExecutorService(AsyncHttpClient client, ConvertToNingRequest convertToNingRequest,
-         ConvertToJCloudsResponse convertToJCloudsResponse, DelegatingRetryHandler retryHandler,
-         DelegatingErrorHandler errorHandler) {
+            ConvertToJCloudsResponse convertToJCloudsResponse, DelegatingRetryHandler retryHandler,
+            DelegatingErrorHandler errorHandler) {
       this.client = client;
       this.convertToNingRequest = convertToNingRequest;
       this.convertToJCloudsResponse = convertToJCloudsResponse;
@@ -130,7 +131,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
       public Request apply(HttpRequest request) {
 
          for (HttpRequestFilter filter : request.getFilters()) {
-            filter.filter(request);
+            request = filter.filter(request);
          }
 
          RequestBuilder builder = new RequestBuilder(request.getMethod());
@@ -140,22 +141,22 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
 
             if (request.getPayload().getContentMetadata().getContentMD5() != null)
-               builder.addHeader("Content-MD5",
-                     CryptoStreams.base64(request.getPayload().getContentMetadata().getContentMD5()));
+               builder.addHeader("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMetadata()
+                        .getContentMD5()));
             if (request.getPayload().getContentMetadata().getContentType() != null)
                builder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentMetadata().getContentType());
             if (request.getPayload().getContentMetadata().getContentLanguage() != null)
                builder.addHeader(HttpHeaders.CONTENT_LANGUAGE, request.getPayload().getContentMetadata()
-                     .getContentLanguage());
+                        .getContentLanguage());
             if (request.getPayload().getContentMetadata().getContentEncoding() != null)
                builder.addHeader(HttpHeaders.CONTENT_ENCODING, request.getPayload().getContentMetadata()
-                     .getContentEncoding());
+                        .getContentEncoding());
             if (request.getPayload().getContentMetadata().getContentDisposition() != null)
                builder.addHeader("Content-Disposition", request.getPayload().getContentMetadata()
-                     .getContentDisposition());
+                        .getContentDisposition());
             if (!chunked) {
                Long length = checkNotNull(request.getPayload().getContentMetadata().getContentLength(),
-                     "payload.getContentLength");
+                        "payload.getContentLength");
                builder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
             }
             setPayload(builder, payload);
@@ -177,7 +178,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          if (payload instanceof FilePayload) {
             requestBuilder.setBody(((FilePayload) payload).getRawContent());
          } else {
-            requestBuilder.setBody(payload.getInput());
+            requestBuilder.setBody(new InputStreamBodyGenerator(payload.getInput()));
          }
       }
    }
@@ -204,7 +205,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          if (payload != null)
             payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
          return new HttpResponse(nativeResponse.getStatusCode(), nativeResponse.getStatusText(), payload,
-               RestAnnotationProcessor.filterOutContentHeaders(headers));
+                  RestAnnotationProcessor.filterOutContentHeaders(headers));
       }
    }
 }
