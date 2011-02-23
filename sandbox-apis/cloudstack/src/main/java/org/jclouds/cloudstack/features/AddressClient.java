@@ -71,5 +71,6 @@ public interface AddressClient {
     * @param id
     *           the id of the public ip address to disassociate
     */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    void disassociateIPAddress(long id);
 }

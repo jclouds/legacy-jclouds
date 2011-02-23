@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -28,6 +29,22 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
+   public static enum State {
+      ADD, ACTIVE, UNRECOGNIZED;
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+   }
 
    public static enum Algorithm {
       SOURCE, ROUNDROBIN, LEASTCONN, UNRECOGNIZED;
@@ -62,7 +79,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       private String publicIP;
       private long publicIPId;
       private int publicPort;
-      private String state;
+      private State state;
 
       public Builder id(long id) {
          this.id = id;
@@ -119,7 +136,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -146,7 +163,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    private long publicIPId;
    @SerializedName("publicport")
    private int publicPort;
-   private String state;
+   private State state;
 
    // for deserializer
    LoadBalancerRule() {
@@ -154,7 +171,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    public LoadBalancerRule(long id, String account, Algorithm algorithm, String description, String domain,
-            long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, String state) {
+            long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state) {
       this.id = id;
       this.account = account;
       this.algorithm = algorithm;
@@ -249,7 +266,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the state of the rule
     */
-   public String getState() {
+   public State getState() {
       return state;
    }
 

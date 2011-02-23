@@ -48,6 +48,15 @@ public interface LoadBalancerClient {
    Set<LoadBalancerRule> listLoadBalancerRules(ListLoadBalancerRulesOptions... options);
 
    /**
+    * get a specific LoadBalancerRule by id
+    * 
+    * @param id
+    *           LoadBalancerRule to get
+    * @return LoadBalancerRule or null if not found
+    */
+   LoadBalancerRule getLoadBalancerRule(long id);
+
+   /**
     * Creates a load balancer rule.
     * 
     * @param publicIPId
@@ -85,4 +94,51 @@ public interface LoadBalancerClient {
     */
    Set<VirtualMachine> listVirtualMachinesAssignedToLoadBalancerRule(long id);
 
+   /**
+    * Assigns virtual machine or a list of virtual machines to a load balancer rule.
+    * 
+    * @param id
+    *           the ID of the load balancer rule
+    * @param virtualMachineIds
+    *           the list of IDs of the virtual machine that are being assigned to the load balancer
+    *           rule
+    * @return job id related to the operation
+    */
+   long assignVirtualMachinesToLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
+
+   /**
+    * Assigns virtual machine or a list of virtual machines to a load balancer rule.
+    * 
+    * @param id
+    *           the ID of the load balancer rule
+    * @param virtualMachineIds
+    *           the list of IDs of the virtual machine that are being assigned to the load balancer
+    *           rule
+    * @return job id related to the operation
+    */
+   long assignVirtualMachinesToLoadBalancerRule(long id, long... virtualMachineIds);
+
+   /**
+    * Removes a virtual machine or a list of virtual machines from a load balancer rule.
+    * 
+    * @param id
+    *           the ID of the load balancer rule
+    * @param virtualMachineIds
+    *           the list of IDs of the virtual machine that are being removed from the load balancer
+    *           rule
+    * @return job id related to the operation
+    */
+   long removeVirtualMachinesFromLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
+
+   /**
+    * Removes a virtual machine or a list of virtual machines from a load balancer rule.
+    * 
+    * @param id
+    *           the ID of the load balancer rule
+    * @param virtualMachineIds
+    *           the list of IDs of the virtual machine that are being removed from the load balancer
+    *           rule
+    * @return job id related to the operation
+    */
+   long removeVirtualMachinesFromLoadBalancerRule(long id, long... virtualMachineIds);
 }

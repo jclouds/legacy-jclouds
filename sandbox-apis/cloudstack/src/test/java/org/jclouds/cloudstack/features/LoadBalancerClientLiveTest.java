@@ -24,11 +24,16 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
+import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
+import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -45,10 +50,13 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private LoadBalancerRule rule;
+   private RetryablePredicate<LoadBalancerRule> loadBalancerRuleActive;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
+      loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 600, 5,
+               TimeUnit.SECONDS);
       prefix += "rule";
       ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
@@ -62,19 +70,30 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(rule.getPrivatePort(), 22);
       assertEquals(rule.getAlgorithm(), Algorithm.LEASTCONN);
       assertEquals(rule.getName(), prefix);
+      assertEquals(rule.getState(), State.ADD);
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
       checkRule(rule);
-      // IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
-      // socketTester.apply(socket);
-      // SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
-      // try {
-      // client.connect();
-      // ExecResponse exec = client.exec("echo hello");
-      // assertEquals(exec.getOutput().trim(), "hello");
-      // } finally {
-      // if (client != null)
-      // client.disconnect();
-      // }
+
+   }
+
+   @Test(dependsOnMethods = "testCreateLoadBalancerRule")
+   public void testAssignToLoadBalancerRule() throws Exception {
+      assert jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
+               vm.getId()));
+      assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
+      assert loadBalancerRuleActive.apply(rule) : rule;
+      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
+      assert socketTester.apply(socket) : vm;
+   }
+
+   @Test(dependsOnMethods = "testAssignToLoadBalancerRule")
+   public void testRemoveFromLoadBalancerRule() throws Exception {
+      assert jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
+               vm.getId()));
+      assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
+      assertEquals(rule.getState(), State.ADD);
+      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
+      assert !socketTester.apply(socket);
    }
 
    @AfterGroups(groups = "live")
@@ -82,11 +101,11 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       if (rule != null) {
          assert jobComplete.apply(client.getLoadBalancerClient().deleteLoadBalancerRule(rule.getId()));
       }
-      if (ip != null) {
-         client.getAddressClient().disassociateIPAddress(ip.getId());
-      }
       if (vm != null) {
          assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+      }
+      if (ip != null) {
+         client.getAddressClient().disassociateIPAddress(ip.getId());
       }
       super.tearDown();
    }
