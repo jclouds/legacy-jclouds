@@ -64,8 +64,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       ip = client.getAddressClient().getPublicIPAddress(ip.getId());
       assert ip.isStaticNAT();
 
-      AsyncCreateResponse job = client.getNATClient().createIPForwardingRuleForVirtualMachine(vm.getId(), ip.getId(),
-               "tcp", 22);
+      AsyncCreateResponse job = client.getNATClient().createIPForwardingRule(ip.getId(), "tcp", 22);
       assert jobComplete.apply(job.getJobId());
       rule = client.getNATClient().getIPForwardingRule(job.getId());
       assertEquals(rule.getIPAddressId(), ip.getId());
@@ -106,7 +105,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(response.size() >= 0);
       for (IPForwardingRule rule : response) {
          IPForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
-                  ListIPForwardingRulesOptions.Builder.id(rule.getId())));
+               ListIPForwardingRulesOptions.Builder.id(rule.getId())));
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);
       }

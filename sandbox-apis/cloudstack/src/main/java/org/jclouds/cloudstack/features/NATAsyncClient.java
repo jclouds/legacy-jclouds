@@ -73,16 +73,15 @@ public interface NATAsyncClient {
    ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
 
    /**
-    * @see NATClient#createIPForwardingRuleForVirtualMachine
+    * @see NATClient#createIPForwardingRule
     */
    @GET
    @QueryParams(keys = "command", values = "createIpForwardingRule")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createIPForwardingRuleForVirtualMachine(
-            @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
-            @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
-            CreateIPForwardingRuleOptions... options);
+   ListenableFuture<AsyncCreateResponse> createIPForwardingRule(@QueryParam("ipaddressid") long IPAddressId,
+         @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
+         CreateIPForwardingRuleOptions... options);
 
    /**
     * @see NATClient#enableStaticNATForVirtualMachine
@@ -92,7 +91,7 @@ public interface NATAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> enableStaticNATForVirtualMachine(
-            @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
+         @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
 
    /**
     * @see NATClient#deleteIPForwardingRule
