@@ -59,9 +59,6 @@ public interface NATClient {
    /**
     * Creates an ip forwarding rule
     * 
-    * @param virtualMachineId
-    *           the virtual machine this rule applies to.
-    * 
     * @param IPAddressId
     *           the public IP address id of the forwarding rule, already associated via associateIp
     * @param protocol
@@ -70,8 +67,8 @@ public interface NATClient {
     *           the start port for the rule
     * @return response used to track creation
     */
-   AsyncCreateResponse createIPForwardingRuleForVirtualMachine(long virtualMachineId, long IPAddressId,
-            String protocol, int startPort, CreateIPForwardingRuleOptions... options);
+   AsyncCreateResponse createIPForwardingRule(long IPAddressId, String protocol, int startPort,
+         CreateIPForwardingRuleOptions... options);
 
    /**
     * Deletes an ip forwarding rule

@@ -49,7 +49,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -63,11 +63,11 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testListIPForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListIPForwardingRulesOptions.Builder
-               .virtualMachineId(3));
+      HttpRequest httpRequest = processor.createRequest(method,
+            ListIPForwardingRulesOptions.Builder.virtualMachineId(3));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&virtualmachineid=3 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&virtualmachineid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -84,7 +84,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -97,14 +97,14 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testCreateIPForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = NATAsyncClient.class.getMethod("createIPForwardingRuleForVirtualMachine", long.class, long.class,
-               String.class, int.class, CreateIPForwardingRuleOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22);
+         IOException {
+      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", long.class, String.class, int.class,
+            CreateIPForwardingRuleOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22);
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&startport=22 HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=7&startport=22&protocol=tcp HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -117,15 +117,15 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testCreateIPForwardingRuleForVirtualMachineOptions() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = NATAsyncClient.class.getMethod("createIPForwardingRuleForVirtualMachine", long.class, long.class,
-               String.class, int.class, CreateIPForwardingRuleOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22, CreateIPForwardingRuleOptions.Builder
-               .endPort(22));
+         IOException {
+      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", long.class, String.class, int.class,
+            CreateIPForwardingRuleOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22,
+            CreateIPForwardingRuleOptions.Builder.endPort(22));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&startport=22&endport=22 HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=7&startport=22&protocol=tcp&endport=22 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -142,7 +142,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 5, 6);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=enableStaticNat&virtualmachineid=5&ipaddressid=6 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=enableStaticNat&virtualmachineid=5&ipaddressid=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -159,7 +159,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=deleteIpForwardingRule&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=deleteIpForwardingRule&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
