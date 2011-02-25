@@ -153,8 +153,8 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                         "After filtering, the request has niether chunked encoding nor content length: " + request);
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                wirePayloadIfEnabled(wire, request);
-               nativeRequest = convert(request);
                utils.logRequest(headerLog, request, ">>");
+               nativeRequest = convert(request);
                response = invoke(nativeRequest);
 
                logger.debug("Receiving response %s: %s", request.hashCode(), response.getStatusLine());
