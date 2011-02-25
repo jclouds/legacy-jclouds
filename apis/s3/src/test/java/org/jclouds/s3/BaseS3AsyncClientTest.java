@@ -28,20 +28,17 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient> {
+public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends RestClientTest<T> {
 
    protected BlobToObject blobToS3Object;
    protected RequestAuthorizeSignature filter;
@@ -52,11 +49,6 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
       assertEquals(request.getFilters().get(0).getClass(), RequestAuthorizeSignature.class);
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
 
    @BeforeClass
    @Override

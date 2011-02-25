@@ -31,6 +31,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
@@ -40,6 +41,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code S3BlobRequestSigner}
@@ -48,39 +50,45 @@ import com.google.inject.Module;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "S3BlobRequestSignerTest")
-public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest {
+public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    private BlobRequestSigner signer;
    private Factory blobFactory;
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
       HttpRequest request = signer.signGetBlob("container", "name");
 
       assertRequestLineEquals(request, "GET https://container.s3.amazonaws.com/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
-            request,
-            "Authorization: AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
+               request,
+               "Authorization: AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
    }
 
    public void testSignRemoveBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
       HttpRequest request = signer.signRemoveBlob("container", "name");
 
       assertRequestLineEquals(request, "DELETE https://container.s3.amazonaws.com/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
-            request,
-            "Authorization: AWS identity:4FnyjdX/ULdDMRbVlLNjZfEo9RQ=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
+               request,
+               "Authorization: AWS identity:4FnyjdX/ULdDMRbVlLNjZfEo9RQ=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
    }
 
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
       blob.setPayload(new PhantomPayload());
@@ -92,8 +100,8 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest {
 
       assertRequestLineEquals(request, "PUT https://container.s3.amazonaws.com/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
-            request,
-            "Authorization: AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
+               request,
+               "Authorization: AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
 
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
 

@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public interface ContentMetadata {
    public static final Set<String> HTTP_HEADERS = ImmutableSet.of(CONTENT_LENGTH, "Content-MD5", CONTENT_TYPE,
-         "Content-Disposition", "Content-Encoding", "Content-Language");
+            "Content-Disposition", "Content-Encoding", "Content-Language");
 
    /**
     * Returns the total size of the payload, or the chunk that's available.
@@ -86,5 +86,7 @@ public interface ContentMetadata {
     */
    @Nullable
    String getContentLanguage();
+
+   ContentMetadataBuilder toBuilder();
 
 }

@@ -26,15 +26,19 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
-import org.jclouds.s3.BaseS3AsyncClientTest;
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.BaseS3AsyncClientTest;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindS3ObjectMetadataToRequest}
@@ -43,7 +47,13 @@ import com.google.common.collect.ImmutableMultimap;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindS3ObjectMetadataToRequestTest")
-public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest {
+public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    @Test
    public void testPassWithMinimumDetailsAndPayload5GB() {
@@ -56,8 +66,8 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest {
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
 
-      assertEquals(binder.bindToRequest(request, object),
-            HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build());
+      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
+               URI.create("http://localhost")).build());
    }
 
    @Test
@@ -68,14 +78,14 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest {
       object.setPayload(payload);
       object.getMetadata().setKey("foo");
       object.getMetadata().setCacheControl("no-cache");
+      object.getMetadata().setUserMetadata(ImmutableMap.of("foo", "bar"));
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
 
-      assertEquals(
-            binder.bindToRequest(request, object),
-            HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost"))
-                  .headers(ImmutableMultimap.of("Cache-Control", "no-cache")).build());
+      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
+               URI.create("http://localhost")).headers(
+               ImmutableMultimap.of("Cache-Control", "no-cache", "x-amz-meta-foo", "bar")).build());
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.MutableContentMetadata;
 
 /**
@@ -34,6 +35,10 @@ public class PhantomPayload extends BasePayload<Object> {
 
    public PhantomPayload() {
       super(Object.class);
+   }
+
+   public PhantomPayload(ContentMetadata contentMetadata) {
+      this(BaseMutableContentMetadata.fromContentMetadata(checkNotNull(contentMetadata, "contentMetadata")));
    }
 
    public PhantomPayload(MutableContentMetadata contentMetadata) {

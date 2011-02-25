@@ -19,63 +19,26 @@
 
 package org.jclouds.io.payloads;
 
-import static com.google.common.collect.Iterables.any;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.MutableContentMetadata;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
  */
-public class BaseMutableContentMetadata implements MutableContentMetadata, Serializable {
+public class BaseMutableContentMetadata extends ContentMetadataBuilder implements MutableContentMetadata, Serializable {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8364286391963469370L;
+
    @Override
    public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
-      boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
-         @Override
-         public boolean apply(Entry<String, String> input) {
-            return "Transfer-Encoding".equalsIgnoreCase(input.getKey()) && "chunked".equalsIgnoreCase(input.getValue());
-         }
-      });
-      for (Entry<String, String> header : headers.entries()) {
-         if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
-            setContentLength(new Long(header.getValue()));
-         } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
-            setContentMD5(CryptoStreams.base64(header.getValue()));
-         } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
-            setContentType(header.getValue());
-         } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
-            setContentDisposition(header.getValue());
-         } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
-            setContentEncoding(header.getValue());
-         } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
-            setContentLanguage(header.getValue());
-         }
-      }
-   }
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 4572381435863125873L;
-
-   protected String contentType = "application/unknown";
-   protected Long contentLength;
-   protected byte[] contentMD5;
-   protected String contentDisposition;
-   protected String contentLanguage;
-   protected String contentEncoding;
-
-   public BaseMutableContentMetadata() {
-      super();
+      fromHttpHeaders(headers);
    }
 
    /**
@@ -91,7 +54,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentLength(@Nullable Long contentLength) {
-      this.contentLength = contentLength;
+      contentLength(contentLength);
    }
 
    /**
@@ -113,11 +76,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentMD5(byte[] md5) {
-      if (md5 != null) {
-         byte[] retval = new byte[md5.length];
-         System.arraycopy(md5, 0, retval, 0, md5.length);
-         this.contentMD5 = md5;
-      }
+      contentMD5(md5);
    }
 
    /**
@@ -133,7 +92,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentType(@Nullable String contentType) {
-      this.contentType = contentType;
+      contentType(contentType);
    }
 
    /**
@@ -141,7 +100,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentDisposition(@Nullable String contentDisposition) {
-      this.contentDisposition = contentDisposition;
+      contentDisposition(contentDisposition);
    }
 
    /**
@@ -157,7 +116,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentLanguage(@Nullable String contentLanguage) {
-      this.contentLanguage = contentLanguage;
+      contentLanguage(contentLanguage);
    }
 
    /**
@@ -173,7 +132,7 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
     */
    @Override
    public void setContentEncoding(@Nullable String contentEncoding) {
-      this.contentEncoding = contentEncoding;
+      contentEncoding(contentEncoding);
    }
 
    /**
@@ -185,62 +144,14 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
    }
 
    @Override
-   public String toString() {
-      return "[contentType=" + contentType + ", contentLength=" + contentLength + ", contentDisposition="
-            + contentDisposition + ", contentEncoding=" + contentEncoding + ", contentLanguage=" + contentLanguage
-            + ", contentMD5=" + Arrays.toString(contentMD5) + "]";
+   public BaseMutableContentMetadata toBuilder() {
+      return BaseMutableContentMetadata.fromContentMetadata(this);
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((contentDisposition == null) ? 0 : contentDisposition.hashCode());
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      return result;
+   public static BaseMutableContentMetadata fromContentMetadata(ContentMetadata in) {
+      return (BaseMutableContentMetadata) new BaseMutableContentMetadata().contentType(in.getContentType())
+               .contentLength(in.getContentLength()).contentMD5(in.getContentMD5()).contentDisposition(
+                        in.getContentDisposition()).contentLanguage(in.getContentLanguage()).contentEncoding(
+                        in.getContentEncoding());
    }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BaseMutableContentMetadata other = (BaseMutableContentMetadata) obj;
-      if (contentDisposition == null) {
-         if (other.contentDisposition != null)
-            return false;
-      } else if (!contentDisposition.equals(other.contentDisposition))
-         return false;
-      if (contentEncoding == null) {
-         if (other.contentEncoding != null)
-            return false;
-      } else if (!contentEncoding.equals(other.contentEncoding))
-         return false;
-      if (contentLanguage == null) {
-         if (other.contentLanguage != null)
-            return false;
-      } else if (!contentLanguage.equals(other.contentLanguage))
-         return false;
-      if (contentLength == null) {
-         if (other.contentLength != null)
-            return false;
-      } else if (!contentLength.equals(other.contentLength))
-         return false;
-      if (!Arrays.equals(contentMD5, other.contentMD5))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
-         return false;
-      return true;
-   }
-
 }

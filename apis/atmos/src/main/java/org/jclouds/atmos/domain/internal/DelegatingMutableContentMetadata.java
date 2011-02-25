@@ -20,6 +20,7 @@
 package org.jclouds.atmos.domain.internal;
 
 import org.jclouds.atmos.domain.MutableContentMetadata;
+import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
 import com.google.common.collect.Multimap;
@@ -155,6 +156,11 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    @Override
    public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
       delegate.setPropertiesFromHttpHeaders(headers);
+   }
+
+   @Override
+   public ContentMetadataBuilder toBuilder() {
+      return delegate.toBuilder();
    }
 
 }

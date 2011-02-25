@@ -17,31 +17,43 @@
  * ====================================================================
  */
 
-package org.jclouds.googlestorage;
+package org.jclouds.aws.s3.config;
 
-import org.jclouds.rest.internal.RestAnnotationProcessor;
+import javax.inject.Singleton;
+
+import org.jclouds.aws.s3.AWSS3AsyncClient;
+import org.jclouds.aws.s3.AWSS3Client;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.s3.S3AsyncClient;
-import org.testng.annotations.Test;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.config.S3RestClientModule;
 
-import com.google.inject.TypeLiteral;
+import com.google.inject.Provides;
 
 /**
+ * Configures the S3 connection.
+ * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(enabled = false, groups = "unit", testName = "GoogleStorageAsyncClientTest")
-public class GoogleStorageAsyncClientTestDisabled extends org.jclouds.s3.S3AsyncClientTest<S3AsyncClient> {
+@RequiresHttp
+@ConfiguresRestClient
+public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
 
-   public GoogleStorageAsyncClientTestDisabled() {
-      this.provider = "googlestorage";
-      this.url = "commondatastorage.googleapis.com";
+   public AWSS3RestClientModule() {
+      super(AWSS3Client.class, AWSS3AsyncClient.class);
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
+   @Singleton
+   @Provides
+   S3Client provide(AWSS3Client in) {
+      return in;
    }
 
-   // TODO parameterize this test so that it can pass
+   @Singleton
+   @Provides
+   S3AsyncClient provide(AWSS3AsyncClient in) {
+      return in;
+   }
+
 }

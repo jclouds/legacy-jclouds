@@ -78,7 +78,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
    public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging", "location",
-         "requestPayment");
+            "requestPayment", "uploads");
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -97,10 +97,10 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    @Inject
    public RequestAuthorizeSignature(SignatureWire signatureWire, @Named(PROPERTY_AUTH_TAG) String authTag,
-         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, @Named(PROPERTY_HEADER_TAG) String headerTag,
-         @Named(PROPERTY_IDENTITY) String accessKey, @Named(PROPERTY_CREDENTIAL) String secretKey,
-         @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
+            @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, @Named(PROPERTY_HEADER_TAG) String headerTag,
+            @Named(PROPERTY_IDENTITY) String accessKey, @Named(PROPERTY_CREDENTIAL) String secretKey,
+            @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
       this.isVhostStyle = isVhostStyle;
       this.servicePath = servicePath;
       this.headerTag = headerTag;
@@ -123,7 +123,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
       request = ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":"
-            + signature);
+               + signature);
       return request;
    }
 
@@ -161,8 +161,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    public String sign(String toSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign),
-               crypto.hmacSHA1(secretKey.getBytes())));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(secretKey
+                  .getBytes())));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -189,11 +189,11 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
       buffer.append(
-            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
-                  .getContentMD5())).append("\n");
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                        .getContentMD5())).append("\n");
       buffer.append(
-            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
-                  .getContentType())).append("\n");
+               utils.valueOrEmpty(request.getPayload() == null ? request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)
+                        : request.getPayload().getContentMetadata().getContentType())).append("\n");
    }
 
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
@@ -210,11 +210,11 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
       for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
          if (Iterables.any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]),
-               new Predicate<Annotation>() {
-                  public boolean apply(Annotation input) {
-                     return input.annotationType().equals(Bucket.class);
-                  }
-               })) {
+                  new Predicate<Annotation>() {
+                     public boolean apply(Annotation input) {
+                        return input.annotationType().equals(Bucket.class);
+                     }
+                  })) {
             bucketName = (String) request.getArgs().get(i);
             break;
          }

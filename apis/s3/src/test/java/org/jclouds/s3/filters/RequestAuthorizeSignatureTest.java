@@ -26,17 +26,20 @@ import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
-import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code RequestAuthorizeSignature}
@@ -45,7 +48,13 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "RequestAuthorizeSignatureTest")
-public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
+public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    @DataProvider(parallel = true)
    public Object[][] dataProvider() throws NoSuchMethodException {
@@ -70,20 +79,20 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
          filter.filter(request);
          if (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date))
             assert signature.equals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION)) : String.format(
-                  "sig: %s != %s on attempt %s", signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION),
-                  iterations);
+                     "sig: %s != %s on attempt %s", signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION),
+                     iterations);
          else
             iterations++;
 
       }
       System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread().getName(),
-            iterations);
+               iterations);
    }
 
    @Test
    void testAppendBucketNameHostHeader() throws SecurityException, NoSuchMethodException {
       HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod("getBucketLocation", String.class),
-            "bucket");
+               "bucket");
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "/bucket");
@@ -98,12 +107,12 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
    }
 
    private GeneratedHttpRequest<S3AsyncClient> putBucketAcl() throws NoSuchMethodException {
-      return processor.createRequest(
-            S3AsyncClient.class.getMethod("putBucketACL", String.class, AccessControlList.class), "bucket",
-            AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
+      return processor.createRequest(S3AsyncClient.class.getMethod("putBucketACL", String.class,
+               AccessControlList.class), "bucket", AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE,
+               "1234"));
    }
 
-   // "?acl", "?location", "?logging", or "?torrent"
+   // "?acl", "?location", "?logging", "?uploads", or "?torrent"
 
    @Test
    void testAppendBucketNameHostHeaderService() throws SecurityException, NoSuchMethodException {
@@ -129,16 +138,15 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
       S3Object object = blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB);
 
       object.getMetadata().getUserMetadata().put("x-amz-Adrian", "foo");
-      HttpRequest request = processor.createRequest(
-            S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class, PutObjectOptions[].class),
-            "bucket", object);
+      HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod("putObject", String.class,
+               S3Object.class, PutObjectOptions[].class), "bucket", object);
       return request;
    }
 
    @Test
    void testAppendBucketNameURIHost() throws SecurityException, NoSuchMethodException {
       HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod("getBucketLocation", String.class),
-            "bucket");
+               "bucket");
       assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
    }
 

@@ -27,10 +27,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.BaseS3AsyncClientTest;
+import org.jclouds.s3.S3AsyncClient;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}
@@ -39,7 +43,13 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindAsHostPrefixIfConfiguredTest")
-public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest {
+public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    public void testBucket() throws IOException {
 
@@ -64,8 +74,8 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest {
 
    @DataProvider(name = "objects")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" },
-            { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
+               { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
 
    @Override
