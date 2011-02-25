@@ -137,7 +137,6 @@ public interface S3Client {
     *           namespace of the object you are deleting
     * @param key
     *           unique key in the s3Bucket identifying the object
-    * @return true if deleted
     * @throws org.jclouds.http.HttpResponseException
     *            if the bucket is not available
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
@@ -164,7 +163,7 @@ public interface S3Client {
     *           contains the data and metadata to create or overwrite
     * @param options
     *           options for creating the object
-    * @return MD5 hash of the content uploaded
+    * @return ETag of the content uploaded
     * @throws org.jclouds.http.HttpResponseException
     *            if the conditions requested set are not satisfied by the object on the server.
     * @see org.jclouds.s3.domain.CannedAccessPolicy#PRIVATE

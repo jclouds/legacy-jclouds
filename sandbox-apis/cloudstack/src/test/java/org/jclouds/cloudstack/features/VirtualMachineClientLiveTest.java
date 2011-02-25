@@ -21,12 +21,14 @@ package org.jclouds.cloudstack.features;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.cloudstack.CloudStackClient;
@@ -72,15 +74,30 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
-      long templateId = find(client.getTemplateClient().listTemplates(), new Predicate<Template>() {
+      Iterable<Template> templates = filter(client.getTemplateClient().listTemplates(), new Predicate<Template>() {
 
          @Override
          public boolean apply(Template arg0) {
             return arg0.getZoneId() == zone.getId() && arg0.isFeatured() && arg0.isReady()
-                     && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (32-bit)")).apply(arg0.getOSType());
+                     && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (64-bit)")).apply(arg0.getOSType());
          }
 
-      }).getId();
+      });
+
+      long templateId;
+      try {
+         // prefer password enabled
+         templateId = find(templates, new Predicate<Template>() {
+
+            @Override
+            public boolean apply(Template arg0) {
+               return arg0.isPasswordEnabled();
+            }
+
+         }).getId();
+      } catch (NoSuchElementException e) {
+         templateId = get(templates, 0).getId();
+      }
 
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
       if (zone.getNetworkType() == NetworkType.ADVANCED) {

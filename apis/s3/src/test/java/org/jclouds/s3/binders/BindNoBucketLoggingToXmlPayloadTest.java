@@ -24,9 +24,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.BaseS3AsyncClientTest;
+import org.jclouds.s3.S3AsyncClient;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindNoBucketLoggingToXmlPayload}
@@ -35,7 +39,13 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindNoBucketLoggingToXmlPayloadTest")
-public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest {
+public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    public void testApplyInputStream() throws IOException {
 
@@ -44,7 +54,7 @@ public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest {
 
       request = binder.bindToRequest(request, "bucket");
       assertEquals(request.getPayload().getRawContent(),
-            "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
+               "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
 
    }
 }

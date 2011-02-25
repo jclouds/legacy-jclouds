@@ -17,31 +17,33 @@
  * ====================================================================
  */
 
-package org.jclouds.googlestorage;
+package org.jclouds.aws.s3.functions;
 
-import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.S3AsyncClient;
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
-
 /**
+ * Tests behavior of {@code ETagFromHttpResponseViaRegex}
+ * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(enabled = false, groups = "unit", testName = "GoogleStorageAsyncClientTest")
-public class GoogleStorageAsyncClientTestDisabled extends org.jclouds.s3.S3AsyncClientTest<S3AsyncClient> {
+@Test(groups = "unit", testName = "ETagFromHttpResponseViaRegexTest")
+public class ETagFromHttpResponseViaRegexTest {
 
-   public GoogleStorageAsyncClientTestDisabled() {
-      this.provider = "googlestorage";
-      this.url = "commondatastorage.googleapis.com";
+   @Test
+   public void test() {
+
+      HttpResponse response = HttpResponse.builder().statusCode(200).payload(
+               Payloads.newInputStreamPayload(getClass().getResourceAsStream("/complete-multipart-upload.xml")))
+               .build();
+      ETagFromHttpResponseViaRegex parser = new ETagFromHttpResponseViaRegex(new ReturnStringIf2xx());
+
+      assertEquals(parser.apply(response), "\"3858f62230ac3c915f300c664312c11f-9\"");
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
-
-   // TODO parameterize this test so that it can pass
 }

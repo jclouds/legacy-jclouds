@@ -10,12 +10,15 @@ import javax.ws.rs.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.BaseS3AsyncClientTest;
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindGoogleStorageObjectMetadataToRequest}
@@ -24,8 +27,13 @@ import com.google.common.collect.ImmutableMultimap;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindGoogleStorageObjectMetadataToRequestTest")
-public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncClientTest {
- 
+public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    @Test
    public void testPassWithMinimumDetailsAndPayload5GB() {
@@ -36,7 +44,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
       object.getMetadata().setKey("foo");
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
                URI.create("http://localhost")).build());
@@ -52,7 +61,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
       object.getMetadata().getUserMetadata().putAll(ImmutableMap.of("foo", "bar"));
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
                URI.create("http://localhost")).headers(ImmutableMultimap.of("x-amz-meta-foo", "bar")).build());
@@ -66,7 +76,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
       object.getMetadata().setKey("foo");
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
                URI.create("http://localhost")).headers(ImmutableMultimap.of("Transfer-Encoding", "chunked")).build());
@@ -80,7 +91,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
       object.setPayload(payload);
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
 
@@ -93,7 +105,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
       object.getMetadata().setKey("foo");
 
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
 
@@ -105,7 +118,8 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
-      BindGoogleStorageObjectMetadataToRequest binder = injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class);
+      BindGoogleStorageObjectMetadataToRequest binder = injector
+               .getInstance(BindGoogleStorageObjectMetadataToRequest.class);
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
       binder.bindToRequest(request, null);
    }

@@ -17,31 +17,33 @@
  * ====================================================================
  */
 
-package org.jclouds.googlestorage;
+package org.jclouds.aws.s3.functions;
 
-import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.S3AsyncClient;
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
-
 /**
+ * Tests behavior of {@code UploadIdFromHttpResponseViaRegex}
+ * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(enabled = false, groups = "unit", testName = "GoogleStorageAsyncClientTest")
-public class GoogleStorageAsyncClientTestDisabled extends org.jclouds.s3.S3AsyncClientTest<S3AsyncClient> {
+@Test(groups = "unit", testName = "UploadIdFromHttpResponseViaRegexTest")
+public class UploadIdFromHttpResponseViaRegexTest {
 
-   public GoogleStorageAsyncClientTestDisabled() {
-      this.provider = "googlestorage";
-      this.url = "commondatastorage.googleapis.com";
+   @Test
+   public void test() {
+
+      HttpResponse response = HttpResponse.builder().statusCode(200).payload(
+               Payloads.newInputStreamPayload(getClass().getResourceAsStream("/initiate-multipart-upload.xml")))
+               .build();
+      UploadIdFromHttpResponseViaRegex parser = new UploadIdFromHttpResponseViaRegex(new ReturnStringIf2xx());
+
+      assertEquals(parser.apply(response), "VXBsb2FkIElEIGZvciA2aWWpbmcncyBteS1tb3ZpZS5tMnRzIHVwbG9hZA");
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
-
-   // TODO parameterize this test so that it can pass
 }

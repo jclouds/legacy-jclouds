@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.s3.binders;
+package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,39 +30,54 @@ import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.domain.ObjectMetadata;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BindS3ObjectMetadataToRequest implements Binder {
+public class BindObjectMetadataToRequest implements Binder {
    protected final BindMapToHeadersWithPrefix metadataPrefixer;
 
    @Inject
-   public BindS3ObjectMetadataToRequest(BindMapToHeadersWithPrefix metadataPrefixer) {
+   public BindObjectMetadataToRequest(BindMapToHeadersWithPrefix metadataPrefixer) {
       this.metadataPrefixer = checkNotNull(metadataPrefixer, "metadataPrefixer");
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof S3Object, "this binder is only valid for S3Object!");
+      checkArgument(checkNotNull(input, "input") instanceof ObjectMetadata,
+               "this binder is only valid for ObjectMetadata!");
       checkNotNull(request, "request");
 
-      S3Object s3Object = S3Object.class.cast(input);
-      checkArgument(s3Object.getMetadata().getKey() != null, "s3Object.getMetadata().getKey() must be set!");
-      checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() != null,
-            "contentLength must be set, streaming not supported");
-      checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() <= 5l * 1024 * 1024 * 1024,
-            "maximum size for put object is 5GB");
-      
-      request = metadataPrefixer.bindToRequest(request, s3Object.getMetadata().getUserMetadata());
+      ObjectMetadata md = ObjectMetadata.class.cast(input);
+      checkArgument(md.getKey() != null, "objectMetadata.getKey() must be set!");
 
-      if (s3Object.getMetadata().getCacheControl() != null) {
-         request = ModifyRequest.replaceHeader(request, HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()
-               .getCacheControl());
+      request = metadataPrefixer.bindToRequest(request, md.getUserMetadata());
+
+      Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
+      if (md.getCacheControl() != null) {
+         headers.put(HttpHeaders.CACHE_CONTROL, md.getCacheControl());
       }
+
+      if (md.getContentMetadata().getContentDisposition() != null) {
+         headers.put("Content-Disposition", md.getContentMetadata().getContentDisposition());
+      }
+
+      if (md.getContentMetadata().getContentEncoding() != null) {
+         headers.put("Content-Encoding", md.getContentMetadata().getContentEncoding());
+      }
+      if (md.getContentMetadata().getContentType() != null) {
+         headers.put(HttpHeaders.CONTENT_TYPE, md.getContentMetadata().getContentType());
+      } else {
+         headers.put(HttpHeaders.CONTENT_TYPE, "binary/octet-stream");
+      }
+
+      request = ModifyRequest.replaceHeaders(request, headers.build());
       return request;
    }
 }

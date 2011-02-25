@@ -80,7 +80,7 @@ import com.google.inject.Module;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "S3AsyncClientTest")
-public class S3AsyncClientTest extends BaseS3AsyncClientTest {
+public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3AsyncClientTest<T> {
 
    protected String url = "s3.amazonaws.com";
 
@@ -388,7 +388,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       checkFilters(request);
    }
-   
+
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
 

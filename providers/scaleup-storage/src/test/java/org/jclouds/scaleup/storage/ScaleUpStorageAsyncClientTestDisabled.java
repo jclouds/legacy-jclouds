@@ -19,14 +19,25 @@
 
 package org.jclouds.scaleup.storage;
 
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3AsyncClientTest;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(enabled = false, groups = "unit", testName = "ScaleUpStorageAsyncClientTest")
-public class ScaleUpStorageAsyncClientTestDisabled extends org.jclouds.s3.S3AsyncClientTest {
+public class ScaleUpStorageAsyncClientTestDisabled extends S3AsyncClientTest<S3AsyncClient> {
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
+      };
+   }
 
    public ScaleUpStorageAsyncClientTestDisabled() {
       this.provider = "scaleup-storage";

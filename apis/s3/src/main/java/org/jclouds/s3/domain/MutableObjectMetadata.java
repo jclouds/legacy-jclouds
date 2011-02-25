@@ -22,8 +22,8 @@ package org.jclouds.s3.domain;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.s3.domain.internal.MutableObjectMetadataImpl;
 import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.s3.domain.internal.MutableObjectMetadataImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -69,6 +69,7 @@ public interface MutableObjectMetadata extends ObjectMetadata {
     */
    void setCacheControl(String cacheControl);
 
+   @Override
    MutableContentMetadata getContentMetadata();
 
    void setContentMetadata(MutableContentMetadata md);

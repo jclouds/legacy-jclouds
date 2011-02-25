@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.ContentMetadataBuilder;
 
 /**
  * @author Adrian Cole
@@ -159,6 +160,11 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
       } else if (!contentType.equals(other.contentType))
          return false;
       return true;
+   }
+
+   @Override
+   public ContentMetadataBuilder toBuilder() {
+      return ContentMetadataBuilder.fromContentMetadata(this);
    }
 
 }

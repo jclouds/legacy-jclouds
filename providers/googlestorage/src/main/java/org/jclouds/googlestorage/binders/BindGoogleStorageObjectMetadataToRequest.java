@@ -26,11 +26,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.s3.binders.BindS3ObjectMetadataToRequest;
-import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.domain.S3Object;
 
 /**
@@ -39,15 +38,9 @@ import org.jclouds.s3.domain.S3Object;
  */
 @Singleton
 public class BindGoogleStorageObjectMetadataToRequest extends BindS3ObjectMetadataToRequest {
-   private final BindUserMetadataToHeadersWithPrefix blobBinder;
-   private final ObjectToBlob object2Blob;
-
    @Inject
-   public BindGoogleStorageObjectMetadataToRequest(ObjectToBlob object2Blob,
-            BindUserMetadataToHeadersWithPrefix blobBinder) {
-      super(object2Blob, blobBinder);
-      this.blobBinder = checkNotNull(blobBinder, "blobBinder");
-      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
+   public BindGoogleStorageObjectMetadataToRequest(BindMapToHeadersWithPrefix metadataPrefixer) {
+      super(metadataPrefixer);
    }
 
    @Override
@@ -67,7 +60,7 @@ public class BindGoogleStorageObjectMetadataToRequest extends BindS3ObjectMetada
          request = ModifyRequest.replaceHeader(request, "Transfer-Encoding", "chunked");
       }
 
-      request = blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
+      request = metadataPrefixer.bindToRequest(request, s3Object.getMetadata().getUserMetadata());
 
       if (s3Object.getMetadata().getCacheControl() != null) {
          request = ModifyRequest.replaceHeader(request, HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()

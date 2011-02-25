@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
@@ -71,8 +72,10 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
                if (error != null) {
                   message = error.getMessage();
+                  exception = new AWSResponseException(command, response, error);
+               } else {
+                  exception = new HttpResponseException(command, response, message);
                }
-               exception = new HttpResponseException(command, response, message);
             } else {
                try {
                   message = Strings2.toStringAndClose(response.getPayload().getInput());

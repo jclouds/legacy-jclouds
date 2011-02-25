@@ -49,10 +49,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Nullable;
@@ -67,13 +67,13 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
@@ -97,6 +97,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.BaseMutableContentMetadata;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
@@ -129,10 +130,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    protected FilesystemAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
-         HttpGetOptionsListToGetOptions httpGetOptionsConverter, IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-         Factory blobFactory, BlobUtils blobUtils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-         Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,
-         FilesystemStorageStrategy storageStrategy) {
+            HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+            IfDirectoryReturnNameStrategy ifDirectoryReturnName, Factory blobFactory, BlobUtils blobUtils,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, FilesystemStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       // super(context, blobUtils, service, null, null);
       this.blobFactory = blobFactory;
@@ -164,22 +165,22 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
-            new Function<String, StorageMetadata>() {
-               public StorageMetadata apply(String key) {
-                  Blob oldBlob = loadFileBlob(container, key);
+               new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String key) {
+                     Blob oldBlob = loadFileBlob(container, key);
 
-                  checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
-                        + container);
-                  checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
-                  MutableBlobMetadata md = copy(oldBlob.getMetadata());
-                  String directoryName = ifDirectoryReturnName.execute(md);
-                  if (directoryName != null) {
-                     md.setName(directoryName);
-                     md.setType(StorageType.RELATIVE_PATH);
+                     checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
+                              + container);
+                     checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
+                     MutableBlobMetadata md = copy(oldBlob.getMetadata());
+                     String directoryName = ifDirectoryReturnName.execute(md);
+                     if (directoryName != null) {
+                        md.setName(directoryName);
+                        md.setType(StorageType.RELATIVE_PATH);
+                     }
+                     return md;
                   }
-                  return md;
-               }
-            }));
+               }));
 
       String marker = null;
       if (options != null) {
@@ -219,21 +220,21 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          if (delimiter != null) {
             SortedSet<String> commonPrefixes = null;
             Iterable<String> iterable = transform(contents, new CommonPrefixes(prefix != null ? prefix : null,
-                  delimiter));
+                     delimiter));
             commonPrefixes = iterable != null ? newTreeSet(iterable) : new TreeSet<String>();
             commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
 
             contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
 
-            Iterables.<StorageMetadata> addAll(contents,
-                  transform(commonPrefixes, new Function<String, StorageMetadata>() {
-                     public StorageMetadata apply(String o) {
-                        MutableStorageMetadata md = new MutableStorageMetadataImpl();
-                        md.setType(StorageType.RELATIVE_PATH);
-                        md.setName(o);
-                        return md;
-                     }
-                  }));
+            Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
+                     new Function<String, StorageMetadata>() {
+                        public StorageMetadata apply(String o) {
+                           MutableStorageMetadata md = new MutableStorageMetadataImpl();
+                           md.setType(StorageType.RELATIVE_PATH);
+                           md.setName(o);
+                           return md;
+                        }
+                     }));
          }
 
          // trim metadata, if the response isn't supposed to be detailed.
@@ -245,7 +246,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(contents,
-            marker));
+               marker));
 
    }
 
@@ -262,6 +263,8 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          ObjectInput is = new ObjectInputStream(new ByteArrayInputStream(bout.toByteArray()));
          MutableBlobMetadata metadata = (MutableBlobMetadata) is.readObject();
          convertUserMetadataKeysToLowercase(metadata);
+         metadata.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(in.getContentMetadata().toBuilder()
+                  .build()));
          return metadata;
       } catch (Exception e) {
          propagate(e);
@@ -310,14 +313,14 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       Iterable<String> containers = storageStrategy.getAllContainerNames();
 
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(transform(
-            containers, new Function<String, StorageMetadata>() {
-               public StorageMetadata apply(String name) {
-                  MutableStorageMetadata cmd = create();
-                  cmd.setName(name);
-                  cmd.setType(StorageType.CONTAINER);
-                  return cmd;
-               }
-            }), null));
+               containers, new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String name) {
+                     MutableStorageMetadata cmd = create();
+                     cmd.setName(name);
+                     cmd.setType(StorageType.CONTAINER);
+                     return cmd;
+                  }
+               }), null));
    }
 
    protected MutableStorageMetadata create() {
@@ -330,7 +333,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    @Path("{container}")
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(final Location location,
-         @PathParam("container") @ParamValidators({ FilesystemContainerNameValidator.class }) String name) {
+            @PathParam("container") @ParamValidators( { FilesystemContainerNameValidator.class }) String name) {
       boolean result = storageStrategy.createContainer(name);
       return immediateFuture(result);
    }
@@ -500,7 +503,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          storageStrategy.writePayloadOnFile(containerName, blobKey, object.getPayload());
       } catch (IOException e) {
          logger.error(e, "An error occurred storing the new object with name [%s] to container [%s].", blobKey,
-               containerName);
+                  containerName);
          Throwables.propagate(e);
       }
       return immediateFuture(eTag);
@@ -547,7 +550,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             if (blob.getMetadata().getLastModified().before(modifiedSince)) {
                HttpResponse response = new HttpResponse(304, null, null);
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", blob
-                     .getMetadata().getLastModified(), modifiedSince), null, response));
+                        .getMetadata().getLastModified(), modifiedSince), null, response));
             }
 
          }
@@ -556,7 +559,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             if (blob.getMetadata().getLastModified().after(unmodifiedSince)) {
                HttpResponse response = new HttpResponse(412, null, null);
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", blob
-                     .getMetadata().getLastModified(), unmodifiedSince), null, response));
+                        .getMetadata().getLastModified(), unmodifiedSince), null, response));
             }
          }
 
