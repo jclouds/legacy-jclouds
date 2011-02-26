@@ -19,8 +19,6 @@
 
 package org.jclouds.http;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import javax.annotation.Nullable;
 
 import org.jclouds.io.Payload;
@@ -43,7 +41,7 @@ public class HttpResponse extends HttpMessage {
       private String message;
 
       public Builder message(String message) {
-         this.message = checkNotNull(message, "message");
+         this.message = message;
          return this;
       }
 
