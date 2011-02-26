@@ -47,7 +47,7 @@ import com.google.inject.Module;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "QuerySignerTest")
 public class QuerySignerTest {
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("cloudstack",
             "http://localhost:8080/client/api", "2.2", "", "apiKey", "secretKey", Map.class, List.class,
             PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),

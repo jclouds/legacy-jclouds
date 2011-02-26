@@ -43,7 +43,7 @@ public interface AsyncJobClient {
     *           if present, how to constrain the list.
     * @return asyncJobs matching query, or empty set, if no asyncJobs are found
     */
-   Set<AsyncJob> listAsyncJobs(ListAsyncJobsOptions... options);
+   Set<AsyncJob<?>> listAsyncJobs(ListAsyncJobsOptions... options);
 
    /**
     * get a specific asyncJob by id
@@ -52,5 +52,5 @@ public interface AsyncJobClient {
     *           asyncJob to get
     * @return asyncJob or null if not found
     */
-   AsyncJob getAsyncJob(long id);
+   <T> AsyncJob<T> getAsyncJob(long id);
 }

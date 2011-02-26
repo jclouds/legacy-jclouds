@@ -50,6 +50,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -63,13 +64,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    static final Ordering<ServiceOffering> DEFAULT_SIZE_ORDERING = new Ordering<ServiceOffering>() {
       public int compare(ServiceOffering left, ServiceOffering right) {
-         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber()).compare(left.getMemory(),
-                  right.getMemory()).result();
+         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber())
+               .compare(left.getMemory(), right.getMemory()).result();
       }
    };
 
    public static VirtualMachine createVirtualMachine(CloudStackClient client, RetryablePredicate<Long> jobComplete,
-            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       final Zone zone = get(client.getZoneClient().listZones(), 0);
 
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
@@ -79,11 +80,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          @Override
          public boolean apply(Template arg0) {
             return arg0.getZoneId() == zone.getId() && arg0.isFeatured() && arg0.isReady()
-                     && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (64-bit)")).apply(arg0.getOSType());
+                  && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (64-bit)")).apply(arg0.getOSType());
          }
 
       });
-
+      if (Iterables.size(templates) == 0) {
+         throw new NoSuchElementException();
+      }
       long templateId;
       try {
          // prefer password enabled
@@ -111,21 +114,21 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          }).getId());
       } else {
          options.securityGroupId(find(client.getSecurityGroupClient().listSecurityGroups(),
-                  new Predicate<SecurityGroup>() {
+               new Predicate<SecurityGroup>() {
 
-                     @Override
-                     public boolean apply(SecurityGroup arg0) {
-                        return arg0.getName().equals("default");
-                     }
+                  @Override
+                  public boolean apply(SecurityGroup arg0) {
+                     return arg0.getName().equals("default");
+                  }
 
-                  }).getId());
+               }).getId());
       }
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
-               zone.getId(), options);
+            zone.getId(), options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
-               zone.getId(), options);
+            zone.getId(), options);
       assert jobComplete.apply(job.getJobId());
-      VirtualMachine vm = client.getVirtualMachineClient().getVirtualMachine(job.getId());
+      VirtualMachine vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId()).getResult();
       if (vm.isPasswordEnabled())
          assert vm.getPassword() != null : vm;
       assert virtualMachineRunning.apply(vm);
@@ -181,7 +184,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(response.size() >= 0);
       for (VirtualMachine vm : response) {
          VirtualMachine newDetails = getOnlyElement(client.getVirtualMachineClient().listVirtualMachines(
-                  ListVirtualMachinesOptions.Builder.id(vm.getId())));
+               ListVirtualMachinesOptions.Builder.id(vm.getId())));
          assertEquals(vm.getId(), newDetails.getId());
          checkVm(vm);
       }
@@ -219,22 +222,22 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          assert nic.getTrafficType() != null : vm;
          assert nic.getGuestIPType() != null : vm;
          switch (vm.getState()) {
-            case RUNNING:
+         case RUNNING:
+            assert nic.getNetmask() != null : vm;
+            assert nic.getGateway() != null : vm;
+            assert nic.getIPAddress() != null : vm;
+            break;
+         default:
+            if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
                assert nic.getNetmask() != null : vm;
                assert nic.getGateway() != null : vm;
                assert nic.getIPAddress() != null : vm;
-               break;
-            default:
-               if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
-                  assert nic.getNetmask() != null : vm;
-                  assert nic.getGateway() != null : vm;
-                  assert nic.getIPAddress() != null : vm;
-               } else {
-                  assert nic.getNetmask() == null : vm;
-                  assert nic.getGateway() == null : vm;
-                  assert nic.getIPAddress() == null : vm;
-               }
-               break;
+            } else {
+               assert nic.getNetmask() == null : vm;
+               assert nic.getGateway() == null : vm;
+               assert nic.getIPAddress() == null : vm;
+            }
+            break;
          }
 
       }

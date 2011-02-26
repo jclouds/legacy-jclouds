@@ -20,16 +20,105 @@
 package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AsyncJob {
+public class AsyncJob<T> {
+
+   public static <T> Builder<T> builder() {
+      return new Builder<T>();
+   }
+
+   public static class Builder<T> {
+      private long accountId = -1;
+      private String cmd;
+      private Date created;
+      private long id = -1;
+      private long instanceId = -1;
+      private String instanceType;
+      private int progress = -1;
+      private T result;
+      private int resultCode = -1;
+      private String resultType;
+      private int status = -1;
+      private int userId = -1;
+
+      public Builder<T> accountId(long accountId) {
+         this.accountId = accountId;
+         return this;
+      }
+
+      public Builder<T> cmd(String cmd) {
+         this.cmd = cmd;
+         return this;
+      }
+
+      public Builder<T> created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder<T> id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder<T> instanceId(long instanceId) {
+         this.instanceId = instanceId;
+         return this;
+      }
+
+      public Builder<T> instanceType(String instanceType) {
+         this.instanceType = instanceType;
+         return this;
+      }
+
+      public Builder<T> progress(int progress) {
+         this.progress = progress;
+         return this;
+      }
+
+      public Builder<T> result(T result) {
+         this.result = result;
+         return this;
+      }
+
+      public Builder<T> resultCode(int resultCode) {
+         this.resultCode = resultCode;
+         return this;
+      }
+
+      public Builder<T> resultType(String resultType) {
+         this.resultType = resultType;
+         return this;
+      }
+
+      public Builder<T> status(int status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder<T> userId(int userId) {
+         this.userId = userId;
+         return this;
+      }
+
+      public AsyncJob<T> build() {
+         return new AsyncJob<T>(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode,
+               resultType, status, userId);
+      }
+
+      public static <T> Builder<T> fromAsyncJobUntyped(AsyncJob<T> in) {
+         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id)
+               .instanceId(in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result)
+               .resultCode(in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId);
+      }
+   }
+
    @SerializedName("accountid")
    private long accountId = -1;
    private String cmd;
@@ -43,7 +132,7 @@ public class AsyncJob {
    @SerializedName("jobprocstatus")
    private int progress = -1;
    @SerializedName("jobresult")
-   private Map<String, Object> result = ImmutableMap.of();
+   private T result;
    @SerializedName("jobresultcode")
    private int resultCode = -1;
    @SerializedName("jobresulttype")
@@ -53,8 +142,8 @@ public class AsyncJob {
    @SerializedName("userid")
    private int userId = -1;
 
-   public AsyncJob(int accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         int progress, Map<String, Object> result, int resultCode, String resultType, int status, int userId) {
+   public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
+         int progress, T result, int resultCode, String resultType, int status, int userId) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -129,7 +218,7 @@ public class AsyncJob {
    /**
     * @return the result reason
     */
-   public Map<String, Object> getResult() {
+   public T getResult() {
       return result;
    }
 
@@ -188,7 +277,7 @@ public class AsyncJob {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncJob other = (AsyncJob) obj;
+      AsyncJob<?> other = (AsyncJob<?>) obj;
       if (accountId != other.accountId)
          return false;
       if (cmd == null) {

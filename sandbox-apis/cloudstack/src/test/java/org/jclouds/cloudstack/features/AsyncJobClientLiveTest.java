@@ -36,12 +36,12 @@ import org.testng.annotations.Test;
 public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListAsyncJobs() throws Exception {
-      Set<AsyncJob> response = client.getAsyncJobClient().listAsyncJobs();
+      Set<AsyncJob<?>> response = client.getAsyncJobClient().listAsyncJobs();
       assert null != response;
       long asyncJobCount = response.size();
       assertTrue(asyncJobCount >= 0);
-      for (AsyncJob asyncJob : response) {
-         AsyncJob query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());
+      for (AsyncJob<?> asyncJob : response) {
+         AsyncJob<?> query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());
          assertEquals(query.getId(), asyncJob.getId());
          assert query.getStatus() >= 0 : query;
          assert query.getResultCode() >= 0 : query;
