@@ -39,6 +39,8 @@ import org.jclouds.s3.options.PutObjectOptions;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -129,9 +131,11 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    @Test
    void testHeadersGoLowercase() throws SecurityException, NoSuchMethodException {
       HttpRequest request = putObject();
+      SortedSetMultimap<String, String> canonicalizedHeaders = TreeMultimap.create();
+      filter.appendHttpHeaders(request, canonicalizedHeaders);
       StringBuilder builder = new StringBuilder();
-      filter.appendAmzHeaders(request, builder);
-      assertEquals(builder.toString(), "x-amz-meta-x-amz-adrian:foo\n");
+      filter.appendAmzHeaders(canonicalizedHeaders, builder);
+      assertEquals(builder.toString(), "x-amz-meta-x-amz-adrian: foo\n");
    }
 
    private HttpRequest putObject() throws NoSuchMethodException {

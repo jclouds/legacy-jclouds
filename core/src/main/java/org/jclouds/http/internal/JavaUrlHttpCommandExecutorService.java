@@ -236,6 +236,9 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             checkArgument(length < Integer.MAX_VALUE,
                      "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
             connection.setFixedLengthStreamingMode(length.intValue());
+            if (length.intValue() > 0) {
+              connection.setRequestProperty("Expect", "100-continue");
+            }
          }
          CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
          try {

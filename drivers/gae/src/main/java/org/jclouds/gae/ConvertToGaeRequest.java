@@ -92,6 +92,9 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
                HttpUtils.copy(oldPayload.getContentMetadata(), request.getPayload().getContentMetadata());
             }
             gaeRequest.setPayload(array);
+            if (array.length > 0) {
+              gaeRequest.setHeader(new HTTPHeader("Expect", "100-continue"));
+            }
          } catch (IOException e) {
             Throwables.propagate(e);
          } finally {
@@ -101,7 +104,7 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
          for (Entry<String, String> header : HttpUtils.getContentHeadersFromMetadata(
                request.getPayload().getContentMetadata()).entries()) {
             gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));
-         }
+         }         
       } else {
          gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }

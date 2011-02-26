@@ -36,7 +36,8 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ETagFromHttpResponseViaRegex implements Function<HttpResponse, String> {
-   Pattern pattern = Pattern.compile("<ETag>([\\S&&[^<]]+)</ETag>");
+   private static Pattern pattern = Pattern.compile("<ETag>([\\S&&[^<]]+)</ETag>");
+   private static Pattern quotPattern = Pattern.compile("(&quot;)");
    private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
@@ -52,6 +53,17 @@ public class ETagFromHttpResponseViaRegex implements Function<HttpResponse, Stri
          Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {
             value = matcher.group(1);
+            Matcher quotMatcher = quotPattern.matcher(value);
+            StringBuffer quotBuffer = new StringBuffer();
+            boolean foundUnescapedQuote = false;
+            while (quotMatcher.find()) {
+               quotMatcher.appendReplacement(quotBuffer, "\"");
+               foundUnescapedQuote = true;
+            }
+            if (foundUnescapedQuote) {
+               quotMatcher.appendTail(quotBuffer);
+               value = quotBuffer.toString();
+            }
          }
       }
       return value;

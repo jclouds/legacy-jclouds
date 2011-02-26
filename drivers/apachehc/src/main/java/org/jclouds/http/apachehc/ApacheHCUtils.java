@@ -43,6 +43,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.CoreProtocolPNames;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.BasePayload;
@@ -72,6 +73,7 @@ public class ApacheHCUtils {
          apacheRequest = new HttpDelete(request.getEndpoint());
       } else if (request.getMethod().equals(HttpMethod.PUT)) {
          apacheRequest = new HttpPut(request.getEndpoint());
+         apacheRequest.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, true);
       } else if (request.getMethod().equals(HttpMethod.POST)) {
          apacheRequest = new HttpPost(request.getEndpoint());
       } else {
