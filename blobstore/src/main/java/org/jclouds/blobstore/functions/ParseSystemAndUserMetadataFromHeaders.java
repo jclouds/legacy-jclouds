@@ -53,7 +53,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
 
-   private String key;
+   private String name;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
@@ -65,11 +65,12 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
    public MutableBlobMetadata apply(HttpResponse from) {
       checkNotNull(from, "request");
-      checkState(key != null, "key must be initialized by now");
+      checkState(name != null, "name must be initialized by now");
 
       MutableBlobMetadata to = metadataFactory.get();
-      to.setName(key);
-      HttpUtils.copy(from.getPayload().getContentMetadata(), to.getContentMetadata());
+      to.setName(name);
+      if (from.getPayload() != null)
+         HttpUtils.copy(from.getPayload().getContentMetadata(), to.getContentMetadata());
       addETagTo(from, to);
       parseLastModifiedOrThrowException(from, to);
       addUserMetadataTo(from, to);
@@ -115,12 +116,11 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
       checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
-      setName(getNameFor(GeneratedHttpRequest.class.cast(request)));
-      return this;
+      return setName(getNameFor(GeneratedHttpRequest.class.cast(request)));
    }
 
-   @VisibleForTesting
-   void setName(String key) {
-      this.key = checkNotNull(key, "key");
+   public ParseSystemAndUserMetadataFromHeaders setName(String name) {
+      this.name = checkNotNull(name, "name");
+      return this;
    }
 }
