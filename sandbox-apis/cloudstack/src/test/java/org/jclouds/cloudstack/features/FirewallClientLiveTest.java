@@ -56,6 +56,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "rule";
       ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      if (vm.getPassword() != null)
+         password = vm.getPassword();
    }
 
    public void testCreatePortForwardingRule() throws Exception {
@@ -70,7 +72,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      SshClient client = sshFactory.create(socket, new Credentials("root", password));
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

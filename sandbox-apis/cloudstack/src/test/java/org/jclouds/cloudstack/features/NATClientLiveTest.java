@@ -55,6 +55,8 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "nat";
       ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      if (vm.getPassword() != null)
+         password = vm.getPassword();
    }
 
    public void testCreateIPForwardingRule() throws Exception {
@@ -74,7 +76,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      SshClient client = sshFactory.create(socket, new Credentials("root",password));
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

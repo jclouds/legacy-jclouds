@@ -29,9 +29,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkService;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
-import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.predicates.RetryablePredicate;
@@ -40,6 +41,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code PublicIPAddressClientLiveTest}
@@ -62,12 +64,20 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
       checkIP(ip);
    }
 
-   public static PublicIPAddress createPublicIPAddress(CloudStackClient client, RetryablePredicate<Long> jobComplete) {
-      Zone zone = find(client.getZoneClient().listZones(), new Predicate<Zone>() {
+   public static PublicIPAddress createPublicIPAddress(final CloudStackClient client,
+            RetryablePredicate<Long> jobComplete) {
+      Network network = find(client.getNetworkClient().listNetworks(), new Predicate<Network>() {
 
          @Override
-         public boolean apply(Zone arg0) {
-            return arg0.getNetworkType() == NetworkType.ADVANCED;
+         public boolean apply(Network arg0) {
+            return Iterables.any(arg0.getServices(), new Predicate<NetworkService>() {
+
+               @Override
+               public boolean apply(NetworkService input) {
+                  return input.getName().equals("Firewall") && "true".equals(input.getCapabilities().get("StaticNat"));
+               }
+
+            });
          }
 
          @Override
@@ -75,10 +85,16 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
             return "networkType(ADVANCED)";
          }
       });
-      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(zone.getId());
+      return createPublicIPAddressInNetwork(network, client, jobComplete);
+   }
+
+   public static PublicIPAddress createPublicIPAddressInNetwork(Network network, CloudStackClient client,
+            RetryablePredicate<Long> jobComplete) {
+      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(network.getZoneId(),
+               AssociateIPAddressOptions.Builder.networkId(network.getId()));
       assert jobComplete.apply(job.getJobId());
-      PublicIPAddress ip = client.getAddressClient().getPublicIPAddress(job.getId());
-      assertEquals(ip.getZoneId(), zone.getId());
+      PublicIPAddress ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
+      assertEquals(ip.getZoneId(), network.getZoneId());
       return ip;
    }
 

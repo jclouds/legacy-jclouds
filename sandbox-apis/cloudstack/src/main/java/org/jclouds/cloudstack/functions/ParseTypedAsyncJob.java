@@ -26,18 +26,19 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.AsyncJob.Builder;
+import org.jclouds.cloudstack.domain.AsyncJobError;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.domain.JsonBall;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 
@@ -51,49 +52,57 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class ParseAsyncJob implements Function<HttpResponse, AsyncJob<?>> {
+@Singleton
+public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBall>>, AsyncJob<?>> {
    @Resource
    protected Logger logger = Logger.NULL;
-
-   private final Json json;
-   private final UnwrapOnlyJsonValue<AsyncJob<Map<String, JsonBall>>> parser;
 
    @Inject(optional = true)
    @VisibleForTesting
    @Named("jclouds.cloudstack.jobresult-type-map")
    Map<String, Class<?>> typeMap = ImmutableMap.<String, Class<?>> builder().put("securitygroup", SecurityGroup.class)
-         .put("portforwardingrule", PortForwardingRule.class).put("template", Template.class)
-         .put("network", Network.class).put("ipaddress", PublicIPAddress.class)
-         .put("virtualmachine", VirtualMachine.class).build();
+            .put("portforwardingrule", PortForwardingRule.class).put("ipforwardingrule", IPForwardingRule.class).put(
+                     "template", Template.class).put("network", Network.class).put("ipaddress", PublicIPAddress.class)
+            .put("virtualmachine", VirtualMachine.class).build();
+   private final Json json;
 
    @Inject
-   public ParseAsyncJob(Json json, UnwrapOnlyJsonValue<AsyncJob<Map<String, JsonBall>>> parser) {
+   public ParseTypedAsyncJob(Json json) {
       this.json = checkNotNull(json, "json");
-      this.parser = checkNotNull(parser, "parser");
    }
 
-   public AsyncJob<?> apply(HttpResponse response) {
-      checkNotNull(response, "response");
-      AsyncJob<Map<String, JsonBall>> toParse = parser.apply(response);
-      checkNotNull(toParse, "parsed result from %s", response);
+   public AsyncJob<?> apply(AsyncJob<Map<String, JsonBall>> toParse) {
       AsyncJob<?> result = toParse;
       if (toParse.getResult() != null) {
          if (toParse.getResult().size() == 1) {
-            Entry<String, JsonBall> entry = Iterables.get(toParse.getResult().entrySet(), 0);
-            @SuppressWarnings({ "unchecked", "rawtypes" })
+            @SuppressWarnings( { "unchecked", "rawtypes" })
             Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
-            if (typeMap.containsKey(entry.getKey())) {
-               builder.result(json.fromJson(entry.getValue().toString(), typeMap.get(entry.getKey())));
+            if (toParse.getResult().containsKey("success")) {
+               builder.result(null);
             } else {
-               logger.warn(
-                     "type key % not configured.  please override default for Map<String, Class<?>> bound to name jclouds.cloudstack.jobresult-type-map",
-                     entry.getKey());
-               builder.result(entry.getValue().toString());
+               Entry<String, JsonBall> entry = Iterables.get(toParse.getResult().entrySet(), 0);
+               if (typeMap.containsKey(entry.getKey())) {
+                  builder.result(json.fromJson(entry.getValue().toString(), typeMap.get(entry.getKey())));
+               } else {
+                  logger
+                           .warn(
+                                    "type key %s not configured.  please override default for Map<String, Class<?>> bound to name jclouds.cloudstack.jobresult-type-map",
+                                    entry.getKey());
+                  builder.result(entry.getValue().toString());
+               }
             }
             result = builder.build();
+         } else if (toParse.getResult().containsKey("errorcode")) {
+            @SuppressWarnings( { "unchecked", "rawtypes" })
+            Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
+            builder.result(null);// avoid classcastexceptions
+            builder.error(new AsyncJobError(Integer.parseInt(toParse.getResult().get("errorcode").toString()), toParse
+                     .getResult().containsKey("errortext") ? toParse.getResult().get("errortext").toString().replace(
+                     "\"", "") : null));
+            result = builder.build();
          } else if (toParse.getResult().size() > 1) {
-            logger.warn("unexpected size of async job result; expecting a map with a single element",
-                  toParse.getResult());
+            logger.warn("unexpected size of async job result; expecting a map with a single element", toParse
+                     .getResult());
          }
       }
       return result;

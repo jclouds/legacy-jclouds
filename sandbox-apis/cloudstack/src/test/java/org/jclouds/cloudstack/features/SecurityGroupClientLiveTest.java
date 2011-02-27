@@ -55,7 +55,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
       })) {
          for (SecurityGroup securityGroup : client.getSecurityGroupClient().listSecurityGroups(
-               ListSecurityGroupsOptions.Builder.named(prefix)))
+                  ListSecurityGroupsOptions.Builder.named(prefix)))
             client.getSecurityGroupClient().deleteSecurityGroup(securityGroup.getId());
 
          group = client.getSecurityGroupClient().createSecurityGroup(prefix);
@@ -72,7 +72,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
             client.getSecurityGroupClient().createSecurityGroup(prefix);
             assert false;
          } catch (HttpResponseException e) {
-
+            assertEquals(e.getResponse().getStatusCode(), 530);
          }
       }
 
@@ -85,7 +85,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(groupCount >= 0);
       for (SecurityGroup group : response) {
          SecurityGroup newDetails = Iterables.getOnlyElement(client.getSecurityGroupClient().listSecurityGroups(
-               ListSecurityGroupsOptions.Builder.id(group.getId())));
+                  ListSecurityGroupsOptions.Builder.id(group.getId())));
          assertEquals(group.getId(), newDetails.getId());
          // sometimes this comes up different
          // assertEquals(group,newDetails);

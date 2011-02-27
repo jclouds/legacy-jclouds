@@ -60,6 +60,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "rule";
       ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
       vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      if (vm.getPassword() != null)
+         password = vm.getPassword();
    }
 
    public void testCreateLoadBalancerRule() throws Exception {

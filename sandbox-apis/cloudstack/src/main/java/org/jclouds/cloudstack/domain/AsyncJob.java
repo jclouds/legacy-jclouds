@@ -44,6 +44,7 @@ public class AsyncJob<T> {
       private T result;
       private int resultCode = -1;
       private String resultType;
+      private AsyncJobError error;
       private int status = -1;
       private int userId = -1;
 
@@ -69,6 +70,11 @@ public class AsyncJob<T> {
 
       public Builder<T> instanceId(long instanceId) {
          this.instanceId = instanceId;
+         return this;
+      }
+
+      public Builder<T> error(AsyncJobError error) {
+         this.error = error;
          return this;
       }
 
@@ -109,13 +115,13 @@ public class AsyncJob<T> {
 
       public AsyncJob<T> build() {
          return new AsyncJob<T>(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode,
-               resultType, status, userId);
+                  resultType, status, userId, error);
       }
 
       public static <T> Builder<T> fromAsyncJobUntyped(AsyncJob<T> in) {
-         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id)
-               .instanceId(in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result)
-               .resultCode(in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId);
+         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id).instanceId(
+                  in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result).resultCode(
+                  in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId).error(in.error);
       }
    }
 
@@ -141,9 +147,10 @@ public class AsyncJob<T> {
    private int status = -1;
    @SerializedName("userid")
    private int userId = -1;
+   private AsyncJobError error;
 
    public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         int progress, T result, int resultCode, String resultType, int status, int userId) {
+            int progress, T result, int resultCode, String resultType, int status, int userId, AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -156,6 +163,7 @@ public class AsyncJob<T> {
       this.resultType = resultType;
       this.status = status;
       this.userId = userId;
+      this.error = error;
    }
 
    /**
@@ -250,6 +258,15 @@ public class AsyncJob<T> {
       return userId;
    }
 
+   /**
+    * 
+    * 
+    * @return the error related to this command, or null if no error or error not yet encountered.
+    */
+   public AsyncJobError getError() {
+      return error;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -260,6 +277,7 @@ public class AsyncJob<T> {
       result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + (int) (instanceId ^ (instanceId >>> 32));
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
+      result = prime * result + ((error == null) ? 0 : error.hashCode());
       result = prime * result + progress;
       result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
       result = prime * result + resultCode;
@@ -299,6 +317,11 @@ public class AsyncJob<T> {
             return false;
       } else if (!instanceType.equals(other.instanceType))
          return false;
+      if (error == null) {
+         if (other.error != null)
+            return false;
+      } else if (!error.equals(other.error))
+         return false;
       if (progress != other.progress)
          return false;
       if (result == null) {
@@ -323,9 +346,9 @@ public class AsyncJob<T> {
    @Override
    public String toString() {
       return "[accountId=" + accountId + ", cmd=" + cmd + ", created=" + created + ", id=" + id + ", instanceId="
-            + instanceId + ", instanceType=" + instanceType + ", progress=" + progress + ", result=" + result
-            + ", resultCode=" + resultCode + ", resultType=" + resultType + ", status=" + status + ", userId=" + userId
-            + "]";
+               + instanceId + ", instanceType=" + instanceType + ", error=" + error + ", progress=" + progress
+               + ", result=" + result + ", resultCode=" + resultCode + ", resultType=" + resultType + ", status="
+               + status + ", userId=" + userId + "]";
    }
 
 }

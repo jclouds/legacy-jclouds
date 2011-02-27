@@ -1,0 +1,1 @@
+{ "queryasyncjobresultresponse" : {"jobid":1133,"jobstatus":1,"jobprocstatus":0,"jobresultcode":0,"jobresulttype":"object","jobresult":{"ipforwardingrule":{"id":109,"protocol":"tcp","virtualmachineid":226,"virtualmachinename":"i-3-226-VM","ipaddressid":36,"ipaddress":"72.52.126.65","startport":22,"endport":22,"state":"Active"}}} }

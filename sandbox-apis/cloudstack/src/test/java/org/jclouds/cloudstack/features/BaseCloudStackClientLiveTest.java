@@ -69,6 +69,7 @@ public class BaseCloudStackClientLiveTest {
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
+   protected String password = "password";
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
@@ -80,10 +81,9 @@ public class BaseCloudStackClientLiveTest {
       apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
-   protected void checkSSH(String address, int port) {
-      IPSocket socket = new IPSocket(address, port);
+   protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", "password"));
+      SshClient client = sshFactory.create(socket, new Credentials("root", password));
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

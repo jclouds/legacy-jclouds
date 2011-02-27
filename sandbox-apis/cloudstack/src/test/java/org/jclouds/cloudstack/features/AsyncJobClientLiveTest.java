@@ -41,27 +41,31 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
       long asyncJobCount = response.size();
       assertTrue(asyncJobCount >= 0);
       for (AsyncJob<?> asyncJob : response) {
+         assert asyncJob.getCmd() != null : asyncJob;
+         assert asyncJob.getUserId() >= 0 : asyncJob;
+         checkJob(asyncJob);
+
          AsyncJob<?> query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());
          assertEquals(query.getId(), asyncJob.getId());
-         assert query.getStatus() >= 0 : query;
-         assert query.getResultCode() >= 0 : query;
-         assert query.getResultType() != null : query;
-         assert query.getProgress() >= 0 : query;
-         assert query.getResult() != null : query;
 
-         assert asyncJob.getId() > 0 : asyncJob;
-         assert asyncJob.getAccountId() >= 0 : asyncJob;
-         assert asyncJob.getCmd() != null : asyncJob;
-         assert asyncJob.getCreated() != null : asyncJob;
-         if (asyncJob.getProgress() > 0) {
-            assert asyncJob.getResult() == null : asyncJob;
-            assert asyncJob.getResultCode() == -1 : asyncJob;
-         } else {
-            assert asyncJob.getResult() != null : asyncJob;
-            assert asyncJob.getResultCode() >= 0 : asyncJob;
-         }
-         assert asyncJob.getStatus() >= 0 : asyncJob;
-         assert asyncJob.getUserId() >= 0 : asyncJob;
+         assert query.getResultType() != null :query;
+         checkJob(query);
+      }
+   }
+
+   private void checkJob(AsyncJob<?> query) {
+      assert query.getStatus() >= 0 : query;
+      assert query.getResultCode() >= 0 : query;
+      assert query.getProgress() >= 0 : query;
+      if (query.getResultCode() == 0) {
+         if (query.getResult() != null)// null is ok for result of success = true
+            // ensure we parsed properly
+            assert (query.getResult().getClass().getPackage().equals(AsyncJob.class.getPackage())) : query;
+      } else if (query.getResultCode() > 400) {
+         assert query.getResult() == null : query;
+         assert query.getError() != null : query;
+      } else {
+         assert query.getResult() == null : query;
       }
    }
 
