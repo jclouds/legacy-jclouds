@@ -54,7 +54,7 @@ public class PutObjectOptionsTest {
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
 
       PutObjectOptions options = withAcl(CannedAccessPolicy.AUTHENTICATED_READ);
-      options.setHeaderTag("amz");
+      options.setHeaderTag(S3Headers.DEFAULT_AMAZON_HEADERTAG);
 
       Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),

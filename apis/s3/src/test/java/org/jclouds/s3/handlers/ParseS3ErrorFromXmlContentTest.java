@@ -39,6 +39,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.s3.reference.S3Headers;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -57,16 +58,17 @@ public class ParseS3ErrorFromXmlContentTest {
    @Test
    public void test404ContainerNotFoundExceptionPath() {
       assertCodeMakes("GET", URI
-               .create("http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore58/"), 404, "HTTP/1.1 404 Not Found", false,
-               "<Error><Code>Monster.NotFound</Code></Error>", ContainerNotFoundException.class);
+               .create("http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore58/"), 404,
+               "HTTP/1.1 404 Not Found", false, "<Error><Code>Monster.NotFound</Code></Error>",
+               ContainerNotFoundException.class);
    }
-   
 
    @Test
    public void test404KeyNotFoundExceptionPath() {
       assertCodeMakes("GET", URI
-               .create("http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore58/apples"), 404, "HTTP/1.1 404 Not Found", false,
-               "<Error><Code>Monster.NotFound</Code></Error>", KeyNotFoundException.class);
+               .create("http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore58/apples"), 404,
+               "HTTP/1.1 404 Not Found", false, "<Error><Code>Monster.NotFound</Code></Error>",
+               KeyNotFoundException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, final boolean virtualHost,
@@ -77,7 +79,7 @@ public class ParseS3ErrorFromXmlContentTest {
          @Override
          protected void configure() {
             bind(RequestSigner.class).toInstance(createMock(RequestSigner.class));
-            bindConstant().annotatedWith(Names.named(PROPERTY_HEADER_TAG)).to("amz");
+            bindConstant().annotatedWith(Names.named(PROPERTY_HEADER_TAG)).to(S3Headers.DEFAULT_AMAZON_HEADERTAG);
             bindConstant().annotatedWith(Names.named(PROPERTY_S3_SERVICE_PATH)).to(SERVICE_PATH);
             bindConstant().annotatedWith(Names.named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS)).to(virtualHost);
          }

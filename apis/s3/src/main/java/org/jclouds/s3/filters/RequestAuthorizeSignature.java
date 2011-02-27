@@ -20,13 +20,17 @@
 package org.jclouds.s3.filters;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.get;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
+import static org.jclouds.http.utils.ModifyRequest.replaceHeader;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
+import static org.jclouds.util.Strings2.toInputStream;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -43,8 +47,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.s3.Bucket;
-import org.jclouds.s3.reference.S3Headers;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
@@ -53,43 +55,44 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Strings2;
+import org.jclouds.s3.Bucket;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 
 /**
  * Signs the S3 request.
  * 
- * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?RESTAuthentication.html" />
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?RESTAuthentication.html"
+ *      />
  * @author Adrian Cole
  * 
  */
 @Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSigner {
+   private static final Predicate<Annotation> ANNOTATIONTYPE_BUCKET = new Predicate<Annotation>() {
+      public boolean apply(Annotation input) {
+         return input.annotationType().equals(Bucket.class);
+      }
+   };
+
    private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
-   /** Prefix for general Amazon headers: x-amz- */
-   public static final String AMAZON_PREFIX = "x-amz-";
+   public static Set<String> SIGNED_PARAMETERS = ImmutableSet.of("acl", "torrent", "logging", "location", "policy",
+            "requestPayment", "versioning", "versions", "versionId", "notification", "uploadId", "uploads",
+            "partNumber", "website", "response-content-type", "response-content-language", "response-expires",
+            "response-cache-control", "response-content-disposition", "response-content-encoding");
 
-   public static Set<String> SIGNED_PARAMETERS = ImmutableSet.of("acl", "torrent", "logging", "location", "policy", "requestPayment", "versioning",
-       "versions", "versionId", "notification", "uploadId", "uploads", "partNumber", "website",
-       "response-content-type", "response-content-language", "response-expires", 
-       "response-cache-control", "response-content-disposition", "response-content-encoding");
-   
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -133,31 +136,27 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
-      request = ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":"
-               + signature);
+      request = replaceHeader(request, HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":" + signature);
       return request;
    }
 
    HttpRequest replaceDateHeader(HttpRequest request) {
-      Builder<String, String> builder = ImmutableMap.builder();
-      String date = timeStampProvider.get();
-      builder.put(HttpHeaders.DATE, date);
-      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      request = replaceHeader(request, HttpHeaders.DATE, timeStampProvider.get());
       return request;
    }
 
    public String createStringToSign(HttpRequest request) {
       utils.logRequest(signatureLog, request, ">>");
-      SortedSetMultimap<String, String> canonicalizedHeaders = TreeMultimap.create();            
+      SortedSetMultimap<String, String> canonicalizedHeaders = TreeMultimap.create();
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);
       appendPayloadMetadata(request, buffer);
       appendHttpHeaders(request, canonicalizedHeaders);
-     
+
       // Remove default date timestamp if "x-amz-date" is set.
-      if (canonicalizedHeaders.containsKey(S3Headers.ALTERNATE_DATE)) {
-         canonicalizedHeaders.put("date", "");
+      if (canonicalizedHeaders.containsKey("x-" + headerTag + "-date")) {
+         canonicalizedHeaders.removeAll("date");
       }
 
       appendAmzHeaders(canonicalizedHeaders, buffer);
@@ -172,7 +171,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    String calculateSignature(String toSign) throws HttpException {
       String signature = sign(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(Strings2.toInputStream(signature));
+         signatureWire.input(toInputStream(signature));
       return signature;
    }
 
@@ -196,35 +195,35 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       for (Entry<String, String> header : canonicalizedHeaders.entries()) {
          String key = header.getKey();
          if (key.startsWith("x-" + headerTag + "-")) {
-            toSign.append(String.format("%s: %s\n", key.toLowerCase(), header.getValue()));
+            toSign.append(String.format("%s:%s\n", key.toLowerCase(), header.getValue()));
          }
       }
    }
 
    void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      // the following request parameters are positional in their nature
+      // note that we fall back to headers, and some requests such as ?uploads do not have a
+      // payload, yet specify payload related parameters
       buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
-                        .getContentMD5())).append("\n");
+               request.getPayload() == null ? utils.valueOrEmpty(request.getFirstHeaderOrNull("Content-MD5")) : utils
+                        .valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                                 .getContentMD5())).append("\n");
       buffer.append(
                utils.valueOrEmpty(request.getPayload() == null ? request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)
-                        : request.getPayload().getContentMetadata().getContentType())).append("\n");      
+                        : request.getPayload().getContentMetadata().getContentType())).append("\n");
       for (String header : firstHeadersToSign)
          buffer.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
-   void appendHttpHeaders(HttpRequest request,
-         SortedSetMultimap<String, String> canonicalizedHeaders) {
+   void appendHttpHeaders(HttpRequest request, SortedSetMultimap<String, String> canonicalizedHeaders) {
       Multimap<String, String> headers = request.getHeaders();
       for (Entry<String, String> header : headers.entries()) {
          if (header.getKey() == null)
             continue;
-         String key = header.getKey().toString()
-               .toLowerCase(Locale.getDefault());
+         String key = header.getKey().toString().toLowerCase(Locale.getDefault());
          // Ignore any headers that are not particularly interesting.
          if (key.equalsIgnoreCase(HttpHeaders.CONTENT_TYPE) || key.equalsIgnoreCase("Content-MD5")
-               || key.equalsIgnoreCase(HttpHeaders.DATE) || key.startsWith(AMAZON_PREFIX)) {
+                  || key.equalsIgnoreCase(HttpHeaders.DATE) || key.startsWith("x-" + headerTag + "-")) {
             canonicalizedHeaders.put(key, header.getValue());
          }
       }
@@ -238,12 +237,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       String bucketName = null;
 
       for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
-         if (Iterables.any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]),
-                  new Predicate<Annotation>() {
-                     public boolean apply(Annotation input) {
-                        return input.annotationType().equals(Bucket.class);
-                     }
-                  })) {
+         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
             bucketName = (String) request.getArgs().get(i);
             break;
          }
@@ -261,20 +255,14 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       // ...however, there are a few exceptions that must be included in the
       // signed URI.
       if (request.getEndpoint().getQuery() != null) {
-         SortedSetMultimap<String, String> sortedParams = TreeMultimap.create();
-         String[] params = request.getEndpoint().getQuery().split("&");
-         for (String param : params) {
-            String[] paramNameAndValue = param.split("=");
-            sortedParams.put(paramNameAndValue[0], paramNameAndValue.length == 2 ? paramNameAndValue[1] : null);
-         }
+         Multimap<String, String> params = parseQueryToMap(request.getEndpoint().getQuery());
          char separator = '?';
-         for (Entry<String, String> param: sortedParams.entries()) {
-            String paramName = param.getKey();
+         for (String paramName : Ordering.natural().sortedCopy(params.keySet())) {
             // Skip any parameters that aren't part of the canonical signed string
-            if (SIGNED_PARAMETERS.contains(paramName) == false) continue;
-
+            if (SIGNED_PARAMETERS.contains(paramName) == false)
+               continue;
             toSign.append(separator).append(paramName);
-            String paramValue = param.getValue();
+            String paramValue = get(params.get(paramName), 0);
             if (paramValue != null) {
                toSign.append("=").append(paramValue);
             }

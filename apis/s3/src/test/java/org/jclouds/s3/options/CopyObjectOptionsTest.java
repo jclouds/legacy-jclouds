@@ -19,12 +19,19 @@
 
 package org.jclouds.s3.options;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.ifSourceETagDoesntMatch;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.ifSourceETagMatches;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.overrideAcl;
 import static org.jclouds.s3.options.CopyObjectOptions.Builder.overrideMetadataWith;
+import static org.jclouds.s3.reference.S3Headers.CANNED_ACL;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_MODIFIED_SINCE;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_NO_MATCH;
+import static org.jclouds.s3.reference.S3Headers.DEFAULT_AMAZON_HEADERTAG;
+import static org.jclouds.s3.reference.S3Headers.METADATA_DIRECTIVE;
+import static org.jclouds.s3.reference.S3Headers.USER_METADATA_PREFIX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -33,13 +40,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.s3.domain.CannedAccessPolicy;
-import org.jclouds.s3.reference.S3Headers;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -54,14 +60,10 @@ public class CopyObjectOptionsTest {
    private Date now;
    private String nowExpected;
    private Map<String, String> goodMeta;
-   private Map<String, String> badMeta;
 
    @BeforeMethod
    void setUp() {
-      goodMeta = Maps.newHashMap();
-      goodMeta.put("x-amz-meta-adrian", "foo");
-      badMeta = Maps.newHashMap();
-      badMeta.put("x-google-meta-adrian", "foo");
+      goodMeta = ImmutableMap.of(USER_METADATA_PREFIX + "adrian", "foo");
       now = new Date();
       nowExpected = new SimpleDateFormatDateService().rfc822DateFormat(now);
       etag = "mama";
@@ -70,8 +72,8 @@ public class CopyObjectOptionsTest {
    @Test
    void testGoodMetaStatic() {
       CopyObjectOptions options = overrideMetadataWith(goodMeta);
-      options.setMetadataPrefix("x-amz-meta-");
-      options.setHeaderTag("amz");
+      options.setMetadataPrefix(USER_METADATA_PREFIX);
+      options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
       assertGoodMeta(options);
    }
 
@@ -85,17 +87,17 @@ public class CopyObjectOptionsTest {
       assert options.getMetadata() != null;
       Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.size(), 2);
-      assertEquals(headers.get("x-amz-metadata-directive").iterator().next(), "REPLACE");
+      assertEquals(headers.get(METADATA_DIRECTIVE).iterator().next(), "REPLACE");
       assertEquals(options.getMetadata().size(), 1);
-      assertEquals(headers.get("x-amz-meta-adrian").iterator().next(), "foo");
-      assertEquals(options.getMetadata().get("x-amz-meta-adrian"), "foo");
+      assertEquals(headers.get(USER_METADATA_PREFIX + "adrian").iterator().next(), "foo");
+      assertEquals(options.getMetadata().get(USER_METADATA_PREFIX + "adrian"), "foo");
    }
 
    @Test
    void testGoodMeta() {
       CopyObjectOptions options = new CopyObjectOptions();
-      options.setHeaderTag("amz");
-      options.setMetadataPrefix("x-amz-meta-");
+      options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
+      options.setMetadataPrefix(USER_METADATA_PREFIX);
       options.overrideMetadataWith(goodMeta);
       assertGoodMeta(options);
    }
@@ -272,25 +274,24 @@ public class CopyObjectOptionsTest {
    @Test
    void testBuildRequestHeadersWhenMetadataNull() throws UnsupportedEncodingException {
       CopyObjectOptions options = new CopyObjectOptions();
-      options.setHeaderTag("amz");
+      options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
 
-      options.setMetadataPrefix("x-amz-meta-");
+      options.setMetadataPrefix(USER_METADATA_PREFIX);
       assert options.buildRequestHeaders() != null;
    }
 
    @Test
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
-      CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag)
-               .overrideMetadataWith(goodMeta);
-      options.setHeaderTag("amz");
+      CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag).overrideMetadataWith(
+               goodMeta);
+      options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
 
-      options.setMetadataPrefix("x-amz-meta-");
+      options.setMetadataPrefix(USER_METADATA_PREFIX);
 
       Multimap<String, String> headers = options.buildRequestHeaders();
-      assertEquals(headers.get("x-amz-copy-source-if-modified-since").iterator().next(),
-               new SimpleDateFormatDateService().rfc822DateFormat(now));
-      assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator().next(), "\"" + etag
-               + "\"");
+      assertEquals(getOnlyElement(headers.get(COPY_SOURCE_IF_MODIFIED_SINCE)), new SimpleDateFormatDateService()
+               .rfc822DateFormat(now));
+      assertEquals(getOnlyElement(headers.get(COPY_SOURCE_IF_NO_MATCH)), "\"" + etag + "\"");
       for (String value : goodMeta.values())
          assertTrue(headers.containsValue(value));
 
@@ -311,13 +312,12 @@ public class CopyObjectOptionsTest {
    @Test
    void testBuildRequestHeadersACL() throws UnsupportedEncodingException {
       CopyObjectOptions options = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ);
-      options.setHeaderTag("amz");
+      options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
 
-      options.setMetadataPrefix("x-amz-meta-");
+      options.setMetadataPrefix(USER_METADATA_PREFIX);
 
       Multimap<String, String> headers = options.buildRequestHeaders();
 
-      assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
-               CannedAccessPolicy.AUTHENTICATED_READ.toString());
+      assertEquals(headers.get(CANNED_ACL).iterator().next(), CannedAccessPolicy.AUTHENTICATED_READ.toString());
    }
 }

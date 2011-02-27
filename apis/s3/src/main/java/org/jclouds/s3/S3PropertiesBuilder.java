@@ -32,6 +32,7 @@ import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCK
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.s3.reference.S3Headers;
 
 /**
  * Builds properties used in S3 Connections
@@ -44,7 +45,7 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
-      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
@@ -67,8 +68,8 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
 
    protected void setMetaPrefix() {
       if (properties.getProperty(PROPERTY_USER_METADATA_PREFIX) == null) {
-         properties.setProperty(PROPERTY_USER_METADATA_PREFIX,
-               String.format("x-%s-meta-", properties.getProperty(PROPERTY_HEADER_TAG)));
+         properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-%s-meta-", properties
+                  .getProperty(PROPERTY_HEADER_TAG)));
       }
    }
 

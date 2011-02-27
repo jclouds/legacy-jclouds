@@ -55,7 +55,7 @@ public class PutBucketOptionsTest {
 
       PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
 
-      options.setHeaderTag("amz");
+      options.setHeaderTag(S3Headers.DEFAULT_AMAZON_HEADERTAG);
       Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
                CannedAccessPolicy.AUTHENTICATED_READ.toString());

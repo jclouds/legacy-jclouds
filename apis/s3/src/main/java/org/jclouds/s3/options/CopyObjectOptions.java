@@ -23,6 +23,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.s3.reference.S3Headers.CANNED_ACL;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_MATCH;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_MODIFIED_SINCE;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_NO_MATCH;
+import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_UNMODIFIED_SINCE;
+import static org.jclouds.s3.reference.S3Headers.DEFAULT_AMAZON_HEADERTAG;
+import static org.jclouds.s3.reference.S3Headers.METADATA_DIRECTIVE;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -32,14 +39,13 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.s3.domain.CannedAccessPolicy;
-import org.jclouds.s3.reference.S3Headers;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+import org.jclouds.s3.domain.CannedAccessPolicy;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -99,7 +105,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    public CopyObjectOptions overrideAcl(CannedAccessPolicy acl) {
       this.acl = checkNotNull(acl, "acl");
       if (!acl.equals(CannedAccessPolicy.PRIVATE))
-         this.replaceHeader(S3Headers.CANNED_ACL, acl.toString());
+         this.replaceHeader(CANNED_ACL, acl.toString());
       return this;
    }
 
@@ -124,7 +130,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @see CopyObjectOptions#ifSourceModifiedSince(Date)
     */
    public String getIfModifiedSince() {
-      return getFirstHeaderOrNull("x-amz-copy-source-if-modified-since");
+      return getFirstHeaderOrNull(COPY_SOURCE_IF_MODIFIED_SINCE);
    }
 
    /**
@@ -141,7 +147,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @see CopyObjectOptions#ifSourceUnmodifiedSince(Date)
     */
    public String getIfUnmodifiedSince() {
-      return getFirstHeaderOrNull("x-amz-copy-source-if-unmodified-since");
+      return getFirstHeaderOrNull(COPY_SOURCE_IF_UNMODIFIED_SINCE);
    }
 
    /**
@@ -156,7 +162,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @see CopyObjectOptions#ifSourceETagMatches(String)
     */
    public String getIfMatch() {
-      return getFirstHeaderOrNull("x-amz-copy-source-if-match");
+      return getFirstHeaderOrNull(COPY_SOURCE_IF_MATCH);
    }
 
    /**
@@ -171,7 +177,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @see CopyObjectOptions#ifSourceETagDoesntMatch(String)
     */
    public String getIfNoneMatch() {
-      return getFirstHeaderOrNull("x-amz-copy-source-if-none-match");
+      return getFirstHeaderOrNull(COPY_SOURCE_IF_NO_MATCH);
    }
 
    /**
@@ -192,10 +198,9 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     */
    public CopyObjectOptions ifSourceModifiedSince(Date ifModifiedSince) {
       checkState(getIfMatch() == null, "ifETagMatches() is not compatible with ifModifiedSince()");
-      checkState(getIfUnmodifiedSince() == null,
-               "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-      replaceHeader("x-amz-copy-source-if-modified-since", dateService
-               .rfc822DateFormat(checkNotNull(ifModifiedSince, "ifModifiedSince")));
+      checkState(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
+      replaceHeader(COPY_SOURCE_IF_MODIFIED_SINCE, dateService.rfc822DateFormat(checkNotNull(ifModifiedSince,
+               "ifModifiedSince")));
       return this;
    }
 
@@ -206,12 +211,10 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * {@link #ifSourceModifiedSince(Date)}
     */
    public CopyObjectOptions ifSourceUnmodifiedSince(Date ifUnmodifiedSince) {
-      checkState(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
-      checkState(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-      replaceHeader("x-amz-copy-source-if-unmodified-since", dateService
-               .rfc822DateFormat(checkNotNull(ifUnmodifiedSince, "ifUnmodifiedSince")));
+      checkState(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
+      checkState(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
+      replaceHeader(COPY_SOURCE_IF_UNMODIFIED_SINCE, dateService.rfc822DateFormat(checkNotNull(ifUnmodifiedSince,
+               "ifUnmodifiedSince")));
       return this;
    }
 
@@ -226,12 +229,9 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     *           hash representing the payload
     */
    public CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
-      checkState(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifETagMatches()");
-      checkState(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifETagMatches()");
-      replaceHeader("x-amz-copy-source-if-match", String.format("\"%1$s\"", checkNotNull(eTag,
-               "eTag")));
+      checkState(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
+      checkState(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifETagMatches()");
+      replaceHeader(COPY_SOURCE_IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
       return this;
    }
 
@@ -246,13 +246,11 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public CopyObjectOptions ifSourceETagDoesntMatch(String eTag)
-            throws UnsupportedEncodingException {
+   public CopyObjectOptions ifSourceETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
       checkState(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       Preconditions.checkState(getIfUnmodifiedSince() == null,
                "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
-      replaceHeader("x-amz-copy-source-if-none-match", String.format("\"%1$s\"", checkNotNull(eTag,
-               "ifETagDoesntMatch")));
+      replaceHeader(COPY_SOURCE_IF_NO_MATCH, String.format("\"%s\"", checkNotNull(eTag, "ifETagDoesntMatch")));
       return this;
    }
 
@@ -260,18 +258,17 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    public Multimap<String, String> buildRequestHeaders() {
       checkState(headerTag != null, "headerTag should have been injected!");
       checkState(metadataPrefix != null, "metadataPrefix should have been injected!");
-      Multimap<String, String> returnVal = LinkedHashMultimap.create();
+      ImmutableMultimap.Builder<String, String> returnVal = ImmutableMultimap.<String, String> builder();
       for (Entry<String, String> entry : headers.entries()) {
-         returnVal.put(entry.getKey().replace("amz", headerTag), entry.getValue());
+         returnVal.put(entry.getKey().replace(DEFAULT_AMAZON_HEADERTAG, headerTag), entry.getValue());
       }
       if (metadata != null) {
+         returnVal.put(METADATA_DIRECTIVE.replace(DEFAULT_AMAZON_HEADERTAG, headerTag), "REPLACE");
          for (String key : metadata.keySet()) {
-            returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata
-                     .get(key));
+            returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata.get(key));
          }
-         returnVal.put("x-" + headerTag + "-metadata-directive", "REPLACE");
       }
-      return returnVal;
+      return returnVal.build();
    }
 
    /**
@@ -311,8 +308,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see CopyObjectOptions#ifSourceETagMatches(String)
        */
-      public static CopyObjectOptions ifSourceETagMatches(String eTag)
-               throws UnsupportedEncodingException {
+      public static CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagMatches(eTag);
       }
@@ -320,8 +316,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see CopyObjectOptions#ifSourceETagDoesntMatch(String)
        */
-      public static CopyObjectOptions ifSourceETagDoesntMatch(String eTag)
-               throws UnsupportedEncodingException {
+      public static CopyObjectOptions ifSourceETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagDoesntMatch(eTag);
       }

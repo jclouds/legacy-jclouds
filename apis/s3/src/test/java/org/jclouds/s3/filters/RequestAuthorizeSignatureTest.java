@@ -36,6 +36,7 @@ import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
+import org.jclouds.s3.reference.S3Headers;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -72,13 +73,13 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
     */
    @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 10000)
    void testIdempotent(HttpRequest request) {
-      filter.filter(request);
+      request = filter.filter(request);
       String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
       String date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
       int iterations = 1;
       while (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
          date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
-         filter.filter(request);
+         request = filter.filter(request);
          if (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date))
             assert signature.equals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION)) : String.format(
                      "sig: %s != %s on attempt %s", signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION),
@@ -135,13 +136,13 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       filter.appendHttpHeaders(request, canonicalizedHeaders);
       StringBuilder builder = new StringBuilder();
       filter.appendAmzHeaders(canonicalizedHeaders, builder);
-      assertEquals(builder.toString(), "x-amz-meta-x-amz-adrian: foo\n");
+      assertEquals(builder.toString(), S3Headers.USER_METADATA_PREFIX + "adrian:foo\n");
    }
 
    private HttpRequest putObject() throws NoSuchMethodException {
       S3Object object = blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB);
 
-      object.getMetadata().getUserMetadata().put("x-amz-Adrian", "foo");
+      object.getMetadata().getUserMetadata().put("Adrian", "foo");
       HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod("putObject", String.class,
                S3Object.class, PutObjectOptions[].class), "bucket", object);
       return request;
