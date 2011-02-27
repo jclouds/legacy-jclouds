@@ -157,7 +157,7 @@ public class ConvertToGaeRequestTest {
          builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
       assertEquals(builder.toString(),
-            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
+            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nExpect: 100-continue\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }
