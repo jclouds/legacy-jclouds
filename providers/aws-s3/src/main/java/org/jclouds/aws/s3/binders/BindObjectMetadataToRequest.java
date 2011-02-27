@@ -21,6 +21,7 @@ package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.crypto.CryptoStreams.base64;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -75,6 +76,10 @@ public class BindObjectMetadataToRequest implements Binder {
          headers.put(HttpHeaders.CONTENT_TYPE, md.getContentMetadata().getContentType());
       } else {
          headers.put(HttpHeaders.CONTENT_TYPE, "binary/octet-stream");
+      }
+
+      if (md.getContentMetadata().getContentMD5() != null) {
+         headers.put("Content-MD5", base64(md.getContentMetadata().getContentMD5()));
       }
 
       request = ModifyRequest.replaceHeaders(request, headers.build());

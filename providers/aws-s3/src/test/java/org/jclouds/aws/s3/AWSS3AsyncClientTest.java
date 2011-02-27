@@ -79,11 +79,23 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
             NoSuchMethodException {
       Method method = AWSS3AsyncClient.class.getMethod("initiateMultipartUpload", String.class, ObjectMetadata.class,
                PutObjectOptions[].class);
-      HttpRequest request = processor
-               .createRequest(method, "bucket", ObjectMetadataBuilder.create().key("foo").build());
+      HttpRequest request = processor.createRequest(method, "bucket", ObjectMetadataBuilder.create().key("foo")
+               .contentMD5(new byte[] { 1, 2, 3, 4 }).build());
 
       assertRequestLineEquals(request, "POST https://bucket." + url + "/foo?uploads HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Content-Type: binary/octet-stream\nHost: bucket." + url + "\n");
+      assertNonPayloadHeadersEqual(request, "Content-MD5: AQIDBA==\nContent-Type: binary/octet-stream\nHost: bucket."
+               + url + "\n");
+      assertPayloadEquals(request, null, null, false);
+
+      // as this is a payload-related command, but with no payload, be careful that we check
+      // filtering and do not ignore if this fails later.
+      request = request.getFilters().get(0).filter(request);
+
+      assertRequestLineEquals(request, "POST https://bucket." + url + "/foo?uploads HTTP/1.1");
+      assertNonPayloadHeadersEqual(request,
+               "Authorization: AWS identity:Sp1FX4svL9P2u2bFJwroaYpSANo=\nContent-MD5: AQIDBA==\n"
+                        + "Content-Type: binary/octet-stream\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket." + url
+                        + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, UploadIdFromHttpResponseViaRegex.class);
