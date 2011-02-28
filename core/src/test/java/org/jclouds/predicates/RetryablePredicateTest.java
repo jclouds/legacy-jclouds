@@ -42,20 +42,22 @@ public class RetryablePredicateTest {
       Date startPlusThird = new Date(System.currentTimeMillis() + 1000);
       predicate.apply("");
       Date now = new Date();
-      assert now.compareTo(startPlusThird) < 0 : String.format("%s should be less than %s", now, startPlusThird);
+      assert now.compareTo(startPlusThird) < 0 : String.format("%s should be less than %s", now.getTime(),
+               startPlusThird.getTime());
    }
 
    @Test
    void testAlwaysFalseMillis() {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates.<String> alwaysFalse(), 3, 1,
                TimeUnit.SECONDS);
-      Date startPlus3Thirds = new Date(System.currentTimeMillis() + 3000);
-      Date startPlus4Thirds = new Date(System.currentTimeMillis() + 4000);
+      Date startPlus3Seconds = new Date(System.currentTimeMillis() + 3000);
+      Date startPlus4Seconds = new Date(System.currentTimeMillis() + 4001);
       predicate.apply("");
       Date now = new Date();
-      assert now.compareTo(startPlus3Thirds) >= 0 : String.format("%s should be less than %s", startPlus3Thirds, now);
-      assert now.compareTo(startPlus4Thirds) <= 0 : String
-               .format("%s should be greater than %s", startPlus4Thirds, now);
+      assert now.compareTo(startPlus3Seconds) >= 0 : String.format("%s should be less than %s", startPlus3Seconds
+               .getTime(), now.getTime());
+      assert now.compareTo(startPlus4Seconds) <= 0 : String.format("%s should be greater than %s", startPlus4Seconds
+               .getTime(), now.getTime());
 
    }
 
@@ -75,12 +77,14 @@ public class RetryablePredicateTest {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(new ThirdTimeTrue(), 3, 1, TimeUnit.SECONDS);
 
       Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus3 = new Date(System.currentTimeMillis() + 3000);
+      Date startPlus3 = new Date(System.currentTimeMillis() + 3001);
 
       predicate.apply("");
       Date now = new Date();
-      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now, startPlus);
-      assert now.compareTo(startPlus3) <= 0 : String.format("%s should be greater than %s", startPlus3, now);
+      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now.getTime(), startPlus
+               .getTime());
+      assert now.compareTo(startPlus3) <= 0 : String.format("%s should be greater than %s", startPlus3.getTime(), now
+               .getTime());
    }
 
    @Test
@@ -89,11 +93,13 @@ public class RetryablePredicateTest {
                TimeUnit.SECONDS);
 
       Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus2 = new Date(System.currentTimeMillis() + 2000);
+      Date startPlus2 = new Date(System.currentTimeMillis() + 2001);
 
       predicate.apply("");
       Date now = new Date();
-      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now, startPlus);
-      assert now.compareTo(startPlus2) <= 0 : String.format("%s should be greater than %s", startPlus2, now);
+      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now.getTime(), startPlus
+               .getTime());
+      assert now.compareTo(startPlus2) <= 0 : String.format("%s should be greater than %s", startPlus2.getTime(), now
+               .getTime());
    }
 }
