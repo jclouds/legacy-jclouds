@@ -38,6 +38,11 @@ public class AsyncCreateResponse {
 
    }
 
+   public AsyncCreateResponse(long id, long jobId) {
+      this.id = id;
+      this.jobId = jobId;
+   }
+
    /**
     * @return id of the resource being created
     */

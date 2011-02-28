@@ -26,13 +26,12 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -49,38 +48,39 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private PortForwardingRule rule;
+   private Network network;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
       prefix += "rule";
-      ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
-      vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsPortForwarding());
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+               virtualMachineRunning);
       if (vm.getPassword() != null)
          password = vm.getPassword();
    }
 
    public void testCreatePortForwardingRule() throws Exception {
-      AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
-               ip.getId(), "tcp", 22, 22);
-      assert jobComplete.apply(job.getJobId());
-      rule = findRuleWithId(job.getId());
+
+      while (rule == null) {
+         ip = reuseOrAssociate.apply(network);
+         try {
+            AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
+                     ip.getId(), "tcp", 22, 22);
+            assert jobComplete.apply(job.getJobId());
+            rule = findRuleWithId(job.getId());
+         } catch (IllegalStateException e) {
+            // very likely an ip conflict, so retry;
+         }
+      }
+
       assertEquals(rule.getIPAddressId(), ip.getId());
       assertEquals(rule.getVirtualMachineId(), vm.getId());
       assertEquals(rule.getPublicPort(), 22);
       assertEquals(rule.getProtocol(), "tcp");
       checkRule(rule);
-      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
-      socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", password));
-      try {
-         client.connect();
-         ExecResponse exec = client.exec("echo hello");
-         assertEquals(exec.getOutput().trim(), "hello");
-      } finally {
-         if (client != null)
-            client.disconnect();
-      }
+      checkSSH(new IPSocket(ip.getIPAddress(), 22));
    }
 
    @AfterGroups(groups = "live")
@@ -88,11 +88,11 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       if (rule != null) {
          client.getFirewallClient().deletePortForwardingRule(rule.getId());
       }
+      if (vm != null) {
+         jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+      }
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
-      }
-      if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
       }
       super.tearDown();
    }

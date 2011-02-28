@@ -30,9 +30,11 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.Network;
@@ -49,6 +51,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -140,7 +143,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
                zoneId, options);
       assert jobComplete.apply(job.getJobId());
-      VirtualMachine vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId()).getResult();
+      AsyncJob<VirtualMachine> jobWithResult = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId());
+      if (jobWithResult.getError() != null)
+         Throwables.propagate(new ExecutionException(String.format("job %s failed with exception %s", job.getId(),
+                  jobWithResult.getError().toString())) {
+            private static final long serialVersionUID = 4371112085613620239L;
+         });
+      VirtualMachine vm = jobWithResult.getResult();
       if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
       }

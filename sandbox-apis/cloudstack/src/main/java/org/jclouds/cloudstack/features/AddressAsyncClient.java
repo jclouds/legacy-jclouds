@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.functions.ReturnVoidOnNotFoundOr404OrUnableToFindAccountOwner;
 import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -37,7 +38,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -88,7 +88,7 @@ public interface AddressAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "disassociateIpAddress")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404OrUnableToFindAccountOwner.class)
    ListenableFuture<Void> disassociateIPAddress(@QueryParam("id") long id);
 
 }

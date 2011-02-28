@@ -21,6 +21,8 @@ package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -29,6 +31,7 @@ import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -52,14 +55,19 @@ public class JobComplete implements Predicate<Long> {
 
    public boolean apply(Long jobId) {
       logger.trace("looking for status on job %s", checkNotNull(jobId, "jobId"));
-      AsyncJob job = refresh(jobId);
+      AsyncJob<?> job = refresh(jobId);
       if (job == null)
          return false;
       logger.trace("%s: looking for job status %s: currently: %s", job.getId(), 1, job.getStatus());
+      if (job.getError() != null)
+         Throwables.propagate(new ExecutionException(String.format("job %s failed with exception %s", job.getId(), job
+                  .getError().toString())) {
+                     private static final long serialVersionUID = 4371112085613620239L;
+         });
       return job.getStatus() > 0;
    }
 
-   private AsyncJob refresh(Long jobId) {
+   private AsyncJob<?> refresh(Long jobId) {
       return client.getAsyncJobClient().getAsyncJob(jobId);
    }
 }

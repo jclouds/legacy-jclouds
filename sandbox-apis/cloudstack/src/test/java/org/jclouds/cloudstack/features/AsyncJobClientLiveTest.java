@@ -34,7 +34,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "AsyncJobClientLiveTest")
 public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
-
+   // disabled as it takes too long
+   @Test(enabled = false)
    public void testListAsyncJobs() throws Exception {
       Set<AsyncJob<?>> response = client.getAsyncJobClient().listAsyncJobs();
       assert null != response;
@@ -48,7 +49,7 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
          AsyncJob<?> query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());
          assertEquals(query.getId(), asyncJob.getId());
 
-         assert query.getResultType() != null :query;
+         assert query.getResultType() != null : query;
          checkJob(query);
       }
    }

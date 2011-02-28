@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -27,9 +28,11 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
+import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
+import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
@@ -48,23 +51,34 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private IPForwardingRule rule;
+   private Network network;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
       prefix += "nat";
-      ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
-      vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+               virtualMachineRunning);
       if (vm.getPassword() != null)
          password = vm.getPassword();
    }
 
    public void testCreateIPForwardingRule() throws Exception {
-
-      assert !ip.isStaticNAT();
-      client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
-      ip = client.getAddressClient().getPublicIPAddress(ip.getId());
-      assert ip.isStaticNAT();
+      for (ip = reuseOrAssociate.apply(network); (!ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId()); ip = reuseOrAssociate
+               .apply(network)) {
+         // check to see if someone already grabbed this ip
+         if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
+            continue;
+         try {
+            client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
+            ip = client.getAddressClient().getPublicIPAddress(ip.getId());
+            if (ip.isStaticNAT() && ip.getVirtualMachineId() == vm.getId())
+               break;
+         } catch (IllegalStateException e) {
+            // very likely an ip conflict, so retry;
+         }
+      }
 
       AsyncCreateResponse job = client.getNATClient().createIPForwardingRule(ip.getId(), "tcp", 22);
       assert jobComplete.apply(job.getJobId());
@@ -76,7 +90,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root",password));
+      SshClient client = sshFactory.create(socket, new Credentials("root", password));
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");
@@ -92,22 +106,24 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       if (rule != null) {
          client.getNATClient().deleteIPForwardingRule(rule.getId());
       }
+      if (vm != null) {
+         jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+      }
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
-      }
-      if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
       }
       super.tearDown();
    }
 
+   @Test(enabled = false)
+   // takes too long
    public void testListIPForwardingRules() throws Exception {
       Set<IPForwardingRule> response = client.getNATClient().listIPForwardingRules();
       assert null != response;
       assertTrue(response.size() >= 0);
       for (IPForwardingRule rule : response) {
          IPForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
-               ListIPForwardingRulesOptions.Builder.id(rule.getId())));
+                  ListIPForwardingRulesOptions.Builder.id(rule.getId())));
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);
       }

@@ -23,17 +23,21 @@ import static com.google.common.collect.Iterables.find;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
+import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
+import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -51,22 +55,32 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm;
    private LoadBalancerRule rule;
    private RetryablePredicate<LoadBalancerRule> loadBalancerRuleActive;
+   private Network network;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
-      loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 600, 5,
+
+      loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
                TimeUnit.SECONDS);
       prefix += "rule";
-      ip = AddressClientLiveTest.createPublicIPAddress(client, jobComplete);
-      vm = VirtualMachineClientLiveTest.createVirtualMachine(client, jobComplete, virtualMachineRunning);
+      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+               virtualMachineRunning);
       if (vm.getPassword() != null)
          password = vm.getPassword();
    }
 
    public void testCreateLoadBalancerRule() throws Exception {
-      rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN, prefix,
-               22, 22);
+      while (rule == null) {
+         ip = reuseOrAssociate.apply(network);
+         try {
+            rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
+                     prefix, 22, 22);
+         } catch (IllegalStateException e) {
+            // very likely an ip conflict, so retry;
+         }
+      }
       assert (rule.getPublicIPId() == ip.getId()) : rule;
       assertEquals(rule.getPublicPort(), 22);
       assertEquals(rule.getPrivatePort(), 22);
@@ -84,18 +98,33 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
                vm.getId()));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
       assert loadBalancerRuleActive.apply(rule) : rule;
-      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
-      assert socketTester.apply(socket) : vm;
+      loopAndCheckSSH();
    }
 
-   @Test(dependsOnMethods = "testAssignToLoadBalancerRule")
+   // note that when in LB mode, there's a chance you'll have a connection failure
+   private void loopAndCheckSSH() throws IOException {
+      for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
+         try {
+            checkSSH(new IPSocket(ip.getIPAddress(), 22));
+            return;
+         } catch (SshException e) {
+            e.printStackTrace();
+            try {
+               Thread.sleep(10 * 1000);
+            } catch (InterruptedException e1) {
+            }
+            continue;
+         }
+      }
+   }
+
+   @Test(dependsOnMethods = "testAssignToLoadBalancerRule", expectedExceptions = SshException.class)
    public void testRemoveFromLoadBalancerRule() throws Exception {
       assert jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
                vm.getId()));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
       assertEquals(rule.getState(), State.ADD);
-      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
-      assert !socketTester.apply(socket);
+      checkSSH(new IPSocket(ip.getIPAddress(), 22));
    }
 
    @AfterGroups(groups = "live")
@@ -116,7 +145,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       Set<LoadBalancerRule> response = client.getLoadBalancerClient().listLoadBalancerRules();
       assert null != response;
       assertTrue(response.size() >= 0);
-      for (final LoadBalancerRule rule : response) {
+      for (LoadBalancerRule rule : response) {
          LoadBalancerRule newDetails = findRuleWithId(rule.getId());
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);

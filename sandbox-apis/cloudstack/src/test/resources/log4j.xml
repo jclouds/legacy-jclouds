@@ -146,7 +146,7 @@
     </category>
     
     <category name="jclouds.ssh">
-        <priority value="DEBUG" />
+        <priority value="TRACE" />
         <appender-ref ref="ASYNCSSH" />
     </category>
     

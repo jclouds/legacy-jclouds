@@ -29,6 +29,7 @@ import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.functions.ReuseOrAssociateNewPublicIPAddress;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
@@ -48,6 +49,7 @@ import org.testng.annotations.BeforeGroups;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -70,6 +72,10 @@ public class BaseCloudStackClientLiveTest {
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
    protected String password = "password";
+
+   protected Injector injector;
+
+   protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
@@ -115,13 +121,20 @@ public class BaseCloudStackClientLiveTest {
                overrides);
 
       client = context.getApi();
-      sshFactory = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
-      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
-      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5,
+      injector = Guice.createInjector(new JschSshClientModule(),new Log4JLoggingModule());
+      sshFactory = injector.getInstance(SshClient.Factory.class);
+      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
+      injector.injectMembers(socketTester);
+      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, 5, TimeUnit.SECONDS);
+      injector.injectMembers(jobComplete);
+      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
                TimeUnit.SECONDS);
-      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5,
+      injector.injectMembers(virtualMachineRunning);
+      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5, 5,
                TimeUnit.SECONDS);
+      injector.injectMembers(virtualMachineDestroyed);
+      reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
+      injector.injectMembers(reuseOrAssociate);
    }
 
    @AfterGroups(groups = "live")

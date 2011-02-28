@@ -19,28 +19,19 @@
 
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.collect.Iterables.find;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.Network;
-import org.jclouds.cloudstack.domain.NetworkService;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
-import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
-import org.jclouds.cloudstack.predicates.JobComplete;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -51,51 +42,13 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", sequential = true, testName = "PublicIPAddressClientLiveTest")
 public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
-   private RetryablePredicate<Long> jobComplete;
-
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
-      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, TimeUnit.SECONDS);
-   }
 
    public void testAssociateDisassociatePublicIPAddress() throws Exception {
-      ip = createPublicIPAddress(client, jobComplete);
+      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(
+               Iterables.get(client.getNetworkClient().listNetworks(), 0).getZoneId());
+      checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
+      ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
       checkIP(ip);
-   }
-
-   public static PublicIPAddress createPublicIPAddress(final CloudStackClient client,
-            RetryablePredicate<Long> jobComplete) {
-      Network network = find(client.getNetworkClient().listNetworks(), new Predicate<Network>() {
-
-         @Override
-         public boolean apply(Network arg0) {
-            return Iterables.any(arg0.getServices(), new Predicate<NetworkService>() {
-
-               @Override
-               public boolean apply(NetworkService input) {
-                  return input.getName().equals("Firewall") && "true".equals(input.getCapabilities().get("StaticNat"));
-               }
-
-            });
-         }
-
-         @Override
-         public String toString() {
-            return "networkType(ADVANCED)";
-         }
-      });
-      return createPublicIPAddressInNetwork(network, client, jobComplete);
-   }
-
-   public static PublicIPAddress createPublicIPAddressInNetwork(Network network, CloudStackClient client,
-            RetryablePredicate<Long> jobComplete) {
-      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(network.getZoneId(),
-               AssociateIPAddressOptions.Builder.networkId(network.getId()));
-      assert jobComplete.apply(job.getJobId());
-      PublicIPAddress ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
-      assertEquals(ip.getZoneId(), network.getZoneId());
-      return ip;
    }
 
    @AfterGroups(groups = "live")
