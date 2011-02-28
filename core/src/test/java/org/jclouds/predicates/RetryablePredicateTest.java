@@ -34,6 +34,7 @@ import com.google.common.base.Predicates;
  */
 @Test(groups = "unit", sequential = true)
 public class RetryablePredicateTest {
+   public static int SLOW_BUILD_SERVER_GRACE = 50;
 
    @Test
    void testAlwaysTrue() {
@@ -51,7 +52,7 @@ public class RetryablePredicateTest {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates.<String> alwaysFalse(), 3, 1,
                TimeUnit.SECONDS);
       Date startPlus3Seconds = new Date(System.currentTimeMillis() + 3000);
-      Date startPlus4Seconds = new Date(System.currentTimeMillis() + 4001);
+      Date startPlus4Seconds = new Date(System.currentTimeMillis() + 4000 + SLOW_BUILD_SERVER_GRACE);
       predicate.apply("");
       Date now = new Date();
       assert now.compareTo(startPlus3Seconds) >= 0 : String.format("%s should be less than %s", startPlus3Seconds
@@ -77,7 +78,7 @@ public class RetryablePredicateTest {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(new ThirdTimeTrue(), 3, 1, TimeUnit.SECONDS);
 
       Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus3 = new Date(System.currentTimeMillis() + 3001);
+      Date startPlus3 = new Date(System.currentTimeMillis() + 3000 + SLOW_BUILD_SERVER_GRACE);
 
       predicate.apply("");
       Date now = new Date();
@@ -93,7 +94,7 @@ public class RetryablePredicateTest {
                TimeUnit.SECONDS);
 
       Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus2 = new Date(System.currentTimeMillis() + 2001);
+      Date startPlus2 = new Date(System.currentTimeMillis() + 2000 + SLOW_BUILD_SERVER_GRACE);
 
       predicate.apply("");
       Date now = new Date();
