@@ -324,9 +324,9 @@ public class RestAnnotationProcessor<T> {
          } else if (isConstantDeclaration(method)) {
             bindConstant(method);
          } else if (!method.getDeclaringClass().equals(declaring)) {
-            logger.debug("skipping potentially overridden method %s", method);
+            logger.trace("skipping potentially overridden method %s", method);
          } else if (method.isAnnotationPresent(Delegate.class)) {
-            logger.debug("skipping delegate method %s", method);
+            logger.trace("skipping delegate method %s", method);
          } else if (!method.getName().startsWith("new")) {
             logger.trace("Method is not annotated as either http or constant: %s", method);
          }
