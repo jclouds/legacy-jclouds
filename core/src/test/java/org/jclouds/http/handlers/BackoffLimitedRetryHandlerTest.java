@@ -61,7 +61,7 @@ public class BackoffLimitedRetryHandlerTest {
    BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler();
 
    @Test
-   void testExponentialBackoffDelay() throws InterruptedException {
+   void testExponentialBackoffDelayDefaultMaxInterval500() throws InterruptedException {
       long acceptableDelay = 25; // Delay to forgive if tests run long.
 
       long startTime = System.nanoTime();
@@ -85,14 +85,14 @@ public class BackoffLimitedRetryHandlerTest {
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 799) : elapsedTime;
-      assertTrue(elapsedTime < 800 + acceptableDelay * 2);
+      assert (elapsedTime >= 499) : elapsedTime;
+      assertTrue(elapsedTime < 550 + acceptableDelay * 2);
 
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(5, "TEST FAILURE: 5");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 1249) : elapsedTime;
-      assertTrue(elapsedTime < 1250 + acceptableDelay * 2);
+      assert (elapsedTime >= 499) : elapsedTime;
+      assertTrue(elapsedTime < 550 + acceptableDelay * 2);
    }
 
    TransformingHttpCommandExecutorServiceImpl executorService;
