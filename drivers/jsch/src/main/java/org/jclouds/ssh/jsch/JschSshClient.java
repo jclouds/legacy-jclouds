@@ -100,7 +100,7 @@ public class JschSshClient implements SshClient {
    @Inject(optional = true)
    @Named("jclouds.ssh.retryable_messages")
    @VisibleForTesting
-   String retryableMessages = "invalid data,End of IO Stream Read,Connection reset";
+   String retryableMessages = "invalid data,End of IO Stream Read,Connection reset,connection is closed by foreign host,socket is not established";
 
    @Inject(optional = true)
    @Named("jclouds.ssh.retry_predicate")
