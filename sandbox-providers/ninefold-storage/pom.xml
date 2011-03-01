@@ -37,7 +37,7 @@
     <properties>
         <test.initializer>org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageTestInitializer</test.initializer>
         <test.ninefold-storage.endpoint>http://onlinestorage.ninefold.com</test.ninefold-storage.endpoint>
-        <test.ninefold-storage.apiversion>1.2.7c</test.ninefold-storage.apiversion>
+        <test.ninefold-storage.apiversion>1.4.0</test.ninefold-storage.apiversion>
         <test.ninefold-storage.identity>FIXME_IDENTITY</test.ninefold-storage.identity>
         <test.ninefold-storage.credential>FIXME_CREDENTIAL</test.ninefold-storage.credential>
     </properties>

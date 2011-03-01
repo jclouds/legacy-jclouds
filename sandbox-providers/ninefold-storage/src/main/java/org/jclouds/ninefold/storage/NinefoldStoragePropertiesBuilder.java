@@ -39,7 +39,7 @@ public class NinefoldStoragePropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "http://onlinestorage.ninefold.com");
       properties.setProperty(PROPERTY_ISO3166_CODES, "AU-NSW");
-      properties.setProperty(PROPERTY_API_VERSION, "1.2.7C");
+      properties.setProperty(PROPERTY_API_VERSION, "1.4.0");
       return properties;
    }
 
