@@ -51,6 +51,11 @@ public interface RunScriptOnNode extends Callable<ExecResponse> {
    ExecResponse call();
 
    /**
+    * @return statement that will be executed
+    */
+   Statement getStatement();
+
+   /**
     * verifies that the command can execute on the node. For example, if this is ssh, it may attempt
     * to find a reachable socket. If this is using an API, it may attempt to validate that
     * connection.

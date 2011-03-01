@@ -156,4 +156,9 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       return Objects.toStringHelper(this).add("node", node).add("name", name).add("runAsRoot", runAsRoot).toString();
    }
 
+   @Override
+   public Statement getStatement() {
+      return init;
+   }
+
 }
