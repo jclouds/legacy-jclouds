@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.inject.Module;
 
 /**
@@ -57,10 +56,9 @@ public class CloudWatchClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint", null);
+      apiversion = System.getProperty("test." + provider + ".apiversion", null);
    }
 
    protected Properties setupProperties() {
@@ -69,8 +67,10 @@ public class CloudWatchClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -79,7 +79,7 @@ public class CloudWatchClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+            overrides);
       client = context.getApi();
    }
 
@@ -87,8 +87,7 @@ public class CloudWatchClientLiveTest {
    void testGetMetricStatisticsInRegion() {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.MINUTE, -1);
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : Region.DEFAULT_REGIONS) {
          assert client.getMetricStatisticsInRegion(region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average") != null;
       }
    }

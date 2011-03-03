@@ -68,7 +68,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2010-07-01&Action=CreateLoadBalancer&Listeners.member.1.Protocol=http&LoadBalancerName=name&Listeners.member.1.InstancePort=80&Listeners.member.1.LoadBalancerPort=80",
+            "Version=2010-07-01&Action=CreateLoadBalancer&Listeners.member.1.Protocol=http&LoadBalancerName=name&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.InstancePort=80",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -181,8 +181,18 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
    protected String provider = "elb";
 
    @Override
+   protected Properties getProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(provider + ".endpoint", "https://elasticloadbalancing.us-east-1.amazonaws.com");
+      overrides.setProperty(provider + ".propertiesbuilder", ELBPropertiesBuilder.class.getName());
+      overrides.setProperty(provider + ".contextbuilder", ELBContextBuilder.class.getName());
+      return overrides;
+   }
+
+   @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
+            new Properties());
    }
 
    @Override

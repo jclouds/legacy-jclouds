@@ -20,51 +20,49 @@
 package org.jclouds.aws.simpledb;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
 import static org.jclouds.aws.domain.Region.EU_WEST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
-import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Builds properties used in SimpleDB Clients
  * 
  * @author Adrian Cole
  */
-public class SimpleDBPropertiesBuilder extends org.jclouds.simpledb.SimpleDBPropertiesBuilder {
-   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
+public class AWSSimpleDBPropertiesBuilder extends org.jclouds.simpledb.SimpleDBPropertiesBuilder {
 
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
+      properties.putAll(Region.regionProperties());
+      
       properties.setProperty(PROPERTY_ENDPOINT, "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint", "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + US_EAST_1 + ".endpoint", "https://sdb.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + ".endpoint",
             "https://sdb.us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + ".endpoint",
             "https://sdb.eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + ".endpoint",
             "https://sdb.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + ".endpoint",
+      "https://sdb.ap-northeast-1.amazonaws.com");
       return properties;
    }
 
-   public SimpleDBPropertiesBuilder() {
+   public AWSSimpleDBPropertiesBuilder() {
       super();
    }
 
-   public SimpleDBPropertiesBuilder(Properties properties) {
+   public AWSSimpleDBPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

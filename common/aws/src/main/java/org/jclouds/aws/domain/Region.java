@@ -19,8 +19,15 @@
 
 package org.jclouds.aws.domain;
 
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
+import java.util.Properties;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -84,6 +91,36 @@ public class Region {
     */
    public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
 
-   public static Set<String> ALL_S3 = ImmutableSet.of(EU, US_STANDARD, US_WEST_1, AP_SOUTHEAST_1);
-   public static Set<String> ALL_SQS = ImmutableSet.of(EU_WEST_1, US_STANDARD, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
+   /**
+    * Region in Tokyo, launched March 2, 2011. This region improves latency for Asia-based users
+    */
+   public static final String AP_NORTHEAST_1 = "ap-northeast-1";
+
+   public static Set<String> DEFAULT_S3 = ImmutableSet.of(EU, US_STANDARD, US_WEST_1, AP_SOUTHEAST_1, AP_NORTHEAST_1);
+
+   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(US_EAST_1, US_WEST_1, EU_WEST_1, AP_SOUTHEAST_1,
+         AP_NORTHEAST_1);
+
+   public static Properties regionPropertiesS3() {
+
+      Properties properties = regionProperties();
+      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_S3));
+      // note that due to US_STANDARD the codes include US instead of US-VA
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US,US-CA,IE,SG,JP-13");
+      properties.setProperty(PROPERTY_REGION + "." + US_STANDARD + "." + ISO3166_CODES, "US");
+      properties.setProperty(PROPERTY_REGION + "." + EU + "." + ISO3166_CODES, "IE");
+      return properties;
+   }
+
+   public static Properties regionProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-VA,US-CA,IE,SG,JP-13");
+      properties.setProperty(PROPERTY_REGION + "." + US_EAST_1 + "." + ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + "." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + "." + ISO3166_CODES, "IE");
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + "." + ISO3166_CODES, "SG");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + "." + ISO3166_CODES, "JP-13");
+      return properties;
+   }
 }

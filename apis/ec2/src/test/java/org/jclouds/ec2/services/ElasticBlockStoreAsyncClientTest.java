@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.ec2.options.CreateSnapshotOptions;
 import org.jclouds.ec2.options.DescribeSnapshotsOptions;
@@ -59,7 +58,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testCreateVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeInAvailabilityZone", String.class,
                int.class);
-      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, 20);
+      HttpRequest request = processor.createRequest(method, "us-east-1a", 20);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -76,7 +75,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testCreateVolumeFromSnapShot() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeFromSnapshotInAvailabilityZone",
                String.class, String.class);
-      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, "snapshotId");
+      HttpRequest request = processor.createRequest(method, "us-east-1a", "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -94,7 +93,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testCreateVolumeFromSnapShotWithSize() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeFromSnapshotInAvailabilityZone",
                String.class, int.class, String.class);
-      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, 15, "snapshotId");
+      HttpRequest request = processor.createRequest(method, "us-east-1a", 15, "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

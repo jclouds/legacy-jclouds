@@ -31,7 +31,6 @@ import java.util.SortedSet;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -42,7 +41,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
@@ -97,60 +95,61 @@ public class SQSClientLiveTest {
    }
 
    @Test
-   void testListQueuesInRegion() throws InterruptedException {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
-         SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
-         assertNotNull(allResults);
-         if (allResults.size() >= 1) {
-            Queue queue = allResults.last();
-            assertQueueInList(region, queue);
-         }
+   protected void testListQueues() throws InterruptedException {
+      listQueuesInRegion(null);
+   }
+
+   protected void listQueuesInRegion(String region) throws InterruptedException {
+      SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
+      assertNotNull(allResults);
+      if (allResults.size() >= 1) {
+         Queue queue = allResults.last();
+         assertQueueInList(region, queue);
       }
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-sqs";
 
    @Test
-   void testCreateQueue() throws InterruptedException {
-      String queueName = PREFIX + "1";
+   protected void testCreateQueue() throws InterruptedException {
+      createQueueInRegion(null, PREFIX + "1");
+   }
 
-      for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
-         try {
-            SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(queueName)));
-            if (result.size() >= 1) {
-               client.deleteQueue(result.last());
-               queueName += 1;// cannot recreate a queue within 60 seconds
-            }
-         } catch (Exception e) {
+   public String createQueueInRegion(final String region, String queueName) throws InterruptedException {
+      try {
+         SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(queueName)));
+         if (result.size() >= 1) {
+            client.deleteQueue(result.last());
+            queueName += 1;// cannot recreate a queue within 60 seconds
+         }
+      } catch (Exception e) {
 
-         }
-         Queue queue = null;
-         int tries = 0;
-         while (queue == null && tries < 5) {
-            try {
-               tries++;
-               queue = client.createQueueInRegion(region, queueName);
-            } catch (AWSResponseException e) {
-               queueName += "1";
-               if (e.getError().getCode().equals("AWS.SimpleQueueService.QueueDeletedRecently"))// TODO
-                  // retry
-                  // handler
-                  continue;
-               throw e;
-            }
-         }
-         if (region != null)
-            assertEquals(queue.getRegion(), region);
-         assertEquals(queue.getName(), queueName);
-         assertQueueInList(region, queue);
-         queues.add(queue);
       }
+      Queue queue = null;
+      int tries = 0;
+      while (queue == null && tries < 5) {
+         try {
+            tries++;
+            queue = client.createQueueInRegion(region, queueName);
+         } catch (AWSResponseException e) {
+            queueName += "1";
+            if (e.getError().getCode().equals("AWS.SimpleQueueService.QueueDeletedRecently"))// TODO
+               // retry
+               // handler
+               continue;
+            throw e;
+         }
+      }
+      if (region != null)
+         assertEquals(queue.getRegion(), region);
+      assertEquals(queue.getName(), queueName);
+      assertQueueInList(region, queue);
+      queues.add(queue);
+      return queueName;
    }
 
    @Test(dependsOnMethods = "testCreateQueue")
-   void testSendMessage() throws InterruptedException, IOException {
+   protected void testSendMessage() throws InterruptedException, IOException {
       String message = "hardyharhar";
       byte[] md5 = CryptoStreams.md5(message.getBytes());
       for (Queue queue : queues) {

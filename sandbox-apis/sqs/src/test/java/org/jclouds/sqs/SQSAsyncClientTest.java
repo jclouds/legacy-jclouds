@@ -19,8 +19,6 @@
 
 package org.jclouds.sqs;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -31,7 +29,6 @@ import java.util.Properties;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -48,7 +45,6 @@ import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.sqs.xml.RegexQueueHandler;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -145,14 +141,6 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       checkFilters(request);
    }
 
-   public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class, String.class, Array
-            .newInstance(CreateQueueOptions.class, 0).getClass());
-      for (String region : Iterables.filter(Region.ALL_SQS, not(equalTo("us-standard")))) {
-         processor.createRequest(method, region, "queueName");
-      }
-   }
-
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
@@ -173,8 +161,18 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
    protected String provider = "sqs";
 
    @Override
+   protected Properties getProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(provider + ".endpoint", "https://sqs.us-east-1.amazonaws.com");
+      overrides.setProperty(provider + ".propertiesbuilder", SQSPropertiesBuilder.class.getName());
+      overrides.setProperty(provider + ".contextbuilder", SQSContextBuilder.class.getName());
+      return overrides;
+   }
+
+   @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
+            new Properties());
    }
 
 }

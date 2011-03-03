@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -68,7 +67,7 @@ public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
          @Provides
          @Zone
          Map<String, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
+            return ImmutableMap.<String, String> of("us-east-1a", "us-east-1");
          }
       });
       factory = injector.getInstance(ParseSax.Factory.class);
