@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
@@ -74,7 +73,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                                  "174.129.81.68").kernelId("aki-a71cf9ce").keyName("adriancole.ec21").launchTime(
                                  dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"))
                         // MonitoringState.DISABLED,
-                        .availabilityZone(AvailabilityZone.US_EAST_1C).virtualizationType("paravirtual")
+                        .availabilityZone("us-east-1c").virtualizationType("paravirtual")
                         .privateDnsName("ip-10-243-42-70.ec2.internal").privateIpAddress("10.243.42.70").ramdiskId(
                                  "ari-a51cf9cc").rootDeviceType(RootDeviceType.INSTANCE_STORE).build()),
                "993194456877", null, "r-a3c508cb"));
@@ -92,7 +91,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
                         // MonitoringState.DISABLED,
-                        .availabilityZone(AvailabilityZone.US_EAST_1B).virtualizationType("paravirtual")
+                        .availabilityZone("us-east-1b").virtualizationType("paravirtual")
                         .privateDnsName("10-251-50-132.ec2.internal")// product codes
                         // ImmutableSet.of("774F4FF8")
                         .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build(),
@@ -102,7 +101,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                                           InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name")
                                  .launchTime(dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
                                  // MonitoringState.DISABLED,
-                                 .availabilityZone(AvailabilityZone.US_EAST_1B).virtualizationType("paravirtual")
+                                 .availabilityZone("us-east-1b").virtualizationType("paravirtual")
                                  .privateDnsName("10-251-50-134.ec2.internal")// product codes
                                  // ImmutableSet.of("774F4FF8")
                                  .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build()),
@@ -124,7 +123,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         .keyName("adriancole.ec2ebs1")
                         .launchTime(dateService.iso8601DateParse("2009-12-30T04:06:23.000Z"))
                         // MonitoringState.DISABLED
-                        .availabilityZone(AvailabilityZone.US_EAST_1B)
+                        .availabilityZone("us-east-1b")
                         // "placement"
                         .virtualizationType("hvm").privateDnsName("domU-12-31-39-09-CE-53.compute-1.internal")
                         .privateIpAddress("10.210.209.157").ramdiskId("ari-a51cf9cc")

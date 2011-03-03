@@ -117,10 +117,9 @@ public class AWSUtils {
       return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
    }
 
+   // TODO: make this more dynamic
    public static boolean isRegion(String regionName) {
-      return Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
-            || Region.US_EAST_1.equals(regionName) || Region.US_STANDARD.equals(regionName)
-            || Region.AP_SOUTHEAST_1.equals(regionName);
+      return Region.DEFAULT_REGIONS.contains(regionName);
    }
 
    public static <R extends HttpRequest> R indexIterableToFormValuesWithPrefix(R request, String prefix, Object input) {
@@ -162,7 +161,7 @@ public class AWSUtils {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String regionName = (String) arg;
-            //TODO regions may not be amazon regions!
+            // TODO regions may not be amazon regions!
             // take from a configured value
             if (isRegion(regionName))
                return regionName;

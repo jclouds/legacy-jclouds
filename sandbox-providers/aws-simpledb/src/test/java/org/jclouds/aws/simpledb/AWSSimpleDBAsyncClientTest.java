@@ -19,12 +19,14 @@
 
 package org.jclouds.aws.simpledb;
 
-import static org.jclouds.aws.simpledb.SimpleDBPropertiesBuilder.DEFAULT_REGIONS;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.simpledb.SimpleDBAsyncClient;
+import org.jclouds.simpledb.SimpleDBAsyncClientTest;
 import org.testng.annotations.Test;
 
 /**
@@ -34,17 +36,20 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "aws.SimpleDBAsyncClientTest")
-public class SimpleDBAsyncClientTest extends org.jclouds.simpledb.SimpleDBAsyncClientTest {
+public class AWSSimpleDBAsyncClientTest extends SimpleDBAsyncClientTest {
 
-   public SimpleDBAsyncClientTest() {
+   public AWSSimpleDBAsyncClientTest() {
       this.provider = "aws-simpledb";
    }
 
-   // TODO fix this test as it has the wrong arg count
-   @Test(enabled = false)
+   @Override
+   protected Properties getProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
+   }
+
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SimpleDBAsyncClient.class.getMethod("putAttributes", String.class, String.class);
-      for (String region : DEFAULT_REGIONS) {
+      Method method = SimpleDBAsyncClient.class.getMethod("createDomainInRegion", String.class, String.class);
+      for (String region : Region.DEFAULT_REGIONS) {
          processor.createRequest(method, region, "domainName");
       }
    }

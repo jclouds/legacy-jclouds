@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.easymock.IArgumentMatcher;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -44,7 +43,6 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
@@ -65,12 +63,12 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
    @Test
    public void testZoneAsALocation() {
-      assertRegionAndZoneForLocation(ZONE_AP_SOUTHEAST_1A, Region.AP_SOUTHEAST_1, AvailabilityZone.AP_SOUTHEAST_1A);
+      assertRegionAndZoneForLocation(ZONE_AP_SOUTHEAST_1A, "ap-southeast-1", "ap-southeast-1a");
    }
 
    @Test
    public void testRegionAsALocation() {
-      assertRegionAndZoneForLocation(REGION_AP_SOUTHEAST_1, Region.AP_SOUTHEAST_1, null);
+      assertRegionAndZoneForLocation(REGION_AP_SOUTHEAST_1, "ap-southeast-1", null);
    }
 
    // // fixtures
@@ -155,10 +153,10 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    }
 
    private static final Location REGION_AP_SOUTHEAST_1 = new LocationBuilder().scope(LocationScope.REGION).id(
-            Region.AP_SOUTHEAST_1).description(Region.AP_SOUTHEAST_1).parent(
-            new LocationBuilder().scope(LocationScope.PROVIDER).id("ec2").description("ec2").build()).build();
+            "ap-southeast-1").description("ap-southeast-1").parent(
+            new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build()).build();
    private static final Location ZONE_AP_SOUTHEAST_1A = new LocationBuilder().scope(LocationScope.ZONE).id(
-            AvailabilityZone.AP_SOUTHEAST_1A).description(AvailabilityZone.AP_SOUTHEAST_1A).parent(
+            "ap-southeast-1a").description("ap-southeast-1a").parent(
             REGION_AP_SOUTHEAST_1).build();
 
    // /////////////////////////////////////////////////////////////////////

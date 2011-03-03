@@ -75,6 +75,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-ec2</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>

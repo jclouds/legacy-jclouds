@@ -19,8 +19,7 @@
 
 package org.jclouds.aws.simpledb;
 
-import static org.jclouds.aws.simpledb.SimpleDBPropertiesBuilder.DEFAULT_REGIONS;
-
+import org.jclouds.aws.domain.Region;
 import org.jclouds.simpledb.SimpleDBClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -36,7 +35,7 @@ public class AWSSimpleDBClientLiveTest extends SimpleDBClientLiveTest {
    }
    @Test
    void testListDomainsInRegion() throws InterruptedException {
-      for (String region : DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          listDomainInRegion(region);
       }
    }
@@ -44,8 +43,7 @@ public class AWSSimpleDBClientLiveTest extends SimpleDBClientLiveTest {
    @Test
    void testCreateDomainInRegions() throws InterruptedException {
       String domainName = PREFIX + "1";
-
-      for (String region : DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          domainName = createDomainInRegion(region, domainName);
       }
    }

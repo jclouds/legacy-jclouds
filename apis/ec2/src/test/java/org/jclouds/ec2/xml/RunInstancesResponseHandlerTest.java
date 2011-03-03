@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.date.DateService;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.Reservation;
@@ -70,19 +69,19 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).instanceType(
                         InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone(AvailabilityZone.US_EAST_1B).build(),
+               .availabilityZone("us-east-1b").build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1")
                .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).instanceType(
                         InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone(AvailabilityZone.US_EAST_1B).build(),
+               .availabilityZone("us-east-1b").build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2")
                .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).instanceType(
                         InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone(AvailabilityZone.US_EAST_1B).build())
+               .availabilityZone("us-east-1b").build())
 
       , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 

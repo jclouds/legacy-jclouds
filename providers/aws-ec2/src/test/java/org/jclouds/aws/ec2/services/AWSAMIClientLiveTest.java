@@ -31,13 +31,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.Image.ImageType;
+import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
@@ -49,7 +48,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
@@ -102,7 +100,7 @@ public class AWSAMIClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getAMIServices();
    }
 
@@ -116,8 +114,7 @@ public class AWSAMIClientLiveTest {
    }
 
    public void testDescribeImages() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<Image> allResults = Sets.newLinkedHashSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
@@ -138,7 +135,7 @@ public class AWSAMIClientLiveTest {
       String imageRegisteredId = client.registerImageFromManifestInRegion(null, "jcloudstest1", DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegisteredFromManifest = Iterables.getOnlyElement(client.describeImagesInRegion(null,
-               imageIds(imageRegisteredId)));
+            imageIds(imageRegisteredId)));
       assertEquals(imageRegisteredFromManifest.getName(), "jcloudstest1");
       assertEquals(imageRegisteredFromManifest.getImageLocation(), DEFAULT_MANIFEST);
       assertEquals(imageRegisteredFromManifest.getImageType(), ImageType.MACHINE);
@@ -149,10 +146,10 @@ public class AWSAMIClientLiveTest {
    @Test(enabled = false)
    public void testRegisterImageFromManifestOptions() {
       String imageRegisteredWithOptionsId = client.registerImageFromManifestInRegion(null, "jcloudstest2",
-               DEFAULT_MANIFEST, withDescription("adrian"));
+            DEFAULT_MANIFEST, withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredFromManifestWithOptions = Iterables.getOnlyElement(client.describeImagesInRegion(null,
-               imageIds(imageRegisteredWithOptionsId)));
+            imageIds(imageRegisteredWithOptionsId)));
       assertEquals(imageRegisteredFromManifestWithOptions.getName(), "jcloudstest2");
       assertEquals(imageRegisteredFromManifestWithOptions.getImageLocation(), DEFAULT_MANIFEST);
       assertEquals(imageRegisteredFromManifestWithOptions.getImageType(), ImageType.MACHINE);
@@ -167,7 +164,7 @@ public class AWSAMIClientLiveTest {
       String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null, "jcloudstest1", DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegistered = Iterables
-               .getOnlyElement(client.describeImagesInRegion(null, imageIds(imageRegisteredId)));
+            .getOnlyElement(client.describeImagesInRegion(null, imageIds(imageRegisteredId)));
       assertEquals(imageRegistered.getName(), "jcloudstest1");
       assertEquals(imageRegistered.getImageType(), ImageType.MACHINE);
       assertEquals(imageRegistered.getRootDeviceType(), RootDeviceType.EBS);
@@ -178,18 +175,19 @@ public class AWSAMIClientLiveTest {
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBSOptions() {
       String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(null, "jcloudstest2",
-               DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2", "myvirtual", 1).withDescription("adrian"));
+            DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2", "myvirtual", 1).withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredWithOptions = Iterables.getOnlyElement(client.describeImagesInRegion(null,
-               imageIds(imageRegisteredWithOptionsId)));
+            imageIds(imageRegisteredWithOptionsId)));
       assertEquals(imageRegisteredWithOptions.getName(), "jcloudstest2");
       assertEquals(imageRegisteredWithOptions.getImageType(), ImageType.MACHINE);
       assertEquals(imageRegisteredWithOptions.getRootDeviceType(), RootDeviceType.EBS);
       assertEquals(imageRegisteredWithOptions.getRootDeviceName(), "/dev/sda1");
       assertEquals(imageRegisteredWithOptions.getDescription(), "adrian");
-      assertEquals(imageRegisteredWithOptions.getEbsBlockDevices().entrySet(), ImmutableMap.of("/dev/sda1",
-               new Image.EbsBlockDevice("/dev/sda1", 30, true), "/dev/sda2",
-               new Image.EbsBlockDevice("/dev/sda2", 1, true)).entrySet());
+      assertEquals(
+            imageRegisteredWithOptions.getEbsBlockDevices().entrySet(),
+            ImmutableMap.of("/dev/sda1", new Image.EbsBlockDevice("/dev/sda1", 30, true), "/dev/sda2",
+                  new Image.EbsBlockDevice("/dev/sda2", 1, true)).entrySet());
    }
 
    @Test(enabled = false)

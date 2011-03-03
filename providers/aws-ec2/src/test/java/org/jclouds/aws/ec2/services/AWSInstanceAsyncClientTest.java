@@ -24,11 +24,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.AWSRunInstancesResponseHandler;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
@@ -132,22 +130,22 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSInstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class, String.class,
                String.class, int.class, int.class, Array.newInstance(RunInstancesOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo",
+      HttpRequest request = processor.createRequest(method, "us-east-1", "us-east-1a", "ami-voo",
                1, 5, new AWSRunInstancesOptions().withKernelId("kernelId").enableMonitoring().withSecurityGroups(
                         "group1", "group2"));
 
-      assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.eu-west-1.amazonaws.com\n");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       try {
          assertPayloadEquals(
                   request,
-                  "Version=2010-06-15&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=eu-west-1a",
+                  "Version=2010-06-15&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
                   "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
          assertPayloadEquals(
                   request,
-                  "Version=2010-06-15&Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=eu-west-1a",
+                  "Version=2010-06-15&Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
                   "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ParseSax.class);

@@ -29,7 +29,6 @@ import java.io.InputStream;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -52,7 +51,7 @@ public class CreateVolumeResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/created_volume.xml");
 
       Volume expected = new Volume(Region.US_EAST_1, "vol-2a21e543", 1, null,
-               AvailabilityZone.US_EAST_1A, Volume.Status.CREATING, dateService
+            "us-east-1a", Volume.Status.CREATING, dateService
                         .iso8601DateParse("2009-12-28T05:42:53.000Z"), Sets
                         .<Attachment> newLinkedHashSet());
 

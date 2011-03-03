@@ -20,7 +20,6 @@
 package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.jclouds.ec2.util.EC2Utils.getAllRunningInstancesInRegion;
 
 import java.util.NoSuchElementException;
 
@@ -32,8 +31,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.services.InstanceClient;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -64,6 +65,11 @@ public class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
       } catch (NoSuchElementException e) {
          return null;
       }
+   }
+
+   public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client, String region,
+         String id) {
+      return Iterables.concat(client.describeInstancesInRegion(region, id));
    }
 
 }

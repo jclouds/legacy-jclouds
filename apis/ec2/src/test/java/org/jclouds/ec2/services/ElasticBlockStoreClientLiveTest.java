@@ -34,7 +34,6 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
@@ -104,8 +103,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeVolumes() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
+      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -120,10 +118,10 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testCreateVolumeInAvailabilityZone() {
-      Volume expected = client.createVolumeInAvailabilityZone(AvailabilityZone.US_EAST_1B, 1);
+      Volume expected = client.createVolumeInAvailabilityZone(getDefaultAvailabilityZone(), 1);
       assertNotNull(expected);
       System.out.println(expected);
-      assertEquals(expected.getAvailabilityZone(), AvailabilityZone.US_EAST_1B);
+      assertEquals(expected.getAvailabilityZone(), getDefaultAvailabilityZone());
 
       this.volumeId = expected.getId();
 
@@ -148,9 +146,13 @@ public class ElasticBlockStoreClientLiveTest {
       this.snapshot = result;
    }
 
+   protected  String getDefaultAvailabilityZone(){
+      return "us-east-1a";
+   }
+   
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZone() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1A, snapshot.getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(getDefaultAvailabilityZone(), snapshot.getId());
       assertNotNull(volume);
 
       Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
@@ -160,7 +162,7 @@ public class ElasticBlockStoreClientLiveTest {
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
-      assertEquals(volume.getAvailabilityZone(), AvailabilityZone.US_EAST_1A);
+      assertEquals(volume.getAvailabilityZone(), getDefaultAvailabilityZone());
       assertEquals(result.getStatus(), Volume.Status.AVAILABLE);
 
       client.deleteVolumeInRegion(snapshot.getRegion(), volume.getId());
@@ -168,7 +170,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZoneWithSize() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1B, 2,
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(getDefaultAvailabilityZone(), 2,
             snapshot.getId());
       assertNotNull(volume);
 
@@ -179,7 +181,7 @@ public class ElasticBlockStoreClientLiveTest {
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
-      assertEquals(volume.getAvailabilityZone(), AvailabilityZone.US_EAST_1B);
+      assertEquals(volume.getAvailabilityZone(), getDefaultAvailabilityZone());
       assertEquals(volume.getSize(), 2);
       assertEquals(result.getStatus(), Volume.Status.AVAILABLE);
 

@@ -22,7 +22,6 @@ package org.jclouds.ec2.options;
 import java.util.Arrays;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 
 /**
@@ -61,7 +60,7 @@ public class DescribeRegionsOptions extends BaseEC2RequestOptions {
    public static class Builder {
 
       /**
-       * @see DescribeRegionsOptions#regions(Region[] )
+       * @see DescribeRegionsOptions#regions(String[] )
        */
       public static DescribeRegionsOptions regions(String... regions) {
          DescribeRegionsOptions options = new DescribeRegionsOptions();

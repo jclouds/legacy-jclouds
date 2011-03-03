@@ -27,10 +27,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.AvailabilityZone;
-import org.jclouds.ec2.domain.Volume;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.Attachment;
+import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -52,11 +51,11 @@ public class DescribeVolumesResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/describe_volumes.xml");
 
       Set<Volume> expected = Sets.newLinkedHashSet();
-      expected.add(new Volume(defaultRegion, "vol-2a21e543", 1, null, AvailabilityZone.US_EAST_1A,
+      expected.add(new Volume(defaultRegion, "vol-2a21e543", 1, null, "us-east-1a",
                Volume.Status.AVAILABLE, dateService.iso8601DateParse("2009-12-28T05:42:53.000Z"),
                Sets.<Attachment> newLinkedHashSet()));
       expected.add(new Volume(defaultRegion, "vol-4282672b", 800, "snap-536d1b3a",
-               AvailabilityZone.US_EAST_1A, Volume.Status.IN_USE, dateService
+               "us-east-1a", Volume.Status.IN_USE, dateService
                         .iso8601DateParse("2008-05-07T11:51:50.000Z"), Sets
                         .<Attachment> newHashSet(new Attachment(defaultRegion, "vol-4282672b", "i-6058a509",
                                  "/dev/sdh", Attachment.Status.ATTACHED, dateService

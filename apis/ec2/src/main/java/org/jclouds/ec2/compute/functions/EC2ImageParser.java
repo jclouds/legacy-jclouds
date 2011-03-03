@@ -115,7 +115,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
 
          }));
       } catch (NoSuchElementException e) {
-         System.err.printf("unknown region %s for image %s; not in %s", from.getRegion(), from.getId(), locations);
+         logger.error("unknown region %s for image %s; not in %s", from.getRegion(), from.getId(), locations);
          builder.location(new LocationBuilder().scope(LocationScope.REGION).id(from.getRegion()).description(
                   from.getRegion()).parent(defaultLocation.get()).build());
       }

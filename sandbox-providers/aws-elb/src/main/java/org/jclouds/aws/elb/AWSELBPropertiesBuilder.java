@@ -21,6 +21,7 @@ package org.jclouds.aws.elb;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
 import static org.jclouds.aws.domain.Region.EU_WEST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
@@ -28,17 +29,12 @@ import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_ZONECLIENT_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
-import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBPropertiesBuilder;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Builds properties used in ELB Clients
@@ -46,23 +42,24 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class AWSELBPropertiesBuilder extends ELBPropertiesBuilder {
-   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
+      properties.putAll(Region.regionProperties());
       properties.setProperty(PROPERTY_API_VERSION, ELBAsyncClient.VERSION);
       properties.setProperty(PROPERTY_ENDPOINT, "https://elasticloadbalancing.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + US_EAST_1 + ".endpoint",
             "https://elasticloadbalancing.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + ".endpoint",
             "https://elasticloadbalancing.us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + ".endpoint",
             "https://elasticloadbalancing.eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + ".endpoint",
             "https://elasticloadbalancing.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + ".endpoint",
+            "https://elasticloadbalancing.ap-northeast-1.amazonaws.com");
       properties.setProperty(PROPERTY_ZONECLIENT_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       return properties;
    }

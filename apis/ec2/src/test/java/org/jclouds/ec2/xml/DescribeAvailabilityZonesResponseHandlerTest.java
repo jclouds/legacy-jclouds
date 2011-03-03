@@ -24,8 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -66,14 +64,14 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
 
       Set<AvailabilityZoneInfo> expected = ImmutableSet.<AvailabilityZoneInfo> of(
 
-      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A, "available", Region.US_EAST_1, ImmutableSet.<String> of()),
-               new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B, "available", Region.US_EAST_1, ImmutableSet
+      new AvailabilityZoneInfo("us-east-1a", "available", "us-east-1", ImmutableSet.<String> of()),
+               new AvailabilityZoneInfo("us-east-1b", "available", "us-east-1", ImmutableSet
                         .<String> of()),
 
-               new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C, "available", Region.US_EAST_1, ImmutableSet
+               new AvailabilityZoneInfo("us-east-1c", "available", "us-east-1", ImmutableSet
                         .<String> of("our service is awesome")),
 
-               new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D, "downlikeaclown", Region.US_EAST_1, ImmutableSet
+               new AvailabilityZoneInfo("us-east-1d", "downlikeaclown", "us-east-1", ImmutableSet
                         .<String> of()));
       Set<AvailabilityZoneInfo> result = factory.create(
                injector.getInstance(DescribeAvailabilityZonesResponseHandler.class)).parse(is);

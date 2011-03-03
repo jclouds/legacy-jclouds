@@ -112,14 +112,14 @@ public class PlacementGroupClientLiveTest {
    public void setupClient() throws FileNotFoundException, IOException {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
       keyPair = setupKeyPair();
 
       client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
@@ -128,24 +128,25 @@ public class PlacementGroupClientLiveTest {
    void testDescribe() {
       for (String region : newArrayList(Region.US_EAST_1)) {
          SortedSet<PlacementGroup> allResults = newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region));
+               .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
             SortedSet<PlacementGroup> result = newTreeSet(client.getPlacementGroupServices()
-                     .describePlacementGroupsInRegion(region, group.getName()));
+                  .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
          }
       }
 
-      for (String region : newArrayList(Region.EU_WEST_1, Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         try {
-            client.getPlacementGroupServices().describePlacementGroupsInRegion(region);
-            assert false : "should be unsupported";
-         } catch (UnsupportedOperationException e) {
-         }
+      for (String region : client.getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+         if (!region.equals(Region.US_EAST_1))
+            try {
+               client.getPlacementGroupServices().describePlacementGroupsInRegion(region);
+               assert false : "should be unsupported";
+            } catch (UnsupportedOperationException e) {
+            }
       }
    }
 
@@ -161,7 +162,7 @@ public class PlacementGroupClientLiveTest {
    private void verifyPlacementGroup(String groupName) {
       assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
       Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-               groupName);
+            groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -197,7 +198,7 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(buildScript(template.getImage().getOperatingSystem()));
+            .runScript(buildScript(template.getImage().getOperatingSystem()));
 
       String group = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
@@ -209,7 +210,7 @@ public class PlacementGroupClientLiveTest {
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
-                  node.getProviderId())));
+               node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());

@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.services;
+package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
@@ -31,14 +31,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.Image.ImageType;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
@@ -49,7 +48,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
@@ -69,7 +67,7 @@ public class AMIClientLiveTest {
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
 
-   protected String provider = "ec2";
+   protected String provider = "aws-ec2";
    protected String identity;
    protected String credential;
    protected String endpoint;
@@ -110,14 +108,13 @@ public class AMIClientLiveTest {
       assertEquals(client.describeImagesInRegion(null, imageIds("ami-cdf819a3")).size(), 0);
    }
 
-   @Test(expectedExceptions = AWSResponseException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testDescribeImageBadId() {
       client.describeImagesInRegion(null, imageIds("asdaasdsa"));
    }
 
    public void testDescribeImages() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<Image> allResults = Sets.newLinkedHashSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
