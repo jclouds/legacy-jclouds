@@ -22,8 +22,10 @@ package org.jclouds.aws.s3;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.s3.S3ContextBuilder;
+import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 
 import com.google.inject.Module;
 
@@ -35,6 +37,11 @@ public class AWSS3ContextBuilder extends S3ContextBuilder {
 
    public AWSS3ContextBuilder(Properties props) {
       super(props);
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new AWSS3BlobStoreContextModule());
    }
 
    @Override
