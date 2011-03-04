@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis.config;
+package org.jclouds.savvis.vpdc.config;
 
 import java.net.URI;
 
@@ -27,9 +27,9 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.savvis.SymphonyVPDCAsyncClient;
-import org.jclouds.savvis.SymphonyVPDCClient;
-import org.jclouds.savvis.handlers.SymphonyVPDCErrorHandler;
+import org.jclouds.savvis.vpdc.SymphonyVPDCAsyncClient;
+import org.jclouds.savvis.vpdc.SymphonyVPDCClient;
+import org.jclouds.savvis.vpdc.handlers.SymphonyVPDCErrorHandler;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;

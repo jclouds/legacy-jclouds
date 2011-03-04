@@ -17,17 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain.network.internal;
+package org.jclouds.savvis.vpdc.domain.internal;
 
 import java.net.URI;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.savvis.vpdc.domain.SymphonyVPDCNetwork;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
-import org.jclouds.vcloud.domain.network.SymphonyVPDCNetwork;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 
@@ -151,7 +151,7 @@ public class SymphonyVPDCNetworkImpl extends ReferenceTypeImpl implements Sympho
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudExpressNetworkImpl other = (VCloudExpressNetworkImpl) obj;
+      SymphonyVPDCNetworkImpl other = (SymphonyVPDCNetworkImpl) obj;
       if (description == null) {
          if (other.description != null)
             return false;

@@ -17,14 +17,21 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis.compute.config;
+package org.jclouds.savvis.vpdc;
 
-import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.VCloudExpressClient;
 
 /**
+ * Provides access to Symphony VPDC resources via their REST API.
+ * <p/>
  * 
+ * @see <a href="TODO PUBLIC DOC REF" />
  * @author Adrian Cole
  */
-public class SymphonyVPDCComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
+@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
+public interface SymphonyVPDCClient extends VCloudExpressClient {
 
 }

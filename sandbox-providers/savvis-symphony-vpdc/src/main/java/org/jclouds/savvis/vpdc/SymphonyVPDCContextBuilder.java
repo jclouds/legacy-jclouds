@@ -17,31 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis;
+package org.jclouds.savvis.vpdc;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-
+import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.savvis.vpdc.compute.config.SymphonyVPDCComputeServiceContextModule;
+import org.jclouds.savvis.vpdc.config.SymphonyVPDCRestClientModule;
+
+import com.google.inject.Module;
 
 /**
- * Builds properties used in Symphony VPDC Clients
  * 
  * @author Adrian Cole
  */
-public class SymphonyVPDCPropertiesBuilder extends VCloudExpressPropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.8");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.sandbox.symphonyVPDC.savvis.net/rest/api");
-      return properties;
+public class SymphonyVPDCContextBuilder extends
+      ComputeServiceContextBuilder<SymphonyVPDCClient, SymphonyVPDCAsyncClient> {
+
+   public SymphonyVPDCContextBuilder(Properties props) {
+      super(SymphonyVPDCClient.class, SymphonyVPDCAsyncClient.class, props);
    }
 
-   public SymphonyVPDCPropertiesBuilder(Properties properties) {
-      super(properties);
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new SymphonyVPDCComputeServiceContextModule());
+   }
+
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new SymphonyVPDCRestClientModule());
    }
 
 }

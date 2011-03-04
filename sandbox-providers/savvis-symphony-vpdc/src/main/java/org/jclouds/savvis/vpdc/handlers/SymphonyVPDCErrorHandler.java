@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis.handlers;
+package org.jclouds.savvis.vpdc.handlers;
 
 import java.io.IOException;
 

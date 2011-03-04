@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.savvis.xml;
+package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.vcloud.util.Utils.cleanseAttributes;

@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.savvis.xml;
+package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
@@ -29,12 +29,12 @@ import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.savvis.vpdc.domain.SymphonyVPDCNetwork;
+import org.jclouds.savvis.vpdc.domain.internal.SymphonyVPDCNetworkImpl;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.network.FenceMode;
-import org.jclouds.vcloud.domain.network.SymphonyVPDCNetwork;
 import org.jclouds.vcloud.domain.network.firewall.FirewallPolicy;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
-import org.jclouds.vcloud.domain.network.internal.SymphonyVPDCNetworkImpl;
 import org.jclouds.vcloud.domain.network.nat.NatProtocol;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 import org.xml.sax.Attributes;

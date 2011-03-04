@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis;
+package org.jclouds.savvis.vpdc;
 
 import java.net.URI;
 
@@ -29,6 +29,8 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.savvis.vpdc.xml.SymphonyVPDCNetworkHandler;
+import org.jclouds.savvis.vpdc.xml.SymphonyVPDCVAppHandler;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.domain.Org;
@@ -39,8 +41,6 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
-import org.jclouds.vcloud.savvis.xml.SymphonyVPDCNetworkHandler;
-import org.jclouds.vcloud.savvis.xml.SymphonyVPDCVAppHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 

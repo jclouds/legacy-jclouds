@@ -17,13 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain.network;
+package org.jclouds.savvis.vpdc.domain;
 
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 
