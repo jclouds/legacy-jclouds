@@ -26,7 +26,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -39,7 +38,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.inject.Module;
 
 /**
@@ -91,8 +89,7 @@ public class AWSInstanceClientLiveTest {
 
    @Test
    void testDescribeInstances() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Reservation<? extends RunningInstance>> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();

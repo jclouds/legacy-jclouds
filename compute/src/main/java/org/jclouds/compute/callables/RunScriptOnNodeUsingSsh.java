@@ -124,4 +124,9 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
                .toString();
    }
 
+   @Override
+   public Statement getStatement() {
+      return statement;
+   }
+
 }

@@ -323,7 +323,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       Method method = CloudSigmaAsyncClient.class.getMethod("destroyServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -430,7 +430,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       Method method = CloudSigmaAsyncClient.class.getMethod("destroyDrive", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -536,7 +536,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       Method method = CloudSigmaAsyncClient.class.getMethod("destroyVLAN", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -626,7 +626,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       Method method = CloudSigmaAsyncClient.class.getMethod("destroyStaticIP", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/ip/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

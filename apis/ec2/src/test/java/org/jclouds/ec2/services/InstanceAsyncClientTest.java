@@ -24,8 +24,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.jclouds.aws.domain.Region;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
@@ -131,7 +129,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class, String.class,
                String.class, int.class, int.class, Array.newInstance(RunInstancesOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo",
+      HttpRequest request = processor.createRequest(method, "eu-west-1", "eu-west-1a", "ami-voo",
                1, 5, new RunInstancesOptions().withKernelId("kernelId").withSecurityGroups("group1", "group2"));
 
       assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");

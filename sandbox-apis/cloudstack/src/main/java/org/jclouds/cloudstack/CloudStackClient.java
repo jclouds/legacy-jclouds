@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.FirewallClient;
+import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
@@ -110,4 +111,10 @@ public interface CloudStackClient {
     */
    @Delegate
    LoadBalancerClient getLoadBalancerClient();
+
+   /**
+    * Provides synchronous access to GuestOS features.
+    */
+   @Delegate
+   GuestOSClient getGuestOSClient();
 }

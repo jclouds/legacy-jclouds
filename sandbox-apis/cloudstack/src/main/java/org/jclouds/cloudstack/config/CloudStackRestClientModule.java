@@ -29,6 +29,8 @@ import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
+import org.jclouds.cloudstack.features.GuestOSAsyncClient;
+import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
@@ -53,6 +55,8 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -68,18 +72,19 @@ import com.google.common.collect.ImmutableMap;
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(ZoneClient.class, ZoneAsyncClient.class)//
-            .put(TemplateClient.class, TemplateAsyncClient.class)//
-            .put(OfferingClient.class, OfferingAsyncClient.class)//
-            .put(NetworkClient.class, NetworkAsyncClient.class)//
-            .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-            .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
-            .put(AddressClient.class, AddressAsyncClient.class)//
-            .put(NATClient.class, NATAsyncClient.class)//
-            .put(FirewallClient.class, FirewallAsyncClient.class)//
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-            .build();
+         .put(ZoneClient.class, ZoneAsyncClient.class)//
+         .put(TemplateClient.class, TemplateAsyncClient.class)//
+         .put(OfferingClient.class, OfferingAsyncClient.class)//
+         .put(NetworkClient.class, NetworkAsyncClient.class)//
+         .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
+         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+         .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
+         .put(AddressClient.class, AddressAsyncClient.class)//
+         .put(NATClient.class, NATAsyncClient.class)//
+         .put(FirewallClient.class, FirewallAsyncClient.class)//
+         .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+         .put(GuestOSClient.class, GuestOSAsyncClient.class)//
+         .build();
 
    public CloudStackRestClientModule() {
       super(CloudStackClient.class, CloudStackAsyncClient.class, DELEGATE_MAP);
@@ -88,6 +93,14 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      bind(SocketOpen.class).toInstance(new SocketOpen() {
+
+         @Override
+         public boolean apply(IPSocket arg0) {
+            return true;
+         }
+
+      });
       super.configure();
    }
 

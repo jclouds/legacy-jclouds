@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.elb;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -35,21 +36,21 @@ public class AWSELBClientLiveTest extends ELBClientLiveTest {
 
    @Test
    public void testCreateLoadBalancer() {
-      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          createLoadBalancerInRegionZone(region, region + "a", name);
       }
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testDescribeLoadBalancers() {
-      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          describeLoadBalancerInRegion(region);
       }
    }
 
    @Test
    public void testDeleteLoadBalancer() {
-      for (String region : AWSELBPropertiesBuilder.DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          deleteLoadBalancerInRegion(region);
       }
    }

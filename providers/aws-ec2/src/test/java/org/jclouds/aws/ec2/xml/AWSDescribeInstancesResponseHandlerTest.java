@@ -29,7 +29,6 @@ import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
@@ -77,7 +76,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                                  .instanceType(InstanceType.M1_SMALL).ipAddress("174.129.81.68").kernelId(
                                           "aki-a71cf9ce").keyName("adriancole.ec21").launchTime(
                                           dateService.iso8601DateParse("2009-11-09T03:00:34.000Z")).monitoringState(
-                                          MonitoringState.DISABLED).availabilityZone(AvailabilityZone.US_EAST_1C)
+                                          MonitoringState.DISABLED).availabilityZone("us-east-1c")
                                  .virtualizationType("paravirtual").privateDnsName("ip-10-243-42-70.ec2.internal")
                                  .privateIpAddress("10.243.42.70").ramdiskId("ari-a51cf9cc").rootDeviceType(
                                           RootDeviceType.INSTANCE_STORE).build()), "993194456877", null, "r-a3c508cb"));
@@ -95,7 +94,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                         .instanceState(InstanceState.RUNNING).instanceType(InstanceType.M1_LARGE).kernelId(
                                  "aki-ba3adfd3").keyName("example-key-name").launchTime(
                                  dateService.iso8601DateParse("2007-08-07T11:54:42.000Z")).monitoringState(
-                                 MonitoringState.DISABLED).availabilityZone(AvailabilityZone.US_EAST_1B)
+                                 MonitoringState.DISABLED).availabilityZone("us-east-1b")
                         .virtualizationType("paravirtual").privateDnsName("10-251-50-132.ec2.internal").productCode(
                                  "774F4FF8").ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE)
                         .build(), new AWSRunningInstance.Builder().region(defaultRegion).groupId("default")
@@ -103,7 +102,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                         .instanceId("i-28a64435").instanceState(InstanceState.RUNNING).instanceType(
                                  InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name")
                         .launchTime(dateService.iso8601DateParse("2007-08-07T11:54:42.000Z")).monitoringState(
-                                 MonitoringState.DISABLED).availabilityZone(AvailabilityZone.US_EAST_1B)
+                                 MonitoringState.DISABLED).availabilityZone("us-east-1b")
                         .virtualizationType("paravirtual").privateDnsName("10-251-50-134.ec2.internal").productCode(
                                  "774F4FF8").ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE)
                         .build()), "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null, "r-44a5402d"));
@@ -123,7 +122,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                                  .instanceType(InstanceType.M1_SMALL).ipAddress("75.101.203.146").kernelId(
                                           "aki-a71cf9ce").keyName("adriancole.ec2ebs1").launchTime(
                                           dateService.iso8601DateParse("2009-12-30T04:06:23.000Z")).monitoringState(
-                                          MonitoringState.DISABLED).availabilityZone(AvailabilityZone.US_EAST_1B)
+                                          MonitoringState.DISABLED).availabilityZone("us-east-1b")
                                  .placementGroup("placement").virtualizationType("hvm").privateDnsName(
                                           "domU-12-31-39-09-CE-53.compute-1.internal").privateIpAddress(
                                           "10.210.209.157").ramdiskId("ari-a51cf9cc")

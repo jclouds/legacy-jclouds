@@ -20,23 +20,16 @@
 package org.jclouds.aws.s3;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
-import static org.jclouds.aws.domain.Region.EU_WEST_1;
-import static org.jclouds.aws.domain.Region.US_EAST_1;
+import static org.jclouds.aws.domain.Region.US_STANDARD;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
-import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
-import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Builds properties used in S3 Clients
@@ -44,25 +37,19 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class AWSS3PropertiesBuilder extends org.jclouds.s3.S3PropertiesBuilder {
-   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US,US-CA,IE,SG");
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(Region.US_STANDARD, Region.US_WEST_1, "EU",
-               Region.AP_SOUTHEAST_1));
+      properties.putAll(Region.regionPropertiesS3());
       properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_STANDARD + "." + ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_STANDARD + "." + ISO3166_CODES, "US");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + "." + ENDPOINT,
-               "https://s3-us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + "." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + "." + ENDPOINT, "https://s3-us-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + "EU" + "." + ENDPOINT, "https://s3-eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + "EU" + "." + ISO3166_CODES, "IE");
-      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + "." + ENDPOINT,
-               "https://s3-ap-southeast-1.amazonaws.com");
-      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + "." + ISO3166_CODES, "SG");
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + "." + ENDPOINT,
+            "https://s3-ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + "." + ENDPOINT,
+            "https://s3-ap-northeast-1.amazonaws.com");
       return properties;
    }
 

@@ -11,7 +11,6 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
-import org.jclouds.ec2.domain.AvailabilityZone;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -59,7 +58,7 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
       static class Zones implements javax.inject.Provider<Map<String, String>> {
          @Override
          public Map<String, String> get() {
-            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
+            return ImmutableMap.<String, String> of("us-east-1a", "us-east-1");
          }
       }
    }

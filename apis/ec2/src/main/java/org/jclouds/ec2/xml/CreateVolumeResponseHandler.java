@@ -28,16 +28,16 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.util.EC2Utils;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.Attachment;
+import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -46,8 +46,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class CreateVolumeResponseHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
+public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
    private StringBuilder currentText = new StringBuilder();
 
    @Resource
@@ -128,8 +127,7 @@ public class CreateVolumeResponseHandler extends
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inAttachmentSet) {
-            attachments.add(new Attachment(region, volumeId, instanceId, device, attachmentStatus,
-                     attachTime));
+            attachments.add(new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime));
             volumeId = null;
             instanceId = null;
             device = null;
@@ -142,8 +140,7 @@ public class CreateVolumeResponseHandler extends
    }
 
    private Volume newVolume() {
-      Volume volume = new Volume(region, id, size, snapshotId, availabilityZone, volumeStatus,
-               createTime, attachments);
+      Volume volume = new Volume(region, id, size, snapshotId, availabilityZone, volumeStatus, createTime, attachments);
       id = null;
       size = 0;
       snapshotId = null;
@@ -163,14 +160,26 @@ public class CreateVolumeResponseHandler extends
       super.setContext(request);
       region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null) {
-         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull(getRequest());
+         String zone = findAvailabilityZoneInArgsOrNull(getRequest(), availabilityZoneToRegion.keySet());
          if (zone != null) {
-            region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
-                     "zone %s not in %s", zone, availabilityZoneToRegion));
+            region = checkNotNull(availabilityZoneToRegion.get(zone),
+                  String.format("zone %s not in %s", zone, availabilityZoneToRegion));
          } else {
             region = defaultRegion;
          }
       }
       return this;
    }
+
+   public static String findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest, Set<String> zones) {
+      for (Object arg : gRequest.getArgs()) {
+         if (arg instanceof String) {
+            String zone = (String) arg;
+            if (zones.contains(zone))
+               return zone;
+         }
+      }
+      return null;
+   }
+
 }

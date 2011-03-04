@@ -203,7 +203,7 @@ public interface CloudSigmaAsyncClient {
    /**
     * @see CloudSigmaClient#destroyServer
     */
-   @POST
+   @GET
    @Path("/servers/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyServer(@PathParam("uuid") String uuid);
@@ -247,7 +247,7 @@ public interface CloudSigmaAsyncClient {
    /**
     * @see CloudSigmaClient#destroyDrive
     */
-   @POST
+   @GET
    @Path("/drives/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
@@ -301,7 +301,7 @@ public interface CloudSigmaAsyncClient {
    /**
     * @see CloudSigmaClient#destroyVLAN
     */
-   @POST
+   @GET
    @Path("/resources/vlan/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyVLAN(@PathParam("uuid") String uuid);
@@ -343,7 +343,7 @@ public interface CloudSigmaAsyncClient {
    /**
     * @see CloudSigmaClient#destroyStaticIP
     */
-   @POST
+   @GET
    @Path("/resources/ip/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyStaticIP(@PathParam("uuid") String uuid);
