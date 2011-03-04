@@ -31,7 +31,7 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>savvis</artifactId>
+    <artifactId>savvis-symphony-vpdc</artifactId>
     <name>jclouds savvis core</name>
     <description>jclouds components to access savvis</description>
     
@@ -59,13 +59,13 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-vcloud</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>vcloudexpress</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>vcloudexpress</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -80,6 +80,13 @@
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-vcloud</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

@@ -50,8 +50,10 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.config.SymphonyVPDCRestClientModule;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
 import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
@@ -84,9 +86,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-
-import domain.VCloudExpressLoginAsyncClient;
-import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests annotation parsing of {@code SymphonyVPDCAsyncClient}
@@ -453,7 +452,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
    }
 
    public void testFindTasksListInOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class);
+      Method method = VCloudExpressAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class);
       HttpRequest request = processor.createRequest(method, "org");
 
       assertRequestLineEquals(request,
