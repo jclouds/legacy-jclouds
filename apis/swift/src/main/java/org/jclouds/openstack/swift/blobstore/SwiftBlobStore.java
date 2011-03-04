@@ -196,6 +196,19 @@ public class SwiftBlobStore extends BaseBlobStore {
    }
 
    /**
+    * This implementation invokes {@link CommonSwiftClient#putObject}
+    * 
+    * @param container
+    *           container name
+    * @param blob
+    *           object
+    */
+   @Override
+   public String putBlobMultipart(String container, Blob blob) {
+      return putBlob(container, blob);
+   }
+
+   /**
     * This implementation invokes {@link CommonSwiftClient#removeObject}
     * 
     * @param container

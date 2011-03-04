@@ -74,7 +74,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
@@ -222,6 +222,19 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob) {
+      return sync.putObject(container, blob2Object.apply(blob));
+   }
+
+   /**
+    * This implementation invokes {@link S3Client#putObject}
+    * 
+    * @param container
+    *           bucket name
+    * @param blob
+    *           object
+    */
+   @Override
+   public String putBlobMultipart(String container, Blob blob) {
       return sync.putObject(container, blob2Object.apply(blob));
    }
 
