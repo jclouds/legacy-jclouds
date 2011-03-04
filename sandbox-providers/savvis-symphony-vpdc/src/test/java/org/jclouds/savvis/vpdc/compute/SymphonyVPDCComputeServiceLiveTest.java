@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  * 
  * @author Kedar Dave
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = false, sequential = true)
 public class SymphonyVPDCComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public SymphonyVPDCComputeServiceLiveTest() {
       provider = "savvis-symphony-vpdc";

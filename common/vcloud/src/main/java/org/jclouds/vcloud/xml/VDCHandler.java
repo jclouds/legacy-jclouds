@@ -117,43 +117,43 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
 
    public void endElement(String uri, String name, String qName) {
       taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
+      if (qName.endsWith("Task")) {
          this.tasks.add(taskHandler.getResult());
-      } else if (qName.equals("Description")) {
+      } else if (qName.endsWith("Description")) {
          description = currentOrNull();
-      } else if (qName.equals("AllocationModel")) {
+      } else if (qName.endsWith("AllocationModel")) {
          allocationModel = AllocationModel.fromValue(currentOrNull());
-      } else if (qName.equals("Units")) {
+      } else if (qName.endsWith("Units")) {
          units = currentOrNull();
-      } else if (qName.equals("Allocated")) {
+      } else if (qName.endsWith("Allocated")) {
          allocated = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Used")) {
+      } else if (qName.endsWith("Used")) {
          used = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Limit")) {
+      } else if (qName.endsWith("Limit")) {
          limit = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Overhead")) {
+      } else if (qName.endsWith("Overhead")) {
          overhead = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("StorageCapacity")) {
+      } else if (qName.endsWith("StorageCapacity")) {
          storageCapacity = new Capacity(units, allocated, limit, used, overhead);
          resetCapacity();
-      } else if (qName.equals("Cpu")) {
+      } else if (qName.endsWith("Cpu")) {
          cpuCapacity = new Capacity(units, allocated, limit, used, overhead);
          resetCapacity();
-      } else if (qName.equals("Memory")) {
+      } else if (qName.endsWith("Memory")) {
          memoryCapacity = new Capacity(units, allocated, limit, used, overhead);
          resetCapacity();
-      } else if (qName.equals("DeployedVmsQuota")) {
+      } else if (qName.endsWith("DeployedVmsQuota")) {
          vmQuota = (int) limit;
          // vcloud express doesn't have the zero is unlimited rule
          if (vmQuota == -1)
             vmQuota = 0;
-      } else if (qName.equals("VmQuota")) {
+      } else if (qName.endsWith("VmQuota")) {
          vmQuota = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("NicQuota")) {
+      } else if (qName.endsWith("NicQuota")) {
          nicQuota = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("NetworkQuota")) {
+      } else if (qName.endsWith("NetworkQuota")) {
          networkQuota = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("IsEnabled")) {
+      } else if (qName.endsWith("IsEnabled")) {
          isEnabled = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();

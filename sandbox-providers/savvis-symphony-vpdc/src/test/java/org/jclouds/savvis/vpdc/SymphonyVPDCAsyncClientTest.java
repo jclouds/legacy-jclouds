@@ -50,9 +50,9 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.vpdc.config.SymphonyVPDCRestClientModule;
 import org.jclouds.savvis.vpdc.xml.SymphonyVPDCNetworkHandler;
 import org.jclouds.savvis.vpdc.xml.SymphonyVPDCVAppHandler;
+import org.jclouds.savvis.vpdc.xml.SymphonyVPDCVDCHandler;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
-import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.VCloudVersionsAsyncClient;
@@ -77,7 +77,6 @@ import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppTemplateHandler;
-import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -104,7 +103,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(
             request,
             Strings2.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hosting.xml")).replace(
@@ -136,7 +135,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request,
             Strings2.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hostingcpumemdisk.xml"))
                   .replace("vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
@@ -176,7 +175,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(
             request,
             Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp-default.xml")).replace(
@@ -200,7 +199,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml"))
             .replace("vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
             "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
@@ -250,7 +249,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/catalog/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -266,7 +265,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/catalog/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -300,7 +299,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/catalogItem/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -317,7 +316,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/catalogItem/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -334,7 +333,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vAppTemplate/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -351,7 +350,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vAppTemplate/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -370,7 +369,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
+      assertSaxResponseParserClassEquals(method, SymphonyVPDCVDCHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -397,7 +396,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
+      assertSaxResponseParserClassEquals(method, SymphonyVPDCVDCHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -412,7 +411,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
+      assertSaxResponseParserClassEquals(method, SymphonyVPDCVDCHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -428,7 +427,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
+      assertSaxResponseParserClassEquals(method, SymphonyVPDCVDCHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -441,7 +440,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/tasksList/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -452,12 +451,12 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
    }
 
    public void testFindTasksListInOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class);
+      Method method = SymphonyVPDCAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class);
       HttpRequest request = processor.createRequest(method, "org");
 
       assertRequestLineEquals(request,
             "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/tasksList/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -474,7 +473,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/action/deploy HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -507,7 +506,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/action/undeploy HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -541,7 +540,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/power/action/powerOn HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -558,7 +557,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/power/action/powerOff HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -575,7 +574,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/power/action/reset HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -592,7 +591,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
 
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vApp/1/power/action/suspend HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -625,7 +624,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
             URI.create("https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/task/1"));
 
       assertRequestLineEquals(request, "GET https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/task/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

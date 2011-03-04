@@ -17,27 +17,18 @@
  * ====================================================================
  */
 
-package org.jclouds.savvis.vpdc;
+package org.jclouds.savvis.vpdc.domain;
 
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import org.jclouds.savvis.vpdc.domain.internal.SymphonyVPDCVDCImpl;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VDC;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.savvis.vpdc.domain.SymphonyVPDCVDC;
-import org.jclouds.vcloud.VCloudExpressClient;
+import com.google.inject.ImplementedBy;
 
 /**
- * Provides access to Symphony VPDC resources via their REST API.
- * <p/>
- * 
- * @see <a href="TODO PUBLIC DOC REF" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-public interface SymphonyVPDCClient extends VCloudExpressClient {
-   @Override
-   SymphonyVPDCVDC findVDCInOrgNamed(String orgName, String vdcName);
-
-   @Override
-   SymphonyVPDCVDC getVDC(URI vdc);
+@ImplementedBy(SymphonyVPDCVDCImpl.class)
+public interface SymphonyVPDCVDC extends VDC {
+   String getOfferingTag();
 }
