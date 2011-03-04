@@ -300,9 +300,12 @@ public class CloudSigmaClientLiveTest {
          server = client.createServer(serverRequest);
          assertEquals(server.getNics().get(0).getDhcp(), ip.getAddress());
       } finally {
-         client.destroyServer(server.getUuid());
-         client.destroyDrive(drive.getUuid());
-         client.destroyStaticIP(id);
+         if (server != null) {
+            client.destroyServer(server.getUuid());
+            client.destroyDrive(drive.getUuid());
+         }
+         client.destroyStaticIP(ip.getAddress());
+         client.destroyStaticIP(ip2.getAddress());
       }
    }
 
@@ -422,16 +425,10 @@ public class CloudSigmaClientLiveTest {
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
-      try {
+      if (server != null)
          client.destroyServer(server.getUuid());
-      } catch (Exception e) {
-         // no need to check null or anything as we swallow all
-      }
-      try {
+      if (server != null)
          client.destroyDrive(drive.getUuid());
-      } catch (Exception e) {
-
-      }
       if (context != null)
          context.close();
    }
