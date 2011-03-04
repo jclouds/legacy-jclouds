@@ -283,10 +283,11 @@ public class CloudSigmaClientLiveTest {
       }
    }
 
-   @Test
+   @Test(dependsOnMethods = "testSetDriveData")
    public void testCreateAndDestroyStaticIP() throws Exception {
       StaticIPInfo ip = client.createStaticIP();
-      String id = ip.getAddress();
+      StaticIPInfo ip2 = client.createStaticIP();
+      Server server = null;
       try {
          ip = client.getStaticIPInfo(ip.getAddress());
          assertNotNull(ip);
@@ -299,16 +300,32 @@ public class CloudSigmaClientLiveTest {
          Logger.getAnonymousLogger().info("starting server");
          server = client.createServer(serverRequest);
          assertEquals(server.getNics().get(0).getDhcp(), ip.getAddress());
+         client.stopServer(server.getUuid());
+         server = client.setServerConfiguration(server.getUuid(), Servers.changeIP(server, ip2.getAddress()));
+         assertEquals(server.getNics().get(0).getDhcp(), ip2.getAddress());
       } finally {
-         client.destroyServer(server.getUuid());
-         client.destroyDrive(drive.getUuid());
-         client.destroyStaticIP(id);
+         if (server != null) {
+            client.destroyServer(server.getUuid());
+            client.destroyDrive(drive.getUuid());
+         }
+         try {
+            client.destroyStaticIP(ip.getAddress());
+         } catch (IllegalArgumentException e) {
+            // this shouldn't happen
+            assertEquals(e.getMessage(), "resource_exception:Missing resource");
+         }
+         try {
+            client.destroyStaticIP(ip2.getAddress());
+         } catch (IllegalArgumentException e) {
+            // this shouldn't happen
+            assertEquals(e.getMessage(), "resource_exception:Missing resource");
+         }
       }
    }
 
    protected ServerInfo server;
 
-   @Test(dependsOnMethods = "testSetDriveData")
+   @Test(dependsOnMethods = "testCreateAndDestroyStaticIP")
    public void testCreateAndStartServer() throws Exception {
       Logger.getAnonymousLogger().info("preparing drive");
       prepareDrive();
