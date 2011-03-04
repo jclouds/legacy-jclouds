@@ -29,11 +29,21 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
+import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
+import org.jclouds.vcloud.savvis.xml.SymphonyVPDCNetworkHandler;
+import org.jclouds.vcloud.savvis.xml.SymphonyVPDCVAppHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.VDCHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -67,4 +77,69 @@ public interface SymphonyVPDCAsyncClient extends VCloudExpressAsyncClient {
    @XMLResponseParser(OrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgId);
+   
+   /**
+    * @see CommonVCloudClient#getVDC(URI)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
+
+   /**
+    * @see CommonVCloudClient#findVDCInOrgNamed(String, String)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> findVDCInOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
+   
+   /**
+    * @see CommonVCloudClient#findNetworkInOrgVDCNamed
+    *//*
+   @GET
+   @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
+            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
+            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+
+   *//**
+    * @see CommonVCloudClient#getNetwork
+    *//*
+   @GET
+   @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);*/
+   
+   /**
+    * @see CommonVCloudClient#findNetworkInOrgVDCNamed
+    */
+   @GET
+   @XMLResponseParser(SymphonyVPDCNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
+            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
+            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+
+   /**
+    * @see CommonVCloudClient#getNetwork
+    */
+   @GET
+   @XMLResponseParser(SymphonyVPDCNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);
+   
+   /**
+    * @see VCloudClient#getVApp
+    */
+   @GET
+   @XMLResponseParser(SymphonyVPDCVAppHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VCloudExpressVApp> getVApp(@EndpointParam URI vApp);
+   
 }

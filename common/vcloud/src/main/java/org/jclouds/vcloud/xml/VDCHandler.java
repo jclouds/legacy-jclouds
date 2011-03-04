@@ -98,16 +98,16 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.equals("Vdc")) {
+      if (qName.endsWith("Vdc")) {
          vDC = newReferenceType(attributes);
          String status = attributes.get("status");
          if (status != null)
             this.status = VDCStatus.fromValue(Integer.parseInt(status));
-      } else if (qName.equals("Network")) {
+      } else if (qName.endsWith("Network")) {
          putReferenceType(availableNetworks, attributes);
-      } else if (qName.equals("ResourceEntity")) {
+      } else if (qName.endsWith("ResourceEntity")) {
          putReferenceType(resourceEntities, attributes);
-      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+      } else if (qName.endsWith("Link") && "up".equals(attributes.get("rel"))) {
          org = newReferenceType(attributes);
       } else {
          taskHandler.startElement(uri, localName, qName, attrs);

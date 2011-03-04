@@ -50,9 +50,14 @@ public class SymphonyVPDCClientLiveTest extends VCloudExpressClientLiveTest {
       context = new ComputeServiceContextFactory(restProperties).createContext(provider,
             ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
-      System.out.println(context);
-      
       connection = context.getApi();
-      System.out.println(connection);
+
+      System.out.println(context);
+      /*System.out.println(connection);
+      Org org = connection.getOrg(URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/607968.0"));
+      System.out.println(connection.getVDC(URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/607968.0/vdc/2826")).getAvailableNetworks());
+      System.out.println(org.getVDCs().get(0));
+      System.out.println(org.getTasksList());
+      System.out.println(org.getTasks());*/
    }
 }
