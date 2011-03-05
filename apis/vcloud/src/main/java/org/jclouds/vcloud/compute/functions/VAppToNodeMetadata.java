@@ -20,13 +20,15 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
-import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPrivateIpsFromVApp;
-import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPublicIpsFromVApp;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getIpsFromVApp;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -38,6 +40,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 
@@ -58,7 +61,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
 
    @Inject
    protected VAppToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-            FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp) {
+         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp) {
       this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
@@ -75,8 +78,9 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.operatingSystem(toComputeOs(from, null));
       builder.hardware(hardwareForVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
-      builder.publicAddresses(getPublicIpsFromVApp(from));
-      builder.privateAddresses(getPrivateIpsFromVApp(from));
+      Set<String> addresses = getIpsFromVApp(from);
+      builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
+      builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
       builder.credentials(getCredentialsFrom(from));
       Credentials fromApi = getCredentialsFrom(from);
       if (fromApi != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString()))

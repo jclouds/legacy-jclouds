@@ -36,8 +36,9 @@ import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -77,7 +78,7 @@ public class VCloudComputeUtils {
    public static Credentials getCredentialsFrom(Vm vm) {
       String user = "root";
       if (vm.getOperatingSystemSection() != null && vm.getOperatingSystemSection().getDescription() != null
-               && vm.getOperatingSystemSection().getDescription().indexOf("Windows") >= 0)
+            && vm.getOperatingSystemSection().getDescription().indexOf("Windows") >= 0)
          user = "Administrator";
       String password = null;
       if (vm.getGuestCustomizationSection() != null)
@@ -85,34 +86,33 @@ public class VCloudComputeUtils {
       return new Credentials(user, password);
    }
 
-   public static Set<String> getPublicIpsFromVApp(VApp vApp) {
-      Set<String> ips = Sets.newLinkedHashSet();
+   public static Set<String> getIpsFromVApp(VApp vApp) {
       // TODO make this work with composite vApps
       if (vApp.getChildren().size() == 0)
-         return ips;
+         return ImmutableSet.of();
+      Builder<String> ips = ImmutableSet.<String> builder();
       Vm vm = Iterables.get(vApp.getChildren(), 0);
       // TODO: figure out how to differentiate public from private ip addresses
       // assumption is that we'll do this from the network object, which may have
       // enough data to tell whether or not it is a public network without string
-      // parsing.  At worst, we could have properties set per cloud provider to
-      // declare the networks which are public, then check against these in 
+      // parsing. At worst, we could have properties set per cloud provider to
+      // declare the networks which are public, then check against these in
       // networkconnection.getNetwork
       if (vm.getNetworkConnectionSection() != null) {
-         for (NetworkConnection connection : vm.getNetworkConnectionSection().getConnections())
-            ips.add(connection.getIpAddress());
+         for (NetworkConnection connection : vm.getNetworkConnectionSection().getConnections()) {
+            if (connection.getIpAddress() != null)
+               ips.add(connection.getIpAddress());
+         }
       } else {
          for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
-                  resourceType(ResourceType.ETHERNET_ADAPTER))) {
+               resourceType(ResourceType.ETHERNET_ADAPTER))) {
             if (net instanceof VCloudNetworkAdapter) {
                VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);
-               ips.add(vNet.getIpAddress());
+               if (vNet.getIpAddress() != null)
+                  ips.add(vNet.getIpAddress());
             }
          }
       }
-      return ips;
-   }
-
-   public static Set<String> getPrivateIpsFromVApp(VApp vApp) {
-      return Sets.newLinkedHashSet();
+      return ips.build();
    }
 }
