@@ -161,12 +161,12 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory(getRestProperties()).createContext(provider, ImmutableSet.of(
+      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
                new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
-   protected Properties getRestProperties() {
+   protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
@@ -182,7 +182,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
                   .<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {

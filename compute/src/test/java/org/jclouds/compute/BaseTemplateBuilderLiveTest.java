@@ -44,6 +44,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -91,10 +92,14 @@ public abstract class BaseTemplateBuilderLiveTest {
       return overrides;
    }
 
+   protected Properties setupRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
+   }
+
    @BeforeClass
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setupCredentials();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), setupProperties());
    }
 

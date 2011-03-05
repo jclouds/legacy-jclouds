@@ -24,7 +24,7 @@ public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveT
    }
 
    @Override
-   protected Properties getRestProperties() {
+   protected Properties setupRestProperties() {
       Properties restProperties = new Properties();
       restProperties.setProperty("servermanager.contextbuilder",
             ServerManagerComputeServiceContextBuilder.class.getName());
