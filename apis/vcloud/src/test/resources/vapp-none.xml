@@ -29,8 +29,8 @@
         <ovf:Network ovf:name="none">
             <ovf:Description>This is a special place-holder used for disconnected network interfaces.</ovf:Description>
         </ovf:Network>
-    </ovf:NetworkSection>    <NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp
--1/networkConfigSection/" ovf:required="false">
+    </ovf:NetworkSection>
+    <NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1/networkConfigSection/" ovf:required="false">
         <ovf:Info>The configuration parameters for logical networks</ovf:Info>
         <Link rel="edit" type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1/networkConfigSection/"/>
         <NetworkConfig networkName="none">

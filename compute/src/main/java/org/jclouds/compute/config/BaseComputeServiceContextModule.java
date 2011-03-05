@@ -162,6 +162,15 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    }
 
    /**
+    * The default options if none are provided.
+    */
+   @Provides
+   @Named("DEFAULT")
+   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+      return options;
+   }
+
+   /**
     * supplies how the tag is encoded into the name. A string of hex characters is the last argument
     * and tag is the first
     */

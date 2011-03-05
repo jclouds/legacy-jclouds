@@ -22,6 +22,7 @@ package org.jclouds.vcloud;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
@@ -31,26 +32,31 @@ import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
+import org.jclouds.vcloud.domain.Vm;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
  * This tests that we can use guest customization as an alternative to bootstrapping with ssh. There
- * are a few advangroupes to this, including the fact that it can work inside google appengine where
+ * are a few advantages to this, including the fact that it can work inside google appengine where
  * network sockets (ssh:22) are prohibited.
  * 
  * @author Adrian Cole
@@ -58,7 +64,7 @@ import com.google.inject.Module;
 @Test(groups = "live", enabled = true, sequential = true)
 public class VCloudGuestCustomizationLiveTest {
 
-   public static final String PARSE_VMTOOLSD = "vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'|base64 -d";
+   public static final String PARSE_VMTOOLSD = "vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'";
 
    protected ComputeServiceContext context;
    protected ComputeService client;
@@ -70,6 +76,8 @@ public class VCloudGuestCustomizationLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+
+   protected NodeMetadata node;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -96,51 +104,89 @@ public class VCloudGuestCustomizationLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-
-      client = new ComputeServiceContextFactory().createContext(provider,
+      client = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
             ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getComputeService();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 60, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
       sshFactory = Guice.createInjector(getSshModule()).getInstance(Factory.class);
+   }
+
+   protected Properties setupRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    protected JschSshClientModule getSshModule() {
       return new JschSshClientModule();
    }
 
+   // make sure the script has a lot of screwy characters, knowing our parser throws-out \r
+   private String iLoveAscii = "I '\"love\"' {asc|!}*&";
+
+   String script = "cat > /root/foo.txt<<EOF\n" + iLoveAscii + "\nEOF\n";
+
    @Test
    public void testExtendedOptionsWithCustomizationScript() throws Exception {
 
       String group = "customize";
-      String script = "cat > /root/foo.txt<<EOF\nI love candy\nEOF\n";
 
       TemplateOptions options = client.templateOptions();
       options.as(VCloudTemplateOptions.class).customizationScript(script);
+      node = getOnlyElement(client.createNodesInGroup(group, 1, options));
 
-      NodeMetadata node = null;
+      Vm vm = Iterables.get(
+            ((VCloudClient) client.getContext().getProviderSpecificContext().getApi()).getVApp(node.getUri())
+                  .getChildren(), 0);
+      String apiOutput = vm.getGuestCustomizationSection().getCustomizationScript();
+      checkApiOutput(apiOutput);
+
+      IPSocket socket = getSocket(node);
+
+      System.out.printf("%s:%s@%s", node.getCredentials().identity, node.getCredentials().credential, socket);
+      assert socketTester.apply(socket) : socket;
+
+      SshClient ssh = sshFactory.create(socket, node.getCredentials());
       try {
-
-         node = getOnlyElement(client.createNodesInGroup(group, 1, options));
-
-         IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
-
-         assert socketTester.apply(socket);
-
-         SshClient ssh = sshFactory.create(socket, node.getCredentials());
-         try {
-            ssh.connect();
-
-            assertEquals(ssh.exec(PARSE_VMTOOLSD).getOutput(), script.replaceAll("\n", "\r\n"));
-            assertEquals(ssh.exec("cat /root/foo.txt").getOutput().trim(), "I love candy");
-
-         } finally {
-            if (ssh != null)
-               ssh.disconnect();
-         }
-
+         ssh.connect();
+         ExecResponse vmTools = ssh.exec(PARSE_VMTOOLSD);
+         System.out.println(vmTools);
+         String fooTxt = ssh.exec("cat /root/foo.txt").getOutput();
+         String decodedVmToolsOutput = new String(base64(vmTools.getOutput().trim()));
+         checkVmOutput(fooTxt, decodedVmToolsOutput);
       } finally {
-         if (node != null)
-            client.destroyNode(node.getId());
+         if (ssh != null)
+            ssh.disconnect();
       }
+   }
+
+   protected void checkApiOutput(String apiOutput) {
+      checkApiOutput1_0_1(apiOutput);
+   }
+
+   protected void checkApiOutput1_0_1(String apiOutput) {
+      // in 1.0.1, vcloud director seems to pass through characters via api flawlessly
+      assertEquals(apiOutput, script);
+   }
+
+   protected void checkApiOutput1_0_0(String apiOutput) {
+      // in 1.0.0, vcloud director seems to remove all newlines
+      assertEquals(apiOutput, script.replace("\n", ""));
+   }
+
+   protected void checkVmOutput(String fooTxtContentsMadeByVMwareTools, String decodedVMwareToolsOutput) {
+      // note that vmwaretools throws in \r characters when executing scripts
+      assertEquals(fooTxtContentsMadeByVMwareTools, iLoveAscii + "\r\n");
+      assertEquals(decodedVMwareToolsOutput, script);
+   }
+
+   @AfterTest
+   public void tearDown() {
+      if (node != null)
+         client.destroyNode(node.getId());
+      if (context != null)
+         context.close();
+   }
+
+   protected IPSocket getSocket(NodeMetadata node) {
+      return new IPSocket(get(node.getPublicAddresses(), 0), 22);
    }
 
 }
