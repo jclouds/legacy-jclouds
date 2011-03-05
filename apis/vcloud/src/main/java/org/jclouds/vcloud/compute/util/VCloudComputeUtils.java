@@ -102,6 +102,8 @@ public class VCloudComputeUtils {
          for (NetworkConnection connection : vm.getNetworkConnectionSection().getConnections()) {
             if (connection.getIpAddress() != null)
                ips.add(connection.getIpAddress());
+            if (connection.getExternalIpAddress() != null)
+               ips.add(connection.getExternalIpAddress());
          }
       } else {
          for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
