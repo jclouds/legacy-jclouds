@@ -45,9 +45,9 @@ public class AWSEC2TemplateBuilderImpl extends EC2TemplateBuilderImpl {
 
    @Inject
    protected AWSEC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-            Supplier<Location> defaultLocation, Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+         Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider, imageMap);
    }
 
