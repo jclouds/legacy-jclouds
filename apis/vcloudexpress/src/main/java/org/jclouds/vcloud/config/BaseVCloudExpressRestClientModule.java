@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
@@ -78,7 +78,7 @@ public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressC
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final VCloudExpressLoginAsyncClient login) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
             new Supplier<VCloudSession>() {
 
                @Override

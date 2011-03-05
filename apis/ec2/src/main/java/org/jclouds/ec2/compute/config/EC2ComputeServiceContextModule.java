@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
-import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Provides;
@@ -59,7 +59,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Singleton
    protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
                authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
                   @Override
                   public Map<RegionAndName, ? extends Image> get() {

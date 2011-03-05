@@ -19,6 +19,8 @@
 
 package org.jclouds.rest.suppliers;
 
+import static com.google.common.base.Suppliers.memoizeWithExpiration;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,8 +28,6 @@ import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.base.Throwables;
 
 /**
  * This will retry the supplier if it encounters a timeout exception, but not if it encounters an
@@ -44,33 +44,15 @@ import com.google.common.base.Throwables;
  * 
  * @author Adrian Cole
  */
-public class RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> implements Supplier<T> {
+public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> implements Supplier<T> {
    private final Supplier<T> delegate;
+   private final long seconds;
 
-   public RetryOnTimeOutButNotOnAuthorizationExceptionSupplier(
-         final AtomicReference<AuthorizationException> authException, final long seconds, final Supplier<T> delegate) {
-      this.delegate = Suppliers.<T> memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<T>(new Supplier<T>() {
-         public T get() {
-            if (authException.get() != null)
-               throw authException.get();
-            try {
-               return delegate.get();
-            } catch (AuthorizationException e) {
-               authException.set(e);
-               throw e;
-            } catch (Exception e) {
-               Throwables.propagate(e);
-               assert false : e;
-               return null;
-            }
-         }
-
-         @Override
-         public String toString() {
-            return "memoizeWithExpiration(" + delegate + ", seconds=" + seconds + ")";
-         }
-
-      }), seconds, TimeUnit.SECONDS);
+   public MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier(
+         AtomicReference<AuthorizationException> authException, long seconds, Supplier<T> delegate) {
+      this.delegate = memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<T>(
+            new SetAndThrowAuthorizationExceptionSupplier<T>(delegate, authException)), seconds, TimeUnit.SECONDS);
+      this.seconds = seconds;
    }
 
    @Override
@@ -80,7 +62,6 @@ public class RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> implements 
 
    @Override
    public String toString() {
-      return "RetryOnTimeOutButNotOnAuthorizationExceptionSupplier(" + delegate + ")";
+      return "memoizeWithExpiration(" + delegate + ", seconds=" + seconds + ")";
    }
-
 }
