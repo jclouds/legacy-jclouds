@@ -100,7 +100,7 @@ public class AWSEC2ReviseParsedImage implements ReviseParsedImage {
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from.getImageLocation());
       } catch (NoSuchElementException e) {
-         logger.debug("<< didn't match at all(%s)", from.getImageLocation());
+         logger.trace("<< didn't match at all(%s)", from.getImageLocation());
       }
    }
 

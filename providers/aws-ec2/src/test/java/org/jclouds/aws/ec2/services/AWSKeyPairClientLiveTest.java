@@ -20,6 +20,13 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -34,17 +41,26 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.domain.AWSRunningInstance;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.ComputeTestUtils;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -63,6 +79,7 @@ public class AWSKeyPairClientLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   private ComputeServiceContext computeContext;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -89,20 +106,67 @@ public class AWSKeyPairClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+      computeContext = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+      context = computeContext.getProviderSpecificContext();
       client = context.getApi().getKeyPairServices();
+   }
+
+   public void testNoSsh() throws Exception {
+
+      Map<String, String> keyPair = ComputeTestUtils.setupKeyPair();
+
+      InstanceClient instanceClient = EC2Client.class.cast(context.getApi()).getInstanceServices();
+
+      String group = PREFIX + "unssh";
+      computeContext.getComputeService().destroyNodesMatching(inGroup(group));
+
+      TemplateOptions options = computeContext.getComputeService().templateOptions();
+
+      options.authorizePublicKey(keyPair.get("public"));
+
+      ComputeServiceContext noSshContext = null;
+      try {
+         noSshContext = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.of(new Log4JLoggingModule()), setupProperties());
+
+         Set<? extends NodeMetadata> nodes = noSshContext.getComputeService().createNodesInGroup(group, 1, options);
+
+         NodeMetadata first = get(nodes, 0);
+         assert first.getCredentials() != null : first;
+         assert first.getCredentials().identity != null : first;
+
+         AWSRunningInstance instance = AWSRunningInstance.class
+               .cast(getInstance(instanceClient, first.getProviderId()));
+
+         assertEquals(instance.getKeyName(), "jclouds#" + group);
+         assertEquals(first.getCredentials().credential, null);
+
+         Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
+               .runScriptOnNodesMatching(
+                     runningInGroup(group),
+                     exec("echo hello"),
+                     overrideCredentialsWith(new Credentials(first.getCredentials().identity, keyPair.get("private")))
+                           .wrapInInitScript(false).runAsRoot(false));
+
+         ExecResponse hello = getOnlyElement(responses.values());
+         assertEquals(hello.getOutput().trim(), "hello");
+
+      } finally {
+         noSshContext.close();
+         computeContext.getComputeService().destroyNodesMatching(inGroup(group));
+      }
    }
 
    @Test
    void testDescribeAWSKeyPairs() {
       for (String region : Region.DEFAULT_REGIONS) {
 
-         SortedSet<KeyPair> allResults = Sets.newTreeSet(client.describeKeyPairsInRegion(region));
+         SortedSet<KeyPair> allResults = newTreeSet(client.describeKeyPairsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             KeyPair pair = allResults.last();
-            SortedSet<KeyPair> result = Sets.newTreeSet(client.describeKeyPairsInRegion(region, pair.getKeyName()));
+            SortedSet<KeyPair> result = newTreeSet(client.describeKeyPairsInRegion(region, pair.getKeyName()));
             assertNotNull(result);
             KeyPair compare = result.last();
             assertEquals(compare, pair);
@@ -163,12 +227,17 @@ public class AWSKeyPairClientLiveTest {
       assertNotNull(keyPair.getKeyFingerprint());
       assertEquals(keyPair.getKeyName(), keyName);
 
-      Set<KeyPair> twoResults = Sets.newLinkedHashSet(client.describeKeyPairsInRegion(null, keyName));
+      Set<KeyPair> twoResults = client.describeKeyPairsInRegion(null, keyName);
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();
       assertEquals(listPair.getKeyName(), keyPair.getKeyName());
       assertEquals(listPair.getKeyFingerprint(), keyPair.getKeyFingerprint());
+   }
+
+   protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
+      RunningInstance instance = getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
+      return instance;
    }
 
    @AfterTest

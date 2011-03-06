@@ -34,6 +34,26 @@ import com.google.common.collect.Lists;
  */
 public class Credentials {
 
+   public static class Builder<T extends Credentials> {
+      private String identity;
+      private String credential;
+
+      public Builder<T> identity(String identity) {
+         this.identity = identity;
+         return this;
+      }
+
+      public Builder<T> credential(String credential) {
+         this.credential = credential;
+         return this;
+      }
+
+      @SuppressWarnings("unchecked")
+      public T build() {
+         return (T) new Credentials(identity, credential);
+      }
+   }
+
    public final String identity;
    public final String credential;
 
@@ -45,7 +65,7 @@ public class Credentials {
    public static Credentials parse(URI uri) {
       checkNotNull(uri, "uri");
       List<String> userInfo = Lists.newArrayList(Splitter.on(':').split(
-               checkNotNull(uri.getUserInfo(), "no userInfo in " + uri)));
+            checkNotNull(uri.getUserInfo(), "no userInfo in " + uri)));
       String identity = checkNotNull(userInfo.get(0), "no username in " + uri.getUserInfo());
       if (Strings2.isUrlEncoded(identity)) {
          identity = Strings2.urlDecode(identity);
@@ -55,6 +75,10 @@ public class Credentials {
          credential = Strings2.urlDecode(credential);
       }
       return new Credentials(identity, credential);
+   }
+
+   public Builder<? extends Credentials> toBuilder() {
+      return new Builder<Credentials>().identity(identity).credential(credential);
    }
 
    @Override

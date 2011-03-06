@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute.functions;
+package org.jclouds.aws.ec2.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,57 +26,58 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
+public class ImportOrReturnExistingKeypair implements Function<RegionNameAndPublicKeyMaterial, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final EC2Client ec2Client;
-   protected final Supplier<String> randomSuffix;
+   protected final AWSEC2Client ec2Client;
 
    @Inject
-   public CreateUniqueKeyPair(EC2Client ec2Client, Supplier<String> randomSuffix) {
+   public ImportOrReturnExistingKeypair(AWSEC2Client ec2Client) {
       this.ec2Client = ec2Client;
-      this.randomSuffix = randomSuffix;
    }
 
    @Override
-   public KeyPair apply(RegionAndName from) {
-      return createNewKeyPairInRegion(from.getRegion(), from.getName());
+   public KeyPair apply(RegionNameAndPublicKeyMaterial from) {
+      return importOrReturnExistingKeypair(from.getRegion(), from.getName(), from.getPublicKeyMaterial());
    }
 
    @VisibleForTesting
-   KeyPair createNewKeyPairInRegion(String region, String group) {
+   KeyPair importOrReturnExistingKeypair(String region, String group, String publicKeyMaterial) {
       checkNotNull(region, "region");
       checkNotNull(group, "group");
-      logger.debug(">> creating keyPair region(%s) group(%s)", region, group);
+      checkNotNull(publicKeyMaterial, "publicKeyMaterial");
+      logger.debug(">> importing keyPair region(%s) group(%s)", region, group);
       KeyPair keyPair = null;
-      while (keyPair == null) {
+      // loop for eventual consistency or race condition.
+      // as this command is idempotent, it should be ok
+      while (keyPair == null)
          try {
-            keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, getNextName(region, group));
-            logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
+            keyPair = ec2Client.getKeyPairServices().importKeyPairInRegion(region, "jclouds#" + group,
+                  publicKeyMaterial);
+            logger.debug("<< imported keyPair(%s)", keyPair.getKeyName());
          } catch (IllegalStateException e) {
-
+            keyPair = Iterables.getFirst(
+                  ec2Client.getKeyPairServices().describeKeyPairsInRegion(region, "jclouds#" + group), null);
+            if (keyPair != null)
+               logger.debug("<< retrieved existing keyPair(%s)", keyPair.getKeyName());
          }
-      }
       return keyPair;
    }
 
-   private String getNextName(String region, String group) {
-      return String.format("jclouds#%s#%s#%s", group, region, randomSuffix.get());
-   }
 }

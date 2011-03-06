@@ -197,8 +197,8 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
-      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-            .runScript(buildScript(template.getImage().getOperatingSystem()));
+      template.getOptions().overrideLoginCredentialWith(keyPair.get("private"))
+            .authorizePublicKey(keyPair.get("public")).runScript(buildScript(template.getImage().getOperatingSystem()));
 
       String group = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));

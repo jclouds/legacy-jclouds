@@ -31,12 +31,14 @@ import java.util.concurrent.Future;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.util.ComputeUtils;
@@ -77,16 +79,19 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    final Predicate<RunningInstance> instancePresent;
    final Function<RunningInstance, Credentials> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
+   final Provider<TemplateBuilder> templateBuilderProvider;
 
    @Inject
    EC2CreateNodesInGroupThenAddToSet(
-            EC2Client client,
-            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
-            @Named("PRESENT") Predicate<RunningInstance> instancePresent,
-            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
-            ComputeUtils utils) {
+         EC2Client client,
+         Provider<TemplateBuilder> templateBuilderProvider,
+         CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+         @Named("PRESENT") Predicate<RunningInstance> instancePresent,
+         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+         Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+         ComputeUtils utils) {
       this.client = client;
+      this.templateBuilderProvider = templateBuilderProvider;
       this.instancePresent = instancePresent;
       this.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -97,10 +102,11 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
    @Override
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
-            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
-
-      Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group, count,
-               template);
+         Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+      // ensure we don't mutate the input template
+      template = templateBuilderProvider.get().fromTemplate(template).build();
+      Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
+            count, template);
       Iterable<String> ids = transform(started, instanceToId);
 
       String idsString = Joiner.on(',').join(ids);
@@ -111,8 +117,8 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          populateCredentials(started);
       }
 
-      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
-               runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
+      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(),
+            transform(started, runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }
 
    protected void populateCredentials(Iterable<? extends RunningInstance> started) {
@@ -131,12 +137,12 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    // TODO write test for this
    @VisibleForTesting
    Iterable<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String group, int count,
-            Template template) {
+         Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
-               group, template);
+            group, template);
 
       int countStarted = 0;
       int tries = 0;
@@ -145,10 +151,12 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       while (countStarted < count && tries++ < count) {
          if (logger.isDebugEnabled())
             logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count - countStarted, region,
-                     zone, template.getImage().getProviderId(), instanceOptions.buildFormParameters());
+                  zone, template.getImage().getProviderId(), instanceOptions.buildFormParameters());
 
-         started = Iterables.concat(started, client.getInstanceServices().runInstancesInRegion(region, zone,
-                  template.getImage().getProviderId(), 1, count - countStarted, instanceOptions));
+         started = Iterables.concat(
+               started,
+               client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
+                     count - countStarted, instanceOptions));
 
          countStarted = Iterables.size(started);
          if (countStarted < count)

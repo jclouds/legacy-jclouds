@@ -43,6 +43,7 @@ import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
@@ -76,11 +77,11 @@ import com.google.inject.TypeLiteral;
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
-                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
-                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-            .build();
+         .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
+         .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING)
+         .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
+         .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+         .build();
 
    @Singleton
    @Provides
@@ -104,6 +105,12 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       }).to(RunningInstanceToNodeMetadata.class);
       bind(new TypeLiteral<Function<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
+      bind(new TypeLiteral<Function<RegionNameAndIngressRules, String>>() {
+      }).to(CreateSecurityGroupIfNeeded.class);
+      bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
+      }).to(CreateUniqueKeyPair.class);
+      bind(new TypeLiteral<Function<RegionAndName, Image>>() {
+      }).to(RegionAndIdToImage.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
@@ -128,7 +135,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected final Map<RegionAndName, KeyPair> credentialsMap(CreateUniqueKeyPair in) {
+   protected final Map<RegionAndName, KeyPair> credentialsMap(Function<RegionAndName, KeyPair> in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return newLinkedHashMap();
@@ -137,12 +144,11 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("SECURITY")
-   protected final Map<RegionAndName, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
+   protected final Map<RegionAndName, String> securityGroupMap(Function<RegionNameAndIngressRules, String> in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return newLinkedHashMap();
    }
-
 
    @Provides
    @Singleton
@@ -153,10 +159,9 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       return toArray(Splitter.on(',').split(amiOwners), String.class);
    }
 
-
    @Provides
    @Singleton
-   protected Map<RegionAndName, Image> provideImageMap(RegionAndIdToImage regionAndIdToImage) {
+   protected Map<RegionAndName, Image> provideImageMap(Function<RegionAndName, Image> regionAndIdToImage) {
       return new MapMaker().makeComputingMap(regionAndIdToImage);
    }
 

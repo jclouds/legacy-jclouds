@@ -82,7 +82,6 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
    @Override
    public Image apply(final org.jclouds.ec2.domain.Image from) {
       if (from.getImageType() != ImageType.MACHINE) {
-         logger.trace("skipping as not a machine image(%s)", from.getId());
          return null;
       }
       ImageBuilder builder = new ImageBuilder();

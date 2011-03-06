@@ -26,6 +26,26 @@ import org.jclouds.vcloud.terremark.domain.KeyPair;
  */
 public class KeyPairCredentials extends Credentials {
 
+   public static class Builder<T extends KeyPairCredentials> extends Credentials.Builder<T> {
+      private String identity;
+      private KeyPair keyPair;
+
+      public Builder<T> identity(String identity) {
+         this.identity = identity;
+         return this;
+      }
+
+      public Builder<T> keyPair(KeyPair keyPair) {
+         this.keyPair = keyPair;
+         return this;
+      }
+
+      @SuppressWarnings("unchecked")
+      public T build() {
+         return (T) new KeyPairCredentials(identity, keyPair);
+      }
+   }
+
    public KeyPair getKeyPair() {
       return keyPair;
    }
@@ -35,6 +55,10 @@ public class KeyPairCredentials extends Credentials {
    public KeyPairCredentials(String identity, KeyPair keyPair) {
       super(identity, keyPair.getPrivateKey());
       this.keyPair = keyPair;
+   }
+
+   public Builder<? extends KeyPairCredentials> toBuilder() {
+      return new Builder<KeyPairCredentials>().identity(identity).keyPair(keyPair);
    }
 
 }

@@ -73,7 +73,7 @@ public class RegionAndName {
 
    @Override
    public String toString() {
-      return "RegionTag [region=" + region + ", name=" + name + "]";
+      return "[region=" + region + ", name=" + name + "]";
    }
 
 }

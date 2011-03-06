@@ -59,13 +59,13 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getSecurityGroupServices();
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getKeyPairServices();
+            .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
+            .getInstanceServices();
 
       String group = this.group + "o";
 
@@ -117,17 +117,17 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // }
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
-                  + instance.getRegion(), group));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()),
+               ImmutableSortedSet.<String> of("jclouds#" + group + "#" + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
          SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" +group + "#" + instance.getRegion()));
+               "jclouds#" + group + "#" + instance.getRegion()));
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(group, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
-                  .getKeyMaterial()));
+         runScriptWithCreds(group, first.getOperatingSystem(),
+               new Credentials(first.getCredentials().identity, result.getKeyMaterial()));
 
       } finally {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
@@ -138,21 +138,17 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          }
          cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
-      
+
    }
+
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testExtendedOptionsWithSubnetId() throws Exception {
+   public void testSubnetId() throws Exception {
 
       String subnetId = System.getProperty("test.subnetId");
       if (subnetId == null) {
          // Skip test and return
          return;
       }
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
-
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
             .getInstanceServices();
@@ -161,20 +157,11 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
-      // options.as(AWSEC2TemplateOptions.class).securityGroups(group);
-      options.as(AWSEC2TemplateOptions.class).keyPair(group);
       options.as(AWSEC2TemplateOptions.class).subnetId(subnetId);
 
       String startedId = null;
       String nodeId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
-
-         // create the security group
-         // securityGroupClient.createSecurityGroupInRegion(null, group, group);
-
-         // create a keypair to pass in as well
-         keyPairClient.createKeyPairInRegion(null, group);
 
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
 
@@ -192,11 +179,6 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       } finally {
          if (nodeId != null)
             client.destroyNode(nodeId);
-         if (startedId != null) {
-            // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
-         }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
       }
    }
 

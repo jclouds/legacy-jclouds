@@ -19,7 +19,6 @@
 
 package org.jclouds.ec2.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -28,7 +27,6 @@ import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -81,19 +79,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                + defaultTemplate.getImage().getProviderId());
       Template byId = client.templateBuilder().imageId(defaultTemplate.getImage().getId()).build();
       assertEquals(byId.getImage(), defaultTemplate.getImage());
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testImagesResolveCorrectly")
-   public void testDefaultTemplateBuilder() {
-      assertDefaultWorks();
-   }
-
-   protected void assertDefaultWorks() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2010.11.1-beta");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
