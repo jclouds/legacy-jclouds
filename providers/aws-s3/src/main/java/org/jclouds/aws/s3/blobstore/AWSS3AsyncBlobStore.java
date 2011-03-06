@@ -29,7 +29,9 @@ import javax.inject.Provider;
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
+import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
@@ -44,12 +46,16 @@ import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- *
+ * 
  * @author Tibor Kiss
  */
 public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
+
+   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
 
    @Inject
    public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -58,10 +64,19 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
          BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
          BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
          BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-   super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd, 
-         container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, 
-         blob2Object, object2BlobMd, fetchBlobMetadataProvider);
+         Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
+         Provider<MultipartUploadStrategy> multipartUploadStrategy) {
+      super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd,
+            container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
+            object2BlobMd, fetchBlobMetadataProvider);
+      this.multipartUploadStrategy = multipartUploadStrategy;
+   }
+
+   @Override
+   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+      // TODO: make this better
+      // need to use a provider if the strategy object is stateful
+      return Futures.immediateFuture(multipartUploadStrategy.get().execute(container, blob));
    }
 
 }

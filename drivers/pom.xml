@@ -38,6 +38,7 @@
         <module>bouncycastle</module>
         <module>log4j</module>
         <module>jsch</module>
+        <module>netty</module>
         <module>enterprise</module>
     </modules>
 </project>

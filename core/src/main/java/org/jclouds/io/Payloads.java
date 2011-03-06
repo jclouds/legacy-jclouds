@@ -35,7 +35,6 @@ import javax.annotation.Nullable;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;
-import org.jclouds.io.payloads.ChunkedFilePayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
@@ -83,10 +82,6 @@ public class Payloads {
 
    public static FilePayload newFilePayload(File data) {
       return new FilePayload(checkNotNull(data, "data"));
-   }
-   
-   public static ChunkedFilePayload newChunkedFilePayload(File data, int part, long chunkOffset, long chunkSize) {
-      return new ChunkedFilePayload(checkNotNull(data, "data"), part, chunkOffset, chunkSize);
    }
 
    public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams, char... skips) {

@@ -26,7 +26,6 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
-import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -45,32 +44,30 @@ import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import com.google.common.base.Supplier;
 
 /**
- * Proived AWS S3 specific extensions.  
- *
+ * Proived AWS S3 specific extensions.
+ * 
  * @author Tibor Kiss
  */
 public class AWSS3BlobStore extends S3BlobStore {
-   
-   private MultipartUploadStrategy multipartUploadStrategy;
+
+   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
 
    @Inject
    AWSS3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-            @Memoized Supplier<Set<? extends Location>> locations, AWSS3Client sync,
-            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+         @Memoized Supplier<Set<? extends Location>> locations, AWSS3Client sync,
+         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, defaultLocation, locations, sync, bucket2ResourceMd, container2BucketListOptions,
             bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object, object2BlobMd,
             fetchBlobMetadataProvider);
-      multipartUploadStrategy = new SequentialMultipartUploadStrategy(this);
+      this.multipartUploadStrategy = multipartUploadStrategy;
    }
 
-   /* (non-Javadoc)
-    * @see org.jclouds.blobstore.internal.BaseBlobStore#putBlobMultipart(java.lang.String, org.jclouds.blobstore.domain.Blob)
-    */
    @Override
    public String putBlobMultipart(String container, Blob blob) {
-      return multipartUploadStrategy.execute(container, blob);
+      // need to use a provider if the strategy object is stateful
+      return multipartUploadStrategy.get().execute(container, blob);
    }
 }

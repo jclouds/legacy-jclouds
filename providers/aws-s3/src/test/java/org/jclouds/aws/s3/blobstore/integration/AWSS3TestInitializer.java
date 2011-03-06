@@ -26,6 +26,7 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.netty.config.NettyPayloadModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -45,7 +46,7 @@ public class AWSS3TestInitializer extends TransientBlobStoreTestInitializer {
    protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
             String app, String identity, String credential) throws IOException {
       return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
+               new Log4JLoggingModule(), new NettyPayloadModule()), setupProperties(endpoint, apiversion, identity, credential));
    }
 
 }

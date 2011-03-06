@@ -17,10 +17,9 @@
  * ====================================================================
  */
 
-package org.jclouds.io.payloads;
+package org.jclouds.netty.io;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -30,24 +29,24 @@ import org.jboss.netty.handler.stream.ChunkedFile;
 
 /**
  * 
- *
- *
- *
+ * 
+ * 
+ * 
  * @author Tibor Kiss
  */
 public class ChunkedFileInputStream extends InputStream {
-   
+
    private static final int CHUNK_SIZE = 8192;
-   
+
    private ChunkedFile chunks;
    private ChannelBuffer chunk;
-   
+
    private IOException ex;
 
    public ChunkedFileInputStream(String filename, long offset, long length) {
       this(new File(filename), offset, length);
    }
-   
+
    public ChunkedFileInputStream(File file, long offset, long length) {
       try {
          this.chunks = new ChunkedFile(new RandomAccessFile(file, "r"), offset, length, CHUNK_SIZE);
@@ -62,9 +61,9 @@ public class ChunkedFileInputStream extends InputStream {
       }
       if (chunk == null) {
          chunk = ChannelBuffer.class.cast(chunks.nextChunk());
-      }      
+      }
       if (chunk != null) {
-         if (chunk.readableBytes() < 1 && chunks.hasNextChunk()) {            
+         if (chunk.readableBytes() < 1 && chunks.hasNextChunk()) {
             chunk = ChannelBuffer.class.cast(chunks.nextChunk());
             if (chunk.readableBytes() < 1) {
                return null;
@@ -75,7 +74,7 @@ public class ChunkedFileInputStream extends InputStream {
       }
       return chunk;
    }
-   
+
    @Override
    public int read() throws IOException {
       try {
@@ -87,15 +86,15 @@ public class ChunkedFileInputStream extends InputStream {
          int readIndex = chunk.readerIndex();
          byte abyte = chunk.getByte(readIndex);
          chunk.readerIndex(readIndex + 1);
-         return (int)abyte;
+         return (int) abyte;
       } catch (Exception e) {
          throw new IOException(e);
       }
    }
-   
+
    @Override
    public int read(byte[] b, int off, int len) throws IOException {
-      try { 
+      try {
          ChannelBuffer chunk = getChunk();
          if (chunk == null)
             return -1;
@@ -111,7 +110,7 @@ public class ChunkedFileInputStream extends InputStream {
          return readable;
       } catch (Exception e) {
          throw new IOException(e);
-      }      
+      }
    }
 
    @Override

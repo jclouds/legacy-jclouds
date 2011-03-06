@@ -25,7 +25,6 @@ import java.util.Properties;
 import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 
 import com.google.inject.Module;
 

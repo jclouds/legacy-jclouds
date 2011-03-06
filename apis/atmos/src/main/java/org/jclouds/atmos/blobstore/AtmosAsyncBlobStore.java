@@ -250,4 +250,9 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
       return async.deletePath(container + "/" + key);
    }
 
+   @Override
+   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+      return putBlob(container, blob);
+   }
+
 }
