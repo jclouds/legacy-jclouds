@@ -33,6 +33,9 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
  * 
  * 
@@ -65,7 +68,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(
-               setupRestProperties()).createContext(provider, identity, credential).getProviderSpecificContext();
+               setupRestProperties()).createContext(provider, identity, credential, ImmutableSet.<Module> of(),
+               setupProperties()).getProviderSpecificContext();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
