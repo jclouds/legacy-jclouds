@@ -67,7 +67,6 @@ public class Utils {
     * @see Lists2#multiMax
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
    public static <T, E extends T> List<E> multiMax(Comparator<T> ordering, Iterable<E> iterable) {
       return Lists2.<T, E> multiMax(ordering, iterable);
    }
@@ -86,7 +85,6 @@ public class Utils {
     * @see Throwables2#getFirstThrowableOfType(Throwable, Class)
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
       return Throwables2.<T> getFirstThrowableOfType(from, clazz);
    }
@@ -253,7 +251,6 @@ public class Utils {
     * @see Providers#resolveContextBuilderClass
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
    public static <S, A> Class<RestContextBuilder<S, A>> resolveContextBuilderClass(String provider,
             Properties properties) throws ClassNotFoundException, IllegalArgumentException, SecurityException,
             InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -277,7 +274,6 @@ public class Utils {
     * @see Providers#resolvePropertiesBuilderClass
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
    public static Class<PropertiesBuilder> resolvePropertiesBuilderClass(String providerName, Properties props)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
