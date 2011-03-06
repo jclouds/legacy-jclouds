@@ -675,4 +675,10 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return containerToLocation;
    }
 
+   @Override
+   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+      // TODO implement
+      return putBlob(container, blob);
+   }
+
 }

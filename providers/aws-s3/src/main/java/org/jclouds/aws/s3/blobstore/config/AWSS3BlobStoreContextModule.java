@@ -23,15 +23,12 @@ import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobRequestSigner;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
+import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.location.config.RegionsLocationModule;
-import org.jclouds.s3.blobstore.S3BlobRequestSigner;
+import org.jclouds.s3.blobstore.S3AsyncBlobStore;
+import org.jclouds.s3.blobstore.S3BlobStore;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 
 import com.google.inject.Scopes;
@@ -39,21 +36,23 @@ import com.google.inject.TypeLiteral;
 
 /**
  * 
- *
+ * 
  * @author Tibor Kiss
  */
 public class AWSS3BlobStoreContextModule extends S3BlobStoreContextModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreMapModule());
-      install(new RegionsLocationModule());
-      bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
-      bind(AsyncBlobStore.class).to(AWSS3AsyncBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStore.class).to(AWSS3BlobStore.class).in(Scopes.SINGLETON);
+      super.configure();
+      bind(S3AsyncBlobStore.class).to(AWSS3AsyncBlobStore.class).in(Scopes.SINGLETON);
+      bind(S3BlobStore.class).to(AWSS3BlobStore.class).in(Scopes.SINGLETON);
+      bind(MultipartUploadStrategy.class).to(SequentialMultipartUploadStrategy.class);
+   }
+
+   @Override
+   protected void bindContext() {
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AWSS3Client, AWSS3AsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
-      bindBucketLocationStrategy();
    }
+
 }
