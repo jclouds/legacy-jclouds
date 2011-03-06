@@ -22,22 +22,22 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 import static org.jclouds.aws.reference.FormParameters.VERSION;
 
-import java.util.Map;
-
 import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
+import org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.ec2.binders.BindInstanceIdsToIndexedFormParams;
+import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.services.KeyPairAsyncClient;
+import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -45,37 +45,22 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides access to EC2 Monitoring Services via their REST API.
- * <p/>
- * 
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = AWSEC2AsyncClient.VERSION)
 @VirtualHost
-public interface MonitoringAsyncClient {
+public interface AWSKeyPairAsyncClient extends KeyPairAsyncClient {
 
    /**
-    * @see Monitoring#monitorInstancesInRegion
+    * @see KeyPairClient#importKeyPairInRegion
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "MonitorInstances")
-   @XMLResponseParser(MonitoringStateHandler.class)
-   ListenableFuture<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("InstanceId.0") String instanceId,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
-
-   /**
-    * @see Monitoring#monitorInstancesInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "UnmonitorInstances")
-   @XMLResponseParser(MonitoringStateHandler.class)
-   ListenableFuture<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("InstanceId.0") String instanceId,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+   @FormParams(keys = ACTION, values = "ImportKeyPair")
+   @XMLResponseParser(KeyPairResponseHandler.class)
+   ListenableFuture<KeyPair> importKeyPairInRegion(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         @FormParam("KeyName") String keyName,
+         @FormParam("PublicKeyMaterial") @ParamParser(EncodedRSAPublicKeyToBase64.class) String publicKeyMaterial);
 }

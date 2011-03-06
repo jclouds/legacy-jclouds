@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.services.AWSAMIClient;
 import org.jclouds.aws.ec2.services.AWSInstanceClient;
+import org.jclouds.aws.ec2.services.AWSKeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.concurrent.Timeout;
@@ -63,4 +64,10 @@ public interface AWSEC2Client extends EC2Client {
    @Delegate
    MonitoringClient getMonitoringServices();
 
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   AWSKeyPairClient getKeyPairServices();
 }

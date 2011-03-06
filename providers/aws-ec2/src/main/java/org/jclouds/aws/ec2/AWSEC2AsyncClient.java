@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2;
 
 import org.jclouds.aws.ec2.services.AWSAMIAsyncClient;
 import org.jclouds.aws.ec2.services.AWSInstanceAsyncClient;
+import org.jclouds.aws.ec2.services.AWSKeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.ec2.EC2AsyncClient;
@@ -32,7 +33,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface AWSEC2AsyncClient extends EC2AsyncClient {
-   public final static String VERSION = "2010-06-15";
+   public final static String VERSION = "2010-11-15";
 
    /**
     * {@inheritDoc}
@@ -60,4 +61,10 @@ public interface AWSEC2AsyncClient extends EC2AsyncClient {
    @Delegate
    MonitoringAsyncClient getMonitoringServices();
 
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   AWSKeyPairAsyncClient getKeyPairServices();
 }
