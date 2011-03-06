@@ -199,6 +199,22 @@ public interface BlobStore {
     *            if the container doesn't exist
     */
    String putBlob(String container, Blob blob);
+   
+   /**
+    * Adds a {@code Blob} representing the data at location {@code container/blob.metadata.name}
+    * using multipart strategies.
+    * 
+    * @param container
+    *           container to place the blob.
+    * @param blob
+    *           fully qualified name relative to the container.
+    * @param options
+    *           byte range or condition options
+    * @return etag of the blob you uploaded, possibly null where etags are unsupported
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
+   String putBlobMultipart(String container, Blob blob);
 
    /**
     * Retrieves the metadata of a {@code Blob} at location {@code container/name}

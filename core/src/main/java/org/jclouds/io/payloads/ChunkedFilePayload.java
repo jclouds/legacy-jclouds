@@ -17,36 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.s3;
+package org.jclouds.io.payloads;
 
-import java.util.List;
-import java.util.Properties;
+import java.io.File;
+import java.io.InputStream;
 
-import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
-import org.jclouds.aws.s3.config.AWSS3RestClientModule;
-import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+public class ChunkedFilePayload extends FilePayload {
 
-import com.google.inject.Module;
-
-/**
- * 
- * @author Adrian Cole
- */
-public class AWSS3ContextBuilder extends S3ContextBuilder {
-
-   public AWSS3ContextBuilder(Properties props) {
-      super(props);
+   private int part;
+   private long chunkOffset;
+   private long chunkSize;
+   
+   public ChunkedFilePayload(File content) {
+      this(content, 1, 0, content.length());
+   }
+   
+   public ChunkedFilePayload(File content, int part, long chunkOffset, long chunkSize) {
+      super(content);
+      this.part = part;
+      this.chunkOffset = chunkOffset;
+      this.chunkSize = chunkSize;
+   }
+   
+   public int getPart() {
+      return part;
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new AWSS3BlobStoreContextModule());
+   public InputStream getInput() {
+      return new ChunkedFileInputStream(getRawContent(), chunkOffset, chunkSize);
    }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new AWSS3RestClientModule());
-   }
-
 }
