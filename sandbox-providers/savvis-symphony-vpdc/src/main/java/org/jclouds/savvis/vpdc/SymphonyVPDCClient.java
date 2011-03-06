@@ -19,9 +19,11 @@
 
 package org.jclouds.savvis.vpdc;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.savvis.vpdc.domain.SymphonyVPDCVDC;
 import org.jclouds.vcloud.VCloudExpressClient;
 
 /**
@@ -33,5 +35,9 @@ import org.jclouds.vcloud.VCloudExpressClient;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface SymphonyVPDCClient extends VCloudExpressClient {
+   @Override
+   SymphonyVPDCVDC findVDCInOrgNamed(String orgName, String vdcName);
 
+   @Override
+   SymphonyVPDCVDC getVDC(URI vdc);
 }

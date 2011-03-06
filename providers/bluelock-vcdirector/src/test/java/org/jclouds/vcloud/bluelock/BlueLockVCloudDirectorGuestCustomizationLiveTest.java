@@ -34,4 +34,8 @@ public class BlueLockVCloudDirectorGuestCustomizationLiveTest extends VCloudGues
       provider = "bluelock-vcdirector";
    }
 
+   @Override
+   protected void checkApiOutput(String apiOutput) {
+      checkApiOutput1_0_0(apiOutput);
+   }
 }

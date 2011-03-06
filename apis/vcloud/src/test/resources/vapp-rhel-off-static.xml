@@ -310,7 +310,10 @@
                 <AdminPasswordEnabled>true</AdminPasswordEnabled>
                 <AdminPasswordAuto>true</AdminPasswordAuto>
                 <ResetPasswordRequired>false</ResetPasswordRequired>
-                <CustomizationScript>#!/bin/bash if [[ $1 == "postcustomization" ]]; then echo "post customization" touch /root/.postcustomization ping www.redhat.com -c 1 sleep 30 # register with RHN /usr/sbin/rhnreg_ks --profilename vic_`hostname`_`dmidecode -s system-uuid` --activationkey=XXXXXXXXXXXX --force echo "rhn registered" # make hostname fully qualified to speed up sendmail start perl -i -pe "s/`hostname`/`hostname`.victory.blk/g" /etc/sysconfig/network rm /etc/ssh/*_key* service sshd restart echo "completed" fi</CustomizationScript>
+                <CustomizationScript>cat &gt; /root/foo.txt&lt;&lt;EOF
+I '"love"' {asc|!}*&amp;
+EOF
+</CustomizationScript>
                 <ComputerName>RHEL5</ComputerName>
                 <Link rel="edit"
                     type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"

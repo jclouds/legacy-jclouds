@@ -24,12 +24,14 @@ import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.b
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.customizationScript;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.inboundPorts;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.installPrivateKey;
+import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.ipAddressAllocationMode;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payloads;
+import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.testng.annotations.Test;
 
 /**
@@ -38,6 +40,18 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 public class VCloudTemplateOptionsTest {
+   @Test
+   public void testipAddressAllocationMode() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      options.ipAddressAllocationMode(IpAddressAllocationMode.NONE);
+      assertEquals(options.getIpAddressAllocationMode(), IpAddressAllocationMode.NONE);
+   }
+
+   @Test
+   public void testipAddressAllocationModeStatic() {
+      VCloudTemplateOptions options = ipAddressAllocationMode(IpAddressAllocationMode.NONE);
+      assertEquals(options.getIpAddressAllocationMode(), IpAddressAllocationMode.NONE);
+   }
 
    public void testAs() {
       TemplateOptions options = new VCloudTemplateOptions();
@@ -51,16 +65,16 @@ public class VCloudTemplateOptionsTest {
    }
 
    @Test
+   public void testNullcustomizationScript() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      assertEquals(options.getCustomizationScript(), null);
+   }
+
+   @Test
    public void testcustomizationScript() {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
       options.customizationScript("mykeypair");
       assertEquals(options.getCustomizationScript(), "mykeypair");
-   }
-
-   @Test
-   public void testNullcustomizationScript() {
-      VCloudTemplateOptions options = new VCloudTemplateOptions();
-      assertEquals(options.getCustomizationScript(), null);
    }
 
    @Test

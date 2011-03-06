@@ -60,7 +60,7 @@ import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudToken;
@@ -146,7 +146,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Map<String, ? extends Org>> orgToVDCSupplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
                new Supplier<Map<String, String>>() {
                   @Override
                   public Map<String, String> get() {
@@ -193,7 +193,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, ? extends Org>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final OrgMapSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Org>>(authException,
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Org>>(authException,
                seconds, new Supplier<Map<String, ? extends Org>>() {
                   @Override
                   public Map<String, ? extends Org> get() {
@@ -287,7 +287,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final OrgNameToOrgSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
                seconds, new Supplier<Map<String, ReferenceType>>() {
                   @Override
                   public Map<String, ReferenceType> get() {
@@ -300,7 +300,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideURIToVDC(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
                authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
                   @Override
                   public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
@@ -463,7 +463,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> provideOrgCatalogItemMapSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>(
                authException, seconds,
                new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>() {
                   @Override
@@ -478,7 +478,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgVDCSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>(
                authException, seconds,
                new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>() {
                   @Override
@@ -561,7 +561,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> provideOrgCatalogItemSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogItemSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>(
                authException, seconds,
                new Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>() {
                   @Override

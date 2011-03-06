@@ -31,6 +31,8 @@ import org.jclouds.aws.ec2.services.AWSAMIAsyncClient;
 import org.jclouds.aws.ec2.services.AWSAMIClient;
 import org.jclouds.aws.ec2.services.AWSInstanceAsyncClient;
 import org.jclouds.aws.ec2.services.AWSInstanceClient;
+import org.jclouds.aws.ec2.services.AWSKeyPairAsyncClient;
+import org.jclouds.aws.ec2.services.AWSKeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
@@ -50,8 +52,6 @@ import org.jclouds.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.ec2.services.ElasticIPAddressClient;
 import org.jclouds.ec2.services.InstanceAsyncClient;
 import org.jclouds.ec2.services.InstanceClient;
-import org.jclouds.ec2.services.KeyPairAsyncClient;
-import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
@@ -75,7 +75,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
             .put(AWSAMIClient.class, AWSAMIAsyncClient.class)//
             .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
             .put(AWSInstanceClient.class, AWSInstanceAsyncClient.class)//
-            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+            .put(AWSKeyPairClient.class, AWSKeyPairAsyncClient.class)//
             .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
             .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
             .put(MonitoringClient.class, MonitoringAsyncClient.class)//

@@ -456,7 +456,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       assertRequestLineEquals(httpRequest,
             "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&offeringID=offering&size=size",
+      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&size=size&offeringID=offering",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumeFromJson.class);

@@ -38,11 +38,16 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.domain.NetworkConnection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection.Builder;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -50,7 +55,8 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn implements CreateNodeWithGroupEncodedIntoName {
+public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn implements
+      CreateNodeWithGroupEncodedIntoName {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -60,8 +66,8 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    protected final Predicate<URI> successTester;
 
    @Inject
-   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(Predicate<URI> successTester, VCloudClient client,
-            GetNodeMetadataStrategy getNode) {
+   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(Predicate<URI> successTester,
+         VCloudClient client, GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.successTester = successTester;
       this.getNode = getNode;
@@ -70,13 +76,15 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
-               template.getHardware().getRam()).disk(
-               (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));
+            template.getHardware().getRam()).disk(
+            (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));
 
       String customizationScript = null;
+      IpAddressAllocationMode ipAddressAllocationMode = null;
       if (template.getOptions() instanceof VCloudTemplateOptions) {
          customizationScript = VCloudTemplateOptions.class.cast(template.getOptions()).getCustomizationScript();
-         if (customizationScript != null) {
+         ipAddressAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions()).getIpAddressAllocationMode();
+         if (customizationScript != null || ipAddressAllocationMode != null) {
             options.customizeOnInstantiate(false);
             options.deploy(false);
             options.powerOn(false);
@@ -96,39 +104,64 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
       Task task = vAppResponse.getTasks().get(0);
 
-      if (customizationScript == null) {
+      if (customizationScript == null && ipAddressAllocationMode == null) {
          return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
       } else {
          if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String
-                     .format("failed to %s %s: %s", "instantiate", vAppResponse.getName(), task));
+            throw new RuntimeException(
+                  String.format("failed to %s %s: %s", "instantiate", vAppResponse.getName(), task));
          }
          Vm vm = Iterables.get(client.getVApp(vAppResponse.getHref()).getChildren(), 0);
-         GuestCustomizationSection guestConfiguration = vm.getGuestCustomizationSection();
-         // guestConfiguration
-         // .setCustomizationScript(guestConfiguration.getCustomizationScript()
-         // != null ?
-         // guestConfiguration
-         // .getCustomizationScript()
-         // + "\n" + customizationScript : customizationScript);
-         guestConfiguration.setCustomizationScript(customizationScript);
-         task = client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
-         if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "updateGuestCustomizationOfVm", vm
-                     .getName(), task));
-         }
+         if (customizationScript != null)
+            updateVmWithCustomizationScript(vm, customizationScript);
+         if (ipAddressAllocationMode != null)
+            updateVmWithIpAddressAllocationMode(vm, ipAddressAllocationMode);
          task = client.deployAndPowerOnVAppOrVm(vAppResponse.getHref());
          return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
       }
 
    }
 
+   public void updateVmWithCustomizationScript(Vm vm, String customizationScript) {
+      Task task;
+      GuestCustomizationSection guestConfiguration = vm.getGuestCustomizationSection();
+      // TODO: determine if the server version is beyond 1.0.0, and if so append to, but
+      // not overwrite the customization script. In version 1.0.0, the api returns a script that
+      // loses newlines.
+      guestConfiguration.setCustomizationScript(customizationScript);
+      task = client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
+      if (!successTester.apply(task.getHref())) {
+         throw new RuntimeException(String.format("failed to %s %s: %s", "updateGuestCustomizationOfVm", vm.getName(),
+               task));
+      }
+   }
+
+   public void updateVmWithIpAddressAllocationMode(Vm vm, final IpAddressAllocationMode ipAddressAllocationMode) {
+      Task task;
+      NetworkConnectionSection net = vm.getNetworkConnectionSection();
+      Builder builder = net.toBuilder();
+      builder.connections(Iterables.transform(net.getConnections(),
+            new Function<NetworkConnection, NetworkConnection>() {
+
+               @Override
+               public NetworkConnection apply(NetworkConnection arg0) {
+                  return arg0.toBuilder().connected(true).ipAddressAllocationMode(ipAddressAllocationMode).build();
+               }
+
+            }));
+      task = client.updateNetworkConnectionOfVm(vm.getHref(), builder.build());
+      if (!successTester.apply(task.getHref())) {
+         throw new RuntimeException(String.format("failed to %s %s: %s", "updateNetworkConnectionOfVm", vm.getName(),
+               task));
+      }
+   }
+
    private NodeMetadata blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse,
-            Task task) {
+         Task task) {
       if (options.shouldBlock()) {
          if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on", vAppResponse
-                     .getName(), task));
+            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on",
+                  vAppResponse.getName(), task));
          }
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }

@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -48,14 +49,15 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient extends CommonVCloudClient {
-   
+
    /**
     * Get a Screen Thumbnail for a Virtual Machine
     * 
-    * @param vm to snapshot
+    * @param vm
+    *           to snapshot
     */
    InputStream getThumbnailOfVm(URI vm);
-   
+
    /**
     * The response to a login request includes a list of the organizations to which the
     * authenticated user has access.
@@ -68,11 +70,9 @@ public interface VCloudClient extends CommonVCloudClient {
 
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
-   
    /**
-    * The captureVApp request creates a vApp template from an instantiated vApp. 
-    * <h4>Note</h4>
-    * Before it can be captured, a vApp must be undeployed 
+    * The captureVApp request creates a vApp template from an instantiated vApp. <h4>Note</h4>
+    * Before it can be captured, a vApp must be undeployed
     * 
     * @param vDC
     * @param toClone
@@ -98,6 +98,17 @@ public interface VCloudClient extends CommonVCloudClient {
    Task updateGuestCustomizationOfVm(URI vm, GuestCustomizationSection guestCustomizationSection);
 
    /**
+    * Modify the Network Connection Section of a Virtual Machine
+    * 
+    * @param vm
+    *           uri to modify
+    * @param updated
+    *           networkConnectionSection
+    * @return task in progress
+    */
+   Task updateNetworkConnectionOfVm(URI vm, NetworkConnectionSection guestCustomizationSection);
+
+   /**
     * returns the vapp template corresponding to a catalog item in the catalog associated with the
     * specified name. Note that the org and catalog parameters can be null to choose default.
     * 
@@ -112,7 +123,7 @@ public interface VCloudClient extends CommonVCloudClient {
     *            if you specified an org, catalog, or catalog item name that isn't present
     */
    VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
-            String itemName);
+         String itemName);
 
    VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
 

@@ -28,7 +28,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", enabled = false)
 public class SymphonyVPDCTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public SymphonyVPDCTemplateBuilderLiveTest() {

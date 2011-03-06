@@ -43,7 +43,8 @@ public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/guestCustomization.xml");
 
-      GuestCustomizationSection result = factory.create(injector.getInstance(GuestCustomizationSectionHandler.class)).parse(is);
+      GuestCustomizationSection result = factory.create(injector.getInstance(GuestCustomizationSectionHandler.class))
+            .parse(is);
 
       checkGuestCustomization(result);
 
@@ -52,8 +53,8 @@ public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
    @Test(enabled = false)
    public static void checkGuestCustomization(GuestCustomizationSection result) {
       assertEquals(result.getType(), VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML);
-      assertEquals(result.getHref(), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/"));
+      assertEquals(result.getHref(),
+            URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/"));
       assertEquals(result.getInfo(), "Specifies Guest OS Customization Settings");
       assertEquals(result.isEnabled(), new Boolean(true));
       assertEquals(result.shouldChangeSid(), new Boolean(false));
@@ -67,11 +68,11 @@ public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
       assertEquals(result.isAdminPasswordAuto(), new Boolean(true));
       assertEquals(result.getAdminPassword(), null);
       assertEquals(result.isResetPasswordRequired(), new Boolean(false));
-      assertEquals(
-               result.getCustomizationScript(),
-               "#!/bin/bash if [[ $1 == \"postcustomization\" ]]; then echo \"post customization\" touch /root/.postcustomization ping www.redhat.com -c 1 sleep 30 # register with RHN /usr/sbin/rhnreg_ks --profilename vic_`hostname`_`dmidecode -s system-uuid` --activationkey=XXXXXXXXXXXX --force echo \"rhn registered\" # make hostname fully qualified to speed up sendmail start perl -i -pe \"s/`hostname`/`hostname`.victory.blk/g\" /etc/sysconfig/network rm /etc/ssh/*_key* service sshd restart echo \"completed\" fi");
+      assertEquals(result.getCustomizationScript(), "cat > /root/foo.txt<<EOF\nI '\"love\"' {asc|!}*&\nEOF\n");
       assertEquals(result.getComputerName(), "RHEL5");
-      assertEquals(result.getEdit(), new ReferenceTypeImpl(null, VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/")));
+      assertEquals(
+            result.getEdit(),
+            new ReferenceTypeImpl(null, VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML, URI
+                  .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/")));
    }
 }

@@ -33,6 +33,9 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
  * 
  * 
@@ -52,8 +55,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
-               provider, identity, credential).getProviderSpecificContext();
+      RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(setupRestProperties())
+            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -64,8 +67,9 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
-                  provider, identity, credential).getProviderSpecificContext();
+         RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(
+               setupRestProperties()).createContext(provider, identity, credential, ImmutableSet.<Module> of(),
+               setupProperties()).getProviderSpecificContext();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

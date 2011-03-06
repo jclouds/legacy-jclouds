@@ -56,9 +56,9 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
 
    public GuestCustomizationSection getResult() {
       GuestCustomizationSection system = new GuestCustomizationSection(guest.getType(), guest.getHref(), info, enabled,
-               changeSid, virtualMachineId, joinDomainEnabled, useOrgSettings, domainName, domainUserName,
-               domainUserPassword, adminPasswordEnabled, adminPasswordAuto, adminPassword, resetPasswordRequired,
-               customizationScript, computerName, edit);
+            changeSid, virtualMachineId, joinDomainEnabled, useOrgSettings, domainName, domainUserName,
+            domainUserPassword, adminPasswordEnabled, adminPasswordAuto, adminPassword, resetPasswordRequired,
+            customizationScript, computerName, edit);
       this.guest = null;
       this.info = null;
       this.edit = null;
@@ -81,6 +81,7 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = cleanseAttributes(attrs);
+      this.currentText = new StringBuilder();
       if (qName.endsWith("GuestCustomizationSection")) {
          guest = newReferenceType(attributes);
       } else if (qName.endsWith("Link") && "edit".equals(attributes.get("rel"))) {
@@ -119,8 +120,7 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
       } else if (qName.endsWith("CustomizationScript")) {
          this.customizationScript = currentOrNull();
          if (this.customizationScript != null)
-            customizationScript = customizationScript.replace("&lt;", "<").replace(">", "&gt;").replace("&quot;", "\"")
-                     .replace("&apos;", "'").replace("&#13;", "\r\n").replace("&#13;", "\n").replace("&amp;", "&");
+            customizationScript = customizationScript.replace("&gt;", ">");
       } else if (qName.endsWith("ComputerName")) {
          this.computerName = currentOrNull();
       } else if (qName.endsWith("Name")) {
@@ -134,7 +134,7 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
    }
 
    protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
+      String returnVal = currentText.toString();
       return returnVal.equals("") ? null : returnVal;
    }
 }

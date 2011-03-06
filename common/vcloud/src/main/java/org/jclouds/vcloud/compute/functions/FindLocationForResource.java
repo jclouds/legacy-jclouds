@@ -63,8 +63,7 @@ public class FindLocationForResource {
             // link that only includes href and type.
             if (URI.create(input.getId()).equals(resource.getHref()))
                return input;
-            input = input.getParent();
-         } while (input.getParent() != null);
+         } while ((input = input.getParent()) != null);
       }
       throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource, locations
                .get()));

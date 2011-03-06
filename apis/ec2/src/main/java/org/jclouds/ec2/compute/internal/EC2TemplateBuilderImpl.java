@@ -52,9 +52,9 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
    @Inject
    protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-            Supplier<Location> defaultLocation, Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+         Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
    }
@@ -85,8 +85,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
          if (imageId != null) {
             String[] regionName = imageId.split("/");
             checkArgument(regionName.length == 2,
-                     "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: "
-                              + imageId);
+                  "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: " + imageId);
             RegionAndName key = new RegionAndName(regionName[0], regionName[1]);
             try {
                return imageMap.get(key);
