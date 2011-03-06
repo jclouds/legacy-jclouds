@@ -32,6 +32,7 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -125,6 +126,12 @@ public interface AsyncBlobStore {
     * @see BlobStore#putBlob
     */
    ListenableFuture<String> putBlob(String container, Blob blob);
+
+   /**
+    * @see BlobStore#putBlobMultipart
+    */
+   @Beta
+   ListenableFuture<String> putBlobMultipart(String container, Blob blob);
 
    /**
     * @see BlobStore#blobMetadata

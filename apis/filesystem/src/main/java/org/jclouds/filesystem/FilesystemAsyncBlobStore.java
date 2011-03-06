@@ -660,4 +660,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
       return eTag;
    }
+   
+   @Override
+   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+      return putBlob(container, blob);
+   }
+
 }

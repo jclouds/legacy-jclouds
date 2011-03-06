@@ -17,34 +17,26 @@
  * ====================================================================
  */
 
-package org.jclouds.io.payloads;
+package org.jclouds.netty.io;
 
 import java.io.File;
-import java.io.InputStream;
 
-public class ChunkedFilePayload extends FilePayload {
+import javax.inject.Singleton;
 
-   private int part;
-   private long chunkOffset;
-   private long chunkSize;
-   
-   public ChunkedFilePayload(File content) {
-      this(content, 1, 0, content.length());
-   }
-   
-   public ChunkedFilePayload(File content, int part, long chunkOffset, long chunkSize) {
-      super(content);
-      this.part = part;
-      this.chunkOffset = chunkOffset;
-      this.chunkSize = chunkSize;
-   }
-   
-   public int getPart() {
-      return part;
-   }
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.internal.BasePayloadSlicer;
+
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
+public class NettyPayloadSlicer extends BasePayloadSlicer {
 
    @Override
-   public InputStream getInput() {
-      return new ChunkedFileInputStream(getRawContent(), chunkOffset, chunkSize);
+   protected Payload doSlice(File content, long offset, long length) {
+      return Payloads.newInputStreamPayload(new ChunkedFileInputStream(content, offset, length));
    }
+
 }
