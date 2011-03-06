@@ -27,7 +27,6 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -420,6 +419,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder fromTemplate(Template template) {
       fromHardware(template.getHardware());
       fromImage(template.getImage());
+      options(template.getOptions());
       return this;
    }
 
@@ -810,31 +810,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder options(TemplateOptions options) {
       this.options = optionsProvider.get();
-      copyTemplateOptions(checkNotNull(options, "options"), this.options);
+      checkNotNull(options, "options").copyTo(this.options);
       return this;
-   }
-
-   protected void copyTemplateOptions(TemplateOptions from, TemplateOptions to) {
-      if (!Arrays.equals(to.getInboundPorts(), from.getInboundPorts()))
-         to.inboundPorts(from.getInboundPorts());
-      if (from.getRunScript() != null)
-         to.runScript(from.getRunScript());
-      if (from.getPrivateKey() != null)
-         to.installPrivateKey(from.getPrivateKey());
-      if (from.getPublicKey() != null)
-         to.authorizePublicKey(from.getPublicKey());
-      if (from.getPort() != -1)
-         to.blockOnPort(from.getPort(), from.getSeconds());
-      if (from.isIncludeMetadata())
-         to.withMetadata();
-      if (!from.shouldBlockUntilRunning())
-         to.blockUntilRunning(false);
-      if (!from.shouldBlockOnComplete())
-         to.blockOnComplete(false);
-      if (from.getOverrideCredentials() != null)
-         to.withOverridingCredentials(from.getOverrideCredentials());
-      if (from.getTaskName() != null)
-         to.nameTask(from.getTaskName());
    }
 
    @VisibleForTesting

@@ -37,7 +37,6 @@ import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
@@ -57,25 +56,6 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
          @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
-   }
-
-   @Override
-   protected void copyTemplateOptions(TemplateOptions from, TemplateOptions to) {
-      super.copyTemplateOptions(from, to);
-      if (from instanceof EC2TemplateOptions) {
-         EC2TemplateOptions eFrom = EC2TemplateOptions.class.cast(from);
-         EC2TemplateOptions eTo = EC2TemplateOptions.class.cast(to);
-         if (eFrom.getGroupIds().size() > 0)
-            eTo.securityGroups(eFrom.getGroupIds());
-         if (eFrom.getKeyPair() != null)
-            eTo.keyPair(eFrom.getKeyPair());
-         if (eFrom.getBlockDeviceMappings().size() > 0)
-            eTo.blockDeviceMappings(eFrom.getBlockDeviceMappings());
-         if (!eFrom.shouldAutomaticallyCreateKeyPair())
-            eTo.noKeyPair();
-         if (eFrom.getUserData() != null)
-            eTo.userData(eFrom.getUserData());
-      }
    }
 
    final Provider<Image> lazyImageProvider = new Provider<Image>() {

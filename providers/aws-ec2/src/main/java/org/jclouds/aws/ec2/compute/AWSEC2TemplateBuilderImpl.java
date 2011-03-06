@@ -51,22 +51,4 @@ public class AWSEC2TemplateBuilderImpl extends EC2TemplateBuilderImpl {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider, imageMap);
    }
 
-   @Override
-   protected void copyTemplateOptions(TemplateOptions from, TemplateOptions to) {
-      super.copyTemplateOptions(from, to);
-      if (from instanceof AWSEC2TemplateOptions) {
-         AWSEC2TemplateOptions eFrom = AWSEC2TemplateOptions.class.cast(from);
-         AWSEC2TemplateOptions eTo = AWSEC2TemplateOptions.class.cast(to);
-
-         if (eFrom.getSubnetId() != null)
-            eTo.subnetId(eFrom.getSubnetId());
-         if (eFrom.isMonitoringEnabled())
-            eTo.enableMonitoring();
-         if (!eFrom.shouldAutomaticallyCreatePlacementGroup())
-            eTo.noPlacementGroup();
-         if (eFrom.getPlacementGroup() != null)
-            eTo.placementGroup(eFrom.getPlacementGroup());
-      }
-   }
-
 }

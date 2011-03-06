@@ -52,7 +52,29 @@ import org.jclouds.util.Preconditions2;
  * 
  * @author Adrian Cole
  */
-public class AWSEC2TemplateOptions extends EC2TemplateOptions {
+public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneable {
+   @Override
+   public AWSEC2TemplateOptions clone() {
+      AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+      copyTo(options);
+      return options;
+   }
+
+   @Override
+   public void copyTo(TemplateOptions to) {
+      super.copyTo(to);
+      if (to instanceof AWSEC2TemplateOptions) {
+         AWSEC2TemplateOptions eTo = AWSEC2TemplateOptions.class.cast(to);
+         if (getSubnetId() != null)
+            eTo.subnetId(getSubnetId());
+         if (isMonitoringEnabled())
+            eTo.enableMonitoring();
+         if (!shouldAutomaticallyCreatePlacementGroup())
+            eTo.noPlacementGroup();
+         if (getPlacementGroup() != null)
+            eTo.placementGroup(getPlacementGroup());
+      }
+   }
 
    private boolean monitoringEnabled;
    private String placementGroup = null;
@@ -114,7 +136,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        * @see EC2TemplateOptions#mapEBSSnapshotToDeviceName
        */
       public static AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
-               @Nullable Integer sizeInGib, boolean deleteOnTermination) {
+            @Nullable Integer sizeInGib, boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib, deleteOnTermination);
       }
@@ -123,7 +145,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
        * @see EC2TemplateOptions#mapNewVolumeToDeviceName
        */
       public static AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib,
-               boolean deleteOnTermination) {
+            boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination);
       }
@@ -290,9 +312,9 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
 
    @Override
    public AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId, Integer sizeInGib,
-            boolean deleteOnTermination) {
+         boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib,
-               deleteOnTermination));
+            deleteOnTermination));
    }
 
    /**
@@ -309,7 +331,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
    @Override
    public AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super
-               .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
+            .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
    }
 
    /**
@@ -471,8 +493,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
     * {@inheritDoc}
     */
    @Override
-   public AWSEC2TemplateOptions withOverridingCredentials(Credentials overridingCredentials) {
-      return AWSEC2TemplateOptions.class.cast(super.withOverridingCredentials(overridingCredentials));
+   public AWSEC2TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
+      return AWSEC2TemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
    }
 
    /**
@@ -544,9 +566,9 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions {
    public String toString() {
 
       return "[groupIds=" + getGroupIds() + ", keyPair=" + getKeyPair() + ", noKeyPair="
-               + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
-               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
-               + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + "]";
+            + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
+            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
+            + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + "]";
    }
 
 }

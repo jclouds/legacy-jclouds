@@ -45,7 +45,25 @@ import org.jclouds.util.Preconditions2;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudTemplateOptions extends TemplateOptions {
+public class TerremarkVCloudTemplateOptions extends TemplateOptions implements Cloneable {
+   @Override
+   public TerremarkVCloudTemplateOptions clone() {
+      TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
+      copyTo(options);
+      return options;
+   }
+
+   @Override
+   public void copyTo(TemplateOptions to) {
+      super.copyTo(to);
+      if (to instanceof TerremarkVCloudTemplateOptions) {
+         TerremarkVCloudTemplateOptions eTo = TerremarkVCloudTemplateOptions.class.cast(to);
+         if (noKeyPair)
+            eTo.noKeyPair();
+         if (keyPair != null)
+            eTo.keyPair = keyPair;
+      }
+   }
 
    private String keyPair = null;
    private boolean noKeyPair;
@@ -276,9 +294,9 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
    @Override
    public String toString() {
       return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", inboundPorts="
-               + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-               + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-               + ", metadata/details: " + includeMetadata + "]";
+            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+            + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

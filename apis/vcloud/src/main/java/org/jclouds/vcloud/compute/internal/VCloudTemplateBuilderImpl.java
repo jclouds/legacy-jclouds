@@ -32,7 +32,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 
 import com.google.common.base.Supplier;
 
@@ -49,18 +48,4 @@ public class VCloudTemplateBuilderImpl extends TemplateBuilderImpl {
          @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
    }
-
-   @Override
-   protected void copyTemplateOptions(TemplateOptions from, TemplateOptions to) {
-      super.copyTemplateOptions(from, to);
-      if (from instanceof VCloudTemplateOptions) {
-         VCloudTemplateOptions eFrom = VCloudTemplateOptions.class.cast(from);
-         VCloudTemplateOptions eTo = VCloudTemplateOptions.class.cast(to);
-         if (eFrom.getCustomizationScript() != null)
-            eTo.customizationScript(eFrom.getCustomizationScript());
-         if (eFrom.getIpAddressAllocationMode() != null)
-            eTo.ipAddressAllocationMode(eFrom.getIpAddressAllocationMode());
-      }
-   }
-
 }

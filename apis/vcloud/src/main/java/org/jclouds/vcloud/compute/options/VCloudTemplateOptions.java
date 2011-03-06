@@ -43,7 +43,25 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
  * 
  * @author Adrian Cole
  */
-public class VCloudTemplateOptions extends TemplateOptions {
+public class VCloudTemplateOptions extends TemplateOptions implements Cloneable {
+   @Override
+   public VCloudTemplateOptions clone() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      copyTo(options);
+      return options;
+   }
+
+   @Override
+   public void copyTo(TemplateOptions to) {
+      super.copyTo(to);
+      if (to instanceof VCloudTemplateOptions) {
+         VCloudTemplateOptions eTo = VCloudTemplateOptions.class.cast(to);
+         if (getCustomizationScript() != null)
+            eTo.customizationScript(getCustomizationScript());
+         if (getIpAddressAllocationMode() != null)
+            eTo.ipAddressAllocationMode(getIpAddressAllocationMode());
+      }
+   }
 
    private String customizationScript = null;
    private IpAddressAllocationMode ipAddressAllocationMode = null;

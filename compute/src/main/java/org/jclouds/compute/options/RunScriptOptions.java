@@ -54,8 +54,8 @@ public class RunScriptOptions {
       }
 
       @Override
-      public Credentials getOverrideCredentials() {
-         return delegate.getOverrideCredentials();
+      public Credentials getOverridingCredentials() {
+         return delegate.getOverridingCredentials();
 
       }
 
@@ -82,7 +82,22 @@ public class RunScriptOptions {
       }
 
       @Override
-      public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
+      public RunScriptOptions overrideLoginUserWith(String loginUser) {
+         throw new IllegalArgumentException("loginUser is immutable");
+      }
+
+      @Override
+      public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
+         throw new IllegalArgumentException("loginCredential is immutable");
+      }
+
+      @Override
+      public RunScriptOptions wrapInInitScript(boolean wrapInInitScript) {
+         throw new IllegalArgumentException("wrapInInitScript is immutable");
+      }
+
+      @Override
+      public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
          throw new IllegalArgumentException("overridingCredentials is immutable");
       }
 
@@ -120,17 +135,31 @@ public class RunScriptOptions {
    protected boolean blockOnComplete = true;
    protected boolean wrapInInitScript = true;
 
-   public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
+   public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
-      checkNotNull(overridingCredentials.identity, "overridingCredentials.identity");
-      checkNotNull(overridingCredentials.credential, "overridingCredentials.key");
       this.overridingCredentials = overridingCredentials;
       return this;
    }
 
+   public RunScriptOptions overrideLoginUserWith(String loginUser) {
+      checkNotNull(loginUser, "loginUser");
+      org.jclouds.domain.Credentials.Builder<? extends Credentials> builder = overridingCredentials != null ? overridingCredentials
+            .toBuilder() : new Credentials.Builder<Credentials>();
+      this.overridingCredentials = builder.identity(loginUser).build();
+      return this;
+   }
+
+   public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
+      checkNotNull(loginCredential, "loginCredential");
+      org.jclouds.domain.Credentials.Builder<? extends Credentials> builder = overridingCredentials != null ? overridingCredentials
+            .toBuilder() : new Credentials.Builder<Credentials>();
+      this.overridingCredentials = builder.credential(loginCredential).build();
+      return this;
+   }
+
    /**
-    * @return What to call the task relating to this script; default {@code
-    *         jclouds-script-timestamp} where timestamp is millis since epoch
+    * @return What to call the task relating to this script; default
+    *         {@code jclouds-script-timestamp} where timestamp is millis since epoch
     * 
     */
    public RunScriptOptions nameTask(String name) {
@@ -191,7 +220,7 @@ public class RunScriptOptions {
     * 
     * @return value
     */
-   public Credentials getOverrideCredentials() {
+   public Credentials getOverridingCredentials() {
       return overridingCredentials;
    }
 
@@ -229,9 +258,19 @@ public class RunScriptOptions {
          return options.nameTask(name);
       }
 
+      public static RunScriptOptions overrideLoginUserWith(String user) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.overrideLoginUserWith(user);
+      }
+
+      public static RunScriptOptions overrideLoginCredentialWith(String credential) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.overrideLoginCredentialWith(credential);
+      }
+
       public static RunScriptOptions overrideCredentialsWith(Credentials credentials) {
          RunScriptOptions options = new RunScriptOptions();
-         return options.withOverridingCredentials(credentials);
+         return options.overrideCredentialsWith(credentials);
       }
 
       public static RunScriptOptions runAsRoot(boolean value) {
@@ -259,8 +298,8 @@ public class RunScriptOptions {
    @Override
    public String toString() {
       return "[overridingCredentials=" + (overridingCredentials != null) + ", port:seconds=" + port + ":" + seconds
-               + ", runAsRoot=" + runAsRoot + ", blockOnComplete=" + blockOnComplete + ", wrapInInitScript=" + wrapInInitScript
-               + "]";
+            + ", runAsRoot=" + runAsRoot + ", blockOnComplete=" + blockOnComplete + ", wrapInInitScript="
+            + wrapInInitScript + "]";
    }
 
 }
