@@ -17,42 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.binders;
+package org.jclouds.aws.ec2.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
- * Binds the AvailabilityZone to a form parameter if set.
+ * Binds the String [] to form parameters named with SpotInstanceRequestId.index
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
-   private final String param;
-
-   @Inject
-   protected IfNotNullBindAvailabilityZoneToFormParam() {
-      this("Placement.AvailabilityZone");
-   }
-
-   protected IfNotNullBindAvailabilityZoneToFormParam(String param) {
-      this.param = param;
-   }
-
+public class BindSpotInstanceRequestIdsToIndexedFormParams implements Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      if (input != null) {
-         checkArgument(input instanceof String, "this binder is only valid for String!");
-         return ModifyRequest.addFormParam(request, param, (String) input);
-      }
-      return request;
+      return AWSUtils.indexStringArrayToFormValuesWithPrefix(request, "SpotInstanceRequestId", input);
    }
 
 }

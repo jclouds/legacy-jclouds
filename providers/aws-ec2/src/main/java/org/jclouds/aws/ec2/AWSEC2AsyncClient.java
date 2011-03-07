@@ -24,6 +24,7 @@ import org.jclouds.aws.ec2.services.AWSInstanceAsyncClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
+import org.jclouds.aws.ec2.services.SpotInstanceAsyncClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -67,4 +68,10 @@ public interface AWSEC2AsyncClient extends EC2AsyncClient {
    @Delegate
    @Override
    AWSKeyPairAsyncClient getKeyPairServices();
+
+   /**
+    * Provides asynchronous access to SpotInstance services.
+    */
+   @Delegate
+   SpotInstanceAsyncClient getSpotInstanceServices();
 }

@@ -26,6 +26,7 @@ import org.jclouds.aws.ec2.services.AWSInstanceClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
+import org.jclouds.aws.ec2.services.SpotInstanceClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.rest.annotations.Delegate;
@@ -70,4 +71,10 @@ public interface AWSEC2Client extends EC2Client {
    @Delegate
    @Override
    AWSKeyPairClient getKeyPairServices();
+   
+   /**
+    * Provides synchronous access to SpotInstance services.
+    */
+   @Delegate
+   SpotInstanceClient getSpotInstanceServices();
 }
