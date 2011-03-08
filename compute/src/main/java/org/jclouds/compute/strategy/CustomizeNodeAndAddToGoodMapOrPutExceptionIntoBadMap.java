@@ -36,6 +36,7 @@ import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -130,9 +131,11 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
             if (nodeRunning.apply(node)) {
                node = getNode.getNode(node.getId());
             } else {
+               NodeMetadata nodeForState = getNode.getNode(node.getId());
+               NodeState state = nodeForState == null ? NodeState.TERMINATED : nodeForState.getState();
                throw new IllegalStateException(String.format(
                         "node didn't achieve the state running on node %s within %d seconds, final state: %s", node
-                                 .getId(), timeouts.nodeRunning / 1000, node.getState()));
+                                 .getId(), timeouts.nodeRunning / 1000, state));
             }
             if (statement != null) {
                RunScriptOnNode runner = initScriptRunnerFactory.create(node, statement, options, badNodes).call();
