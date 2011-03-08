@@ -17,7 +17,9 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.predicates;
+package org.jclouds.ec2.compute.predicates;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.NoSuchElementException;
 
@@ -25,7 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
 
@@ -35,12 +37,10 @@ import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a task succeeds.
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class InstancePresent implements Predicate<RunningInstance> {
+public class InstancePresent implements Predicate<RegionAndName> {
 
    private final EC2Client client;
 
@@ -49,13 +49,13 @@ public class InstancePresent implements Predicate<RunningInstance> {
 
    @Inject
    public InstancePresent(EC2Client client) {
-      this.client = client;
+      this.client = checkNotNull(client, "client");
    }
 
-   public boolean apply(RunningInstance instance) {
-      logger.trace("looking for instance %s", instance);
+   public boolean apply(RegionAndName instance) {
+      logger.trace("looking for instance %s/%s", instance.getRegion(), instance.getName());
       try {
-         instance = refresh(instance);
+         refresh(instance);
          return true;
       } catch (ResourceNotFoundException e) {
          return false;
@@ -64,8 +64,8 @@ public class InstancePresent implements Predicate<RunningInstance> {
       }
    }
 
-   private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(
-               instance.getRegion(), instance.getId())));
+   protected void refresh(RegionAndName instance) {
+      Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(
+               instance.getRegion(), instance.getName())));
    }
 }

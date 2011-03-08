@@ -41,6 +41,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -49,10 +50,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -84,7 +82,7 @@ public class AWSKeyPairClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
+               + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint", null);
       apiversion = System.getProperty("test." + provider + ".apiversion", null);
    }
@@ -106,8 +104,8 @@ public class AWSKeyPairClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+      computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new JschSshClientModule()), overrides);
       context = computeContext.getProviderSpecificContext();
       client = context.getApi().getKeyPairServices();
    }
@@ -116,19 +114,19 @@ public class AWSKeyPairClientLiveTest {
 
       Map<String, String> keyPair = ComputeTestUtils.setupKeyPair();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.getApi()).getInstanceServices();
+      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(context.getApi()).getInstanceServices();
 
       String group = PREFIX + "unssh";
       computeContext.getComputeService().destroyNodesMatching(inGroup(group));
 
       TemplateOptions options = computeContext.getComputeService().templateOptions();
 
-      options.authorizePublicKey(keyPair.get("public"));
+      options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
       ComputeServiceContext noSshContext = null;
       try {
-         noSshContext = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.of(new Log4JLoggingModule()), setupProperties());
+         noSshContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .of(new Log4JLoggingModule()), setupProperties());
 
          Set<? extends NodeMetadata> nodes = noSshContext.getComputeService().createNodesInGroup(group, 1, options);
 
@@ -136,18 +134,19 @@ public class AWSKeyPairClientLiveTest {
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
 
-         AWSRunningInstance instance = AWSRunningInstance.class
-               .cast(getInstance(instanceClient, first.getProviderId()));
+         AWSRunningInstance instance = getInstance(instanceClient, first.getProviderId());
 
+         assert instance.getSpotInstanceRequestId() != null : instance;
          assertEquals(instance.getKeyName(), "jclouds#" + group);
          assertEquals(first.getCredentials().credential, null);
 
          Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
-               .runScriptOnNodesMatching(
-                     runningInGroup(group),
-                     exec("echo hello"),
-                     overrideCredentialsWith(new Credentials(first.getCredentials().identity, keyPair.get("private")))
-                           .wrapInInitScript(false).runAsRoot(false));
+                  .runScriptOnNodesMatching(
+                           runningInGroup(group),
+                           exec("echo hello"),
+                           overrideCredentialsWith(
+                                    new Credentials(first.getCredentials().identity, keyPair.get("private")))
+                                    .wrapInInitScript(false).runAsRoot(false));
 
          ExecResponse hello = getOnlyElement(responses.values());
          assertEquals(hello.getOutput().trim(), "hello");
@@ -235,9 +234,8 @@ public class AWSKeyPairClientLiveTest {
       assertEquals(listPair.getKeyFingerprint(), keyPair.getKeyFingerprint());
    }
 
-   protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
-      RunningInstance instance = getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
-      return instance;
+   protected AWSRunningInstance getInstance(AWSInstanceClient instanceClient, String id) {
+      return getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
    }
 
    @AfterTest

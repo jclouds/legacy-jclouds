@@ -21,11 +21,8 @@ package org.jclouds.ec2.compute.util;
 
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-
-import com.google.common.base.Function;
 
 /**
  * 
@@ -33,13 +30,6 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class EC2ComputeUtils {
-
-   public static Function<RunningInstance, String> instanceToId = new Function<RunningInstance, String>() {
-      @Override
-      public String apply(RunningInstance from) {
-         return from.getId();
-      }
-   };
 
    public static String getZoneFromLocationOrNull(Location location) {
       return location.getScope() == LocationScope.ZONE ? location.getId() : null;

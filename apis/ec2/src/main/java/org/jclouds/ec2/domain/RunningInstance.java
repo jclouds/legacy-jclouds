@@ -39,6 +39,9 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class RunningInstance implements Comparable<RunningInstance> {
+   public static Builder builder() {
+      return new Builder();
+   }
 
    public static class Builder {
       protected String region;
@@ -265,8 +268,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.ipAddress = ipAddress;
       this.kernelId = kernelId;
       this.keyName = keyName;
-      this.launchTime = checkNotNull(launchTime, "launchTime");
-      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
+      this.launchTime = launchTime;// nullable on spot.
+      this.availabilityZone = availabilityZone;// nullable on spot.
       this.virtualizationType = virtualizationType;
       this.platform = platform;
       this.privateDnsName = privateDnsName;// nullable on runinstances.

@@ -73,7 +73,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    protected final Map<InstanceState, NodeState> instanceToNodeState;
 
    @Inject
-   RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
+   protected RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
             Map<String, Credentials> credentialStore, Map<RegionAndName, Image> instanceToImage,
             @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
       this.locations = checkNotNull(locations, "locations");
@@ -85,13 +85,14 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @Override
    public NodeMetadata apply(RunningInstance instance) {
+      if (instance == null || instance.getId() == null)
+         return null;
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
-      String providerId = checkNotNull(instance, "instance").getId();
-      builder.providerId(providerId);
-      builder.id(instance.getRegion() + "/" + providerId);
+      builder.providerId(instance.getId());
+      builder.id(instance.getRegion() + "/" + instance.getId());
       String group = getGroupForInstance(instance);
       builder.group(group);
-      builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + providerId));
+      addCredentialsForInstance(builder, instance);
       builder.state(instanceToNodeState.get(instance.getInstanceState()));
       builder.publicAddresses(NullSafeCollections.nullSafeSet(instance.getIpAddress()));
       builder.privateAddresses(NullSafeCollections.nullSafeSet(instance.getPrivateIpAddress()));
@@ -104,19 +105,23 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       RegionAndName regionAndName = new RegionAndName(instance.getRegion(), instance.getImageId());
       try {
          Image image = instanceToImage.get(regionAndName);
-          if (image != null)
-              builder.operatingSystem(image.getOperatingSystem());
-      }
-      catch (NullPointerException e) {
-          // The instanceToImage Map may throw NullPointerException (actually subclass NullOutputException) if the
-          // computing Function returns a null value.
-          //
-          // See the following for more information:
-          // MapMaker.makeComputingMap()
-          // RegionAndIdToImage.apply()
+         if (image != null)
+            builder.operatingSystem(image.getOperatingSystem());
+      } catch (NullPointerException e) {
+         // The instanceToImage Map may throw NullPointerException (actually subclass
+         // NullOutputException) if the
+         // computing Function returns a null value.
+         //
+         // See the following for more information:
+         // MapMaker.makeComputingMap()
+         // RegionAndIdToImage.apply()
       }
 
       return builder.build();
+   }
+
+   protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {
+      builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId()));
    }
 
    protected Hardware parseHardware(final RunningInstance instance) {
@@ -171,9 +176,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       } catch (NoSuchElementException e) {
          logger.debug("no group parsed from %s's security groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
-         logger
-                  .debug("too many groups match %s; %s's security groups: %s", "jclouds#", instance.getId(), instance
-                           .getGroupIds());
+         logger.debug("too many groups match %s; %s's security groups: %s", "jclouds#", instance.getId(), instance
+                  .getGroupIds());
       }
       return group;
    }
@@ -203,6 +207,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    private Location findLocationWithId(final String locationId) {
+      if (locationId == null)
+         return null;
       try {
          Location location = Iterables.find(locations.get(), new Predicate<Location>() {
 

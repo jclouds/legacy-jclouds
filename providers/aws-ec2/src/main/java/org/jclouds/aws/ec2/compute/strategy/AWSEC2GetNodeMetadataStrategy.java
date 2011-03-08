@@ -17,58 +17,52 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute.strategy;
+package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getOnlyElement;
 
-import java.util.NoSuchElementException;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
+import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+public class AWSEC2GetNodeMetadataStrategy extends EC2GetNodeMetadataStrategy {
 
-   private final EC2Client client;
-   private final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
+   private final AWSEC2Client client;
+   private final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected EC2GetNodeMetadataStrategy(EC2Client client,
-            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata) {
+   protected AWSEC2GetNodeMetadataStrategy(AWSEC2Client client,
+            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+            SpotInstanceRequestToAWSRunningInstance spotConverter) {
+      super(client, runningInstanceToNodeMetadata);
       this.client = checkNotNull(client, "client");
-      this.runningInstanceToNodeMetadata = checkNotNull(runningInstanceToNodeMetadata, "runningInstanceToNodeMetadata");
+      this.spotConverter = checkNotNull(spotConverter, "spotConverter");
    }
 
    @Override
-   public NodeMetadata getNode(String id) {
-      checkNotNull(id, "id");
-      String[] parts = AWSUtils.parseHandle(id);
-      String region = parts[0];
-      String instanceId = parts[1];
-      try {
-         RunningInstance runningInstance = getRunningInstanceInRegion(region, instanceId);
-         return runningInstanceToNodeMetadata.apply(runningInstance);
-      } catch (NoSuchElementException e) {
-         return null;
-      }
-   }
-
    public RunningInstance getRunningInstanceInRegion(String region, String id) {
-      return getOnlyElement(Iterables.concat(client.getInstanceServices().describeInstancesInRegion(region, id)));
+      if (id.indexOf("sir-") != 0)
+         return super.getRunningInstanceInRegion(region, id);
+      SpotInstanceRequest spot = getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+               region, id));
+      if (spot.getState() == SpotInstanceRequest.State.ACTIVE)
+         return super.getRunningInstanceInRegion(region, spot.getInstanceId());
+      else
+         return spotConverter.apply(spot);
    }
 
 }
