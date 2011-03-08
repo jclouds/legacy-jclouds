@@ -57,8 +57,9 @@ public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest>
          spot = refresh(spot);
          logger.trace("%s: looking for spot state %s: currently: %s", spot.getId(), SpotInstanceRequest.State.ACTIVE,
                   spot.getState());
-         if (spot.getState() == SpotInstanceRequest.State.CANCELLED)
-            throw new IllegalStateException(String.format("spot request %s cancelled", spot.getId()));
+         if (spot.getState() == SpotInstanceRequest.State.CANCELLED
+                  || spot.getState() == SpotInstanceRequest.State.CLOSED)
+            throw new IllegalStateException(String.format("spot request %s %s", spot.getId(), spot.getState()));
          if (spot.getFaultCode() != null)
             throw new IllegalStateException(String.format("spot request %s fault code(%s) message(%s)", spot.getId(),
                      spot.getFaultCode(), spot.getFaultMessage()));
