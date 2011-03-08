@@ -19,14 +19,16 @@
 
 package org.jclouds.predicates;
 
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
+
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Predicate;
 
@@ -75,10 +77,16 @@ public class RetryablePredicate<T> implements Predicate<T> {
       } catch (InterruptedException e) {
          logger.warn(e, "predicate %s on %s interrupted, returning false", input, predicate);
       } catch (RuntimeException e) {
-         ExecutionException exec = Throwables2.getFirstThrowableOfType(e, ExecutionException.class);
-         if (exec != null)
-            logger.warn(exec, "predicate %s on %s error, returning false", input, predicate);
-         else
+         if (getFirstThrowableOfType(e, ExecutionException.class) != null) {
+            logger.warn(e, "predicate %s on %s errored [%s], returning false", input, predicate, e.getMessage());
+            return false;
+         } else if (getFirstThrowableOfType(e, IllegalStateException.class) != null) {
+            logger.warn(e, "predicate %s on %s illegal state [%s], returning false", input, predicate, e.getMessage());
+            return false;
+         } else if (getFirstThrowableOfType(e, TimeoutException.class) != null) {
+            logger.warn(e, "predicate %s on %s timed out [%s], returning false", input, predicate, e.getMessage());
+            return false;
+         } else
             throw e;
       }
       return false;

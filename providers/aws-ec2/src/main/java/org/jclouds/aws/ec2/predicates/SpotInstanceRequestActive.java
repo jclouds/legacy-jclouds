@@ -20,7 +20,6 @@
 package org.jclouds.aws.ec2.predicates;
 
 import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
@@ -31,7 +30,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -58,16 +56,12 @@ public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest>
       try {
          spot = refresh(spot);
          logger.trace("%s: looking for spot state %s: currently: %s", spot.getId(), SpotInstanceRequest.State.ACTIVE,
-               spot.getState());
+                  spot.getState());
          if (spot.getState() == SpotInstanceRequest.State.CANCELLED)
-            Throwables.propagate(new ExecutionException(String.format("spot request %s cancelled", spot.getId())) {
-               private static final long serialVersionUID = 1L;
-            });
+            throw new IllegalStateException(String.format("spot request %s cancelled", spot.getId()));
          if (spot.getFaultCode() != null)
-            Throwables.propagate(new ExecutionException(String.format("spot request %s fault code(%s) message(%s)",
-                  spot.getId(), spot.getFaultCode(), spot.getFaultMessage())) {
-               private static final long serialVersionUID = 1L;
-            });
+            throw new IllegalStateException(String.format("spot request %s fault code(%s) message(%s)", spot.getId(),
+                     spot.getFaultCode(), spot.getFaultMessage()));
          return spot.getState() == SpotInstanceRequest.State.ACTIVE;
       } catch (ResourceNotFoundException e) {
          return false;
@@ -78,6 +72,6 @@ public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest>
 
    private SpotInstanceRequest refresh(SpotInstanceRequest spot) {
       return Iterables.getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
-            spot.getRegion(), spot.getId()));
+               spot.getRegion(), spot.getId()));
    }
 }
