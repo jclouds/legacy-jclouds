@@ -37,8 +37,9 @@ import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
-import org.jclouds.aws.ec2.xml.SpotInstanceRequestsResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandler;
+import org.jclouds.aws.ec2.xml.SpotInstanceHandler;
+import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
@@ -71,31 +72,30 @@ public interface SpotInstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSpotInstanceRequests")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   @XMLResponseParser(SpotInstanceRequestsResponseHandler.class)
+   @XMLResponseParser(SpotInstancesHandler.class)
    ListenableFuture<? extends Set<SpotInstanceRequest>> describeSpotInstanceRequestsInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @BinderParam(BindSpotInstanceRequestIdsToIndexedFormParams.class) String... requestIds);
 
    /**
-    * @see SpotInstanceClient#requestSpotInstancesInRegion(String,float,String,String)
+    * @see SpotInstanceClient#requestSpotInstanceInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
-   @XMLResponseParser(SpotInstanceRequestsResponseHandler.class)
-   ListenableFuture<? extends Set<SpotInstanceRequest>> requestSpotInstancesInRegion(
+   @XMLResponseParser(SpotInstanceHandler.class)
+   ListenableFuture<SpotInstanceRequest> requestSpotInstanceInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @FormParam("SpotPrice") float spotPrice, @FormParam("LaunchSpecification.ImageId") String imageId,
          @FormParam("LaunchSpecification.InstanceType") String instanceType);
 
    /**
-    * @see SpotInstanceClient#requestSpotInstancesInRegion(String,float,int,
-    *      LaunchSpecification,RequestSpotInstancesOptions[])
+    * @see SpotInstanceClient#requestSpotInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
-   @XMLResponseParser(SpotInstanceRequestsResponseHandler.class)
+   @XMLResponseParser(SpotInstancesHandler.class)
    ListenableFuture<? extends Set<SpotInstanceRequest>> requestSpotInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @FormParam("SpotPrice") float spotPrice, @FormParam("InstanceCount") int instanceCount,

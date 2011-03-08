@@ -27,7 +27,8 @@ import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandler;
-import org.jclouds.aws.ec2.xml.SpotInstanceRequestsResponseHandler;
+import org.jclouds.aws.ec2.xml.SpotInstanceHandler;
+import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -46,8 +47,8 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SpotInstanceAsyncClientTest")
 public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotInstanceAsyncClient> {
-   public void testRequestSpotInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstancesInRegion", String.class,
+   public void testRequestSpotInstance() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstanceInRegion", String.class,
             float.class, String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, 0.01f, "m1.small", "ami-voo");
 
@@ -59,7 +60,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstanceRequestsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, SpotInstanceHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
@@ -81,7 +82,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstanceRequestsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
@@ -115,7 +116,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstanceRequestsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -134,7 +135,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstanceRequestsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);

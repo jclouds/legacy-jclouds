@@ -33,7 +33,7 @@ import org.xml.sax.Attributes;
  * 
  * @author Adrian Cole
  */
-public class SpotInstanceRequestHandler extends ParseSax.HandlerForGeneratedRequestWithResult<SpotInstanceRequest> {
+public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResult<SpotInstanceRequest> {
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
@@ -43,7 +43,7 @@ public class SpotInstanceRequestHandler extends ParseSax.HandlerForGeneratedRequ
    protected final LaunchSpecificationHandler launchSpecificationHandler;
 
    @Inject
-   public SpotInstanceRequestHandler(DateService dateService, @Region String defaultRegion,
+   public SpotInstanceHandler(DateService dateService, @Region String defaultRegion,
          LaunchSpecificationHandler launchSpecificationHandler, SpotInstanceRequest.Builder builder) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;

@@ -63,6 +63,24 @@ public interface SpotInstanceClient {
    Set<SpotInstanceRequest> describeSpotInstanceRequestsInRegion(@Nullable String region, String... requestIds);
 
    /**
+    * request a single spot instance
+    * 
+    * @param region
+    *           Region where the spot instance service is running
+    * @param spotPrice
+    *           Specifies the maximum hourly price for any Spot Instance launched to fulfill the
+    *           request.
+    * @param imageId
+    *           The AMI ID.
+    * @param instanceType
+    *           The instance type (ex. m1.small)
+    * @return spot instance request
+    * @see #requestSpotInstancesInRegion
+    */
+   SpotInstanceRequest requestSpotInstanceInRegion(@Nullable String region, float spotPrice, String imageId,
+         String instanceType);
+
+   /**
     * Creates a Spot Instance request. Spot Instances are instances that Amazon EC2 starts on your
     * behalf when the maximum price that you specify exceeds the current Spot Price. Amazon EC2
     * periodically sets the Spot Price based on available Spot Instance capacity and current spot
@@ -74,10 +92,12 @@ public interface SpotInstanceClient {
     * @param spotPrice
     *           Specifies the maximum hourly price for any Spot Instance launched to fulfill the
     *           request.
-    * @param imageId
-    *           The AMI ID.
-    * @param instanceType
-    *           The instance type (ex. m1.small)
+    * @param instanceCount
+    *           number of instances to request
+    * @param launchSpec
+    *           includes at least The AMI ID and instance type (ex. m1.small)
+    * @param options
+    *           options including expiration time or grouping
     * 
     * @see #describeSpotInstanceRequestsInRegion
     * @see #cancelSpotInstanceRequestsInRegion
@@ -85,10 +105,8 @@ public interface SpotInstanceClient {
     * @see <a href=
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RequestSpotInstances.html"
     *      />
-    * @return TODO
+    * @return set of spot instance requests
     */
-   Set<SpotInstanceRequest> requestSpotInstancesInRegion(@Nullable String region, float spotPrice, String imageId, String instanceType);
-
    Set<SpotInstanceRequest> requestSpotInstancesInRegion(@Nullable String region, float spotPrice, int instanceCount,
          LaunchSpecification launchSpec, RequestSpotInstancesOptions... options);
 

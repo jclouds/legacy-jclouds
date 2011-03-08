@@ -25,10 +25,11 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Set;
 
+import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -42,13 +43,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 /**
- * Tests behavior of {@code SpotInstancesRequestsResponseHandler}
+ * Tests behavior of {@code SpotInstanceHandler}
  * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "SpotInstancesRequestsResponseHandlerTest")
-public class SpotInstancesRequestsResponseHandlerTest extends BaseEC2HandlerTest {
+@Test(groups = "unit", testName = "SpotInstanceHandlerTest")
+public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;
 
@@ -67,23 +68,29 @@ public class SpotInstancesRequestsResponseHandlerTest extends BaseEC2HandlerTest
       dateService = injector.getInstance(DateService.class);
       assert dateService != null;
    }
-   public void testDescribe() {
 
-      InputStream is = getClass().getResourceAsStream("/describe_spot_instance_requests.xml");
-      SpotInstanceRequestsResponseHandler handler = injector
-            .getInstance(SpotInstanceRequestsResponseHandler.class);
-      addDefaultRegionToHandler(handler);
-      Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
-      assertEquals(result.size(), 18);
-   }
-   public void testRequest() {
+   public void testApplyInputStream() {
 
-      InputStream is = getClass().getResourceAsStream("/request_spot_instances.xml");
-      SpotInstanceRequestsResponseHandler handler = injector
-            .getInstance(SpotInstanceRequestsResponseHandler.class);
+      InputStream is = getClass().getResourceAsStream("/request_spot_instances-ebs.xml");
+
+      SpotInstanceRequest expected = SpotInstanceRequest
+            .builder()
+            .region("us-east-1")
+            .id("sir-228e6406")
+            .spotPrice(0.001f)
+            .type(SpotInstanceRequest.Type.ONE_TIME)
+            .state(SpotInstanceRequest.State.OPEN)
+            .launchSpecification(
+                  LaunchSpecification.builder().imageId("ami-595a0a1c").groupId("default").instanceType("m1.large")
+                        .mapNewVolumeToDevice("/dev/sda1", 1, true)
+                        .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
+                        .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
+            .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
+            .productDescription("Linux/UNIX").build();
+      SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
-      assertEquals(result.size(), 3);
+      SpotInstanceRequest result = factory.create(handler).parse(is);
+      assertEquals(result, expected);
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

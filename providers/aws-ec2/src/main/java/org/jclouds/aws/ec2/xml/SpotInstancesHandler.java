@@ -36,14 +36,14 @@ import com.google.common.collect.ImmutableSet.Builder;
 /**
  * @author Adrian Cole
  */
-public class SpotInstanceRequestsResponseHandler extends ParseSax.HandlerWithResult<Set<SpotInstanceRequest>> {
+public class SpotInstancesHandler extends ParseSax.HandlerWithResult<Set<SpotInstanceRequest>> {
 
    private final Builder<SpotInstanceRequest> spotRequests = ImmutableSet.<SpotInstanceRequest> builder();
-   private final SpotInstanceRequestHandler spotRequestHandler;
+   private final SpotInstanceHandler spotRequestHandler;
    private int itemDepth;
 
    @Inject
-   public SpotInstanceRequestsResponseHandler(SpotInstanceRequestHandler spotRequestHandler) {
+   public SpotInstancesHandler(SpotInstanceHandler spotRequestHandler) {
       this.spotRequestHandler = spotRequestHandler;
    }
 
