@@ -128,16 +128,20 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
       checkState(!tainted, "this object is not designed to be reused: %s", toString());
       tainted = true;
       String originalId = node.getId();
+      NodeMetadata originalNode = node;
       try {
          if (options.shouldBlockUntilRunning()) {
             if (nodeRunning.apply(node)) {
-               node = getNode.getNode(node.getId());
+               node = getNode.getNode(originalId);
             } else {
-               NodeMetadata nodeForState = getNode.getNode(node.getId());
+               NodeMetadata nodeForState = getNode.getNode(originalId);
                NodeState state = nodeForState == null ? NodeState.TERMINATED : nodeForState.getState();
-               throw new IllegalStateException(format(
-                        "node %s didn't achieve the state running within %d seconds, final state: %s", originalId,
-                        timeouts.nodeRunning / 1000, state));
+               if (state == NodeState.TERMINATED)
+                  throw new IllegalStateException(format("node(%s) terminated before we could customize", originalId));
+               else
+                  throw new IllegalStateException(format(
+                           "node(%s) didn't achieve the state running within %d seconds, final state: %s", originalId,
+                           timeouts.nodeRunning / 1000, state));
             }
             if (node == null)
                throw new IllegalStateException(format("node %s terminated before applying options", originalId));
@@ -156,7 +160,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
          goodNodes.add(node);
       } catch (Exception e) {
          logger.error(e, "<< problem applying options to node(%s): ", originalId, getRootCause(e).getMessage());
-         badNodes.put(node, e);
+         badNodes.put(node == null ? originalNode : node, e);
       }
       return null;
    }
