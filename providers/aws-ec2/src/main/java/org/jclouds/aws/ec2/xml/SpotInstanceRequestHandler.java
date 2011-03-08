@@ -19,79 +19,107 @@
 
 package org.jclouds.aws.ec2.xml;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
-import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Type;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Builder;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
+import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-// TODO finish
 public class SpotInstanceRequestHandler extends ParseSax.HandlerForGeneratedRequestWithResult<SpotInstanceRequest> {
    private StringBuilder currentText = new StringBuilder();
 
+   protected final DateService dateService;
+   protected final String defaultRegion;
+   protected final Builder builder;
+   protected boolean inLaunchSpecification;
+   protected final LaunchSpecificationHandler launchSpecificationHandler;
+
    @Inject
-   protected DateService dateService;
-   @Inject
-   @Region
-   private String defaultRegion;
-   private String availabilityZoneGroup;
-   private Date createTime;
-   private String fault;
-   private String instanceId;
-   private String launchGroup;
-   private String launchSpecification;
-   private String productDescription;
-   private String id;
-   private float spotPrice;
-   private String state;
-   private Type type;
-   private Date validFrom;
-   private Date validUntil;
+   public SpotInstanceRequestHandler(DateService dateService, @Region String defaultRegion,
+         LaunchSpecificationHandler launchSpecificationHandler, SpotInstanceRequest.Builder builder) {
+      this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
+      this.launchSpecificationHandler = launchSpecificationHandler;
+      this.builder = builder;
+   }
+
+   protected String currentOrNull() {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? null : returnVal;
+   }
 
    public SpotInstanceRequest getResult() {
-      String region = AWSUtils.findRegionInArgsOrNull(getRequest());
-      if (region == null)
-         region = defaultRegion;
-      SpotInstanceRequest returnVal = new SpotInstanceRequest(region, availabilityZoneGroup, createTime, fault,
-            instanceId, launchGroup, launchSpecification, productDescription, id, spotPrice, state, type, validFrom,
-            validUntil);
-      this.availabilityZoneGroup = null;
-      this.createTime = null;
-      this.fault = null;
-      this.instanceId = null;
-      this.launchGroup = null;
-      this.launchSpecification = null;
-      this.productDescription = null;
-      this.id = null;
-      this.spotPrice = -1;
-      this.state = null;
-      this.type = null;
-      this.validFrom = null;
-      this.validUntil = null;
-      return returnVal;
+      try {
+         String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
+         if (region == null)
+            region = defaultRegion;
+         return builder.region(region).build();
+      } finally {
+         builder.clear();
+      }
+   }
+
+   public void startElement(String uri, String name, String qName, Attributes attrs) {
+      if (qName.equals("launchSpecification")) {
+         inLaunchSpecification = true;
+      }
+      if (inLaunchSpecification)
+         launchSpecificationHandler.startElement(uri, name, qName, attrs);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("availabilityZoneGroup")) {
-         this.availabilityZoneGroup = currentText.toString().trim();
-      } else if (qName.equals("createTime")) {
-         createTime = this.dateService.iso8601DateParse(currentText.toString().trim());
+      if (qName.equals("launchSpecification")) {
+         inLaunchSpecification = false;
+         builder.launchSpecification(launchSpecificationHandler.getResult());
+      }
+      if (inLaunchSpecification) {
+         launchSpecificationHandler.endElement(uri, name, qName);
+      } else if (qName.equals("spotInstanceRequestId")) {
+         builder.id(currentOrNull());
+      } else if (qName.equals("instanceId")) {
+         builder.instanceId(currentOrNull());
+      } else if (qName.equals("availabilityZoneGroup")) {
+         builder.availabilityZoneGroup(currentOrNull());
+      } else if (qName.equals("launchGroup")) {
+         builder.launchGroup(currentOrNull());
+      } else if (qName.equals("code")) {
+         builder.faultCode(currentOrNull());
+      } else if (qName.equals("message")) {
+         builder.faultMessage(currentOrNull());
+      } else if (qName.equals("spotPrice")) {
+         String price = currentOrNull();
+         if (price != null)
+            builder.spotPrice(Float.parseFloat(price));
       } else if (qName.equals("type")) {
-         type = SpotInstanceRequest.Type.fromValue(currentText.toString().trim());
+         String type = currentOrNull();
+         if (type != null)
+            builder.type(SpotInstanceRequest.Type.fromValue(type));
+      } else if (qName.equals("state")) {
+         String state = currentOrNull();
+         if (state != null)
+            builder.state(SpotInstanceRequest.State.fromValue(state));
+      } else if (qName.equals("createTime")) {
+         String createTime = currentOrNull();
+         if (createTime != null)
+            builder.createTime(dateService.iso8601DateParse(createTime));
+      } else if (qName.equals("productDescription")) {
+         builder.productDescription(currentOrNull());
       }
       currentText = new StringBuilder();
    }
 
    public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
+      if (inLaunchSpecification)
+         launchSpecificationHandler.characters(ch, start, length);
+      else
+         currentText.append(ch, start, length);
    }
 }

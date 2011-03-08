@@ -30,7 +30,64 @@ import org.jclouds.util.Preconditions2;
  * 
  * @author Lili Nadar
  */
-public class BlockDeviceMapping {
+public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String deviceName;
+      private String virtualName;
+      private String snapshotId;
+      private Integer sizeInGib;
+      private Boolean noDevice;
+      private Boolean deleteOnTermination;
+
+      public Builder deviceName(String deviceName) {
+         this.deviceName = deviceName;
+         return this;
+      }
+
+      public Builder virtualName(String virtualName) {
+         this.virtualName = virtualName;
+         return this;
+      }
+
+      public Builder snapshotId(String snapshotId) {
+         this.snapshotId = snapshotId;
+         return this;
+      }
+
+      public Builder sizeInGib(Integer sizeInGib) {
+         this.sizeInGib = sizeInGib;
+         return this;
+      }
+
+      public Builder noDevice(Boolean noDevice) {
+         this.noDevice = noDevice;
+         return this;
+      }
+
+      public Builder deleteOnTermination(Boolean deleteOnTermination) {
+         this.deleteOnTermination = deleteOnTermination;
+         return this;
+      }
+
+      public BlockDeviceMapping build() {
+         return new BlockDeviceMapping(deviceName, virtualName, snapshotId, sizeInGib, noDevice, deleteOnTermination);
+      }
+
+      public Builder clear() {
+         this.deviceName = null;
+         this.virtualName = null;
+         this.snapshotId = null;
+         this.sizeInGib = null;
+         this.noDevice = null;
+         this.deleteOnTermination = null;
+         return this;
+      }
+   }
+
    private final String deviceName;
    private final String virtualName;
    private final String snapshotId;
@@ -43,14 +100,14 @@ public class BlockDeviceMapping {
    private static final Integer VOLUME_SIZE_MAX_VALUE = 1000;
 
    BlockDeviceMapping(String deviceName, @Nullable String virtualName, @Nullable String snapshotId,
-            @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
+         @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
 
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
 
       if (sizeInGib != null) {
-         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE), String.format(
-                  "Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
+         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE),
+               String.format("Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
       }
       this.deviceName = deviceName;
       this.virtualName = virtualName;
@@ -142,13 +199,13 @@ public class BlockDeviceMapping {
    @Override
    public String toString() {
       return "[deviceName=" + deviceName + ", virtualName=" + virtualName + ", snapshotId=" + snapshotId
-               + ", sizeInGib=" + sizeInGib + ", noDevice=" + noDevice + ", deleteOnTermination=" + deleteOnTermination
-               + "]";
+            + ", sizeInGib=" + sizeInGib + ", noDevice=" + noDevice + ", deleteOnTermination=" + deleteOnTermination
+            + "]";
    }
 
    public static class MapEBSSnapshotToDevice extends BlockDeviceMapping {
       public MapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
-               @Nullable Boolean deleteOnTermination) {
+            @Nullable Boolean deleteOnTermination) {
          super(deviceName, null, snapshotId, sizeInGib, null, deleteOnTermination);
          checkNotNull(snapshotId, "snapshotId cannot be null");
          Preconditions2.checkNotEmpty(snapshotId, "the snapshotId must be non-empty");
@@ -174,5 +231,10 @@ public class BlockDeviceMapping {
       public UnmapDeviceNamed(String deviceName) {
          super(deviceName, null, null, null, true, null);
       }
+   }
+
+   @Override
+   public int compareTo(BlockDeviceMapping arg0) {
+      return deviceName.compareTo(arg0.deviceName);
    }
 }

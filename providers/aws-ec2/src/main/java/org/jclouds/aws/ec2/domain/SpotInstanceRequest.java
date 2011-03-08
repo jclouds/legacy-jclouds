@@ -38,17 +38,37 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       private String region;
       private String availabilityZoneGroup;
       private Date createTime;
-      private String fault;
+      private String faultCode;
+      private String faultMessage;
       private String instanceId;
       private String launchGroup;
-      private String launchSpecification;
+      private LaunchSpecification launchSpecification;
       private String productDescription;
       private String id;
       private float spotPrice;
-      private String state;
+      private State state;
       private Type type;
       private Date validFrom;
       private Date validUntil;
+
+      public Builder clear() {
+         this.region = null;
+         this.availabilityZoneGroup = null;
+         this.createTime = null;
+         this.faultCode = null;
+         this.faultMessage = null;
+         this.instanceId = null;
+         this.launchGroup = null;
+         this.launchSpecification = null;
+         this.productDescription = null;
+         this.id = null;
+         this.spotPrice = 0;
+         this.state = null;
+         this.type = null;
+         this.validFrom = null;
+         this.validUntil = null;
+         return this;
+      }
 
       public Builder region(String region) {
          this.region = region;
@@ -65,8 +85,13 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          return this;
       }
 
-      public Builder fault(String fault) {
-         this.fault = fault;
+      public Builder faultCode(String faultCode) {
+         this.faultCode = faultCode;
+         return this;
+      }
+
+      public Builder faultMessage(String faultMessage) {
+         this.faultMessage = faultMessage;
          return this;
       }
 
@@ -80,7 +105,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          return this;
       }
 
-      public Builder launchSpecification(String launchSpecification) {
+      public Builder launchSpecification(LaunchSpecification launchSpecification) {
          this.launchSpecification = launchSpecification;
          return this;
       }
@@ -100,7 +125,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -121,8 +146,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       }
 
       public SpotInstanceRequest build() {
-         return new SpotInstanceRequest(region, availabilityZoneGroup, createTime, fault, instanceId, launchGroup,
-               launchSpecification, productDescription, id, spotPrice, state, type, validFrom, validUntil);
+         return new SpotInstanceRequest(region, availabilityZoneGroup, createTime, faultCode, faultMessage, instanceId,
+               launchGroup, launchSpecification, productDescription, id, spotPrice, state, type, validFrom, validUntil);
       }
    }
 
@@ -147,28 +172,51 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       }
    }
 
+   public enum State {
+      OPEN, ACTIVE, CANCELLED, UNRECOGNIZED;
+
+      public String value() {
+         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
+      }
+
+      @Override
+      public String toString() {
+         return value();
+      }
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "type")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+
    private final String region;
    private final String availabilityZoneGroup;
    private final Date createTime;
-   private final String fault;
+   private final String faultCode;
+   private final String faultMessage;
    private final String instanceId;
    private final String launchGroup;
-   private final String launchSpecification;
+   private final LaunchSpecification launchSpecification;
    private final String productDescription;
    private final String id;
    private final float spotPrice;
-   private final String state;
+   private final State state;
    private final Type type;
    private final Date validFrom;
    private final Date validUntil;
 
-   public SpotInstanceRequest(String region, String availabilityZoneGroup, Date createTime, String fault,
-         String instanceId, String launchGroup, String launchSpecification, String productDescription, String id,
-         float spotPrice, String state, Type type, Date validFrom, Date validUntil) {
+   public SpotInstanceRequest(String region, String availabilityZoneGroup, Date createTime, String faultCode,
+         String faultMessage, String instanceId, String launchGroup, LaunchSpecification launchSpecification,
+         String productDescription, String id, float spotPrice, State state, Type type, Date validFrom, Date validUntil) {
       this.region = checkNotNull(region, "region");
       this.availabilityZoneGroup = availabilityZoneGroup;
       this.createTime = createTime;
-      this.fault = fault;
+      this.faultCode = faultCode;
+      this.faultMessage = faultMessage;
       this.instanceId = instanceId;
       this.launchGroup = launchGroup;
       this.launchSpecification = launchSpecification;
@@ -196,8 +244,12 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       return createTime;
    }
 
-   public String getFault() {
-      return fault;
+   public String getFaultCode() {
+      return faultCode;
+   }
+
+   public String getFaultMessage() {
+      return faultMessage;
    }
 
    public String getInstanceId() {
@@ -208,7 +260,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       return launchGroup;
    }
 
-   public String getLaunchSpecification() {
+   public LaunchSpecification getLaunchSpecification() {
       return launchSpecification;
    }
 
@@ -224,7 +276,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       return spotPrice;
    }
 
-   public String getState() {
+   public State getState() {
       return state;
    }
 
@@ -246,7 +298,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       int result = 1;
       result = prime * result + ((availabilityZoneGroup == null) ? 0 : availabilityZoneGroup.hashCode());
       result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
-      result = prime * result + ((fault == null) ? 0 : fault.hashCode());
+      result = prime * result + ((faultCode == null) ? 0 : faultCode.hashCode());
+      result = prime * result + ((faultMessage == null) ? 0 : faultMessage.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((launchGroup == null) ? 0 : launchGroup.hashCode());
@@ -279,10 +332,15 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
             return false;
       } else if (!createTime.equals(other.createTime))
          return false;
-      if (fault == null) {
-         if (other.fault != null)
+      if (faultCode == null) {
+         if (other.faultCode != null)
             return false;
-      } else if (!fault.equals(other.fault))
+      } else if (!faultCode.equals(other.faultCode))
+         return false;
+      if (faultMessage == null) {
+         if (other.faultMessage != null)
+            return false;
+      } else if (!faultMessage.equals(other.faultMessage))
          return false;
       if (id == null) {
          if (other.id != null)
@@ -334,8 +392,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    @Override
    public String toString() {
       return "[region=" + region + ", id=" + id + ", spotPrice=" + spotPrice + ", state=" + state
-            + ", availabilityZoneGroup=" + availabilityZoneGroup + ", createTime=" + createTime + ", fault=" + fault
-            + ", type=" + type + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup
+            + ", availabilityZoneGroup=" + availabilityZoneGroup + ", createTime=" + createTime + ", faultCode="
+            + faultCode + ", type=" + type + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup
             + ", launchSpecification=" + launchSpecification + ", productDescription=" + productDescription
             + ", validFrom=" + validFrom + ", validUntil=" + validUntil + "]";
    }

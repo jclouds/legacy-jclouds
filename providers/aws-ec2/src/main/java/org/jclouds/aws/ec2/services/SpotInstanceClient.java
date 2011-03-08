@@ -19,10 +19,14 @@
 
 package org.jclouds.aws.ec2.services;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.aws.ec2.domain.LaunchSpecification;
+import org.jclouds.aws.ec2.domain.Spot;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.concurrent.Timeout;
@@ -56,7 +60,7 @@ public interface SpotInstanceClient {
     *      />
     * @return TODO
     */
-   String describeSpotInstanceRequestsInRegion(@Nullable String region, String... requestIds);
+   Set<SpotInstanceRequest> describeSpotInstanceRequestsInRegion(@Nullable String region, String... requestIds);
 
    /**
     * Creates a Spot Instance request. Spot Instances are instances that Amazon EC2 starts on your
@@ -67,18 +71,13 @@ public interface SpotInstanceClient {
     * 
     * @param region
     *           Region where the spot instance service is running
-    * @param nullableAvailabilityZone
-    *           The availability zone to launch the instances in, or null to let the system choose
-    * @param imageId
-    *           The AMI ID.
-    * @param instanceCount
-    *           The maximum number of Spot Instances to launch.
     * @param spotPrice
     *           Specifies the maximum hourly price for any Spot Instance launched to fulfill the
     *           request.
-    * @param options
-    *           control the duration of the request, grouping, and the size and parameters of the
-    *           server to run
+    * @param imageId
+    *           The AMI ID.
+    * @param instanceType
+    *           The instance type (ex. m1.small)
     * 
     * @see #describeSpotInstanceRequestsInRegion
     * @see #cancelSpotInstanceRequestsInRegion
@@ -88,8 +87,10 @@ public interface SpotInstanceClient {
     *      />
     * @return TODO
     */
-   String requestSpotInstancesInRegion(@Nullable String region, @Nullable String nullableAvailabilityZone,
-         String imageId, int instanceCount, float spotPrice, RequestSpotInstancesOptions... options);
+   Set<SpotInstanceRequest> requestSpotInstancesInRegion(@Nullable String region, float spotPrice, String imageId, String instanceType);
+
+   Set<SpotInstanceRequest> requestSpotInstancesInRegion(@Nullable String region, float spotPrice, int instanceCount,
+         LaunchSpecification launchSpec, RequestSpotInstancesOptions... options);
 
    /**
     * 
@@ -112,7 +113,8 @@ public interface SpotInstanceClient {
     *      />
     * @return TODO
     */
-   String describeSpotPriceHistoryInRegion(@Nullable String region, DescribeSpotPriceHistoryOptions... options);
+   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
+   Set<Spot> describeSpotPriceHistoryInRegion(@Nullable String region, DescribeSpotPriceHistoryOptions... options);
 
    /**
     * Cancels one or more Spot Instance requests. Spot Instances are instances that Amazon EC2

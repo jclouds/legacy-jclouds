@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.options;
 
 import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.availabilityZoneGroup;
 import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.launchGroup;
-import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.launchSpecification;
 import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.type;
 import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.validFrom;
 import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.validUntil;
@@ -31,12 +30,8 @@ import java.util.Collections;
 import java.util.Date;
 
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests possible uses of RequestSpotInstancesOptions and RequestSpotInstancesOptions.Builder.*
@@ -147,33 +142,4 @@ public class RequestSpotInstancesOptionsTest {
       validUntil(null);
    }
 
-   RunInstancesOptions launchSpec = new RunInstancesOptions().withBlockDeviceMappings(ImmutableSet
-         .<BlockDeviceMapping> of(new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true)));
-
-   @Test
-   public void testLaunchSpecification() {
-      RequestSpotInstancesOptions options = new RequestSpotInstancesOptions();
-      options.launchSpecification(launchSpec);
-      verifyLaunchSpec(options);
-   }
-
-   protected void verifyLaunchSpec(RequestSpotInstancesOptions options) {
-      assertEquals(options.buildFormParameters().get("LaunchSpecification.BlockDeviceMapping.1.DeviceName"),
-            Collections.singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("LaunchSpecification.BlockDeviceMapping.1.Ebs.VolumeSize"),
-            Collections.singletonList("120"));
-      assertEquals(options.buildFormParameters()
-            .get("LaunchSpecification.BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
-   }
-
-   @Test
-   public void testLaunchSpecificationStatic() {
-      RequestSpotInstancesOptions options = launchSpecification(launchSpec);
-      verifyLaunchSpec(options);
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testLaunchSpecificationNPE() {
-      launchSpecification(null);
-   }
 }

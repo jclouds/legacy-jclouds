@@ -20,22 +20,32 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions.Builder.from;
+import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.launchGroup;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.domain.AWSRunningInstance;
+import org.jclouds.aws.ec2.domain.LaunchSpecification;
+import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
-import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
-import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
+import org.jclouds.aws.ec2.predicates.SpotInstanceRequestActive;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -46,7 +56,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -57,16 +66,18 @@ import com.google.inject.Module;
 @Test(groups = "live", sequential = true)
 public class SpotInstanceClientLiveTest {
 
+   private static final int SPOT_DELAY_SECONDS = 300;
    private AWSEC2Client client;
    private ComputeServiceContext context;
-   private RetryablePredicate<SpotInstanceRequest> availableTester;
-   private RetryablePredicate<SpotInstanceRequest> deletedTester;
-   private SpotInstanceRequest request;
+   private RetryablePredicate<SpotInstanceRequest> activeTester;
+   private Set<SpotInstanceRequest> requests;
    protected String provider = "aws-ec2";
    protected String identity;
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   private AWSRunningInstance instance;
+   private long start;
 
    @BeforeClass
    protected void setupCredentials() {
@@ -98,83 +109,97 @@ public class SpotInstanceClientLiveTest {
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
 
       client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
-      // TODO
-      // availableTester = new RetryablePredicate<SpotInstanceRequest>(new
-      // SpotInstanceAvailable(client), 60, 1,
-      // TimeUnit.SECONDS);
-      //
-      // deletedTester = new RetryablePredicate<SpotInstanceRequest>(new
-      // SpotInstanceDeleted(client), 60, 1, TimeUnit.SECONDS);
+      activeTester = new RetryablePredicate<SpotInstanceRequest>(new SpotInstanceRequestActive(client),
+            SPOT_DELAY_SECONDS, 1, 1, TimeUnit.SECONDS);
    }
 
    @Test
-   void testDescribe() {
+   void testDescribeSpotRequestsInRegion() {
       for (String region : Region.DEFAULT_REGIONS) {
-         String string = client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region);
-         assertNotNull(string);// TODO
-         SortedSet<SpotInstanceRequest> allResults = ImmutableSortedSet.<SpotInstanceRequest>of(SpotInstanceRequest.builder().id("foo")
-               .build());
+         SortedSet<SpotInstanceRequest> allResults = ImmutableSortedSet.copyOf(client.getSpotInstanceServices()
+               .describeSpotInstanceRequestsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             SpotInstanceRequest request = allResults.last();
-            string = client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region, request.getId());
-            assertNotNull(string);// TODO
-            SortedSet<SpotInstanceRequest> result = ImmutableSortedSet.of(SpotInstanceRequest.builder().id("foo")
-                  .build());
+            SortedSet<SpotInstanceRequest> result = ImmutableSortedSet.copyOf(client.getSpotInstanceServices()
+                  .describeSpotInstanceRequestsInRegion(region, request.getId()));
             assertNotNull(result);
             SpotInstanceRequest compare = result.last();
             assertEquals(compare, request);
          }
       }
 
-      for (String region : client.getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
-         if (!region.equals(Region.US_EAST_1))
-            try {
-               client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region);
-               assert false : "should be unsupported";
-            } catch (UnsupportedOperationException e) {
-            }
-      }
    }
 
    @Test
+   void testDescribeSpotPriceHistoryInRegion() {
+      for (final String region : Region.DEFAULT_REGIONS) {
+         Set<Spot> spots = client.getSpotInstanceServices().describeSpotPriceHistoryInRegion(region, from(new Date()));
+         assertNotNull(spots);
+         assert spots.size() > 0;
+         for (Spot spot : spots) {
+            assert spot.getSpotPrice() > 0 : spots;
+            assertEquals(spot.getRegion(), region);
+            assert in(ImmutableSet.of("Linux/UNIX", "SUSE Linux", "Windows")).apply(spot.getProductDescription()) : spot;
+            assert in(
+                  ImmutableSet.of("c1.medium", "c1.xlarge", "m1.large", "m1.small", "m1.xlarge", "m2.2xlarge",
+                        "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(spot.getInstanceType()) : spot;
+
+         }
+      }
+
+   }
+
+   @Test(enabled = true)
    void testCreateSpotInstance() {
       String launchGroup = PREFIX + "1";
-      for (SpotInstanceRequest request : ImmutableSet.<SpotInstanceRequest> of())
-         // client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(null);
-         if (request.getLaunchGroup().equals(launchGroup))
-            client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(null, request.getId());
-      String string = client.getSpotInstanceServices().requestSpotInstancesInRegion(
-            null,
-            null,
-            "TODO",
+      for (SpotInstanceRequest request : client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+            "us-west-1"))
+         if (launchGroup.equals(request.getLaunchGroup()))
+            client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion("us-west-1", request.getId());
+      start = System.currentTimeMillis();
+      requests = client.getSpotInstanceServices().requestSpotInstancesInRegion(
+            "us-west-1",
+            0.03f,
             1,
-            0.01f,
-            RequestSpotInstancesOptions.Builder.launchSpecification(AWSRunInstancesOptions.Builder.asType("m1.small"))
-                  .launchGroup(PREFIX));
-      assertNotNull(string);
+            LaunchSpecification.builder().instanceType(InstanceType.T1_MICRO).imageId("ami-595a0a1c").build(),
+            launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(new Date())
+                  .validUntil(new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(SPOT_DELAY_SECONDS))));
+      assertNotNull(requests);
 
-      verifySpotInstance(request);
+      for (SpotInstanceRequest request : requests)
+         verifySpotInstance(request);
    }
 
    private void verifySpotInstance(SpotInstanceRequest request) {
-      assert availableTester.apply(request) : request;
-      String string = client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(null, request.getId());
-      assertNotNull(string);// TODO
-      SpotInstanceRequest oneResult = Iterables.getOnlyElement(ImmutableSet.of(SpotInstanceRequest.builder().id("foo")
-            .build()));
-      assertNotNull(oneResult);
-      assertEquals(oneResult, request);
-      // TODO: more
+      SpotInstanceRequest spot = refresh(request);
+      assertNotNull(spot);
+      assertEquals(spot, request);
+      assert activeTester.apply(request) : refresh(request);
+      System.out.println(System.currentTimeMillis() - start);
+      spot = refresh(request);
+      assert spot.getInstanceId() != null : spot;
+      instance = getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion("us-west-1",
+            spot.getInstanceId())));
+      assertEquals(instance.getSpotInstanceRequestId(), spot.getId());
+   }
+
+   public SpotInstanceRequest refresh(SpotInstanceRequest request) {
+      return getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion("us-west-1",
+            request.getId()));
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "ec2";
 
    @AfterTest
    public void shutdown() {
-      if (request != null) {
-         client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(request.getRegion(), request.getId());
-         assert deletedTester.apply(request) : request;
+      if (requests != null) {
+         for (SpotInstanceRequest request : requests)
+            client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(request.getRegion(), request.getId());
+         // assert deletedTester.apply(request) : request;
+      }
+      if (instance != null) {
+         client.getInstanceServices().terminateInstancesInRegion("us-west-1", instance.getId());
       }
       context.close();
    }

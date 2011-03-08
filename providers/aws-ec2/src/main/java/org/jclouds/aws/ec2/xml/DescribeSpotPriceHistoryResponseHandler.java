@@ -23,37 +23,37 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
+import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * @author Adrian Cole
  */
-//TODO finish
-public class DescribeSpotInstanceRequestsResponseHandler extends
-         ParseSax.HandlerWithResult<Set<SpotInstanceRequest>> {
+public class DescribeSpotPriceHistoryResponseHandler extends
+         ParseSax.HandlerWithResult<Set<Spot>> {
 
-   private Set<SpotInstanceRequest> spotRequests = Sets.newLinkedHashSet();
-   private final SpotInstanceRequestHandler spotRequestHandler;
+   private Builder<Spot> spots = ImmutableSet.<Spot>builder();
+   private final SpotHandler spotHandler;
 
    @Inject
-   public DescribeSpotInstanceRequestsResponseHandler(SpotInstanceRequestHandler spotRequestHandler) {
-      this.spotRequestHandler = spotRequestHandler;
+   public DescribeSpotPriceHistoryResponseHandler(SpotHandler spotHandler) {
+      this.spotHandler = spotHandler;
    }
 
-   public Set<SpotInstanceRequest> getResult() {
-      return spotRequests;
+   public Set<Spot> getResult() {
+      return spots.build();
    }
 
    @Override
-   public HandlerWithResult<Set<SpotInstanceRequest>> setContext(HttpRequest request) {
-      spotRequestHandler.setContext(request);
+   public HandlerWithResult<Set<Spot>> setContext(HttpRequest request) {
+      spotHandler.setContext(request);
       return super.setContext(request);
    }
 
@@ -61,19 +61,19 @@ public class DescribeSpotInstanceRequestsResponseHandler extends
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (!qName.equals("item"))
-         spotRequestHandler.startElement(uri, localName, qName, attributes);
+         spotHandler.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equals("item")) {
-         spotRequests.add(spotRequestHandler.getResult());
+         spots.add(spotHandler.getResult());
       }
-      spotRequestHandler.endElement(uri, localName, qName);
+      spotHandler.endElement(uri, localName, qName);
    }
 
    public void characters(char ch[], int start, int length) {
-      spotRequestHandler.characters(ch, start, length);
+      spotHandler.characters(ch, start, length);
    }
 
 }

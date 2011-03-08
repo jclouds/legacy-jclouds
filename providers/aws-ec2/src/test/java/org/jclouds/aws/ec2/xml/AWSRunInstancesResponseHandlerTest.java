@@ -53,7 +53,7 @@ import com.google.inject.Guice;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "RunInstancesResponseHandlerTest")
-public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
+public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;
 

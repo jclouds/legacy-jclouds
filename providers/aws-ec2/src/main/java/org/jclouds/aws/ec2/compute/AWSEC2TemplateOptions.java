@@ -294,7 +294,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
-   public AWSEC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+   public AWSEC2TemplateOptions blockDeviceMappings(Iterable<? extends BlockDeviceMapping> blockDeviceMappings) {
       return AWSEC2TemplateOptions.class.cast(super.blockDeviceMappings(blockDeviceMappings));
    }
 

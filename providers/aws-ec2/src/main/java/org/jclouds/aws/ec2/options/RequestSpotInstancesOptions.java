@@ -22,12 +22,10 @@ package org.jclouds.aws.ec2.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
-import java.util.Map.Entry;
 
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 
 /**
@@ -99,18 +97,6 @@ public class RequestSpotInstancesOptions extends BaseEC2RequestOptions {
       return this;
    }
 
-   /**
-    * Specifies the Availability Zone group. If you specify the same Availability Zone group for all
-    * Spot Instance requests, all Spot Instances are launched in the same Availability Zone.
-    */
-   public RequestSpotInstancesOptions launchSpecification(RunInstancesOptions launchSpecification) {
-      for (Entry<String, String> entry : checkNotNull(launchSpecification, "launchSpecification").buildFormParameters()
-            .entries()) {
-         formParameters.put("LaunchSpecification." + entry.getKey(), entry.getValue());
-      }
-      return this;
-   }
-
    public static class Builder {
       /**
        * @see RequestSpotInstancesOptions#validFrom
@@ -152,12 +138,5 @@ public class RequestSpotInstancesOptions extends BaseEC2RequestOptions {
          return options.availabilityZoneGroup(availabilityZoneGroup);
       }
 
-      /**
-       * @see RequestSpotInstancesOptions#launchSpecification
-       */
-      public static RequestSpotInstancesOptions launchSpecification(RunInstancesOptions launchSpecification) {
-         RequestSpotInstancesOptions options = new RequestSpotInstancesOptions();
-         return options.launchSpecification(launchSpecification);
-      }
    }
 }
