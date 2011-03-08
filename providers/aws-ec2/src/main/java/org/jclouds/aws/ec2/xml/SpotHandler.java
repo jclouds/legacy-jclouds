@@ -21,9 +21,9 @@ package org.jclouds.aws.ec2.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.domain.PlacementGroup;
-import org.jclouds.aws.ec2.domain.PlacementGroup.State;
+import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
@@ -31,36 +31,40 @@ import org.jclouds.location.Region;
  * 
  * @author Adrian Cole
  */
-public class PlacementGroupHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<PlacementGroup> {
+public class SpotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Spot> {
    private StringBuilder currentText = new StringBuilder();
 
+   protected final DateService dateService;
+   protected final String defaultRegion;
+
    @Inject
-   @Region
-   String defaultRegion;
+   public SpotHandler(DateService dateService, @Region String defaultRegion) {
+      this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
+   }
 
-   private String name;
-   private String strategy = "cluster";
-   private State state;
+   private Spot.Builder builder = Spot.builder();
 
-   public PlacementGroup getResult() {
-      String region = AWSUtils.findRegionInArgsOrNull(getRequest());
-      if (region == null)
-         region = defaultRegion;
-      PlacementGroup returnVal = new PlacementGroup(region, name, strategy, state);
-      this.name = null;
-      this.strategy = "cluster";
-      this.state = null;
-      return returnVal;
+   public Spot getResult() {
+      try {
+         String region = getRequest() == null ? null : AWSUtils.findRegionInArgsOrNull(getRequest());
+         if (region == null)
+            region = defaultRegion;
+         return builder.region(region).build();
+      } finally {
+         builder.clear();
+      }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("groupName")) {
-         this.name = currentText.toString().trim();
-      } else if (qName.equals("strategy")) {
-         strategy = currentText.toString().trim();
-      } else if (qName.equals("state")) {
-         state = PlacementGroup.State.fromValue(currentText.toString().trim());
+      if (qName.equals("instanceType")) {
+         builder.instanceType(currentText.toString().trim());
+      } else if (qName.equals("productDescription")) {
+         builder.productDescription(currentText.toString().trim());
+      } else if (qName.equals("spotPrice")) {
+         builder.spotPrice(Float.parseFloat(currentText.toString().trim()));
+      } else if (qName.equals("timestamp")) {
+         builder.timestamp(dateService.iso8601DateParse(currentText.toString().trim()));
       }
       currentText = new StringBuilder();
    }

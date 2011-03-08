@@ -66,8 +66,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -177,12 +177,12 @@ public class EC2ComputeService extends BaseComputeService {
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
-      Builder<String, String> regionGroups = ImmutableMap.<String, String> builder();
+      Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
       for (NodeMetadata nodeMetadata : deadOnes) {
          if (nodeMetadata.getGroup() != null)
             regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
       }
-      for (Entry<String, String> regionGroup : regionGroups.build().entrySet()) {
+      for (Entry<String, String> regionGroup : regionGroups.build().entries()) {
          cleanUpIncidentalResources(regionGroup);
       }
       return deadOnes;

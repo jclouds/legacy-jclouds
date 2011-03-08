@@ -37,6 +37,8 @@ import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
+import org.jclouds.aws.ec2.services.SpotInstanceAsyncClient;
+import org.jclouds.aws.ec2.services.SpotInstanceClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
@@ -82,6 +84,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
             .put(WindowsClient.class, WindowsAsyncClient.class)//
             .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
             .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+            .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
             .build();
 
    public AWSEC2RestClientModule() {
