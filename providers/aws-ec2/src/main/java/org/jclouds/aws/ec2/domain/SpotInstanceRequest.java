@@ -173,7 +173,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    }
 
    public enum State {
-      OPEN, ACTIVE, CANCELLED, UNRECOGNIZED;
+      OPEN, ACTIVE, CANCELLED, CLOSED, UNRECOGNIZED;
 
       public String value() {
          return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
