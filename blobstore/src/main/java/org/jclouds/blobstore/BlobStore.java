@@ -32,6 +32,8 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Synchronous access to a BlobStore such as Amazon S3
  * 
@@ -48,17 +50,18 @@ public interface BlobStore {
 
    /**
     * creates a new blob with the specified name.
+    * 
     * @see #blobBuilder
     */
    @Deprecated
    Blob newBlob(String name);
-   
+
    /**
     * 
     * @return builder for creating new {@link Blob}s
     */
    BlobBuilder blobBuilder(String name);
-   
+
    /**
     * The get locations command returns all the valid locations for containers. A location has a
     * scope, which is typically region or zone. A region is a general area, like eu-west, where a
@@ -199,6 +202,23 @@ public interface BlobStore {
     *            if the container doesn't exist
     */
    String putBlob(String container, Blob blob);
+
+   /**
+    * Adds a {@code Blob} representing the data at location {@code container/blob.metadata.name}
+    * using multipart strategies.
+    * 
+    * @param container
+    *           container to place the blob.
+    * @param blob
+    *           fully qualified name relative to the container.
+    * @param options
+    *           byte range or condition options
+    * @return etag of the blob you uploaded, possibly null where etags are unsupported
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
+   @Beta
+   String putBlobMultipart(String container, Blob blob);
 
    /**
     * Retrieves the metadata of a {@code Blob} at location {@code container/name}

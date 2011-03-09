@@ -17,35 +17,26 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.s3;
+package org.jclouds.netty.io;
 
-import java.util.List;
-import java.util.Properties;
+import java.io.File;
 
-import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
-import org.jclouds.aws.s3.config.AWSS3RestClientModule;
-import org.jclouds.s3.S3ContextBuilder;
+import javax.inject.Singleton;
 
-import com.google.inject.Module;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.internal.BasePayloadSlicer;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AWSS3ContextBuilder extends S3ContextBuilder {
-
-   public AWSS3ContextBuilder(Properties props) {
-      super(props);
-   }
+@Singleton
+public class NettyPayloadSlicer extends BasePayloadSlicer {
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new AWSS3BlobStoreContextModule());
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new AWSS3RestClientModule());
+   protected Payload doSlice(File content, long offset, long length) {
+      return Payloads.newInputStreamPayload(new ChunkedFileInputStream(content, offset, length));
    }
 
 }

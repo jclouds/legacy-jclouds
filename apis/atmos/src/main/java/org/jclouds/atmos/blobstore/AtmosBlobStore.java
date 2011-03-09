@@ -208,6 +208,16 @@ public class AtmosBlobStore extends BaseBlobStore {
    }
 
    /**
+    * This implementation invokes {@link AtmosClient#createFile}
+    * <p/>
+    * Since there is no etag support in atmos, we just return the path.
+    */
+   @Override
+   public String putBlobMultipart(String container, Blob blob) {
+      return putBlob(container, blob);
+   }
+
+   /**
     * This implementation invokes {@link AtmosClient#deletePath}
     */
    @Override

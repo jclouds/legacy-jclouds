@@ -55,10 +55,14 @@ public class S3BlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
+      bindContext();
       bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
       bindBucketLocationStrategy();
+   }
+
+   protected void bindContext() {
+      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
+      }).in(Scopes.SINGLETON);
    }
 
    protected void bindBucketLocationStrategy() {

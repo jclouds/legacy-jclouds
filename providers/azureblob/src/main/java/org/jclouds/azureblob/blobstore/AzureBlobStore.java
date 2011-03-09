@@ -193,6 +193,19 @@ public class AzureBlobStore extends BaseBlobStore {
    }
 
    /**
+    * This implementation invokes {@link AzureBlobClient#putObject}
+    * 
+    * @param container
+    *           container name
+    * @param blob
+    *           object
+    */
+   @Override
+   public String putBlobMultipart(String container, Blob blob) {
+      return putBlob(container, blob);
+   }
+
+   /**
     * This implementation invokes {@link AzureBlobClient#deleteObject}
     * 
     * @param container
