@@ -22,6 +22,7 @@ package org.jclouds.aws.s3.blobstore.strategy.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
+import java.util.SortedMap;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -164,7 +165,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
          AWSS3Client client = (AWSS3Client) ablobstore.getContext().getProviderSpecificContext().getApi();
          String uploadId = client.initiateMultipartUpload(container, ObjectMetadataBuilder.create().key(key).build()); // TODO
                                                                                                                        // md5
-         Map<Integer, String> etags = Maps.newHashMap();
+         SortedMap<Integer, String> etags = Maps.newTreeMap();         
          int part;
          while ((part = getNextPart()) <= getParts()) {
             String eTag = prepareUploadPart(client, container, key, uploadId, part,
