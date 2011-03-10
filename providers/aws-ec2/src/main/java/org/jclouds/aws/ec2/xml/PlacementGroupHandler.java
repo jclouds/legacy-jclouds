@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
@@ -36,8 +35,6 @@ public class PlacementGroupHandler extends
          ParseSax.HandlerForGeneratedRequestWithResult<PlacementGroup> {
    private StringBuilder currentText = new StringBuilder();
 
-   @Inject
-   protected DateService dateService;
    @Inject
    @Region
    String defaultRegion;

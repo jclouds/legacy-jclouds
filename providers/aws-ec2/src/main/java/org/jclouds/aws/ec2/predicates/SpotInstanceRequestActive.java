@@ -17,15 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.predicates;
+package org.jclouds.aws.ec2.predicates;
 
 import java.util.NoSuchElementException;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
 
@@ -35,28 +35,35 @@ import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a task succeeds.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class InstancePresent implements Predicate<RunningInstance> {
+public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest> {
 
-   private final EC2Client client;
+   private final AWSEC2Client client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstancePresent(EC2Client client) {
+   public SpotInstanceRequestActive(AWSEC2Client client) {
       this.client = client;
    }
 
-   public boolean apply(RunningInstance instance) {
-      logger.trace("looking for instance %s", instance);
+   public boolean apply(SpotInstanceRequest spot) {
+      logger.trace("looking for state on spot %s", spot);
       try {
-         instance = refresh(instance);
-         return true;
+         spot = refresh(spot);
+         logger.trace("%s: looking for spot state %s: currently: %s", spot.getId(), SpotInstanceRequest.State.ACTIVE,
+                  spot.getState());
+         if (spot.getState() == SpotInstanceRequest.State.CANCELLED
+                  || spot.getState() == SpotInstanceRequest.State.CLOSED)
+            throw new IllegalStateException(String.format("spot request %s %s", spot.getId(), spot.getState()));
+         if (spot.getFaultCode() != null)
+            throw new IllegalStateException(String.format("spot request %s fault code(%s) message(%s)", spot.getId(),
+                     spot.getFaultCode(), spot.getFaultMessage()));
+         return spot.getState() == SpotInstanceRequest.State.ACTIVE;
       } catch (ResourceNotFoundException e) {
          return false;
       } catch (NoSuchElementException e) {
@@ -64,8 +71,8 @@ public class InstancePresent implements Predicate<RunningInstance> {
       }
    }
 
-   private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(
-               instance.getRegion(), instance.getId())));
+   private SpotInstanceRequest refresh(SpotInstanceRequest spot) {
+      return Iterables.getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+               spot.getRegion(), spot.getId()));
    }
 }

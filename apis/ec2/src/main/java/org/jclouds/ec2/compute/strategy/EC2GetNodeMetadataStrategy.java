@@ -19,6 +19,7 @@
 
 package org.jclouds.ec2.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getOnlyElement;
 
 import java.util.NoSuchElementException;
@@ -31,7 +32,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.services.InstanceClient;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -48,28 +48,27 @@ public class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    @Inject
    protected EC2GetNodeMetadataStrategy(EC2Client client,
-         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata) {
-      this.client = client;
-      this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
+            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata) {
+      this.client = checkNotNull(client, "client");
+      this.runningInstanceToNodeMetadata = checkNotNull(runningInstanceToNodeMetadata, "runningInstanceToNodeMetadata");
    }
 
    @Override
    public NodeMetadata getNode(String id) {
+      checkNotNull(id, "id");
       String[] parts = AWSUtils.parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
       try {
-         RunningInstance runningInstance = getOnlyElement(getAllRunningInstancesInRegion(client.getInstanceServices(),
-               region, instanceId));
+         RunningInstance runningInstance = getRunningInstanceInRegion(region, instanceId);
          return runningInstanceToNodeMetadata.apply(runningInstance);
       } catch (NoSuchElementException e) {
          return null;
       }
    }
 
-   public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client, String region,
-         String id) {
-      return Iterables.concat(client.describeInstancesInRegion(region, id));
+   public RunningInstance getRunningInstanceInRegion(String region, String id) {
+      return getOnlyElement(Iterables.concat(client.getInstanceServices().describeInstancesInRegion(region, id)));
    }
 
 }

@@ -89,7 +89,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    private String keyPair = null;
    private boolean noKeyPair;
    private byte[] userData;
-   private Set<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.of();
+   private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.<BlockDeviceMapping> builder();
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -142,80 +142,29 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       return this;
    }
 
-   /**
-    * Specifies the block device mappings to be used to run the instance
-    */
    public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
          @Nullable Integer sizeInGib, boolean deleteOnTermination) {
-      checkNotNull(deviceName, "deviceName cannot be null");
-      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
-      checkNotNull(snapshotId, "snapshotId cannot be null");
-      Preconditions2.checkNotEmpty(snapshotId, "snapshotId must be non-empty");
-      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
-            .<BlockDeviceMapping> builder();
-      mappings.addAll(blockDeviceMappings);
-      MapEBSSnapshotToDevice mapping = new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib,
-            deleteOnTermination);
-      mappings.add(mapping);
-      blockDeviceMappings = mappings.build();
+      blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination));
       return this;
    }
 
-   /**
-    * Specifies the block device mappings to be used to run the instance
-    */
    public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
-      checkNotNull(deviceName, "deviceName cannot be null");
-      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
-
-      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
-            .<BlockDeviceMapping> builder();
-      mappings.addAll(blockDeviceMappings);
-      MapNewVolumeToDevice mapping = new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination);
-      mappings.add(mapping);
-      blockDeviceMappings = mappings.build();
+      blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination));
       return this;
    }
 
-   /**
-    * Specifies the block device mappings to be used to run the instance
-    */
    public EC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
-      checkNotNull(deviceName, "deviceName cannot be null");
-      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
-      checkNotNull(virtualName, "virtualName cannot be null");
-      Preconditions2.checkNotEmpty(virtualName, "virtualName must be non-empty");
-
-      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
-            .<BlockDeviceMapping> builder();
-      mappings.addAll(blockDeviceMappings);
-      MapEphemeralDeviceToDevice mapping = new MapEphemeralDeviceToDevice(deviceName, virtualName);
-      mappings.add(mapping);
-      blockDeviceMappings = mappings.build();
+      blockDeviceMappings.add(new MapEphemeralDeviceToDevice(deviceName, virtualName));
       return this;
    }
 
-   /**
-    * Specifies the block device mappings to be used to run the instance
-    */
    public EC2TemplateOptions unmapDeviceNamed(String deviceName) {
-      checkNotNull(deviceName, "deviceName cannot be null");
-      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
-
-      com.google.common.collect.ImmutableSet.Builder<BlockDeviceMapping> mappings = ImmutableSet
-            .<BlockDeviceMapping> builder();
-      mappings.addAll(blockDeviceMappings);
-      UnmapDeviceNamed mapping = new UnmapDeviceNamed(deviceName);
-      mappings.add(mapping);
-      blockDeviceMappings = mappings.build();
+      blockDeviceMappings.add(new UnmapDeviceNamed(deviceName));
       return this;
    }
 
-   /**
-    * Specifies the block device mappings to be used to run the instance
-    */
-   public EC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
-      this.blockDeviceMappings = ImmutableSet.copyOf(checkNotNull(blockDeviceMappings, "blockDeviceMappings"));
+   public EC2TemplateOptions blockDeviceMappings(Iterable<? extends BlockDeviceMapping> blockDeviceMappings) {
+      this.blockDeviceMappings.addAll(checkNotNull(blockDeviceMappings, "blockDeviceMappings"));
       return this;
    }
 
@@ -511,7 +460,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     * @return BlockDeviceMapping to use when running the instance or null.
     */
    public Set<BlockDeviceMapping> getBlockDeviceMappings() {
-      return blockDeviceMappings;
+      return blockDeviceMappings.build();
    }
 
    @Override

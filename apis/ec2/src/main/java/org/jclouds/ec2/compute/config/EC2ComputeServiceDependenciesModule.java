@@ -25,7 +25,6 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.security.SecureRandom;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -54,13 +53,10 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.predicates.InstancePresent;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -77,23 +73,16 @@ import com.google.inject.TypeLiteral;
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-         .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
-         .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING)
-         .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-         .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-         .build();
+            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
+                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
+                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
+            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+            .build();
 
    @Singleton
    @Provides
    Map<InstanceState, NodeState> provideServerToNodeState() {
       return instanceToNodeState;
-   }
-
-   @Provides
-   @Singleton
-   @Named("PRESENT")
-   protected Predicate<RunningInstance> instancePresent(InstancePresent present) {
-      return new RetryablePredicate<RunningInstance>(present, 5000, 200, TimeUnit.MILLISECONDS);
    }
 
    @Override

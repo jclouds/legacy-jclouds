@@ -301,7 +301,7 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(templateBuilderProvider.get()).andReturn(defaultTemplate);
-      expect(defaultTemplate.options(options)).andReturn(defaultTemplate);
+      expect(defaultTemplate.options(from)).andReturn(defaultTemplate);
       expect(defaultTemplate.build()).andReturn(null);
       expect(optionsProvider.get()).andReturn(from).atLeastOnce();
 

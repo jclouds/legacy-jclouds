@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSpotPriceHistoryResponse xmlns="http://ec2.amazonaws.com/doc/2010-11-15/">
+    <requestId>99777a75-2a2b-4296-a305-650c442d2d63</requestId>
+    <spotPriceHistorySet>
+        <item>
+            <instanceType>t1.micro</instanceType>
+            <productDescription>SUSE Linux</productDescription>
+            <spotPrice>0.013000</spotPrice>
+            <timestamp>2011-03-07T12:17:19.000Z</timestamp>
+        </item>
+        <item>
+            <instanceType>m1.large</instanceType>
+            <productDescription>Linux/UNIX</productDescription>
+            <spotPrice>0.119000</spotPrice>
+            <timestamp>2011-03-07T16:29:16.000Z</timestamp>
+        </item>
+        <item>
+            <instanceType>t1.micro</instanceType>
+            <productDescription>Windows</productDescription>
+            <spotPrice>0.013000</spotPrice>
+            <timestamp>2011-03-07T17:56:54.000Z</timestamp>
+        </item>
+    </spotPriceHistorySet>
+</DescribeSpotPriceHistoryResponse>

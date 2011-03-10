@@ -42,8 +42,10 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
@@ -51,7 +53,6 @@ import org.jclouds.ec2.services.InstanceClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -61,7 +62,7 @@ import com.google.inject.util.Providers;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class EC2RunNodesAndAddToSetStrategyTest {
+public class EC2CreateNodesInGroupThenAddToSetTest {
 
    @Test
    public void testZoneAsALocation() {
@@ -126,10 +127,10 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       // simulate a lazy credentials fetch
       Credentials creds = new Credentials("foo", "bar");
       expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
-      expect(instance.getRegion()).andReturn(region);
+      expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
-      expect(strategy.instancePresent.apply(instance)).andReturn(true);
+      expect(strategy.instancePresent.apply(new RegionAndName(region, instanceCreatedId))).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
@@ -220,13 +221,13 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    private EC2CreateNodesInGroupThenAddToSet setupStrategy(TemplateBuilder template) {
       EC2Client client = createMock(EC2Client.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
-      Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
+      InstancePresent instancePresent = createMock(InstancePresent.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       Function<RunningInstance, Credentials> instanceToCredentials = createMock(Function.class);
       Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
       return new EC2CreateNodesInGroupThenAddToSet(client, Providers.<TemplateBuilder> of(template),
-            createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, instanceStateRunning,
+            createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, instancePresent,
             runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
    }
 

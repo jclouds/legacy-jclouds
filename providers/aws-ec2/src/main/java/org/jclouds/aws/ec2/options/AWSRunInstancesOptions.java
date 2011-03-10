@@ -23,9 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.RunInstancesOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Contains options supported in the Form API for the RunInstances operation. <h2>
@@ -46,6 +49,7 @@ import org.jclouds.ec2.options.RunInstancesOptions;
  *      />
  */
 public class AWSRunInstancesOptions extends RunInstancesOptions {
+   private LaunchSpecification.Builder launchSpecificationBuilder = LaunchSpecification.builder();
    public static final AWSRunInstancesOptions NONE = new AWSRunInstancesOptions();
 
    /**
@@ -60,20 +64,13 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
       return this;
    }
 
-   String getPlacementGroup() {
-      return getFirstFormOrNull("Placement.GroupName");
-   }
-
    /**
     * Enables monitoring for the instance.
     */
    public AWSRunInstancesOptions enableMonitoring() {
       formParameters.put("Monitoring.Enabled", "true");
+      launchSpecificationBuilder.monitoringEnabled(true);
       return this;
-   }
-
-   String getMonitoringEnabled() {
-      return getFirstFormOrNull("Monitoring.Enabled");
    }
 
    /**
@@ -83,10 +80,6 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
    public AWSRunInstancesOptions withSubnetId(String subnetId) {
       formParameters.put("SubnetId", checkNotNull(subnetId, "subnetId"));
       return this;
-   }
-
-   String getSubnetId() {
-      return getFirstFormOrNull("SubnetId");
    }
 
    public static class Builder extends RunInstancesOptions.Builder {
@@ -175,46 +168,63 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
 
    @Override
    public AWSRunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
+      launchSpecificationBuilder.blockDeviceMappings(mappings);
       return AWSRunInstancesOptions.class.cast(super.withBlockDeviceMappings(mappings));
    }
 
    @Override
    public AWSRunInstancesOptions withKernelId(String kernelId) {
+      launchSpecificationBuilder.kernelId(kernelId);
       return AWSRunInstancesOptions.class.cast(super.withKernelId(kernelId));
    }
 
    @Override
    public AWSRunInstancesOptions withKeyName(String keyName) {
+      launchSpecificationBuilder.keyName(keyName);
       return AWSRunInstancesOptions.class.cast(super.withKeyName(keyName));
    }
 
    @Override
    public AWSRunInstancesOptions withRamdisk(String ramDiskId) {
+      launchSpecificationBuilder.ramdiskId(ramDiskId);
       return AWSRunInstancesOptions.class.cast(super.withRamdisk(ramDiskId));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroup(String securityGroup) {
+      launchSpecificationBuilder.groupId(securityGroup);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroup(securityGroup));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(Iterable<String> securityGroups) {
+      launchSpecificationBuilder.groupIds(securityGroups);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(String... securityGroups) {
+      launchSpecificationBuilder.groupIds(ImmutableSet.copyOf(securityGroups));
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 
    @Override
    public AWSRunInstancesOptions withUserData(byte[] unencodedData) {
+      launchSpecificationBuilder.userData(unencodedData);
       return AWSRunInstancesOptions.class.cast(super.withUserData(unencodedData));
    }
 
    @Override
    public AWSRunInstancesOptions asType(String type) {
+      launchSpecificationBuilder.instanceType(type);
       return AWSRunInstancesOptions.class.cast(super.asType(type));
+   }
+
+   public synchronized LaunchSpecification.Builder getLaunchSpecificationBuilder() {
+      try {
+         return launchSpecificationBuilder.imageId("fake").build().toBuilder().imageId(null);
+      } finally {
+         launchSpecificationBuilder.imageId(null);
+      }
    }
 }

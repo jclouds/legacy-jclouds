@@ -42,6 +42,9 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AWSRunningInstance extends RunningInstance {
+   public static Builder builder() {
+      return new Builder();
+   }
 
    public static class Builder extends org.jclouds.ec2.domain.RunningInstance.Builder {
       private MonitoringState monitoringState;

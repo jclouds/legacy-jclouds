@@ -22,6 +22,7 @@ package org.jclouds.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getRootCause;
+import static java.lang.String.format;
 import static org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode;
 
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -125,15 +127,24 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    public Void call() {
       checkState(!tainted, "this object is not designed to be reused: %s", toString());
       tainted = true;
+      String originalId = node.getId();
+      NodeMetadata originalNode = node;
       try {
          if (options.shouldBlockUntilRunning()) {
             if (nodeRunning.apply(node)) {
-               node = getNode.getNode(node.getId());
+               node = getNode.getNode(originalId);
             } else {
-               throw new IllegalStateException(String.format(
-                        "node didn't achieve the state running on node %s within %d seconds, final state: %s", node
-                                 .getId(), timeouts.nodeRunning / 1000, node.getState()));
+               NodeMetadata nodeForState = getNode.getNode(originalId);
+               NodeState state = nodeForState == null ? NodeState.TERMINATED : nodeForState.getState();
+               if (state == NodeState.TERMINATED)
+                  throw new IllegalStateException(format("node(%s) terminated before we could customize", originalId));
+               else
+                  throw new IllegalStateException(format(
+                           "node(%s) didn't achieve the state running within %d seconds, final state: %s", originalId,
+                           timeouts.nodeRunning / 1000, state));
             }
+            if (node == null)
+               throw new IllegalStateException(format("node %s terminated before applying options", originalId));
             if (statement != null) {
                RunScriptOnNode runner = initScriptRunnerFactory.create(node, statement, options, badNodes).call();
                if (runner != null) {
@@ -145,11 +156,11 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node, options.getPort());
             }
          }
-         logger.debug("<< options applied node(%s)", node.getId());
+         logger.debug("<< options applied node(%s)", originalId);
          goodNodes.add(node);
       } catch (Exception e) {
-         logger.error(e, "<< problem applying options to node(%s): ", node.getId(), getRootCause(e).getMessage());
-         badNodes.put(node, e);
+         logger.error(e, "<< problem applying options to node(%s): ", originalId, getRootCause(e).getMessage());
+         badNodes.put(node == null ? originalNode : node, e);
       }
       return null;
    }

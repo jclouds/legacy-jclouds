@@ -65,6 +65,8 @@ public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
    }
 
    private NodeMetadata refresh(NodeMetadata node) {
+      if (node == null || node.getId() == null)
+         return null;
       return client.getNodeMetadata(node.getId());
    }
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -73,6 +74,10 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
             eTo.noPlacementGroup();
          if (getPlacementGroup() != null)
             eTo.placementGroup(getPlacementGroup());
+         if (getSpotPrice() != null)
+            eTo.spotPrice(getSpotPrice());
+         if (getSpotOptions() != null)
+            eTo.spotOptions(getSpotOptions());
       }
    }
 
@@ -80,6 +85,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    private String placementGroup = null;
    private boolean noPlacementGroup;
    private String subnetId;
+   private Float spotPrice;
+   private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
 
    public static final AWSEC2TemplateOptions NONE = new AWSEC2TemplateOptions();
 
@@ -123,6 +130,22 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       return this;
    }
 
+   /**
+    * Specifies the maximum spot price to use
+    */
+   public AWSEC2TemplateOptions spotPrice(Float spotPrice) {
+      this.spotPrice = spotPrice;
+      return this;
+   }
+
+   /**
+    * Options for starting spot instances
+    */
+   public AWSEC2TemplateOptions spotOptions(RequestSpotInstancesOptions spotOptions) {
+      this.spotOptions = spotOptions != null ? spotOptions : RequestSpotInstancesOptions.NONE;
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see EC2TemplateOptions#blockDeviceMappings
@@ -136,7 +159,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
        * @see EC2TemplateOptions#mapEBSSnapshotToDeviceName
        */
       public static AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
-            @Nullable Integer sizeInGib, boolean deleteOnTermination) {
+               @Nullable Integer sizeInGib, boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib, deleteOnTermination);
       }
@@ -145,7 +168,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
        * @see EC2TemplateOptions#mapNewVolumeToDeviceName
        */
       public static AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib,
-            boolean deleteOnTermination) {
+               boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination);
       }
@@ -280,11 +303,27 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#withSubnetId
+       * @see TemplateOptions#spotPrice
        */
       public static AWSEC2TemplateOptions subnetId(String subnetId) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.subnetId(subnetId);
+      }
+
+      /**
+       * @see TemplateOptions#spotPrice
+       */
+      public static AWSEC2TemplateOptions spotPrice(Float spotPrice) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.spotPrice(spotPrice);
+      }
+
+      /**
+       * @see TemplateOptions#spotOptions
+       */
+      public static AWSEC2TemplateOptions spotOptions(RequestSpotInstancesOptions spotOptions) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.spotOptions(spotOptions);
       }
    }
 
@@ -294,7 +333,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
-   public AWSEC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+   public AWSEC2TemplateOptions blockDeviceMappings(Iterable<? extends BlockDeviceMapping> blockDeviceMappings) {
       return AWSEC2TemplateOptions.class.cast(super.blockDeviceMappings(blockDeviceMappings));
    }
 
@@ -312,9 +351,9 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
 
    @Override
    public AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId, Integer sizeInGib,
-         boolean deleteOnTermination) {
+            boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib,
-            deleteOnTermination));
+               deleteOnTermination));
    }
 
    /**
@@ -331,7 +370,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    @Override
    public AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super
-            .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
+               .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
    }
 
    /**
@@ -525,6 +564,20 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       return subnetId;
    }
 
+   /**
+    * @return maximum spot price or null.
+    */
+   public Float getSpotPrice() {
+      return spotPrice;
+   }
+
+   /**
+    * @return options for controlling spot instance requests.
+    */
+   public RequestSpotInstancesOptions getSpotOptions() {
+      return spotOptions;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -532,6 +585,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + (noPlacementGroup ? 1231 : 1237);
       result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
+      result = prime * result + ((spotOptions == null) ? 0 : spotOptions.hashCode());
+      result = prime * result + ((spotPrice == null) ? 0 : spotPrice.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       return result;
    }
@@ -554,6 +609,16 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
             return false;
       } else if (!placementGroup.equals(other.placementGroup))
          return false;
+      if (spotOptions == null) {
+         if (other.spotOptions != null)
+            return false;
+      } else if (!spotOptions.equals(other.spotOptions))
+         return false;
+      if (spotPrice == null) {
+         if (other.spotPrice != null)
+            return false;
+      } else if (!spotPrice.equals(other.spotPrice))
+         return false;
       if (subnetId == null) {
          if (other.subnetId != null)
             return false;
@@ -566,9 +631,10 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    public String toString() {
 
       return "[groupIds=" + getGroupIds() + ", keyPair=" + getKeyPair() + ", noKeyPair="
-            + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
-            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
-            + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + "]";
+               + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
+               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
+               + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + ", spotPrice="
+               + spotPrice + ", spotOptions=" + spotOptions + "]";
    }
 
 }
