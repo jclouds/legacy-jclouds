@@ -17,32 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.scaleup.storage;
+package org.jclouds.scality.rs2.config;
 
-import org.jclouds.rest.internal.RestAnnotationProcessor;
+import javax.inject.Singleton;
+
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3AsyncClientTest;
-import org.testng.annotations.Test;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.config.S3RestClientModule;
+import org.jclouds.scality.rs2.ScalityRS2AsyncClient;
 
-import com.google.inject.TypeLiteral;
+import com.google.inject.Provides;
 
 /**
+ * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(enabled = false, groups = "unit", testName = "ScaleUpStorageAsyncClientTest")
-public class ScaleUpStorageAsyncClientTestDisabled extends S3AsyncClientTest<S3AsyncClient> {
+@ConfiguresRestClient
+@RequiresHttp
+public class ScalityRS2RestClientModule extends S3RestClientModule<S3Client, ScalityRS2AsyncClient> {
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
+   public ScalityRS2RestClientModule() {
+      super(S3Client.class, ScalityRS2AsyncClient.class);
    }
 
-   public ScaleUpStorageAsyncClientTestDisabled() {
-      this.provider = "scaleup-storage";
-      this.url = "commondatastorage.googleapis.com";
+   @Provides
+   @Singleton
+   S3AsyncClient provideS3AsyncClient(ScalityRS2AsyncClient in) {
+      return in;
    }
 
-   // TODO parameterize this test so that it can pass
 }

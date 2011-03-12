@@ -41,6 +41,7 @@
         <module>aws-ec2</module>
         <module>googlestorage</module>
         <module>scaleup-storage</module>
+        <module>hosteurope-storage</module>
         <module>synaptic-storage</module>
         <module>cloudonestorage</module>
         <module>eucalyptus-partnercloud-s3</module>

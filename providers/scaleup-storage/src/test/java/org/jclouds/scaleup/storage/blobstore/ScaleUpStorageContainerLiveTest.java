@@ -19,13 +19,13 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
+import org.jclouds.scality.rs2.blobstore.ScalityRS2ContainerLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "ScaleUpStorageContainerLiveTest")
-public class ScaleUpStorageContainerLiveTest extends S3ContainerLiveTest {
+public class ScaleUpStorageContainerLiveTest extends ScalityRS2ContainerLiveTest {
 
 }

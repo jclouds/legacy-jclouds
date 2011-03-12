@@ -17,29 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.scaleup.storage;
+package org.jclouds.hosteurope.storage.blobstore;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.scaleup.storage.blobstore.config.ScaleUpStorageBlobStoreContextModule;
-
-import com.google.inject.Module;
+import org.jclouds.scality.rs2.blobstore.ScalityRS2BlobMapIntegrationLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class ScaleUpStorageContextBuilder extends S3ContextBuilder {
-
-   public ScaleUpStorageContextBuilder(Properties props) {
-      super(props);
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new ScaleUpStorageBlobStoreContextModule());
-   }
+@Test(groups =  "live", testName = "HostEuropeStorageBlobMapIntegrationLiveTest")
+public class HostEuropeStorageBlobMapIntegrationLiveTest extends ScalityRS2BlobMapIntegrationLiveTest {
 
 }

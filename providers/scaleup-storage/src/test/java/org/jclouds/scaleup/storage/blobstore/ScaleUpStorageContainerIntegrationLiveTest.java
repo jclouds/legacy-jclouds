@@ -19,22 +19,13 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.s3.blobstore.integration.S3ContainerIntegrationLiveTest;
+import org.jclouds.scality.rs2.blobstore.ScalityRS2ContainerIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "ScaleUpStorageContainerIntegrationLiveTest")
-public class ScaleUpStorageContainerIntegrationLiveTest extends S3ContainerIntegrationLiveTest {
-   // doesn't support MD5
-   @Override
-   protected void checkMD5(BlobMetadata metadata) throws IOException {
-      assertEquals(metadata.getContentMetadata().getContentMD5(), null);
-   }
+public class ScaleUpStorageContainerIntegrationLiveTest extends ScalityRS2ContainerIntegrationLiveTest {
+
 }

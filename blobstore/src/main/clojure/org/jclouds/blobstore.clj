@@ -23,7 +23,7 @@
 Current supported services are:
    [transient, filesystem, azureblob, atmos, walrus, scaleup-storage,
     googlestorage, synaptic, peer1-storage, aws-s3, eucalyptus-partnercloud-s3,
-    cloudfiles-us, cloudfiles-uk, swift]
+    cloudfiles-us, cloudfiles-uk, swift, scality-rs2, hosteurope-storage]
 
 Here's a quick example of how to viewresources in rackspace
 

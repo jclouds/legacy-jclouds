@@ -17,14 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.scaleup.storage.blobstore.config;
+package org.jclouds.scality.rs2.blobstore;
 
-import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+import org.jclouds.s3.blobstore.integration.S3ServiceIntegrationLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class ScaleUpStorageBlobStoreContextModule extends S3BlobStoreContextModule {
-  
+@Test(groups =  "live", testName = "ScalityRS2ServiceIntegrationLiveTest")
+public class ScalityRS2ServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
+
 }

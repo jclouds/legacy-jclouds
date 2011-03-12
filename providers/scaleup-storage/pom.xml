@@ -32,7 +32,7 @@
     <groupId>org.jclouds.provider</groupId>
     <artifactId>scaleup-storage</artifactId>
     <name>jclouds ScaleUp Cloud Storage provider</name>
-    <description>Simple Storage Service (S3) implementation targeted to ScaleUp Cloud Storage</description>
+    <description>Scality RING (ScalityRS2) implementation targeted to ScaleUp Cloud Storage</description>
 
     <properties>
         <test.initializer>org.jclouds.scaleup.storage.blobstore.ScaleUpStorageTestInitializer</test.initializer>
@@ -45,9 +45,16 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.api</groupId>
-            <artifactId>s3</artifactId>
+            <artifactId>scality-rs2</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>scality-rs2</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>

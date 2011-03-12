@@ -20,15 +20,12 @@
 package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
-import java.util.Set;
+import java.util.NoSuchElementException;
 
-import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
-import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
@@ -46,14 +43,15 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    private SecurityGroup group;
 
    public void testCreateDestroySecurityGroup() throws Exception {
-      if (Iterables.any(client.getZoneClient().listZones(), new Predicate<Zone>() {
+      try {
+         Iterables.find(client.getZoneClient().listZones(), new Predicate<Zone>() {
 
-         @Override
-         public boolean apply(Zone arg0) {
-            return arg0.getNetworkType() == NetworkType.BASIC;
-         }
+            @Override
+            public boolean apply(Zone arg0) {
+               return arg0.isSecurityGroupsEnabled();
+            }
 
-      })) {
+         });
          for (SecurityGroup securityGroup : client.getSecurityGroupClient().listSecurityGroups(
                   ListSecurityGroupsOptions.Builder.named(prefix)))
             client.getSecurityGroupClient().deleteSecurityGroup(securityGroup.getId());
@@ -67,29 +65,8 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
          } catch (IllegalStateException e) {
 
          }
-      } else {
-         try {
-            client.getSecurityGroupClient().createSecurityGroup(prefix);
-            assert false;
-         } catch (HttpResponseException e) {
-            assertEquals(e.getResponse().getStatusCode(), 530);
-         }
-      }
+      } catch (NoSuchElementException e) {
 
-   }
-
-   public void testListSecurityGroups() throws Exception {
-      Set<SecurityGroup> response = client.getSecurityGroupClient().listSecurityGroups();
-      assert null != response;
-      long groupCount = response.size();
-      assertTrue(groupCount >= 0);
-      for (SecurityGroup group : response) {
-         SecurityGroup newDetails = Iterables.getOnlyElement(client.getSecurityGroupClient().listSecurityGroups(
-                  ListSecurityGroupsOptions.Builder.id(group.getId())));
-         assertEquals(group.getId(), newDetails.getId());
-         // sometimes this comes up different
-         // assertEquals(group,newDetails);
-         checkGroup(group);
       }
    }
 

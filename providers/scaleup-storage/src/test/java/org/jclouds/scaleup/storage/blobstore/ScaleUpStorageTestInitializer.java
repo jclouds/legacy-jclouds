@@ -19,14 +19,14 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import org.jclouds.s3.blobstore.integration.S3TestInitializer;
+import org.jclouds.scality.rs2.blobstore.ScalityRS2TestInitializer;
 
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ScaleUpStorageTestInitializer extends S3TestInitializer {
+public class ScaleUpStorageTestInitializer extends ScalityRS2TestInitializer {
 
    public ScaleUpStorageTestInitializer() {
       provider = "scaleup-storage";
