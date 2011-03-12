@@ -1,6 +1,6 @@
 ;
 ;
-; Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+; Copyright (C) 2010, 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 ;
 ; ====================================================================
 ; Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,32 +65,130 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
                                  :else %)
                                modules)))))
 
+;;; Functions and macros to map keywords to java member functions
 (defn dashed [a]
-  (apply str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
+  (apply
+   str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
 
-(defn camelize [a]
-  (string/map-str string/capitalize (.split a "-")))
+(defn camelize
+  "Takes a string, or anything named, and converts it to camel case
+   (capitalised initial component"
+  [a]
+  (string/map-str string/capitalize (.split (name a) "-")))
 
-(defn camelize-mixed [a]
-  (let [c (.split a "-")]
+(defn camelize-mixed
+  "Takes a string, or anything named, and converts it to mixed camel case
+   (lower case initial component)"
+  [a]
+  (let [c (.split (name a) "-")]
     (apply str (string/lower-case (first c)) (map string/capitalize (rest c)))))
 
-(defmacro option-fn-0arg [key]
-  `(fn [builder#]
-     (~(symbol (str "." (camelize-mixed (name key)))) builder#)))
+(defn kw-fn-symbol
+  "Converts a keyword into a camel cased symbol corresponding to a function
+   name"
+  [kw]
+  (symbol (camelize-mixed kw)))
 
-(defmacro option-fn-1arg [key]
-  `(fn [builder# value#]
-     (~(symbol (str "." (camelize-mixed (name key)))) builder# value#)))
+(defmacro kw-memfn
+  "Expands into code that creates a function that expects to be passed an
+   object and any args, and calls the instance method corresponding to
+   the camel cased version of the passed keyword, passing the arguments."
+  [kw & args]
+  `(memfn ~(kw-fn-symbol kw) ~@args))
 
-(defmacro make-option-map [f keywords]
-  `[ ~@(reduce (fn [v# k#] (conj (conj v# k#) `(~f ~k#))) [] keywords)])
+(defmacro kw-memfn-apply
+  "Expands into code that creates a function that expects to be passed an object
+   and an arg vector containing the args, and calls the instance method
+   corresponding to the camel cased version of the passed keyword, passing the
+   arguments."
+  [kw & args]
+  `(fn [target# [~@args]]
+     ((memfn ~(kw-fn-symbol kw) ~@args) target# ~@args)))
+
+(defmacro kw-memfn-0arg
+  "Expands into code that creates a function that expects to be passed an
+   object, and calls the instance method corresponding to the camel cased
+   version of the passed keyword if the argument is non-nil."
+  [kw]
+  `(fn [target# arg#]
+     (if arg#
+       ((kw-memfn ~kw) target#)
+       target#)))
+
+(defmacro kw-memfn-1arg
+  "Expands into code that creates a function that expects to be passed an object
+   and an arg, and calls the instance method corresponding to the camel cased
+   version of the passed keyword, passing the argument."
+  [kw]
+  `(kw-memfn ~kw a#))
+
+(defmacro kw-memfn-2arg
+  "Expands into code that creates a function that expects to be passed an object
+   and an arg vector containing 2 args, and calls the instance method
+   corresponding to the camel cased version of the passed keyword, passing the
+   arguments."
+  [kw]
+  `(kw-memfn-apply ~kw a# b#))
+
+;; (defmacro memfn-overloads
+;;   "Construct a function that applies arguments to the given member function."
+;;   [name]
+;;   `(fn [target# args#]
+;;     (condp = (count args#)
+;;       0 (. target# (~name))
+;;       1 (. target# (~name (first args#)))
+;;       2 (. target# (~name (first args#) (second args#)))
+;;       3 (. target# (~name (first args#) (second args#) (nth args# 2)))
+;;       4 (. target#
+;;            (~name (first args#) (second args#) (nth args# 2) (nth args# 3)))
+;;       5 (. target#
+;;            (~name (first args#) (second args#) (nth args# 2) (nth args# 3)
+;;                   (nth args# 4)))
+;;       (throw
+;;        (java.lang.IllegalArgumentException.
+;;         (str
+;;          "too many arguments passed.  Limit 5, passed " (count args#)))))))
+
+;; (defmacro kw-memfn-overloads
+;;   "Expands into code that creates a function that expects to be passed an
+;;    object and an arg vector, and calls the instance method corresponding to
+;;    the camel cased version of the passed keyword, passing the arguments.
+;;    The function accepts different arities at runtime."
+;;   [kw]
+;;   `(memfn-overloads ~(kw-fn-symbol kw)))
+
+(defmacro memfn-varargs
+  "Construct a function that applies an argument sequence to the given member
+   function, which accepts varargs. array-fn should accept a sequence and
+   return a suitable array for passing as varargs."
+  [name array-fn]
+  `(fn [target# args#]
+     (. target#
+        (~name
+         (if (or (seq? args#) (vector? args#)) (~array-fn args#) args#)))))
+
+(defmacro kw-memfn-varargs
+  "Expands into code that creates a function that expects to be passed an
+   object and an arg vector, and calls the instance method corresponding to
+   the camel cased version of the passed keyword, passing the arguments.
+   The function accepts different arities at runtime."
+  ([kw] `(kw-memfn-varargs ~kw int-array))
+  ([kw array-fn] `(memfn-varargs ~(kw-fn-symbol kw) ~array-fn)))
+
+(defmacro make-option-map
+  "Builds a literal map from keyword, to a call on macro f with the keyword
+   as an argument."
+  [f keywords]
+  `(hash-map
+    ~@(reduce (fn [v# k#] (conj (conj v# k#) `(~f ~k#))) [] keywords)))
 
 (defmacro define-accessor
   [class property obj-name]
   (list 'defn (symbol (str obj-name "-" (name property)))
         (vector  (with-meta (symbol obj-name) {:tag (.getName class)}))
-        (list (symbol (str ".get" (camelize (name property)))) (symbol obj-name))))
+        (list
+         (symbol (str ".get" (camelize (name property))))
+         (symbol obj-name))))
 
 (defmacro define-accessors
   "Defines read accessors, modelled on class-name-property-name.  If the second

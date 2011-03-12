@@ -1,6 +1,6 @@
 ;
 ;
-; Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+; Copyright (C) 2010, 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 ;
 ; ====================================================================
 ; Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,8 @@
 Current supported providers are:
    [aws-ec2, eucualyptus-partnercloud-ec2, elastichosts-lon-b,
     cloudservers-uk, cloudservers-us, byon, cloudsigma-zrh, stub,
-    trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus, 
-    slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts, 
+    trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus,
+    slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts,
     openhosting-east1, serverlove-z1-man, skalicloud-sdg-my]
 
 Here's an example of getting some compute configuration from rackspace:
@@ -372,50 +372,51 @@ See http://code.google.com/p/jclouds for details."
 (define-accessors Hardware processors ram volumes)
 (define-accessors NodeMetadata "node" credentials hardware state group)
 
-(defn builder-options [builder]
-  (or
-   (get-field
-    org.jclouds.compute.domain.internal.TemplateBuilderImpl :options builder)
-   (TemplateOptions.)))
+(def
+  ^{:doc "TemplateBuilder functions" :private true}
+  template-map
+  (merge
+   (make-option-map
+    kw-memfn-0arg [:smallest :fastest :biggest :any])
+   (make-option-map
+    kw-memfn-1arg
+    [:os-family :location-id :architecture :image-id :hardware-id
+     :os-name-matches :os-version-matches :os-description-matches
+     :os-64-bit :image-version-matches :image-name-matches
+     :image-description-matches :min-cores :min-ram])))
 
-(defmacro option-option-fn-0arg [key]
-  `(fn [builder#]
-     (let [options# (builder-options builder#)]
-       (~(symbol (str "." (camelize-mixed (name key)))) options#)
-       (.options builder# options#))))
+(def
+  ^{:doc "TemplateOptions functions" :private true}
+  options-map
+  (merge
+   (make-option-map
+    kw-memfn-0arg
+    [:destroy-on-error :enable-monitoring :no-placement-group :no-key-pair
+     :with-details])
+   (make-option-map
+    kw-memfn-1arg
+    [:run-script :install-private-key :authorize-public-key
+     ;; aws ec2 options
+     :spot-price :spot-options :placement-group :subnet-id
+     :block-device-mappings :unmapDeviceNamed :security-groups
+     :key-pair :user-data])
+   (make-option-map kw-memfn-varargs [:inbound-ports])
+   (make-option-map
+    kw-memfn-2arg
+    [:block-on-port
+     ;; aws ec2 options
+     :map-ephemeral-device-to-device-name])
+   {:map-ebs-snapshot-to-device-name
+    (kw-memfn-apply :map-ebs-snapshot-to-device-name
+                    device-name snapshot-id size-in-gib delete-on-termination)
+    :map-new-volume-to-device-name
+    (kw-memfn-apply :map-new-volume-to-device-name
+                    device-name size-in-gib delete-on-termination)}))
 
-(defn- seq-to-array [args]
-  (if (or (seq? args) (vector? args))
-    (int-array args)
-    args))
-
-(defmacro option-option-fn-1arg [key]
-  `(fn [builder# value#]
-     (let [options# (builder-options builder#)]
-       (~(symbol (str "." (camelize-mixed (name key))))
-        options# (seq-to-array value#))
-       (.options builder# options#))))
-
-(def option-1arg-map
-  (apply array-map
-         (concat
-          (make-option-map
-           option-fn-1arg
-           [:os-family :location-id :architecture :image-id :hardware-id
-            :os-name-matches :os-version-matches :os-description-matches
-            :os-64-bit :image-version-matches :image-name-matches
-            :image-description-matches :min-cores :min-ram])
-          (make-option-map
-           option-option-fn-1arg
-           [:run-script :install-private-key :authorize-public-key
-            :inbound-ports]))))
-(def option-0arg-map
-     (apply hash-map
-            (concat
-             (make-option-map option-fn-0arg
-                              [:smallest :fastest :biggest :any])
-             (make-option-map option-option-fn-0arg
-                              [:destroy-on-error]))))
+(def
+  ^{:doc "All receognised options"}
+  known-template-options
+  (set (mapcat keys [options-map template-map])))
 
 (defn os-families []
   (. OsFamily values))
@@ -426,14 +427,8 @@ See http://code.google.com/p/jclouds for details."
   (or (-> (filter #(= (name value) (str %)) (kword enum-map)) first)
       value))
 
-(defn add-nullary-option [builder option value]
-  (if-let [f (option-0arg-map option)]
-    (if value
-      (f builder)
-      builder)))
-
-(defn add-value-option [builder option value]
-  (if-let [f (option-1arg-map option)]
+(defn apply-option [builder option-map option value]
+  (when-let [f (option-map option)]
     (f builder (translate-enum-value option value))))
 
 ;; TODO look at clojure-datalog
@@ -457,10 +452,31 @@ Options correspond to TemplateBuilder methods."
     :as options}]
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]
-      (or
-       (add-value-option builder option value)
-       (add-nullary-option builder option value)
-       (condition/raise
-        :type :invalid-template-builder-option
-        :message (format "Invalid template builder option : %s" option))))
-    (.build builder)))
+      (when-not (known-template-options option)
+        (condition/raise
+         :type :invalid-template-builder-option
+         :message (format "Invalid template builder option : %s" option)))
+      ;; apply template builder options
+      (try
+        (apply-option builder template-map option value)
+        (catch Exception e
+            (condition/raise
+             :type :invalid-template-builder
+             :message (format
+                       "Problem applying template builder %s with value %s: %s"
+                       option (pr-str value) (.getMessage e))
+             :cause e))))
+    (let [template (.build builder)
+          template-options (.getOptions template)]
+      (doseq [[option value] options]
+        ;; apply template option options
+        (try
+          (apply-option template-options options-map option value)
+          (catch Exception e
+            (condition/raise
+             :type :invalid-template-option
+             :message (format
+                       "Problem applying template option %s with value %s: %s"
+                       option (pr-str value) (.getMessage e))
+             :cause e))))
+      template)))

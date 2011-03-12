@@ -1,6 +1,6 @@
 ;
 ;
-; Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+; Copyright (C) 2010, 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 ;
 ; ====================================================================
 ; Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,9 @@
 ;
 
 (ns org.jclouds.core-test
-  (:use [org.jclouds.core] :reload-all)
-  (:use clojure.test))
+  (:use
+   org.jclouds.core
+   clojure.test))
 
 (defmacro with-private-vars [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context.  From users mailing
@@ -50,3 +51,25 @@ list, Alan Dipert and MeikelBrandmeyer."
             (assoc module-lookup
               :non-existing 'this.doesnt.Exist)]
     (is (.isEmpty (modules :non-existing)))))
+
+(deftest kw-fn-symbol-test
+  (is (= 'aB (kw-fn-symbol :a-b))))
+
+(deftest kw-memfn-test
+  (is (= "a" ((kw-memfn :to-lower-case) "A")))
+  (is (= "Ab" ((kw-memfn :concat s) "A" "b")))
+  (is (= "Ab" ((kw-memfn-apply :concat s) "A" ["b"])))
+  (is (= "Ac" ((kw-memfn-apply :replace a b) "Ab" ["b" "c"]))))
+
+(deftest kw-memfn-0arg-test
+  (is (= "a" ((kw-memfn-0arg :to-lower-case) "A" true)))
+  (is (= "A" ((kw-memfn-0arg :to-lower-case) "A" nil))))
+
+(deftest kw-memfn-1arg-test
+  (is (= "Ab" ((kw-memfn-1arg :concat) "A" "b"))))
+
+(deftest kw-memfn-2arg-test
+  (is (= "Ac" ((kw-memfn-2arg :replace) "Ab" ["b" "c"]))))
+
+(deftest kw-memfn-varargs-test
+  (is (fn? (kw-memfn-varargs :replace))))
