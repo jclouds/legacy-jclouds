@@ -53,6 +53,8 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
             switch (input.family) {
                case RHEL:
                   return !input.version.equals("") && !input.version.equals("5.4");
+               case UBUNTU:
+                  return !input.version.equals("") && !input.version.equals("10.04");
                case CENTOS:
                   return !input.version.equals("") && !input.version.equals("5.3");
                case WINDOWS:
@@ -68,14 +70,14 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.3");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 0.5d);
    }
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-CA","US-VA");
+      return ImmutableSet.<String> of("US-CA", "US-VA");
    }
 }

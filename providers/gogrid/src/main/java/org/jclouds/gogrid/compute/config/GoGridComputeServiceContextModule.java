@@ -19,7 +19,7 @@
 
 package org.jclouds.gogrid.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -42,6 +42,6 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS).imageNameMatches(".*w/ None.*");
+      return template.osFamily(UBUNTU).imageNameMatches(".*w/ None.*");
    }
 }
