@@ -64,8 +64,9 @@ public class CopyObjectOptionsTest {
    @BeforeMethod
    void setUp() {
       goodMeta = ImmutableMap.of(USER_METADATA_PREFIX + "adrian", "foo");
-      now = new Date();
-      nowExpected = new SimpleDateFormatDateService().rfc822DateFormat(now);
+      Date date = new Date();
+      nowExpected = new SimpleDateFormatDateService().rfc822DateFormat(date);
+      now = new SimpleDateFormatDateService().rfc822DateParse(nowExpected);
       etag = "mama";
    }
 
