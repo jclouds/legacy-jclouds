@@ -83,6 +83,10 @@ public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>>
                            return sizesInOrg.apply(from);
                         }
 
+                        @Override
+                        public String toString() {
+                           return "sizesInOrg(" + from.getHref() + ")";
+                        }
                      });
                   }
 

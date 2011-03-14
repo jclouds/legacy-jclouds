@@ -72,7 +72,7 @@ import com.google.common.collect.Multimap;
 public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    public static String[] mandatoryParametersForSignature = new String[] { ACTION, SIGNATURE_METHOD, SIGNATURE_VERSION,
-         VERSION };
+            VERSION };
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -86,8 +86,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @Inject
    public FormSigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-         @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
-         Crypto crypto, HttpUtils utils) {
+            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
+            Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
@@ -99,7 +99,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
       Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getPayload().getRawContent()
-            .toString());
+               .toString());
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
@@ -155,8 +155,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign),
-               crypto.hmacSHA256(secretKey.getBytes())));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign), crypto
+                  .hmacSHA256(secretKey.getBytes())));
          if (signatureWire.enabled())
             signatureWire.input(Strings2.toInputStream(signature));
       } catch (Exception e) {
@@ -184,14 +184,16 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    String buildCanonicalizedString(Multimap<String, String> decodedParams) {
-      return ModifyRequest.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
-         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-            if (o1.getKey().startsWith("AWSAccessKeyId"))
-               return -1;
-            return o1.getKey().compareTo(o2.getKey());
-         }
-      });
+      return ModifyRequest.makeQueryLine(decodedParams, sortAWSFirst);
    }
+
+   public static final Comparator<Map.Entry<String, String>> sortAWSFirst = new Comparator<Map.Entry<String, String>>() {
+      public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+         if (o1.getKey().startsWith("AWSAccessKeyId"))
+            return -1;
+         return o1.getKey().compareTo(o2.getKey());
+      }
+   };
 
    @VisibleForTesting
    void addSigningParams(Multimap<String, String> params) {

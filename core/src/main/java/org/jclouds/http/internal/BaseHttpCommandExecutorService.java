@@ -150,7 +150,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   request = filter.filter(request);
                }
                checkRequestHasContentLengthOrChunkedEncoding(request,
-                        "After filtering, the request has niether chunked encoding nor content length: " + request);
+                        "After filtering, the request has neither chunked encoding nor content length: " + request);
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                wirePayloadIfEnabled(wire, request);
                utils.logRequest(headerLog, request, ">>");
@@ -201,6 +201,11 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             errorHandler.handleError(command, response);
          }
          return shouldContinue;
+      }
+
+      @Override
+      public String toString() {
+         return "[command=" + command + "]";
       }
 
    }

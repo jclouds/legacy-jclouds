@@ -62,8 +62,8 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
@@ -129,6 +129,10 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
             return blobUtils.countBlobs(containerName, options);
          }
 
+         @Override
+         public String toString() {
+            return "countBlobs(" + containerName + ")";
+         }
       }), service);
    }
 
@@ -159,6 +163,10 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
             return null;
          }
 
+         @Override
+         public String toString() {
+            return "clearContainer(" + containerName + ")";
+         }
       }), service);
    }
 
@@ -177,6 +185,10 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
             return null;
          }
 
+         @Override
+         public String toString() {
+            return "deleteDirectory(" + containerName + "," + directory + ")";
+         }
       }), service);
    }
 
@@ -195,6 +207,10 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
             return blobUtils.directoryExists(containerName, directory);
          }
 
+         @Override
+         public String toString() {
+            return "directoryExists(" + containerName + "," + directory + ")";
+         }
       }), service);
    }
 
@@ -210,12 +226,17 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    public ListenableFuture<Void> createDirectory(final String containerName, final String directory) {
 
       return blobUtils.directoryExists(containerName, directory) ? Futures.immediateFuture((Void) null)
-            : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
-               public Void call() throws Exception {
-                  blobUtils.createDirectory(containerName, directory);
-                  return null;
-               }
-            }), service);
+               : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+                  public Void call() throws Exception {
+                     blobUtils.createDirectory(containerName, directory);
+                     return null;
+                  }
+
+                  @Override
+                  public String toString() {
+                     return "createDirectory(" + containerName + "," + directory + ")";
+                  }
+               }), service);
    }
 
    /**
@@ -247,6 +268,10 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
             return null;
          }
 
+         @Override
+         public String toString() {
+            return "deleteContainer(" + container + ")";
+         }
       }), service);
    }
 

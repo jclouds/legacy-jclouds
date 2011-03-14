@@ -83,6 +83,10 @@ public class VCloudImageSupplier implements Supplier<Set<? extends Image>> {
                            return imagesInOrg.apply(from);
                         }
 
+                        @Override
+                        public String toString() {
+                           return "imagesInOrg(" + from.getHref() + ")";
+                        }
                      });
                   }
 

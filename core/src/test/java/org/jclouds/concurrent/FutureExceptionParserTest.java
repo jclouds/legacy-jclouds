@@ -69,7 +69,7 @@ public class FutureExceptionParserTest {
       assertEquals(future.get(1, TimeUnit.SECONDS), "foo");
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    private Future<?> createFuture(final Exception exception) {
       ListenableFuture<?> future = Futures.makeListenable(executorService.submit(new Callable<String>() {
 
@@ -77,6 +77,10 @@ public class FutureExceptionParserTest {
             throw exception;
          }
 
+         @Override
+         public String toString() {
+            return "throwException(" + exception + ")";
+         }
       }), executorService);
 
       future = new ExceptionParsingListenableFuture(future, new Function<Exception, String>() {
