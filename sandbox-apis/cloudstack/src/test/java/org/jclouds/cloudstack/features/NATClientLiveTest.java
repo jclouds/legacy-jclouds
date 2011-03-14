@@ -24,6 +24,7 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -52,19 +53,26 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm;
    private IPForwardingRule rule;
    private Network network;
+   private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
       prefix += "nat";
-      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
-               virtualMachineRunning);
-      if (vm.getPassword() != null)
-         password = vm.getPassword();
+      try {
+         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
+         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+                  virtualMachineRunning);
+         if (vm.getPassword() != null)
+            password = vm.getPassword();
+      } catch (NoSuchElementException e) {
+         networksDisabled = true;
+      }
    }
 
    public void testCreateIPForwardingRule() throws Exception {
+      if (networksDisabled)
+         return;
       for (ip = reuseOrAssociate.apply(network); (!ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId()); ip = reuseOrAssociate
                .apply(network)) {
          // check to see if someone already grabbed this ip

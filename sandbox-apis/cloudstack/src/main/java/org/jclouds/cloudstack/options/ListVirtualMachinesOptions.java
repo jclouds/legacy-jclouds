@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudstack.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -29,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listVirtualMachines.html" />
  * @author Adrian Cole
  */
-public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
+public class ListVirtualMachinesOptions extends AccountInDomainOptions {
 
    public static final ListVirtualMachinesOptions NONE = new ListVirtualMachinesOptions();
 
@@ -58,28 +56,6 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
    public ListVirtualMachinesOptions state(String state) {
       this.queryParameters.replaceValues("state", ImmutableSet.of(state));
       return this;
-   }
-
-   /**
-    * @param domainId
-    *           the ID of the domain associated with the virtual machine
-    */
-   public ListVirtualMachinesOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
-      return this;
-
-   }
-
-   /**
-    * 
-    * @param account
-    *           account id
-    * @param domain
-    *           domain id
-    */
-   public ListVirtualMachinesOptions accountInDomain(String account, long domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
-      return domainId(domain);
    }
 
    /**
@@ -231,5 +207,21 @@ public class ListVirtualMachinesOptions extends BaseHttpRequestOptions {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.usesVirtualNetwork(usesVirtualNetwork);
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListVirtualMachinesOptions accountInDomain(String account, long domain) {
+      return ListVirtualMachinesOptions.class.cast(super.accountInDomain(account, domain));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListVirtualMachinesOptions domainId(long domainId) {
+      return ListVirtualMachinesOptions.class.cast(super.domainId(domainId));
    }
 }

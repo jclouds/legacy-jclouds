@@ -287,7 +287,7 @@ public class Zone implements Comparable<Zone> {
 
    /**
     * 
-    * @return true if this is an advanced network with security groups enabled, or a basic network.
+    * @return true if this zone has security groups enabled
     */
    public boolean isSecurityGroupsEnabled() {
       return securityGroupsEnabled;

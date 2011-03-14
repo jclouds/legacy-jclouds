@@ -21,6 +21,10 @@ package org.jclouds.cloudstack.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,12 +47,10 @@ import org.jclouds.rest.RequestSigner;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * 
@@ -118,14 +120,15 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
    @VisibleForTesting
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
       utils.logRequest(signatureLog, request, ">>");
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
 
-      for (String key : ImmutableSortedSet.copyOf(decodedParams.keySet()))
-         builder.put(key.toLowerCase(), Iterables.getOnlyElement(decodedParams.get(key)).toLowerCase());
+      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
+      for (Entry<String, String> entry : decodedParams.entries())
+         builder.add(entry.getKey().toLowerCase() + "=" + Strings2.urlEncode(entry.getValue().toLowerCase()));
 
-      String stringToSign = ModifyRequest.makeQueryLine(builder.build(), null);
+      String stringToSign = Joiner.on('&').join(builder.build());
       if (signatureWire.enabled())
          signatureWire.output(stringToSign);
+
       return stringToSign;
    }
 

@@ -33,7 +33,7 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -59,25 +59,49 @@ public class ListSecurityGroupsResponseTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/listsecuritygroupsresponse.json");
 
-      Set<SecurityGroup> expects = ImmutableSet.<SecurityGroup> of(SecurityGroup.builder().id(3).name("default")
-               .description("Default Security Group").account("adrian").domainId(1).domain("ROOT").ingressRules(
-                        ImmutableSet.of(IngressRule.builder().id(8).protocol("tcp").startPort(22).endPort(22).CIDR(
-                                 "0.0.0.0/32").build(),
+      Set<SecurityGroup> expects = ImmutableSortedSet.<SecurityGroup> naturalOrder().add(
 
-                        IngressRule.builder().id(9).protocol("icmp").ICMPType(-1).ICMPCode(-1).securityGroupName(
-                                 "default").account("adrian").build(),
+      SecurityGroup.builder().id(12).name("adriancole").account("adrian").domainId(1).domain("ROOT").build()).add(
+               SecurityGroup.builder().id(13).name("default").description("description").account("adrian").domainId(1)
+                        .domain("ROOT").ingressRules(
+                                 ImmutableSet.of(
 
-                        IngressRule.builder().id(10).protocol("tcp").startPort(80).endPort(80).securityGroupName(
-                                 "default").account("adrian").build())).build(),
+                                 IngressRule.builder().id(5).protocol("tcp").startPort(22).endPort(22)
+                                          .securityGroupName("adriancole").account("adrian").build(),
 
-      SecurityGroup.builder().id(15).name("adriancole").account("adrian").domainId(1).domain("ROOT").build());
+                                 IngressRule.builder().id(6).protocol("udp").startPort(11).endPort(11).CIDR(
+                                          "1.1.1.1/24").build())).build()).add(
+               SecurityGroup.builder().id(14).name("1").description("description").account("adrian").domainId(1)
+                        .domain("ROOT").ingressRules(
+                                 ImmutableSet.of(
+
+                                 IngressRule.builder().id(7).protocol("tcp").startPort(10).endPort(10).CIDR(
+                                          "1.1.1.1/24").build(),
+
+                                 IngressRule.builder().id(8).protocol("tcp").startPort(10).endPort(10).CIDR(
+                                          "2.2.2.2/16").build())).build()).add(
+               SecurityGroup.builder().id(15).name("2").description("description").account("adrian").domainId(1)
+                        .domain("ROOT").build(),
+               SecurityGroup.builder().id(16).name("with1and2").description("description").account("adrian")
+                        .domainId(1).domain("ROOT").ingressRules(
+                                 ImmutableSet.of(
+
+                                 IngressRule.builder().id(9).protocol("icmp").ICMPType(-1).ICMPCode(-1)
+                                          .securityGroupName("1").account("adrian").build(),
+
+                                 IngressRule.builder().id(10).protocol("tcp").startPort(22).endPort(22)
+                                          .securityGroupName("1").account("adrian").build(),
+
+                                 IngressRule.builder().id(11).protocol("tcp").startPort(22).endPort(22)
+                                          .securityGroupName("2").account("adrian").build())).build()).build();
 
       UnwrapOnlyNestedJsonValue<Set<SecurityGroup>> parser = i.getInstance(Key
                .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<SecurityGroup>>>() {
                }));
-      Set<SecurityGroup> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Set<SecurityGroup> response = ImmutableSortedSet.copyOf(parser.apply(new HttpResponse(200, "ok", Payloads
+               .newInputStreamPayload(is))));
 
-      assertEquals(Sets.newHashSet(response), expects);
+      assertEquals(response, expects);
    }
 
 }

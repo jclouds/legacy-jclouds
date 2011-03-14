@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudstack.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -29,34 +27,9 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listIpForwardingRules.html" />
  * @author Adrian Cole
  */
-public class ListPortForwardingRulesOptions extends BaseHttpRequestOptions {
+public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
 
    public static final ListPortForwardingRulesOptions NONE = new ListPortForwardingRulesOptions();
-
-   /**
-    * @param domainId
-    *           Lists all rules for this id. If used with the account parameter, returns all rules
-    *           for an account in the specified domain ID.
-    */
-   public ListPortForwardingRulesOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
-      return this;
-
-   }
-
-   /**
-    * @param account
-    *           the account associated with the port forwarding rule. Must be used with the domainId
-    *           parameter.
-    * 
-    * @param domain
-    *           domain id
-    */
-   public ListPortForwardingRulesOptions accountInDomain(String account, long domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
-      return this;
-   }
 
    /**
     * @param IPAddressId
@@ -93,5 +66,21 @@ public class ListPortForwardingRulesOptions extends BaseHttpRequestOptions {
          return options.domainId(id);
       }
 
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListPortForwardingRulesOptions accountInDomain(String account, long domain) {
+      return ListPortForwardingRulesOptions.class.cast(super.accountInDomain(account, domain));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListPortForwardingRulesOptions domainId(long domainId) {
+      return ListPortForwardingRulesOptions.class.cast(super.domainId(domainId));
    }
 }

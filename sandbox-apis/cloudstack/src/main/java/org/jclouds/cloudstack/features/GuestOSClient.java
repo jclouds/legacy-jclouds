@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.features;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -53,4 +54,20 @@ public interface GuestOSClient {
     * @return os type or null if not found
     */
    OSType getOSType(long id);
+
+   /**
+    * Lists all supported OS categories for this cloud.
+    * 
+    * @return os categories matching query, or empty set, if no categories are found
+    */
+   Map<Long, String> listOSCategories();
+
+   /**
+    * get a specific os category by id
+    * 
+    * @param id
+    *           os category to get
+    * @return os category or null if not found
+    */
+   Map.Entry<Long, String> getOSCategory(long id);
 }

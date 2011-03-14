@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +57,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private LoadBalancerRule rule;
    private RetryablePredicate<LoadBalancerRule> loadBalancerRuleActive;
    private Network network;
+   private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
@@ -64,14 +66,20 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
                TimeUnit.SECONDS);
       prefix += "rule";
-      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
-               virtualMachineRunning);
-      if (vm.getPassword() != null)
-         password = vm.getPassword();
+      try {
+         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
+         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+                  virtualMachineRunning);
+         if (vm.getPassword() != null)
+            password = vm.getPassword();
+      } catch (NoSuchElementException e) {
+         networksDisabled = true;
+      }
    }
 
    public void testCreateLoadBalancerRule() throws Exception {
+      if (networksDisabled)
+         return;
       while (rule == null) {
          ip = reuseOrAssociate.apply(network);
          try {
@@ -94,6 +102,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateLoadBalancerRule")
    public void testAssignToLoadBalancerRule() throws Exception {
+      if (networksDisabled)
+         return;
       assert jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
                vm.getId()));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
@@ -120,6 +130,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(dependsOnMethods = "testAssignToLoadBalancerRule", expectedExceptions = SshException.class)
    public void testRemoveFromLoadBalancerRule() throws Exception {
+      if (networksDisabled)
+         throw new SshException();
       assert jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
                vm.getId()));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);

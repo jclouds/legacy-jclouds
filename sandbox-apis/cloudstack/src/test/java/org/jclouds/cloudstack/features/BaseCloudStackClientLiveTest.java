@@ -125,7 +125,7 @@ public class BaseCloudStackClientLiveTest {
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);
-      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 600, 5, 5, TimeUnit.SECONDS);
+      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(jobComplete);
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
                TimeUnit.SECONDS);

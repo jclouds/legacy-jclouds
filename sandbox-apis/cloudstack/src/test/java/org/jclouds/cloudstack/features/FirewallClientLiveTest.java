@@ -23,6 +23,7 @@ import static com.google.common.collect.Iterables.find;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -49,20 +50,26 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm;
    private PortForwardingRule rule;
    private Network network;
+   private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
       prefix += "rule";
-      network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsPortForwarding());
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
-               virtualMachineRunning);
-      if (vm.getPassword() != null)
-         password = vm.getPassword();
+      try {
+         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsPortForwarding());
+         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+                  virtualMachineRunning);
+         if (vm.getPassword() != null)
+            password = vm.getPassword();
+      } catch (NoSuchElementException e) {
+         networksDisabled = true;
+      }
    }
 
    public void testCreatePortForwardingRule() throws Exception {
-
+      if (networksDisabled)
+         return;
       while (rule == null) {
          ip = reuseOrAssociate.apply(network);
          try {

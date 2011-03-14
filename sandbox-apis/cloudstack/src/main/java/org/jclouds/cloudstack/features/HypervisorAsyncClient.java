@@ -19,26 +19,18 @@
 
 package org.jclouds.cloudstack.features;
 
-import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.functions.ParseIdToNameEntryFromHttpResponse;
-import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
-import org.jclouds.cloudstack.options.ListOSTypesOptions;
+import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -52,44 +44,23 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface GuestOSAsyncClient {
+public interface HypervisorAsyncClient {
 
    /**
-    * @see GuestOSClient#listOSTypes
+    * @see HypervisorClient#listHypervisors
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsTypes")
-   @Unwrap(depth = 2)
-   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "listHypervisors")
+   @ResponseParser(ParseNamesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<OSType>> listOSTypes(ListOSTypesOptions... options);
+   ListenableFuture<Set<String>> listHypervisors();
 
    /**
-    * @see OSTypeClient#getOSType
+    * @see HypervisorClient#listHypervisorsInZone
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsTypes")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<OSType> getOSType(@QueryParam("id") long id);
-
-   /**
-    * @see GuestOSClient#listOSCategories
-    */
-   @GET
-   @QueryParams(keys = "command", values = "listOsCategories")
-   @ResponseParser(ParseIdToNameFromHttpResponse.class)
+   @QueryParams(keys = "command", values = "listHypervisors")
+   @ResponseParser(ParseNamesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Map<Long, String>> listOSCategories();
-
-   /**
-    * @see GuestOSClient#getOSCategory
-    */
-   @GET
-   @QueryParams(keys = "command", values = "listOsCategories")
-   @ResponseParser(ParseIdToNameEntryFromHttpResponse.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Map.Entry<Long, String>> getOSCategory(@QueryParam("id") long id);
-
+   ListenableFuture<Set<String>> listHypervisorsInZone(@QueryParam("zoneid") long zoneId);
 }

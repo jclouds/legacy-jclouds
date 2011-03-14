@@ -19,22 +19,15 @@
 
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.Capabilities;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.ListTemplatesOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -42,42 +35,21 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to cloudstack via their REST API.
  * <p/>
  * 
- * @see TemplateClient
+ * @see ConfigurationClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface TemplateAsyncClient {
+public interface ConfigurationAsyncClient {
 
    /**
-    * @see TemplateClient#listTemplates
+    * @see ConfigurationClient#listCapabilities
     */
    @GET
-   @QueryParams(keys = { "command", "templatefilter" }, values = { "listTemplates", "executable" })
+   @QueryParams(keys = "command", values = "listCapabilities")
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Template>> listTemplates();
-
-   /**
-    * @see TemplateClient#listTemplates(ListTemplatesOptions)
-    */
-   @GET
-   @QueryParams(keys = "command", values = "listTemplates")
-   @Unwrap(depth = 2)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Template>> listTemplates(ListTemplatesOptions options);
-
-   /**
-    * @see TemplateClient#getTemplate
-    */
-   @GET
-   @QueryParams(keys = { "command", "templatefilter" }, values = { "listTemplates", "executable" })
-   @Unwrap(depth = 3, edgeCollection = Set.class)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Template> getTemplateInZone(@QueryParam("zoneid") long zoneId, @QueryParam("id") long id);
+   ListenableFuture<Capabilities> listCapabilities();
 
 }

@@ -148,9 +148,13 @@
     <category name="jclouds.ssh">
         <priority value="TRACE" />
         <appender-ref ref="ASYNCSSH" />
+    </category><!--
+    <category name="jclouds.signature">
+        <priority value="DEBUG" />
+        <appender-ref ref="ASYNCWIRE" />
     </category>
     
-    <category name="jclouds.wire">
+    --><category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>

@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudstack.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -29,22 +27,9 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/associateIpAddress.html" />
  * @author Adrian Cole
  */
-public class AssociateIPAddressOptions extends BaseHttpRequestOptions {
+public class AssociateIPAddressOptions extends AccountInDomainOptions {
 
    public static final AssociateIPAddressOptions NONE = new AssociateIPAddressOptions();
-
-   /**
-    * 
-    * @param account
-    *           an optional account for the ip address
-    * @param domain
-    *           domain id
-    */
-   public AssociateIPAddressOptions accountInDomain(String account, long domain) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
-      return this;
-   }
 
    /**
     * @param networkId
@@ -57,6 +42,15 @@ public class AssociateIPAddressOptions extends BaseHttpRequestOptions {
    }
 
    public static class Builder {
+
+      /**
+       * @see AssociateIPAddressOptions#networkId
+       */
+      public static AssociateIPAddressOptions networkId(long networkId) {
+         AssociateIPAddressOptions options = new AssociateIPAddressOptions();
+         return options.networkId(networkId);
+      }
+
       /**
        * @see AssociateIPAddressOptions#accountInDomain
        */
@@ -66,11 +60,27 @@ public class AssociateIPAddressOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see AssociateIPAddressOptions#networkId
+       * @see AssociateIPAddressOptions#domainId
        */
-      public static AssociateIPAddressOptions networkId(long networkId) {
+      public static AssociateIPAddressOptions domainId(long domainId) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
-         return options.networkId(networkId);
+         return options.domainId(domainId);
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AssociateIPAddressOptions accountInDomain(String account, long domain) {
+      return AssociateIPAddressOptions.class.cast(super.accountInDomain(account, domain));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AssociateIPAddressOptions domainId(long domainId) {
+      return AssociateIPAddressOptions.class.cast(super.domainId(domainId));
    }
 }

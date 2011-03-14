@@ -21,8 +21,10 @@ package org.jclouds.cloudstack;
 
 import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
+import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
+import org.jclouds.cloudstack.features.HypervisorAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
@@ -114,4 +116,16 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    GuestOSAsyncClient getGuestOSClient();
+
+   /**
+    * Provides asynchronous access to Hypervisor features.
+    */
+   @Delegate
+   HypervisorAsyncClient getHypervisorClient();
+
+   /**
+    * Provides asynchronous access to Configuration features.
+    */
+   @Delegate
+   ConfigurationAsyncClient getConfigurationClient();
 }

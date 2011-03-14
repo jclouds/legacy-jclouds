@@ -30,6 +30,8 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -41,9 +43,18 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", sequential = true, testName = "PublicIPAddressClientLiveTest")
 public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
+   private boolean networksEnabled;
+
+   @BeforeGroups(groups = "live")
+   void networksEnabled() {
+      networksEnabled = client.getNetworkClient().listNetworks().size() > 0;
+   }
+
    private PublicIPAddress ip = null;
 
    public void testAssociateDisassociatePublicIPAddress() throws Exception {
+      if (!networksEnabled)
+         return;
       AsyncCreateResponse job = client.getAddressClient().associateIPAddress(
                Iterables.get(client.getNetworkClient().listNetworks(), 0).getZoneId());
       checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
@@ -60,6 +71,8 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListPublicIPAddresss() throws Exception {
+      if (!networksEnabled)
+         return;
       Set<PublicIPAddress> response = client.getAddressClient().listPublicIPAddresses();
       assert null != response;
       assertTrue(response.size() >= 0);

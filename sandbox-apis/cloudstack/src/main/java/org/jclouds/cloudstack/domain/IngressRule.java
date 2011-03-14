@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -33,13 +35,13 @@ public class IngressRule implements Comparable<IngressRule> {
    public static class Builder {
       private String account;
       private String CIDR;
-      private int endPort;
-      private int ICMPCode;
-      private int ICMPType;
+      private int endPort = -1;
+      private int ICMPCode = -1;
+      private int ICMPType = -1;
       private String protocol;
-      private long id;
+      private long id = -1;
       private String securityGroupName;
-      private int startPort;
+      private int startPort = -1;
 
       public Builder account(String account) {
          this.account = account;
@@ -95,28 +97,34 @@ public class IngressRule implements Comparable<IngressRule> {
    @SerializedName("cidr")
    private String CIDR;
    @SerializedName("endport")
-   private int endPort;
+   private int endPort = -1;
    @SerializedName("icmpcode")
-   private int ICMPCode;
+   private int ICMPCode = -1;
    @SerializedName("icmptype")
-   private int ICMPType;
+   private int ICMPType = -1;
    private String protocol;
    @SerializedName("ruleid")
-   private long id;
+   private long id = -1;
    @SerializedName("securitygroupname")
    private String securityGroupName;
    @SerializedName("startport")
-   private int startPort;
+   private int startPort = -1;
 
    // for serialization
    IngressRule() {
 
    }
 
-   public IngressRule(String account, String cIDR, int endPort, int iCMPCode, int iCMPType, String protocol, long id,
-         String securityGroupName, int startPort) {
+   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, long id,
+            String securityGroupName, int startPort) {
+      if (account == null)
+         checkArgument(securityGroupName == null && CIDR != null,
+                  "if you do not specify an account and security group, you must specify a CIDR range");
+      if (CIDR == null)
+         checkArgument(account != null && securityGroupName != null,
+                  "if you do not specify an account and security group, you must specify a CIDR range");
       this.account = account;
-      this.CIDR = cIDR;
+      this.CIDR = CIDR;
       this.endPort = endPort;
       this.ICMPCode = iCMPCode;
       this.ICMPType = iCMPType;
@@ -250,8 +258,8 @@ public class IngressRule implements Comparable<IngressRule> {
    @Override
    public String toString() {
       return "[id=" + id + ", securityGroupName=" + securityGroupName + ", account=" + account + ", startPort="
-            + startPort + ", endPort=" + endPort + ", protocol=" + protocol + ", CIDR=" + CIDR + ", ICMPCode="
-            + ICMPCode + ", ICMPType=" + ICMPType + "]";
+               + startPort + ", endPort=" + endPort + ", protocol=" + protocol + ", CIDR=" + CIDR + ", ICMPCode="
+               + ICMPCode + ", ICMPType=" + ICMPType + "]";
    }
 
    @Override

@@ -22,46 +22,32 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.Template;
-import org.jclouds.cloudstack.domain.TemplateFilter;
-import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
- * Provides synchronous access to CloudStack template features.
+ * Provides synchronous access to CloudStack Operating System features.
  * <p/>
  * 
- * @see TemplateAsyncClient
+ * @see GuestOSAsyncClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface TemplateClient {
+public interface HypervisorClient {
    /**
-    * List all executable templates.
+    * Lists all supported hypervisors for this cloud.
     * 
-    * @return all executable templates, or empty set, if no templates are found
+    * @return hypervisors, or empty set, if no hypervisors are found
     */
-   Set<Template> listTemplates();
+   Set<String> listHypervisors();
 
    /**
-    * List all public, private, and privileged templates.
-    * 
-    * @param options
-    *           if present, how to constrain the list, defaults to all executable templates
-    * @return templates matching query, or empty set, if no templates are found
-    * @see TemplateFilter
-    */
-   Set<Template> listTemplates(ListTemplatesOptions options);
-
-   /**
-    * get a specific template by id
+    * Lists all supported hypervisors for this zone.
     * 
     * @param zoneId
-    *           zone template is defined in
-    * @param id
-    *           template to get
-    * @return template or null if not found
+    *           the zone id for listing hypervisors.
+    * @return hypervisors in the zone, or empty set, if no hypervisors are found
     */
-   Template getTemplateInZone(long zoneId, long id);
+   Set<String> listHypervisorsInZone(long zoneId);
+
 }

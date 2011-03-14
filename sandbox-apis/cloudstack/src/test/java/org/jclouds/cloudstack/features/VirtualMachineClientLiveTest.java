@@ -38,12 +38,16 @@ import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.Network;
-import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
+import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.predicates.CorrectHypervisorForZone;
+import org.jclouds.cloudstack.predicates.OSCategoryIn;
+import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.InetAddresses2;
@@ -51,8 +55,10 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.net.HostSpecifier;
@@ -77,24 +83,26 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       Set<Network> networks = client.getNetworkClient().listNetworks();
       if (networks.size() > 0) {
-         return createVirtualMachineInNetwork(Iterables.get(networks, 0), client, jobComplete, virtualMachineRunning);
+         return createVirtualMachineInNetwork(get(networks, 0), client, jobComplete, virtualMachineRunning);
       } else {
-         return createVirtualMachineWithSecurityGroup(find(client.getSecurityGroupClient().listSecurityGroups(),
-                  new Predicate<SecurityGroup>() {
+         return createVirtualMachineWithSecurityGroupInZone(find(client.getZoneClient().listZones(),
+                  new Predicate<Zone>() {
 
                      @Override
-                     public boolean apply(SecurityGroup arg0) {
-                        return arg0.getName().equals("default");
+                     public boolean apply(Zone arg0) {
+                        return arg0.isSecurityGroupsEnabled();
                      }
 
-                  }), client, jobComplete, virtualMachineRunning);
+                  }).getId(), get(client.getSecurityGroupClient().listSecurityGroups(), 0).getId(), client,
+                  jobComplete, virtualMachineRunning);
       }
    }
 
-   public static VirtualMachine createVirtualMachineWithSecurityGroup(SecurityGroup group, CloudStackClient client,
-            RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
-      return createVirtualMachineWithOptionsInZone(new DeployVirtualMachineOptions().securityGroupId(group.getId()),
-               get(client.getZoneClient().listZones(), 0).getId(), client, jobComplete, virtualMachineRunning);
+   public static VirtualMachine createVirtualMachineWithSecurityGroupInZone(long zoneId, long groupId,
+            CloudStackClient client, RetryablePredicate<Long> jobComplete,
+            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+      return createVirtualMachineWithOptionsInZone(new DeployVirtualMachineOptions().securityGroupId(groupId), zoneId,
+               client, jobComplete, virtualMachineRunning);
    }
 
    public static VirtualMachine createVirtualMachineInNetwork(Network network, CloudStackClient client,
@@ -108,35 +116,25 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    public static VirtualMachine createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions options,
             final long zoneId, CloudStackClient client, RetryablePredicate<Long> jobComplete,
             RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+      // TODO enum, as this is way too easy to mess up.
+      Set<String> acceptableCategories = ImmutableSet.of("Ubuntu", "CentOS");
+
+      final Predicate<Template> hypervisorPredicate = new CorrectHypervisorForZone(client).apply(zoneId);
+      final Predicate<Template> osTypePredicate = new OSCategoryIn(client).apply(acceptableCategories);
+
+      Predicate<Template> templatePredicate = Predicates.<Template> and(TemplatePredicates.isReady(),
+               hypervisorPredicate, osTypePredicate);
+      Iterable<Template> templates = filter(client.getTemplateClient().listTemplates(
+               ListTemplatesOptions.Builder.zoneId(zoneId)), templatePredicate);
+      if (Iterables.any(templates, TemplatePredicates.isPasswordEnabled())) {
+         templates = filter(templates, TemplatePredicates.isPasswordEnabled());
+      }
+      if (Iterables.size(templates) == 0) {
+         throw new NoSuchElementException(templatePredicate.toString());
+      }
+      long templateId = get(templates, 0).getId();
 
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
-
-      Iterable<Template> templates = filter(client.getTemplateClient().listTemplates(), new Predicate<Template>() {
-
-         @Override
-         public boolean apply(Template arg0) {
-            return arg0.isReady() && (arg0.isCrossZones() || arg0.getZoneId() == zoneId)
-                     && or(equalTo("Ubuntu 10.04 (64-bit)"), equalTo("CentOS 5.3 (64-bit)")).apply(arg0.getOSType());
-         }
-
-      });
-      if (Iterables.size(templates) == 0) {
-         throw new NoSuchElementException();
-      }
-      long templateId;
-      try {
-         // prefer password enabled
-         templateId = find(templates, new Predicate<Template>() {
-
-            @Override
-            public boolean apply(Template arg0) {
-               return arg0.isPasswordEnabled();
-            }
-
-         }).getId();
-      } catch (NoSuchElementException e) {
-         templateId = get(templates, 0).getId();
-      }
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
                zoneId, options);
@@ -211,9 +209,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vm != null) {
-         Long job = client.getVirtualMachineClient().destroyVirtualMachine(vm.getId());
-         assert job != null;
-         assert jobComplete.apply(job);
+         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
          assert virtualMachineDestroyed.apply(vm);
       }
       super.tearDown();

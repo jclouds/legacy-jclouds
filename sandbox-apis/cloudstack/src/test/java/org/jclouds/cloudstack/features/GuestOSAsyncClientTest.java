@@ -22,6 +22,8 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.functions.ParseIdToNameEntryFromHttpResponse;
+import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
@@ -42,12 +44,46 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "GuestOSAsyncClientTest")
 public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestOSAsyncClient> {
 
+   public void testGetOSCategory() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = GuestOSAsyncClient.class.getMethod("getOSCategory", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 11l);
+
+      assertRequestLineEquals(httpRequest,
+               "GET http://localhost:8080/client/api?response=json&command=listOsCategories&id=11 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseIdToNameEntryFromHttpResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListOSCategories() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = GuestOSAsyncClient.class.getMethod("listOSCategories");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest,
+               "GET http://localhost:8080/client/api?response=json&command=listOsCategories HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseIdToNameFromHttpResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
    public void testGetOSType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = GuestOSAsyncClient.class.getMethod("getOSType", long.class);
       HttpRequest httpRequest = processor.createRequest(method, 11l);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listOsTypes&id=11 HTTP/1.1");
+               "GET http://localhost:8080/client/api?response=json&command=listOsTypes&id=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -64,7 +100,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listOsTypes HTTP/1.1");
+               "GET http://localhost:8080/client/api?response=json&command=listOsTypes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -81,7 +117,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method, ListOSTypesOptions.Builder.OSCategoryId(11));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listOsTypes&oscategoryid=11 HTTP/1.1");
+               "GET http://localhost:8080/client/api?response=json&command=listOsTypes&oscategoryid=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

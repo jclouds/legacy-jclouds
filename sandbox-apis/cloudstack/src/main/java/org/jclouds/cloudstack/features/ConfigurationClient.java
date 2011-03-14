@@ -19,49 +19,27 @@
 
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.Template;
-import org.jclouds.cloudstack.domain.TemplateFilter;
-import org.jclouds.cloudstack.options.ListTemplatesOptions;
+import org.jclouds.cloudstack.domain.Capabilities;
 import org.jclouds.concurrent.Timeout;
 
 /**
- * Provides synchronous access to CloudStack template features.
+ * Provides synchronous access to CloudStack Configuration features.
  * <p/>
  * 
- * @see TemplateAsyncClient
+ * @see ConfigurationAsyncClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface TemplateClient {
+public interface ConfigurationClient {
    /**
-    * List all executable templates.
+    * Lists capabilities
     * 
-    * @return all executable templates, or empty set, if no templates are found
+    * @return current capabilities of this cloud
+    * 
     */
-   Set<Template> listTemplates();
+   Capabilities listCapabilities();
 
-   /**
-    * List all public, private, and privileged templates.
-    * 
-    * @param options
-    *           if present, how to constrain the list, defaults to all executable templates
-    * @return templates matching query, or empty set, if no templates are found
-    * @see TemplateFilter
-    */
-   Set<Template> listTemplates(ListTemplatesOptions options);
-
-   /**
-    * get a specific template by id
-    * 
-    * @param zoneId
-    *           zone template is defined in
-    * @param id
-    *           template to get
-    * @return template or null if not found
-    */
-   Template getTemplateInZone(long zoneId, long id);
 }

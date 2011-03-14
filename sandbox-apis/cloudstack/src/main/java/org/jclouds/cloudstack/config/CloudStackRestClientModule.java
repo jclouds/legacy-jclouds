@@ -27,10 +27,14 @@ import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
+import org.jclouds.cloudstack.features.ConfigurationClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.features.HypervisorAsyncClient;
+import org.jclouds.cloudstack.features.HypervisorClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
@@ -72,19 +76,21 @@ import com.google.common.collect.ImmutableMap;
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ZoneClient.class, ZoneAsyncClient.class)//
-         .put(TemplateClient.class, TemplateAsyncClient.class)//
-         .put(OfferingClient.class, OfferingAsyncClient.class)//
-         .put(NetworkClient.class, NetworkAsyncClient.class)//
-         .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
-         .put(AddressClient.class, AddressAsyncClient.class)//
-         .put(NATClient.class, NATAsyncClient.class)//
-         .put(FirewallClient.class, FirewallAsyncClient.class)//
-         .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-         .put(GuestOSClient.class, GuestOSAsyncClient.class)//
-         .build();
+            .put(ZoneClient.class, ZoneAsyncClient.class)//
+            .put(TemplateClient.class, TemplateAsyncClient.class)//
+            .put(OfferingClient.class, OfferingAsyncClient.class)//
+            .put(NetworkClient.class, NetworkAsyncClient.class)//
+            .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
+            .put(AddressClient.class, AddressAsyncClient.class)//
+            .put(NATClient.class, NATAsyncClient.class)//
+            .put(FirewallClient.class, FirewallAsyncClient.class)//
+            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+            .put(GuestOSClient.class, GuestOSAsyncClient.class)//
+            .put(HypervisorClient.class, HypervisorAsyncClient.class)//
+            .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
+            .build();
 
    public CloudStackRestClientModule() {
       super(CloudStackClient.class, CloudStackAsyncClient.class, DELEGATE_MAP);

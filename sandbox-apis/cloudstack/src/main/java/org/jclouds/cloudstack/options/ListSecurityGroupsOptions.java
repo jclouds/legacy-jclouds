@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudstack.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -29,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listSecurityGroups.html" />
  * @author Adrian Cole
  */
-public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
+public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
 
    public static final ListSecurityGroupsOptions NONE = new ListSecurityGroupsOptions();
 
@@ -39,25 +37,6 @@ public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
     */
    public ListSecurityGroupsOptions id(long id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
-      return this;
-   }
-
-   /**
-    * @param domainId
-    *           the ID of the domain associated with the security group
-    */
-   public ListSecurityGroupsOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
-      return this;
-
-   }
-
-   /**
-    * @param account
-    *           the security group account
-    */
-   public ListSecurityGroupsOptions account(String account) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
       return this;
    }
 
@@ -84,27 +63,11 @@ public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
    public static class Builder {
 
       /**
-       * @see ListSecurityGroupsOptions#account
-       */
-      public static ListSecurityGroupsOptions account(String account) {
-         ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
-         return options.account(account);
-      }
-
-      /**
        * @see ListSecurityGroupsOptions#named
        */
       public static ListSecurityGroupsOptions named(String securityGroupName) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.named(securityGroupName);
-      }
-
-      /**
-       * @see ListSecurityGroupsOptions#domainId
-       */
-      public static ListSecurityGroupsOptions domainId(long id) {
-         ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
-         return options.domainId(id);
       }
 
       /**
@@ -122,5 +85,37 @@ public class ListSecurityGroupsOptions extends BaseHttpRequestOptions {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.virtualMachineId(virtualMachineId);
       }
+
+      /**
+       * @see DeployVirtualMachineOptions#accountInDomain
+       */
+      public static ListSecurityGroupsOptions accountInDomain(String account, long domain) {
+         ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
+         return options.accountInDomain(account, domain);
+      }
+
+      /**
+       * @see DeployVirtualMachineOptions#domainId
+       */
+      public static ListSecurityGroupsOptions domainId(long domainId) {
+         ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
+         return options.domainId(domainId);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListSecurityGroupsOptions accountInDomain(String account, long domain) {
+      return ListSecurityGroupsOptions.class.cast(super.accountInDomain(account, domain));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListSecurityGroupsOptions domainId(long domainId) {
+      return ListSecurityGroupsOptions.class.cast(super.domainId(domainId));
    }
 }
