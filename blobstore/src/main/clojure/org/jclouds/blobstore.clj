@@ -151,10 +151,17 @@ Options can also be specified for extension modules
                       (list-blobs-chunks container prefix blobstore
                                          (.getNextMarker chunk)))))))
 
+(defn- concat-elements
+  "Make a lazy concatenation of the lazy sequences contained in coll. Lazily evaluates coll.
+Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
+  [coll]
+  (if-let [s (seq coll)]
+    (lazy-seq (concat (first s) (concat-elements (next s))))))
+
 (defn list-blobs
   "Returns a lazy seq of all blobs in the given container."
   ([container prefix #^BlobStore blobstore]
-     (apply concat (list-blobs-chunks container prefix blobstore :start))))
+     (concat-elements (list-blobs-chunks container prefix blobstore :start))))
 
 (defn locations
   "Retrieve the available container locations for the blobstore context."
