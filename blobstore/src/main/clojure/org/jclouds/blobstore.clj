@@ -141,8 +141,10 @@ Options can also be specified for extension modules
 
 (defn- list-blobs-chunk [container prefix #^BlobStore blobstore & [marker]]
   (apply list-container blobstore container
-         :in-directory prefix (when (string? marker)
-                                [:after-marker marker])))
+         (concat (when prefix
+                   [:in-directory prefix])
+                 (when (string? marker)
+                   [:after-marker marker]))))
 
 (defn- list-blobs-chunks [container prefix #^BlobStore blobstore marker]
   (when marker
@@ -161,7 +163,9 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
 (defn list-blobs
   "Returns a lazy seq of all blobs in the given container."
   ([container prefix #^BlobStore blobstore]
-     (concat-elements (list-blobs-chunks container prefix blobstore :start))))
+     (concat-elements (list-blobs-chunks container prefix blobstore :start)))
+  ([container #^BlobStore blobstore]
+     (list-blobs container nil blobstore)))
 
 (defn locations
   "Retrieve the available container locations for the blobstore context."
