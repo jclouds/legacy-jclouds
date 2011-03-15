@@ -41,14 +41,12 @@
 
     <repositories>
         <!-- TODO to be removed when the dependencies are in central -->
+        <!-- https://issues.sonatype.org/browse/OSSRH-1453 -->
         <repository>
             <id>jersey</id>
             <url>http://download.java.net/maven/2</url>
         </repository>
-        <repository>
-            <id>gson</id>
-            <url>http://google-gson.googlecode.com/svn/mavenrepo</url>
-        </repository>
+        <!-- https://issues.sonatype.org/browse/OSSRH-1452 -->
         <repository>
             <id>oauth</id>
             <name>OAuth Repository</name>
