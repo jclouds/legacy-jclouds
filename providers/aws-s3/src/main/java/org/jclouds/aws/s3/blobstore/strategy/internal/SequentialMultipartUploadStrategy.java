@@ -39,6 +39,7 @@ import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
 /**
@@ -58,8 +59,8 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final long DEFAULT_PART_SIZE = 33554432; // 32mb
-   private final int MAGNITUDE_BASE = 100;
+   static final long DEFAULT_PART_SIZE = 33554432; // 32mb
+   static final int MAGNITUDE_BASE = 100;
 
    private final AWSS3BlobStore ablobstore;
    private final PayloadSlicer slicer;
@@ -80,6 +81,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       this.slicer = checkNotNull(slicer, "slicer");
    }
 
+   @VisibleForTesting
    protected long calculateChunkSize(long length) {
       long unitPartSize = DEFAULT_PART_SIZE; // first try with default part size
       long parts = length / unitPartSize;
@@ -92,6 +94,14 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
             unitPartSize = MAX_PART_SIZE;
          }
          parts = length / partSize;
+         if (parts * partSize < length) {
+            partSize = (magnitude + 1) * unitPartSize;
+            if (partSize > MAX_PART_SIZE) {
+               partSize = MAX_PART_SIZE;
+               unitPartSize = MAX_PART_SIZE;
+            }
+            parts = length / partSize;
+         }
       }
       if (parts > MAX_NUMBER_OF_PARTS) { // if splits in too many parts or
                                          // cannot be split
@@ -114,6 +124,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       return this.chunkSize;
    }
 
+   @VisibleForTesting
    protected long getParts() {
       return parts;
    }
@@ -132,10 +143,12 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       return next;
    }
 
+   @VisibleForTesting
    protected long getChunkSize() {
       return chunkSize;
    }
 
+   @VisibleForTesting
    protected long getRemaining() {
       return remaining;
    }
