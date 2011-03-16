@@ -45,12 +45,12 @@
         <repository>
             <id>jersey</id>
             <url>http://download.java.net/maven/2</url>
-        </repository>
-        <!-- https://issues.sonatype.org/browse/OSSRH-1452 -->
-        <repository>
-            <id>oauth</id>
-            <name>OAuth Repository</name>
-            <url>http://oauth.googlecode.com/svn/code/maven</url>
+            <releases>
+              <enabled>true</enabled>
+            </releases>
+            <snapshots>
+              <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
