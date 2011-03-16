@@ -45,6 +45,12 @@
         <repository>
             <id>jersey</id>
             <url>http://download.java.net/maven/2</url>
+            <releases>
+              <enabled>true</enabled>
+            </releases>
+            <snapshots>
+              <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
