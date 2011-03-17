@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -38,6 +39,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -157,7 +159,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
          Payload chunkedPart) {
       String eTag = null;
       try {
-         eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);
+         eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);         
       } catch (KeyNotFoundException e) {
          // note that because of eventual consistency, the upload id may not be present yet
          // we may wish to add this condition to the retry handler
@@ -175,23 +177,35 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       calculateChunkSize(blob.getPayload().getContentMetadata().getContentLength());
       long parts = getParts();
       if (parts > 0) {
-         AWSS3Client client = (AWSS3Client) ablobstore.getContext().getProviderSpecificContext().getApi();
-         String uploadId = client.initiateMultipartUpload(container, ObjectMetadataBuilder.create().key(key).build()); // TODO
-                                                                                                                       // md5
-         SortedMap<Integer, String> etags = Maps.newTreeMap();         
-         int part;
-         while ((part = getNextPart()) <= getParts()) {
-            String eTag = prepareUploadPart(client, container, key, uploadId, part,
-                  slicer.slice(blob.getPayload(), getNextChunkOffset(), chunkSize));
-            etags.put(new Integer(part), eTag);
+         AWSS3Client client = (AWSS3Client) ablobstore.getContext()
+               .getProviderSpecificContext().getApi();
+         String uploadId = client.initiateMultipartUpload(container,
+               ObjectMetadataBuilder.create().key(key).build()); // TODO md5
+         try {
+            SortedMap<Integer, String> etags = Maps.newTreeMap();
+            int part;
+            while ((part = getNextPart()) <= getParts()) {
+               String eTag = prepareUploadPart(client, container, key,
+                     uploadId, part, slicer.slice(blob.getPayload(),
+                           getNextChunkOffset(), chunkSize));
+               etags.put(new Integer(part), eTag);
+            }
+            long remaining = getRemaining();
+            if (remaining > 0) {
+               String eTag = prepareUploadPart(client, container, key,
+                     uploadId, part, slicer.slice(blob.getPayload(),
+                           getNextChunkOffset(), remaining));
+               etags.put(new Integer(part), eTag);
+            }
+            return client.completeMultipartUpload(container, key, uploadId, etags);
+         } catch (Exception ex) {
+            RuntimeException rtex = Throwables2.getFirstThrowableOfType(ex, RuntimeException.class);
+            if (rtex == null) {
+               rtex = new RuntimeException(ex);
+            }
+            client.abortMultipartUpload(container, key, uploadId);
+            throw rtex;
          }
-         long remaining = getRemaining();
-         if (remaining > 0) {
-            String eTag = prepareUploadPart(client, container, key, uploadId, part,
-                  slicer.slice(blob.getPayload(), getNextChunkOffset(), remaining));
-            etags.put(new Integer(part), eTag);
-         }
-         return client.completeMultipartUpload(container, key, uploadId, etags);
       } else {
          return ablobstore.putBlob(container, blob);
       }
