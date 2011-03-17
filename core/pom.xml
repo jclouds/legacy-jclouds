@@ -41,18 +41,16 @@
 
     <repositories>
         <!-- TODO to be removed when the dependencies are in central -->
+        <!-- https://issues.sonatype.org/browse/OSSRH-1453 -->
         <repository>
             <id>jersey</id>
             <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>gson</id>
-            <url>http://google-gson.googlecode.com/svn/mavenrepo</url>
-        </repository>
-        <repository>
-            <id>oauth</id>
-            <name>OAuth Repository</name>
-            <url>http://oauth.googlecode.com/svn/code/maven</url>
+            <releases>
+              <enabled>true</enabled>
+            </releases>
+            <snapshots>
+              <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
