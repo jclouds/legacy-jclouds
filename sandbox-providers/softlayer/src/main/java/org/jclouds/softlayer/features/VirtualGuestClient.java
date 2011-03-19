@@ -17,29 +17,37 @@
  * ====================================================================
  */
 
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.features;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.softlayer.config.SoftLayerRestClientModule;
-
-import com.google.inject.Module;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.softlayer.domain.VirtualGuest;
 
 /**
+ * Provides synchronous access to VirtualGuest.
+ * <p/>
  * 
+ * @see VirtualGuestAsyncClient
+ * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
  * @author Adrian Cole
  */
-public class SoftLayerContextBuilder extends
-         RestContextBuilder<SoftLayerClient, SoftLayerAsyncClient> {
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+public interface VirtualGuestClient {
 
-   public SoftLayerContextBuilder(Properties props) {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class, props);
-   }
+   /**
+    * 
+    * @return an account's associated virtual guest objects.
+    */
+   Set<VirtualGuest> listVirtualGuests();
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new SoftLayerRestClientModule());
-   }
+   /**
+    * 
+    * @param id
+    *           id of the virtual guest
+    * @return virtual guest or null if not found
+    */
+   VirtualGuest getVirtualGuest(long id);
 
 }

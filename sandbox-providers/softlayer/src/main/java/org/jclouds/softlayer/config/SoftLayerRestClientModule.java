@@ -19,6 +19,8 @@
 
 package org.jclouds.softlayer.config;
 
+import java.util.Map;
+
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -32,7 +34,11 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
+import org.jclouds.softlayer.features.VirtualGuestClient;
 import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Configures the SoftLayer connection.
@@ -43,8 +49,12 @@ import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
 @ConfiguresRestClient
 public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient, SoftLayerAsyncClient> {
 
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+         .put(VirtualGuestClient.class, VirtualGuestAsyncClient.class)//
+         .build();
+
    public SoftLayerRestClientModule() {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class);
+      super(SoftLayerClient.class, SoftLayerAsyncClient.class, DELEGATE_MAP);
    }
 
    @Override

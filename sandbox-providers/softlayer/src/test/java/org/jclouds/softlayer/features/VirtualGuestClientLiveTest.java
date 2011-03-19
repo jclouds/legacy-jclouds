@@ -17,57 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.softlayer.domain.VirtualGuest;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
-
 /**
- * Tests behavior of {@code SoftLayerClient}
+ * Tests behavior of {@code VirtualGuestClient}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class SoftLayerClientLiveTest {
-
-   private SoftLayerClient client;
-   private RestContext<SoftLayerClient, SoftLayerAsyncClient> context;
-
+public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("test.softlayer.identity"), "test.softlayer.identity");
-      String credential = checkNotNull(System.getProperty("test.softlayer.credential"), "test.softlayer.credential");
-
-      Properties restProperties = new Properties();
-      restProperties.setProperty("softlayer.contextbuilder", SoftLayerContextBuilder.class.getName());
-      restProperties.setProperty("softlayer.propertiesbuilder", SoftLayerPropertiesBuilder.class.getName());
-
-      context = new RestContextFactory(restProperties).createContext("softlayer", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
-
-      client = context.getApi();
+      super.setupClient();
+      client = context.getApi().getVirtualGuestClient();
    }
 
-   @AfterGroups(groups = "live")
-   void tearDown() {
-      if (context != null)
-         context.close();
-   }
+   private VirtualGuestClient client;
 
    @Test
    public void testListVirtualGuests() throws Exception {
