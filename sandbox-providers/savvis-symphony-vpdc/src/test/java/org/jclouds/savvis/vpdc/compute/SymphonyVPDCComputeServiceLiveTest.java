@@ -40,7 +40,7 @@ public class SymphonyVPDCComputeServiceLiveTest extends BaseComputeServiceLiveTe
    }
 
    @Override
-   protected Properties getRestProperties() {
+   protected Properties setupRestProperties() {
       // TODO remove these lines when this is registered under jclouds-core/rest.properties
       Properties restProperties = new Properties();
       restProperties.setProperty("savvis-symphony-vpdc.contextbuilder", SymphonyVPDCContextBuilder.class.getName());
