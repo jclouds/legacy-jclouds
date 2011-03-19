@@ -29,9 +29,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -47,12 +49,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
 public interface VirtualGuestAsyncClient {
+   public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter";
 
    /**
     * @see VirtualGuestClient#listVirtualGuests
     */
    @GET
-   @Path("/VirtualGuest_Account/VirtualGuests.json")
+   @Path("/SoftLayer_Account/VirtualGuests.json")
+   @QueryParams(keys = "objectMask", values = GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualGuest>> listVirtualGuests();
@@ -61,8 +65,54 @@ public interface VirtualGuestAsyncClient {
     * @see VirtualGuestClient#getVirtualGuest
     */
    @GET
-   @Path("/VirtualGuest_Virtual_Guest/{id}.json")
+   @Path("/SoftLayer_Virtual_Guest/{id}.json")
+   @QueryParams(keys = "objectMask", values = GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<VirtualGuest> getVirtualGuest(@PathParam("id") long id);
+
+   /**
+    * @see VirtualGuestClient#rebootHardVirtualGuest
+    */
+   @GET
+   @Path("/SoftLayer_Virtual_Guest/{id}/rebootHard.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> rebootHardVirtualGuest(@PathParam("id") long id);
+
+   /**
+    * @see VirtualGuestClient#powerOffVirtualGuest
+    */
+   @GET
+   @Path("/SoftLayer_Virtual_Guest/{id}/powerOff.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> powerOffVirtualGuest(@PathParam("id") long id);
+
+   /**
+    * @see VirtualGuestClient#powerOnVirtualGuest
+    */
+   @GET
+   @Path("/SoftLayer_Virtual_Guest/{id}/powerOn.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> powerOnVirtualGuest(@PathParam("id") long id);
+
+   /**
+    * @see VirtualGuestClient#pauseVirtualGuest
+    */
+   @GET
+   @Path("/SoftLayer_Virtual_Guest/{id}/pause.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> pauseVirtualGuest(@PathParam("id") long id);
+
+   /**
+    * @see VirtualGuestClient#resumeVirtualGuest
+    */
+   @GET
+   @Path("/SoftLayer_Virtual_Guest/{id}/resume.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> resumeVirtualGuest(@PathParam("id") long id);
 }

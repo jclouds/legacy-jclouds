@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.softlayer.features.DatacenterClient;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 
 /**
@@ -42,4 +43,9 @@ public interface SoftLayerClient {
    @Delegate
    VirtualGuestClient getVirtualGuestClient();
 
+   /**
+    * Provides synchronous access to Datacenter features.
+    */
+   @Delegate
+   DatacenterClient getDatacenterClient();
 }

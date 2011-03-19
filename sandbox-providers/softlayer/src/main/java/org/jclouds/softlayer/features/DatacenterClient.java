@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,31 +17,37 @@
  * ====================================================================
  */
 
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.features;
 
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.softlayer.features.DatacenterAsyncClient;
-import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.softlayer.domain.Datacenter;
 
 /**
- * Provides asynchronous access to SoftLayer via their REST API.
+ * Provides synchronous access to LocationDatacenter.
  * <p/>
  * 
- * @see SoftLayerClient
+ * @see DatacenterAsyncClient
  * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
  * @author Adrian Cole
  */
-public interface SoftLayerAsyncClient {
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+public interface DatacenterClient {
 
    /**
-    * Provides asynchronous access to VirtualGuest features.
+    * 
+    * @return an account's associated datacenter objects.
     */
-   @Delegate
-   VirtualGuestAsyncClient getVirtualGuestClient();
+   Set<Datacenter> listDatacenters();
 
    /**
-    * Provides asynchronous access to Datacenter features.
+    * 
+    * @param id
+    *           id of the datacenter
+    * @return datacenter or null if not found
     */
-   @Delegate
-   DatacenterAsyncClient getDatacenterClient();
+   Datacenter getDatacenter(long id);
+
 }

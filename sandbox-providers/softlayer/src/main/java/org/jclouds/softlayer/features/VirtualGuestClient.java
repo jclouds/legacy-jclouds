@@ -50,4 +50,43 @@ public interface VirtualGuestClient {
     */
    VirtualGuest getVirtualGuest(long id);
 
+   /**
+    * hard reboot the guest.
+    * 
+    * @param id
+    *           id of the virtual guest
+    */
+   void rebootHardVirtualGuest(long id);
+
+   /**
+    * Power off a guest
+    * 
+    * @param id
+    *           id of the virtual guest
+    */
+   void powerOffVirtualGuest(long id);
+
+   /**
+    * Power on a guest
+    * 
+    * @param id
+    *           id of the virtual guest
+    */
+   void powerOnVirtualGuest(long id);
+
+   /**
+    * pause the guest.
+    * 
+    * @param id
+    *           id of the virtual guest
+    */
+   void pauseVirtualGuest(long id);
+
+   /**
+    * resume the guest.
+    * 
+    * @param id
+    *           id of the virtual guest
+    */
+   void resumeVirtualGuest(long id);
 }
