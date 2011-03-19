@@ -67,8 +67,8 @@ public class MpuGraphData {
 
       SequentialMultipartUploadStrategy strategy = new SequentialMultipartUploadStrategy(ablobStore, slicer);
       foreach(1L, 
-            SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE * SequentialMultipartUploadStrategy.MAGNITUDE_BASE,
-            MultipartUploadStrategy.MAX_PART_SIZE * SequentialMultipartUploadStrategy.MAGNITUDE_BASE,
+            SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE * SequentialMultipartUploadStrategy.magnitudeBase,
+            MultipartUploadStrategy.MAX_PART_SIZE * SequentialMultipartUploadStrategy.magnitudeBase,
             MultipartUploadStrategy.MAX_PART_SIZE * MultipartUploadStrategy.MAX_NUMBER_OF_PARTS,
             strategy);
 

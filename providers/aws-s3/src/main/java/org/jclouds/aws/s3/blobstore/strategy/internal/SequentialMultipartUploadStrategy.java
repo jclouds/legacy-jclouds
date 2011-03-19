@@ -21,12 +21,12 @@ package org.jclouds.aws.s3.blobstore.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.aws.s3.AWSS3Client;
@@ -43,6 +43,7 @@ import org.jclouds.util.Throwables2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 /**
  * Provides a sequential multipart upload strategy.
@@ -61,8 +62,15 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   static final long DEFAULT_PART_SIZE = 33554432; // 32mb
-   static final int MAGNITUDE_BASE = 100;
+   @Inject(optional = true)
+   @Named("jclouds.mpu.parts.size")
+   @VisibleForTesting
+   long DEFAULT_PART_SIZE = 33554432; // 32mb
+   
+   @Inject(optional = true)
+   @Named("jclouds.mpu.parts.magnitude")
+   @VisibleForTesting
+   int magnitudeBase = 100;
 
    private final AWSS3BlobStore ablobstore;
    private final PayloadSlicer slicer;
@@ -88,7 +96,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       long unitPartSize = DEFAULT_PART_SIZE; // first try with default part size
       long parts = length / unitPartSize;
       long partSize = unitPartSize;
-      int magnitude = (int) (parts / MAGNITUDE_BASE);
+      int magnitude = (int) (parts / magnitudeBase);
       if (magnitude > 0) {
          partSize = magnitude * unitPartSize;
          if (partSize > MAX_PART_SIZE) {
