@@ -95,11 +95,11 @@ public class MpuPartitioningAlgorithmTest {
       replay(slicer);
 
       SequentialMultipartUploadStrategy strategy = new SequentialMultipartUploadStrategy(ablobStore, slicer);
-      // upper limit while we still have exactly DEFAULT_PART_SIZE chunkSize
-      long length = SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE * SequentialMultipartUploadStrategy.magnitudeBase;
+      // upper limit while we still have exactly defaultPartSize chunkSize
+      long length = SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE * SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE;
       long chunkSize = strategy.calculateChunkSize(length);
       assertEquals(chunkSize, SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE);
-      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.magnitudeBase - 1);
+      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE - 1);
       assertEquals(strategy.getRemaining(), SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE);
       assertEquals(chunkSize * strategy.getParts() + strategy.getRemaining(), length);
 
@@ -107,7 +107,7 @@ public class MpuPartitioningAlgorithmTest {
       length += 1;
       chunkSize = strategy.calculateChunkSize(length);
       assertEquals(chunkSize, SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE * 2);
-      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.magnitudeBase / 2);
+      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE / 2);
       assertEquals(strategy.getRemaining(), 1);
       assertEquals(chunkSize * strategy.getParts() + strategy.getRemaining(), length);
       
@@ -130,10 +130,10 @@ public class MpuPartitioningAlgorithmTest {
 
       SequentialMultipartUploadStrategy strategy = new SequentialMultipartUploadStrategy(ablobStore, slicer);
       // upper limit while we still have exactly MAGNITUDE_BASE parts (together with the remaining)
-      long length = MultipartUploadStrategy.MAX_PART_SIZE * SequentialMultipartUploadStrategy.magnitudeBase;
+      long length = MultipartUploadStrategy.MAX_PART_SIZE * SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE;
       long chunkSize = strategy.calculateChunkSize(length);
       assertEquals(chunkSize, MultipartUploadStrategy.MAX_PART_SIZE);
-      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.magnitudeBase - 1);
+      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE - 1);
       assertEquals(strategy.getRemaining(), MultipartUploadStrategy.MAX_PART_SIZE);
       assertEquals(chunkSize * strategy.getParts() + strategy.getRemaining(), length);
 
@@ -141,7 +141,7 @@ public class MpuPartitioningAlgorithmTest {
       length += 1;
       chunkSize = strategy.calculateChunkSize(length);
       assertEquals(chunkSize, MultipartUploadStrategy.MAX_PART_SIZE);
-      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.magnitudeBase);
+      assertEquals(strategy.getParts(), SequentialMultipartUploadStrategy.DEFAULT_MAGNITUDE_BASE);
       assertEquals(strategy.getRemaining(), 1);
       assertEquals(chunkSize * strategy.getParts() + strategy.getRemaining(), length);
       

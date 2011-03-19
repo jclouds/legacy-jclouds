@@ -62,15 +62,21 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   @VisibleForTesting
+   static final long DEFAULT_PART_SIZE = 33554432; // 32MB
+   
+   @VisibleForTesting
+   static final int DEFAULT_MAGNITUDE_BASE = 100;
+   
    @Inject(optional = true)
    @Named("jclouds.mpu.parts.size")
    @VisibleForTesting
-   long DEFAULT_PART_SIZE = 33554432; // 32mb
+   long defaultPartSize = DEFAULT_PART_SIZE;
    
    @Inject(optional = true)
    @Named("jclouds.mpu.parts.magnitude")
    @VisibleForTesting
-   int magnitudeBase = 100;
+   int magnitudeBase = DEFAULT_MAGNITUDE_BASE;
 
    private final AWSS3BlobStore ablobstore;
    private final PayloadSlicer slicer;
@@ -93,7 +99,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
 
    @VisibleForTesting
    protected long calculateChunkSize(long length) {
-      long unitPartSize = DEFAULT_PART_SIZE; // first try with default part size
+      long unitPartSize = defaultPartSize; // first try with default part size
       long parts = length / unitPartSize;
       long partSize = unitPartSize;
       int magnitude = (int) (parts / magnitudeBase);
@@ -132,6 +138,14 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       logger.debug(" %d bytes partitioned in %d parts of part size: %d, remaining: %d%s", length, parts, chunkSize,
             remaining, (remaining > MAX_PART_SIZE ? " overflow!" : ""));
       return this.chunkSize;
+   }
+
+   public long getCopied() {
+      return copied;
+   }
+
+   public void setCopied(long copied) {
+      this.copied = copied;
    }
 
    @VisibleForTesting
