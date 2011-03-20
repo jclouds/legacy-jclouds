@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,83 +19,37 @@
 
 package org.jclouds.softlayer;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.util.concurrent.ExecutionException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.softlayer.features.BaseSoftLayerAsyncClientTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests annotation parsing of {@code SoftLayerAsyncClient}
+ * Tests behavior of {@code SoftLayerAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class SoftLayerAsyncClientTest extends RestClientTest<SoftLayerAsyncClient> {
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SoftLayerAsyncClientTest")
+public class SoftLayerAsyncClientTest extends BaseSoftLayerAsyncClientTest<SoftLayerAsyncClient> {
 
-   public void testListVirtualGuests() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SoftLayerAsyncClient.class.getMethod("listVirtualGuests");
-      HttpRequest httpRequest = processor.createRequest(method);
+   private SoftLayerAsyncClient asyncClient;
+   private SoftLayerClient syncClient;
 
-      assertRequestLineEquals(httpRequest,
-               "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-
-      assertRequestLineEquals(httpRequest,
-               "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json HTTP/1.1");
-      // for example, using basic authentication, we should get "only one"
-      // header
-      assertNonPayloadHeadersEqual(httpRequest,
-               "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-
+   public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+      assert syncClient.getVirtualGuestClient() != null;
+      assert syncClient.getDatacenterClient() != null;
    }
 
-   public void testGetVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SoftLayerAsyncClient.class.getMethod("getVirtualGuest", long.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1234);
-
-      assertRequestLineEquals(httpRequest,
-               "GET https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/1234.json HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-
-   }
-
-   @Override
-   protected void checkFilters(HttpRequest request) {
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
+   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+      assert asyncClient.getVirtualGuestClient() != null;
+      assert asyncClient.getDatacenterClient() != null;
    }
 
    @Override
@@ -104,9 +58,16 @@ public class SoftLayerAsyncClientTest extends RestClientTest<SoftLayerAsyncClien
       };
    }
 
+   @BeforeClass
    @Override
-   public RestContextSpec<SoftLayerClient, SoftLayerAsyncClient> createContextSpec() {
-      return contextSpec("softlayer", "https://api.softlayer.com/rest", "3", "", "identity", "credential",
-               SoftLayerClient.class, SoftLayerAsyncClient.class);
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
+      asyncClient = injector.getInstance(SoftLayerAsyncClient.class);
+      syncClient = injector.getInstance(SoftLayerClient.class);
+   }
+
+   @Override
+   protected void checkFilters(HttpRequest request) {
+
    }
 }

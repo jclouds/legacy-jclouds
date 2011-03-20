@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,12 @@
 
 package org.jclouds.softlayer;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.softlayer.domain.VirtualGuest;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.softlayer.features.DatacenterClient;
+import org.jclouds.softlayer.features.VirtualGuestClient;
 
 /**
  * Provides synchronous access to SoftLayer.
@@ -33,21 +34,18 @@ import org.jclouds.softlayer.domain.VirtualGuest;
  * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SoftLayerClient {
 
    /**
-    * 
-    * @return an account's associated virtual guest objects.
+    * Provides synchronous access to VirtualGuest features.
     */
-   Set<VirtualGuest> listVirtualGuests();
+   @Delegate
+   VirtualGuestClient getVirtualGuestClient();
 
    /**
-    * 
-    * @param id
-    *           id of the virtual guest
-    * @return virtual guest or null if not found
+    * Provides synchronous access to Datacenter features.
     */
-   VirtualGuest getVirtualGuest(long id);
-
+   @Delegate
+   DatacenterClient getDatacenterClient();
 }
