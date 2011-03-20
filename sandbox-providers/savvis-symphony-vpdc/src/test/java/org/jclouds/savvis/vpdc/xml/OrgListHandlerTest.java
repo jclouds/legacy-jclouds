@@ -23,38 +23,34 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Set;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.savvis.vpdc.domain.Link;
-import org.jclouds.savvis.vpdc.domain.Org;
+import org.jclouds.savvis.vpdc.domain.Resource;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code OrgHandler}
+ * Tests behavior of {@code OrgListHandler}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class OrgHandlerTest {
+public class OrgListHandlerTest {
 
    public void testSavvis() {
-      InputStream is = getClass().getResourceAsStream("/org.xml");
+      InputStream is = getClass().getResourceAsStream("/orglist.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
-      assertEquals(
-            result.toString(),
-            Org.builder()
-                  .name("100000.0")
-                  .description("SAVVISStation Integration Testing")
-                  .vDC(new Link("2736", "demo_vpdcname", "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"),
-                        "down")).build().toString());
+      Set<Resource> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
+      assertEquals(result, ImmutableSet.of(new Resource("100000.0", "SAVVISStation Integration Testing",
+            "application/vnd.vmware.vcloud.org+xml", URI
+                  .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0"))));
 
    }
 }

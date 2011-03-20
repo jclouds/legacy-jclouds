@@ -31,9 +31,9 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>savvis-symphony-vpdc</artifactId>
-    <name>jclouds savvis core</name>
-    <description>jclouds components to access savvis</description>
+    <artifactId>savvis-symphonyvpdc</artifactId>
+    <name>jclouds savvis-vpdc vpdc</name>
+    <description>jclouds components to access Savvis Symphony VPDC</description>
     
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -52,34 +52,20 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>node-924</jclouds.compute.blacklist-nodes>
-        <test.savvis-symphony-vpdc.endpoint>https://api.sandbox.symphonyVPDC.savvis.net/rest/api</test.savvis-symphony-vpdc.endpoint>
-        <test.savvis-symphony-vpdc.apiversion>0.8</test.savvis-symphony-vpdc.apiversion>
-        <test.savvis-symphony-vpdc.identity>FIXME</test.savvis-symphony-vpdc.identity>
-        <test.savvis-symphony-vpdc.credential>FIXME</test.savvis-symphony-vpdc.credential>
+        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/rest/api</test.savvis-symphonyvpdc.endpoint>
+        <test.savvis-symphonyvpdc.apiversion>0.8</test.savvis-symphonyvpdc.apiversion>
+        <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
+        <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>vcloudexpress</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>vcloudexpress</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-vcloud</artifactId>
+            <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -133,20 +119,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.savvis-symphony-vpdc.endpoint</name>
-                                            <value>${test.savvis-symphony-vpdc.endpoint}</value>
+                                            <name>test.savvis-symphonyvpdc.endpoint</name>
+                                            <value>${test.savvis-symphonyvpdc.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.savvis-symphony-vpdc.apiversion</name>
-                                            <value>${test.savvis-symphony-vpdc.apiversion}</value>
+                                            <name>test.savvis-symphonyvpdc.apiversion</name>
+                                            <value>${test.savvis-symphonyvpdc.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.savvis-symphony-vpdc.identity</name>
-                                            <value>${test.savvis-symphony-vpdc.identity}</value>
+                                            <name>test.savvis-symphonyvpdc.identity</name>
+                                            <value>${test.savvis-symphonyvpdc.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.savvis-symphony-vpdc.credential</name>
-                                            <value>${test.savvis-symphony-vpdc.credential}</value>
+                                            <name>test.savvis-symphonyvpdc.credential</name>
+                                            <value>${test.savvis-symphonyvpdc.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist-nodes</name>

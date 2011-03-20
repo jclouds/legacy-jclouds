@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
@@ -55,6 +56,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private VCloudError error;
    private boolean inOwner;
 
+   @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
