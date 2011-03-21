@@ -23,8 +23,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.cim.VirtualSystemSettingData;
+import org.jclouds.cim.xml.VirtualSystemSettingDataHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.xml.ovf.SystemHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,10 +49,11 @@ public class SystemHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/system.xml");
 
-      org.jclouds.vcloud.domain.ovf.System result = factory.create(injector.getInstance(SystemHandler.class)).parse(is);
-      assertEquals(result.getName(), "Virtual Hardware Family");
-      assertEquals(result.getId(), 0);
-      assertEquals(result.getIdentifier(), "adriantest1");
+      VirtualSystemSettingData result = factory.create(injector.getInstance(VirtualSystemSettingDataHandler.class))
+               .parse(is);
+      assertEquals(result.getElementName(), "Virtual Hardware Family");
+      assertEquals(result.getInstanceID(), "0");
+      assertEquals(result.getVirtualSystemIdentifier(), "adriantest1");
       assertEquals(result.getVirtualSystemTypes(), ImmutableSet.of("vmx-07"));
    }
 }

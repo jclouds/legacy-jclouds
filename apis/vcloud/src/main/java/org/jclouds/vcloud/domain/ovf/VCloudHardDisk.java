@@ -19,21 +19,283 @@
 
 package org.jclouds.vcloud.domain.ovf;
 
+import java.util.List;
+
+import org.jclouds.cim.ResourceAllocationSettingData;
 
 /**
  * @author Adrian Cole
  * 
  */
-public class VCloudHardDisk extends ResourceAllocation {
+public class VCloudHardDisk extends ResourceAllocationSettingData {
+
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder extends ResourceAllocationSettingData.Builder {
+      private long capacity;
+      private int busType;
+      private String busSubType;
+
+      /**
+       * @see VCloudHardDisk#getCapacity
+       */
+      public Builder capacity(long capacity) {
+         this.capacity = capacity;
+         return this;
+      }
+
+      /**
+       * @see VCloudHardDisk#getBusType
+       */
+      public Builder busType(int busType) {
+         this.busType = busType;
+         return this;
+      }
+
+      /**
+       * @see VCloudHardDisk#getBusSubType
+       */
+      public Builder busSubType(String busSubType) {
+         this.busSubType = busSubType;
+         return this;
+      }
+
+      public VCloudHardDisk build() {
+         return new VCloudHardDisk(elementName, instanceID, caption, description, address, addressOnParent,
+                  allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility, limit,
+                  mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+                  virtualQuantity, virtualQuantityUnits, weight, connections, hostResources, capacity, busType,
+                  busSubType);
+      }
+
+      public Builder fromVCloudHardDisk(VCloudHardDisk in) {
+         return capacity(in.getCapacity()).busType(in.getBusType()).busSubType(in.getBusSubType())
+                  .fromResourceAllocationSettingData(in);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder caption(String caption) {
+         return Builder.class.cast(super.caption(caption));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder description(String description) {
+         return Builder.class.cast(super.description(description));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder elementName(String elementName) {
+         return Builder.class.cast(super.elementName(elementName));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder instanceID(String instanceID) {
+         return Builder.class.cast(super.instanceID(instanceID));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder address(String address) {
+         return Builder.class.cast(super.address(address));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder addressOnParent(String addressOnParent) {
+         return Builder.class.cast(super.addressOnParent(addressOnParent));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder allocationUnits(String allocationUnits) {
+         return Builder.class.cast(super.allocationUnits(allocationUnits));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder automaticAllocation(Boolean automaticAllocation) {
+         return Builder.class.cast(super.automaticAllocation(automaticAllocation));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder automaticDeallocation(Boolean automaticDeallocation) {
+         return Builder.class.cast(super.automaticDeallocation(automaticDeallocation));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder connection(String connection) {
+         return Builder.class.cast(super.connection(connection));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder connections(List<String> connections) {
+         return Builder.class.cast(super.connections(connections));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder consumerVisibility(ConsumerVisibility consumerVisibility) {
+         return Builder.class.cast(super.consumerVisibility(consumerVisibility));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder hostResource(String hostResource) {
+         return Builder.class.cast(super.hostResource(hostResource));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder hostResources(List<String> hostResources) {
+         return Builder.class.cast(super.hostResources(hostResources));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder limit(Long limit) {
+         return Builder.class.cast(super.limit(limit));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder mappingBehavior(MappingBehavior mappingBehavior) {
+         return Builder.class.cast(super.mappingBehavior(mappingBehavior));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder otherResourceType(String otherResourceType) {
+         return Builder.class.cast(super.otherResourceType(otherResourceType));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder parent(String parent) {
+         return Builder.class.cast(super.parent(parent));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder poolID(String poolID) {
+         return Builder.class.cast(super.poolID(poolID));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder reservation(Long reservation) {
+         return Builder.class.cast(super.reservation(reservation));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder resourceSubType(String resourceSubType) {
+         return Builder.class.cast(super.resourceSubType(resourceSubType));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder resourceType(org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType) {
+         return Builder.class.cast(super.resourceType(resourceType));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder virtualQuantity(Long virtualQuantity) {
+         return Builder.class.cast(super.virtualQuantity(virtualQuantity));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder virtualQuantityUnits(String virtualQuantityUnits) {
+         return Builder.class.cast(super.virtualQuantityUnits(virtualQuantityUnits));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder weight(Integer weight) {
+         return Builder.class.cast(super.weight(weight));
+      }
+
+      @Override
+      public Builder fromResourceAllocationSettingData(ResourceAllocationSettingData in) {
+         return Builder.class.cast(super.fromResourceAllocationSettingData(in));
+      }
+   }
+
    private final long capacity;
    private final int busType;
    private final String busSubType;
 
-   public VCloudHardDisk(int id, String name, String description, ResourceType type, String subType,
-            String hostResource, String address, Integer addressOnParent, Integer parent, Boolean connected,
-            long virtualQuantity, String virtualQuantityUnits, long capacity, int busType, String busSubType) {
-      super(id, name, description, type, subType, hostResource, address, addressOnParent, parent, connected,
-               virtualQuantity, virtualQuantityUnits);
+   public VCloudHardDisk(String elementName, String instanceID, String caption, String description, String address,
+            String addressOnParent, String allocationUnits, Boolean automaticAllocation, Boolean automaticDeallocation,
+            ConsumerVisibility consumerVisibility, Long limit, MappingBehavior mappingBehavior,
+            String otherResourceType, String parent, String poolID, Long reservation, String resourceSubType,
+            org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType, Long virtualQuantity,
+            String virtualQuantityUnits, Integer weight, List<String> connections, List<String> hostResources,
+            long capacity, int busType, String busSubType) {
+      super(elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
+               automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior,
+               otherResourceType, parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity,
+               virtualQuantityUnits, weight, connections, hostResources);
       this.capacity = capacity;
       this.busType = busType;
       this.busSubType = busSubType;
@@ -52,41 +314,18 @@ public class VCloudHardDisk extends ResourceAllocation {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((busSubType == null) ? 0 : busSubType.hashCode());
-      result = prime * result + busType;
-      result = prime * result + (int) (capacity ^ (capacity >>> 32));
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VCloudHardDisk other = (VCloudHardDisk) obj;
-      if (busSubType == null) {
-         if (other.busSubType != null)
-            return false;
-      } else if (!busSubType.equals(other.busSubType))
-         return false;
-      if (busType != other.busType)
-         return false;
-      if (capacity != other.capacity)
-         return false;
-      return true;
+   public Builder toBuilder() {
+      return builder().fromVCloudHardDisk(this);
    }
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", description=" + getDescription() + ", type=" + getType()
-               + ", virtualQuantity=" + getVirtualQuantity() + ", virtualQuantityUnits=" + getVirtualQuantityUnits()
-               + ", capacity=" + capacity + ", busType=" + busType + ", busSubType=" + busSubType + "]";
+      return String
+               .format(
+                        "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s, busSubType=%s, busType=%s, capacity=%s]",
+                        elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
+                        automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources,
+                        limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
+                        resourceType, virtualQuantity, virtualQuantityUnits, weight, busSubType, busType, capacity);
    }
-
 }

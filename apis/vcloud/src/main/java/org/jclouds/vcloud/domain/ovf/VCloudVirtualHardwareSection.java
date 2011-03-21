@@ -21,6 +21,9 @@ package org.jclouds.vcloud.domain.ovf;
 
 import java.net.URI;
 
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.VirtualSystemSettingData;
+import org.jclouds.ovf.VirtualHardwareSection;
 
 /**
  * A description of the virtual hardware supported by a virtual machine.
@@ -29,8 +32,8 @@ public class VCloudVirtualHardwareSection extends VirtualHardwareSection {
    protected final String type;
    protected final URI href;
 
-   public VCloudVirtualHardwareSection(String type, URI href, String info, System virtualSystem,
-            Iterable<? extends ResourceAllocation> resourceAllocations) {
+   public VCloudVirtualHardwareSection(String type, URI href, String info, VirtualSystemSettingData virtualSystem,
+            Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
       super(info, virtualSystem, resourceAllocations);
       this.type = type;
       this.href = href;
@@ -46,11 +49,7 @@ public class VCloudVirtualHardwareSection extends VirtualHardwareSection {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((href == null) ? 0 : href.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
+      return href.hashCode();
    }
 
    @Override
@@ -62,17 +61,7 @@ public class VCloudVirtualHardwareSection extends VirtualHardwareSection {
       if (getClass() != obj.getClass())
          return false;
       VCloudVirtualHardwareSection other = (VCloudVirtualHardwareSection) obj;
-      if (href == null) {
-         if (other.href != null)
-            return false;
-      } else if (!href.equals(other.href))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
-      return true;
+      return href.equals(other.href);
    }
 
    @Override

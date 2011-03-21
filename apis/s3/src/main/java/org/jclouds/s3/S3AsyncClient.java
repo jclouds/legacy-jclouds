@@ -88,6 +88,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to S3 via their REST API.
@@ -110,6 +111,7 @@ public interface S3AsyncClient {
    /**
     * Creates a default implementation of S3Object
     */
+   @Provides
    public S3Object newS3Object();
 
    /**

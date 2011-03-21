@@ -24,12 +24,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.System;
 
 import com.google.common.collect.ListMultimap;
 
@@ -46,8 +46,8 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    private final Long size;
    private final ListMultimap<String, String> networkToAddresses;
    private final String operatingSystemDescription;
-   private final System system;
-   private final Set<ResourceAllocation> resourceAllocations;
+   private final VirtualSystemSettingData system;
+   private final Set<ResourceAllocationSettingData> resourceAllocations;
    private final Integer osType;
 
    /** The serialVersionUID */
@@ -55,7 +55,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
 
    public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
-            System system, Set<ResourceAllocation> resourceAllocations) {
+            VirtualSystemSettingData system, Set<ResourceAllocationSettingData> resourceAllocations) {
       this.name = checkNotNull(name, "name");
       this.href = checkNotNull(href, "href");
       this.status = checkNotNull(status, "status");
@@ -89,12 +89,12 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
-   public System getSystem() {
+   public VirtualSystemSettingData getSystem() {
       return system;
    }
 
    @Override
-   public Set<ResourceAllocation> getResourceAllocations() {
+   public Set<ResourceAllocationSettingData> getResourceAllocations() {
       return resourceAllocations;
    }
 

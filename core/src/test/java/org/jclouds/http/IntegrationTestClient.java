@@ -27,6 +27,7 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 
 import com.google.common.collect.Multimap;
+import com.google.inject.Provides;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
@@ -67,5 +68,6 @@ public interface IntegrationTestClient {
 
    String downloadAndParse(String id);
 
+   @Provides
    StringBuffer newStringBuffer();
 }

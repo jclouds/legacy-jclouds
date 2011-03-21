@@ -40,12 +40,12 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 

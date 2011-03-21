@@ -53,18 +53,19 @@ public class BaseVPDCClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-            + ".apiversion");
+               + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -73,7 +74,7 @@ public class BaseVPDCClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+               overrides);
    }
 
    @AfterGroups(groups = "live")

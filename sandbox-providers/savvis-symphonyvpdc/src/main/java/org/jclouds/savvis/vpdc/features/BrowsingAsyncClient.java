@@ -24,6 +24,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -36,6 +37,8 @@ import org.jclouds.savvis.vpdc.domain.VApp;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
 import org.jclouds.savvis.vpdc.functions.DefaultOrgIfNull;
+import org.jclouds.savvis.vpdc.options.BindGetVAppOptions;
+import org.jclouds.savvis.vpdc.options.GetVAppOptions;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
 import org.jclouds.savvis.vpdc.xml.OrgHandler;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
@@ -96,7 +99,8 @@ public interface BrowsingAsyncClient {
    @Path("org/{billingSiteId}/vdc/{vpdcId}/vApp/{vAppId}")
    ListenableFuture<VApp> getVAppInOrgAndVDC(
          @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
-         @PathParam("vpdcId") String vpdcId, @PathParam("vAppId") String vAppId);
+            @PathParam("vpdcId") String vpdcId, @PathParam("vAppId") String vAppId,
+            @BinderParam(BindGetVAppOptions.class) GetVAppOptions... options);
 
    /**
     * @see BrowsingClient#getTask

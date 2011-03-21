@@ -34,6 +34,8 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 
+import com.google.inject.Provides;
+
 /**
  * Common features between OpenStack Swift and CloudFiles
  * 
@@ -42,7 +44,7 @@ import org.jclouds.openstack.swift.options.ListContainerOptions;
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CommonSwiftClient {
-
+   @Provides
    SwiftObject newSwiftObject();
 
    /**

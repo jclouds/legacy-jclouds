@@ -26,18 +26,18 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;

@@ -1,0 +1,11 @@
+<ovf:OperatingSystemSection xmlns:vcloud="http://www.vmware.com/vcloud/v1"
+    xmlns:vmw="http://www.vmware.com/schema/ovf" ovf:id="80"
+    vcloud:href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/"
+    vcloud:type="application/vnd.vmware.vcloud.operatingSystemSection+xml"
+    vmw:osType="rhel5_64Guest">
+    <ovf:Info>Specifies the operating system installed</ovf:Info>
+    <ovf:Description>Red Hat Enterprise Linux 5 (64-bit)</ovf:Description>
+    <Link rel="edit"
+        type="application/vnd.vmware.vcloud.operatingSystemSection+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/" />
+</ovf:OperatingSystemSection>

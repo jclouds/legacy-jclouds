@@ -32,6 +32,7 @@ import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -48,8 +49,8 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
       super(ComputeType.HARDWARE);
    }
 
-   public HardwareBuilder processors(List<Processor> processors) {
-      this.processors = checkNotNull(processors, "processors");
+   public HardwareBuilder processors(Iterable<Processor> processors) {
+      this.processors =  ImmutableList.copyOf(checkNotNull(processors, "processors"));
       return this;
    }
 
@@ -58,8 +59,8 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
-   public HardwareBuilder volumes(List<Volume> volumes) {
-      this.volumes = checkNotNull(volumes, "volumes");
+   public HardwareBuilder volumes(Iterable<Volume> volumes) {
+      this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
       return this;
    }
 

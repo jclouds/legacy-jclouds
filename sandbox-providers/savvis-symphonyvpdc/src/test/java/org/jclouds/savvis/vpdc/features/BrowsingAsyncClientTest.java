@@ -26,6 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.savvis.vpdc.options.GetVAppOptions;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
 import org.jclouds.savvis.vpdc.xml.OrgHandler;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
@@ -105,11 +106,11 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BrowsingAsyncClient.class.getMethod("getNetworkInOrgAndVDC", String.class, String.class,
-            String.class);
+               String.class);
       HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-            "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/network/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/network/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -122,11 +123,11 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
 
    public void testNetworkWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BrowsingAsyncClient.class.getMethod("getNetworkInOrgAndVDC", String.class, String.class,
-            String.class);
+               String.class);
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-            "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/network/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/network/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -139,11 +140,29 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
 
    public void testVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
-            String.class);
+               String.class, GetVAppOptions[].class);
       HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-            "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/VM-Tier01 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testVAppWithPowerState() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
+               String.class, GetVAppOptions[].class);
+      HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01", GetVAppOptions.Builder
+               .withPowerState());
+
+      assertRequestLineEquals(request,
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/VM-Tier01/withpowerstate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -156,11 +175,11 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
 
    public void testVAppWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
-            String.class);
+               String.class, GetVAppOptions[].class);
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-            "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/vApp/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/vApp/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 

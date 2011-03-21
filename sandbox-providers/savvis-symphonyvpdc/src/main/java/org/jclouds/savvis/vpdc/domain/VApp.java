@@ -5,7 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.savvis.vpdc.domain.vapp.NetworkSection;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.ovf.NetworkSection;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -122,7 +123,7 @@ public class VApp extends Resource {
       private Integer osType;
       private String osDescripton;
       private NetworkSection networkSection;
-      private Set<ResourceAllocation> resourceAllocations = Sets.newLinkedHashSet();
+      private Set<ResourceAllocationSettingData> resourceAllocations = Sets.newLinkedHashSet();
 
       public Builder ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
@@ -149,12 +150,12 @@ public class VApp extends Resource {
          return this;
       }
 
-      public Builder resourceAllocation(ResourceAllocation in) {
+      public Builder resourceAllocation(ResourceAllocationSettingData in) {
          this.resourceAllocations.add(checkNotNull(in, "resourceAllocation"));
          return this;
       }
 
-      public Builder resourceAllocations(Set<ResourceAllocation> resourceAllocations) {
+      public Builder resourceAllocations(Set<ResourceAllocationSettingData> resourceAllocations) {
          this.resourceAllocations.addAll(checkNotNull(resourceAllocations, "resourceAllocations"));
          return this;
       }
@@ -199,10 +200,10 @@ public class VApp extends Resource {
    private final Integer osType;
    private final String osDescripton;
    private final NetworkSection networkSection;
-   private final Set<ResourceAllocation> resourceAllocations;
+   private final Set<ResourceAllocationSettingData> resourceAllocations;
 
    public VApp(String id, String name, String type, URI href, Status status, String ipAddress, Integer osType,
-         String osDescripton, NetworkSection networkSection, Set<ResourceAllocation> resourceAllocations) {
+         String osDescripton, NetworkSection networkSection, Set<ResourceAllocationSettingData> resourceAllocations) {
       super(id, name, type, href);
       this.status = status;
       this.ipAddress = ipAddress;
@@ -232,7 +233,7 @@ public class VApp extends Resource {
       return networkSection;
    }
 
-   public Set<ResourceAllocation> getResourceAllocations() {
+   public Set<ResourceAllocationSettingData> getResourceAllocations() {
       return resourceAllocations;
    }
 

@@ -19,12 +19,12 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.SaxUtils;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.xml.sax.Attributes;
@@ -80,7 +80,7 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
-      Map<String, String> attributes = cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       this.currentText = new StringBuilder();
       if (qName.endsWith("GuestCustomizationSection")) {
          guest = newReferenceType(attributes);

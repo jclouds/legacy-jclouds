@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +38,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Tests behavior of ListenableFutureExceptionParser
@@ -57,6 +60,9 @@ public class SyncProxyTest {
       String getString();
 
       String newString();
+
+      @Provides
+      Set<String> string();
 
       String getRuntimeException();
 
@@ -112,6 +118,11 @@ public class SyncProxyTest {
          return "new";
       }
 
+      @Provides
+      public Set<String> string() {
+         return ImmutableSet.of("new");
+      }
+
       public ListenableFuture<String> take20Milliseconds() {
          return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
@@ -153,7 +164,7 @@ public class SyncProxyTest {
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
-            new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
    @Test
@@ -164,6 +175,7 @@ public class SyncProxyTest {
    @Test
    public void testPassSync() {
       assertEquals(sync.newString(), "new");
+      assertEquals(sync.string(), ImmutableSet.of("new"));
    }
 
    @Test

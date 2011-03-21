@@ -20,25 +20,24 @@
 package org.jclouds.vcloud.compute.util;
 
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
 import java.util.Set;
 
+import org.jclouds.cim.CIMPredicates;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -55,16 +54,8 @@ public class VCloudComputeUtils {
       return vApp.getChildren().size() > 0 ? toComputeOs(Iterables.get(vApp.getChildren(), 0)) : null;
    }
 
-   public static CIMOperatingSystem toComputeOs(OvfEnvelope ovf) {
-      return toComputeOs(ovf.getVirtualSystem().getOperatingSystem());
-   }
-
    public static CIMOperatingSystem toComputeOs(Vm vm) {
-      return toComputeOs(vm.getOperatingSystemSection());
-   }
-
-   public static CIMOperatingSystem toComputeOs(org.jclouds.vcloud.domain.ovf.OperatingSystemSection os) {
-      return new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(os.getId()), "", null, os.getDescription());
+      return CIMOperatingSystem.toComputeOs(vm.getOperatingSystemSection());
    }
 
    public static Credentials getCredentialsFrom(VApp vApp) {
@@ -106,8 +97,8 @@ public class VCloudComputeUtils {
                ips.add(connection.getExternalIpAddress());
          }
       } else {
-         for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
-               resourceType(ResourceType.ETHERNET_ADAPTER))) {
+         for (ResourceAllocationSettingData net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
+               CIMPredicates.resourceTypeIn(ResourceType.ETHERNET_ADAPTER))) {
             if (net instanceof VCloudNetworkAdapter) {
                VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);
                if (vNet.getIpAddress() != null)

@@ -29,6 +29,7 @@ import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VApp;
 import org.jclouds.savvis.vpdc.domain.VDC;
+import org.jclouds.savvis.vpdc.options.GetVAppOptions;
 
 /**
  * Provides access to Symphony VPDC resources via their REST API.
@@ -84,12 +85,14 @@ public interface BrowsingClient {
     *           vpdc Id
     * @param vAppId
     *           vApp ID
+    * @param options
+    *           control whether or not to get real time state
     * 
     * @return A virtual application (vApp) is a software solution comprising one or more virtual
     *         machines, all of which are deployed, managed, and maintained as a unit, or null if not
     *         present
     */
-   VApp getVAppInOrgAndVDC(String billingSiteId, String vpdcId, String vAppId);
+   VApp getVAppInOrgAndVDC(String billingSiteId, String vpdcId, String vAppId, GetVAppOptions... options);
 
    /**
     * Gets an existing task.

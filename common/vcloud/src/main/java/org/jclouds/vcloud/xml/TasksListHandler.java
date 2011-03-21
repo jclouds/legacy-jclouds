@@ -19,14 +19,13 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
-
 import java.util.Map;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.SaxUtils;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
@@ -57,7 +56,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("TasksList")) {
          resource = Utils.newReferenceType(attributes);
       } else if (qName.equals("Link") && "self".equals(attributes.get("rel"))) {

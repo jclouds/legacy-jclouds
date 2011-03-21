@@ -25,6 +25,7 @@ import java.net.URI;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 
 /**

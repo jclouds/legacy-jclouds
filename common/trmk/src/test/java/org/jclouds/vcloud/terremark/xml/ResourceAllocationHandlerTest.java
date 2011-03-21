@@ -23,10 +23,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
-import org.jclouds.vcloud.xml.ovf.ResourceAllocationHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,15 +48,13 @@ public class ResourceAllocationHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/item.xml");
 
-      ResourceAllocation result = (ResourceAllocation) factory.create(
-               injector.getInstance(ResourceAllocationHandler.class)).parse(is);
+      ResourceAllocationSettingData result = factory.create(
+               injector.getInstance(ResourceAllocationSettingDataHandler.class)).parse(is);
       assertEquals(result.getAddress(), "0");
       assertEquals(result.getDescription(), "SCSI Controller");
-      assertEquals(result.getName(), "SCSI Controller 0");
-      assertEquals(result.getId(), 3);
-      assertEquals(result.getSubType(), "lsilogic");
-      assertEquals(result.getType(), ResourceType.SCSI_CONTROLLER);
-      assertEquals(result.getVirtualQuantity(), 1);
-
+      assertEquals(result.getElementName(), "SCSI Controller 0");
+      assertEquals(result.getInstanceID(), "3");
+      assertEquals(result.getResourceSubType(), "lsilogic");
+      assertEquals(result.getResourceType(), ResourceType.PARALLEL_SCSI_HBA);
    }
 }

@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
@@ -29,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.SaxUtils;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -97,7 +97,7 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.endsWith("Vdc")) {
          vDC = newReferenceType(attributes);
          String status = attributes.get("status");

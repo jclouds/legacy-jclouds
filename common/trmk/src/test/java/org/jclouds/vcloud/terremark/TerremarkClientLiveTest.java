@@ -24,7 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static org.jclouds.vcloud.options.CloneVAppOptions.Builder.deploy;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.changeNameTo;
 import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.deleteDiskWithAddressOnParent;
 import static org.testng.Assert.assertEquals;
@@ -33,22 +32,25 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
+import org.jclouds.cim.CIMPredicates;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.SshException;
+import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.jclouds.vcloud.VCloudExpressMediaType;
@@ -59,8 +61,6 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
@@ -102,7 +102,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    @Test
    public void testGetAllInternetServices() throws Exception {
       for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null)
-            .getHref())) {
+               .getHref())) {
          assertNotNull(tmClient.getNodes(service.getId()));
       }
    }
@@ -114,14 +114,14 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       PublicIpAddress publicIp = publicIpAddresses.iterator().next();
 
       InternetService service = tmClient.addInternetServiceToExistingIp(publicIp.getId(), PREFIX + "-no-monitoring",
-            Protocol.TCP, 1234, AddInternetServiceOptions.Builder.monitorDisabled());
+               Protocol.TCP, 1234, AddInternetServiceOptions.Builder.monitorDisabled());
       tmClient.deleteInternetService(service.getId());
    }
 
    @Test
    public void testGetPublicIpsAssociatedWithVDC() throws Exception {
       for (PublicIpAddress ip : tmClient
-            .getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getHref())) {
+               .getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getHref())) {
          assertNotNull(tmClient.getInternetServicesOnPublicIp(ip.getId()));
          assertNotNull(tmClient.getPublicIp(ip.getId()));
       }
@@ -150,7 +150,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
    @Test(enabled = true)
    public void testInstantiateAndPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
-         IOException {
+            IOException {
       prepare();
       StringBuffer name = new StringBuffer();
       for (int i = 0; i < 15; i++)
@@ -176,7 +176,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // if this template supports setting the root password, let's add it to
       // our options
       CustomizationParameters customizationOptions = tmClient.getCustomizationOptions(item.getCustomizationOptions()
-            .getHref());
+               .getHref());
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
@@ -186,7 +186,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       // instantiate, noting vApp returned has minimal details
       vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getHref(), vAppTemplate.getHref(), serverName,
-            instantiateOptions);
+               instantiateOptions);
 
       assertEquals(vApp.getStatus(), Status.RESOLVED);
 
@@ -278,7 +278,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    @Test(enabled = true, dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
    public void testPublicIp() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()), vApp.getName()
-            + "-SSH", 22);
+               + "-SSH", 22);
       loopAndCheckPass();
    }
 
@@ -341,15 +341,18 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       vApp = tmClient.getVApp(vApp.getHref());
 
       Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1)
-            .addDisk(25 * 1048576).addDisk(25 * 1048576));
+               .addDisk(25 * 1048576).addDisk(25 * 1048576));
 
       assert successTester.apply(task.getHref());
 
       vApp = tmClient.getVApp(vApp.getHref());
       assertEquals(vApp.getName(), "eduardo");
-      assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)).getVirtualQuantity(), 1);
-      assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity(), 1536);
-      assertEquals(size(filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))), 3);
+      assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.PROCESSOR))
+               .getVirtualQuantity().longValue(), 1);
+      assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.MEMORY))
+               .getVirtualQuantity().longValue(), 1536);
+      assertEquals(size(filter(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE))),
+               3);
 
       assert successTester.apply(tmClient.powerOnVApp(vApp.getHref()).getHref());
 
@@ -358,11 +361,12 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       assert successTester.apply(tmClient.powerOffVApp(vApp.getHref()).getHref());
 
       // extract the disks on the vApp sorted by addressOnParent
-      List<ResourceAllocation> disks = Lists.newArrayList(filter(vApp.getResourceAllocations(),
-            resourceType(ResourceType.DISK_DRIVE)));
+      List<ResourceAllocationSettingData> disks = Lists.newArrayList(filter(vApp.getResourceAllocations(),
+               CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE)));
 
       // delete the second disk
-      task = tmClient.configureVApp(vApp, deleteDiskWithAddressOnParent(disks.get(1).getAddressOnParent()));
+      task = tmClient.configureVApp(vApp, deleteDiskWithAddressOnParent(Integer.parseInt(disks.get(1)
+               .getAddressOnParent())));
 
       assert successTester.apply(task.getHref());
 
@@ -371,18 +375,19 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    }
 
    private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs,
-         int processorCount, long memory, long hardDisk) {
+            int processorCount, long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)).getVirtualQuantity(),
-            processorCount);
-      assertEquals(
-            find(vApp.getResourceAllocations(), resourceType(ResourceType.SCSI_CONTROLLER)).getVirtualQuantity(), 1);
-      assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity(), memory);
-      assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity(),
-            hardDisk);
-      assertEquals(vApp.getSize().longValue(),
-            find(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity());
+      assertEquals((int) find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.PROCESSOR))
+               .getVirtualQuantity().longValue(), processorCount);
+      assertEquals((int) find(vApp.getResourceAllocations(),
+               CIMPredicates.resourceTypeIn(ResourceType.PARALLEL_SCSI_HBA)).getVirtualQuantity().longValue(), 1);
+      assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.MEMORY))
+               .getVirtualQuantity().longValue(), memory);
+      assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE))
+               .getVirtualQuantity().longValue(), hardDisk);
+      assertEquals(vApp.getSize().longValue(), find(vApp.getResourceAllocations(),
+               CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE)).getVirtualQuantity().longValue());
    }
 
    private void doCheckPass(String address) throws IOException {
@@ -465,7 +470,8 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       Properties overrides = setupProperties();
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
+               .buildInjector();
 
       connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 

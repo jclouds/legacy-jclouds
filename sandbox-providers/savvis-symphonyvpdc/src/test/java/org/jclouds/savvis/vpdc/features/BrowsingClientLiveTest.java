@@ -27,6 +27,7 @@ import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.VApp;
 import org.jclouds.savvis.vpdc.domain.VDC;
+import static org.jclouds.savvis.vpdc.options.GetVAppOptions.Builder.withPowerState;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -94,8 +95,8 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
             assertNotNull(response.getNetmask());
             assertNotNull(response.getGateway());
             assertNotNull(response.getInternalToExternalNATRules());
-            assertEquals(client.getNetworkInOrgAndVDC(null, vdc.getId(), response.getId()).toString(),
-                  response.toString());
+            assertEquals(client.getNetworkInOrgAndVDC(null, vdc.getId(), response.getId()).toString(), response
+                     .toString());
          }
       }
    }
@@ -125,7 +126,9 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
             assertNotNull(response.getOsType());
             assertNotNull(response.getNetworkSection());
             assertNotNull(response.getResourceAllocations());
-            assertEquals(client.getVAppInOrgAndVDC(null, vdc.getId(), response.getId()).toString(), response.toString());
+            // power state is the only thing that should change
+            assertEquals(client.getVAppInOrgAndVDC(null, vdc.getId(), response.getId(), withPowerState()).toString()
+                     .replaceFirst("status=[A-Z]+", ""), response.toString().replaceFirst("status=[A-Z]+", ""));
          }
       }
    }

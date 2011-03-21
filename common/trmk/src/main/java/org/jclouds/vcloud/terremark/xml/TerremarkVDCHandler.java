@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.util.SaxUtils.cleanseAttributes;
 
 import java.util.Map;
 

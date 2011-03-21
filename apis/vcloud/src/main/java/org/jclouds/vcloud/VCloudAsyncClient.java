@@ -42,6 +42,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.ovf.OvfEnvelope;
+import org.jclouds.ovf.xml.OvfEnvelopeHandler;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -69,7 +71,6 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
 import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
@@ -82,7 +83,6 @@ import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VmHandler;
-import org.jclouds.vcloud.xml.ovf.OvfEnvelopeHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

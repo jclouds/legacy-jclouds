@@ -25,7 +25,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.ovf.xml.NetworkSectionHandler;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.VApp;
 import org.jclouds.savvis.vpdc.util.Utils;
@@ -40,10 +42,10 @@ import com.google.common.collect.ImmutableMap;
 public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected StringBuilder currentText = new StringBuilder();
    private final NetworkSectionHandler networkSectionHandler;
-   private final ResourceAllocationHandler allocationHandler;
+   private final ResourceAllocationSettingDataHandler allocationHandler;
 
    @Inject
-   public VAppHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationHandler allocationHandler) {
+   public VAppHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationSettingDataHandler allocationHandler) {
       this.networkSectionHandler = networkSectionHandler;
       this.allocationHandler = allocationHandler;
    }

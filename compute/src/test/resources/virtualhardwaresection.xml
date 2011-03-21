@@ -1,0 +1,118 @@
+
+<ovf:VirtualHardwareSection xmlns:vcloud="http://www.vmware.com/vcloud/v1"
+    vcloud:href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/"
+    vcloud:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml">
+    <ovf:Info>Virtual hardware requirements</ovf:Info>
+    <ovf:System>
+        <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>RHEL5</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>vmx-07</vssd:VirtualSystemType>
+    </ovf:System>
+    <ovf:Item>
+        <rasd:Address>00:50:56:01:01:f2</rasd:Address>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Connection vcloud:ipAddress="174.47.101.164"
+            vcloud:primaryNetworkConnection="true"
+            vcloud:ipAddressingMode="POOL">internet01</rasd:Connection>
+        <rasd:Description>PCNet32 ethernet adapter</rasd:Description>
+        <rasd:ElementName>Network adapter 0</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Description>SCSI Controller</rasd:Description>
+        <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+        <rasd:ResourceType>6</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:Description>Hard disk</rasd:Description>
+        <rasd:ElementName>Hard disk 1</rasd:ElementName>
+        <rasd:HostResource vcloud:capacity="30720"
+            vcloud:busType="6" vcloud:busSubType="lsilogic" />
+        <rasd:InstanceID>2000</rasd:InstanceID>
+        <rasd:Parent>2</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Description>IDE Controller</rasd:Description>
+        <rasd:ElementName>IDE Controller 0</rasd:ElementName>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceType>5</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Description>CD/DVD Drive</rasd:Description>
+        <rasd:ElementName>CD/DVD Drive 1</rasd:ElementName>
+        <rasd:HostResource />
+        <rasd:InstanceID>3002</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Description>Floppy Drive</rasd:Description>
+        <rasd:ElementName>Floppy Drive 1</rasd:ElementName>
+        <rasd:HostResource />
+        <rasd:InstanceID>8000</rasd:InstanceID>
+        <rasd:ResourceType>14</rasd:ResourceType>
+    </ovf:Item>
+    <ovf:Item
+        vcloud:href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/cpu"
+        vcloud:type="application/vnd.vmware.vcloud.rasdItem+xml">
+        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+        <rasd:Description>Number of Virtual CPUs</rasd:Description>
+        <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:Reservation>0</rasd:Reservation>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+        <rasd:Weight>0</rasd:Weight>
+        <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItem+xml"
+            href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/cpu" />
+    </ovf:Item>
+    <ovf:Item
+        vcloud:href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/memory"
+        vcloud:type="application/vnd.vmware.vcloud.rasdItem+xml">
+        <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:ElementName>384 MB of memory</rasd:ElementName>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:Reservation>0</rasd:Reservation>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>384</rasd:VirtualQuantity>
+        <rasd:Weight>0</rasd:Weight>
+        <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItem+xml"
+            href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/memory" />
+    </ovf:Item>
+    <Link rel="edit"
+        type="application/vnd.vmware.vcloud.virtualHardwareSection+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/" />
+    <Link rel="down" type="application/vnd.vmware.vcloud.rasdItem+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/cpu" />
+    <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItem+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/cpu" />
+    <Link rel="down" type="application/vnd.vmware.vcloud.rasdItem+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/memory" />
+    <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItem+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/memory" />
+    <Link rel="down" type="application/vnd.vmware.vcloud.rasdItemsList+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/disks" />
+    <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItemsList+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/disks" />
+    <Link rel="down" type="application/vnd.vmware.vcloud.rasdItemsList+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/media" />
+    <Link rel="down" type="application/vnd.vmware.vcloud.rasdItemsList+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/networkCards" />
+    <Link rel="edit" type="application/vnd.vmware.vcloud.rasdItemsList+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/networkCards" />
+</ovf:VirtualHardwareSection>

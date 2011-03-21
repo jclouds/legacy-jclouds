@@ -64,6 +64,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Common features between OpenStack Swift and CloudFiles
@@ -76,7 +77,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface CommonSwiftAsyncClient {
-
+   @Provides
    SwiftObject newSwiftObject();
 
    /**
