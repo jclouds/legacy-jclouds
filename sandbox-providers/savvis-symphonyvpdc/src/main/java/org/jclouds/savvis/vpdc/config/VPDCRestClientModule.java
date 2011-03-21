@@ -27,6 +27,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.savvis.vpdc.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -81,7 +82,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected Iterable<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
+   protected Set<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
          @Named(PROPERTY_IDENTITY) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
@@ -91,7 +92,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected String provideDefaultOrgId(@org.jclouds.savvis.vpdc.internal.Org Iterable<Resource> orgs) {
+   protected String provideDefaultOrgId(@org.jclouds.savvis.vpdc.internal.Org Set<Resource> orgs) {
       return Iterables.get(orgs, 0).getId();
    }
 

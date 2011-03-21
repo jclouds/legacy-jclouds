@@ -159,6 +159,7 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
@@ -2173,7 +2174,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public interface TestClassForm {
       @Provides
       Set<String> set();
-      
+
+      @Named("bar")
+      @Provides
+      Set<String> foo();
+
       @POST
       @Path("/")
       void oneForm(@PathParam("bucket") String path);
@@ -2183,6 +2188,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testProvidesWithGeneric() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
       Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).set();
       assertEquals(set, ImmutableSet.of("foo"));
+   }
+
+   @Test
+   public void testProvidesWithGenericQualified() throws SecurityException, NoSuchMethodException,
+            UnsupportedEncodingException {
+      Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).foo();
+      assertEquals(set, ImmutableSet.of("bar"));
    }
 
    @Test
@@ -2234,6 +2246,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                            protected void configure() {
                               bind(new TypeLiteral<Set<String>>() {
                               }).toInstance(ImmutableSet.of("foo"));
+                              bind(new TypeLiteral<Set<String>>() {
+                              }).annotatedWith(Names.named("bar")).toInstance(ImmutableSet.of("bar"));
                               bind(URI.class).annotatedWith(Localhost2.class).toInstance(
                                        URI.create("http://localhost:1111"));
                            }

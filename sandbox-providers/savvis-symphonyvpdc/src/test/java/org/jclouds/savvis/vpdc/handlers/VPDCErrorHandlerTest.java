@@ -49,25 +49,36 @@ public class VPDCErrorHandlerTest {
    @Test
    public void test400MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://savvis.com/foo"), 400, "", "Bad Request",
-            IllegalArgumentException.class);
+               IllegalArgumentException.class);
    }
 
    @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://savvis.com/foo"), 401, "", "Unauthorized",
-            AuthorizationException.class);
+               AuthorizationException.class);
+   }
+
+   @Test
+   public void test403MakesAuthorizationException() {
+      assertCodeMakes(
+               "GET",
+               URI.create("https://savvis.com/foo"),
+               403,
+               "HTTP/1.1 403 Forbidden",
+               "With the User/login credentials provided, no privilege exists to process the current request. Please contact Savvis administrator for further information",
+               AuthorizationException.class);
    }
 
    @Test
    public void test404MakesResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://savvis.com/foo"), 404, "", "Not Found",
-            ResourceNotFoundException.class);
+               ResourceNotFoundException.class);
    }
 
    @Test
    public void test405MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://savvis.com/foo"), 405, "", "Method Not Allowed",
-            IllegalArgumentException.class);
+               IllegalArgumentException.class);
    }
 
    @Test
@@ -76,19 +87,19 @@ public class VPDCErrorHandlerTest {
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-         Class<? extends Exception> expected) {
+            Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-         String content, Class<? extends Exception> expected) {
+            String content, Class<? extends Exception> expected) {
 
       VPDCErrorHandler function = Guice.createInjector().getInstance(VPDCErrorHandler.class);
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-            .toInputStream(content)));
+               .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

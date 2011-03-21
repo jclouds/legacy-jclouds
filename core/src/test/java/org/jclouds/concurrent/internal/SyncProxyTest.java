@@ -122,7 +122,7 @@ public class SyncProxyTest {
       public Set<String> string() {
          return ImmutableSet.of("new");
       }
-
+      
       public ListenableFuture<String> take20Milliseconds() {
          return Futures.makeListenable(executorService.submit(new Callable<String>() {
 

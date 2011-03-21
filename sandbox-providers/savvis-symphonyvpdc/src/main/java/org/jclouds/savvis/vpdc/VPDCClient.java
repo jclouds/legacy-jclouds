@@ -19,10 +19,12 @@
 
 package org.jclouds.savvis.vpdc;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingClient;
 
 /**
@@ -42,4 +44,9 @@ public interface VPDCClient {
    @Delegate
    BrowsingClient getBrowsingClient();
 
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   Set<Resource> listOrgs();
 }

@@ -19,8 +19,9 @@
 
 package org.jclouds.savvis.vpdc;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -42,12 +43,14 @@ public class VPDCAsyncClientTest extends BaseVPDCAsyncClientTest<VPDCAsyncClient
    private VPDCAsyncClient asyncClient;
    private VPDCClient syncClient;
 
-   public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+   public void testSync() {
       assert syncClient.getBrowsingClient() != null;
+      assertEquals(syncClient.listOrgs().size(), 1);
    }
 
-   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+   public void testAsync() {
       assert asyncClient.getBrowsingClient() != null;
+      assertEquals(syncClient.listOrgs().size(), 1);
    }
 
    @Override

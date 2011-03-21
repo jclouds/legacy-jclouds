@@ -19,8 +19,14 @@
 
 package org.jclouds.savvis.vpdc;
 
+import java.util.Set;
+
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
+import org.jclouds.savvis.vpdc.internal.Org;
+
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to VPDC via their REST API.
@@ -38,4 +44,11 @@ public interface VPDCAsyncClient {
    @Delegate
    BrowsingAsyncClient getBrowsingClient();
 
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   @Provides
+   @Org
+   Set<Resource> listOrgs();
 }

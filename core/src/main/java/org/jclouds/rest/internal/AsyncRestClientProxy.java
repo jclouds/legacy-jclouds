@@ -24,13 +24,16 @@ package org.jclouds.rest.internal;
  * 
  * @author Adrian Cole
  */
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -46,6 +49,9 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
@@ -83,6 +89,15 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       this.delegateMap = delegateMap;
    }
 
+   private static final Predicate<Annotation> isQualifierPresent = new Predicate<Annotation>() {
+
+      @Override
+      public boolean apply(Annotation input) {
+         return input.annotationType().isAnnotationPresent(Qualifier.class);
+      }
+
+   };
+
    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
       if (method.getName().equals("equals")) {
          return this.equals(o);
@@ -91,7 +106,12 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
       } else if (method.isAnnotationPresent(Provides.class)) {
-         return injector.getInstance(Key.get(method.getGenericReturnType()));
+         try {
+            Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
+            return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
+         } catch (NoSuchElementException e) {
+            return injector.getInstance(Key.get(method.getGenericReturnType()));
+         }
       } else if (method.isAnnotationPresent(Delegate.class)) {
          return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
       } else if (annotationProcessor.getDelegateOrNull(method) != null
