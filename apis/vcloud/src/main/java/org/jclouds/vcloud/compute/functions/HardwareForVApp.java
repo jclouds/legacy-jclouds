@@ -20,32 +20,20 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.predicates.ImagePredicates;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
-import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * @author Adrian Cole
@@ -56,13 +44,13 @@ public class HardwareForVApp implements Function<VApp, Hardware> {
    protected Logger logger = Logger.NULL;
 
    private final FindLocationForResource findLocationForResource;
-   private final ResourceAllocationsToVolumes resourceAllocationsToVolumes;
+   private final VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
    @Inject
    protected HardwareForVApp(FindLocationForResource findLocationForResource,
-         ResourceAllocationsToVolumes resourceAllocationsToVolumes) {
+            VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
-      this.resourceAllocationsToVolumes = checkNotNull(resourceAllocationsToVolumes, "resourceAllocationsToVolumes");
+      this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");
    }
 
    @Override
@@ -72,25 +60,12 @@ public class HardwareForVApp implements Function<VApp, Hardware> {
       Vm vm = from.getChildren().size() == 0 ? null : Iterables.get(from.getChildren(), 0);
       if (vm == null)
          return null;
-      Location location = findLocationForResource.apply(checkNotNull(from, "from").getVDC());
 
       VirtualHardwareSection hardware = vm.getVirtualHardwareSection();
-
-      int ram = (int) find(hardware.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
-
-      List<Processor> processors = Lists.newArrayList(transform(
-            filter(hardware.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)),
-            new Function<ResourceAllocation, Processor>() {
-
-               @Override
-               public Processor apply(ResourceAllocation arg0) {
-                  return new Processor(arg0.getVirtualQuantity(), 1);
-               }
-
-            }));
-      List<Volume> volumes = Lists.newArrayList(resourceAllocationsToVolumes.apply(hardware.getResourceAllocations()));
-      return new HardwareBuilder().ids(from.getHref().toASCIIString()).uri(from.getHref()).name(from.getName())
-            .location(location).processors(processors).ram(ram).volumes(volumes)
-            .supportsImage(ImagePredicates.idEquals(from.getHref().toASCIIString())).build();
+      HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getResourceAllocations());
+      builder.location(findLocationForResource.apply(checkNotNull(from, "from").getVDC()));
+      builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
+               ImagePredicates.idEquals(from.getHref().toASCIIString()));
+      return builder.build();
    }
 }

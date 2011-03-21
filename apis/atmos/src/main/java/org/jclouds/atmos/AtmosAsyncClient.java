@@ -60,6 +60,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to EMC Atmos Online Storage resources via their REST API.
@@ -76,6 +77,7 @@ public interface AtmosAsyncClient {
    /**
     * Creates a default implementation of AtmosObject
     */
+   @Provides
    AtmosObject newObject();
 
    /**

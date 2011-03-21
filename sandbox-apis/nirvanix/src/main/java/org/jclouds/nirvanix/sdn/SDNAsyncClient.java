@@ -46,6 +46,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to Nirvanix SDN resources via their REST API.
@@ -59,7 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding( { '/', ':' })
 @QueryParams(keys = SDNQueryParams.OUTPUT, values = "json")
 public interface SDNAsyncClient {
-
+   @Provides
    public Blob newBlob();
 
    /**

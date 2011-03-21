@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.xml;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.net.URI;
@@ -31,17 +30,18 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.VirtualSystemSettingData;
+import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
+import org.jclouds.cim.xml.VirtualSystemSettingDataHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.SaxUtils;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.System;
-import org.jclouds.vcloud.xml.ovf.ResourceAllocationHandler;
-import org.jclouds.vcloud.xml.ovf.SystemHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -54,21 +54,21 @@ import com.google.common.collect.Sets;
  */
 public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudExpressVApp> {
    private final String apiVersion;
-   private final SystemHandler systemHandler;
-   private final ResourceAllocationHandler allocationHandler;
+   private final VirtualSystemSettingDataHandler systemHandler;
+   private final ResourceAllocationSettingDataHandler allocationHandler;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VCloudExpressVAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion, SystemHandler systemHandler,
-            ResourceAllocationHandler allocationHandler) {
+   public VCloudExpressVAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion,
+            VirtualSystemSettingDataHandler systemHandler, ResourceAllocationSettingDataHandler allocationHandler) {
       this.apiVersion = apiVersion;
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   protected System system;
-   protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
+   protected VirtualSystemSettingData system;
+   protected Set<ResourceAllocationSettingData> allocations = Sets.newLinkedHashSet();
    protected Status status;
    protected final ListMultimap<String, String> networkToAddresses = ArrayListMultimap.create();
    protected StringBuilder currentText = new StringBuilder();
@@ -87,7 +87,7 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("VApp")) {
          ReferenceType resource = newReferenceType(attributes);
          name = resource.getName();

@@ -145,6 +145,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
@@ -327,7 +328,9 @@ public class RestAnnotationProcessor<T> {
             logger.trace("skipping potentially overridden method %s", method);
          } else if (method.isAnnotationPresent(Delegate.class)) {
             logger.trace("skipping delegate method %s", method);
-         } else if (!method.getName().startsWith("new")) {
+         } else if (method.isAnnotationPresent(Provides.class)) {
+            logger.trace("skipping provider method %s", method);
+         } else {
             logger.trace("Method is not annotated as either http or constant: %s", method);
          }
       }

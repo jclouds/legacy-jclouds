@@ -27,6 +27,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 
+import com.google.inject.Provides;
+
 /**
  * Provides access to Nirvanix SDN resources via their REST API.
  * <p/>
@@ -37,7 +39,7 @@ import org.jclouds.nirvanix.sdn.domain.UploadInfo;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SDNClient {
-
+   @Provides
    public Blob newBlob();
 
    /**

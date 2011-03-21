@@ -68,6 +68,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to Azure Blob via their REST API.
@@ -85,7 +86,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
 @Path("/")
 public interface AzureBlobAsyncClient {
-
+   @Provides
    public org.jclouds.azureblob.domain.AzureBlob newBlob();
 
    /**

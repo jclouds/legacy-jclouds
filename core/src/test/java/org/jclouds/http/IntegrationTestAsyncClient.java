@@ -54,6 +54,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
@@ -199,6 +200,7 @@ public interface IntegrationTestAsyncClient {
 
    }
 
+   @Provides
    StringBuffer newStringBuffer();
 
 }

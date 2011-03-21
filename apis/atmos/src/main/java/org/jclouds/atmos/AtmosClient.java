@@ -31,6 +31,8 @@ import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
+import com.google.inject.Provides;
+
 /**
  * Provides access to EMC Atmos Online Storage resources via their REST API.
  * <p/>
@@ -44,6 +46,7 @@ public interface AtmosClient {
    /**
     * Creates a default implementation of AtmosObject
     */
+   @Provides
    AtmosObject newObject();
 
    BoundedSet<? extends DirectoryEntry> listDirectories(ListOptions... options);

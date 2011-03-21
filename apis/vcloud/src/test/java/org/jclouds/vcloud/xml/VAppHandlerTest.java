@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -32,6 +33,7 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -49,7 +51,14 @@ public class VAppHandlerTest {
 
    public void testRhelOffStatic() {
       InputStream is = getClass().getResourceAsStream("/vapp-rhel-off-static.xml");
-      Injector injector = Guice.createInjector(new SaxParserModule());
+      Injector injector = Guice.createInjector(new SaxParserModule() {
+
+         @Override
+         protected void configure() {
+            super.configure();
+            bind(ResourceAllocationSettingDataHandler.class).to(VCloudResourceAllocationSettingDataHandler.class);
+         }
+      });
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       assertEquals(result.getName(), "vApp_acole_2");

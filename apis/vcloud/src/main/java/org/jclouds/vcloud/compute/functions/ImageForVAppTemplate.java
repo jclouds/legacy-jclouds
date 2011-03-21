@@ -20,17 +20,17 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 
 import javax.inject.Inject;
 
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.ovf.OvfEnvelope;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
 
 import com.google.common.base.Function;
 
@@ -65,7 +65,7 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       OvfEnvelope ovf = client.getOvfEnvelopeForVAppTemplate(from.getHref());
-      builder.operatingSystem(toComputeOs(ovf));
+      builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
       builder.defaultCredentials(credentialsProvider.execute(from));
       return builder.build();
    }

@@ -20,30 +20,20 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.cim.functions.HardwareBuilderFromResourceAllocations;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.predicates.ImagePredicates;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 /**
  * @author Adrian Cole
@@ -54,36 +44,24 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
    protected Logger logger = Logger.NULL;
 
    private final FindLocationForResource findLocationForResource;
-   private final ResourceAllocationsToVolumes resourceAllocationsToVolumes;
+   private final HardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
    @Inject
    protected HardwareForVCloudExpressVApp(FindLocationForResource findLocationForResource,
-         ResourceAllocationsToVolumes resourceAllocationsToVolumes) {
+            HardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
-      this.resourceAllocationsToVolumes = checkNotNull(resourceAllocationsToVolumes, "resourceAllocationsToVolumes");
+      this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");
    }
 
    @Override
    public Hardware apply(VCloudExpressVApp from) {
       checkNotNull(from, "VApp");
-      Location location = findLocationForResource.apply(checkNotNull(from, "from").getVDC());
       try {
-         int ram = (int) find(from.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
-
-         List<Processor> processors = Lists.newArrayList(transform(
-               filter(from.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)),
-               new Function<ResourceAllocation, Processor>() {
-
-                  @Override
-                  public Processor apply(ResourceAllocation arg0) {
-                     return new Processor(arg0.getVirtualQuantity(), 1);
-                  }
-
-               }));
-         List<Volume> volumes = Lists.newArrayList(resourceAllocationsToVolumes.apply(from.getResourceAllocations()));
-         return new HardwareBuilder().ids(from.getHref().toASCIIString()).name(from.getName()).location(location)
-               .processors(processors).ram(ram).volumes(volumes)
-               .supportsImage(ImagePredicates.idEquals(from.getHref().toASCIIString())).build();
+         HardwareBuilder builder = rasdToHardwareBuilder.apply(from.getResourceAllocations());
+         builder.location(findLocationForResource.apply(checkNotNull(from, "from").getVDC()));
+         builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
+                  ImagePredicates.idEquals(from.getHref().toASCIIString()));
+         return builder.build();
       } catch (NoSuchElementException e) {
          logger.debug("incomplete data to form vApp %s", from.getHref());
          return null;

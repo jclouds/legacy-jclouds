@@ -25,7 +25,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -39,14 +38,15 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.jclouds.cim.CIMPredicates;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 
 import com.google.common.base.Function;
@@ -101,8 +101,8 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    }
 
-   protected String generateXml(VCloudExpressVApp vApp, VAppConfiguration configuration) throws ParserConfigurationException,
-            FactoryConfigurationError, TransformerException {
+   protected String generateXml(VCloudExpressVApp vApp, VAppConfiguration configuration)
+            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       String name = configuration.getName() != null ? configuration.getName() : vApp.getName();
 
       XMLBuilder rootBuilder = buildRoot(vApp, name);
@@ -121,46 +121,51 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    private void addProcessorItem(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
-      ResourceAllocation cpu = find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR));
+      ResourceAllocationSettingData cpu = find(vApp.getResourceAllocations(), CIMPredicates
+               .resourceTypeIn(ResourceType.PROCESSOR));
       long quantity = configuration.getProcessorCount() != null ? configuration.getProcessorCount() : cpu
                .getVirtualQuantity();
       addResourceWithQuantity(sectionBuilder, cpu, quantity);
    }
 
    private void addMemoryItem(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
-      ResourceAllocation memory = find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY));
+      ResourceAllocationSettingData memory = find(vApp.getResourceAllocations(), CIMPredicates
+               .resourceTypeIn(ResourceType.MEMORY));
       long quantity = configuration.getMemory() != null ? configuration.getMemory() : memory.getVirtualQuantity();
       addResourceWithQuantity(sectionBuilder, memory, quantity);
    }
 
    private void addDiskItems(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
-      for (ResourceAllocation disk : filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))) {
+      for (ResourceAllocationSettingData disk : filter(vApp.getResourceAllocations(), CIMPredicates
+               .resourceTypeIn(ResourceType.DISK_DRIVE))) {
          if (!configuration.getDisksToDelete().contains(disk.getAddressOnParent()))
             addDiskWithQuantity(sectionBuilder, disk);
       }
       for (Long quantity : configuration.getDisks()) {
-         ResourceAllocation disk = new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576",
-                  null, -1, null, null, quantity, null);
+         ResourceAllocationSettingData disk = ResourceAllocationSettingData.builder().instanceID("9")
+                  .elementName("n/a").resourceType(ResourceType.DISK_DRIVE).virtualQuantity(quantity).build();
          addDiskWithQuantity(sectionBuilder, disk);
       }
    }
 
-   private XMLBuilder addResourceWithQuantity(XMLBuilder sectionBuilder, ResourceAllocation resource, long quantity) {
+   private XMLBuilder addResourceWithQuantity(XMLBuilder sectionBuilder, ResourceAllocationSettingData resource,
+            long quantity) {
       XMLBuilder itemBuilder = sectionBuilder.e("Item");
       addCommonElements(itemBuilder, resource, quantity);
       return itemBuilder;
    }
 
-   private void addCommonElements(XMLBuilder itemBuilder, ResourceAllocation resource, long quantity) {
-      itemBuilder.e("InstanceID").a("xmlns", RESOURCE_ALLOCATION_NS).t(resource.getId() + "");
-      itemBuilder.e("ResourceType").a("xmlns", RESOURCE_ALLOCATION_NS).t(resource.getType().value());
+   private void addCommonElements(XMLBuilder itemBuilder, ResourceAllocationSettingData resource, long quantity) {
+      itemBuilder.e("InstanceID").a("xmlns", RESOURCE_ALLOCATION_NS).t(resource.getInstanceID() + "");
+      itemBuilder.e("ResourceType").a("xmlns", RESOURCE_ALLOCATION_NS).t(resource.getResourceType().value());
       itemBuilder.e("VirtualQuantity").a("xmlns", RESOURCE_ALLOCATION_NS).t(quantity + "");
    }
 
-   private XMLBuilder addDiskWithQuantity(XMLBuilder sectionBuilder, ResourceAllocation disk) {
+   private XMLBuilder addDiskWithQuantity(XMLBuilder sectionBuilder, ResourceAllocationSettingData disk) {
       XMLBuilder itemBuilder = sectionBuilder.e("Item");
       itemBuilder.e("AddressOnParent").a("xmlns", RESOURCE_ALLOCATION_NS).t(disk.getAddressOnParent() + "");
-      itemBuilder.e("HostResource").a("xmlns", RESOURCE_ALLOCATION_NS).t(disk.getHostResource());
+      for (String hostResource : disk.getHostResources())
+         itemBuilder.e("HostResource").a("xmlns", RESOURCE_ALLOCATION_NS).t(hostResource);
       addCommonElements(itemBuilder, disk, disk.getVirtualQuantity());
       return itemBuilder;
    }
@@ -199,6 +204,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       }
       return null;
    }
+
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("BindVAppConfigurationToXmlPayload needs parameters");

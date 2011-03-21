@@ -102,7 +102,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       expect(net.getNetworks())
                .andReturn(
                         ImmutableSet
-                                 .<org.jclouds.vcloud.domain.ovf.network.Network> of(new org.jclouds.vcloud.domain.ovf.network.Network(
+                                 .<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network(
                                           "vAppNet-vApp Internal", null)));
 
       replay(request);
@@ -219,7 +219,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       expect(net.getNetworks())
                .andReturn(
                         ImmutableSet
-                                 .<org.jclouds.vcloud.domain.ovf.network.Network> of(new org.jclouds.vcloud.domain.ovf.network.Network(
+                                 .<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network(
                                           "vAppNet-vApp Internal", null)));
 
       replay(request);

@@ -39,6 +39,8 @@ import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
+import com.google.inject.Provides;
+
 import java.util.concurrent.Future;
 
 /**
@@ -58,6 +60,7 @@ public interface S3Client {
    /**
     * Creates a default implementation of S3Object
     */
+   @Provides
    public S3Object newS3Object();
 
    /**

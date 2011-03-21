@@ -42,7 +42,7 @@ import java.util.Map;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.s3.domain.CannedAccessPolicy;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -61,7 +61,7 @@ public class CopyObjectOptionsTest {
    private String nowExpected;
    private Map<String, String> goodMeta;
 
-   @BeforeMethod
+   @BeforeTest
    void setUp() {
       goodMeta = ImmutableMap.of(USER_METADATA_PREFIX + "adrian", "foo");
       Date date = new Date();

@@ -23,10 +23,10 @@ import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsA
 import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsYum;
 import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsZypper;
 
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.os.CIMOperatingSystem;
-import org.jclouds.compute.domain.os.CIMOperatingSystem.OSType;
+import org.jclouds.compute.domain.CIMOperatingSystem.OSType;
 import org.testng.annotations.Test;
 
 /**

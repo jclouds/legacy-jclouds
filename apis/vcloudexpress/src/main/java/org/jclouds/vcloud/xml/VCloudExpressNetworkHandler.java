@@ -19,7 +19,8 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.util.SaxUtils.cleanseAttributes;
+import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.Map;
@@ -88,21 +89,21 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Description")) {
-         description = currentOrNull();
+         description = currentOrNull(currentText);
       } else if (qName.equals("Dns")) {
-         dnsServers.add(currentOrNull());
+         dnsServers.add(currentOrNull(currentText));
       } else if (qName.equals("Gateway")) {
-         gateway = currentOrNull();
+         gateway = currentOrNull(currentText);
       } else if (qName.equals("Netmask")) {
-         netmask = currentOrNull();
+         netmask = currentOrNull(currentText);
       } else if (qName.equals("FenceMode")) {
          try {
-            fenceModes.add(FenceMode.fromValue(currentOrNull()));
+            fenceModes.add(FenceMode.fromValue(currentOrNull(currentText)));
          } catch (IllegalArgumentException e) {
             fenceModes.add(FenceMode.BRIDGED);
          }
       } else if (qName.equals("Dhcp")) {
-         dhcp = new Boolean(currentOrNull());
+         dhcp = new Boolean(currentOrNull(currentText));
       } else if (qName.equals("NatRule")) {
          natRules.add(new PortForwardingRule(externalIP, externalPort, internalIP, internalPort, NatProtocol.TCP_UDP));
          externalIP = null;
@@ -110,24 +111,24 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
          internalIP = null;
          internalPort = null;
       } else if (qName.equals("ExternalIP")) {
-         externalIP = currentOrNull();
+         externalIP = currentOrNull(currentText);
       } else if (qName.equals("ExternalPort")) {
-         externalPort = Integer.parseInt(currentOrNull());
+         externalPort = Integer.parseInt(currentOrNull(currentText));
       } else if (qName.equals("InternalIP")) {
-         internalIP = currentOrNull();
+         internalIP = currentOrNull(currentText);
       } else if (qName.equals("InternalPort")) {
-         internalPort = Integer.parseInt(currentOrNull());
+         internalPort = Integer.parseInt(currentOrNull(currentText));
       } else if (qName.equals("FirewallRule")) {
          firewallRules.add(new FirewallRule(true, null, policy, null, sourcePort, sourceIP));
          policy = null;
          sourceIP = null;
          sourcePort = -1;
       } else if (qName.equals("Policy")) {
-         policy = FirewallPolicy.fromValue(currentOrNull());
+         policy = FirewallPolicy.fromValue(currentOrNull(currentText));
       } else if (qName.equals("SourceIp")) {
-         sourceIP = currentOrNull();
+         sourceIP = currentOrNull(currentText);
       } else if (qName.equals("SourcePort")) {
-         sourcePort = Integer.parseInt(currentOrNull());
+         sourcePort = Integer.parseInt(currentOrNull(currentText));
       }
 
       currentText = new StringBuilder();
@@ -135,11 +136,6 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
 
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
-   }
-
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
    }
 
 }

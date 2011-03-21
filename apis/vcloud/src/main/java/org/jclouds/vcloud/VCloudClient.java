@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.ovf.OvfEnvelope;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -35,7 +36,6 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;

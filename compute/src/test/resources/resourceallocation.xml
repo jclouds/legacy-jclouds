@@ -1,0 +1,26 @@
+ <ovf:Item>
+            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:AllocationUnits>Gigabytes</rasd:AllocationUnits>
+            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:Caption>1234568</rasd:Caption>
+            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:Description>Hard Disk</rasd:Description>
+            <rasd:ElementName>D:\</rasd:ElementName>
+            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:HostResource>data</rasd:HostResource>
+            <rasd:InstanceID>6</rasd:InstanceID>
+            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <rasd:ResourceType>26</rasd:ResourceType>
+            <rasd:VirtualQuantity>50</rasd:VirtualQuantity>
+            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        </ovf:Item>

@@ -26,7 +26,7 @@ import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
-import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 

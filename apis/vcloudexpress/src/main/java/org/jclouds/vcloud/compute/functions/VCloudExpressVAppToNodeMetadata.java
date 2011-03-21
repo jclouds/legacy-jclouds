@@ -29,11 +29,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.Status;

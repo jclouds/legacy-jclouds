@@ -28,6 +28,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.VirtualSystemSettingData;
+import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -35,9 +38,6 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
-import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -81,7 +81,8 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
                .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED, 123456789l, new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
-               ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.<ResourceAllocation> of());
+               ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet
+                        .<ResourceAllocationSettingData> of());
       assertEquals(result, expects);
    }
 
@@ -92,17 +93,31 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.150.4.93");
-      System system = new System(0, "Virtual Hardware Family", "centos53", ImmutableSet.of("vmx-07"));
 
-      Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
-               "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
-               null, 1, "hertz * 10^6"), new ResourceAllocation(2, "16MB of memory", "Memory Size",
-               ResourceType.MEMORY, null, null, null, null, null, null, 16, "byte * 2^20"), new ResourceAllocation(3,
-               "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null,
-               null, 1, null), new ResourceAllocation(8, "Network Adapter 1",
-               "PCNet32 ethernet adapter on \"Internal\" network", ResourceType.ETHERNET_ADAPTER, "PCNet32", null,
-               null, 7, null, true, 1, null), new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
-               null, "104857", null, 0, 3, null, 104857, "byte * 2^20"));
+      VirtualSystemSettingData system = VirtualSystemSettingData.builder().instanceID("0").elementName(
+               "Virtual Hardware Family").virtualSystemIdentifier("centos53").virtualSystemType("vmx-07").build();
+
+      Set<ResourceAllocationSettingData> resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> of(
+               ResourceAllocationSettingData.builder().instanceID("1").elementName("1 virtual CPU(s)").description(
+                        "Number of Virtual CPUs").resourceType(ResourceType.PROCESSOR).virtualQuantity(1l)
+                        .allocationUnits("hertz * 10^6").virtualQuantityUnits("count").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("2").elementName("16MB of memory").description(
+                        "Memory Size").resourceType(ResourceType.MEMORY).virtualQuantity(16l).allocationUnits(
+                        "byte * 2^20").virtualQuantityUnits("byte * 2^20").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("3").elementName("SCSI Controller 0").description(
+                        "SCSI Controller").resourceType(ResourceType.PARALLEL_SCSI_HBA).resourceSubType("lsilogic")
+                        .address("0").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("8").elementName("Network Adapter 1").description(
+                        "PCNet32 ethernet adapter on \"Internal\" network").resourceType(ResourceType.ETHERNET_ADAPTER)
+                        .resourceSubType("PCNet32").addressOnParent("7").connection("Internal").automaticAllocation(
+                                 true).build(),
+
+               ResourceAllocationSettingData.builder().instanceID("9").elementName("Hard Disk 1").resourceType(
+                        ResourceType.DISK_DRIVE).hostResource("104857").addressOnParent("0").parent("3")
+                        .virtualQuantity(104857l).build());
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
                .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new ReferenceTypeImpl(null,
@@ -112,10 +127,10 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
       assertEquals(result.getOperatingSystemDescription(), expects.getOperatingSystemDescription());
-      assertEquals(result.getResourceAllocations(), expects.getResourceAllocations());
+      assertEquals(result.getResourceAllocations().toString(), expects.getResourceAllocations().toString());
       assertEquals(result.getSize(), expects.getSize());
       assertEquals(result.getStatus(), expects.getStatus());
-      assertEquals(result.getSystem(), expects.getSystem());
+      assertEquals(result.getSystem().toString(), expects.getSystem().toString());
       assertEquals(result.getType(), expects.getType());
       assertEquals(result.getVDC(), expects.getVDC());
    }
@@ -127,17 +142,30 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.23.119.221");
-      System system = new System(0, "Virtual Hardware Family", "m1", ImmutableSet.of("vmx-07"));
+      VirtualSystemSettingData system = VirtualSystemSettingData.builder().instanceID("0").elementName(
+               "Virtual Hardware Family").virtualSystemIdentifier("m1").virtualSystemType("vmx-07").build();
 
-      Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
-               "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
-               null, 1, "hertz * 10^6"), new ResourceAllocation(2, "512MB of memory", "Memory Size",
-               ResourceType.MEMORY, null, null, null, null, null, null, 512, "byte * 2^20"), new ResourceAllocation(3,
-               "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null,
-               null, 1, null), new ResourceAllocation(8, "Network Adapter 1",
-               "PCNet32 ethernet adapter on \"Internal\" network", ResourceType.ETHERNET_ADAPTER, "PCNet32", null,
-               null, 7, null, true, 1, null), new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
-               null, "10485760", null, 0, 3, null, 10485760, "byte * 2^20"));
+      Set<ResourceAllocationSettingData> resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> of(
+               ResourceAllocationSettingData.builder().instanceID("1").elementName("1 virtual CPU(s)").description(
+                        "Number of Virtual CPUs").resourceType(ResourceType.PROCESSOR).virtualQuantity(1l)
+                        .allocationUnits("hertz * 10^6").virtualQuantityUnits("count").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("2").elementName("512MB of memory").description(
+                        "Memory Size").resourceType(ResourceType.MEMORY).virtualQuantity(512l).allocationUnits(
+                        "byte * 2^20").virtualQuantityUnits("byte * 2^20").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("3").elementName("SCSI Controller 0").description(
+                        "SCSI Controller").resourceType(ResourceType.PARALLEL_SCSI_HBA).resourceSubType("lsilogic")
+                        .address("0").build(),
+
+               ResourceAllocationSettingData.builder().instanceID("8").elementName("Network Adapter 1").description(
+                        "PCNet32 ethernet adapter on \"Internal\" network").resourceType(ResourceType.ETHERNET_ADAPTER)
+                        .resourceSubType("PCNet32").addressOnParent("7").connection("Internal").automaticAllocation(
+                                 true).build(),
+
+               ResourceAllocationSettingData.builder().instanceID("9").elementName("Hard Disk 1").resourceType(
+                        ResourceType.DISK_DRIVE).hostResource("10485760").addressOnParent("0").parent("3")
+                        .virtualQuantity(10485760l).build());
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
                Status.ON, new Long(10485760), new ReferenceTypeImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
@@ -147,10 +175,10 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
       assertEquals(result.getOperatingSystemDescription(), expects.getOperatingSystemDescription());
-      assertEquals(result.getResourceAllocations(), expects.getResourceAllocations());
+      assertEquals(result.getResourceAllocations().toString(), expects.getResourceAllocations().toString());
       assertEquals(result.getSize(), expects.getSize());
       assertEquals(result.getStatus(), expects.getStatus());
-      assertEquals(result.getSystem(), expects.getSystem());
+      assertEquals(result.getSystem().toString(), expects.getSystem().toString());
       assertEquals(result.getType(), expects.getType());
       assertEquals(result.getVDC(), expects.getVDC());
    }

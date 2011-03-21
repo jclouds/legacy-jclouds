@@ -19,28 +19,37 @@
 
 package org.jclouds.util;
 
-
 import java.util.Map;
-
 
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class SaxUtils {
+
+   public static boolean equalsOrSuffix(String val, String expected) {
+      return expected.equals(val) || val.endsWith(":" + expected);
+   }
+
    public static Map<String, String> cleanseAttributes(Attributes in) {
-      Map<String, String> attrs = Maps.newLinkedHashMap();
+      Builder<String, String> attrs = ImmutableMap.<String, String> builder();
       for (int i = 0; i < in.getLength(); i++) {
          String name = in.getQName(i);
          if (name.indexOf(':') != -1)
             name = name.substring(name.indexOf(':') + 1);
          attrs.put(name, in.getValue(i));
       }
-      return attrs;
+      return attrs.build();
+   }
+
+   public static String currentOrNull(StringBuilder currentText) {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? null : returnVal;
    }
 
 }

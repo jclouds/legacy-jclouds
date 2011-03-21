@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 
 import com.google.common.base.Function;
 

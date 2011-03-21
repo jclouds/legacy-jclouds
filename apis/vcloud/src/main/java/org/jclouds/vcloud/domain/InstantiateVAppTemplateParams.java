@@ -21,8 +21,8 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Set;
 
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.cim.ResourceAllocationSettingData;
+import org.jclouds.cim.VirtualSystemSettingData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -33,10 +33,10 @@ import com.google.common.collect.Sets;
 public class InstantiateVAppTemplateParams {
 
    protected final String info;
-   protected final System virtualSystem;
-   protected final Set<ResourceAllocation> resourceAllocations = Sets.newLinkedHashSet();
+   protected final VirtualSystemSettingData virtualSystem;
+   protected final Set<ResourceAllocationSettingData> resourceAllocations = Sets.newLinkedHashSet();
 
-   public InstantiateVAppTemplateParams(String info, System virtualSystem, Iterable<? extends ResourceAllocation> resourceAllocations) {
+   public InstantiateVAppTemplateParams(String info, VirtualSystemSettingData virtualSystem, Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
       this.info = info;
       this.virtualSystem = virtualSystem;
       Iterables.addAll(this.resourceAllocations, resourceAllocations);
@@ -46,11 +46,11 @@ public class InstantiateVAppTemplateParams {
       return info;
    }
 
-   public System getSystem() {
+   public VirtualSystemSettingData getSystem() {
       return virtualSystem;
    }
 
-   public Set<? extends ResourceAllocation> getResourceAllocations() {
+   public Set<? extends ResourceAllocationSettingData> getResourceAllocationSettingDatas() {
       return resourceAllocations;
    }
 

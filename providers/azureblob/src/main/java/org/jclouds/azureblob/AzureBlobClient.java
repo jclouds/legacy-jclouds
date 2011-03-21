@@ -34,6 +34,8 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
+import com.google.inject.Provides;
+
 import java.util.concurrent.Future;
 
 /**
@@ -48,6 +50,7 @@ import java.util.concurrent.Future;
  */
 @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AzureBlobClient {
+   @Provides
    public org.jclouds.azureblob.domain.AzureBlob newBlob();
 
    /**

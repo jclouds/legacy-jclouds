@@ -22,14 +22,11 @@ package org.jclouds.vcloud.util;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.VCloudError.MinorCode;
 import org.jclouds.vcloud.domain.internal.ErrorImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
-import org.xml.sax.Attributes;
-
-import com.google.common.collect.Maps;
 
 /**
  * 
@@ -43,17 +40,6 @@ public class Utils {
       // savvis org has null href
       URI href = (uri != null) ? URI.create(uri) : null;
       return new ReferenceTypeImpl(attributes.get("name"), type != null ? type : defaultType, href);
-   }
-
-   public static Map<String, String> cleanseAttributes(Attributes in) {
-      Map<String, String> attrs = Maps.newLinkedHashMap();
-      for (int i = 0; i < in.getLength(); i++) {
-         String name = in.getQName(i);
-         if (name.indexOf(':') != -1)
-            name = name.substring(name.indexOf(':') + 1);
-         attrs.put(name, in.getValue(i));
-      }
-      return attrs;
    }
 
    public static ReferenceType newReferenceType(Map<String, String> attributes) {
