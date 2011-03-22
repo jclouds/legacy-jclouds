@@ -1,0 +1,10 @@
+<DiskSection>
+    <Info>Describes the set of virtual disks</Info>
+    <Disk ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:capacity="8589934592"
+        ovf:populatedSize="3549324972"
+        ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#sparse">
+    </Disk>
+    <Disk ovf:diskId="vmdisk2" ovf:capacity="536870912" />
+    <Disk ovf:diskId="vmdisk3" ovf:capacity="${disk.size}"
+        ovf:capacityAllocationUnits="byte * 2^30" />
+</DiskSection>

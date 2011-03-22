@@ -28,7 +28,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.logging.Logger;
-import org.jclouds.ovf.OvfEnvelope;
+import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -73,19 +73,19 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
          return null;
       }
 
-      OvfEnvelope ovf = client.getOvfEnvelopeForVAppTemplate(from.getHref());
+      Envelope ovf = client.getOvfEnvelopeForVAppTemplate(from.getHref());
       if (ovf == null) {
          logger.warn("cannot parse hardware as no ovf envelope found for %s", from);
          return null;
       }
-      if (ovf.getVirtualSystem().getHardware().size() == 0) {
+      if (ovf.getVirtualSystem().getVirtualHardwareSections().size() == 0) {
          logger.warn("cannot parse hardware for %s as no hardware sections exist in ovf %s", ovf);
          return null;
       }
-      if (ovf.getVirtualSystem().getHardware().size() > 1) {
+      if (ovf.getVirtualSystem().getVirtualHardwareSections().size() > 1) {
          logger.warn("multiple hardware choices found. using first", ovf);
       }
-      VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getHardware(), 0);
+      VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getVirtualHardwareSections(), 0);
       HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getResourceAllocations());
       builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(

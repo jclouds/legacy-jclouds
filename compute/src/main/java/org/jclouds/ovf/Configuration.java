@@ -19,25 +19,33 @@
 
 package org.jclouds.ovf;
 
-
 /**
  * 
  * @author Adrian Cole
  */
-public class Network {
+public class Configuration {
    public static Builder builder() {
       return new Builder();
    }
 
    public static class Builder {
-      protected String name;
+      protected String id;
+      protected String label;
       protected String description;
 
       /**
-       * @see Network#getName
+       * @see Configuration#getId
        */
-      public Builder name(String name) {
-         this.name = name;
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see Section#getLabel
+       */
+      public Builder label(String label) {
+         this.label = label;
          return this;
       }
 
@@ -49,20 +57,22 @@ public class Network {
          return this;
       }
 
-      public Network build() {
-         return new Network(name, description);
+      public Configuration build() {
+         return new Configuration(id, label, description);
       }
 
-      public Builder fromNetwork(Network in) {
-         return name(in.getName()).description(in.getDescription());
+      public Builder fromNetwork(Configuration in) {
+         return id(in.getId()).description(in.getDescription()).label(in.getLabel());
       }
    }
 
-   private final String name;
+   private final String id;
+   private final String label;
    private final String description;
 
-   public Network(String name, String description) {
-      this.name = name;
+   public Configuration(String id, String label, String description) {
+      this.id = id;
+      this.label = label;
       this.description = description;
    }
 
@@ -70,8 +80,7 @@ public class Network {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
 
@@ -83,30 +92,29 @@ public class Network {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Network other = (Network) obj;
-      if (description == null) {
-         if (other.description != null)
+      Configuration other = (Configuration) obj;
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
+      } else if (!id.equals(other.id))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[name=" + name + ", description=" + description + "]";
+      return String.format("Configuration [id=%s, label=%s, description=%s]", id, label, description);
    }
 
-   public String getName() {
-      return name;
+   public String getId() {
+      return id;
    }
 
    public String getDescription() {
       return description;
+   }
+
+   public String getLabel() {
+      return label;
    }
 }

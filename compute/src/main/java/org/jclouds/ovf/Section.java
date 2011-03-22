@@ -19,29 +19,62 @@
 
 package org.jclouds.ovf;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.annotation.Nullable;
 
 /**
- * 
+ * Metadata about a virtual machine or grouping of them
  * 
  * @author Adrian Cole
  */
-public class OvfEnvelope {
-   private final VirtualSystem virtualSystem;
+public class Section<T extends Section<T>> {
 
-   public OvfEnvelope(VirtualSystem virtualSystem) {
-      this.virtualSystem = checkNotNull(virtualSystem, "virtualSystem");
+   public static <T extends Section<T>> Builder<T> builder() {
+      return new Builder<T>();
    }
 
-   public VirtualSystem getVirtualSystem() {
-      return virtualSystem;
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromSection(this);
+   }
+
+   public static class Builder<T extends Section<T>> {
+      protected String info;
+
+      /**
+       * @see Section#getInfo
+       */
+      public Builder<T> info(String info) {
+         this.info = info;
+         return this;
+      }
+
+      public Section<T> build() {
+         return new Section<T>(info);
+      }
+
+      public Builder<T> fromSection(Section<T> in) {
+         return info(in.getInfo());
+      }
+   }
+
+   protected final String info;
+
+   public Section(@Nullable String info) {
+      this.info = info;
+   }
+
+   /**
+    * 
+    * @return ovf info
+    */
+   public String getInfo() {
+      return info;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((virtualSystem == null) ? 0 : virtualSystem.hashCode());
+      result = prime * result + ((info == null) ? 0 : info.hashCode());
       return result;
    }
 
@@ -53,17 +86,18 @@ public class OvfEnvelope {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      OvfEnvelope other = (OvfEnvelope) obj;
-      if (virtualSystem == null) {
-         if (other.virtualSystem != null)
+      Section<?> other = (Section<?>) obj;
+      if (info == null) {
+         if (other.info != null)
             return false;
-      } else if (!virtualSystem.equals(other.virtualSystem))
+      } else if (!info.equals(other.info))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[virtualSystem=" + virtualSystem + "]";
+      return "[info=" + getInfo() + "]";
    }
+
 }

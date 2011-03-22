@@ -1,0 +1,11 @@
+<NetworkSection>
+    <Info>List of logical networks used in the package</Info>
+    <Network ovf:name="red">
+        <Description>The network the Red service is available on
+        </Description>
+    </Network>
+    <Network ovf:name="blue">
+        <Description>The network the Blue service is available on
+        </Description>
+    </Network>
+</NetworkSection>

@@ -22,47 +22,72 @@ package org.jclouds.ovf.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
+import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.ovf.Network;
-import org.jclouds.ovf.NetworkSection;
+import org.jclouds.logging.Logger;
+import org.jclouds.ovf.Disk;
+import org.jclouds.ovf.DiskSection;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class NetworkSectionHandler extends SectionHandler<NetworkSection, NetworkSection.Builder> {
-   protected Network.Builder networkBuilder = Network.builder();
+public class DiskSectionHandler extends SectionHandler<DiskSection, DiskSection.Builder> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+   protected Disk.Builder diskBuilder = Disk.builder();
 
    @Inject
-   public NetworkSectionHandler(Provider<NetworkSection.Builder> builderProvider) {
+   public DiskSectionHandler(Provider<DiskSection.Builder> builderProvider) {
       super(builderProvider);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "Network")) {
-         networkBuilder.name(attributes.get("name"));
+      if (equalsOrSuffix(qName, "Disk")) {
+         diskBuilder.id(attributes.get("diskId"));
+         diskBuilder.capacity(attemptToParse(attributes.get("capacity"), "capacity", attributes.get("diskId")));
+         diskBuilder.parentRef(attributes.get("parentRef"));
+         diskBuilder.fileRef(attributes.get("fileRef"));
+         if (attributes.containsKey("format"))
+            diskBuilder.format(URI.create(attributes.get("format")));
+         diskBuilder.populatedSize(attemptToParse(attributes.get("populatedSize"), "populatedSize", attributes
+                  .get("diskId")));
+         diskBuilder.capacityAllocationUnits(attributes.get("capacityAllocationUnits"));
       }
+   }
+
+   private Long attemptToParse(String toParse, String key, String diskId) {
+      Long val = null;
+      if (toParse != null) {
+         try {
+            val = new Long(toParse);
+         } catch (NumberFormatException e) {
+            logger.warn("%s for disk %s not a number [%s]", key, diskId, toParse);
+         }
+      }
+      return val;
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (equalsOrSuffix(qName, "Info")) {
          builder.info(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "Description")) {
-         networkBuilder.description(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "Network")) {
+      } else if (equalsOrSuffix(qName, "Disk")) {
          try {
-            builder.network(networkBuilder.build());
+            builder.disk(diskBuilder.build());
          } finally {
-            networkBuilder = Network.builder();
+            diskBuilder = Disk.builder();
          }
       }
       super.endElement(uri, localName, qName);
    }
+
 }

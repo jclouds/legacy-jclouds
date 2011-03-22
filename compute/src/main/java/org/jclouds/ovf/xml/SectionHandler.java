@@ -22,31 +22,43 @@ package org.jclouds.ovf.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import java.util.Map;
-
-import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.ovf.Network;
-import org.jclouds.ovf.NetworkSection;
-import org.jclouds.util.SaxUtils;
-import org.xml.sax.Attributes;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.ovf.Section;
+import org.jclouds.ovf.Section.Builder;
 
 /**
  * @author Adrian Cole
  */
-public class NetworkSectionHandler extends SectionHandler<NetworkSection, NetworkSection.Builder> {
-   protected Network.Builder networkBuilder = Network.builder();
+public class SectionHandler<T extends Section<T>, B extends Section.Builder<T>> extends ParseSax.HandlerWithResult<T> {
+   @SuppressWarnings("unchecked")
+   public static SectionHandler create() {
+      return new SectionHandler(new Provider<Section.Builder>() {
 
-   @Inject
-   public NetworkSectionHandler(Provider<NetworkSection.Builder> builderProvider) {
-      super(builderProvider);
+         @Override
+         public Builder get() {
+            return new Section.Builder();
+         }
+
+      });
    }
 
-   public void startElement(String uri, String localName, String qName, Attributes attrs) {
-      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "Network")) {
-         networkBuilder.name(attributes.get("name"));
+   protected final Provider<? extends Section.Builder<T>> builderProvider;
+   protected StringBuilder currentText = new StringBuilder();
+   protected B builder;
+
+   public SectionHandler(Provider<B> builderProvider) {
+      this.builderProvider = builderProvider;
+      this.builder = builderProvider.get();
+   }
+
+   @SuppressWarnings("unchecked")
+   public T getResult() {
+      try {
+         return (T) builder.build();
+      } finally {
+         builder = (B) builderProvider.get();
       }
    }
 
@@ -54,15 +66,11 @@ public class NetworkSectionHandler extends SectionHandler<NetworkSection, Networ
    public void endElement(String uri, String localName, String qName) {
       if (equalsOrSuffix(qName, "Info")) {
          builder.info(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "Description")) {
-         networkBuilder.description(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "Network")) {
-         try {
-            builder.network(networkBuilder.build());
-         } finally {
-            networkBuilder = Network.builder();
-         }
       }
-      super.endElement(uri, localName, qName);
+      currentText = new StringBuilder();
+   }
+
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
    }
 }

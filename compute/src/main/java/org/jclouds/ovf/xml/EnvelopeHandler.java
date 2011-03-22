@@ -19,8 +19,6 @@
 
 package org.jclouds.ovf.xml;
 
-import static org.jclouds.util.SaxUtils.cleanseAttributes;
-import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
@@ -28,7 +26,8 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.jclouds.ovf.VirtualSystem;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.ovf.Envelope;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -38,17 +37,29 @@ import com.google.inject.Inject;
 /**
  * @author Adrian Cole
  */
-public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualSystem.Builder> {
+public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
 
-   private final OperatingSystemSectionHandler osHandler;
-   private final VirtualHardwareSectionHandler hardwareHandler;
+   protected StringBuilder currentText = new StringBuilder();
+   protected Envelope.Builder builder = Envelope.builder();
+
+   public Envelope getResult() {
+      try {
+         return builder.build();
+      } finally {
+         builder = Envelope.builder();
+      }
+   }
+
+   private final VirtualSystemHandler virtualSystemHandler;
+   private final DiskSectionHandler diskHandler;
+   private final NetworkSectionHandler networkHandler;
 
    @Inject
-   public VirtualSystemHandler(Provider<VirtualSystem.Builder> builderProvider,
-            OperatingSystemSectionHandler osHandler, VirtualHardwareSectionHandler hardwareHandler) {
-      super(builderProvider);
-      this.osHandler = osHandler;
-      this.hardwareHandler = hardwareHandler;
+   public EnvelopeHandler(DiskSectionHandler diskHandler, NetworkSectionHandler networkHandler,
+            VirtualSystemHandler osHandler) {
+      this.virtualSystemHandler = osHandler;
+      this.diskHandler = diskHandler;
+      this.networkHandler = networkHandler;
    }
 
    @SuppressWarnings("unchecked")
@@ -63,17 +74,19 @@ public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualS
    @SuppressWarnings("unchecked")
    protected SectionHandler extensionHandler;
 
-   private boolean inHardware;
-   private boolean inOs;
+   private boolean inDisk;
+   private boolean inNetwork;
+   private boolean inVirtualSystem;
    private boolean inSection;
    private boolean inExtensionSection;
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
-         inHardware = true;
-      } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
-         inOs = true;
+      if (equalsOrSuffix(qName, "DiskSection")) {
+         inDisk = true;
+      } else if (equalsOrSuffix(qName, "NetworkSection")) {
+         inNetwork = true;
+      } else if (equalsOrSuffix(qName, "VirtualSystem")) {
+         inVirtualSystem = true;
       } else if (extensionHandlers.containsKey(qName)) {
          inExtensionSection = true;
          extensionHandler = extensionHandlers.get(qName).get();
@@ -81,28 +94,31 @@ public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualS
          inSection = true;
       }
 
-      if (inHardware) {
-         hardwareHandler.startElement(uri, localName, qName, attrs);
-      } else if (inOs) {
-         osHandler.startElement(uri, localName, qName, attrs);
+      if (inDisk) {
+         diskHandler.startElement(uri, localName, qName, attrs);
+      } else if (inNetwork) {
+         networkHandler.startElement(uri, localName, qName, attrs);
+      } else if (inVirtualSystem) {
+         virtualSystemHandler.startElement(uri, localName, qName, attrs);
       } else if (inExtensionSection) {
          extensionHandler.startElement(uri, localName, qName, attrs);
       } else if (inSection) {
          defaultSectionHandler.startElement(uri, localName, qName, attrs);
-      } else if (equalsOrSuffix(qName, "VirtualSystem")) {
-         builder.id(attributes.get("id"));
       }
 
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
-         inHardware = false;
-         builder.hardwareSection(hardwareHandler.getResult());
-      } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
-         inOs = false;
-         builder.operatingSystemSection(osHandler.getResult());
+      if (equalsOrSuffix(qName, "DiskSection")) {
+         inDisk = false;
+         builder.diskSection(diskHandler.getResult());
+      } else if (equalsOrSuffix(qName, "NetworkSection")) {
+         inNetwork = false;
+         builder.networkSection(networkHandler.getResult());
+      } else if (equalsOrSuffix(qName, "VirtualSystem")) {
+         inVirtualSystem = false;
+         builder.virtualSystem(virtualSystemHandler.getResult());
       } else if (extensionHandlers.containsKey(qName)) {
          builder.additionalSection(extensionHandler.getResult());
          inExtensionSection = false;
@@ -111,36 +127,35 @@ public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualS
          inSection = false;
       }
 
-      if (inHardware) {
-         hardwareHandler.endElement(uri, localName, qName);
-      } else if (inOs) {
-         osHandler.endElement(uri, localName, qName);
+      if (inDisk) {
+         diskHandler.endElement(uri, localName, qName);
+      } else if (inNetwork) {
+         networkHandler.endElement(uri, localName, qName);
+      } else if (inVirtualSystem) {
+         virtualSystemHandler.endElement(uri, localName, qName);
       } else if (inExtensionSection) {
          extensionHandler.endElement(uri, localName, qName);
       } else if (inSection) {
          defaultSectionHandler.endElement(uri, localName, qName);
       } else {
-         if (equalsOrSuffix(qName, "Info")) {
-            builder.info(currentOrNull(currentText));
-         } else if (equalsOrSuffix(qName, "Name")) {
-            builder.name(currentOrNull(currentText));
-         }
-         super.endElement(uri, localName, qName);
+         currentText = new StringBuilder();
       }
    }
 
    @Override
    public void characters(char ch[], int start, int length) {
-      if (inHardware) {
-         hardwareHandler.characters(ch, start, length);
-      } else if (inOs) {
-         osHandler.characters(ch, start, length);
+      if (inDisk) {
+         diskHandler.characters(ch, start, length);
+      } else if (inNetwork) {
+         networkHandler.characters(ch, start, length);
+      } else if (inVirtualSystem) {
+         virtualSystemHandler.characters(ch, start, length);
       } else if (inExtensionSection) {
          extensionHandler.characters(ch, start, length);
       } else if (inSection) {
          defaultSectionHandler.characters(ch, start, length);
       } else {
-         super.characters(ch, start, length);
+         currentText.append(ch, start, length);
       }
    }
 
