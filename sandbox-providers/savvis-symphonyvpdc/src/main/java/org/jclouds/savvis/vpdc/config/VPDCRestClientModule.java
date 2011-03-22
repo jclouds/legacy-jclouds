@@ -26,17 +26,22 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.savvis.vpdc.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.json.Json;
+import org.jclouds.location.Provider;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
@@ -52,6 +57,7 @@ import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
 import org.jclouds.savvis.vpdc.internal.LoginAsyncClient;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -59,6 +65,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -81,8 +88,8 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected Iterable<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
-         @Named(PROPERTY_IDENTITY) String user) {
+   protected Set<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
+            @Named(PROPERTY_IDENTITY) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
       return discovery.getOrgs();
@@ -91,7 +98,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected String provideDefaultOrgId(@org.jclouds.savvis.vpdc.internal.Org Iterable<Resource> orgs) {
+   protected String provideDefaultOrgId(@org.jclouds.savvis.vpdc.internal.Org Set<Resource> orgs) {
       return Iterables.get(orgs, 0).getId();
    }
 
@@ -100,37 +107,46 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @Singleton
    protected Predicate<String> successTester(Injector injector,
-         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), completed);
    }
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(BrowsingClient.class, BrowsingAsyncClient.class)//
-         .build();
+            .put(BrowsingClient.class, BrowsingAsyncClient.class)//
+            .build();
 
    public VPDCRestClientModule() {
       super(VPDCClient.class, VPDCAsyncClient.class, DELEGATE_MAP);
    }
 
+   @Singleton
+   @Provides
+   protected Set<CIMOperatingSystem> provideOperatingSystems(Json json, @Provider String providerName)
+            throws IOException {
+      return json.fromJson(Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/" + providerName + "/predefined_operatingsystems.json")), new TypeLiteral<Set<CIMOperatingSystem>>() {
+      }.getType());
+   }
+
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final LoginAsyncClient login) {
+            final LoginAsyncClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-            new Supplier<VCloudSession>() {
+               new Supplier<VCloudSession>() {
 
-               @Override
-               public VCloudSession get() {
-                  try {
-                     return login.login().get(10, TimeUnit.SECONDS);
-                  } catch (Exception e) {
-                     propagate(e);
-                     assert false : e;
-                     return null;
+                  @Override
+                  public VCloudSession get() {
+                     try {
+                        return login.login().get(10, TimeUnit.SECONDS);
+                     } catch (Exception e) {
+                        propagate(e);
+                        assert false : e;
+                        return null;
+                     }
                   }
-               }
 
-            });
+               });
    }
 
    @Override

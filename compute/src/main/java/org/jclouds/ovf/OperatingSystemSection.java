@@ -21,14 +21,59 @@ package org.jclouds.ovf;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.cim.OSType;
+
+/**
+ * An OperatingSystemSection specifies the operating system installed on a virtual machine.
+ * 
+ * @author Adrian Cole
+ */
 public class OperatingSystemSection {
 
-   @Nullable
-   protected final Integer id;
-   @Nullable
-   protected final String info;
+   public static Builder builder() {
+      return new Builder();
+   }
 
-   @Nullable
+   public static class Builder {
+      protected Integer id;
+      protected String info;
+      protected String description;
+
+      /**
+       * @see OperatingSystemSection#getID
+       */
+      public Builder id(Integer id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see OperatingSystemSection#getInfo
+       */
+      public Builder info(String info) {
+         this.info = info;
+         return this;
+      }
+
+      /**
+       * @see OperatingSystemSection#getDescription
+       */
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public OperatingSystemSection build() {
+         return new OperatingSystemSection(id, info, description);
+      }
+
+      public Builder fromOperatingSystemSection(OperatingSystemSection in) {
+         return id(in.getId()).info(in.getInfo()).description(in.getDescription());
+      }
+   }
+
+   protected final Integer id;
+   protected final String info;
    protected final String description;
 
    public OperatingSystemSection(@Nullable Integer id, @Nullable String info, @Nullable String description) {
@@ -40,6 +85,7 @@ public class OperatingSystemSection {
    /**
     * 
     * @return ovf id
+    * @see OSType#getCode()
     */
    public Integer getId() {
       return id;
@@ -96,6 +142,10 @@ public class OperatingSystemSection {
       } else if (!info.equals(other.info))
          return false;
       return true;
+   }
+
+   public Builder toBuilder() {
+      return builder().fromOperatingSystemSection(this);
    }
 
    @Override
