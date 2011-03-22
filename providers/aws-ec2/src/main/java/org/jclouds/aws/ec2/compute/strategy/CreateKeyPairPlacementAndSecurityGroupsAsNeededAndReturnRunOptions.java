@@ -132,7 +132,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          credentialsMap.put(key, pair);
       } else {
          if (hasPublicKeyMaterial.apply(options)) {
-            logger.warn("to avoid creating extra keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");
+            logger.warn("to avoid creating temporary keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");
          }
          return createUniqueKeyPairAndPutIntoMap(region, group);
       }

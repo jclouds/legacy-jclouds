@@ -27,26 +27,28 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.ovf.Network;
-import org.jclouds.ovf.NetworkSection;
+import org.jclouds.ovf.Configuration;
+import org.jclouds.ovf.DeploymentOptionSection;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class NetworkSectionHandler extends SectionHandler<NetworkSection, NetworkSection.Builder> {
-   protected Network.Builder networkBuilder = Network.builder();
+public class DeploymentOptionSectionHandler extends
+         SectionHandler<DeploymentOptionSection, DeploymentOptionSection.Builder> {
+   protected Configuration.Builder configBuilder = Configuration.builder();
 
    @Inject
-   public NetworkSectionHandler(Provider<NetworkSection.Builder> builderProvider) {
+   public DeploymentOptionSectionHandler(Provider<DeploymentOptionSection.Builder> builderProvider) {
       super(builderProvider);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "Network")) {
-         networkBuilder.name(attributes.get("name"));
+      if (equalsOrSuffix(qName, "Configuration")) {
+         configBuilder.id(attributes.get("id"));
+         // TODO default;
       }
    }
 
@@ -54,13 +56,15 @@ public class NetworkSectionHandler extends SectionHandler<NetworkSection, Networ
    public void endElement(String uri, String localName, String qName) {
       if (equalsOrSuffix(qName, "Info")) {
          builder.info(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "Label")) {
+         configBuilder.label(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Description")) {
-         networkBuilder.description(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "Network")) {
+         configBuilder.description(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "Configuration")) {
          try {
-            builder.network(networkBuilder.build());
+            builder.configuration(configBuilder.build());
          } finally {
-            networkBuilder = Network.builder();
+            configBuilder = Configuration.builder();
          }
       }
       super.endElement(uri, localName, qName);

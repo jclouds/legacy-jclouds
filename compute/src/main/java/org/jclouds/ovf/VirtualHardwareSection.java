@@ -27,30 +27,141 @@ import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.VirtualSystemSettingData;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
- * 
  * The virtual hardware required by a virtual machine is specified in VirtualHardwareSection.
  * <p/>
  * This specification supports abstract or incomplete hardware descriptions in which only the major
  * devices are described. The hypervisor is allowed to create additional virtual hardware
  * controllers and devices, as long as the required devices listed in the descriptor are realized.
+ * 
+ * @author Adrian Cole
  */
-public class VirtualHardwareSection {
+public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
 
-   protected final String info;
-   protected final VirtualSystemSettingData virtualSystem;
-   protected final Set<ResourceAllocationSettingData> resourceAllocations;
-
-   public VirtualHardwareSection(String info, VirtualSystemSettingData virtualSystem,
-            Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
-      this.info = info;
-      this.virtualSystem = virtualSystem;
-      this.resourceAllocations = ImmutableSet.copyOf(checkNotNull(resourceAllocations, "resourceAllocations"));
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public String getInfo() {
-      return info;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromVirtualHardwareSection(this);
+   }
+
+   public static class Builder extends Section.Builder<VirtualHardwareSection> {
+      protected VirtualSystemSettingData virtualSystem;
+      protected Set<String> transports = Sets.newLinkedHashSet();
+      protected Set<ResourceAllocationSettingData> resourceAllocations = Sets.newLinkedHashSet();
+
+      /**
+       * @see VirtualHardwareSection#getSystem
+       */
+      public Builder system(VirtualSystemSettingData virtualSystem) {
+         this.virtualSystem = virtualSystem;
+         return this;
+      }
+
+      /**
+       * @see VirtualHardwareSection#getTransports
+       */
+      public Builder transport(String transport) {
+         this.transports.add(checkNotNull(transport, "transport"));
+         return this;
+      }
+
+      /**
+       * @see VirtualHardwareSection#getTransports
+       */
+      public Builder transports(Iterable<String> transports) {
+         this.transports = ImmutableSet.<String> copyOf(checkNotNull(transports, "transports"));
+         return this;
+      }
+
+      /**
+       * @see VirtualHardwareSection#getResourceAllocations
+       */
+      public Builder resourceAllocation(ResourceAllocationSettingData resourceAllocation) {
+         this.resourceAllocations.add(checkNotNull(resourceAllocation, "resourceAllocation"));
+         return this;
+      }
+
+      /**
+       * @see VirtualHardwareSection#getResourceAllocations
+       */
+      public Builder resourceAllocations(Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
+         this.resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(
+                  resourceAllocations, "resourceAllocations"));
+         return this;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public VirtualHardwareSection build() {
+         return new VirtualHardwareSection(info, transports, virtualSystem, resourceAllocations);
+      }
+
+      public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
+         return resourceAllocations(in.getResourceAllocations()).transports(in.getTransports()).system(
+                  in.getSystem()).info(in.getInfo());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromSection(Section<VirtualHardwareSection> in) {
+         return Builder.class.cast(super.fromSection(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder info(String info) {
+         return Builder.class.cast(super.info(info));
+      }
+
+   }
+
+   protected final VirtualSystemSettingData virtualSystem;
+   protected final Set<String> transports;
+   protected final Set<ResourceAllocationSettingData> resourceAllocations;
+
+   public VirtualHardwareSection(String info, Iterable<String> transports, VirtualSystemSettingData virtualSystem,
+            Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
+      super(info);
+      this.virtualSystem = virtualSystem;
+      this.transports = ImmutableSet.<String> copyOf(checkNotNull(transports, "transports"));
+      this.resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(resourceAllocations,
+               "resourceAllocations"));
+   }
+
+   /**
+    * transport types define methods by which the environment document is communicated from the
+    * deployment platform to the guest software.
+    * <p/>
+    * To enable interoperability, this specification defines an "iso" transport type which all
+    * implementations that support CD-ROM devices are required to support. The iso transport
+    * communicates the environment 1346 document by making a dynamically generated ISO image
+    * available to the guest software. To support the iso transport type, prior to booting a virtual
+    * machine, an implementation shall make an ISO 9660 read-only disk image available as backing
+    * for a disconnected CD-ROM. If the iso transport is selected for a VirtualHardwareSection, at
+    * least one disconnected CD-ROM device shall be present in this section.
+    * <p/>
+    * Support for the "iso" transport type is not a requirement for virtual hardware architectures
+    * or guest 1351 operating systems which do not have CD-ROM device support.
+    * 
+    * @return
+    */
+   public Set<String> getTransports() {
+      return transports;
    }
 
    public VirtualSystemSettingData getSystem() {
@@ -62,16 +173,11 @@ public class VirtualHardwareSection {
    }
 
    @Override
-   public String toString() {
-      return "[info=" + getInfo() + ", virtualSystem=" + getSystem() + "]";
-   }
-
-   @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((info == null) ? 0 : info.hashCode());
+      int result = super.hashCode();
       result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
+      result = prime * result + ((transports == null) ? 0 : transports.hashCode());
       result = prime * result + ((virtualSystem == null) ? 0 : virtualSystem.hashCode());
       return result;
    }
@@ -80,20 +186,20 @@ public class VirtualHardwareSection {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
       VirtualHardwareSection other = (VirtualHardwareSection) obj;
-      if (info == null) {
-         if (other.info != null)
-            return false;
-      } else if (!info.equals(other.info))
-         return false;
       if (resourceAllocations == null) {
          if (other.resourceAllocations != null)
             return false;
       } else if (!resourceAllocations.equals(other.resourceAllocations))
+         return false;
+      if (transports == null) {
+         if (other.transports != null)
+            return false;
+      } else if (!transports.equals(other.transports))
          return false;
       if (virtualSystem == null) {
          if (other.virtualSystem != null)
@@ -101,6 +207,12 @@ public class VirtualHardwareSection {
       } else if (!virtualSystem.equals(other.virtualSystem))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("[info=%s, resourceAllocations=%s, transports=%s, virtualSystem=%s]", info,
+               resourceAllocations, transports, virtualSystem);
    }
 
 }

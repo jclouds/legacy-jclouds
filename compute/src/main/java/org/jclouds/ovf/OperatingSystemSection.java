@@ -28,15 +28,23 @@ import org.jclouds.cim.OSType;
  * 
  * @author Adrian Cole
  */
-public class OperatingSystemSection {
+public class OperatingSystemSection extends Section<OperatingSystemSection> {
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
-   public static class Builder {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromOperatingSystemSection(this);
+   }
+
+   public static class Builder extends Section.Builder<OperatingSystemSection> {
       protected Integer id;
-      protected String info;
       protected String description;
 
       /**
@@ -48,14 +56,6 @@ public class OperatingSystemSection {
       }
 
       /**
-       * @see OperatingSystemSection#getInfo
-       */
-      public Builder info(String info) {
-         this.info = info;
-         return this;
-      }
-
-      /**
        * @see OperatingSystemSection#getDescription
        */
       public Builder description(String description) {
@@ -63,6 +63,10 @@ public class OperatingSystemSection {
          return this;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public OperatingSystemSection build() {
          return new OperatingSystemSection(id, info, description);
       }
@@ -70,15 +74,31 @@ public class OperatingSystemSection {
       public Builder fromOperatingSystemSection(OperatingSystemSection in) {
          return id(in.getId()).info(in.getInfo()).description(in.getDescription());
       }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromSection(Section<OperatingSystemSection> in) {
+         return Builder.class.cast(super.fromSection(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder info(String info) {
+         return Builder.class.cast(super.info(info));
+      }
+
    }
 
    protected final Integer id;
-   protected final String info;
    protected final String description;
 
    public OperatingSystemSection(@Nullable Integer id, @Nullable String info, @Nullable String description) {
+      super(info);
       this.id = id;
-      this.info = info;
       this.description = description;
    }
 
@@ -89,14 +109,6 @@ public class OperatingSystemSection {
     */
    public Integer getId() {
       return id;
-   }
-
-   /**
-    * 
-    * @return ovf info
-    */
-   public String getInfo() {
-      return info;
    }
 
    /**
@@ -144,13 +156,9 @@ public class OperatingSystemSection {
       return true;
    }
 
-   public Builder toBuilder() {
-      return builder().fromOperatingSystemSection(this);
-   }
-
    @Override
    public String toString() {
-      return "[id=" + getId() + ", info=" + getInfo() + ", description=" + getDescription() + "]";
+      return String.format("[info=%s, id=%s, description=%s]", info, id, description);
    }
 
 }

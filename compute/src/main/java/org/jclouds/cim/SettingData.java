@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *      />
  * 
  */
-public abstract class SettingData {
+public abstract class SettingData implements Comparable<SettingData> {
 
    public static Builder builder() {
       return new Builder();
@@ -121,6 +121,16 @@ public abstract class SettingData {
    @Override
    public String toString() {
       return String.format("[elementName=%s, instanceID=%s]", elementName, instanceID);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int compareTo(SettingData o) {
+      if (instanceID == null)
+         return -1;
+      return (this == o) ? 0 : instanceID.compareTo(o.instanceID);
    }
 
 }

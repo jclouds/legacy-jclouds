@@ -27,11 +27,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * The NetworkSection element shall list all logical networks used in the OVF package.
+ * A DiskSection describes meta-information about virtual disks in the OVF package. Virtual disks
+ * and their metadata are described outside the virtual hardware to facilitate sharing between
+ * virtual machines within an OVF package.
  * 
  * @author Adrian Cole
  */
-public class NetworkSection extends Section<NetworkSection> {
+public class DiskSection extends Section<DiskSection> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -43,25 +45,25 @@ public class NetworkSection extends Section<NetworkSection> {
     */
    @Override
    public Builder toBuilder() {
-      return builder().fromNetworkSection(this);
+      return new Builder().fromDiskSection(this);
    }
 
-   public static class Builder extends Section.Builder<NetworkSection> {
-      protected Set<Network> networks = Sets.newLinkedHashSet();
+   public static class Builder extends Section.Builder<DiskSection> {
+      protected Set<Disk> disks = Sets.newLinkedHashSet();
 
       /**
-       * @see NetworkSection#getNetworks
+       * @see DiskSection#getDisks
        */
-      public Builder network(Network network) {
-         this.networks.add(checkNotNull(network, "network"));
+      public Builder disk(Disk disk) {
+         this.disks.add(checkNotNull(disk, "disk"));
          return this;
       }
 
       /**
-       * @see NetworkSection#getNetworks
+       * @see DiskSection#getDisks
        */
-      public Builder networks(Iterable<Network> networks) {
-         this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
+      public Builder disks(Iterable<Disk> disks) {
+         this.disks = ImmutableSet.<Disk> copyOf(checkNotNull(disks, "disks"));
          return this;
       }
 
@@ -69,20 +71,20 @@ public class NetworkSection extends Section<NetworkSection> {
        * {@inheritDoc}
        */
       @Override
-      public NetworkSection build() {
-         return new NetworkSection(info, networks);
+      public DiskSection build() {
+         return new DiskSection(info, disks);
       }
 
-      public Builder fromNetworkSection(NetworkSection in) {
-         return networks(in.getNetworks()).info(in.getInfo());
+      public Builder fromDiskSection(DiskSection in) {
+         return disks(in.getDisks()).info(in.getInfo());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(Section<NetworkSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSection(Section<DiskSection> in) {
+         return (Builder) super.fromSection(in);
       }
 
       /**
@@ -90,26 +92,26 @@ public class NetworkSection extends Section<NetworkSection> {
        */
       @Override
       public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
+         return (Builder) super.info(info);
       }
 
    }
 
-   private final Set<Network> networks;
+   private final Set<Disk> disks;
 
-   public NetworkSection(String info, Iterable<Network> networks) {
+   public DiskSection(String info, Iterable<Disk> disks) {
       super(info);
-      this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
+      this.disks = ImmutableSet.<Disk> copyOf(checkNotNull(disks, "disks"));
    }
 
    /**
-    * All networks referred to from Connection elements in all {@link VirtualHardwareSection}
-    * elements shall be defined in the NetworkSection.
+    * All disks referred to from Connection elements in all {@link VirtualHardwareSection} elements
+    * shall be defined in the DiskSection.
     * 
     * @return
     */
-   public Set<Network> getNetworks() {
-      return networks;
+   public Set<Disk> getDisks() {
+      return disks;
    }
 
    @Override
@@ -117,7 +119,7 @@ public class NetworkSection extends Section<NetworkSection> {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((info == null) ? 0 : info.hashCode());
-      result = prime * result + ((networks == null) ? 0 : networks.hashCode());
+      result = prime * result + ((disks == null) ? 0 : disks.hashCode());
       return result;
    }
 
@@ -129,23 +131,23 @@ public class NetworkSection extends Section<NetworkSection> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      NetworkSection other = (NetworkSection) obj;
+      DiskSection other = (DiskSection) obj;
       if (info == null) {
          if (other.info != null)
             return false;
       } else if (!info.equals(other.info))
          return false;
-      if (networks == null) {
-         if (other.networks != null)
+      if (disks == null) {
+         if (other.disks != null)
             return false;
-      } else if (!networks.equals(other.networks))
+      } else if (!disks.equals(other.disks))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return String.format("[info=%s, networks=%s]", info, networks);
+      return String.format("[info=%s, disks=%s]", info, disks);
    }
 
 }

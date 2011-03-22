@@ -19,36 +19,43 @@
 
 package org.jclouds.ovf.xml;
 
-import java.io.InputStream;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.cim.xml.VirtualSystemSettingDataHandlerTest;
+import java.io.InputStream;
+import java.net.URI;
+
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.ovf.OvfEnvelope;
-import org.jclouds.ovf.xml.OvfEnvelopeHandler;
+import org.jclouds.ovf.Disk;
+import org.jclouds.ovf.DiskSection;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code OvfEnvelopeHandler}
+ * Tests behavior of {@code DiskSectionHandler}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class OvfEnvelopeHandlerTest {
-   public void testVCloud1_0() {
-      InputStream is = getClass().getResourceAsStream("/ovf.xml");
+public class DiskSectionHandlerTest {
+   public void test() {
+      InputStream is = getClass().getResourceAsStream("/disksection.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      OvfEnvelope result = factory.create(injector.getInstance(OvfEnvelopeHandler.class)).parse(is);
-      checkOvfEnvelope(result);
-   }
+      DiskSection result = factory.create(injector.getInstance(DiskSectionHandler.class)).parse(is);
+      assertEquals(result.toString(), DiskSection.builder().info("Describes the set of virtual disks").disk(
+               Disk.builder().id("vmdisk1")
 
-   static void checkOvfEnvelope(OvfEnvelope result) {
-      VirtualSystemSettingDataHandlerTest.checkVirtualSystem(result.getVirtualSystem());
-   }
+               .fileRef("file1").capacity(8589934592l).populatedSize(3549324972l).format(
+                        URI.create("http://www.vmware.com/interfaces/specifications/vmdk.html#sparse")).build()).disk(
+               Disk.builder().id("vmdisk2").capacity(536870912l).build()).disk(
+               Disk.builder().id("vmdisk3").capacityAllocationUnits("byte * 2^30").build())
 
+      .build().toString()
+
+      );
+   }
 }

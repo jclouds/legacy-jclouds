@@ -42,8 +42,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.ovf.OvfEnvelope;
-import org.jclouds.ovf.xml.OvfEnvelopeHandler;
+import org.jclouds.ovf.Envelope;
+import org.jclouds.ovf.xml.EnvelopeHandler;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -131,9 +131,9 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @GET
    @Consumes(MediaType.TEXT_XML)
    @Path("/ovf")
-   @XMLResponseParser(OvfEnvelopeHandler.class)
+   @XMLResponseParser(EnvelopeHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends OvfEnvelope> getOvfEnvelopeForVAppTemplate(@EndpointParam URI vAppTemplate);
+   ListenableFuture<? extends Envelope> getOvfEnvelopeForVAppTemplate(@EndpointParam URI vAppTemplate);
 
    /**
     * @see VCloudClient#findVAppTemplateInOrgCatalogNamed
