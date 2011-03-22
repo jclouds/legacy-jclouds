@@ -23,7 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -46,7 +49,7 @@ public class Envelope {
       protected Set<DiskSection> diskSections = Sets.newLinkedHashSet();
       protected Set<NetworkSection> networkSections = Sets.newLinkedHashSet();
       @SuppressWarnings("unchecked")
-      protected Set<Section> additionalSections = Sets.newLinkedHashSet();
+      protected Multimap<String, Section> additionalSections = LinkedHashMultimap.create();
       protected VirtualSystem virtualSystem;
 
       /**
@@ -85,8 +88,8 @@ public class Envelope {
        * @see Envelope#getAdditionalSections
        */
       @SuppressWarnings("unchecked")
-      public Builder additionalSection(Section additionalSection) {
-         this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
+      public Builder additionalSection(String name, Section additionalSection) {
+         this.additionalSections.put(checkNotNull(name, "name"), checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
 
@@ -94,9 +97,9 @@ public class Envelope {
        * @see Envelope#getAdditionalSections
        */
       @SuppressWarnings("unchecked")
-      public Builder additionalSections(Iterable<? extends Section> additionalSections) {
-         this.additionalSections = ImmutableSet
-                  .<Section> copyOf(checkNotNull(additionalSections, "additionalSections"));
+      public Builder additionalSections(Multimap<String, Section> additionalSections) {
+         this.additionalSections = ImmutableMultimap.<String, Section> copyOf(checkNotNull(additionalSections,
+                  "additionalSections"));
          return this;
       }
 
@@ -116,8 +119,8 @@ public class Envelope {
       }
 
       public Builder fromEnvelope(Envelope in) {
-         return virtualSystem(in.getVirtualSystem()).diskSections(in.getDiskSections()).networkSections(
-                  networkSections).additionalSections(in.getAdditionalSections());
+         return virtualSystem(in.getVirtualSystem()).diskSections(in.getDiskSections())
+                  .networkSections(networkSections).additionalSections(in.getAdditionalSections());
       }
 
    }
@@ -125,15 +128,15 @@ public class Envelope {
    private final Set<DiskSection> diskSections;
    private final Set<NetworkSection> networkSections;
    @SuppressWarnings("unchecked")
-   private final Set<? extends Section> additionalSections;
+   private final Multimap<String, Section> additionalSections;
    private final VirtualSystem virtualSystem;
 
    @SuppressWarnings("unchecked")
    public Envelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-            Iterable<? extends Section> additionalSections, VirtualSystem virtualSystem) {
+            Multimap<String, Section> additionalSections, VirtualSystem virtualSystem) {
       this.diskSections = ImmutableSet.copyOf(checkNotNull(diskSections, "diskSections"));
       this.networkSections = ImmutableSet.copyOf(checkNotNull(networkSections, "networkSections"));
-      this.additionalSections = ImmutableSet.copyOf(checkNotNull(additionalSections, "additionalSections"));
+      this.additionalSections = ImmutableMultimap.copyOf(checkNotNull(additionalSections, "additionalSections"));
       this.virtualSystem = checkNotNull(virtualSystem, "virtualSystem");
    }
 
@@ -146,7 +149,7 @@ public class Envelope {
    }
 
    @SuppressWarnings("unchecked")
-   public Set<? extends Section> getAdditionalSections() {
+   public Multimap<String, Section> getAdditionalSections() {
       return additionalSections;
    }
 

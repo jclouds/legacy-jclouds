@@ -67,20 +67,23 @@ public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualS
    private boolean inOs;
    private boolean inSection;
    private boolean inExtensionSection;
+   private int depth;
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
-         inHardware = true;
-      } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
-         inOs = true;
-      } else if (extensionHandlers.containsKey(qName)) {
-         inExtensionSection = true;
-         extensionHandler = extensionHandlers.get(qName).get();
-      } else if (qName.endsWith("Section")) {
-         inSection = true;
+      depth++;
+      if (depth == 2) {
+         if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
+            inHardware = true;
+         } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
+            inOs = true;
+         } else if (extensionHandlers.containsKey(qName)) {
+            inExtensionSection = true;
+            extensionHandler = extensionHandlers.get(qName).get();
+         } else if (qName.endsWith("Section")) {
+            inSection = true;
+         }
       }
-
       if (inHardware) {
          hardwareHandler.startElement(uri, localName, qName, attrs);
       } else if (inOs) {
@@ -97,18 +100,21 @@ public class VirtualSystemHandler extends SectionHandler<VirtualSystem, VirtualS
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
-         inHardware = false;
-         builder.hardwareSection(hardwareHandler.getResult());
-      } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
-         inOs = false;
-         builder.operatingSystemSection(osHandler.getResult());
-      } else if (extensionHandlers.containsKey(qName)) {
-         builder.additionalSection(extensionHandler.getResult());
-         inExtensionSection = false;
-      } else if (qName.endsWith("Section")) {
-         builder.additionalSection(defaultSectionHandler.getResult());
-         inSection = false;
+      depth--;
+      if (depth == 1) {
+         if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
+            inHardware = false;
+            builder.hardwareSection(hardwareHandler.getResult());
+         } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
+            inOs = false;
+            builder.operatingSystemSection(osHandler.getResult());
+         } else if (extensionHandlers.containsKey(qName)) {
+            builder.additionalSection(qName, extensionHandler.getResult());
+            inExtensionSection = false;
+         } else if (qName.endsWith("Section")) {
+            builder.additionalSection(qName, defaultSectionHandler.getResult());
+            inSection = false;
+         }
       }
 
       if (inHardware) {

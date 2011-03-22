@@ -39,7 +39,6 @@ import com.google.inject.Inject;
  */
 public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
 
-   protected StringBuilder currentText = new StringBuilder();
    protected Envelope.Builder builder = Envelope.builder();
 
    public Envelope getResult() {
@@ -80,18 +79,23 @@ public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
    private boolean inSection;
    private boolean inExtensionSection;
 
+   private int depth = 0;
+
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      if (equalsOrSuffix(qName, "DiskSection")) {
-         inDisk = true;
-      } else if (equalsOrSuffix(qName, "NetworkSection")) {
-         inNetwork = true;
-      } else if (equalsOrSuffix(qName, "VirtualSystem")) {
-         inVirtualSystem = true;
-      } else if (extensionHandlers.containsKey(qName)) {
-         inExtensionSection = true;
-         extensionHandler = extensionHandlers.get(qName).get();
-      } else if (qName.endsWith("Section")) {
-         inSection = true;
+      depth++;
+      if (depth == 2) {
+         if (equalsOrSuffix(qName, "DiskSection")) {
+            inDisk = true;
+         } else if (equalsOrSuffix(qName, "NetworkSection")) {
+            inNetwork = true;
+         } else if (equalsOrSuffix(qName, "VirtualSystem")) {
+            inVirtualSystem = true;
+         } else if (extensionHandlers.containsKey(qName)) {
+            inExtensionSection = true;
+            extensionHandler = extensionHandlers.get(qName).get();
+         } else if (qName.endsWith("Section")) {
+            inSection = true;
+         }
       }
 
       if (inDisk) {
@@ -110,21 +114,24 @@ public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      if (equalsOrSuffix(qName, "DiskSection")) {
-         inDisk = false;
-         builder.diskSection(diskHandler.getResult());
-      } else if (equalsOrSuffix(qName, "NetworkSection")) {
-         inNetwork = false;
-         builder.networkSection(networkHandler.getResult());
-      } else if (equalsOrSuffix(qName, "VirtualSystem")) {
-         inVirtualSystem = false;
-         builder.virtualSystem(virtualSystemHandler.getResult());
-      } else if (extensionHandlers.containsKey(qName)) {
-         builder.additionalSection(extensionHandler.getResult());
-         inExtensionSection = false;
-      } else if (qName.endsWith("Section")) {
-         builder.additionalSection(defaultSectionHandler.getResult());
-         inSection = false;
+      depth--;
+      if (depth == 1) {
+         if (equalsOrSuffix(qName, "DiskSection")) {
+            inDisk = false;
+            builder.diskSection(diskHandler.getResult());
+         } else if (equalsOrSuffix(qName, "NetworkSection")) {
+            inNetwork = false;
+            builder.networkSection(networkHandler.getResult());
+         } else if (equalsOrSuffix(qName, "VirtualSystem")) {
+            inVirtualSystem = false;
+            builder.virtualSystem(virtualSystemHandler.getResult());
+         } else if (extensionHandlers.containsKey(qName)) {
+            builder.additionalSection(qName, extensionHandler.getResult());
+            inExtensionSection = false;
+         } else if (qName.endsWith("Section")) {
+            builder.additionalSection(qName, defaultSectionHandler.getResult());
+            inSection = false;
+         }
       }
 
       if (inDisk) {
@@ -137,8 +144,6 @@ public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
          extensionHandler.endElement(uri, localName, qName);
       } else if (inSection) {
          defaultSectionHandler.endElement(uri, localName, qName);
-      } else {
-         currentText = new StringBuilder();
       }
    }
 
@@ -154,8 +159,6 @@ public class EnvelopeHandler extends ParseSax.HandlerWithResult<Envelope> {
          extensionHandler.characters(ch, start, length);
       } else if (inSection) {
          defaultSectionHandler.characters(ch, start, length);
-      } else {
-         currentText.append(ch, start, length);
       }
    }
 
