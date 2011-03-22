@@ -46,11 +46,15 @@ public class VPDCAsyncClientTest extends BaseVPDCAsyncClientTest<VPDCAsyncClient
    public void testSync() {
       assert syncClient.getBrowsingClient() != null;
       assertEquals(syncClient.listOrgs().size(), 1);
+      assertEquals(syncClient.listPredefinedOperatingSystems().size(), 3);
+
    }
 
    public void testAsync() {
       assert asyncClient.getBrowsingClient() != null;
-      assertEquals(syncClient.listOrgs().size(), 1);
+      assertEquals(asyncClient.listOrgs().size(), 1);
+      assertEquals(asyncClient.listPredefinedOperatingSystems().size(), 3);
+
    }
 
    @Override

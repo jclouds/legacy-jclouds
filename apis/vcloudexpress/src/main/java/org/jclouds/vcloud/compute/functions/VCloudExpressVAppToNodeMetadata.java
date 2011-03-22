@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cim.OSType;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
@@ -76,7 +77,7 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.name(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(parseGroupFromName(from.getName()));
-      builder.operatingSystem(from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType
+      builder.operatingSystem(from.getOsType() != null ? new CIMOperatingSystem(OSType
                .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null);
       builder.hardware(hardwareForVCloudExpressVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));

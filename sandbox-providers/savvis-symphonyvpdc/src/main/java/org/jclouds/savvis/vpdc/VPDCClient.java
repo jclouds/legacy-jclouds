@@ -22,6 +22,7 @@ package org.jclouds.savvis.vpdc;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.savvis.vpdc.domain.Resource;
@@ -49,4 +50,13 @@ public interface VPDCClient {
     * @return a listing of all orgs that the current user has access to.
     */
    Set<Resource> listOrgs();
+
+   /**
+    * predefined by default in the classpath resource {@code
+    * /savvis-symphonyvpdc/predefined_operatingsystems.json}
+    * 
+    * @return the operating systems that are predefined in the provider
+    * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/addSingleVM.html" />
+    */
+   Set<CIMOperatingSystem> listPredefinedOperatingSystems();
 }
