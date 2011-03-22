@@ -23,6 +23,11 @@ import static org.jclouds.savvis.vpdc.options.GetVAppOptions.Builder.withPowerSt
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jclouds.savvis.vpdc.domain.FirewallRule;
+import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
@@ -107,7 +112,7 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
          }
       }
    }
-
+   
    @Test
    public void testVApp() throws Exception {
       for (Resource org1 : context.getApi().listOrgs()) {
@@ -142,5 +147,30 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
 
          }
       }
+   }
+   
+   @Test
+   public void testGetFirewallRules() throws Exception {
+	   for (Resource org1 : context.getApi().listOrgs()) {
+	         Org org = client.getOrg(org1.getId());
+	         for (Resource vdc : org.getVDCs()) {
+	        	FirewallService response = client.getFirewallRules(org.getId(), vdc.getId());
+	            Set<FirewallRule> firewallRules = response.getFirewallRules();
+	            if(firewallRules != null){
+	            	Iterator<FirewallRule> iter = firewallRules.iterator();
+	            	while(iter.hasNext()){
+	            		FirewallRule firewallRule = iter.next();
+	            		assertNotNull(firewallRule);
+	            		// these are null for firewall rules
+	            		assertEquals(response.getHref(), null);
+	            		assertEquals(response.getType(), null);
+	            		assertNotNull(firewallRule.getFirewallType());
+	            		assertNotNull(firewallRule.getProtocol());
+	            		assertNotNull(firewallRule.getSource());
+	            		assertNotNull(firewallRule.getDestination());
+	            	}
+	            }
+	         }
+	   }
    }
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Task;
@@ -105,4 +106,18 @@ public interface BrowsingClient {
     */
    Task getTask(String taskId);
 
+   /**
+    * Gets Firewall Rules
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * 
+    * @return If the request is successful, caller could get the firewall rules as specified in the
+    * 		  result element and if the request is not successful, caller would get empty
+    *         rules list and respective validation (error) message.
+    */
+   FirewallService getFirewallRules(String billingSiteId, String vpdcId);
+   
 }

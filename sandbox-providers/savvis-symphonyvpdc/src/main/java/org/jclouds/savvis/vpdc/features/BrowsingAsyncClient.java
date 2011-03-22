@@ -30,6 +30,7 @@ import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Task;
@@ -39,6 +40,7 @@ import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
 import org.jclouds.savvis.vpdc.functions.DefaultOrgIfNull;
 import org.jclouds.savvis.vpdc.options.BindGetVAppOptions;
 import org.jclouds.savvis.vpdc.options.GetVAppOptions;
+import org.jclouds.savvis.vpdc.xml.FirewallServiceHandler;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
 import org.jclouds.savvis.vpdc.xml.OrgHandler;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
@@ -111,4 +113,14 @@ public interface BrowsingAsyncClient {
    @Path("task/{taskId}")
    ListenableFuture<Task> getTask(@PathParam("taskId") String taskId);
 
+   /**
+    * @see BrowsingClient#getFirewallRules
+    */
+   @GET
+   @XMLResponseParser(FirewallServiceHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("org/{billingSiteId}/vdc/{vpdcId}/FirewallService")
+   ListenableFuture<FirewallService> getFirewallRules(@PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId, 
+		   @PathParam("vpdcId") String vpdcId);
+   
 }
