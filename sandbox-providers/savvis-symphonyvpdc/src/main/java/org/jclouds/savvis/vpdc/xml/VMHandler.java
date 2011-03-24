@@ -29,7 +29,7 @@ import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ovf.xml.NetworkSectionHandler;
 import org.jclouds.savvis.vpdc.domain.Resource;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,25 +39,25 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Kedar Dave
  */
-public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
+public class VMHandler extends ParseSax.HandlerWithResult<VM> {
    protected StringBuilder currentText = new StringBuilder();
    private final NetworkSectionHandler networkSectionHandler;
    private final ResourceAllocationSettingDataHandler allocationHandler;
 
    @Inject
-   public VAppHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationSettingDataHandler allocationHandler) {
+   public VMHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationSettingDataHandler allocationHandler) {
       this.networkSectionHandler = networkSectionHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   private VApp.Builder builder = VApp.builder();
+   private VM.Builder builder = VM.builder();
    protected boolean inOs;
 
-   public VApp getResult() {
+   public VM getResult() {
       try {
          return builder.build();
       } finally {
-         builder = VApp.builder();
+         builder = VM.builder();
       }
    }
 
@@ -70,7 +70,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
                   .put("href", getRequest().getEndpoint().toASCIIString()).build();
          Resource vApp = newResource(attributes);
          builder.name(vApp.getName()).type(vApp.getType()).id(vApp.getId()).href(vApp.getHref());
-         builder.status(VApp.Status.fromValue(attributes.get("status")));
+         builder.status(VM.Status.fromValue(attributes.get("status")));
       } else if (qName.endsWith("OperatingSystemSection")) {
          inOs = true;
          if (attributes.containsKey("id"))

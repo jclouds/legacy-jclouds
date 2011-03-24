@@ -26,11 +26,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.savvis.vpdc.options.GetVAppOptions;
+import org.jclouds.savvis.vpdc.options.GetVMOptions;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
 import org.jclouds.savvis.vpdc.xml.OrgHandler;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
-import org.jclouds.savvis.vpdc.xml.VAppHandler;
+import org.jclouds.savvis.vpdc.xml.VMHandler;
 import org.jclouds.savvis.vpdc.xml.VDCHandler;
 import org.testng.annotations.Test;
 
@@ -105,7 +105,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
    }
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = BrowsingAsyncClient.class.getMethod("getNetworkInOrgAndVDC", String.class, String.class,
+      Method method = BrowsingAsyncClient.class.getMethod("getNetworkInVDC", String.class, String.class,
                String.class);
       HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01");
 
@@ -122,7 +122,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
    }
 
    public void testNetworkWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = BrowsingAsyncClient.class.getMethod("getNetworkInOrgAndVDC", String.class, String.class,
+      Method method = BrowsingAsyncClient.class.getMethod("getNetworkInVDC", String.class, String.class,
                String.class);
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
@@ -138,9 +138,9 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       checkFilters(request);
    }
 
-   public void testVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
-               String.class, GetVAppOptions[].class);
+   public void testVM() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = BrowsingAsyncClient.class.getMethod("getVMInVDC", String.class, String.class,
+               String.class, GetVMOptions[].class);
       HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
@@ -149,16 +149,16 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VMHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
 
-   public void testVAppWithPowerState() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
-               String.class, GetVAppOptions[].class);
-      HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01", GetVAppOptions.Builder
+   public void testVMWithPowerState() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = BrowsingAsyncClient.class.getMethod("getVMInVDC", String.class, String.class,
+               String.class, GetVMOptions[].class);
+      HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01", GetVMOptions.Builder
                .withPowerState());
 
       assertRequestLineEquals(request,
@@ -167,15 +167,15 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VMHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
 
-   public void testVAppWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = BrowsingAsyncClient.class.getMethod("getVAppInOrgAndVDC", String.class, String.class,
-               String.class, GetVAppOptions[].class);
+   public void testVMWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = BrowsingAsyncClient.class.getMethod("getVMInVDC", String.class, String.class,
+               String.class, GetVMOptions[].class);
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
@@ -184,7 +184,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VMHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);

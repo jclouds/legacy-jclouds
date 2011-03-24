@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
@@ -38,15 +38,15 @@ import com.google.inject.Provides;
 public class VPDCComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   public static final Map<VApp.Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap
-         .<VApp.Status, NodeState> builder().put(VApp.Status.OFF, NodeState.SUSPENDED)
-         .put(VApp.Status.ON, NodeState.RUNNING).put(VApp.Status.RESOLVED, NodeState.PENDING)
-         .put(VApp.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(VApp.Status.UNKNOWN, NodeState.UNRECOGNIZED)
-         .put(VApp.Status.SUSPENDED, NodeState.SUSPENDED).put(VApp.Status.UNRESOLVED, NodeState.PENDING).build();
+   public static final Map<VM.Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap
+         .<VM.Status, NodeState> builder().put(VM.Status.OFF, NodeState.SUSPENDED)
+         .put(VM.Status.ON, NodeState.RUNNING).put(VM.Status.RESOLVED, NodeState.PENDING)
+         .put(VM.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(VM.Status.UNKNOWN, NodeState.UNRECOGNIZED)
+         .put(VM.Status.SUSPENDED, NodeState.SUSPENDED).put(VM.Status.UNRESOLVED, NodeState.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<VApp.Status, NodeState> provideVAppStatusToNodeState() {
+   protected Map<VM.Status, NodeState> provideVAppStatusToNodeState() {
       return VAPPSTATUS_TO_NODESTATE;
    }
 

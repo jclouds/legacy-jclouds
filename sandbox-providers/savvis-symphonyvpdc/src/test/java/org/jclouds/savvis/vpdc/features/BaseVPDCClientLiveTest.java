@@ -28,12 +28,16 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.savvis.vpdc.VPDCAsyncClient;
 import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VPDCClient}
@@ -49,11 +53,12 @@ public class BaseVPDCClientLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   protected Injector injector;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
+            + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
    }
@@ -73,8 +78,13 @@ public class BaseVPDCClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+      // context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new
+      // Log4JLoggingModule()),
+      // overrides);
+      injector = new RestContextFactory().createContextBuilder(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides).buildInjector();
+      context = injector.getInstance(Key.get(new TypeLiteral<RestContext<VPDCClient, VPDCAsyncClient>>() {
+      }));
    }
 
    @AfterGroups(groups = "live")

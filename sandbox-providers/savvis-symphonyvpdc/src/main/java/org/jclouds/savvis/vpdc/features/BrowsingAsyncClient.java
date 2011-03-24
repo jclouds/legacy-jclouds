@@ -33,16 +33,16 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Task;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
 import org.jclouds.savvis.vpdc.functions.DefaultOrgIfNull;
-import org.jclouds.savvis.vpdc.options.BindGetVAppOptions;
-import org.jclouds.savvis.vpdc.options.GetVAppOptions;
+import org.jclouds.savvis.vpdc.options.BindGetVMOptions;
+import org.jclouds.savvis.vpdc.options.GetVMOptions;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
 import org.jclouds.savvis.vpdc.xml.OrgHandler;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
-import org.jclouds.savvis.vpdc.xml.VAppHandler;
+import org.jclouds.savvis.vpdc.xml.VMHandler;
 import org.jclouds.savvis.vpdc.xml.VDCHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -80,27 +80,27 @@ public interface BrowsingAsyncClient {
          @PathParam("vpdcId") String vpdcId);
 
    /**
-    * @see BrowsingClient#getNetworkInOrgAndVDC
+    * @see BrowsingClient#getNetworkInVDC
     */
    @GET
    @XMLResponseParser(NetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("org/{billingSiteId}/vdc/{vpdcId}/network/{network-tier-name}")
-   ListenableFuture<Network> getNetworkInOrgAndVDC(
+   ListenableFuture<Network> getNetworkInVDC(
          @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
          @PathParam("vpdcId") String vpdcId, @PathParam("network-tier-name") String networkTierName);
 
    /**
-    * @see BrowsingClient#getVAppInOrgAndVDC
+    * @see BrowsingClient#getVMInVDC
     */
    @GET
-   @XMLResponseParser(VAppHandler.class)
+   @XMLResponseParser(VMHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("org/{billingSiteId}/vdc/{vpdcId}/vApp/{vAppId}")
-   ListenableFuture<VApp> getVAppInOrgAndVDC(
+   ListenableFuture<VM> getVMInVDC(
          @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
             @PathParam("vpdcId") String vpdcId, @PathParam("vAppId") String vAppId,
-            @BinderParam(BindGetVAppOptions.class) GetVAppOptions... options);
+            @BinderParam(BindGetVMOptions.class) GetVMOptions... options);
 
    /**
     * @see BrowsingClient#getTask
