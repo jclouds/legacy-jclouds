@@ -23,56 +23,46 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
-import java.util.Set;
 
-import org.jclouds.http.functions.ParseSax;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.ovf.Network;
 import org.jclouds.ovf.NetworkSection;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.Sets;
-
 /**
  * @author Adrian Cole
  */
-public class NetworkSectionHandler extends ParseSax.HandlerWithResult<NetworkSection> {
-   protected StringBuilder currentText = new StringBuilder();
+public class NetworkSectionHandler extends SectionHandler<NetworkSection, NetworkSection.Builder> {
+   protected Network.Builder networkBuilder = Network.builder();
 
-   protected String info;
-   protected String name;
-   protected String description;
-
-   protected Set<Network> networks = Sets.newLinkedHashSet();
-
-   public NetworkSection getResult() {
-      NetworkSection system = new NetworkSection(info, networks);
-      this.info = null;
-      this.networks = Sets.newLinkedHashSet();
-      return system;
+   @Inject
+   public NetworkSectionHandler(Provider<NetworkSection.Builder> builderProvider) {
+      super(builderProvider);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (equalsOrSuffix(qName, "Network")) {
-         name = attributes.get("name");
+         networkBuilder.name(attributes.get("name"));
       }
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (equalsOrSuffix(qName, "Info")) {
-         this.info = currentOrNull(currentText);
+         builder.info(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Description")) {
-         this.description = currentOrNull(currentText);
+         networkBuilder.description(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Network")) {
-         this.networks.add(new Network(name, description));
+         try {
+            builder.network(networkBuilder.build());
+         } finally {
+            networkBuilder = Network.builder();
+         }
       }
-      currentText = new StringBuilder();
+      super.endElement(uri, localName, qName);
    }
-
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
-   }
-
 }

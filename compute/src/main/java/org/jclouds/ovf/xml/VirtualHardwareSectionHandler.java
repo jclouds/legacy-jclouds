@@ -19,53 +19,53 @@
 
 package org.jclouds.ovf.xml;
 
-import java.util.Set;
+import static org.jclouds.util.SaxUtils.cleanseAttributes;
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-import org.jclouds.cim.ResourceAllocationSettingData;
-import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.cim.xml.VirtualSystemSettingDataHandler;
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ovf.VirtualHardwareSection;
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Splitter;
 
 /**
  * @author Adrian Cole
  */
-public class VirtualHardwareSectionHandler extends ParseSax.HandlerWithResult<VirtualHardwareSection> {
-   protected StringBuilder currentText = new StringBuilder();
+public class VirtualHardwareSectionHandler extends
+         SectionHandler<VirtualHardwareSection, VirtualHardwareSection.Builder> {
 
    private final VirtualSystemSettingDataHandler systemHandler;
    private final ResourceAllocationSettingDataHandler allocationHandler;
 
    @Inject
-   public VirtualHardwareSectionHandler(VirtualSystemSettingDataHandler systemHandler,
-            ResourceAllocationSettingDataHandler allocationHandler) {
+   public VirtualHardwareSectionHandler(Provider<VirtualHardwareSection.Builder> builderProvider,
+            VirtualSystemSettingDataHandler systemHandler, ResourceAllocationSettingDataHandler allocationHandler) {
+      super(builderProvider);
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   private String info;
-   protected VirtualSystemSettingData system;
-   protected Set<ResourceAllocationSettingData> allocations = Sets.newLinkedHashSet();
-
    private boolean inItem;
    private boolean inSystem;
 
-   public VirtualHardwareSection getResult() {
-      return new VirtualHardwareSection(info, system, allocations);
-   }
-
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
-      if (qName.endsWith("System")) {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      if (equalsOrSuffix(qName, "VirtualHardwareSection")) {
+         if (attributes.containsKey("transport"))
+            builder.transports(Splitter.on(' ').split(attributes.get("transport")));
+      } else if (equalsOrSuffix(qName, "System")) {
          inSystem = true;
-      } else if (!inSystem && qName.endsWith("Item")) {
+      } else if (!inSystem && equalsOrSuffix(qName, "Item")) {
          inItem = true;
       }
+
       if (inSystem) {
          systemHandler.startElement(uri, localName, qName, attrs);
       } else if (inItem) {
@@ -75,30 +75,33 @@ public class VirtualHardwareSectionHandler extends ParseSax.HandlerWithResult<Vi
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      if (qName.endsWith("System")) {
+      if (equalsOrSuffix(qName, "System")) {
          inSystem = false;
-         system = systemHandler.getResult();
-      } else if (qName.endsWith("Item")) {
+         builder.system(systemHandler.getResult());
+      } else if (equalsOrSuffix(qName, "Item")) {
          inItem = false;
-         allocations.add(allocationHandler.getResult());
+         builder.resourceAllocation(allocationHandler.getResult());
       }
       if (inSystem) {
          systemHandler.endElement(uri, localName, qName);
       } else if (inItem) {
          allocationHandler.endElement(uri, localName, qName);
-      } else if (qName.endsWith("Info")) {
-         this.info = currentText.toString().trim();
+      } else {
+         if (equalsOrSuffix(qName, "Info"))
+            builder.info(currentOrNull(currentText));
+         super.endElement(uri, localName, qName);
       }
-      currentText = new StringBuilder();
    }
 
    @Override
    public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
-      if (inSystem)
+      if (inSystem) {
          systemHandler.characters(ch, start, length);
-      if (inItem)
+      } else if (inItem) {
          allocationHandler.characters(ch, start, length);
+      } else {
+         super.characters(ch, start, length);
+      }
    }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <description@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,45 @@
 
 package org.jclouds.ovf;
 
+
 /**
  * 
  * @author Adrian Cole
  */
 public class Network {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      protected String name;
+      protected String description;
+
+      /**
+       * @see Network#getName
+       */
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      /**
+       * @see Section#getDescription
+       */
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public Network build() {
+         return new Network(name, description);
+      }
+
+      public Builder fromNetwork(Network in) {
+         return name(in.getName()).description(in.getDescription());
+      }
+   }
+
    private final String name;
    private final String description;
 
@@ -65,7 +99,7 @@ public class Network {
 
    @Override
    public String toString() {
-      return "Network [name=" + name + ", description=" + description + "]";
+      return "[name=" + name + ", description=" + description + "]";
    }
 
    public String getName() {

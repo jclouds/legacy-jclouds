@@ -30,21 +30,21 @@ package org.jclouds.savvis.vpdc.options;
  * import static org.jclouds.savvis.vpdc.options.GetVAppOptions.Builder.*
  * <p/>
  * 
- * vApp = context.getApi().getBrowsingClient().getVAppInOrgAndVDC(orgId, vdcId, vAppId, withPowerState());
+ * vApp = context.getApi().getBrowsingClient().getVAppInVDC(orgId, vdcId, vAppId, withPowerState());
  * <code>
  * 
  * @author Adrian Cole
  * @see <a href= "https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/getVAppPowerState.html"
  *      />
  */
-public class GetVAppOptions {
-   public static final GetVAppOptions NONE = new GetVAppOptions();
+public class GetVMOptions {
+   public static final GetVMOptions NONE = new GetVMOptions();
    private boolean withPowerState;
 
    /**
     * The VM State is the real time state.
     */
-   public GetVAppOptions withPowerState() {
+   public GetVMOptions withPowerState() {
       this.withPowerState = true;
       return this;
    }
@@ -56,10 +56,10 @@ public class GetVAppOptions {
    public static class Builder {
 
       /**
-       * @see GetVAppOptions#withPowerState()
+       * @see GetVMOptions#withPowerState()
        */
-      public static GetVAppOptions withPowerState() {
-         GetVAppOptions options = new GetVAppOptions();
+      public static GetVMOptions withPowerState() {
+         GetVMOptions options = new GetVMOptions();
          return options.withPowerState();
       }
 

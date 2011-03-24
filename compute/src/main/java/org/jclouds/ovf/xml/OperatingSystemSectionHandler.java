@@ -25,26 +25,20 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 
-import org.jclouds.http.functions.ParseSax;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.ovf.OperatingSystemSection;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class OperatingSystemSectionHandler extends ParseSax.HandlerWithResult<OperatingSystemSection> {
-   private StringBuilder currentText = new StringBuilder();
-
-   protected Integer id;
-   protected String info;
-   protected String description;
-
-   public OperatingSystemSection getResult() {
-      OperatingSystemSection system = new OperatingSystemSection(id, info, description);
-      id = null;
-      info = null;
-      description = null;
-      return system;
+public class OperatingSystemSectionHandler extends
+         SectionHandler<OperatingSystemSection, OperatingSystemSection.Builder> {
+   @Inject
+   public OperatingSystemSectionHandler(Provider<OperatingSystemSection.Builder> builderProvider) {
+      super(builderProvider);
    }
 
    @Override
@@ -52,21 +46,17 @@ public class OperatingSystemSectionHandler extends ParseSax.HandlerWithResult<Op
       Map<String, String> attributes = cleanseAttributes(attrs);
       if (equalsOrSuffix(qName, "OperatingSystemSection")) {
          if (attributes.containsKey("id"))
-            this.id = Integer.parseInt(attributes.get("id"));
+            builder.id(Integer.parseInt(attributes.get("id")));
       }
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (equalsOrSuffix(qName, "Info")) {
-         this.info = currentOrNull(currentText);
+         builder.info(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Description")) {
-         this.description = currentOrNull(currentText);
+         builder.description(currentOrNull(currentText));
       }
-      currentText = new StringBuilder();
-   }
-
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
+      super.endElement(uri, localName, qName);
    }
 }

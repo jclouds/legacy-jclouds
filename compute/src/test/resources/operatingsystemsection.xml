@@ -1,0 +1,4 @@
+<OperatingSystemSection ovf:id="76">
+    <Info>Specifies the operating system installed</Info>
+    <Description>Microsoft Windows Server 2008</Description>
+</OperatingSystemSection>

@@ -56,6 +56,8 @@
         <test.savvis-symphonyvpdc.apiversion>0.8</test.savvis-symphonyvpdc.apiversion>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
+        <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
+        <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>
     </properties>
     <dependencies>
         <dependency>
@@ -100,6 +102,11 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.3</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -133,6 +140,14 @@
                                         <property>
                                             <name>test.savvis-symphonyvpdc.credential</name>
                                             <value>${test.savvis-symphonyvpdc.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.savvis-symphonyvpdc.loginUser</name>
+                                            <value>${test.savvis-symphonyvpdc.loginUser}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.savvis-symphonyvpdc.loginPassword</name>
+                                            <value>${test.savvis-symphonyvpdc.loginPassword}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist-nodes</name>

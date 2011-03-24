@@ -32,9 +32,10 @@ public class VCloudVirtualHardwareSection extends VirtualHardwareSection {
    protected final String type;
    protected final URI href;
 
-   public VCloudVirtualHardwareSection(String type, URI href, String info, VirtualSystemSettingData virtualSystem,
+   public VCloudVirtualHardwareSection(String type, URI href, String info, Iterable<String> transports,
+            VirtualSystemSettingData virtualSystem,
             Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
-      super(info, virtualSystem, resourceAllocations);
+      super(info, transports, virtualSystem, resourceAllocations);
       this.type = type;
       this.href = href;
    }

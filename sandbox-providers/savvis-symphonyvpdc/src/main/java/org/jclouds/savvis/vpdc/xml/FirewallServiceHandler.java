@@ -58,10 +58,6 @@ public class FirewallServiceHandler extends ParseSax.HandlerWithResult<FirewallS
     	  inFirewallRule = true;
     	  firewallRuleHandler.startElement(uri, localName, qName, attrs);
       }
-      else{
-//    	  firewallRuleHandler.startElement(uri, localName, qName, attrs);
-      }
-
    }
 
    @Override

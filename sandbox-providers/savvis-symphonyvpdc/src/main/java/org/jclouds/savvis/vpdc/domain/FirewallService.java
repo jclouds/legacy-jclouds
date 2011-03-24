@@ -67,22 +67,6 @@ public class FirewallService extends Resource {
 	        	.isEnabled(in.isEnabled()).firewallRules(in.getFirewallRules());
 	    }
 		
-		public Set<FirewallRule> getFirewallRules() {
-			return firewallRules;
-		}
-
-		public void setFirewallRules(Set<FirewallRule> firewallRules) {
-			this.firewallRules = firewallRules;
-		}
-		
-		public boolean isEnabled() {
-			return isEnabled;
-		}
-
-		public void setEnabled(boolean isEnabled) {
-			this.isEnabled = isEnabled;
-		}
-
 		@Override
 		public Builder id(String id) {
 			return Builder.class.cast(super.id(id));
@@ -105,8 +89,8 @@ public class FirewallService extends Resource {
 		
 	}
 	
-	private boolean isEnabled;
-	private Set<FirewallRule> firewallRules;
+	private final boolean isEnabled;
+	private final Set<FirewallRule> firewallRules;
 	
 	public FirewallService(String id, String name, String type, URI href, boolean isEnabled, Set<FirewallRule> firewallRules) {
       super(id, name, type, href);
@@ -123,16 +107,8 @@ public class FirewallService extends Resource {
 		return firewallRules;
 	}
 
-	public void setFirewallRules(Set<FirewallRule> firewallRules) {
-		this.firewallRules = firewallRules;
-	}
-
 	public boolean isEnabled() {
 		return isEnabled;
-	}
-
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
 	}
 
 }

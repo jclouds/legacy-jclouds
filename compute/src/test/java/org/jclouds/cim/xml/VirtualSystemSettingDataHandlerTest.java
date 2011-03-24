@@ -75,8 +75,8 @@ public class VirtualSystemSettingDataHandlerTest extends BaseHandlerTest {
       assertEquals(result.getId(), "Ubuntu1004");
       assertEquals(result.getName(), "Ubuntu1004");
       assertEquals(result.getInfo(), "A virtual machine:");
-      checkHardware(Iterables.get(result.getHardware(), 0));
-      checkOs(result.getOperatingSystem());
+      checkHardware(Iterables.get(result.getVirtualHardwareSections(), 0));
+      checkOs(result.getOperatingSystemSection());
    }
 
    @Test(enabled = false)

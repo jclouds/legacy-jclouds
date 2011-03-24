@@ -22,7 +22,7 @@ package org.jclouds.compute.domain;
 import javax.annotation.Nullable;
 
 import org.jclouds.cim.OSType;
-import org.jclouds.ovf.OvfEnvelope;
+import org.jclouds.ovf.Envelope;
 
 import com.google.common.annotations.Beta;
 
@@ -123,8 +123,8 @@ public class CIMOperatingSystem extends OperatingSystem {
       return new CIMOperatingSystem(OSType.fromValue(os.getId()), "", null, os.getDescription());
    }
 
-   public static CIMOperatingSystem toComputeOs(OvfEnvelope ovf) {
-      return toComputeOs(ovf.getVirtualSystem().getOperatingSystem());
+   public static CIMOperatingSystem toComputeOs(Envelope ovf) {
+      return toComputeOs(ovf.getVirtualSystem().getOperatingSystemSection());
    }
 
    private OSType osType;

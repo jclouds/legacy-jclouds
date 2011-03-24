@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.ovf.OvfEnvelope;
+import org.jclouds.ovf.Envelope;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -84,7 +84,7 @@ public interface VCloudClient extends CommonVCloudClient {
 
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
-   OvfEnvelope getOvfEnvelopeForVAppTemplate(URI vAppTemplate);
+   Envelope getOvfEnvelopeForVAppTemplate(URI vAppTemplate);
 
    /**
     * Modify the Guest Customization Section of a Virtual Machine

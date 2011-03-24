@@ -18,7 +18,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class VApp extends Resource {
+public class VM extends Resource {
    /**
     * Objects such as vAppTemplate, vApp, and Vm have a status attribute whose value indicates the
     * state of the object. Status for an object, such as a vAppTemplate or vApp, whose Children (Vm
@@ -161,12 +161,12 @@ public class VApp extends Resource {
       }
 
       @Override
-      public VApp build() {
-         return new VApp(id, name, type, href, status, ipAddress, osType, osDescripton, networkSection,
+      public VM build() {
+         return new VM(id, name, type, href, status, ipAddress, osType, osDescripton, networkSection,
                resourceAllocations);
       }
 
-      public static Builder fromVApp(VApp in) {
+      public static Builder fromVApp(VM in) {
          return new Builder().id(in.getId()).name(in.getName()).type(in.getType()).href(in.getHref())
                .status(in.getStatus()).ipAddress(in.getIpAddress()).osType(in.getOsType())
                .networkSection(in.getNetworkSection()).resourceAllocations(in.getResourceAllocations())
@@ -202,7 +202,7 @@ public class VApp extends Resource {
    private final NetworkSection networkSection;
    private final Set<ResourceAllocationSettingData> resourceAllocations;
 
-   public VApp(String id, String name, String type, URI href, Status status, String ipAddress, Integer osType,
+   public VM(String id, String name, String type, URI href, Status status, String ipAddress, Integer osType,
          String osDescripton, NetworkSection networkSection, Set<ResourceAllocationSettingData> resourceAllocations) {
       super(id, name, type, href);
       this.status = status;

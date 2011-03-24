@@ -19,31 +19,92 @@
 
 package org.jclouds.ovf;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * The NetworkSection element shall list all logical networks used in the OVF package.
  * 
  * @author Adrian Cole
  */
-public class NetworkSection {
-   private final String info;
-   private final Set<Network> networks;
+public class NetworkSection extends Section<NetworkSection> {
 
-   public NetworkSection(String info, Iterable<Network> networks) {
-      this.info = info;
-      this.networks = ImmutableSet.<Network> copyOf(networks);
-   }
-
-   public String getInfo() {
-      return info;
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
    /**
-    * All networks referred to from Connection elements in all {@link VirtualHardwareSection} elements shall
-    * be defined in the NetworkSection.
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromNetworkSection(this);
+   }
+
+   public static class Builder extends Section.Builder<NetworkSection> {
+      protected Set<Network> networks = Sets.newLinkedHashSet();
+
+      /**
+       * @see NetworkSection#getNetworks
+       */
+      public Builder network(Network network) {
+         this.networks.add(checkNotNull(network, "network"));
+         return this;
+      }
+
+      /**
+       * @see NetworkSection#getNetworks
+       */
+      public Builder networks(Iterable<Network> networks) {
+         this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
+         return this;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public NetworkSection build() {
+         return new NetworkSection(info, networks);
+      }
+
+      public Builder fromNetworkSection(NetworkSection in) {
+         return networks(in.getNetworks()).info(in.getInfo());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromSection(Section<NetworkSection> in) {
+         return Builder.class.cast(super.fromSection(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder info(String info) {
+         return Builder.class.cast(super.info(info));
+      }
+
+   }
+
+   private final Set<Network> networks;
+
+   public NetworkSection(String info, Iterable<Network> networks) {
+      super(info);
+      this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
+   }
+
+   /**
+    * All networks referred to from Connection elements in all {@link VirtualHardwareSection}
+    * elements shall be defined in the NetworkSection.
     * 
     * @return
     */
@@ -84,7 +145,7 @@ public class NetworkSection {
 
    @Override
    public String toString() {
-      return "[info=" + info + ", networks=" + networks + "]";
+      return String.format("[info=%s, networks=%s]", info, networks);
    }
 
 }

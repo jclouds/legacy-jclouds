@@ -42,6 +42,11 @@ import com.google.inject.Injector;
 @Test(groups = "unit")
 public class FirewallServiceHandlerTest {
 
+	 /*new FirewallRule(null, null, null, null, "SERVER_TIER_FIREWALL", true, "internet" , "VM Tier01" , 
+   		  "22", "allow", "Server Tier Firewall Rule", false, "Tcp"),
+   		  new FirewallRule(null, null, null, null, "SERVER_TIER_FIREWALL", true, "VM Tier03" , "VM Tier03" , 
+           		  null, "allow", "Server Tier Firewall Rule", false, "Icmp-ping")));*/
+	
    public void test() {
       InputStream is = getClass().getResourceAsStream("/firewallService.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
@@ -51,10 +56,10 @@ public class FirewallServiceHandlerTest {
       assertEquals(
             result.getFirewallRules(),
             ImmutableSet.<FirewallRule> of(
-                  new FirewallRule(null, null, null, null, "SERVER_TIER_FIREWALL", true, "internet" , "VM Tier01" , 
-                		  "22", "allow", "Server Tier Firewall Rule", false, "Tcp"),
-                		  new FirewallRule(null, null, null, null, "SERVER_TIER_FIREWALL", true, "VM Tier03" , "VM Tier03" , 
-                        		  null, "allow", "Server Tier Firewall Rule", false, "Icmp-ping")));
+            	  FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
+            	  	.destination("VM Tier01").port("22").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build(),
+            	  FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("VM Tier03")
+            	  	.destination("VM Tier03").protocol("Icmp-ping").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build()));
    }
 
 }

@@ -95,78 +95,6 @@ public class FirewallRule extends Resource {
 			return this;
 		}
 		
-		public boolean isEnabled() {
-			return isEnabled;
-		}
-
-		public void setEnabled(boolean isEnabled) {
-			this.isEnabled = isEnabled;
-		}
-
-		public String getFirewallType() {
-			return firewallType;
-		}
-
-		public void setFirewallType(String firewallType) {
-			this.firewallType = firewallType;
-		}
-
-		public String getSource() {
-			return source;
-		}
-
-		public void setSource(String source) {
-			this.source = source;
-		}
-
-		public String getDestination() {
-			return destination;
-		}
-
-		public void setDestination(String destination) {
-			this.destination = destination;
-		}
-
-		public String getPort() {
-			return port;
-		}
-
-		public void setPort(String port) {
-			this.port = port;
-		}
-		
-		public String getPolicy() {
-			return policy;
-		}
-
-		public void setPolicy(String policy) {
-			this.policy = policy;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public boolean isLogged() {
-			return isLogged;
-		}
-
-		public void setLogged(boolean isLogged) {
-			this.isLogged = isLogged;
-		}
-
-		public String getProtocol() {
-			return protocol;
-		}
-
-		public void setProtocol(String protocol) {
-			this.protocol = protocol;
-		}
-
 		public static Builder fromFirewallRule(FirewallRule in) {
 	        return new Builder().id(in.getId()).name(in.getName()).type(in.getType()).href(in.getHref())
 	        	.firewallType(in.getFirewallType()).isEnabled(in.isEnabled()).source(in.getSource())
@@ -196,15 +124,15 @@ public class FirewallRule extends Resource {
 		
 	}
 	
-	private String firewallType;
-	private boolean isEnabled;
-	private String source;
-	private String destination;
-	private String port;
-	private String policy;
-	private String description;
-	private boolean isLogged;
-	private String protocol;
+	private final String firewallType;
+	private final boolean isEnabled;
+	private final String source;
+	private final String destination;
+	private final String port;
+	private final String policy;
+	private final String description;
+	private final boolean isLogged;
+	private final String protocol;
 	
 	public FirewallRule(String id, String name, String type, URI href, String firewallType, boolean isEnabled, 
 			String source, String destination, String port, String policy, String description, boolean isLogged, String protocol) {
@@ -271,72 +199,36 @@ public class FirewallRule extends Resource {
 		return isEnabled;
 	}
 
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
-	}
-
 	public String getSource() {
 		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
 	}
 
 	public String getDestination() {
 		return destination;
 	}
 
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
-
 	public String getFirewallType() {
 		return firewallType;
-	}
-
-	public void setFirewallType(String firewallType) {
-		this.firewallType = firewallType;
 	}
 
 	public String getPort() {
 		return port;
 	}
 
-	public void setPort(String port) {
-		this.port = port;
-	}
-
 	public String getPolicy() {
 		return policy;
-	}
-
-	public void setPolicy(String policy) {
-		this.policy = policy;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public boolean isLogged() {
 		return isLogged;
 	}
 
-	public void setLogged(boolean isLogged) {
-		this.isLogged = isLogged;
-	}
-
 	public String getProtocol() {
 		return protocol;
-	}
-
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
 	}
 
 	@Override
