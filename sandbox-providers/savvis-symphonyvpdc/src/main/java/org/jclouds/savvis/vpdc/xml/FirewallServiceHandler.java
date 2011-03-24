@@ -20,6 +20,7 @@
 package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import javax.inject.Inject;
 
@@ -37,12 +38,12 @@ public class FirewallServiceHandler extends ParseSax.HandlerWithResult<FirewallS
    private FirewallService.Builder builder = FirewallService.builder();
    boolean inFirewallService;
    boolean inFirewallRule;
-   
+
    @Inject
    public FirewallServiceHandler(FirewallRuleHandler firewallRuleHandler) {
       this.firewallRuleHandler = firewallRuleHandler;
    }
-   
+
    public FirewallService getResult() {
       try {
          return builder.build();
@@ -52,32 +53,32 @@ public class FirewallServiceHandler extends ParseSax.HandlerWithResult<FirewallS
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      if (qName.endsWith("FirewallService")) {
-    	  inFirewallService = true;
-      } else if (qName.endsWith("FirewallRule")) {
-    	  inFirewallRule = true;
-    	  firewallRuleHandler.startElement(uri, localName, qName, attrs);
+      if (equalsOrSuffix(qName, "FirewallService")) {
+         inFirewallService = true;
+      } else if (equalsOrSuffix(qName, "FirewallRule")) {
+         inFirewallRule = true;
+         firewallRuleHandler.startElement(uri, localName, qName, attrs);
       }
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-	  if (qName.endsWith("FirewallService")) {
-		  inFirewallService = false;
-	  } else if(qName.endsWith("FirewallRule")) {
-    	  builder.firewallRule(firewallRuleHandler.getResult());
-    	  inFirewallRule = false;
-      } else if (qName.endsWith("isEnabled")) {
-    	  if(inFirewallService){
-    		  String current = currentOrNull(currentText);
-    		  if(current != null){
-    			  builder.isEnabled(Boolean.parseBoolean(current));
-    		  }
-    	  }
+      if (equalsOrSuffix(qName, "FirewallService")) {
+         inFirewallService = false;
+      } else if (equalsOrSuffix(qName, "FirewallRule")) {
+         builder.firewallRule(firewallRuleHandler.getResult());
+         inFirewallRule = false;
+      } else if (equalsOrSuffix(qName, "isEnabled")) {
+         if (inFirewallService) {
+            String current = currentOrNull(currentText);
+            if (current != null) {
+               builder.isEnabled(Boolean.parseBoolean(current));
+            }
+         }
       }
-	  
-	  if (inFirewallRule) {
-		  firewallRuleHandler.endElement(uri, localName, qName);
+
+      if (inFirewallRule) {
+         firewallRuleHandler.endElement(uri, localName, qName);
       }
       currentText = new StringBuilder();
    }

@@ -1,5 +1,7 @@
 package org.jclouds.savvis.vpdc.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -30,13 +32,18 @@ public class TaskSuccess implements Predicate<String> {
    }
 
    public boolean apply(String taskId) {
-      logger.trace("looking for status on task %s", taskId);
-
-      Task task = client.getBrowsingClient().getTask(taskId);
-      logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
-      if (task.getStatus() == Task.Status.ERROR || task.getStatus() == Task.Status.NONE)
-         throw new RuntimeException("error on task: " + task.getHref() + " error: " + task.getError());
+      logger.trace("looking for status on task %s", checkNotNull(taskId, "taskId"));
+      Task task = refresh(taskId);
+      if (task == null)
+         return false;
+      logger.trace("%s: looking for task status %s: currently: %s", task.getId(), Task.Status.SUCCESS, task.getStatus());
+      if (task.getError() != null)
+         throw new IllegalStateException(String.format("task %s failed with exception %s", task.getId(), task
+               .getError().toString()));
       return task.getStatus() == Task.Status.SUCCESS;
    }
 
+   private Task refresh(String taskId) {
+      return client.getBrowsingClient().getTask(taskId);
+   }
 }

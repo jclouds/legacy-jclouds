@@ -32,6 +32,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
@@ -58,6 +59,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
    private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<String> taskTester;
 
+   private String email = checkNotNull(System.getProperty("test." + provider + ".email"), "test." + provider + ".email");
    private String username = checkNotNull(System.getProperty("test." + provider + ".loginUser"), "test." + provider
          + ".loginUser");
    private String password = checkNotNull(System.getProperty("test." + provider + ".loginPassword"), "test." + provider
@@ -79,7 +81,20 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    public void testCreateVirtualMachine() throws Exception {
       billingSiteId = context.getApi().getBrowsingClient().getOrg(null).getId();// default
-      vpdcId = Iterables.get(context.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(), 0).getId();
+      vpdcId = Iterables.find(context.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+            new Predicate<Resource>() {
+
+               // try to find the first VDC owned by the current user
+               // check here for what the email property might be, or in
+               // the jclouds-wire.log
+               @Override
+               public boolean apply(Resource arg0) {
+                  String description = context.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, arg0.getId())
+                        .getDescription();
+                  return description.indexOf(email) != -1;
+               }
+
+            }).getId();
       String networkTierName = Iterables.get(
             context.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId).getAvailableNetworks(), 0)
             .getName();
@@ -95,8 +110,13 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       });
       System.out.printf("vpdcId %s, networkName %s, name %s, os %s%n", vpdcId, networkTierName, name, os);
 
+      // TODO: determine the sizes available in the VDC, for example there's
+      // a minimum size of boot disk, and also a preset combination of cpu count vs ram
       Task task = client.addVMIntoVDC(billingSiteId, vpdcId, networkTierName, name, VMSpec.builder()
-            .operatingSystem(os).build());
+            .operatingSystem(os).memoryInGig(2).build());
+
+      // make sure there's no error
+      assert task.getId() != null && task.getError() != null : task;
 
       assert this.taskTester.apply(task.getId());
       vm = context.getApi().getBrowsingClient().getVMInVDC(billingSiteId, vpdcId, task.getOwner().getId());

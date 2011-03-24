@@ -20,6 +20,7 @@
 package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.savvis.vpdc.domain.FirewallRule;
@@ -47,33 +48,33 @@ public class FirewallRuleHandler extends ParseSax.HandlerWithResult<FirewallRule
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-	  String current = currentOrNull(currentText);
-	  if(current != null){
-		  if (qName.endsWith("Type")) {
-			  builder.firewallType(current);
-		  } else if (qName.endsWith("IsEnabled")) {
-			  builder.isEnabled(Boolean.parseBoolean(current));
-		  } else if (qName.endsWith("Source")) {
-			  builder.source(current);
-		  } else if (qName.endsWith("Destination")) {
-			  builder.destination(current);
-		  } else if (qName.endsWith("Port")) {
-			  builder.port(current);
-		  } else if (qName.endsWith("Policy")) {
-			  builder.policy(current);
-		  } else if (qName.endsWith("Description")) {
-			  builder.description(current);
-		  } else if (qName.endsWith("Log")) {
-			  builder.isLogged(Boolean.parseBoolean(current));
-		  } else if (qName.endsWith("Tcp")) {
-			  builder.protocol("Tcp");
-		  } else if (qName.contains("Udp") || qName.contains("udp")) {
-			  builder.protocol("Udp");
-		  } else if (qName.contains("Icmp") || qName.contains("icmp") || 
-				  qName.contains("Ping") || qName.contains("ping")) {
-			  builder.protocol("Icmp-ping");
-		  }
-	  }
+      String current = currentOrNull(currentText);
+      if (current != null) {
+         if (equalsOrSuffix(qName, "Type")) {
+            builder.firewallType(current);
+         } else if (equalsOrSuffix(qName, "IsEnabled")) {
+            builder.isEnabled(Boolean.parseBoolean(current));
+         } else if (equalsOrSuffix(qName, "Source")) {
+            builder.source(current);
+         } else if (equalsOrSuffix(qName, "Destination")) {
+            builder.destination(current);
+         } else if (equalsOrSuffix(qName, "Port")) {
+            builder.port(current);
+         } else if (equalsOrSuffix(qName, "Policy")) {
+            builder.policy(current);
+         } else if (equalsOrSuffix(qName, "Description")) {
+            builder.description(current);
+         } else if (equalsOrSuffix(qName, "Log")) {
+            builder.isLogged(Boolean.parseBoolean(current));
+         } else if (equalsOrSuffix(qName, "Tcp")) {
+            builder.protocol("Tcp");
+         } else if (qName.contains("Udp") || qName.contains("udp")) {
+            builder.protocol("Udp");
+         } else if (qName.contains("Icmp") || qName.contains("icmp") || qName.contains("Ping")
+               || qName.contains("ping")) {
+            builder.protocol("Icmp-ping");
+         }
+      }
       currentText = new StringBuilder();
    }
 

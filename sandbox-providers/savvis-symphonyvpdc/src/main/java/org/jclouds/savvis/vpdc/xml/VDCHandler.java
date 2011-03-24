@@ -22,6 +22,7 @@ package org.jclouds.savvis.vpdc.xml;
 import static org.jclouds.savvis.vpdc.util.Utils.cleanseAttributes;
 import static org.jclouds.savvis.vpdc.util.Utils.currentOrNull;
 import static org.jclouds.savvis.vpdc.util.Utils.newResource;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 
@@ -54,24 +55,24 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.endsWith("Vdc")) {
+      if (equalsOrSuffix(qName, "Vdc")) {
          // savvis doesn't add href in the header for some reason
          if (!attributes.containsKey("href") && getRequest() != null)
             attributes = ImmutableMap.<String, String> builder().putAll(attributes)
                   .put("href", getRequest().getEndpoint().toASCIIString()).build();
          Resource vDC = newResource(attributes);
          builder.name(vDC.getName()).type(vDC.getType()).id(vDC.getId()).href(vDC.getHref());
-      } else if (qName.endsWith("Network")) {
+      } else if (equalsOrSuffix(qName, "Network")) {
          builder.availableNetwork(newResource(attributes));
-      } else if (qName.endsWith("ResourceEntity")) {
+      } else if (equalsOrSuffix(qName, "ResourceEntity")) {
          builder.resourceEntity(newResource(attributes));
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.endsWith("Description")) {
+      if (equalsOrSuffix(qName, "Description")) {
          builder.description(currentOrNull(currentText));
-      } else if (qName.endsWith("OfferingTag")) {
+      } else if (equalsOrSuffix(qName, "OfferingTag")) {
          builder.status(Status.fromValue(currentOrNull(currentText)));
       }
       currentText = new StringBuilder();

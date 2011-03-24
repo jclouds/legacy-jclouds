@@ -56,6 +56,7 @@
         <test.savvis-symphonyvpdc.apiversion>0.8</test.savvis-symphonyvpdc.apiversion>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
+        <test.savvis-symphonyvpdc.email>FIXME</test.savvis-symphonyvpdc.email>
         <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
         <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>
     </properties>
@@ -140,6 +141,10 @@
                                         <property>
                                             <name>test.savvis-symphonyvpdc.credential</name>
                                             <value>${test.savvis-symphonyvpdc.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.savvis-symphonyvpdc.email</name>
+                                            <value>${test.savvis-symphonyvpdc.email}</value>
                                         </property>
                                         <property>
                                             <name>test.savvis-symphonyvpdc.loginUser</name>

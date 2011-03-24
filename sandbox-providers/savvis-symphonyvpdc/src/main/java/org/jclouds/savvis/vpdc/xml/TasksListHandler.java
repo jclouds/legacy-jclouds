@@ -19,6 +19,8 @@
 
 package org.jclouds.savvis.vpdc.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -60,7 +62,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<Set<Task>> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       taskHandler.endElement(uri, localName, qName);
-      if (qName.equals("Task")) {
+      if (equalsOrSuffix(qName, "Task")) {
          this.tasks.add(taskHandler.getResult());
       }
    }
