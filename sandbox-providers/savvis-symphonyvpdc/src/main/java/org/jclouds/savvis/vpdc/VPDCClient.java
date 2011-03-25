@@ -27,6 +27,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingClient;
+import org.jclouds.savvis.vpdc.features.FirewallClient;
 import org.jclouds.savvis.vpdc.features.VMClient;
 
 /**
@@ -53,14 +54,20 @@ public interface VPDCClient {
    VMClient getVMClient();
 
    /**
+    * Provides synchronous access to Firewall Operation features.
+    */
+   @Delegate
+   FirewallClient getFirewallClient();
+
+   /**
     * 
     * @return a listing of all orgs that the current user has access to.
     */
    Set<Resource> listOrgs();
 
    /**
-    * predefined by default in the classpath resource
-    * {@code /savvis-symphonyvpdc/predefined_operatingsystems.json}
+    * predefined by default in the classpath resource {@code
+    * /savvis-symphonyvpdc/predefined_operatingsystems.json}
     * 
     * @return the operating systems that are predefined in the provider
     * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/addSingleVM.html" />

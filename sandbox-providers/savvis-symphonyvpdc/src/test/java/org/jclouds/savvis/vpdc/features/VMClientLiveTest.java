@@ -113,7 +113,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       // TODO: determine the sizes available in the VDC, for example there's
       // a minimum size of boot disk, and also a preset combination of cpu count vs ram
       Task task = client.addVMIntoVDC(billingSiteId, vpdcId, networkTierName, name, VMSpec.builder()
-            .operatingSystem(os).memoryInGig(2).build());
+            .operatingSystem(os).memoryInGig(2).addDataDrive("/data01", 25).build());
 
       // make sure there's no error
       assert task.getId() != null && task.getError() != null : task;

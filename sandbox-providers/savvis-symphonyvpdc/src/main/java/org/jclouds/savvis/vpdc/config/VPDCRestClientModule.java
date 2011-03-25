@@ -53,6 +53,8 @@ import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
 import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
 import org.jclouds.savvis.vpdc.features.BrowsingClient;
+import org.jclouds.savvis.vpdc.features.FirewallAsyncClient;
+import org.jclouds.savvis.vpdc.features.FirewallClient;
 import org.jclouds.savvis.vpdc.features.VMAsyncClient;
 import org.jclouds.savvis.vpdc.features.VMClient;
 import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
@@ -91,7 +93,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
    protected Set<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
-         @Named(PROPERTY_IDENTITY) String user) {
+            @Named(PROPERTY_IDENTITY) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
       return discovery.getOrgs();
@@ -109,14 +111,15 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @Singleton
    protected Predicate<String> successTester(Injector injector,
-         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), completed);
    }
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(BrowsingClient.class, BrowsingAsyncClient.class)//
-         .put(VMClient.class, VMAsyncClient.class)//
-         .build();
+            .put(BrowsingClient.class, BrowsingAsyncClient.class)//
+            .put(VMClient.class, VMAsyncClient.class)//
+            .put(FirewallClient.class, FirewallAsyncClient.class)//
+            .build();
 
    public VPDCRestClientModule() {
       super(VPDCClient.class, VPDCAsyncClient.class, DELEGATE_MAP);
@@ -125,33 +128,31 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Singleton
    @Provides
    protected Set<CIMOperatingSystem> provideOperatingSystems(Json json, @Provider String providerName)
-         throws IOException {
-      return json.fromJson(
-            Strings2.toStringAndClose(getClass().getResourceAsStream(
-                  "/" + providerName + "/predefined_operatingsystems.json")),
-            new TypeLiteral<Set<CIMOperatingSystem>>() {
-            }.getType());
+            throws IOException {
+      return json.fromJson(Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/" + providerName + "/predefined_operatingsystems.json")), new TypeLiteral<Set<CIMOperatingSystem>>() {
+      }.getType());
    }
 
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final LoginAsyncClient login) {
+            final LoginAsyncClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-            new Supplier<VCloudSession>() {
+               new Supplier<VCloudSession>() {
 
-               @Override
-               public VCloudSession get() {
-                  try {
-                     return login.login().get(10, TimeUnit.SECONDS);
-                  } catch (Exception e) {
-                     propagate(e);
-                     assert false : e;
-                     return null;
+                  @Override
+                  public VCloudSession get() {
+                     try {
+                        return login.login().get(10, TimeUnit.SECONDS);
+                     } catch (Exception e) {
+                        propagate(e);
+                        assert false : e;
+                        return null;
+                     }
                   }
-               }
 
-            });
+               });
    }
 
    @Override

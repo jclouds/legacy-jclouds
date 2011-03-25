@@ -25,6 +25,7 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
+import org.jclouds.savvis.vpdc.features.FirewallAsyncClient;
 import org.jclouds.savvis.vpdc.features.VMAsyncClient;
 import org.jclouds.savvis.vpdc.internal.Org;
 
@@ -51,6 +52,12 @@ public interface VPDCAsyncClient {
     */
    @Delegate
    VMAsyncClient getVMClient();
+
+   /**
+    * Provides asynchronous access to Firewall Operation features.
+    */
+   @Delegate
+   FirewallAsyncClient getFirewallClient();
 
    /**
     * 
