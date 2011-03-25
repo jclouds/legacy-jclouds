@@ -19,9 +19,10 @@
 
 package org.jclouds.aws.s3.blobstore.strategy;
 
-import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
+import org.jclouds.aws.s3.blobstore.strategy.internal.ParallelMultipartUploadStrategy;
 import org.jclouds.blobstore.domain.Blob;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -29,8 +30,9 @@ import com.google.inject.ImplementedBy;
  *
  * @author Tibor Kiss
  */
-@ImplementedBy(SequentialMultipartUploadStrategy.class)
-public interface MultipartUploadStrategy extends MultipartUpload {
+@ImplementedBy(ParallelMultipartUploadStrategy.class)
+public interface AsyncMultipartUploadStrategy extends MultipartUpload {
    
-   String execute(String container, Blob blob);   
+   ListenableFuture<String> execute(String container, Blob blob);
+
 }

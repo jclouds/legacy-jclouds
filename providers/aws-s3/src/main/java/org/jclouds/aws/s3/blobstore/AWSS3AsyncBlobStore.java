@@ -29,6 +29,7 @@ import javax.inject.Provider;
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
+import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -55,7 +56,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
 
-   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
+   private final Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy;
 
    @Inject
    public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -65,7 +66,7 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
          BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
          BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
          Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
-         Provider<MultipartUploadStrategy> multipartUploadStrategy) {
+         Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd,
             container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
             object2BlobMd, fetchBlobMetadataProvider);
@@ -74,9 +75,8 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
 
    @Override
    public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
-      // TODO: make this better
       // need to use a provider if the strategy object is stateful
-      return Futures.immediateFuture(multipartUploadStrategy.get().execute(container, blob));
+      return multipartUploadStrategy.get().execute(container, blob);
    }
 
 }

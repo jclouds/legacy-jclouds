@@ -22,9 +22,7 @@ package org.jclouds.aws.s3.blobstore.strategy.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
-import java.util.Map;
 import java.util.SortedMap;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -41,7 +39,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.util.Throwables2;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -62,126 +59,24 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   @VisibleForTesting
-   static final long DEFAULT_PART_SIZE = 33554432; // 32MB
-   
-   @VisibleForTesting
-   static final int DEFAULT_MAGNITUDE_BASE = 100;
-   
-   @Inject(optional = true)
-   @Named("jclouds.mpu.parts.size")
-   @VisibleForTesting
-   long defaultPartSize = DEFAULT_PART_SIZE;
-   
-   @Inject(optional = true)
-   @Named("jclouds.mpu.parts.magnitude")
-   @VisibleForTesting
-   int magnitudeBase = DEFAULT_MAGNITUDE_BASE;
-
-   private final AWSS3BlobStore ablobstore;
-   private final PayloadSlicer slicer;
-
-   // calculated only once, but not from the constructor
-   private volatile long parts; // required number of parts with chunkSize
-   private volatile long chunkSize;
-   private volatile long remaining; // number of bytes remained for the last part
-
-   // sequentially updated values
-   private volatile int part;
-   private volatile long chunkOffset;
-   private volatile long copied;
+   protected final AWSS3BlobStore ablobstore;
+   protected final PayloadSlicer slicer;
 
    @Inject
    public SequentialMultipartUploadStrategy(AWSS3BlobStore ablobstore, PayloadSlicer slicer) {
       this.ablobstore = checkNotNull(ablobstore, "ablobstore");
       this.slicer = checkNotNull(slicer, "slicer");
    }
-
-   @VisibleForTesting
-   protected long calculateChunkSize(long length) {
-      long unitPartSize = defaultPartSize; // first try with default part size
-      long parts = length / unitPartSize;
-      long partSize = unitPartSize;
-      int magnitude = (int) (parts / magnitudeBase);
-      if (magnitude > 0) {
-         partSize = magnitude * unitPartSize;
-         if (partSize > MAX_PART_SIZE) {
-            partSize = MAX_PART_SIZE;
-            unitPartSize = MAX_PART_SIZE;
-         }
-         parts = length / partSize;
-         if (parts * partSize < length) {
-            partSize = (magnitude + 1) * unitPartSize;
-            if (partSize > MAX_PART_SIZE) {
-               partSize = MAX_PART_SIZE;
-               unitPartSize = MAX_PART_SIZE;
-            }
-            parts = length / partSize;
-         }
-      }
-      if (parts > MAX_NUMBER_OF_PARTS) { // if splits in too many parts or
-                                         // cannot be split
-         unitPartSize = MIN_PART_SIZE; // take the minimum part size
-         parts = length / unitPartSize;
-      }
-      if (parts > MAX_NUMBER_OF_PARTS) { // if still splits in too many parts
-         parts = MAX_NUMBER_OF_PARTS - 1; // limit them. do not care about not
-                                          // covering
-      }
-      long remainder = length % unitPartSize;
-      if (remainder == 0 && parts > 0) {
-         parts -= 1;
-      }
-      this.chunkSize = partSize;
-      this.parts = parts;
-      this.remaining = length - partSize * parts;
-      logger.debug(" %d bytes partitioned in %d parts of part size: %d, remaining: %d%s", length, parts, chunkSize,
-            remaining, (remaining > MAX_PART_SIZE ? " overflow!" : ""));
-      return this.chunkSize;
-   }
-
-   public long getCopied() {
-      return copied;
-   }
-
-   public void setCopied(long copied) {
-      this.copied = copied;
-   }
-
-   @VisibleForTesting
-   protected long getParts() {
-      return parts;
-   }
-
-   protected int getNextPart() {
-      return ++part;
-   }
-
-   protected void addCopied(long copied) {
-      this.copied += copied;
-   }
-
-   protected long getNextChunkOffset() {
-      long next = chunkOffset;
-      chunkOffset += getChunkSize();
-      return next;
-   }
-
-   @VisibleForTesting
-   protected long getChunkSize() {
-      return chunkSize;
-   }
-
-   @VisibleForTesting
-   protected long getRemaining() {
-      return remaining;
-   }
-
-   private String prepareUploadPart(AWSS3Client client, String container, String key, String uploadId, int part,
-         Payload chunkedPart) {
+   
+   protected void prepareUploadPart(String container, String key, String uploadId, int part,
+         Payload payload, long offset, long size, SortedMap<Integer, String> etags) {
+      AWSS3Client client = (AWSS3Client) ablobstore.getContext()
+         .getProviderSpecificContext().getApi();
+      Payload chunkedPart = slicer.slice(payload, offset, size);
       String eTag = null;
       try {
-         eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);         
+         eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);
+         etags.put(new Integer(part), eTag);
       } catch (KeyNotFoundException e) {
          // note that because of eventual consistency, the upload id may not be present yet
          // we may wish to add this condition to the retry handler
@@ -189,15 +84,18 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
          // we may also choose to implement ListParts and wait for the uploadId to become
          // available there.
          eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);
+         etags.put(new Integer(part), eTag);
       }
-      return eTag;
    }
 
    @Override
    public String execute(String container, Blob blob) {
       String key = blob.getMetadata().getName();
-      calculateChunkSize(blob.getPayload().getContentMetadata().getContentLength());
-      long parts = getParts();
+      Payload payload = blob.getPayload();
+      MultipartUploadSlicingAlgorithm algorithm = new MultipartUploadSlicingAlgorithm();
+      algorithm.calculateChunkSize(payload.getContentMetadata().getContentLength());
+      int parts = algorithm.getParts();
+      long chunkSize = algorithm.getChunkSize();
       if (parts > 0) {
          AWSS3Client client = (AWSS3Client) ablobstore.getContext()
                .getProviderSpecificContext().getApi();
@@ -206,18 +104,14 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
          try {
             SortedMap<Integer, String> etags = Maps.newTreeMap();
             int part;
-            while ((part = getNextPart()) <= getParts()) {
-               String eTag = prepareUploadPart(client, container, key,
-                     uploadId, part, slicer.slice(blob.getPayload(),
-                           getNextChunkOffset(), chunkSize));
-               etags.put(new Integer(part), eTag);
+            while ((part = algorithm.getNextPart()) <= parts) {
+               prepareUploadPart(container, key, uploadId, part, payload, 
+                     algorithm.getNextChunkOffset(), chunkSize, etags);
             }
-            long remaining = getRemaining();
+            long remaining = algorithm.getRemaining();
             if (remaining > 0) {
-               String eTag = prepareUploadPart(client, container, key,
-                     uploadId, part, slicer.slice(blob.getPayload(),
-                           getNextChunkOffset(), remaining));
-               etags.put(new Integer(part), eTag);
+               prepareUploadPart(container, key, uploadId, part, payload, 
+                     algorithm.getNextChunkOffset(), remaining, etags);
             }
             return client.completeMultipartUpload(container, key, uploadId, etags);
          } catch (Exception ex) {

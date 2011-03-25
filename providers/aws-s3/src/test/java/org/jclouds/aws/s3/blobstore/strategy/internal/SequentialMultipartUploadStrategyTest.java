@@ -27,17 +27,13 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.fail;
 
 import java.util.SortedMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.easymock.EasyMock;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
@@ -74,7 +70,7 @@ public class SequentialMultipartUploadStrategyTest {
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);
       String uploadId = "uploadId";
-      long chunkSize = SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE;
+      long chunkSize = MultipartUploadSlicingAlgorithm.DEFAULT_PART_SIZE;
       long remaining = 100L;
       SortedMap<Integer, String> etags = Maps.newTreeMap();
       etags.put(new Integer(1), "eTag1");
@@ -137,7 +133,7 @@ public class SequentialMultipartUploadStrategyTest {
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);
       String uploadId = "uploadId";
-      long chunkSize = SequentialMultipartUploadStrategy.DEFAULT_PART_SIZE;
+      long chunkSize = MultipartUploadSlicingAlgorithm.DEFAULT_PART_SIZE;
       long remaining = 100L;
       SortedMap<Integer, String> etags = Maps.newTreeMap();
       etags.put(new Integer(1), "eTag1");
