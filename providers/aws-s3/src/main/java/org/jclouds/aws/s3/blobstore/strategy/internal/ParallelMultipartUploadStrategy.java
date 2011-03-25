@@ -203,7 +203,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                  algorithm.getNextChunkOffset(), remaining, etags, 
                                  activeParts, futureParts, errors, maxRetries, errorMap, toRetry, latch);
                         }
-                        latch.await(1, TimeUnit.MINUTES);
+                        latch.await();
                         // handling retries
                         while (errors.get() <= maxRetries && toRetry.size() > 0) {
                            int atOnce = Math.min(Math.min(toRetry.size(), errors.get()), parallelDegree);
@@ -216,7 +216,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                     failedPart.getOffset(), failedPart.getSize(), etags, 
                                     activeParts, futureParts, errors, maxRetries, errorMap, toRetry, retryLatch);
                            }
-                           retryLatch.await(1, TimeUnit.MINUTES);
+                           retryLatch.await();
                         }
                         if (errors.get() > maxRetries) {
                            throw new BlobRuntimeException(String.format(
