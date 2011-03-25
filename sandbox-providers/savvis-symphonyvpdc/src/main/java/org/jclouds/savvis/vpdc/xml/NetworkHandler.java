@@ -22,6 +22,7 @@ package org.jclouds.savvis.vpdc.xml;
 import static org.jclouds.savvis.vpdc.util.Utils.cleanseAttributes;
 import static org.jclouds.savvis.vpdc.util.Utils.currentOrNull;
 import static org.jclouds.savvis.vpdc.util.Utils.newResource;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 
@@ -53,22 +54,22 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.endsWith("Network")) {
+      if (equalsOrSuffix(qName, "Network")) {
          // savvis doesn't add href in the header for some reason
          if (!attributes.containsKey("href") && getRequest() != null)
             attributes = ImmutableMap.<String, String> builder().putAll(attributes)
                   .put("href", getRequest().getEndpoint().toASCIIString()).build();
          Resource org = newResource(attributes);
          builder.name(org.getName()).type(org.getType()).id(org.getId()).href(org.getHref());
-      } else if (qName.endsWith("NatRule")) {
+      } else if (equalsOrSuffix(qName, "NatRule")) {
          builder.internalToExternalNATRule(attributes.get("internalIP"), attributes.get("externalIP"));
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.endsWith("Gateway")) {
+      if (equalsOrSuffix(qName, "Gateway")) {
          builder.gateway(currentOrNull(currentText));
-      } else if (qName.endsWith("Netmask")) {
+      } else if (equalsOrSuffix(qName, "Netmask")) {
          builder.netmask(currentOrNull(currentText));
       }
       currentText = new StringBuilder();

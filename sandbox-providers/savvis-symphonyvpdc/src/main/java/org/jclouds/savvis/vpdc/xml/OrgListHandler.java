@@ -2,6 +2,7 @@ package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.savvis.vpdc.util.Utils.cleanseAttributes;
 import static org.jclouds.savvis.vpdc.util.Utils.newResource;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class OrgListHandler extends ParseSax.HandlerWithResult<Set<Resource>> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.endsWith("Org")) {
+      if (equalsOrSuffix(qName, "Org")) {
          org.add(newResource(attributes));
       }
    }

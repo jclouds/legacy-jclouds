@@ -21,6 +21,7 @@ package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.savvis.vpdc.util.Utils.cleanseAttributes;
 import static org.jclouds.savvis.vpdc.util.Utils.newResource;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Date;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.endsWith("Task")) {
+      if (equalsOrSuffix(qName, "Task")) {
          Resource task = newResource(attributes);
          builder.id(task.getId());
          builder.type(task.getType());
@@ -75,11 +76,11 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          if (attributes.containsKey("endTime"))
             builder.endTime(parseDate(attributes.get("endTime")));
          builder.status(Task.Status.fromValue(attributes.get("status")));
-      } else if (qName.endsWith("Owner")) {
+      } else if (equalsOrSuffix(qName, "Owner")) {
          builder.owner(Utils.newResource(attributes));
-      } else if (qName.endsWith("Result")) {
+      } else if (equalsOrSuffix(qName, "Result")) {
          builder.result(Utils.newResource(attributes));
-      } else if (qName.endsWith("Error")) {
+      } else if (equalsOrSuffix(qName, "Error")) {
          builder.error(new TaskError(attributes.get("message"), Integer.parseInt(attributes.get("majorErrorCode")),
                Integer.parseInt(attributes.get("minorErrorCode")), attributes.get("vendorSpecificErrorCode")));
       }

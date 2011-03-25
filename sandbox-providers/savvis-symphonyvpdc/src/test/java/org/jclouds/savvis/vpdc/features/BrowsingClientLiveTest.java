@@ -19,14 +19,19 @@
 
 package org.jclouds.savvis.vpdc.features;
 
-import static org.jclouds.savvis.vpdc.options.GetVAppOptions.Builder.withPowerState;
+import static org.jclouds.savvis.vpdc.options.GetVMOptions.Builder.withPowerState;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jclouds.savvis.vpdc.domain.FirewallRule;
+import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 import org.testng.annotations.BeforeGroups;
@@ -60,7 +65,7 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
          assertEquals(response.getType(), null);
          assert response.getImages().size() >= 0;
          assert response.getDescription() != null;
-         assert response.getVDCs().size() >= 1;
+         assert response.getVDCs().size() >= 0;
          assertEquals(client.getOrg(response.getId()).toString(), response.toString());
       }
    }
@@ -92,7 +97,7 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
          for (Resource vdc : org.getVDCs()) {
             VDC VDC = client.getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vApp : VDC.getAvailableNetworks()) {
-               Network response = client.getNetworkInOrgAndVDC(org.getId(), vdc.getId(), vApp.getId());
+               Network response = client.getNetworkInVDC(org.getId(), vdc.getId(), vApp.getId());
                assertNotNull(response);
                assertNotNull(response.getId());
                assertNotNull(response.getHref());
@@ -101,15 +106,15 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                assertNotNull(response.getNetmask());
                assertNotNull(response.getGateway());
                assertNotNull(response.getInternalToExternalNATRules());
-               assertEquals(client.getNetworkInOrgAndVDC(org.getId(), vdc.getId(), response.getId()).toString(),
+               assertEquals(client.getNetworkInVDC(org.getId(), vdc.getId(), response.getId()).toString(),
                         response.toString());
             }
          }
       }
    }
-
+   
    @Test
-   public void testVApp() throws Exception {
+   public void testVM() throws Exception {
       for (Resource org1 : context.getApi().listOrgs()) {
          Org org = client.getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {
@@ -122,7 +127,7 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                }
 
             })) {
-               VApp response = client.getVAppInOrgAndVDC(org.getId(), vdc.getId(), vApp.getId());
+               VM response = client.getVMInVDC(org.getId(), vdc.getId(), vApp.getId());
                assertNotNull(response);
                assertNotNull(response.getId());
                assertNotNull(response.getHref());
@@ -135,12 +140,37 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                assertNotNull(response.getNetworkSection());
                assertNotNull(response.getResourceAllocations());
                // power state is the only thing that should change
-               assertEquals(client.getVAppInOrgAndVDC(org.getId(), vdc.getId(), response.getId(), withPowerState())
+               assertEquals(client.getVMInVDC(org.getId(), vdc.getId(), response.getId(), withPowerState())
                         .toString().replaceFirst("status=[A-Z]+", ""), response.toString().replaceFirst(
                         "status=[A-Z]+", ""));
             }
 
          }
       }
+   }
+   
+   @Test
+   public void testGetFirewallRules() throws Exception {
+	   for (Resource org1 : context.getApi().listOrgs()) {
+	         Org org = client.getOrg(org1.getId());
+	         for (Resource vdc : org.getVDCs()) {
+	        	FirewallService response = client.listFirewallRules(org.getId(), vdc.getId());
+	            Set<FirewallRule> firewallRules = response.getFirewallRules();
+	            if(firewallRules != null){
+	            	Iterator<FirewallRule> iter = firewallRules.iterator();
+	            	while(iter.hasNext()){
+	            		FirewallRule firewallRule = iter.next();
+	            		assertNotNull(firewallRule);
+	            		// these are null for firewall rules
+	            		assertEquals(response.getHref(), null);
+	            		assertEquals(response.getType(), null);
+	            		assertNotNull(firewallRule.getFirewallType());
+	            		assertNotNull(firewallRule.getProtocol());
+	            		assertNotNull(firewallRule.getSource());
+	            		assertNotNull(firewallRule.getDestination());
+	            	}
+	            }
+	         }
+	   }
    }
 }

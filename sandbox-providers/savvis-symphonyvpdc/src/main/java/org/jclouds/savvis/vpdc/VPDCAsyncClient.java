@@ -25,6 +25,7 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
+import org.jclouds.savvis.vpdc.features.VMAsyncClient;
 import org.jclouds.savvis.vpdc.internal.Org;
 
 import com.google.inject.Provides;
@@ -46,6 +47,12 @@ public interface VPDCAsyncClient {
    BrowsingAsyncClient getBrowsingClient();
 
    /**
+    * Provides asynchronous access to VM Operation features.
+    */
+   @Delegate
+   VMAsyncClient getVMClient();
+
+   /**
     * 
     * @return a listing of all orgs that the current user has access to.
     */
@@ -54,8 +61,8 @@ public interface VPDCAsyncClient {
    Set<Resource> listOrgs();
 
    /**
-    * predefined by default in the classpath resource {@code
-    * /savvis-symphonyvpdc/predefined_operatingsystems.json}
+    * predefined by default in the classpath resource
+    * {@code /savvis-symphonyvpdc/predefined_operatingsystems.json}
     * 
     * @return the operating systems that are predefined in the provider
     * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/addSingleVM.html" />

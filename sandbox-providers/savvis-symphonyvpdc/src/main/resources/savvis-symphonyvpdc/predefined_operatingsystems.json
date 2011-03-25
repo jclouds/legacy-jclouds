@@ -16,7 +16,7 @@
       "osType": "RHEL"
   },
   {
-      "family": "RHEL_64",
+      "family": "RHEL",
       "name": "rhel5_64Guest",
       "version": "5",
       "description": "Red Hat Enterprise Linux 5.x 64bit",

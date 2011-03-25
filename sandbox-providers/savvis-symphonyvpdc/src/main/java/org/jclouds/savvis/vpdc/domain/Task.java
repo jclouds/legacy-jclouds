@@ -207,8 +207,9 @@ public class Task extends Resource {
 
    @Override
    public String toString() {
-      return "[status=" + status + ", startTime=" + startTime + ", endTime=" + endTime + ", owner=" + owner
-            + ", result=" + result + ", error=" + error + "]";
+      return "[id=" + id + ", name=" + name + ", type=" + type + ", href=" + href + ", status=" + status
+            + ", startTime=" + startTime + ", endTime=" + endTime + ", owner=" + owner + ", result=" + result
+            + ", error=" + error + "]";
    }
 
 }

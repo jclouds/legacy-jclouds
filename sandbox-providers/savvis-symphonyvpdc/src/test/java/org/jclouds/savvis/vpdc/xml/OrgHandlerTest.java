@@ -57,4 +57,17 @@ public class OrgHandlerTest {
                         "down")).build().toString());
 
    }
+   
+   public void testOrgWithoutVDC() {
+	      InputStream is = getClass().getResourceAsStream("/org_no_vdc.xml");
+	      Injector injector = Guice.createInjector(new SaxParserModule());
+	      Factory factory = injector.getInstance(ParseSax.Factory.class);
+	      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+	      assertEquals(
+	            result.toString(),
+	            Org.builder()
+	                  .name("100000.0")
+	                  .description("SAVVISStation Integration Testing").build().toString());
+
+   }
 }

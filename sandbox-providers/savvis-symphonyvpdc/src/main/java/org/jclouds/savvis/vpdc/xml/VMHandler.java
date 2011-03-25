@@ -20,6 +20,7 @@
 package org.jclouds.savvis.vpdc.xml;
 
 import static org.jclouds.savvis.vpdc.util.Utils.newResource;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ovf.xml.NetworkSectionHandler;
 import org.jclouds.savvis.vpdc.domain.Resource;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,39 +40,39 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Kedar Dave
  */
-public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
+public class VMHandler extends ParseSax.HandlerWithResult<VM> {
    protected StringBuilder currentText = new StringBuilder();
    private final NetworkSectionHandler networkSectionHandler;
    private final ResourceAllocationSettingDataHandler allocationHandler;
 
    @Inject
-   public VAppHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationSettingDataHandler allocationHandler) {
+   public VMHandler(NetworkSectionHandler networkSectionHandler, ResourceAllocationSettingDataHandler allocationHandler) {
       this.networkSectionHandler = networkSectionHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   private VApp.Builder builder = VApp.builder();
+   private VM.Builder builder = VM.builder();
    protected boolean inOs;
 
-   public VApp getResult() {
+   public VM getResult() {
       try {
          return builder.build();
       } finally {
-         builder = VApp.builder();
+         builder = VM.builder();
       }
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = Utils.cleanseAttributes(attrs);
-      if (qName.endsWith("VApp")) {
+      if (equalsOrSuffix(qName, "VApp")) {
          // savvis doesn't add href in the header for some reason
          if (!attributes.containsKey("href") && getRequest() != null)
             attributes = ImmutableMap.<String, String> builder().putAll(attributes)
                   .put("href", getRequest().getEndpoint().toASCIIString()).build();
          Resource vApp = newResource(attributes);
          builder.name(vApp.getName()).type(vApp.getType()).id(vApp.getId()).href(vApp.getHref());
-         builder.status(VApp.Status.fromValue(attributes.get("status")));
-      } else if (qName.endsWith("OperatingSystemSection")) {
+         builder.status(VM.Status.fromValue(attributes.get("status")));
+      } else if (equalsOrSuffix(qName, "OperatingSystemSection")) {
          inOs = true;
          if (attributes.containsKey("id"))
             builder.osType(Integer.parseInt(attributes.get("id")));
@@ -84,16 +85,16 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (qName.endsWith("OperatingSystemSection")) {
+      if (equalsOrSuffix(qName, "OperatingSystemSection")) {
          inOs = false;
-      } else if (inOs && qName.endsWith("Description")) {
+      } else if (inOs && equalsOrSuffix(qName, "Description")) {
          builder.osDescripton(Utils.currentOrNull(currentText));
-      } else if (qName.endsWith("IpAddress")) {
+      } else if (equalsOrSuffix(qName, "IpAddress")) {
          builder.ipAddress(Utils.currentOrNull(currentText));
-      } else if (qName.endsWith("NetworkSection")) {
+      } else if (equalsOrSuffix(qName, "NetworkSection")) {
          networkSectionHandler.endElement(uri, localName, qName);
          builder.networkSection(networkSectionHandler.getResult());
-      } else if (qName.endsWith("Item")) {
+      } else if (equalsOrSuffix(qName, "Item")) {
          allocationHandler.endElement(uri, localName, qName);
          builder.resourceAllocation(allocationHandler.getResult());
       } else {

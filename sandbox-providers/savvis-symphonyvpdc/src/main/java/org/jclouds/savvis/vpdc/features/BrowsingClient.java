@@ -24,12 +24,13 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Task;
-import org.jclouds.savvis.vpdc.domain.VApp;
+import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VDC;
-import org.jclouds.savvis.vpdc.options.GetVAppOptions;
+import org.jclouds.savvis.vpdc.options.GetVMOptions;
 
 /**
  * Provides access to Symphony VPDC resources via their REST API.
@@ -73,7 +74,7 @@ public interface BrowsingClient {
     * @return network detail if it used any one deployed VM and NetworkConfigSection defines various
     *         network features such NAT Public IP, Gateway and Netmask, or null if not present
     */
-   Network getNetworkInOrgAndVDC(String billingSiteId, String vpdcId, String networkTierName);
+   Network getNetworkInVDC(String billingSiteId, String vpdcId, String networkTierName);
 
    /**
     * VAPP is a software solution, the API returns details of virtual machine configuration such as
@@ -92,17 +93,31 @@ public interface BrowsingClient {
     *         machines, all of which are deployed, managed, and maintained as a unit, or null if not
     *         present
     */
-   VApp getVAppInOrgAndVDC(String billingSiteId, String vpdcId, String vAppId, GetVAppOptions... options);
+   VM getVMInVDC(String billingSiteId, String vpdcId, String vAppId, GetVMOptions... options);
 
    /**
     * Gets an existing task.
     * 
     * @param taskId
     *           task id
-    * @return If the request is successful, caller could get the VApp/VMDK details as specified in
+    * @return If the request is successful, caller could get the VM/VMDK details as specified in
     *         the result element and if the request is not successful, caller would get empty
     *         VAPP/VMDK URL and respective validation (error) message.
     */
    Task getTask(String taskId);
 
+   /**
+    * Gets Firewall Rules
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * 
+    * @return If the request is successful, caller could get the firewall rules as specified in the
+    * 		  result element and if the request is not successful, caller would get empty
+    *         rules list and respective validation (error) message.
+    */
+   FirewallService listFirewallRules(String billingSiteId, String vpdcId);
+   
 }
