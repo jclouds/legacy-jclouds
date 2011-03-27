@@ -34,6 +34,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
+import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
@@ -95,10 +96,19 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
                }
 
             }).getId();
+
       String networkTierName = Iterables.get(
             context.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId).getAvailableNetworks(), 0)
             .getName();
       String name = prefix;
+
+      // delete any old VM
+      VDC vpdc = context.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+      for (Resource resource : vpdc.getResourceEntities()) {
+         if (resource.getName().equals(prefix)) {
+            taskTester.apply(client.removeVMFromVDC(billingSiteId, vpdcId, resource.getId()).getId());
+         }
+      }
       CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
       })), new Predicate<CIMOperatingSystem>() {
 

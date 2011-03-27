@@ -30,6 +30,7 @@
 
 (def module-lookup
      {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
+      :slf4j 'org.jclouds.logging.slf4j.config.SLF4JLoggingModule
       :lognull 'org.jclouds.logging.config.NullLoggingModule
       :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
       :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule

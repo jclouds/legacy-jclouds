@@ -123,7 +123,7 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
 
       ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
       for (Entry<String, String> entry : decodedParams.entries())
-         builder.add(entry.getKey().toLowerCase() + "=" + Strings2.urlEncode(entry.getValue().toLowerCase()));
+         builder.add(entry.getKey().toLowerCase() + "=" + Strings2.urlEncode(entry.getValue()).toLowerCase());
 
       String stringToSign = Joiner.on('&').join(builder.build());
       if (signatureWire.enabled())

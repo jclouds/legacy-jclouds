@@ -37,6 +37,7 @@
         <module>joda</module>
         <module>bouncycastle</module>
         <module>log4j</module>
+        <module>slf4j</module>
         <module>jsch</module>
         <module>netty</module>
         <module>enterprise</module>
