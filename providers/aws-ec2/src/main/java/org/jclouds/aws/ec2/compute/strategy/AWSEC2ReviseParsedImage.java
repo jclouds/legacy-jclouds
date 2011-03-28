@@ -50,7 +50,7 @@ public class AWSEC2ReviseParsedImage implements ReviseParsedImage {
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.i386.manifest.xml
    public static final Pattern AMZN_PATTERN = Pattern
-            .compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
+            .compile(".*/(amzn-hvm-|amzn-)?ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
 
    // amazon/EC2 CentOS 5.4 HVM AMI
    public static final Pattern AMAZON_PATTERN = Pattern.compile("amazon/EC2 ([^ ]+) ([^ ]+).*");
@@ -83,8 +83,8 @@ public class AWSEC2ReviseParsedImage implements ReviseParsedImage {
          Matcher matcher = getMatcherAndFind(from.getImageLocation());
          if (matcher.pattern() == AMZN_PATTERN) {
             osBuilder.family(OsFamily.AMZN_LINUX);
-            osBuilder.version(matcher.group(1));
-            builder.version(matcher.group(1));
+            osBuilder.version(matcher.group(2));
+            builder.version(matcher.group(2));
          } else if (matcher.pattern() == AMAZON_PATTERN) {
             family = OsFamily.fromValue(matcher.group(1));
             osBuilder.family(family);

@@ -195,7 +195,7 @@ public class PlacementGroupClientLiveTest {
       Template template = context.getComputeService().templateBuilder().fastest().build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
+      assertEquals(template.getImage().getId(), "us-east-1/ami-321eed5b");
 
       template.getOptions().overrideLoginCredentialWith(keyPair.get("private"))
             .authorizePublicKey(keyPair.get("public")).runScript(buildScript(template.getImage().getOperatingSystem()));
