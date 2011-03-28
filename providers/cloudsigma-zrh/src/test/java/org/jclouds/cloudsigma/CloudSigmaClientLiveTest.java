@@ -305,7 +305,6 @@ public class CloudSigmaClientLiveTest {
             client.destroyDrive(drive.getUuid());
          }
          client.destroyStaticIP(ip.getAddress());
-         client.destroyStaticIP(ip2.getAddress());
       }
    }
 
