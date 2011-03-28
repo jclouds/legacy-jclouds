@@ -19,114 +19,42 @@
 
 package org.jclouds.ovf;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.ovf.internal.BaseVirtualSystem;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
-public class VirtualSystem extends Section<VirtualSystem> {
+public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVirtualSystem(this);
-   }
-
-   public static class Builder extends Section.Builder<VirtualSystem> {
-      protected String id;
-      protected String name;
-      protected OperatingSystemSection operatingSystem;
-      protected Set<VirtualHardwareSection> hardwareSections = Sets.newLinkedHashSet();
-      @SuppressWarnings("unchecked")
-      protected Multimap<String, Section> additionalSections = LinkedHashMultimap.create();
-
-      /**
-       * @see VirtualSystem#getName
-       */
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getId
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getOperatingSystemSection
-       */
-      public Builder operatingSystemSection(OperatingSystemSection operatingSystem) {
-         this.operatingSystem = operatingSystem;
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getVirtualHardwareSections
-       */
-      public Builder hardwareSection(VirtualHardwareSection hardwareSection) {
-         this.hardwareSections.add(checkNotNull(hardwareSection, "hardwareSection"));
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getVirtualHardwareSections
-       */
-      public Builder hardwareSections(Iterable<? extends VirtualHardwareSection> hardwareSections) {
-         this.hardwareSections = ImmutableSet.<VirtualHardwareSection> copyOf(checkNotNull(hardwareSections,
-                  "hardwareSections"));
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getAdditionalSections
-       */
-      @SuppressWarnings("unchecked")
-      public Builder additionalSection(String name, Section additionalSection) {
-         this.additionalSections.put(checkNotNull(name, "name"), checkNotNull(additionalSection, "additionalSection"));
-         return this;
-      }
-
-      /**
-       * @see VirtualSystem#getAdditionalSections
-       */
-      @SuppressWarnings("unchecked")
-      public Builder additionalSections(Multimap<String, Section> additionalSections) {
-         this.additionalSections = ImmutableMultimap.<String, Section> copyOf(checkNotNull(additionalSections,
-                  "additionalSections"));
-         return this;
-      }
+   public static class Builder extends BaseVirtualSystem.Builder<VirtualSystem> {
 
       /**
        * {@inheritDoc}
        */
       @Override
       public VirtualSystem build() {
-         return new VirtualSystem(id, info, name, operatingSystem, hardwareSections, additionalSections);
+         return new VirtualSystem(id, info, name, operatingSystem, virtualHardwareSections, productSections,
+                  additionalSections);
       }
 
-      public Builder fromVirtualSystem(VirtualSystem in) {
-         return fromSection(in).id(in.getId()).name(in.getName())
-                  .operatingSystemSection(in.getOperatingSystemSection()).hardwareSections(
-                           in.getVirtualHardwareSections()).additionalSections(in.getAdditionalSections());
+      /**
+       * {@inheritDoc}
+       */
+      @SuppressWarnings("unchecked")
+      @Override
+      public Builder additionalSection(String name, Section additionalSection) {
+         return Builder.class.cast(super.additionalSection(name, additionalSection));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @SuppressWarnings("unchecked")
+      @Override
+      public Builder additionalSections(Multimap<String, Section> additionalSections) {
+         return Builder.class.cast(super.additionalSections(additionalSections));
       }
 
       /**
@@ -134,7 +62,39 @@ public class VirtualSystem extends Section<VirtualSystem> {
        */
       @Override
       public Builder fromSection(Section<VirtualSystem> in) {
-         return (Builder) super.fromSection(in);
+         return Builder.class.cast(super.fromSection(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromVirtualSystem(BaseVirtualSystem<VirtualSystem> in) {
+         return Builder.class.cast(super.fromVirtualSystem(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder virtualHardwareSection(VirtualHardwareSection virtualHardwareSection) {
+         return Builder.class.cast(super.virtualHardwareSection(virtualHardwareSection));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder virtualHardwareSections(Iterable<? extends VirtualHardwareSection> virtualHardwareSections) {
+         return Builder.class.cast(super.virtualHardwareSections(virtualHardwareSections));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder id(String id) {
+         return Builder.class.cast(super.id(id));
       }
 
       /**
@@ -142,82 +102,47 @@ public class VirtualSystem extends Section<VirtualSystem> {
        */
       @Override
       public Builder info(String info) {
-         return (Builder) super.info(info);
+         return Builder.class.cast(super.info(info));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder operatingSystemSection(OperatingSystemSection operatingSystem) {
+         return Builder.class.cast(super.operatingSystemSection(operatingSystem));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder productSection(ProductSection productSection) {
+         return Builder.class.cast(super.productSection(productSection));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder productSections(Iterable<? extends ProductSection> productSections) {
+         return Builder.class.cast(super.productSections(productSections));
       }
 
    }
 
-   private final String id;
-   private final String name;
-   private final OperatingSystemSection operatingSystem;
-   private final Set<VirtualHardwareSection> hardwareSections;
-   @SuppressWarnings("unchecked")
-   private final Multimap<String, Section> additionalSections;
-
    @SuppressWarnings("unchecked")
    public VirtualSystem(String id, String info, String name, OperatingSystemSection operatingSystem,
-            Iterable<? extends VirtualHardwareSection> hardwareSections, Multimap<String, Section> additionalSections) {
-      super(info);
-      this.id = id;
-      this.name = name;
-      this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.hardwareSections = ImmutableSet.copyOf(checkNotNull(hardwareSections, "hardwareSections"));
-      this.additionalSections = ImmutableMultimap.copyOf(checkNotNull(additionalSections, "additionalSections"));
-   }
-
-   public String getId() {
-      return id;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public OperatingSystemSection getOperatingSystemSection() {
-      return operatingSystem;
-   }
-
-   /**
-    * Each VirtualSystem element may contain one or more VirtualHardwareSection elements, each of
-    * which describes the virtual hardwareSections required by the virtual system.
-    * */
-   public Set<? extends VirtualHardwareSection> getVirtualHardwareSections() {
-      return hardwareSections;
-   }
-
-   @SuppressWarnings("unchecked")
-   public Multimap<String, Section> getAdditionalSections() {
-      return additionalSections;
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VirtualSystem other = (VirtualSystem) obj;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return String.format("[id=%s, name=%s, info=%s, operatingSystem=%s, hardwareSections=%s, additionalSections=%s]",
-               id, name, info, operatingSystem, hardwareSections, additionalSections);
+            Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
+            Iterable<? extends ProductSection> productSections, Multimap<String, Section> additionalSections) {
+      super(id, info, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
    }
 }

@@ -56,7 +56,7 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
    public static class Builder extends Section.Builder<VirtualHardwareSection> {
       protected VirtualSystemSettingData virtualSystem;
       protected Set<String> transports = Sets.newLinkedHashSet();
-      protected Set<ResourceAllocationSettingData> resourceAllocations = Sets.newLinkedHashSet();
+      protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
 
       /**
        * @see VirtualHardwareSection#getSystem
@@ -83,19 +83,19 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
       }
 
       /**
-       * @see VirtualHardwareSection#getResourceAllocations
+       * @see VirtualHardwareSection#getItems
        */
-      public Builder resourceAllocation(ResourceAllocationSettingData resourceAllocation) {
-         this.resourceAllocations.add(checkNotNull(resourceAllocation, "resourceAllocation"));
+      public Builder item(ResourceAllocationSettingData item) {
+         this.items.add(checkNotNull(item, "item"));
          return this;
       }
 
       /**
-       * @see VirtualHardwareSection#getResourceAllocations
+       * @see VirtualHardwareSection#getItems
        */
-      public Builder resourceAllocations(Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
-         this.resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(
-                  resourceAllocations, "resourceAllocations"));
+      public Builder items(Iterable<? extends ResourceAllocationSettingData> items) {
+         this.items = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(
+                  items, "items"));
          return this;
       }
 
@@ -104,11 +104,11 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
        */
       @Override
       public VirtualHardwareSection build() {
-         return new VirtualHardwareSection(info, transports, virtualSystem, resourceAllocations);
+         return new VirtualHardwareSection(info, transports, virtualSystem, items);
       }
 
       public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return resourceAllocations(in.getResourceAllocations()).transports(in.getTransports()).system(
+         return items(in.getItems()).transports(in.getTransports()).system(
                   in.getSystem()).info(in.getInfo());
       }
 
@@ -132,15 +132,15 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
 
    protected final VirtualSystemSettingData virtualSystem;
    protected final Set<String> transports;
-   protected final Set<ResourceAllocationSettingData> resourceAllocations;
+   protected final Set<ResourceAllocationSettingData> items;
 
    public VirtualHardwareSection(String info, Iterable<String> transports, VirtualSystemSettingData virtualSystem,
-            Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
+            Iterable<? extends ResourceAllocationSettingData> items) {
       super(info);
       this.virtualSystem = virtualSystem;
       this.transports = ImmutableSet.<String> copyOf(checkNotNull(transports, "transports"));
-      this.resourceAllocations = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(resourceAllocations,
-               "resourceAllocations"));
+      this.items = ImmutableSet.<ResourceAllocationSettingData> copyOf(checkNotNull(items,
+               "items"));
    }
 
    /**
@@ -168,15 +168,15 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
       return virtualSystem;
    }
 
-   public Set<? extends ResourceAllocationSettingData> getResourceAllocations() {
-      return resourceAllocations;
+   public Set<? extends ResourceAllocationSettingData> getItems() {
+      return items;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
+      result = prime * result + ((items == null) ? 0 : items.hashCode());
       result = prime * result + ((transports == null) ? 0 : transports.hashCode());
       result = prime * result + ((virtualSystem == null) ? 0 : virtualSystem.hashCode());
       return result;
@@ -191,10 +191,10 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
       if (getClass() != obj.getClass())
          return false;
       VirtualHardwareSection other = (VirtualHardwareSection) obj;
-      if (resourceAllocations == null) {
-         if (other.resourceAllocations != null)
+      if (items == null) {
+         if (other.items != null)
             return false;
-      } else if (!resourceAllocations.equals(other.resourceAllocations))
+      } else if (!items.equals(other.items))
          return false;
       if (transports == null) {
          if (other.transports != null)
@@ -211,8 +211,8 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
 
    @Override
    public String toString() {
-      return String.format("[info=%s, resourceAllocations=%s, transports=%s, virtualSystem=%s]", info,
-               resourceAllocations, transports, virtualSystem);
+      return String.format("[info=%s, items=%s, transports=%s, virtualSystem=%s]", info,
+               items, transports, virtualSystem);
    }
 
 }

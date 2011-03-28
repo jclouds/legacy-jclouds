@@ -26,7 +26,6 @@ import java.io.InputStream;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
-import org.jclouds.cim.xml.VirtualSystemSettingDataHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
@@ -34,6 +33,7 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.ovf.OperatingSystemSection;
 import org.jclouds.ovf.VirtualHardwareSection;
 import org.jclouds.ovf.VirtualSystem;
+import org.jclouds.ovf.internal.BaseVirtualSystem;
 import org.jclouds.ovf.xml.VirtualSystemHandler;
 import org.testng.annotations.Test;
 
@@ -71,7 +71,7 @@ public class VirtualSystemSettingDataHandlerTest extends BaseHandlerTest {
    }
 
    @Test(enabled = false)
-   public static void checkVirtualSystem(VirtualSystem result) {
+   public static <T extends BaseVirtualSystem<T>> void checkVirtualSystem(BaseVirtualSystem<T> result) {
       assertEquals(result.getId(), "Ubuntu1004");
       assertEquals(result.getName(), "Ubuntu1004");
       assertEquals(result.getInfo(), "A virtual machine:");
@@ -85,38 +85,38 @@ public class VirtualSystemSettingDataHandlerTest extends BaseHandlerTest {
                "Virtual Hardware Family").virtualSystemIdentifier("Ubuntu1004").virtualSystemType("vmx-07").build());
       assertEquals(result.getInfo(), "Virtual hardware requirements");
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 0).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 0).toString(), ResourceAllocationSettingData
                .builder().instanceID("1").elementName("Network adapter 0").description("PCNet32 ethernet adapter")
                .resourceType(ResourceType.ETHERNET_ADAPTER).resourceSubType("PCNet32").address("00:50:56:8c:00:13")
                .automaticAllocation(true).connection("vAppNet-vApp Internal").addressOnParent("0").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 1).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 1).toString(), ResourceAllocationSettingData
                .builder().instanceID("2").elementName("SCSI Controller 0").description("SCSI Controller").resourceType(
                         ResourceType.PARALLEL_SCSI_HBA).resourceSubType("lsilogic").address("0").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 2).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 2).toString(), ResourceAllocationSettingData
                .builder().instanceID("2000").elementName("Hard disk 1").description("Hard disk").resourceType(
                         ResourceType.DISK_DRIVE).addressOnParent("0").parent("2").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 3).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 3).toString(), ResourceAllocationSettingData
                .builder().instanceID("3").elementName("IDE Controller 0").description("IDE Controller").resourceType(
                         ResourceType.IDE_CONTROLLER).address("0").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 4).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 4).toString(), ResourceAllocationSettingData
                .builder().instanceID("3002").elementName("CD/DVD Drive 1").description("CD/DVD Drive").resourceType(
                         ResourceType.CD_DRIVE).addressOnParent("0").parent("3").automaticAllocation(false).build()
                .toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 5).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 5).toString(), ResourceAllocationSettingData
                .builder().instanceID("8000").elementName("Floppy Drive 1").description("Floppy Drive").resourceType(
                         ResourceType.FLOPPY_DRIVE).addressOnParent("0").automaticAllocation(false).build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 6).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 6).toString(), ResourceAllocationSettingData
                .builder().instanceID("4").elementName("1 virtual CPU(s)").description("Number of Virtual CPUs")
                .resourceType(ResourceType.PROCESSOR).virtualQuantity(1l).allocationUnits("hertz * 10^6")
                .reservation(0l).weight(0).build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 7).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 7).toString(), ResourceAllocationSettingData
                .builder().instanceID("5").elementName("512 MB of memory").description("Memory Size").resourceType(
                         ResourceType.MEMORY).virtualQuantity(512l).allocationUnits("byte * 2^20").reservation(0l)
                .weight(0).build().toString());

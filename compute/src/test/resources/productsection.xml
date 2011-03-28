@@ -1,0 +1,38 @@
+    <ovf:ProductSection>
+        <ovf:Info>vCenter Information</ovf:Info>
+        <ovf:Property ovf:value="false" ovf:type="String" ovf:key="vmwareToolsEnabled">
+            <ovf:Label>VMWare Tools Enabled status</ovf:Label>
+            <ovf:Description>VMWare Tools Enabled status</ovf:Description>
+        </ovf:Property>
+        <ovf:Property ovf:value="10.12.46.171" ovf:type="String" ovf:key="vmwareESXHost">
+            <ovf:Label>VMWare ESXHost Ipaddress</ovf:Label>
+            <ovf:Description>VMWare ESXHost Ipaddress</ovf:Description>
+        </ovf:Property>
+        <ovf:Property ovf:value="cussl01s01c01alun088bal,cussl01s01c01alun089bal" ovf:type="String" ovf:key="datastores">
+            <ovf:Label>Datastore Name</ovf:Label>
+            <ovf:Description>Datastore Name</ovf:Description>
+        </ovf:Property>
+        <!-- **** capacity unit : bytes *** -->
+        <ovf:Property ovf:value="[Totalcapacity=1335915184128,UsedCapacity=549755813888]" ovf:type="String"
+                      ovf:key="cussl01s01c01alun088bal">
+            <ovf:Label>Datastore Capacity</ovf:Label>
+            <ovf:Description>Datastore cussl01s01c01alun088bal Total Capacity, Used Capacity in comma separated
+            </ovf:Description>
+        </ovf:Property>
+        <ovf:Property ovf:value="[Totalcapacity=1335915184129,UsedCapacity=549755813889]" ovf:type="String"
+                      ovf:key="cussl01s01c01alun089bal">
+            <ovf:Label>Datastore Capacity</ovf:Label>
+            <ovf:Description>Datastore cussl01s01c01alun089bal Total Capacity, Used Capacity in comma separated
+            </ovf:Description>
+        </ovf:Property>
+        <ovf:Property ovf:value="[name=3282176-1949-bal-tier01,ip=0.0.0.0,mac=00:50:56:8c:3f:3c]" ovf:type="String"
+                      ovf:key="customerPortprofile">
+            <ovf:Label>customerPortprofile</ovf:Label>
+            <ovf:Description>customerPortprofile</ovf:Description>
+        </ovf:Property>
+        <ovf:Property ovf:value="[name=vm-server-mgmt,ip=0.0.0.0,mac=00:50:56:8c:39:75]" ovf:type="String"
+                      ovf:key="savvisPortprofile">
+            <ovf:Label>savvisPortprofile</ovf:Label>
+            <ovf:Description>savvisPortprofile</ovf:Description>
+        </ovf:Property>
+    </ovf:ProductSection>

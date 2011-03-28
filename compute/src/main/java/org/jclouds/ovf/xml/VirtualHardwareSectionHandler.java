@@ -65,7 +65,6 @@ public class VirtualHardwareSectionHandler extends
       } else if (!inSystem && equalsOrSuffix(qName, "Item")) {
          inItem = true;
       }
-
       if (inSystem) {
          systemHandler.startElement(uri, localName, qName, attrs);
       } else if (inItem) {
@@ -80,7 +79,7 @@ public class VirtualHardwareSectionHandler extends
          builder.system(systemHandler.getResult());
       } else if (equalsOrSuffix(qName, "Item")) {
          inItem = false;
-         builder.resourceAllocation(allocationHandler.getResult());
+         builder.item(allocationHandler.getResult());
       }
       if (inSystem) {
          systemHandler.endElement(uri, localName, qName);

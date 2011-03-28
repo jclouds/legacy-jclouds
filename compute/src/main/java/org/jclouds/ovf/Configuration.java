@@ -61,7 +61,7 @@ public class Configuration {
          return new Configuration(id, label, description);
       }
 
-      public Builder fromNetwork(Configuration in) {
+      public Builder fromConfiguration(Configuration in) {
          return id(in.getId()).description(in.getDescription()).label(in.getLabel());
       }
    }
@@ -103,7 +103,7 @@ public class Configuration {
 
    @Override
    public String toString() {
-      return String.format("Configuration [id=%s, label=%s, description=%s]", id, label, description);
+      return String.format("[id=%s, label=%s, description=%s]", id, label, description);
    }
 
    public String getId() {

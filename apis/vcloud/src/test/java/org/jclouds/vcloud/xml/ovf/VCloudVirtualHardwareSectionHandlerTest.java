@@ -86,35 +86,35 @@ public class VCloudVirtualHardwareSectionHandlerTest extends BaseHandlerTest {
       assertEquals(result.getSystem().toString(), system.toString());
       assertEquals(result.getInfo(), "Virtual hardware requirements");
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 0).toString(), VCloudNetworkAdapter.builder()
+      assertEquals(Iterables.get(result.getItems(), 0).toString(), VCloudNetworkAdapter.builder()
                .instanceID("1").elementName("Network adapter 0").description("PCNet32 ethernet adapter").resourceType(
                         ResourceType.ETHERNET_ADAPTER).resourceSubType("PCNet32").automaticAllocation(true).connection(
                         "internet01").address("00:50:56:01:01:f2").addressOnParent("0").ipAddress("174.47.101.164")
                .primaryNetworkConnection(true).ipAddressingMode("POOL").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 1).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 1).toString(), ResourceAllocationSettingData
                .builder().instanceID("2").elementName("SCSI Controller 0").description("SCSI Controller").resourceType(
                         ResourceType.PARALLEL_SCSI_HBA).resourceSubType("lsilogic").address("0").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 2).toString(), VCloudHardDisk.builder().instanceID(
+      assertEquals(Iterables.get(result.getItems(), 2).toString(), VCloudHardDisk.builder().instanceID(
                "2000").elementName("Hard disk 1").description("Hard disk").resourceType(ResourceType.DISK_DRIVE)
                .addressOnParent("0").parent("2").capacity(30720).busType(6).busSubType("lsilogic").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 3).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 3).toString(), ResourceAllocationSettingData
                .builder().instanceID("3").elementName("IDE Controller 0").description("IDE Controller").resourceType(
                         ResourceType.IDE_CONTROLLER).address("0").build().toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 4).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 4).toString(), ResourceAllocationSettingData
                .builder().instanceID("3002").elementName("CD/DVD Drive 1").description("CD/DVD Drive").resourceType(
                         ResourceType.CD_DRIVE).addressOnParent("0").automaticAllocation(false).parent("3").build()
                .toString());
 
-      assertEquals(Iterables.get(result.getResourceAllocations(), 5).toString(), ResourceAllocationSettingData
+      assertEquals(Iterables.get(result.getItems(), 5).toString(), ResourceAllocationSettingData
                .builder().instanceID("8000").elementName("Floppy Drive 1").description("Floppy Drive").resourceType(
                         ResourceType.FLOPPY_DRIVE).addressOnParent("0").automaticAllocation(false).build().toString());
 
       assertEquals(
-               Iterables.get(result.getResourceAllocations(), 6).toString(),
+               Iterables.get(result.getItems(), 6).toString(),
                EditableResourceAllocationSettingData
                         .builder()
                         .instanceID("4")
@@ -134,7 +134,7 @@ public class VCloudVirtualHardwareSectionHandlerTest extends BaseHandlerTest {
                         .build().toString());
 
       assertEquals(
-               Iterables.get(result.getResourceAllocations(), 7).toString(),
+               Iterables.get(result.getItems(), 7).toString(),
                EditableResourceAllocationSettingData
                         .builder()
                         .instanceID("5")

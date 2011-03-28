@@ -49,13 +49,23 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
       super(ComputeType.HARDWARE);
    }
 
+   public HardwareBuilder processor(Processor processor) {
+      this.processors.add(checkNotNull(processor, "processor"));
+      return this;
+   }
+
    public HardwareBuilder processors(Iterable<Processor> processors) {
-      this.processors =  ImmutableList.copyOf(checkNotNull(processors, "processors"));
+      this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
       return this;
    }
 
    public HardwareBuilder ram(int ram) {
       this.ram = ram;
+      return this;
+   }
+
+   public HardwareBuilder volume(Volume volume) {
+      this.volumes.add(checkNotNull(volume, "volume"));
       return this;
    }
 
@@ -112,14 +122,14 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    @Override
    public Hardware build() {
       return new HardwareImpl(providerId, name, id, location, uri, userMetadata, processors, ram, volumes,
-            supportsImage);
+               supportsImage);
    }
 
    @SuppressWarnings("unchecked")
    public static HardwareBuilder fromHardware(Hardware in) {
-      return new HardwareBuilder().id(in.getId()).providerId(in.getProviderId()).location(in.getLocation())
-            .name(in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata())
-            .processors(List.class.cast(in.getProcessors())).ram(in.getRam()).volumes(List.class.cast(in.getVolumes()))
-            .supportsImage(in.supportsImage());
+      return new HardwareBuilder().id(in.getId()).providerId(in.getProviderId()).location(in.getLocation()).name(
+               in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).processors(
+               List.class.cast(in.getProcessors())).ram(in.getRam()).volumes(List.class.cast(in.getVolumes()))
+               .supportsImage(in.supportsImage());
    }
 }

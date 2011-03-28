@@ -50,7 +50,7 @@ public class VCloudVirtualHardwareHandler extends ParseSax.HandlerWithResult<VCl
    public VCloudVirtualHardwareSection getResult() {
       VirtualHardwareSection hardware = hardwareHandler.getResult();
       return new VCloudVirtualHardwareSection(this.hardware.getType(), this.hardware.getHref(), hardware.getInfo(), hardware
-                        .getTransports(), hardware.getSystem(), hardware.getResourceAllocations());
+                        .getTransports(), hardware.getSystem(), hardware.getItems());
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {

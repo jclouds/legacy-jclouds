@@ -86,7 +86,7 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
          logger.warn("multiple hardware choices found. using first", ovf);
       }
       VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getVirtualHardwareSections(), 0);
-      HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getResourceAllocations());
+      HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getItems());
       builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
                ImagePredicates.idEquals(from.getHref().toASCIIString()));

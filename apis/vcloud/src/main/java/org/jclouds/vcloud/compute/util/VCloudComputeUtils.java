@@ -97,7 +97,7 @@ public class VCloudComputeUtils {
                ips.add(connection.getExternalIpAddress());
          }
       } else {
-         for (ResourceAllocationSettingData net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
+         for (ResourceAllocationSettingData net : filter(vm.getVirtualHardwareSection().getItems(),
                CIMPredicates.resourceTypeIn(ResourceType.ETHERNET_ADAPTER))) {
             if (net instanceof VCloudNetworkAdapter) {
                VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);

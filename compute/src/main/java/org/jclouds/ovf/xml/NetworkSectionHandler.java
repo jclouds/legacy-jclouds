@@ -29,6 +29,7 @@ import javax.inject.Provider;
 
 import org.jclouds.ovf.Network;
 import org.jclouds.ovf.NetworkSection;
+import org.jclouds.ovf.xml.SectionHandler;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 
