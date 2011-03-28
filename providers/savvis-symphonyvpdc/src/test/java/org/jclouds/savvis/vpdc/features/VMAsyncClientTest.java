@@ -49,6 +49,37 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
 
+   public void testAddVMIntoVDCURI() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VMAsyncClient.class
+               .getMethod("addVMIntoVDC", URI.class, String.class, String.class, VMSpec.class);
+
+      CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
+      })), new Predicate<CIMOperatingSystem>() {
+
+         @Override
+         public boolean apply(CIMOperatingSystem arg0) {
+            return arg0.getOsType() == OSType.RHEL_64;
+         }
+
+      });
+
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22"), "VM Tier01", "DemoHost-1",
+               VMSpec.builder().operatingSystem(os).build());
+
+      assertRequestLineEquals(request,
+               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-default.xml")),
+               "application/xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(request);
+   }
+
    public void testAddVMIntoVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("addVMIntoVDC", String.class, String.class, String.class,
                String.class, VMSpec.class);

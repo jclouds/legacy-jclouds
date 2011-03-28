@@ -1,3 +1,22 @@
+/**
+ *
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
 package org.jclouds.savvis.vpdc.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,7 +27,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,6 +52,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.inject.Inject;
 
 ;
 
@@ -46,16 +65,16 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSpec, CIMOperatingSystem, Network> {
    private final VPDCClient client;
    private final RetryablePredicate<String> taskTester;
-   private final String email;
+   @Inject(optional = true)
+   @Named(PROPERTY_VPDC_VDC_EMAIL)
+   String email;
 
    @Inject
-   public VPDCComputeServiceAdapter(VPDCClient client, TaskSuccess taskSuccess,
-            @Named(PROPERTY_VPDC_VDC_EMAIL) String email) {
+   public VPDCComputeServiceAdapter(VPDCClient client, TaskSuccess taskSuccess) {
       this.client = checkNotNull(client, "client");
       // TODO: parameterize
       this.taskTester = new RetryablePredicate<String>(checkNotNull(taskSuccess, "taskSuccess"), 650, 10,
                TimeUnit.SECONDS);
-      this.email = email;
    }
 
    @Override
@@ -136,7 +155,8 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
          Org org = client.getBrowsingClient().getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {
             VDC VDC = client.getBrowsingClient().getVDCInOrg(org.getId(), vdc.getId());
-            if (VDC.getDescription().indexOf(email) != -1)
+            // optionally constrain locations
+            if (email != null && VDC.getDescription().indexOf(email) != -1)
                continue;
             for (Resource network : VDC.getAvailableNetworks()) {
                builder.add(client.getBrowsingClient().getNetworkInVDC(org.getId(), vdc.getId(), network.getId()));

@@ -67,6 +67,16 @@ public interface VMAsyncClient {
             @PayloadParam("name") String vAppName, VMSpec spec);
 
    /**
+    * @see VMClient#addVMIntoVDC
+    */
+   @GET
+   @XMLResponseParser(TaskHandler.class)
+   @Path("vApp/")
+   @MapBinder(BindVMSpecToXmlPayload.class)
+   ListenableFuture<Task> addVMIntoVDC(@EndpointParam URI vpdc, @PayloadParam("networkName") String networkTierName,
+            @PayloadParam("name") String vAppName, VMSpec spec);
+
+   /**
     * @see VMClient#removeVMFromVDC
     */
    @DELETE

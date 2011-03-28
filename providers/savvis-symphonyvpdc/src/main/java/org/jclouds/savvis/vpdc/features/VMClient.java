@@ -53,6 +53,14 @@ public interface VMClient {
    Task addVMIntoVDC(String billingSiteId, String vpdcId, String networkTierName, String name, VMSpec spec);
 
    /**
+    * 
+    * @param vpdc
+    *           href of the vpdc
+    * @see #addVMIntoVDC
+    */
+   Task addVMIntoVDC(URI vpdc, String networkTierName, String name, VMSpec spec);
+
+   /**
     * Remove a VM
     * <p/>
     * <h4>Pre-conditions:</h4>
