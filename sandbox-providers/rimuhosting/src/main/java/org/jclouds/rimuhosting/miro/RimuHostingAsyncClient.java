@@ -34,8 +34,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Unwrap;
@@ -112,9 +112,9 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    @Unwrap
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
-         @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId,
-         CreateServerOptions... options);
+   ListenableFuture<NewServerResponse> createServer(@PayloadParam("name") String name,
+            @PayloadParam("imageId") String imageId, @PayloadParam("planId") String planId,
+            CreateServerOptions... options);
 
    /**
     * @see RimuHostingClient#getServer
