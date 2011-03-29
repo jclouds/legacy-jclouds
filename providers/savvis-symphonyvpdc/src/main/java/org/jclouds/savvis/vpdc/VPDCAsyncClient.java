@@ -66,7 +66,7 @@ public interface VPDCAsyncClient {
    @Delegate
    ServiceManagementAsyncClient getServiceManagementClient();
 
-   /**s
+   /**
     * 
     * @return a listing of all orgs that the current user has access to.
     */
