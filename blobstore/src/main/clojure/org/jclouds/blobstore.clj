@@ -23,12 +23,12 @@
 Current supported services are:
    [transient, filesystem, azureblob, atmos, walrus, scaleup-storage,
     googlestorage, synaptic, peer1-storage, aws-s3, eucalyptus-partnercloud-s3,
-    cloudfiles-us, cloudfiles-uk, swift, scality-rs2, hosteurope-storage]
+    cloudfiles-us, cloudfiles-uk, swift, scality-rs2, hosteurope-storage
+    tiscali-storage]
 
 Here's a quick example of how to viewresources in rackspace
 
     (use 'org.jclouds.blobstore)
-    (use 'clojure.contrib.pprint)
 
     (def user \"rackspace_username\")
     (def password \"rackspace_password\")
@@ -42,6 +42,7 @@ Here's a quick example of how to viewresources in rackspace
 See http://code.google.com/p/jclouds for details."
   (:use [org.jclouds.core])
   (:import [java.io File FileOutputStream OutputStream]
+           java.util.Properties
            [org.jclouds.blobstore
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
@@ -63,14 +64,20 @@ Options for communication style
      :sync and :async.
 Options can also be specified for extension modules
      :log4j :enterprise :ning :apachehc :bouncycastle :joda :gae"
-  [#^String service #^String account #^String key & options]
-  (let [context
-        (.createContext
-         (BlobStoreContextFactory.) service account key
-         (apply modules (filter #(not (#{:sync :async} %)) options)))]
-    (if (some #(= :async %) options)
+  ([#^String provider #^String provider-identity #^String provider-credential
+    & options]
+     (let [module-keys (set (keys module-lookup))
+           ext-modules (filter #(module-keys %) options)
+           opts (apply hash-map (filter #(not (module-keys %)) options))]
+       (let [context (.. (BlobStoreContextFactory.)
+           (createContext
+            provider provider-identity provider-credential
+            (apply modules (concat ext-modules (opts :extensions)))
+            (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+                    (Properties.) (dissoc opts :extensions))))]
+           (if (some #(= :async %) options)
       (.getAsyncBlobStore context)
-      (.getBlobStore context))))
+      (.getBlobStore context))))))
 
 (defn blobstore-context
   "Returns a blobstore context from a blobstore."
