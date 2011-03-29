@@ -56,6 +56,11 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>tiscali-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>hosteurope-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
