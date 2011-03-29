@@ -44,6 +44,7 @@
         <module>tiscali-storage</module>
         <module>hosteurope-storage</module>
         <module>synaptic-storage</module>
+        <module>ninefold-storage</module>
         <module>cloudonestorage</module>
         <module>eucalyptus-partnercloud-s3</module>
         <module>eucalyptus-partnercloud-ec2</module>
