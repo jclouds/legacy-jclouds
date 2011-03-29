@@ -53,7 +53,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.deltacloud.endpoint>http://localhost:3001/api</test.deltacloud.endpoint>
-        <test.deltacloud.apiversion>0.1.0</test.deltacloud.apiversion>
+        <test.deltacloud.apiversion>0.1.2</test.deltacloud.apiversion>
         <test.deltacloud.identity>mockuser</test.deltacloud.identity>
         <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
     </properties>

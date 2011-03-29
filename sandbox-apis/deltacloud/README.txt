@@ -33,6 +33,7 @@ To run a local deltacloud server, do the following:
     # export SSL_CERT_DIR=$HOME/certs
     # export SSL_CERT_FILE=$HOME/certs/cacert.pem
     # jruby -S deltacloudd -i mock 
+      * or if you are running from a src tree: jruby -S ./server/bin/deltacloudd -i <driver>
 
 Here are some notes about specific cloud providers
   * terremark

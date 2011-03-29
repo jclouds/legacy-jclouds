@@ -21,12 +21,15 @@ package org.jclouds.deltacloud.xml;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.logging.Logger;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,6 +42,9 @@ import com.google.common.collect.Multimap;
  */
 public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<InstanceState, ? extends Transition>> {
 
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    private Multimap<InstanceState, Transition> states = LinkedHashMultimap.create();
    private InstanceState state;
 
@@ -50,17 +56,28 @@ public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<I
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("state")) {
-         state = InstanceState.valueOf(attributes.get("name").toUpperCase());
+         state = instanceStateWarningOnUnrecognized(attributes.get("name"));
       } else if (qName.equals("transition")) {
          if (attributes.containsKey("auto"))
-            states.put(state, new TransitionAutomatically(InstanceState.valueOf(attributes.get("to").toUpperCase())));
+            states.put(state, new TransitionAutomatically(instanceStateWarningOnUnrecognized(attributes.get("to"))));
          else
-            states.put(
-                  state,
-                  new TransitionOnAction(InstanceAction.fromValue(attributes.get("action")), InstanceState
-                        .valueOf(attributes.get("to").toUpperCase())));
-
+            states.put(state, new TransitionOnAction(instanceActionWarningOnUnrecognized(attributes.get("action")),
+                     instanceStateWarningOnUnrecognized(attributes.get("to"))));
       }
+   }
+
+   InstanceState instanceStateWarningOnUnrecognized(String input) {
+      InstanceState state = InstanceState.fromValue(input);
+      if (state == InstanceState.UNRECOGNIZED)
+         logger.warn("unrecognized state: %s", input);
+      return state;
+   }
+
+   InstanceAction instanceActionWarningOnUnrecognized(String input) {
+      InstanceAction action = InstanceAction.fromValue(input);
+      if (action == InstanceAction.UNRECOGNIZED)
+         logger.warn("unrecognized action: %s", input);
+      return action;
    }
 
 }

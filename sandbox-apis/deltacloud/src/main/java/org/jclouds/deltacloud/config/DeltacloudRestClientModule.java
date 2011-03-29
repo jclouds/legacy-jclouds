@@ -48,7 +48,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -86,7 +86,7 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Singleton
    protected Supplier<Set<? extends DeltacloudCollection>> provideCollections(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, final DeltacloudClient client) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends DeltacloudCollection>>(
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends DeltacloudCollection>>(
             authException, seconds, new Supplier<Set<? extends DeltacloudCollection>>() {
                @Override
                public Set<? extends DeltacloudCollection> get() {

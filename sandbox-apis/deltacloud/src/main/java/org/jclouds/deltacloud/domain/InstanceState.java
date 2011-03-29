@@ -46,6 +46,10 @@ public enum InstanceState {
     */
    STOPPED,
    /**
+    * the instance is shutting down
+    */
+   SHUTTING_DOWN,
+   /**
     * the instance is terminated
     */
    FINISH,
@@ -56,7 +60,7 @@ public enum InstanceState {
 
    public static InstanceState fromValue(String state) {
       try {
-         return valueOf(checkNotNull(state, "state"));
+         return valueOf(checkNotNull(state, "state").toUpperCase());
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }
