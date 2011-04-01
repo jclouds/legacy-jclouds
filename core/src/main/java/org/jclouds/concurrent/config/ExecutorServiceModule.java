@@ -19,13 +19,20 @@
 
 package org.jclouds.concurrent.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.DynamicExecutors.newScalingThreadPool;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -80,11 +87,18 @@ public class ExecutorServiceModule extends AbstractModule {
    @Inject
    public ExecutorServiceModule(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-      this.userExecutorFromConstructor = checkNotGuavaSameThreadExecutor(userThreads);
-      this.ioExecutorFromConstructor = checkNotGuavaSameThreadExecutor(ioThreads);
+      this.userExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(userThreads));
+      this.ioExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(ioThreads));
    }
 
-   private ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
+   static ExecutorService addToStringOnSubmit(ExecutorService executor) {
+      if (executor != null) {
+         return new AddToStringOnSubmitExecutorService(executor);
+      }
+      return executor;
+   }
+
+   static ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
       // we detect behavior based on the class
       if (executor != null && !(executor.getClass().isAnnotationPresent(SingleThreaded.class))
                && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
@@ -104,13 +118,157 @@ public class ExecutorServiceModule extends AbstractModule {
    protected void configure() {
    }
 
+   static class AddToStringOnSubmitExecutorService implements ExecutorService {
+
+      private final ExecutorService delegate;
+
+      public AddToStringOnSubmitExecutorService(ExecutorService delegate) {
+         this.delegate = checkNotNull(delegate, "delegate");
+      }
+
+      @Override
+      public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+         return delegate.awaitTermination(timeout, unit);
+      }
+
+      @Override
+      public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+         return delegate.invokeAll(tasks);
+      }
+
+      @Override
+      public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+               throws InterruptedException {
+         return delegate.invokeAll(tasks, timeout, unit);
+      }
+
+      @Override
+      public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+         return delegate.invokeAny(tasks);
+      }
+
+      @Override
+      public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+               throws InterruptedException, ExecutionException, TimeoutException {
+         return delegate.invokeAny(tasks, timeout, unit);
+      }
+
+      @Override
+      public boolean isShutdown() {
+         return delegate.isShutdown();
+      }
+
+      @Override
+      public boolean isTerminated() {
+         return delegate.isTerminated();
+      }
+
+      @Override
+      public void shutdown() {
+         delegate.shutdown();
+      }
+
+      @Override
+      public List<Runnable> shutdownNow() {
+         return delegate.shutdownNow();
+      }
+
+      @Override
+      public <T> Future<T> submit(Callable<T> task) {
+         return new AddToStringFuture<T>(delegate.submit(task), task.toString());
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public Future<?> submit(Runnable task) {
+         return new AddToStringFuture(delegate.submit(task), task.toString());
+      }
+
+      @Override
+      public <T> Future<T> submit(Runnable task, T result) {
+         return new AddToStringFuture<T>(delegate.submit(task, result), task.toString());
+      }
+
+      @Override
+      public void execute(Runnable arg0) {
+         delegate.execute(arg0);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         return delegate.equals(obj);
+      }
+
+      @Override
+      public int hashCode() {
+         return delegate.hashCode();
+      }
+
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
+
+   }
+
+   static class AddToStringFuture<T> implements Future<T> {
+      private final Future<T> delegate;
+      private final String toString;
+
+      public AddToStringFuture(Future<T> delegate, String toString) {
+         this.delegate = delegate;
+         this.toString = toString;
+      }
+
+      @Override
+      public boolean cancel(boolean arg0) {
+         return delegate.cancel(arg0);
+      }
+
+      @Override
+      public T get() throws InterruptedException, ExecutionException {
+         return delegate.get();
+      }
+
+      @Override
+      public T get(long arg0, TimeUnit arg1) throws InterruptedException, ExecutionException, TimeoutException {
+         return delegate.get(arg0, arg1);
+      }
+
+      @Override
+      public boolean isCancelled() {
+         return delegate.isCancelled();
+      }
+
+      @Override
+      public boolean isDone() {
+         return delegate.isDone();
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         return delegate.equals(obj);
+      }
+
+      @Override
+      public int hashCode() {
+         return delegate.hashCode();
+      }
+
+      @Override
+      public String toString() {
+         return toString;
+      }
+
+   }
+
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
    ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count, Closer closer) {
       if (userExecutorFromConstructor != null)
          return userExecutorFromConstructor;
-      return shutdownOnClose(newThreadPoolNamed("user thread %d", count), closer);
+      return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("user thread %d", count)), closer);
    }
 
    @Provides
@@ -119,7 +277,7 @@ public class ExecutorServiceModule extends AbstractModule {
    ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count, Closer closer) {
       if (ioExecutorFromConstructor != null)
          return ioExecutorFromConstructor;
-      return shutdownOnClose(newThreadPoolNamed("i/o thread %d", count), closer);
+      return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("i/o thread %d", count)), closer);
    }
 
    @VisibleForTesting

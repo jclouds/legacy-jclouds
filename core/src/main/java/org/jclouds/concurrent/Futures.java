@@ -62,8 +62,10 @@ public class Futures {
             // This thread was interrupted. This should never happen, so we
             // throw an IllegalStateException.
             Thread.currentThread().interrupt();
+            // TODO we cannot inspect the executionList at the moment to make a reasonable
+            // toString()
             throw new IllegalStateException(String.format(
-                  "interrupted calling get() on [%s], so could not run listeners", delegate), e);
+                     "interrupted calling get() on [%s], so could not run listeners", delegate), e);
          } catch (Throwable e) {
             // ExecutionException / CancellationException / RuntimeException
             // The task is done, run the listeners.
@@ -155,27 +157,27 @@ public class Futures {
    }
 
    public static class LazyListenableFutureFunctionAdapter<I, O> extends ForwardingObject implements
-         ListenableFuture<O> {
+            ListenableFuture<O> {
       private final FutureListener<I> futureListener;
       private final Function<? super I, ? extends O> function;
 
       static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(Future<I> future,
-            Function<? super I, ? extends O> function, ExecutorService executor) {
+               Function<? super I, ? extends O> function, ExecutorService executor) {
          return new LazyListenableFutureFunctionAdapter<I, O>(future, function, executor);
       }
 
       static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(FutureListener<I> futureListener,
-            Function<? super I, ? extends O> function) {
+               Function<? super I, ? extends O> function) {
          return new LazyListenableFutureFunctionAdapter<I, O>(futureListener, function);
       }
 
       private LazyListenableFutureFunctionAdapter(Future<I> future, Function<? super I, ? extends O> function,
-            ExecutorService executor) {
+               ExecutorService executor) {
          this(FutureListener.create(future, executor), function);
       }
 
       private LazyListenableFutureFunctionAdapter(FutureListener<I> futureListener,
-            Function<? super I, ? extends O> function) {
+               Function<? super I, ? extends O> function) {
          this.futureListener = checkNotNull(futureListener, "futureListener");
          this.function = checkNotNull(function, "function");
       }
@@ -255,19 +257,19 @@ public class Futures {
     * chaining, so that we don't invoke get() early.
     */
    public static <I, O> ListenableFuture<O> compose(Future<I> future, final Function<? super I, ? extends O> function,
-         ExecutorService executorService) {
+            ExecutorService executorService) {
       if (future instanceof Futures.ListenableFutureAdapter<?>) {
          Futures.ListenableFutureAdapter<I> lf = (ListenableFutureAdapter<I>) future;
          if (lf.futureListener.adapterExecutor.getClass().isAnnotationPresent(SingleThreaded.class))
             return Futures.LazyListenableFutureFunctionAdapter.create(
-                  ((org.jclouds.concurrent.Futures.ListenableFutureAdapter<I>) future).futureListener, function);
+                     ((org.jclouds.concurrent.Futures.ListenableFutureAdapter<I>) future).futureListener, function);
          else
             return com.google.common.util.concurrent.Futures.compose(lf, function, executorService);
       } else if (executorService.getClass().isAnnotationPresent(SingleThreaded.class)) {
          return Futures.LazyListenableFutureFunctionAdapter.create(future, function, executorService);
       } else {
          return com.google.common.util.concurrent.Futures.compose(Futures.makeListenable(future, executorService),
-               function, executorService);
+                  function, executorService);
       }
    }
 
