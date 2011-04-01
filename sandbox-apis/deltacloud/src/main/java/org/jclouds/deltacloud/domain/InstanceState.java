@@ -42,13 +42,13 @@ public enum InstanceState {
     */
    RUNNING,
    /**
-    * the instance is stopped
-    */
-   STOPPED,
-   /**
     * the instance is shutting down
     */
    SHUTTING_DOWN,
+   /**
+    * the instance is stopped
+    */
+   STOPPED,
    /**
     * the instance is terminated
     */
