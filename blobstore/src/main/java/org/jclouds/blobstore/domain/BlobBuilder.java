@@ -72,6 +72,11 @@ public interface BlobBuilder {
    PayloadBlobBuilder payload(InputStream payload);
 
    /**
+    * If you are creating a blob only for signing, use this. {@see BlobRequestSigner}
+    */
+   PayloadBlobBuilder forSigning();
+
+   /**
     * 
     * @param payload
     *           payload you wish to construct the {@link Blob} with.

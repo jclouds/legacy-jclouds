@@ -24,10 +24,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
@@ -47,7 +48,7 @@ import com.google.inject.TypeLiteral;
 public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyncBlobStore> {
 
    private BlobRequestSigner signer;
-   private Factory blobFactory;
+   private Provider<BlobBuilder> blobFactory;
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
@@ -73,12 +74,8 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      Blob blob = blobFactory.create(null);
-      blob.getMetadata().setName("name");
-      blob.setPayload(new PhantomPayload());
-      blob.getPayload().getContentMetadata().setContentLength(2l);
-      blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
-      blob.getPayload().getContentMetadata().setContentType("text/plain");
+      Blob blob = blobFactory.get().name("name").forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 })
+               .contentType("text/plain").build();
 
       HttpRequest request = signer.signPutBlob("container", blob);
 
@@ -94,7 +91,7 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    @BeforeClass
    protected void setupFactory() throws IOException {
       super.setupFactory();
-      this.blobFactory = injector.getInstance(Blob.Factory.class);
+      this.blobFactory = injector.getProvider(BlobBuilder.class);
       this.signer = injector.getInstance(BlobRequestSigner.class);
    }
 

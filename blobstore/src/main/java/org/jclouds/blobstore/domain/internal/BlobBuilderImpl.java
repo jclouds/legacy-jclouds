@@ -38,6 +38,7 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.PhantomPayload;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -225,5 +226,15 @@ public class BlobBuilderImpl implements BlobBuilder {
          return this;
       }
 
+      @Override
+      public PayloadBlobBuilder forSigning() {
+         return builder.forSigning();
+      }
+
+   }
+
+   @Override
+   public PayloadBlobBuilder forSigning() {
+      return payload(new PhantomPayload());
    }
 }

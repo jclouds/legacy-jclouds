@@ -23,13 +23,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.BaseS3AsyncClientTest;
@@ -59,7 +60,7 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
    }
 
    private BlobRequestSigner signer;
-   private Factory blobFactory;
+   private Provider<BlobBuilder> blobFactory;
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
@@ -89,12 +90,8 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
 
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      Blob blob = blobFactory.create(null);
-      blob.getMetadata().setName("name");
-      blob.setPayload(new PhantomPayload());
-      blob.getPayload().getContentMetadata().setContentLength(2l);
-      blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
-      blob.getPayload().getContentMetadata().setContentType("text/plain");
+      Blob blob = blobFactory.get().name("name").forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 }).contentType(
+               "text/plain").build();
 
       HttpRequest request = signer.signPutBlob("container", blob);
 
@@ -111,7 +108,7 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
    @BeforeClass
    protected void setupFactory() throws IOException {
       super.setupFactory();
-      this.blobFactory = injector.getInstance(Blob.Factory.class);
+      this.blobFactory = injector.getProvider(BlobBuilder.class);
       this.signer = injector.getInstance(BlobRequestSigner.class);
    }
 
