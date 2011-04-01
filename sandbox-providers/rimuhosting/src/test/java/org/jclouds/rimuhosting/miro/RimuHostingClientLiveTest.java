@@ -92,7 +92,7 @@ public class RimuHostingClientLiveTest {
    public void testPricingPlans() {
       Set<? extends PricingPlan> plans = connection.getPricingPlanList();
       for (PricingPlan plan : plans) {
-         if (plan.getId().equalsIgnoreCase("miro1")) {
+         if (plan.getId().equalsIgnoreCase("MIRO4B")) {
             assertTrue(true);
             return;
          }

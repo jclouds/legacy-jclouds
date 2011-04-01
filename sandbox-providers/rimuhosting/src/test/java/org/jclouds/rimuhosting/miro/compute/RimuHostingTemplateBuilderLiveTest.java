@@ -19,11 +19,15 @@
 
 package org.jclouds.rimuhosting.miro.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.testng.Assert.assertEquals;
+
 import java.util.Set;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -46,12 +50,29 @@ public class RimuHostingTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return input.family != OsFamily.UBUNTU || //
-                     Float.parseFloat(input.version) > 10.04 || //
-                     (!(input.is64Bit) && Float.parseFloat(input.version) < 8.10);
+            switch (input.family) {
+               case UBUNTU:
+                  // support for all ubuntu w/empty version and 10.04 & 10.10
+                  return !(input.version.equals("") || input.version.startsWith("10."));
+               case CENTOS:
+                  return !input.version.equals("");
+               default:
+                  return true;
+            }
          }
 
       };
+   }
+
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
+      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO4B");
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override

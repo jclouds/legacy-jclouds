@@ -19,12 +19,7 @@
 
 package org.jclouds.rimuhosting.miro.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -42,17 +37,6 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Override
    public void setServiceDefaults() {
       group = "rimuhosting.jclouds";
-   }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
-      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO4B");
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override
