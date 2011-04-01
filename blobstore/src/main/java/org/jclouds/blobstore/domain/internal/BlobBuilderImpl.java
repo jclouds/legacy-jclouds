@@ -41,7 +41,6 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.PhantomPayload;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
@@ -70,8 +69,8 @@ public class BlobBuilderImpl implements BlobBuilder {
 
    @Override
    public BlobBuilder userMetadata(Map<String, String> userMetadata) {
-      if (userMetadata == null)
-         this.userMetadata = ImmutableMap.copyOf(userMetadata);
+      if (userMetadata != null)
+         this.userMetadata = Maps.newLinkedHashMap(userMetadata);
       return this;
    }
 
