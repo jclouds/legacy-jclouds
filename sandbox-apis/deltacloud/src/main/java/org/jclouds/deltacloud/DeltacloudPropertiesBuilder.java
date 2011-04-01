@@ -34,7 +34,7 @@ public class DeltacloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.1.2");
+      properties.setProperty(PROPERTY_API_VERSION, "0.3.0");
       return properties;
    }
 

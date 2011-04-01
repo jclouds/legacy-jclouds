@@ -49,25 +49,31 @@ public class DeltacloudErrorHandlerTest {
    @Test
    public void test400MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://deltacloud.com/foo"), 400, "", "Bad Request",
-            IllegalArgumentException.class);
+               IllegalArgumentException.class);
    }
 
    @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://deltacloud.com/foo"), 401, "", "Unauthorized",
-            AuthorizationException.class);
+               AuthorizationException.class);
    }
 
    @Test
    public void test404MakesResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://deltacloud.com/foo"), 404, "", "Not Found",
-            ResourceNotFoundException.class);
+               ResourceNotFoundException.class);
+   }
+
+   @Test
+   public void testItemNotFoundMakesResourceNotFoundException() {
+      assertCodeMakes("GET", URI.create("https://deltacloud.com/foo"), 500, "", "ItemNotFound",
+               ResourceNotFoundException.class);
    }
 
    @Test
    public void test405MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://deltacloud.com/foo"), 405, "", "Method Not Allowed",
-            IllegalArgumentException.class);
+               IllegalArgumentException.class);
    }
 
    @Test
@@ -76,19 +82,19 @@ public class DeltacloudErrorHandlerTest {
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-         Class<? extends Exception> expected) {
+            Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-         String content, Class<? extends Exception> expected) {
+            String content, Class<? extends Exception> expected) {
 
       DeltacloudErrorHandler function = Guice.createInjector().getInstance(DeltacloudErrorHandler.class);
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-            .toInputStream(content)));
+               .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

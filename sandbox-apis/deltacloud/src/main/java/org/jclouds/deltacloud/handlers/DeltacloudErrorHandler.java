@@ -50,28 +50,32 @@ public class DeltacloudErrorHandler implements HttpErrorHandler {
       // it is important to always read fully and close streams
       String message = parseMessage(response);
       Exception exception = message != null ? new HttpResponseException(command, response, message)
-            : new HttpResponseException(command, response);
+               : new HttpResponseException(command, response);
       try {
          message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-               response.getStatusLine());
-         switch (response.getStatusCode()) {
-         case 400:
-            exception = new IllegalArgumentException(message, exception);
-            break;
-         case 401:
-            exception = new AuthorizationException(message, exception);
-            break;
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               exception = new ResourceNotFoundException(message, exception);
+                  response.getStatusLine());
+         if (message.indexOf("ItemNotFound") != -1) {
+            exception = new ResourceNotFoundException(message, exception);
+         } else {
+            switch (response.getStatusCode()) {
+               case 400:
+                  exception = new IllegalArgumentException(message, exception);
+                  break;
+               case 401:
+                  exception = new AuthorizationException(message, exception);
+                  break;
+               case 404:
+                  if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                     exception = new ResourceNotFoundException(message, exception);
+                  }
+                  break;
+               case 405:
+                  exception = new IllegalArgumentException(message, exception);
+                  break;
+               case 409:
+                  exception = new IllegalStateException(message, exception);
+                  break;
             }
-            break;
-         case 405:
-            exception = new IllegalArgumentException(message, exception);
-            break;
-         case 409:
-            exception = new IllegalStateException(message, exception);
-            break;
          }
       } finally {
          if (response.getPayload() != null)
