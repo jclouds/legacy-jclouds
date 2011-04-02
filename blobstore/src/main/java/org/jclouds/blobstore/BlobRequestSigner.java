@@ -22,6 +22,7 @@ package org.jclouds.blobstore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.internal.RequestSigningUnsupported;
+import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.http.HttpRequest;
 
 import com.google.inject.ImplementedBy;
@@ -46,6 +47,12 @@ public interface BlobRequestSigner {
     *            if not supported by the provider
     */
    HttpRequest signGetBlob(String container, String name);
+
+   /**
+    * @param options
+    * @see #signGetBlob(String, String)
+    */
+   HttpRequest signGetBlob(String container, String name, GetOptions options);
 
    /**
     * gets a signed request, including headers as necessary, to delete a blob from an external

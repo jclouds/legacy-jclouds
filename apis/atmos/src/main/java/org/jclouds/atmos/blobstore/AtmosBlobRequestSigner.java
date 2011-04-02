@@ -32,6 +32,7 @@ import org.jclouds.atmos.blobstore.functions.BlobToObject;
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -44,19 +45,21 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final RestAnnotationProcessor<AtmosAsyncClient> processor;
    private final BlobToObject blobToObject;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
+
    private final Method getMethod;
    private final Method deleteMethod;
    private final Method createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor<AtmosAsyncClient> processor, BlobToObject blobToObject)
-            throws SecurityException, NoSuchMethodException {
+   public AtmosBlobRequestSigner(RestAnnotationProcessor<AtmosAsyncClient> processor, BlobToObject blobToObject,
+            BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
+      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.getMethod = AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class);
       this.deleteMethod = AtmosAsyncClient.class.getMethod("deletePath", String.class);
       this.createMethod = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class);
-
    }
 
    @Override
@@ -76,6 +79,12 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
 
    private String getPath(String container, String name) {
       return checkNotNull(container, "container") + "/" + checkNotNull(name, "name");
+   }
+
+   @Override
+   public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
+      return cleanRequest(processor.createRequest(getMethod, getPath(container, name), blob2ObjectGetOptions
+               .apply(options)));
    }
 
 }
