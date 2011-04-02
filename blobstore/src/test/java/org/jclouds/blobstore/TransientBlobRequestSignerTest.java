@@ -77,6 +77,8 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
       Blob blob = blobFactory.get().name("name").forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 })
                .contentType("text/plain").build();
 
+      assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), new byte[] { 0, 2, 4, 8 });
+
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request, "PUT http://localhost/container/name HTTP/1.1");
@@ -84,6 +86,25 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
+
+      assertEquals(request.getFilters().size(), 0);
+   }
+
+   public void testSignPutBlobWithGenerate() throws ArrayIndexOutOfBoundsException, SecurityException,
+            IllegalArgumentException, NoSuchMethodException, IOException {
+      Blob blob = blobFactory.get().name("name").payload("foo").calculateMD5().contentType("text/plain").build();
+
+      assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), new byte[] { -84, -67, 24, -37, 76, -62, -8,
+               92, -19, -17, 101, 79, -52, -60, -92, -40 });
+
+      HttpRequest request = signer.signPutBlob("container", blob);
+
+      assertRequestLineEquals(request, "PUT http://localhost/container/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(
+               request,
+               "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 3\nContent-MD5: rL0Y20zC+Fzt72VPzMSk2A==\nContent-Type: text/plain\n");
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 3l, new byte[] { -84, -67, 24, -37, 76,
+               -62, -8, 92, -19, -17, 101, 79, -52, -60, -92, -40 });
 
       assertEquals(request.getFilters().size(), 0);
    }
