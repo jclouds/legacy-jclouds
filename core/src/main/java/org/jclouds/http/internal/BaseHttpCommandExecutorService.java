@@ -205,7 +205,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
       @Override
       public String toString() {
-         return "[command=" + command + "]";
+         return command.toString();
       }
 
    }
