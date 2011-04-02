@@ -29,16 +29,16 @@ import java.util.List;
 
 /**
  * Contains options supported for HTTP GET operations. <h2>
- * Usage</h2> The recommended way to instantiate a GetObjectOptions object is to statically import
- * GetObjectOptions.Builder.* and invoke a static creation method followed by an instance mutator
- * (if needed):
+ * Usage</h2> The recommended way to instantiate a {@link GetOptions} object is to statically import
+ * GetOptions.Builder.* and invoke a static creation method followed by an instance mutator (if
+ * needed):
  * <p/>
  * <code>
- * import static org.jclouds.http.options.GetOptions.Builder.*
+ * import static org.jclouds.blobstore.options.GetOptions.Builder.*
  * 
  * 
- * // this will get the first megabyte of an object, provided it wasn't modified since yesterday
- * Future<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
+ * // this will get the first megabyte of an blob, provided it wasn't modified since yesterday
+ * blob = blobStore.getBlob("container, "blobName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
  * <code>
  * 
  * @author Adrian Cole
@@ -275,8 +275,8 @@ public class GetOptions {
 
    @Override
    public String toString() {
-      return "[ranges=" + ranges + ", ifModifiedSince=" + ifModifiedSince + ", ifUnmodifiedSince="
-            + ifUnmodifiedSince + ", ifMatch=" + ifMatch + ", ifNoneMatch=" + ifNoneMatch + "]";
+      return "[ranges=" + ranges + ", ifModifiedSince=" + ifModifiedSince + ", ifUnmodifiedSince=" + ifUnmodifiedSince
+               + ", ifMatch=" + ifMatch + ", ifNoneMatch=" + ifNoneMatch + "]";
    }
 
 }
