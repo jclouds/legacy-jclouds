@@ -146,6 +146,40 @@
       (is (= "f" (first (.get (.getHeaders request) "Content-Disposition"))))
       (is (= "g" (first (.get (.getHeaders request) "Content-Encoding")))))))
 
+(deftest sign-get-test
+  (let [request (sign-get "container" "path")]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "GET" (.getMethod request)))))
+
+(deftest sign-put-test
+  (let [request (sign-put "container"
+                          (blob2 "path" {:content-length 10}))]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+    (is (nil?
+         (first (.get (.getHeaders request) "Content-Type"))))))
+
+(deftest sign-put-with-headers-test
+  (let [request (sign-put
+                 "container"
+                 (blob2 "path" {:content-length 10
+                                :content-type "x"
+                                :content-language "en"
+                                :content-disposition "f"
+                                :content-encoding "g"}))]
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+    (is (= "x" (first (.get (.getHeaders request) "Content-Type"))))
+    (is (= "en" (first (.get (.getHeaders request) "Content-Language"))))
+    (is (= "f" (first (.get (.getHeaders request) "Content-Disposition"))))
+    (is (= "g" (first (.get (.getHeaders request) "Content-Encoding"))))))
+
+(deftest sign-delete-test
+  (let [request (sign-delete "container" "path")]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "DELETE" (.getMethod request)))))
+
 ;; TODO: more tests involving blob-specific functions
 
 (deftest corruption-hunt

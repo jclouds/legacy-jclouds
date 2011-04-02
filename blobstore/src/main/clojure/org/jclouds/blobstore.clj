@@ -44,9 +44,9 @@ See http://code.google.com/p/jclouds for details."
   (:import [java.io File FileOutputStream OutputStream]
            java.util.Properties
            [org.jclouds.blobstore
-            AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
-            domain.BlobMetadata domain.StorageMetadata domain.Blob
-            options.ListContainerOptions]
+            AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
+            BlobStoreContextFactory domain.BlobMetadata domain.StorageMetadata
+            domain.Blob options.ListContainerOptions]
            org.jclouds.io.Payloads
            org.jclouds.io.payloads.PhantomPayload
            java.util.Arrays
@@ -267,6 +267,7 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
    :put. For :put requests, :content-length must be specified. Optionally,
    :content-type, :content-disposition, :content-language, :content-encoding
     and :content-md5  may be given."
+  {:deprecated "1.0-beta-10"}
   ([container-name path]
      (sign-blob-request container-name path {:method :get} *blobstore*))
   ([container-name path
@@ -298,6 +299,33 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
                     (.setContentEncoding content-encoding)
                     (.setContentLanguage content-language))
                   payload)))))))
+
+(defn sign-get
+  "Get a signed http GET request for manipulating a blob in another
+   application, Ex. curl."
+  ([container-name name]
+     (sign-get container-name name *blobstore*))
+  ([container-name name ^BlobStore blobstore]
+      (.signGetBlob (.. blobstore getContext getSigner) container-name name)))
+
+(defn sign-put
+  "Get a signed http PUT request for manipulating a blob in another
+   application, Ex. curl. A Blob with at least the name and content-length
+   must be given."
+  ([container-name blob]
+     (sign-put container-name blob *blobstore*))
+  ([container-name ^Blob blob ^BlobStore blobstore]
+      (.signPutBlob (.. blobstore getContext getSigner)
+                    container-name
+                    blob)))
+
+(defn sign-delete
+  "Get a signed http DELETE request for manipulating a blob in another
+   applicaiton, Ex. curl."
+  ([container-name name]
+     (sign-delete container-name name *blobstore*))
+  ([container-name name ^BlobStore blobstore]
+     (.signRemoveBlob (.. blobstore getContext getSigner) container-name name)))
 
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
@@ -340,21 +368,46 @@ example:
             (.inDirectory (new ListContainerOptions) dir))))
 (defn blob
   "create a new blob with the specified payload"
+  {:deprecated "1.0-beta-10"}
     ([#^String name payload]
      (blob name payload *blobstore*))
     ([#^String name payload #^BlobStore blobstore]
       (doto (.newBlob blobstore name)
                  (.setPayload payload))))
 
+(defn blob2
+  "Create a new blob with the specified payload and options."
+  ([^String name option-map]
+     (blob2 name option-map *blobstore*))
+  ([^String name
+    {:keys [payload content-type content-length content-md5
+            content-disposition content-encoding content-language metadata]
+     :or {for-signing false}}
+    ^BlobStore blobstore]
+     (let [blob-builder (if payload
+                          (.payload (.blobBuilder blobstore name) payload)
+                          (.forSigning (.blobBuilder blobstore name)))
+           blob-builder (if content-length ;; Special case, arg is prim.
+                          (.contentLength blob-builder content-length)
+                          blob-builder)]
+       (doto blob-builder
+         (.contentType content-type)
+         (.contentMD5 content-md5)
+         (.contentDisposition content-disposition)
+         (.contentEncoding content-encoding)
+         (.contentLanguage content-language)
+         (.userMetadata metadata))
+       (.build blob-builder))))
+
 (defn md5-blob
   "add a content md5 to a blob, or make a new blob that has an md5.
 note that this implies rebuffering, if the blob's payload isn't repeatable"
-    ([#^Blob blob]
-      (Payloads/calculateMD5 blob))
-    ([#^String name payload]
-     (blob name payload *blobstore*))
-    ([#^String name payload #^BlobStore blobstore]
-     (md5-blob (blob name payload blobstore))))
+  ([#^Blob blob]
+     (Payloads/calculateMD5 blob))
+  ([#^String name payload]
+     (blob2 name {:payload payload} *blobstore*))
+  ([#^String name payload #^BlobStore blobstore]
+     (md5-blob (blob2 name {:payload payload} blobstore))))
 
 (defn upload-blob
   "Create anrepresenting text data:
