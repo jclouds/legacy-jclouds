@@ -19,6 +19,8 @@
 
 package org.jclouds.deltacloud.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -26,8 +28,10 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceAction;
-import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.deltacloud.domain.KeyAuthentication;
+import org.jclouds.deltacloud.domain.PasswordAuthentication;
+import org.jclouds.deltacloud.domain.Instance.Authentication;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -54,8 +58,8 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
    private URI image;
    private URI hardwareProfile;
    private URI realm;
-   private InstanceState state;
-   private Map<InstanceAction, HttpRequest> actions = Maps.newLinkedHashMap();
+   private Instance.State state;
+   private Map<Instance.Action, HttpRequest> actions = Maps.newLinkedHashMap();
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
 
@@ -63,6 +67,10 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
    private boolean inPrivateAddresses;
 
    private Instance instance;
+
+   private Credentials.Builder<Credentials> credentialsBuilder = new Credentials.Builder<Credentials>();
+   private String keyName;
+   private Authentication authentication;
 
    public Instance getResult() {
       return instance;
@@ -83,10 +91,10 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
          this.id = attributes.get("id");
       } else if (qName.equals("link")) {
          try {
-            InstanceAction action = InstanceAction.fromValue(attributes.get("rel"));
-            if (action != InstanceAction.UNRECOGNIZED) {
+            Instance.Action action = Instance.Action.fromValue(attributes.get("rel"));
+            if (action != Instance.Action.UNRECOGNIZED) {
                HttpRequest request = new HttpRequest(attributes.get("method").toUpperCase(), URI.create(attributes
-                     .get("href")));
+                        .get("href")));
                actions.put(action, request);
             }
          } catch (RuntimeException e) {
@@ -112,19 +120,35 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
          inPrivateAddresses = false;
       }
       if (qName.equalsIgnoreCase("owner_id")) {
-         this.ownerId = currentText.toString().trim();
+         this.ownerId = currentOrNull(currentText);
       } else if (qName.equalsIgnoreCase("name")) {
-         this.name = currentText.toString().trim();
+         this.name = currentOrNull(currentText);
+      } else if (qName.equalsIgnoreCase("keyname")) {
+         this.keyName = currentOrNull(currentText);
+      } else if (qName.equalsIgnoreCase("username")) {
+         this.credentialsBuilder.identity(currentOrNull(currentText));
+      } else if (qName.equalsIgnoreCase("password")) {
+         this.credentialsBuilder.credential(currentOrNull(currentText));
+      } else if (qName.equalsIgnoreCase("authentication")) {
+         if (keyName != null) {
+            this.authentication = new KeyAuthentication(keyName);
+         } else {
+            Credentials creds = credentialsBuilder.build();
+            if (creds.identity != null)
+               this.authentication = new PasswordAuthentication(creds);
+         }
+         this.keyName = null;
+         this.credentialsBuilder = new Credentials.Builder<Credentials>();
       } else if (qName.equalsIgnoreCase("state")) {
-         this.state = InstanceState.fromValue(currentText.toString().trim());
+         this.state = Instance.State.fromValue(currentOrNull(currentText));
       } else if (qName.equalsIgnoreCase("address")) {
          if (inPublicAddresses)
-            this.publicAddresses.add(currentText.toString().trim());
+            this.publicAddresses.add(currentOrNull(currentText));
          else if (inPrivateAddresses)
-            this.privateAddresses.add(currentText.toString().trim());
+            this.privateAddresses.add(currentOrNull(currentText));
       } else if (qName.equalsIgnoreCase("instance")) {
          this.instance = new Instance(href, id, ownerId, name, image, hardwareProfile, realm, state, actions,
-               publicAddresses, privateAddresses);
+                  authentication, publicAddresses, privateAddresses);
          this.href = null;
          this.id = null;
          this.ownerId = null;
@@ -133,6 +157,7 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
          this.hardwareProfile = null;
          this.realm = null;
          this.state = null;
+         this.authentication = null;
          this.actions = Maps.newLinkedHashMap();
          this.publicAddresses = Sets.newLinkedHashSet();
          this.privateAddresses = Sets.newLinkedHashSet();

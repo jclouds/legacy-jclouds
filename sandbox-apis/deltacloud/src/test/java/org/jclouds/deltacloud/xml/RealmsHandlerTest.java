@@ -26,7 +26,6 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.deltacloud.domain.Realm;
-import org.jclouds.deltacloud.domain.RealmState;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -44,10 +43,10 @@ public class RealmsHandlerTest extends BaseHandlerTest {
    @Test
    public void test() {
       InputStream is = getClass().getResourceAsStream("/test_list_realms.xml");
-      Set<? extends Realm> expects = ImmutableSet.of(
-            new Realm(URI.create("http://fancycloudprovider.com/api/realms/us"), "us", "United States", null,
-                  RealmState.AVAILABLE), new Realm(URI.create("http://fancycloudprovider.com/api/realms/eu"), "eu",
-                  "Europe", null, RealmState.AVAILABLE));
+      Set<? extends Realm> expects = ImmutableSet.of(new Realm(URI
+               .create("http://fancycloudprovider.com/api/realms/us"), "us", "United States", null,
+               Realm.State.AVAILABLE), new Realm(URI.create("http://fancycloudprovider.com/api/realms/eu"), "eu",
+               "Europe", null, Realm.State.AVAILABLE));
       assertEquals(factory.create(injector.getInstance(RealmsHandler.class)).parse(is), expects);
    }
 }

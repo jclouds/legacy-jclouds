@@ -26,8 +26,6 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceAction;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -48,15 +46,15 @@ public class InstancesHandlerTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/test_list_instances.xml");
       Set<? extends Instance> expects = ImmutableSet.of(new Instance(URI
-            .create("http://fancycloudprovider.com/api/instances/inst1"), "inst1", "larry",
-            "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"), URI
-                  .create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"), URI
-                  .create("http://fancycloudprovider.com/api/realms/us"), InstanceState.RUNNING, ImmutableMap.of(
-                  InstanceAction.REBOOT,
-                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
-                  InstanceAction.STOP,
-                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/stop"))),
-            ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet.of("inst1.larry.internal")));
-      assertEquals(factory.create(injector.getInstance(InstancesHandler.class)).parse(is), expects);
+               .create("http://fancycloudprovider.com/api/instances/inst1"), "inst1", "larry",
+               "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"), URI
+                        .create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"), URI
+                        .create("http://fancycloudprovider.com/api/realms/us"), Instance.State.RUNNING, ImmutableMap
+                        .of(Instance.Action.REBOOT, new HttpRequest("POST", URI
+                                 .create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
+                                 Instance.Action.STOP, new HttpRequest("POST", URI
+                                          .create("http://fancycloudprovider.com/api/instances/inst1/stop"))), null,
+               ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet.of("inst1.larry.internal")));
+      assertEquals(factory.create(injector.getInstance(InstancesHandler.class)).parse(is).toString(), expects.toString());
    }
 }

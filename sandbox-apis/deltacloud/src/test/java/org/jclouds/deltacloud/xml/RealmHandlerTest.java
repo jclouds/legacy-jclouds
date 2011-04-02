@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.deltacloud.domain.Realm;
-import org.jclouds.deltacloud.domain.RealmState;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.Test;
@@ -44,7 +43,7 @@ public class RealmHandlerTest {
    static ParseSax<Realm> createParser() {
       Injector injector = Guice.createInjector(new SaxParserModule());
       ParseSax<Realm> parser = injector.getInstance(ParseSax.Factory.class).create(
-            injector.getInstance(RealmHandler.class));
+               injector.getInstance(RealmHandler.class));
       return parser;
    }
 
@@ -59,7 +58,7 @@ public class RealmHandlerTest {
 
    public void test() {
       Realm expects = new Realm(URI.create("http://fancycloudprovider.com/api/realms/us"), "us", "United States", null,
-            RealmState.AVAILABLE);
+               Realm.State.AVAILABLE);
       assertEquals(parseRealm(), expects);
    }
 

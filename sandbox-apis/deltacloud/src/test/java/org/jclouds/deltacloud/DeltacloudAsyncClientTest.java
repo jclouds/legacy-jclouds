@@ -234,7 +234,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testCreateInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
-            CreateInstanceOptions[].class);
+               CreateInstanceOptions[].class);
       GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1");
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
@@ -251,9 +251,9 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testCreateInstanceWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
-            CreateInstanceOptions[].class);
+               CreateInstanceOptions[].class);
       GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1",
-            CreateInstanceOptions.Builder.named("foo"));
+               CreateInstanceOptions.Builder.named("foo"));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\n");
@@ -269,8 +269,8 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testPerformAction() throws IOException, SecurityException, NoSuchMethodException {
       Method method = DeltacloudAsyncClient.class.getMethod("performAction", HttpRequest.class);
-      HttpRequest request = processor.createRequest(method,
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://delta/instance1/reboot")).build());
+      HttpRequest request = processor.createRequest(method, HttpRequest.builder().method("POST").endpoint(
+               URI.create("https://delta/instance1/reboot")).build());
 
       assertRequestLineEquals(request, "POST https://delta/instance1/reboot HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");

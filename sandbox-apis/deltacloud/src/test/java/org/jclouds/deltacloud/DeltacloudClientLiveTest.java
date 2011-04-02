@@ -25,9 +25,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceAction;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
@@ -37,6 +36,7 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
@@ -54,8 +54,14 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
 
    public void testCreateInstance() throws Exception {
       Logger.getAnonymousLogger().info("starting instance");
-      instance = client.createInstance(Iterables.get(client.listImages(), 0).getId(),
-            CreateInstanceOptions.Builder.named(prefix));
+      instance = client.createInstance(Iterables.find(client.listImages(), new Predicate<Image>() {
+
+         @Override
+         public boolean apply(Image input) {
+            return input.getDescription().toLowerCase().indexOf("fedora") != -1;
+         }
+
+      }).getId(), CreateInstanceOptions.Builder.named(prefix));
       instance = client.getInstance(instance.getHref());
       checkStartedInstance();
 
@@ -71,7 +77,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    protected void checkStartedInstance() {
       System.out.println(new Gson().toJson(instance));
       assertEquals(instance.getName(), prefix);
-      assertEquals(instance.getState(), InstanceState.RUNNING);
+      assertEquals(instance.getState(), Instance.State.RUNNING);
    }
 
    @Test(dependsOnMethods = "testCreateInstance")
@@ -88,37 +94,37 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
       return null;
    }
 
-   public HttpRequest refreshInstanceAndGetAction(InstanceAction action) {
+   public HttpRequest refreshInstanceAndGetAction(Instance.Action action) {
       return client.getInstance(instance.getHref()).getActions().get(action);
    }
 
    @Test(dependsOnMethods = "testConnectivity")
-   public void testLifeCycle() throws Exception {
-      client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
-      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+   public void testLifeCycle() {
+      client.performAction(refreshInstanceAndGetAction(Instance.Action.STOP));
+      assertEquals(client.getInstance(instance.getHref()).getState(), Instance.State.STOPPED);
 
-      client.performAction(refreshInstanceAndGetAction(InstanceAction.START));
-      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.RUNNING);
+      client.performAction(refreshInstanceAndGetAction(Instance.Action.START));
+      assertEquals(client.getInstance(instance.getHref()).getState(), Instance.State.RUNNING);
 
-      client.performAction(refreshInstanceAndGetAction(InstanceAction.REBOOT));
-      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.RUNNING);
+      client.performAction(refreshInstanceAndGetAction(Instance.Action.REBOOT));
+      assertEquals(client.getInstance(instance.getHref()).getState(), Instance.State.RUNNING);
 
    }
 
    @Test(dependsOnMethods = "testLifeCycle")
-   public void testDestroyInstance() throws Exception {
+   public void testDestroyInstance() {
       try {
-         client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
-         assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+         client.performAction(refreshInstanceAndGetAction(Instance.Action.STOP));
+         assertEquals(client.getInstance(instance.getHref()).getState(), Instance.State.STOPPED);
       } catch (IllegalArgumentException e) {
       }
-      client.performAction(refreshInstanceAndGetAction(InstanceAction.DESTROY));
+      client.performAction(refreshInstanceAndGetAction(Instance.Action.DESTROY));
       assertEquals(client.getInstance(instance.getHref()), null);
    }
 
    protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
-      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
-            .create(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
+      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class).create(
+               new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -137,7 +143,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    protected void tearDown() {
       try {
          testDestroyInstance();
-      } catch (Exception e) {
+      } catch (NullPointerException e) {
          // no need to check null or anything as we swallow all
       }
       super.tearDown();

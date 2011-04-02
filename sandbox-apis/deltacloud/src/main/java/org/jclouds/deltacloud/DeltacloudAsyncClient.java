@@ -37,9 +37,9 @@ import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.functions.ReturnVoidOnRedirectedDelete;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
@@ -93,7 +93,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(InstanceStates.class)
    @ExceptionParser(ReturnEmptyMultimapOnNotFoundOr404.class)
    @XMLResponseParser(InstanceStatesHandler.class)
-   ListenableFuture<? extends Multimap<InstanceState, ? extends Transition>> getInstanceStates();
+   ListenableFuture<? extends Multimap<State, ? extends Transition>> getInstanceStates();
 
    /**
     * @see DeltacloudClient#listRealms

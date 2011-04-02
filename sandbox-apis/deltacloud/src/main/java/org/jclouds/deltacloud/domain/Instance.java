@@ -38,6 +38,83 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class Instance {
+   public static interface Authentication {
+
+   }
+
+   public static enum State {
+      /**
+       * initial state, before instance is created.
+       */
+      START,
+      /**
+       * the instance is in the process of being launched
+       */
+      PENDING,
+      /**
+       * the instance launched (although the boot process might not be completed)
+       */
+      RUNNING,
+      /**
+       * the instance is shutting down
+       */
+      SHUTTING_DOWN,
+      /**
+       * the instance is stopped
+       */
+      STOPPED,
+      /**
+       * the instance is terminated
+       */
+      FINISH,
+      /**
+       * state returned as something besides the above.
+       */
+      UNRECOGNIZED;
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(checkNotNull(state, "state").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+
+   public static enum Action {
+
+      CREATE,
+
+      RUN,
+
+      REBOOT,
+
+      START,
+
+      STOP,
+
+      DESTROY,
+
+      UNRECOGNIZED;
+
+      public String value() {
+         return name().toLowerCase();
+      }
+
+      @Override
+      public String toString() {
+         return value();
+      }
+
+      public static Action fromValue(String action) {
+         try {
+            return valueOf(checkNotNull(action, "action").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+
    private final URI href;
    private final String id;
    private final String ownerId;
@@ -46,14 +123,16 @@ public class Instance {
    private final URI image;
    private final URI hardwareProfile;
    private final URI realm;
-   private final InstanceState state;
-   private final Map<InstanceAction, HttpRequest> actions;
+   private final State state;
+   private final Map<Action, HttpRequest> actions;
+   @Nullable
+   private final Authentication authentication;
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
 
    public Instance(URI href, String id, String ownerId, @Nullable String name, URI image, URI hardwareProfile,
-         URI realm, InstanceState state, Map<InstanceAction, HttpRequest> actions, Set<String> publicAddresses,
-         Set<String> privateAddresses) {
+            URI realm, State state, Map<Action, HttpRequest> actions, @Nullable Authentication authentication,
+            Set<String> publicAddresses, Set<String> privateAddresses) {
       this.href = checkNotNull(href, "href");
       this.id = checkNotNull(id, "id");
       this.ownerId = checkNotNull(ownerId, "ownerId");
@@ -63,6 +142,7 @@ public class Instance {
       this.realm = checkNotNull(realm, "realm");
       this.state = checkNotNull(state, "state");
       this.actions = ImmutableMap.copyOf(checkNotNull(actions, "actions"));
+      this.authentication = authentication;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
    }
@@ -128,7 +208,7 @@ public class Instance {
     * 
     * @return indicator of the instance's current state
     */
-   public InstanceState getState() {
+   public State getState() {
       return state;
    }
 
@@ -137,8 +217,17 @@ public class Instance {
     * @return valid actions for the instance, along with the URL which may be used to perform the
     *         action
     */
-   public Map<InstanceAction, HttpRequest> getActions() {
+   public Map<Action, HttpRequest> getActions() {
       return actions;
+   }
+
+   /**
+    * 
+    * @return authentication of the instance or null
+    */
+   @Nullable
+   public Authentication getAuthentication() {
+      return authentication;
    }
 
    /**
@@ -161,16 +250,7 @@ public class Instance {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((actions == null) ? 0 : actions.hashCode());
-      result = prime * result + ((hardwareProfile == null) ? 0 : hardwareProfile.hashCode());
       result = prime * result + ((href == null) ? 0 : href.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((image == null) ? 0 : image.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
-      result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
-      result = prime * result + ((realm == null) ? 0 : realm.hashCode());
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
       return result;
    }
 
@@ -183,61 +263,21 @@ public class Instance {
       if (getClass() != obj.getClass())
          return false;
       Instance other = (Instance) obj;
-      if (actions == null) {
-         if (other.actions != null)
-            return false;
-      } else if (!actions.equals(other.actions))
-         return false;
-      if (hardwareProfile == null) {
-         if (other.hardwareProfile != null)
-            return false;
-      } else if (!hardwareProfile.equals(other.hardwareProfile))
-         return false;
       if (href == null) {
          if (other.href != null)
             return false;
       } else if (!href.equals(other.href))
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (image == null) {
-         if (other.image != null)
-            return false;
-      } else if (!image.equals(other.image))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (privateAddresses == null) {
-         if (other.privateAddresses != null)
-            return false;
-      } else if (!privateAddresses.equals(other.privateAddresses))
-         return false;
-      if (publicAddresses == null) {
-         if (other.publicAddresses != null)
-            return false;
-      } else if (!publicAddresses.equals(other.publicAddresses))
-         return false;
-      if (realm == null) {
-         if (other.realm != null)
-            return false;
-      } else if (!realm.equals(other.realm))
-         return false;
-      if (state != other.state)
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[href=" + href + ", id=" + id + ", name=" + name + ", image=" + image + ", hardwareProfile="
-            + hardwareProfile + ", realm=" + realm + ", state=" + state + ", actions=" + actions + ", publicAddresses="
-            + publicAddresses + ", privateAddresses=" + privateAddresses + "]";
+      return String
+               .format(
+                        "[id=%s, href=%s, image=%s, name=%s, state=%s, realm=%s, ownerId=%s, hardwareProfile=%s, actions=%s, authentication=%s, privateAddresses=%s, publicAddresses=%s]",
+                        id, href, image, name, state, realm, ownerId, hardwareProfile, actions, authentication,
+                        privateAddresses, publicAddresses);
    }
 
 }

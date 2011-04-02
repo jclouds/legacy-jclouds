@@ -23,11 +23,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.deltacloud.domain.InstanceAction;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
+import org.jclouds.deltacloud.domain.Instance.Action;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -35,26 +35,25 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Tests behavior of {@code InstanceStatesHandler}
+ * Tests behavior of {@code StatesHandler}
  * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "InstanceStatesHandlerTest")
+@Test(groups = "unit", testName = "StatesHandlerTest")
 public class InstanceStatesHandlerTest extends BaseHandlerTest {
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/test_get_states.xml");
-      Multimap<InstanceState, ? extends Transition> expects = ImmutableMultimap
-            .<InstanceState, Transition> builder()
-            .put(InstanceState.START, new TransitionOnAction(InstanceAction.CREATE, InstanceState.PENDING))
-            .put(InstanceState.PENDING, new TransitionAutomatically(InstanceState.RUNNING))
-            .putAll(InstanceState.RUNNING, new TransitionOnAction(InstanceAction.REBOOT, InstanceState.RUNNING),
-                  new TransitionOnAction(InstanceAction.STOP, InstanceState.STOPPED))
-            .putAll(InstanceState.STOPPED, new TransitionOnAction(InstanceAction.START, InstanceState.RUNNING),
-                  new TransitionOnAction(InstanceAction.DESTROY, InstanceState.FINISH)).build();
-      assertEquals(factory.create(injector.getInstance(InstanceStatesHandler.class)).parse(is).entries(),
-            expects.entries());
+      Multimap<State, ? extends Transition> expects = ImmutableMultimap.<State, Transition> builder().put(State.START,
+               new TransitionOnAction(Action.CREATE, State.PENDING)).put(State.PENDING,
+               new TransitionAutomatically(State.RUNNING))
+               .putAll(State.RUNNING, new TransitionOnAction(Action.REBOOT, State.RUNNING),
+                        new TransitionOnAction(Action.STOP, State.STOPPED)).putAll(State.STOPPED,
+                        new TransitionOnAction(Action.START, State.RUNNING),
+                        new TransitionOnAction(Action.DESTROY, State.FINISH)).build();
+      assertEquals(factory.create(injector.getInstance(InstanceStatesHandler.class)).parse(is).entries(), expects
+               .entries());
 
    }
 }

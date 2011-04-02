@@ -36,14 +36,39 @@ import javax.annotation.Nullable;
  * @author Adrian Cole
  */
 public class Realm {
+   public enum State {
+
+      /**
+       * the realm is available
+       */
+      AVAILABLE,
+
+      /**
+       * the realm is unavailable
+       */
+      UNAVAILABLE,
+
+      /**
+       * state returned as something besides the above.
+       */
+      UNRECOGNIZED;
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(checkNotNull(state, "state"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
    private final URI href;
    private final String id;
    @Nullable
    private final String limit;
    private final String name;
-   private final RealmState state;
+   private final State state;
 
-   public Realm(URI href, String id, String name, @Nullable String limit, RealmState state) {
+   public Realm(URI href, String id, String name, @Nullable String limit, State state) {
       this.href = checkNotNull(href, "href");
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
@@ -90,7 +115,7 @@ public class Realm {
     * 
     * @return indicator of the realm's current state
     */
-   public RealmState getState() {
+   public State getState() {
       return state;
    }
 

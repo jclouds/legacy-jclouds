@@ -26,19 +26,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public class TransitionOnAction implements Transition {
-   private final InstanceAction action;
-   private final InstanceState to;
+   private final Instance.Action action;
+   private final Instance.State to;
 
-   public TransitionOnAction(InstanceAction action, InstanceState to) {
+   public TransitionOnAction(Instance.Action action, Instance.State to) {
       this.to = checkNotNull(to, "to");
       this.action = checkNotNull(action, "action");
    }
 
-   public InstanceState getTo() {
+   public Instance.State getTo() {
       return to;
    }
 
-   public InstanceAction getAction() {
+   public Instance.Action getAction() {
       return action;
    }
 

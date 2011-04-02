@@ -26,13 +26,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public class TransitionAutomatically implements Transition {
-   private final InstanceState to;
+   private final Instance.State to;
 
-   public TransitionAutomatically(InstanceState to) {
+   public TransitionAutomatically(Instance.State to) {
       this.to = checkNotNull(to, "to");
    }
 
-   public InstanceState getTo() {
+   public Instance.State getTo() {
       return to;
    }
 

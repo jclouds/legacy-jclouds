@@ -28,9 +28,9 @@ import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.http.HttpRequest;
 
@@ -58,7 +58,7 @@ public interface DeltacloudClient {
     * 
     * @return The possible states of an instance, and how to traverse between them
     */
-   Multimap<InstanceState, ? extends Transition> getInstanceStates();
+   Multimap<State, ? extends Transition> getInstanceStates();
 
    /**
     * The realms collection will return a set of all realms available to the current user.

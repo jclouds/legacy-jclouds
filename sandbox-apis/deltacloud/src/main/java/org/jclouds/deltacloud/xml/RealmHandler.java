@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.deltacloud.domain.Realm;
-import org.jclouds.deltacloud.domain.RealmState;
+import org.jclouds.deltacloud.domain.Realm.State;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
@@ -39,7 +39,7 @@ public class RealmHandler extends ParseSax.HandlerWithResult<Realm> {
    private String id;
    private String name;
    private String limit;
-   private RealmState state;
+   private State state;
 
    private Realm realm;
 
@@ -65,7 +65,7 @@ public class RealmHandler extends ParseSax.HandlerWithResult<Realm> {
       } else if (qName.equalsIgnoreCase("name")) {
          this.name = currentText.toString().trim();
       } else if (qName.equalsIgnoreCase("state")) {
-         this.state = RealmState.fromValue(currentText.toString().trim());
+         this.state = State.fromValue(currentText.toString().trim());
       } else if (qName.equalsIgnoreCase("realm")) {
          this.realm = new Realm(href, id, name, limit, state);
          this.href = null;

@@ -24,5 +24,5 @@ package org.jclouds.deltacloud.domain;
  * @author Adrian Cole
  */
 public interface Transition {
-   InstanceState getTo();
+   Instance.State getTo();
 }

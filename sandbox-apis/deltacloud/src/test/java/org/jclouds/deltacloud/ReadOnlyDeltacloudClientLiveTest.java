@@ -32,7 +32,6 @@ import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -57,7 +56,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName ="ReadOnlyDeltacloudClientLiveTest")
+@Test(groups = "live", sequential = true, testName = "ReadOnlyDeltacloudClientLiveTest")
 public class ReadOnlyDeltacloudClientLiveTest {
 
    protected DeltacloudClient client;
@@ -96,7 +95,7 @@ public class ReadOnlyDeltacloudClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+               overrides);
 
       client = context.getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
@@ -110,20 +109,20 @@ public class ReadOnlyDeltacloudClientLiveTest {
 
    @Test
    public void testGetInstanceStatesCanGoFromStartToFinish() throws Exception {
-      Multimap<InstanceState, ? extends Transition> states = client.getInstanceStates();
+      Multimap<Instance.State, ? extends Transition> states = client.getInstanceStates();
       assertNotNull(states);
-      Iterable<Transition> toFinishFromStart = findChainTo(InstanceState.FINISH, InstanceState.START, states);
+      Iterable<Transition> toFinishFromStart = findChainTo(Instance.State.FINISH, Instance.State.START, states);
       assert Iterables.size(toFinishFromStart) > 0 : toFinishFromStart;
-      Iterable<Transition> toRunningFromStart = findChainTo(InstanceState.RUNNING, InstanceState.START, states);
+      Iterable<Transition> toRunningFromStart = findChainTo(Instance.State.RUNNING, Instance.State.START, states);
       assert Iterables.size(toRunningFromStart) > 0 : toRunningFromStart;
-      Iterable<Transition> toFinishFromRunning = findChainTo(InstanceState.FINISH, InstanceState.RUNNING, states);
+      Iterable<Transition> toFinishFromRunning = findChainTo(Instance.State.FINISH, Instance.State.RUNNING, states);
       assert Iterables.size(toFinishFromRunning) > 0 : toFinishFromRunning;
-      assertEquals(ImmutableList.copyOf(Iterables.concat(toRunningFromStart, toFinishFromRunning)),
-            ImmutableList.copyOf(toFinishFromStart));
+      assertEquals(ImmutableList.copyOf(Iterables.concat(toRunningFromStart, toFinishFromRunning)), ImmutableList
+               .copyOf(toFinishFromStart));
    }
 
-   Iterable<Transition> findChainTo(InstanceState desired, InstanceState currentState,
-         Multimap<InstanceState, ? extends Transition> states) {
+   Iterable<Transition> findChainTo(Instance.State desired, Instance.State currentState,
+            Multimap<Instance.State, ? extends Transition> states) {
       for (Transition transition : states.get(currentState)) {
          if (currentState.ordinal() >= transition.getTo().ordinal())
             continue;

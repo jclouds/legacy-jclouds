@@ -23,11 +23,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.jclouds.deltacloud.domain.InstanceAction;
-import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
+import org.jclouds.deltacloud.domain.Instance.Action;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.SaxUtils;
@@ -40,15 +40,15 @@ import com.google.common.collect.Multimap;
 /**
  * @author Adrian Cole
  */
-public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<InstanceState, ? extends Transition>> {
+public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<State, ? extends Transition>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Multimap<InstanceState, Transition> states = LinkedHashMultimap.create();
-   private InstanceState state;
+   private Multimap<State, Transition> states = LinkedHashMultimap.create();
+   private State state;
 
-   public Multimap<InstanceState, ? extends Transition> getResult() {
+   public Multimap<State, ? extends Transition> getResult() {
       return states;
    }
 
@@ -66,16 +66,16 @@ public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<I
       }
    }
 
-   InstanceState instanceStateWarningOnUnrecognized(String input) {
-      InstanceState state = InstanceState.fromValue(input);
-      if (state == InstanceState.UNRECOGNIZED)
+   State instanceStateWarningOnUnrecognized(String input) {
+      State state = State.fromValue(input);
+      if (state == State.UNRECOGNIZED)
          logger.warn("unrecognized state: %s", input);
       return state;
    }
 
-   InstanceAction instanceActionWarningOnUnrecognized(String input) {
-      InstanceAction action = InstanceAction.fromValue(input);
-      if (action == InstanceAction.UNRECOGNIZED)
+   Action instanceActionWarningOnUnrecognized(String input) {
+      Action action = Action.fromValue(input);
+      if (action == Action.UNRECOGNIZED)
          logger.warn("unrecognized action: %s", input);
       return action;
    }

@@ -7,6 +7,7 @@ To install deltacloud, do the following:
   * OS/X and jruby
     # use homebrew or equiv to install jruby
       * brew install jruby
+        * note testing took place w/ 1.6.0
     # install and configure openssl to avoid "certificate verify failed" errors
       # install and link openssl
         * brew install openssl
@@ -24,7 +25,9 @@ To install deltacloud, do the following:
         * jruby -ropen-uri -e 'p open("https://encrypted.google.com")'
           * should see something like #<StringIO:0x5330cb4b>
     # install specific version of rack that doesn't conflict with deltacloud
-      * jruby -S gem --version 1.1.0 install rack
+      * jruby -S gem install rack --version 1.1.0
+    # install net-ssh
+      * jruby -S gem install net-ssh
     # install deltacloud core
       * jruby -S gem install deltacloud-core
 
@@ -40,12 +43,15 @@ Here are some notes about specific cloud providers
     # install fog gem
       * jruby -S gem install fog
   * rackspace
-    # install cloudfiles gem
+    # install cloudfiles, cloudservers gem
+      * jruby -S gem install cloudservers
       * jruby -S gem install cloudfiles
   * ec2
-    # install amazon-ec2 gem
-      * jruby -S gem install amazon-ec2
-
+    * using jruby --1.8, 'gem install aws' will fail with ArrayIndexOutOfBoundsException per http://jira.codehaus.org/browse/JRUBY-5581 
+    * using jruby --1.9, 'gem install aws' works, but running './server/bin/deltacloudd -i ec2' fails per http://jira.codehaus.org/browse/JRUBY-5529 
+      # install i18n, aws gem
+        * jruby -S gem install i18n
+        * jruby -S gem install aws
 
 Local Development of Delta
    * jruby -S gem install rack-test cucumber
