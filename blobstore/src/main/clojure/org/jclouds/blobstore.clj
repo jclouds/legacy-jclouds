@@ -380,19 +380,24 @@ example:
   ([^String name option-map]
      (blob2 name option-map *blobstore*))
   ([^String name
-    {:keys [payload content-type content-length content-md5
-            content-disposition content-encoding content-language metadata]
-     :or {for-signing false}}
+    {:keys [payload content-type content-length content-md5 calculate-md5
+            content-disposition content-encoding content-language metadata]}
     ^BlobStore blobstore]
+     {:pre [(not (and content-md5 calculate-md5))
+            (not (and (nil? payload) calculate-md5))]}
      (let [blob-builder (if payload
                           (.payload (.blobBuilder blobstore name) payload)
                           (.forSigning (.blobBuilder blobstore name)))
            blob-builder (if content-length ;; Special case, arg is prim.
                           (.contentLength blob-builder content-length)
-                          blob-builder)]
+                          blob-builder)
+           blob-builder (if calculate-md5 ;; Only do calculateMD5 OR contentMD5.
+                          (.calculateMD5 blob-builder)
+                          (if content-md5
+                            (.contentMD5 blob-builder content-md5)
+                            blob-builder))]
        (doto blob-builder
          (.contentType content-type)
-         (.contentMD5 content-md5)
          (.contentDisposition content-disposition)
          (.contentEncoding content-encoding)
          (.contentLanguage content-language)
@@ -405,7 +410,7 @@ note that this implies rebuffering, if the blob's payload isn't repeatable"
   ([#^Blob blob]
      (Payloads/calculateMD5 blob))
   ([#^String name payload]
-     (blob2 name {:payload payload} *blobstore*))
+     (md5-blob name payload *blobstore*))
   ([#^String name payload #^BlobStore blobstore]
      (md5-blob (blob2 name {:payload payload} blobstore))))
 

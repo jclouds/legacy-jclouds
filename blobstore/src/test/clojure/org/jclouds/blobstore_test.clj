@@ -21,6 +21,7 @@
   (:use [org.jclouds.blobstore] :reload-all)
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
+           [org.jclouds.crypto CryptoStreams]
            [java.io ByteArrayOutputStream]
            [org.jclouds.util Strings2]))
 
@@ -179,6 +180,12 @@
   (let [request (sign-delete "container" "path")]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
     (is (= "DELETE" (.getMethod request)))))
+
+(deftest blob2-test
+  (let [a-blob (blob2 "test-name" {:payload (.getBytes "test-payload")
+                                   :calculate-md5 true})]
+    (is (= (seq (.. a-blob (getPayload) (getContentMetadata) (getContentMD5)))
+           (seq (CryptoStreams/md5 (.getBytes "test-payload")))))))
 
 ;; TODO: more tests involving blob-specific functions
 
