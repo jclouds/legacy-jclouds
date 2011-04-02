@@ -101,7 +101,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from, location));
       builder.hardware(null);// TODO
-      builder.state(runningStateToNodeState.get(from.getState()));
+      if (from.getBillingData() != null && from.getBillingData().getDateCancelled() != null
+               && RunningState.NOTRUNNING == from.getState())
+         builder.state(NodeState.TERMINATED);
+      else
+         builder.state(runningStateToNodeState.get(from.getState()));
       builder.publicAddresses(getPublicAddresses.apply(from));
       builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
