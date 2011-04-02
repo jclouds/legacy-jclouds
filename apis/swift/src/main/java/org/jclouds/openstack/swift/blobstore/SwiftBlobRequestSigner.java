@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
@@ -44,16 +45,20 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 public class SwiftBlobRequestSigner implements BlobRequestSigner {
    private final RestAnnotationProcessor<CommonSwiftAsyncClient> processor;
    private final BlobToObject blobToObject;
+   private final BlobToHttpGetOptions blob2HttpGetOptions;
+
    private final Method getMethod;
    private final Method deleteMethod;
    private final Method createMethod;
 
    @Inject
-   public SwiftBlobRequestSigner(RestAnnotationProcessor<CommonSwiftAsyncClient> processor, BlobToObject blobToObject)
-            throws SecurityException, NoSuchMethodException {
+   public SwiftBlobRequestSigner(RestAnnotationProcessor<CommonSwiftAsyncClient> processor, BlobToObject blobToObject,
+            BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
-      this.getMethod = CommonSwiftAsyncClient.class.getMethod("getObject", String.class, String.class, GetOptions[].class);
+      this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
+      this.getMethod = CommonSwiftAsyncClient.class.getMethod("getObject", String.class, String.class,
+               GetOptions[].class);
       this.deleteMethod = CommonSwiftAsyncClient.class.getMethod("removeObject", String.class, String.class);
       this.createMethod = CommonSwiftAsyncClient.class.getMethod("putObject", String.class, SwiftObject.class);
 
@@ -74,4 +79,8 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
       return cleanRequest(processor.createRequest(deleteMethod, container, name));
    }
 
+   @Override
+   public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
+      return cleanRequest(processor.createRequest(getMethod, container, name, blob2HttpGetOptions.apply(options)));
+   }
 }

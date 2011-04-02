@@ -35,6 +35,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
 import org.jclouds.rimuhosting.miro.functions.ParseRimuHostingException;
+import org.jclouds.rimuhosting.miro.functions.ParseServersFromJsonResponse;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
@@ -50,17 +51,32 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
 
    public void testCreateServer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = RimuHostingAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
-            CreateServerOptions[].class);
+               CreateServerOptions[].class);
       GeneratedHttpRequest<RimuHostingAsyncClient> httpRequest = processor.createRequest(method, "test.ivan.api.com",
-            "lenny", "MIRO4B");
+               "lenny", "MIRO4B");
 
       assertRequestLineEquals(httpRequest, "POST https://api.rimuhosting.com/r/orders/new-vps HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nHost: api.rimuhosting.com\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"request\":{\"instantiation_options\":{\"distro\":\"lenny\",\"domain_name\":\"test.ivan.api.com\"},\"pricing_plan_code\":\"MIRO4B\",\"meta_data\":[]}}",
-            "application/json", false);
+               httpRequest,
+               "{\"request\":{\"instantiation_options\":{\"distro\":\"lenny\",\"domain_name\":\"test.ivan.api.com\"},\"pricing_plan_code\":\"MIRO4B\",\"meta_data\":[]}}",
+               "application/json", false);
       assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ParseRimuHostingException.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testGetServerList() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = RimuHostingAsyncClient.class.getMethod("getServerList");
+      GeneratedHttpRequest<RimuHostingAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.rimuhosting.com/r/orders;include_inactive=N HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nHost: api.rimuhosting.com\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+      assertResponseParserClassEquals(method, httpRequest, ParseServersFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ParseRimuHostingException.class);
 

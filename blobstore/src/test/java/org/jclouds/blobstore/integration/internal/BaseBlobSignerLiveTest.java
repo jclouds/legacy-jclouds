@@ -19,6 +19,7 @@
 
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -68,6 +69,24 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          HttpRequest request = context.getSigner().signGetBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
          assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), text);
+      } finally {
+         returnContainer(container);
+      }
+   }
+
+   @Test
+   public void testSignGetUrlOptions() throws Exception {
+      String name = "hello";
+      String text = "fooooooooooooooooooooooo";
+
+      Blob blob = context.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      String container = getContainerName();
+      try {
+         context.getBlobStore().putBlob(container, blob);
+         assertConsistencyAwareContainerSize(container, 1);
+         HttpRequest request = context.getSigner().signGetBlob(container, name, range(0, 1));
+         assertEquals(request.getFilters().size(), 0);
+         assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), "fo");
       } finally {
          returnContainer(container);
       }

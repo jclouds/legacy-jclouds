@@ -27,15 +27,16 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.options.GetOptions;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
-import org.jclouds.blobstore.BlobRequestSigner;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 /**
  * 
@@ -45,15 +46,18 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 public class S3BlobRequestSigner implements BlobRequestSigner {
    private final RestAnnotationProcessor<S3AsyncClient> processor;
    private final BlobToObject blobToObject;
+   private final BlobToHttpGetOptions blob2HttpGetOptions;
+
    private final Method getMethod;
    private final Method deleteMethod;
    private final Method createMethod;
 
    @Inject
-   public S3BlobRequestSigner(RestAnnotationProcessor<S3AsyncClient> processor, BlobToObject blobToObject)
-            throws SecurityException, NoSuchMethodException {
+   public S3BlobRequestSigner(RestAnnotationProcessor<S3AsyncClient> processor, BlobToObject blobToObject,
+            BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
+      this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
       this.getMethod = S3AsyncClient.class.getMethod("getObject", String.class, String.class, GetOptions[].class);
       this.deleteMethod = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
       this.createMethod = S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class,
@@ -76,4 +80,8 @@ public class S3BlobRequestSigner implements BlobRequestSigner {
       return cleanRequest(processor.createRequest(deleteMethod, container, name));
    }
 
+   @Override
+   public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
+      return cleanRequest(processor.createRequest(getMethod, container, name, blob2HttpGetOptions.apply(options)));
+   }
 }
