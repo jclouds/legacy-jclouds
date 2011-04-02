@@ -21,6 +21,7 @@
   (:use [org.jclouds.blobstore] :reload-all)
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
+           [org.jclouds.crypto CryptoStreams]
            [java.io ByteArrayOutputStream]
            [org.jclouds.util Strings2]))
 
@@ -145,6 +146,46 @@
       (is (= "en" (first (.get (.getHeaders request) "Content-Language"))))
       (is (= "f" (first (.get (.getHeaders request) "Content-Disposition"))))
       (is (= "g" (first (.get (.getHeaders request) "Content-Encoding")))))))
+
+(deftest sign-get-test
+  (let [request (sign-get "container" "path")]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "GET" (.getMethod request)))))
+
+(deftest sign-put-test
+  (let [request (sign-put "container"
+                          (blob2 "path" {:content-length 10}))]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+    (is (nil?
+         (first (.get (.getHeaders request) "Content-Type"))))))
+
+(deftest sign-put-with-headers-test
+  (let [request (sign-put
+                 "container"
+                 (blob2 "path" {:content-length 10
+                                :content-type "x"
+                                :content-language "en"
+                                :content-disposition "f"
+                                :content-encoding "g"}))]
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+    (is (= "x" (first (.get (.getHeaders request) "Content-Type"))))
+    (is (= "en" (first (.get (.getHeaders request) "Content-Language"))))
+    (is (= "f" (first (.get (.getHeaders request) "Content-Disposition"))))
+    (is (= "g" (first (.get (.getHeaders request) "Content-Encoding"))))))
+
+(deftest sign-delete-test
+  (let [request (sign-delete "container" "path")]
+    (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+    (is (= "DELETE" (.getMethod request)))))
+
+(deftest blob2-test
+  (let [a-blob (blob2 "test-name" {:payload (.getBytes "test-payload")
+                                   :calculate-md5 true})]
+    (is (= (seq (.. a-blob (getPayload) (getContentMetadata) (getContentMD5)))
+           (seq (CryptoStreams/md5 (.getBytes "test-payload")))))))
 
 ;; TODO: more tests involving blob-specific functions
 
