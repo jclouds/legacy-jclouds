@@ -17,49 +17,52 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.predicates;
+package org.jclouds.deltacloud.predicates;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.deltacloud.DeltacloudClient;
+import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a task succeeds.
+ * Tests to see if a instance is at a specific state
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class InstanceStateStopped implements Predicate<RunningInstance> {
+public abstract class InstanceState implements Predicate<Instance> {
 
-   private final InstanceClient client;
+   private final DeltacloudClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateStopped(InstanceClient client) {
+   public InstanceState(DeltacloudClient client) {
       this.client = client;
    }
 
-   public boolean apply(RunningInstance instance) {
-      logger.trace("looking for state on instance %s", instance);
+   public boolean apply(Instance instance) {
+      logger.trace("looking for state on instance %s", checkNotNull(instance, "instance"));
       instance = refresh(instance);
-      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(),
-               InstanceState.STOPPED, instance.getInstanceState());
-      return instance.getInstanceState() == InstanceState.STOPPED;
+      if (instance == null || instance.getState() == Instance.State.FINISH)
+         return false;
+      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(), getState(), instance
+               .getState());
+      return instance.getState() == getState();
    }
 
-   private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.describeInstancesInRegion(
-               instance.getRegion(), instance.getId())));
+   protected abstract Instance.State getState();
+
+   private Instance refresh(Instance instance) {
+      return client.getInstance(instance.getHref());
    }
 }

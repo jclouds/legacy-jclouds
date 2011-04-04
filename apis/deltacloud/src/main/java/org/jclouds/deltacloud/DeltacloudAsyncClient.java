@@ -84,7 +84,7 @@ public interface DeltacloudAsyncClient {
    @GET
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(DeltacloudCollectionsHandler.class)
-   ListenableFuture<? extends Set<? extends DeltacloudCollection>> getCollections();
+   ListenableFuture<Set<DeltacloudCollection>> getCollections();
 
    /**
     * @see DeltacloudClient#getInstanceStates
@@ -93,7 +93,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(InstanceStates.class)
    @ExceptionParser(ReturnEmptyMultimapOnNotFoundOr404.class)
    @XMLResponseParser(InstanceStatesHandler.class)
-   ListenableFuture<? extends Multimap<State, ? extends Transition>> getInstanceStates();
+   ListenableFuture<Multimap<State, Transition>> getInstanceStates();
 
    /**
     * @see DeltacloudClient#listRealms
@@ -102,7 +102,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(Realms.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(RealmsHandler.class)
-   ListenableFuture<? extends Set<? extends Realm>> listRealms();
+   ListenableFuture<Set<Realm>> listRealms();
 
    /**
     * @see DeltacloudClient#getRealm
@@ -119,7 +119,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(Images.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(ImagesHandler.class)
-   ListenableFuture<? extends Set<? extends Image>> listImages();
+   ListenableFuture<Set<Image>> listImages();
 
    /**
     * @see DeltacloudClient#getImage
@@ -136,7 +136,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(HardwareProfiles.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(HardwareProfilesHandler.class)
-   ListenableFuture<? extends Set<? extends HardwareProfile>> listHardwareProfiles();
+   ListenableFuture<Set<HardwareProfile>> listHardwareProfiles();
 
    /**
     * @see DeltacloudClient#getHardwareProfile
@@ -153,7 +153,7 @@ public interface DeltacloudAsyncClient {
    @Endpoint(Instances.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(InstancesHandler.class)
-   ListenableFuture<? extends Set<? extends Instance>> listInstances();
+   ListenableFuture<Set<Instance>> listInstances();
 
    /**
     * @see DeltacloudClient#getInstance

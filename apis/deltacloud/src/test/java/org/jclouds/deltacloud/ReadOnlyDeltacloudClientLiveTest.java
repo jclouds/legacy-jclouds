@@ -28,24 +28,28 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
+import org.jclouds.deltacloud.domain.Instance.State;
+import org.jclouds.deltacloud.predicates.InstanceFinished;
+import org.jclouds.deltacloud.predicates.InstanceRunning;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -68,6 +72,7 @@ public class ReadOnlyDeltacloudClientLiveTest {
    protected String endpoint;
    protected String apiversion;
    protected Predicate<IPSocket> socketTester;
+   protected ImmutableMap<State, Predicate<Instance>> stateChanges;
 
    protected void setupCredentials() {
       identity = System.getProperty("test." + provider + ".identity", "mockuser");
@@ -94,11 +99,17 @@ public class ReadOnlyDeltacloudClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+               overrides).getProviderSpecificContext();
 
       client = context.getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
+      stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
+               Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,
+                        TimeUnit.SECONDS),//
+               Instance.State.FINISH, new RetryablePredicate<Instance>(new InstanceFinished(client), 30, 1,
+                        TimeUnit.SECONDS)//
+               );
    }
 
    @Test

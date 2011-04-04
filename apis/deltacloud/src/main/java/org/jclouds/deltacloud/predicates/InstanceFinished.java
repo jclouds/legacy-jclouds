@@ -17,29 +17,32 @@
  * ====================================================================
  */
 
-package org.jclouds.deltacloud;
+package org.jclouds.deltacloud.predicates;
 
-import java.util.List;
-import java.util.Properties;
+import javax.inject.Singleton;
 
-import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.deltacloud.DeltacloudClient;
+import org.jclouds.deltacloud.domain.Instance;
 
-import com.google.inject.Module;
+import com.google.inject.Inject;
 
 /**
  * 
+ * Tests to see if a instance is terminated
+ * 
  * @author Adrian Cole
  */
-public class DeltacloudContextBuilder extends
-         RestContextBuilder<DeltacloudClient, DeltacloudAsyncClient> {
+@Singleton
+public class InstanceFinished extends InstanceState {
 
-   public DeltacloudContextBuilder(Properties props) {
-      super(DeltacloudClient.class, DeltacloudAsyncClient.class, props);
+   @Inject
+   public InstanceFinished(DeltacloudClient client) {
+      super(client);
    }
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new DeltacloudRestClientModule());
+   @Override
+   protected Instance.State getState() {
+      return Instance.State.FINISH;
    }
 
 }

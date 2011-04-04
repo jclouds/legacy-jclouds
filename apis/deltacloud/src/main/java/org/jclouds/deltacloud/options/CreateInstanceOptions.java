@@ -32,6 +32,23 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   /**
+    * The realm in which to launch the instance
+    * 
+    */
+   public CreateInstanceOptions realm(String realmId) {
+      formParameters.put("realm_id", checkNotNull(realmId, "realmId"));
+      return this;
+   }
+
+   /**
+    * The hardware profile upon which to launch the instance
+    */
+   public CreateInstanceOptions hardwareProfile(String hwpName) {
+      formParameters.put("hwp_name", checkNotNull(hwpName, "hwpName"));
+      return this;
+   }
+
    public String getName() {
       return this.getFirstFormOrNull("name");
    }
@@ -44,6 +61,22 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       public static CreateInstanceOptions named(String name) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.named(name);
+      }
+
+      /**
+       * @see CreateInstanceOptions#realm
+       */
+      public static CreateInstanceOptions realm(String realmId) {
+         CreateInstanceOptions options = new CreateInstanceOptions();
+         return options.realm(realmId);
+      }
+
+      /**
+       * @see CreateInstanceOptions#hardwareProfile
+       */
+      public static CreateInstanceOptions hardwareProfile(String hwpName) {
+         CreateInstanceOptions options = new CreateInstanceOptions();
+         return options.hardwareProfile(hwpName);
       }
 
    }
