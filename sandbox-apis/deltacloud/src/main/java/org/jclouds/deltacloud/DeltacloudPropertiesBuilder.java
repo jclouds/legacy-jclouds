@@ -20,6 +20,7 @@
 package org.jclouds.deltacloud;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ public class DeltacloudPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "0.3.0");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:3001/api");
       return properties;
    }
 

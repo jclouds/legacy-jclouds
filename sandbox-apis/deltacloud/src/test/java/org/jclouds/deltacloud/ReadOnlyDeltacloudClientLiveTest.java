@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
@@ -42,7 +43,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -99,8 +99,8 @@ public class ReadOnlyDeltacloudClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+               overrides).getProviderSpecificContext();
 
       client = context.getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);

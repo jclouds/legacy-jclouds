@@ -52,20 +52,20 @@ public interface DeltacloudClient {
     * 
     * @return named links to available collections, or empty set, if no collections are found
     */
-   Set<? extends DeltacloudCollection> getCollections();
+   Set<DeltacloudCollection> getCollections();
 
    /**
     * 
     * @return The possible states of an instance, and how to traverse between them
     */
-   Multimap<State, ? extends Transition> getInstanceStates();
+   Multimap<State, Transition> getInstanceStates();
 
    /**
     * The realms collection will return a set of all realms available to the current user.
     * 
     * @return realms viewable to the user or empty set
     */
-   Set<? extends Realm> listRealms();
+   Set<Realm> listRealms();
 
    /**
     * 
@@ -79,7 +79,7 @@ public interface DeltacloudClient {
     * 
     * @return images viewable to the user or empty set
     */
-   Set<? extends Image> listImages();
+   Set<Image> listImages();
 
    /**
     * 
@@ -94,7 +94,7 @@ public interface DeltacloudClient {
     * 
     * @return hardware profiles viewable to the user or empty set
     */
-   Set<? extends HardwareProfile> listHardwareProfiles();
+   Set<HardwareProfile> listHardwareProfiles();
 
    /**
     * 
@@ -108,7 +108,7 @@ public interface DeltacloudClient {
     * 
     * @return instances viewable to the user or empty set
     */
-   Set<? extends Instance> listInstances();
+   Set<Instance> listInstances();
 
    /**
     * 

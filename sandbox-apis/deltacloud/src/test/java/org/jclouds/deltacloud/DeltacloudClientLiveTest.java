@@ -64,7 +64,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
             return input.getDescription().toLowerCase().indexOf("fedora") != -1;
          }
 
-      }).getId(), CreateInstanceOptions.Builder.named(prefix));
+      }).getId(), CreateInstanceOptions.Builder.named(prefix).hardwareProfile("1").realm("us"));
       if (instance.getAuthentication() != null && instance.getAuthentication() instanceof PasswordAuthentication)
          creds = PasswordAuthentication.class.cast(instance.getAuthentication()).getLoginCredentials();
       refreshInstance();
