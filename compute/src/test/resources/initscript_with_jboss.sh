@@ -72,7 +72,7 @@ END_OF_FILE
    iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables-save
-   curl -X GET -s --retry 20  http://d19xvfg065k8li.cloudfront.net/jboss-6.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+   curl -X GET -s --retry 20  http://d37gkgjhl3prlk.cloudfront.net/jboss-6.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
    mkdir -p /usr/local/jboss
    mv /usr/local/jboss-*/* /usr/local/jboss
    chmod -R oug+r+w /usr/local/jboss

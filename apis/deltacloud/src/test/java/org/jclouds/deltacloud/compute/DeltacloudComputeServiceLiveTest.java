@@ -59,7 +59,7 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
       super.checkNodes(nodes, tag);
       for (NodeMetadata node : nodes) {
-         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
+         assertEquals(node.getLocation().getScope(), LocationScope.ZONE);
       }
    }
 

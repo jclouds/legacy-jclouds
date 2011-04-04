@@ -10,7 +10,7 @@ data.
 our current version is 1.0-beta-9b
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory),
+our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
                           cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
