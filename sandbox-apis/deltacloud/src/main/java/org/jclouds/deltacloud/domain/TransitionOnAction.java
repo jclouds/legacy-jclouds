@@ -44,7 +44,7 @@ public class TransitionOnAction implements Transition {
 
    @Override
    public String toString() {
-      return "TransitionOnAction [action=" + action + ", to=" + to + "]";
+      return "[action=" + action + ", to=" + to + "]";
    }
 
    @Override
