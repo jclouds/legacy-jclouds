@@ -77,6 +77,11 @@
   (is (= 3 (count (list-container "container" :with-details true))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
 
+(deftest list-blobs-test
+  (is (create-container "container"))
+  (is (empty? (list-blobs "container")))
+  (is (empty? (list-blobs "container" "/a" *blobstore*))))
+
 (deftest get-blob-test
   (is (create-container "blob"))
   (is (upload-blob "blob" "blob1" "blob1"))

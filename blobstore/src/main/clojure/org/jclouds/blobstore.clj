@@ -169,10 +169,12 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
 
 (defn list-blobs
   "Returns a lazy seq of all blobs in the given container."
-  ([container prefix #^BlobStore blobstore]
-     (concat-elements (list-blobs-chunks container prefix blobstore :start)))
-  ([container #^BlobStore blobstore]
-     (list-blobs container nil blobstore)))
+  ([container]
+     (list-blobs container *blobstore*))
+  ([container blobstore]
+     (list-blobs container nil blobstore))
+  ([container prefix blobstore]
+     (concat-elements (list-blobs-chunks container prefix blobstore :start))))
 
 (defn locations
   "Retrieve the available container locations for the blobstore context."
