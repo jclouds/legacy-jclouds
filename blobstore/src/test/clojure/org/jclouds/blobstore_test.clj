@@ -77,6 +77,18 @@
   (is (= 3 (count (list-container "container" :with-details true))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
 
+(deftest large-container-list-test
+  (let [container-name "test"
+        total-blobs 10000]
+
+    ;; create a container full of blobs
+    (create-container container-name)
+    (dotimes [i total-blobs] (upload-blob container-name (str i) (str i)))
+    
+    ;; verify
+    (is (= total-blobs (count-blobs  container-name)))))
+
+
 (deftest get-blob-test
   (is (create-container "blob"))
   (is (upload-blob "blob" "blob1" "blob1"))
