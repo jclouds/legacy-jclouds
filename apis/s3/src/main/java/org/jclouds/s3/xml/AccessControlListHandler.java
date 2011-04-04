@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax;
@@ -79,11 +81,11 @@ public class AccessControlListHandler extends ParseSax.HandlerWithResult<AccessC
       }
 
       else if (qName.equals("ID") || qName.equals("EmailAddress") || qName.equals("URI")) {
-         currentId = currentText.toString().trim();
+         currentId = currentOrNull(currentText);
       } else if (qName.equals("DisplayName")) {
-         currentDisplayName = currentText.toString().trim();
+         currentDisplayName = currentOrNull(currentText);
       } else if (qName.equals("Permission")) {
-         currentPermission = currentText.toString().trim();
+         currentPermission = currentOrNull(currentText);
       }
       currentText = new StringBuilder();
    }

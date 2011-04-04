@@ -33,7 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
+import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
@@ -86,7 +86,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
-   @ExceptionParser(ThrowContainerNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
    @Path("/{container}")
    @Endpoint(CDNManagement.class)
    ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);

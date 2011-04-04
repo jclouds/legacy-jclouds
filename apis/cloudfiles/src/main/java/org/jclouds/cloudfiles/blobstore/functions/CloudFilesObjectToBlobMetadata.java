@@ -17,39 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.s3.blobstore.functions;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+package org.jclouds.cloudfiles.blobstore.functions;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.s3.domain.S3Object;
-
-import com.google.common.base.Function;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.openstack.swift.domain.ObjectInfo;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ObjectToBlob implements Function<S3Object, Blob> {
-   private final Factory blobFactory;
-   private final ObjectToBlobMetadata object2BlobMd;
+public class CloudFilesObjectToBlobMetadata extends ObjectToBlobMetadata {
+   private final PublicUriForObjectInfo publicUriForObjectInfo;
 
    @Inject
-   ObjectToBlob(Factory blobFactory, ObjectToBlobMetadata object2BlobMd) {
-      this.blobFactory = blobFactory;
-      this.object2BlobMd = object2BlobMd;
+   public CloudFilesObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+            PublicUriForObjectInfo publicUriForObjectInfo) {
+      super(ifDirectoryReturnName);
+      this.publicUriForObjectInfo = publicUriForObjectInfo;
    }
 
-   public Blob apply(S3Object from) {
+   public MutableBlobMetadata apply(ObjectInfo from) {
       if (from == null)
          return null;
-      Blob blob = blobFactory.create(object2BlobMd.apply(from.getMetadata()));
-      blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
-      blob.setAllHeaders(from.getAllHeaders());
-      return blob;
+      MutableBlobMetadata to = super.apply(from);
+      to.setPublicUri(publicUriForObjectInfo.apply(from));
+      return to;
    }
 }

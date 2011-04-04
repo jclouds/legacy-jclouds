@@ -28,6 +28,8 @@ import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
@@ -51,14 +53,18 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements InvocationContext<ParseObjectInfoListFromJsonResponse> {
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements
+         InvocationContext<ParseObjectInfoListFromJsonResponse> {
+   private final Provider<UriBuilder> uriBuilders;
 
    private GeneratedHttpRequest<?> request;
+   private String container;
 
    @Inject
-   public ParseObjectInfoListFromJsonResponse(Json json) {
+   public ParseObjectInfoListFromJsonResponse(Json json, Provider<UriBuilder> uriBuilders) {
       super(json, new TypeLiteral<PageSet<ObjectInfo>>() {
       });
+      this.uriBuilders = uriBuilders;
    }
 
    public PageSet<ObjectInfo> apply(InputStream stream) {
@@ -66,7 +72,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
       checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
       checkArgument(request.getArgs().get(0) instanceof String, "arg[0] must be a container name");
       checkArgument(request.getArgs().get(1) instanceof ListContainerOptions[],
-            "arg[1] must be an array of ListContainerOptions");
+               "arg[1] must be an array of ListContainerOptions");
       ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs().get(1);
       ListContainerOptions options = optionsList.length > 0 ? optionsList[0] : ListContainerOptions.NONE;
       Type listType = new TypeToken<SortedSet<ObjectInfoImpl>>() {
@@ -75,11 +81,13 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
       try {
          SortedSet<ObjectInfoImpl> list = apply(stream, listType);
          SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(list,
-               new Function<ObjectInfoImpl, ObjectInfo>() {
-                  public ObjectInfo apply(ObjectInfoImpl from) {
-                     return from;
-                  }
-               }));
+                  new Function<ObjectInfoImpl, ObjectInfo>() {
+                     public ObjectInfo apply(ObjectInfoImpl from) {
+                        return from.toBuilder().container(container).uri(
+                                 uriBuilders.get().uri(request.getEndpoint()).path(from.getName()).replaceQuery("")
+                                          .build()).build();
+                     }
+                  }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
          return new PageSetImpl<ObjectInfo>(returnVal, marker);
@@ -92,6 +100,11 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
    public ParseObjectInfoListFromJsonResponse setContext(HttpRequest request) {
       checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
+      return setContainer(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+   }
+
+   private ParseObjectInfoListFromJsonResponse setContainer(String container) {
+      this.container = container;
       return this;
    }
 }

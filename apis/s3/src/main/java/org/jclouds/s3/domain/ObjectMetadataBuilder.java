@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.domain;
 
+import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.io.ContentMetadataBuilder;
@@ -38,16 +40,46 @@ public class ObjectMetadataBuilder {
       return new ObjectMetadataBuilder();
    }
 
-   private final ContentMetadataBuilder contentMetadataBuilder = new ContentMetadataBuilder().contentType("binary/octet-stream");
+   private final ContentMetadataBuilder contentMetadataBuilder = new ContentMetadataBuilder()
+            .contentType("binary/octet-stream");
 
    private String key;
-   private StorageClass storageClass;
+   private String bucket;
+   private URI uri;
+   private StorageClass storageClass = StorageClass.STANDARD;
    private String cacheControl;
+   private Date lastModified;
+   private String eTag;
+   private CanonicalUser owner;
    private Map<String, String> userMetadata = ImmutableMap.of();
- 
-   
+
    public ObjectMetadataBuilder key(String key) {
       this.key = key;
+      return this;
+   }
+
+   public ObjectMetadataBuilder bucket(String bucket) {
+      this.bucket = bucket;
+      return this;
+   }
+
+   public ObjectMetadataBuilder owner(CanonicalUser owner) {
+      this.owner = owner;
+      return this;
+   }
+
+   public ObjectMetadataBuilder eTag(String eTag) {
+      this.eTag = eTag;
+      return this;
+   }
+
+   public ObjectMetadataBuilder uri(URI uri) {
+      this.uri = uri;
+      return this;
+   }
+
+   public ObjectMetadataBuilder lastModified(Date lastModified) {
+      this.lastModified = lastModified;
       return this;
    }
 
@@ -98,7 +130,6 @@ public class ObjectMetadataBuilder {
    public ObjectMetadataBuilder contentType(String contentType) {
       contentMetadataBuilder.contentType(contentType);
       return this;
-
    }
 
    public ObjectMetadata build() {
@@ -106,8 +137,13 @@ public class ObjectMetadataBuilder {
       toReturn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(contentMetadataBuilder.build()));
       toReturn.setCacheControl(cacheControl);
       toReturn.setKey(key);
+      toReturn.setBucket(bucket);
+      toReturn.setUri(uri);
+      toReturn.setETag(eTag);
+      toReturn.setOwner(owner);
       toReturn.setStorageClass(storageClass);
       toReturn.setUserMetadata(userMetadata);
+      toReturn.setLastModified(lastModified);
       return toReturn;
    }
 

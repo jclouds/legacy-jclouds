@@ -19,6 +19,7 @@
 
 package org.jclouds.openstack.swift.domain;
 
+import java.net.URI;
 import java.util.Date;
 
 /**
@@ -27,6 +28,8 @@ import java.util.Date;
  * 
  */
 public interface ObjectInfo extends Comparable<ObjectInfo> {
+
+   URI getUri();
 
    String getName();
 
@@ -37,5 +40,7 @@ public interface ObjectInfo extends Comparable<ObjectInfo> {
    String getContentType();
 
    Date getLastModified();
+
+   String getContainer();
 
 }

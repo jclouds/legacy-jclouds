@@ -36,8 +36,8 @@ import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -61,10 +61,11 @@ public class DirectoryEntryListToResourceMetadataList implements
                      StorageType type = from.getType() == FileType.DIRECTORY ? StorageType.FOLDER : StorageType.BLOB;
                      if (type == StorageType.FOLDER)
                         return new StorageMetadataImpl(type, from.getObjectID(), from.getObjectName(), defaultLocation
-                                 .get(), null, null, null, Maps.<String, String> newHashMap());
+                                 .get(), null, null, null,ImmutableMap.<String,String>of());
                      else
                         return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(),
-                                 null, null, null, Maps.<String, String> newHashMap(), new BaseMutableContentMetadata());
+                                 null, null, null,ImmutableMap.<String,String>of(), null,
+                                 null, new BaseMutableContentMetadata());
                   }
 
                }), from.getToken());

@@ -48,6 +48,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    private LeaseStatus leaseStatus = LeaseStatus.UNLOCKED;
 
    private String name;
+   private String container;
    private URI url;
    private Date lastModified;
    private String eTag;
@@ -61,12 +62,19 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
 
    public MutableBlobPropertiesImpl(BlobProperties from) {
       this.contentMetadata = new BaseMutableContentMetadata();
+      this.name = from.getName();
+      this.container = from.getContainer();
+      this.url = from.getUrl();
+      this.lastModified = from.getLastModified();
+      this.eTag = from.getETag();
+      this.metadata.putAll(from.getMetadata());
       HttpUtils.copy(from.getContentMetadata(), this.contentMetadata);
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public BlobType getType() {
       return type;
    }
@@ -161,12 +169,6 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
@@ -180,36 +182,6 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
       if (getClass() != obj.getClass())
          return false;
       MutableBlobPropertiesImpl other = (MutableBlobPropertiesImpl) obj;
-      if (contentMetadata == null) {
-         if (other.contentMetadata != null)
-            return false;
-      } else if (!contentMetadata.equals(other.contentMetadata))
-         return false;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
       if (url == null) {
          if (other.url != null)
             return false;
@@ -220,7 +192,10 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
 
    @Override
    public String toString() {
-      return "[name=" + name + ", type=" + type + ", lastModified=" + lastModified + "]";
+      return String
+               .format(
+                        "[name=%s, container=%s, url=%s, contentMetadata=%s, eTag=%s, lastModified=%s, leaseStatus=%s, metadata=%s, type=%s]",
+                        name, container, url, contentMetadata, eTag, lastModified, leaseStatus, metadata, type);
    }
 
    /**
@@ -239,5 +214,20 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
       this.contentMetadata = contentMetadata;
    }
 
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public String getContainer() {
+      return container;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public void setContainer(String container) {
+      this.container = container;
+   }
 
 }

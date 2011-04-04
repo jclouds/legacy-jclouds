@@ -19,6 +19,7 @@
 
 package org.jclouds.openstack.swift.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -43,6 +45,7 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
          InvocationContext<ParseObjectInfoFromHeaders> {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final ResourceToObjectInfo blobToObjectInfo;
+   private String container;
 
    @Inject
    public ParseObjectInfoFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
@@ -58,6 +61,8 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectInfoWithMetadata to = blobToObjectInfo.apply(base);
       to.setBytes(attemptToParseSizeAndRangeFromHeaders(from));
+      to.setContainer(container);
+      to.setUri(base.getUri());
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
          to.setHash(CryptoStreams.hex(eTagHeader));
@@ -68,6 +73,12 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
    @Override
    public ParseObjectInfoFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
+      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
+      return setContainer(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+   }
+
+   private ParseObjectInfoFromHeaders setContainer(String container) {
+      this.container = container;
       return this;
    }
 

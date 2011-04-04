@@ -130,9 +130,10 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
       } else if (qName.equals("LeaseStatus")) {
          currentLeaseStatus = LeaseStatus.fromValue(currentText.toString().trim());
       } else if (qName.equals("Blob")) {
-         BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, currentUrl, currentLastModified,
-                  currentETag, currentSize, currentContentType, currentContentMD5, currentContentEncoding,
-                  currentContentLanguage, currentLeaseStatus, currentMetadata);
+         BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, containerUrl.getPath().replace("/",
+                  ""), currentUrl, currentLastModified, currentETag, currentSize, currentContentType,
+                  currentContentMD5, currentContentEncoding, currentContentLanguage, currentLeaseStatus,
+                  currentMetadata);
          blobMetadata.add(md);
          currentBlobType = null;
          currentName = null;

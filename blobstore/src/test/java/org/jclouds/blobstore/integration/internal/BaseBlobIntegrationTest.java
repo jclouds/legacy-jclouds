@@ -49,11 +49,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -99,7 +99,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @SuppressWarnings("unchecked")
    public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
       byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
-            .getResourceAsStream("/const.txt.gz")));
+               .getResourceAsStream("/const.txt.gz")));
       InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams.newInputStreamSupplier(oneConstitution);
 
       InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
@@ -114,178 +114,181 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @Test(groups = { "integration", "live" })
    public void testBigFileGets() throws InterruptedException, IOException {
       final String expectedContentDisposition = "attachment; filename=constit.txt";
-      String containerName = getContainerName();
+      final String container = getContainerName();
       try {
-         String key = "constitution.txt";
+         final String name = "constitution.txt";
 
-         uploadConstitution(containerName, key, expectedContentDisposition);
+         uploadConstitution(container, name, expectedContentDisposition);
          Map<Integer, Future<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
-            responses.put(i,
-                  Futures.compose(context.getAsyncBlobStore().getBlob(containerName, key), new Function<Blob, Void>() {
+            responses.put(i, Futures.compose(context.getAsyncBlobStore().getBlob(container, name),
+                     new Function<Blob, Void>() {
 
-                     @Override
-                     public Void apply(Blob from) {
-                        try {
-                           assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
-                           checkContentDisposition(from, expectedContentDisposition);
-                        } catch (IOException e) {
-                           Throwables.propagate(e);
+                        @Override
+                        public Void apply(Blob from) {
+                           try {
+                              validateMetadata(from.getMetadata(), container, name);
+                              assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                              checkContentDisposition(from, expectedContentDisposition);
+                           } catch (IOException e) {
+                              Throwables.propagate(e);
+                           }
+                           return null;
                         }
-                        return null;
-                     }
 
-                  }, this.exec));
+                     }, this.exec));
          }
          Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
-               "get constitution");
+                  "get constitution");
          assert exceptions.size() == 0 : exceptions;
 
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
 
    }
 
-   private void uploadConstitution(String containerName, String key, String contentDisposition) throws IOException {
+   private void uploadConstitution(String container, String name, String contentDisposition) throws IOException {
       context.getBlobStore().putBlob(
-            containerName,
-            context.getBlobStore().blobBuilder(key).payload(oneHundredOneConstitutions.getInput())
-                  .contentType("text/plain").contentMD5(oneHundredOneConstitutionsMD5)
-                  .contentLength(oneHundredOneConstitutionsLength).contentDisposition(contentDisposition).build());
+               container,
+               context.getBlobStore().blobBuilder(name).payload(oneHundredOneConstitutions.getInput()).contentType(
+                        "text/plain").contentMD5(oneHundredOneConstitutionsMD5).contentLength(
+                        oneHundredOneConstitutionsLength).contentDisposition(contentDisposition).build());
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfModifiedSince() throws InterruptedException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
-         String key = "apples";
+         String name = "apples";
 
          Date before = new Date(System.currentTimeMillis() - 1000);
          // first create the blob
-         addObjectAndValidateContent(containerName, key);
+         addObjectAndValidateContent(container, name);
          // now, modify it
-         addObjectAndValidateContent(containerName, key);
+         addObjectAndValidateContent(container, name);
          Date after = new Date(System.currentTimeMillis() + 1000);
 
-         context.getBlobStore().getBlob(containerName, key, ifModifiedSince(before));
-         validateContent(containerName, key);
+         context.getBlobStore().getBlob(container, name, ifModifiedSince(before));
+         validateContent(container, name);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifModifiedSince(after));
-            validateContent(containerName, key);
+            context.getBlobStore().getBlob(container, name, ifModifiedSince(after));
+            validateContent(container, name);
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 304);
          }
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
 
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfUnmodifiedSince() throws InterruptedException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         String key = "apples";
+         String name = "apples";
 
          Date before = new Date(System.currentTimeMillis() - 1000);
-         addObjectAndValidateContent(containerName, key);
+         addObjectAndValidateContent(container, name);
          Date after = new Date(System.currentTimeMillis() + 1000);
 
-         context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(after));
-         validateContent(containerName, key);
+         context.getBlobStore().getBlob(container, name, ifUnmodifiedSince(after));
+         validateContent(container, name);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(before));
-            validateContent(containerName, key);
+            context.getBlobStore().getBlob(container, name, ifUnmodifiedSince(before));
+            validateContent(container, name);
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfMatch() throws InterruptedException, UnsupportedEncodingException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         String key = "apples";
+         String name = "apples";
 
-         String goodETag = addObjectAndValidateContent(containerName, key);
+         String goodETag = addObjectAndValidateContent(container, name);
 
-         context.getBlobStore().getBlob(containerName, key, ifETagMatches(goodETag));
-         validateContent(containerName, key);
+         context.getBlobStore().getBlob(container, name, ifETagMatches(goodETag));
+         validateContent(container, name);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifETagMatches("powerfrisbee"));
-            validateContent(containerName, key);
+            context.getBlobStore().getBlob(container, name, ifETagMatches("powerfrisbee"));
+            validateContent(container, name);
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfNoneMatch() throws InterruptedException, UnsupportedEncodingException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         String key = "apples";
+         String name = "apples";
 
-         String goodETag = addObjectAndValidateContent(containerName, key);
+         String goodETag = addObjectAndValidateContent(container, name);
 
-         context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch("powerfrisbee"));
-         validateContent(containerName, key);
+         context.getBlobStore().getBlob(container, name, ifETagDoesntMatch("powerfrisbee"));
+         validateContent(container, name);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch(goodETag));
-            validateContent(containerName, key);
+            context.getBlobStore().getBlob(container, name, ifETagDoesntMatch(goodETag));
+            validateContent(container, name);
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 304);
          }
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetRange() throws InterruptedException, IOException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         String key = "apples";
+         String name = "apples";
 
-         addObjectAndValidateContent(containerName, key);
-         Blob blob1 = context.getBlobStore().getBlob(containerName, key, range(0, 5));
+         addObjectAndValidateContent(container, name);
+         Blob blob1 = context.getBlobStore().getBlob(container, name, range(0, 5));
+         validateMetadata(blob1.getMetadata(), container, name);
          assertEquals(getContentAsStringOrNullAndClose(blob1), TEST_STRING.substring(0, 6));
 
-         Blob blob2 = context.getBlobStore().getBlob(containerName, key, range(6, TEST_STRING.length()));
+         Blob blob2 = context.getBlobStore().getBlob(container, name, range(6, TEST_STRING.length()));
+         validateMetadata(blob2.getMetadata(), container, name);
          assertEquals(getContentAsStringOrNullAndClose(blob2), TEST_STRING.substring(6, TEST_STRING.length()));
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetTwoRanges() throws InterruptedException, IOException {
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         String key = "apples";
+         String name = "apples";
 
-         addObjectAndValidateContent(containerName, key);
-         Blob blob = context.getBlobStore().getBlob(containerName, key, range(0, 5).range(6, TEST_STRING.length()));
-
+         addObjectAndValidateContent(container, name);
+         Blob blob = context.getBlobStore().getBlob(container, name, range(0, 5).range(6, TEST_STRING.length()));
+         validateMetadata(blob.getMetadata(), container, name);
          assertEquals(getContentAsStringOrNullAndClose(blob), TEST_STRING);
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
@@ -293,13 +296,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    // public void testGetTail() throws InterruptedException, ExecutionException,
    // TimeoutException,
    // IOException {
-   // String containerName = getContainerName();
+   // String container = getContainerName();
    // try {
    //
-   // String key = "apples";
+   // String name = "apples";
    //
-   // addObjectAndValidateContent(containerName, key);
-   // Blob blob = context.getBlobStore().getBlob(containerName, key,
+   // addObjectAndValidateContent(container, name);
+   // Blob blob = context.getBlobStore().getBlob(container, name,
    // tail(5)).get(30,
    // TimeUnit.SECONDS);
    // assertEquals(BlobStoreUtils.getContentAsStringAndClose(blob), TEST_STRING
@@ -307,7 +310,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    // assertEquals(blob.getContentLength(), 5);
    // assertEquals(blob.getMetadata().getSize(), TEST_STRING.length());
    // } finally {
-   // returnContainer(containerName);
+   // returnContainer(container);
    // }
    // }
 
@@ -316,12 +319,12 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    // ExecutionException,
    // TimeoutException,
    // IOException {
-   // String containerName = getContainerName();
+   // String container = getContainerName();
    // try {
-   // String key = "apples";
+   // String name = "apples";
    //
-   // addObjectAndValidateContent(containerName, key);
-   // Blob blob = context.getBlobStore().getBlob(containerName, key,
+   // addObjectAndValidateContent(container, name);
+   // Blob blob = context.getBlobStore().getBlob(container, name,
    // startAt(5)).get(30,
    // TimeUnit.SECONDS);
    // assertEquals(BlobStoreUtils.getContentAsStringAndClose(blob),
@@ -330,71 +333,69 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    // assertEquals(blob.getContentLength(), TEST_STRING.length() - 5);
    // assertEquals(blob.getMetadata().getSize(), TEST_STRING.length());
    // } finally {
-   // returnContainer(containerName);
+   // returnContainer(container);
    // }
    // }
 
-   private String addObjectAndValidateContent(String sourcecontainerName, String sourceKey) throws InterruptedException {
-      String eTag = addBlobToContainer(sourcecontainerName, sourceKey);
-      validateContent(sourcecontainerName, sourceKey);
+   private String addObjectAndValidateContent(String sourcecontainer, String sourceKey) throws InterruptedException {
+      String eTag = addBlobToContainer(sourcecontainer, sourceKey);
+      validateContent(sourcecontainer, sourceKey);
       return eTag;
    }
 
    @Test(groups = { "integration", "live" })
    public void deleteObjectNotFound() throws InterruptedException {
-      String containerName = getContainerName();
-      String key = "test";
+      String container = getContainerName();
+      String name = "test";
       try {
-         context.getBlobStore().removeBlob(containerName, key);
+         context.getBlobStore().removeBlob(container, name);
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void blobNotFound() throws InterruptedException {
-      String containerName = getContainerName();
-      String key = "test";
+      String container = getContainerName();
+      String name = "test";
       try {
-         assert !context.getBlobStore().blobExists(containerName, key);
+         assert !context.getBlobStore().blobExists(container, name);
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @DataProvider(name = "delete")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" },
-            { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
+               { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "delete")
-   public void deleteObject(String key) throws InterruptedException {
-      String containerName = getContainerName();
+   public void deleteObject(String name) throws InterruptedException {
+      String container = getContainerName();
       try {
-         addBlobToContainer(containerName, key, key, MediaType.TEXT_PLAIN);
-         context.getBlobStore().removeBlob(containerName, key);
-         assertContainerEmptyDeleting(containerName, key);
+         addBlobToContainer(container, name, name, MediaType.TEXT_PLAIN);
+         context.getBlobStore().removeBlob(container, name);
+         assertContainerEmptyDeleting(container, name);
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
-   private void assertContainerEmptyDeleting(String containerName, String key) {
-      Iterable<? extends StorageMetadata> listing = Iterables.filter(context.getBlobStore().list(containerName),
-            new Predicate<StorageMetadata>() {
+   private void assertContainerEmptyDeleting(String container, String name) {
+      Iterable<? extends StorageMetadata> listing = Iterables.filter(context.getBlobStore().list(container),
+               new Predicate<StorageMetadata>() {
 
-               @Override
-               public boolean apply(StorageMetadata input) {
-                  return input.getType() == StorageType.BLOB;
-               }
+                  @Override
+                  public boolean apply(StorageMetadata input) {
+                     return input.getType() == StorageType.BLOB;
+                  }
 
-            });
-      assertEquals(
-            Iterables.size(listing),
-            0,
-            String.format("deleting %s, we still have %s blobs left in container %s, using encoding %s", key,
-                  Iterables.size(listing), containerName, LOCAL_ENCODING));
+               });
+      assertEquals(Iterables.size(listing), 0, String.format(
+               "deleting %s, we still have %s blobs left in container %s, using encoding %s", name, Iterables
+                        .size(listing), container, LOCAL_ENCODING));
    }
 
    @Test(groups = { "integration", "live" })
@@ -414,60 +415,63 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       String realObject = Strings2.toStringAndClose(new FileInputStream("pom.xml"));
 
       return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
-            { "string", "text/xml", realObject, realObject },
-            { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
+               { "string", "text/xml", realObject, realObject },
+               { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
-   public void testPutObject(String key, String type, Object content, Object realObject) throws InterruptedException,
-         IOException {
-      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder(key).payload(Payloads.newPayload(content))
-            .contentType(type);
+   public void testPutObject(String name, String type, Object content, Object realObject) throws InterruptedException,
+            IOException {
+      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder(name).payload(Payloads.newPayload(content))
+               .contentType(type);
       addContentMetadata(blobBuilder);
       if (content instanceof InputStream) {
          blobBuilder.calculateMD5();
       }
       Blob blob = blobBuilder.build();
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
-         assertNotNull(context.getBlobStore().putBlob(containerName, blob));
-         blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
+         assertNotNull(context.getBlobStore().putBlob(container, blob));
+         blob = context.getBlobStore().getBlob(container, blob.getMetadata().getName());
+         validateMetadata(blob.getMetadata(), container, name);
          checkContentMetadata(blob);
 
          String returnedString = getContentAsStringOrNullAndClose(blob);
          assertEquals(returnedString, realObject);
-         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
+         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(container);
          assert set.size() == 1 : set;
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder("streaming").payload(new StreamingPayload(new WriteTo() {
-         @Override
-         public void writeTo(OutputStream outstream) throws IOException {
-            outstream.write("foo".getBytes());
-         }
-      }));
+      PayloadBlobBuilder blobBuilder = context.getBlobStore().blobBuilder("streaming").payload(
+               new StreamingPayload(new WriteTo() {
+                  @Override
+                  public void writeTo(OutputStream outstream) throws IOException {
+                     outstream.write("foo".getBytes());
+                  }
+               }));
       addContentMetadata(blobBuilder);
-      
+
       Blob blob = blobBuilder.build();
 
-      String containerName = getContainerName();
+      String container = getContainerName();
       try {
 
-         assertNotNull(context.getBlobStore().putBlob(containerName, blob));
+         assertNotNull(context.getBlobStore().putBlob(container, blob));
 
-         blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
+         blob = context.getBlobStore().getBlob(container, blob.getMetadata().getName());
          String returnedString = getContentAsStringOrNullAndClose(blob);
          assertEquals(returnedString, "foo");
+         validateMetadata(blob.getMetadata(), container, blob.getMetadata().getName());
          checkContentMetadata(blob);
-         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
+         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(container);
          assert set.size() == 1 : set;
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
@@ -487,31 +491,31 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void checkContentType(Blob blob, String contentType) {
       assert blob.getPayload().getContentMetadata().getContentType().startsWith(contentType) : blob.getPayload()
-            .getContentMetadata().getContentType();
+               .getContentMetadata().getContentType();
       assert blob.getMetadata().getContentMetadata().getContentType().startsWith(contentType) : blob.getMetadata()
-            .getContentMetadata().getContentType();
+               .getContentMetadata().getContentType();
    }
 
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
       assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
-            .getPayload().getContentMetadata().getContentDisposition();
+               .getPayload().getContentMetadata().getContentDisposition();
       assert blob.getMetadata().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
-            .getMetadata().getContentMetadata().getContentDisposition();
+               .getMetadata().getContentMetadata().getContentDisposition();
 
    }
 
    protected void checkContentEncoding(Blob blob, String contentEncoding) {
       assert (blob.getPayload().getContentMetadata().getContentEncoding().indexOf(contentEncoding) != -1) : blob
-            .getPayload().getContentMetadata().getContentEncoding();
+               .getPayload().getContentMetadata().getContentEncoding();
       assert (blob.getMetadata().getContentMetadata().getContentEncoding().indexOf(contentEncoding) != -1) : blob
-            .getMetadata().getContentMetadata().getContentEncoding();
+               .getMetadata().getContentMetadata().getContentEncoding();
    }
 
    protected void checkContentLanguage(Blob blob, String contentLanguage) {
       assert blob.getPayload().getContentMetadata().getContentLanguage().startsWith(contentLanguage) : blob
-            .getPayload().getContentMetadata().getContentLanguage();
+               .getPayload().getContentMetadata().getContentLanguage();
       assert blob.getMetadata().getContentMetadata().getContentLanguage().startsWith(contentLanguage) : blob
-            .getMetadata().getContentMetadata().getContentLanguage();
+               .getMetadata().getContentMetadata().getContentLanguage();
    }
 
    protected volatile static Crypto crypto;
@@ -527,40 +531,41 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testMetadata() throws InterruptedException, IOException {
-      String key = "hello";
+      String name = "hello";
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to
       // normalize the
       // providers.
-      Blob blob = context.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
-            .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).calculateMD5().build();
-      String containerName = getContainerName();
+      Blob blob = context.getBlobStore().blobBuilder(name).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+               .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).calculateMD5().build();
+      String container = getContainerName();
       try {
-         assertNull(context.getBlobStore().blobMetadata(containerName, "powderpuff"));
+         assertNull(context.getBlobStore().blobMetadata(container, "powderpuff"));
 
-         addBlobToContainer(containerName, blob);
-         Blob newObject = validateContent(containerName, key);
+         addBlobToContainer(container, blob);
+         Blob newObject = validateContent(container, name);
 
          BlobMetadata metadata = newObject.getMetadata();
 
          validateMetadata(metadata);
-         validateMetadata(context.getBlobStore().blobMetadata(containerName, key));
+         validateMetadata(metadata, container, name);
+         validateMetadata(context.getBlobStore().blobMetadata(container, name));
 
-         // write 2 items with the same key to ensure that provider doesn't
+         // write 2 items with the same name to ensure that provider doesn't
          // accept dupes
          blob.getMetadata().getUserMetadata().put("Adrian", "wonderpuff");
          blob.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
 
-         addBlobToContainer(containerName, blob);
-         validateMetadata(context.getBlobStore().blobMetadata(containerName, key));
+         addBlobToContainer(container, blob);
+         validateMetadata(context.getBlobStore().blobMetadata(container, name));
 
       } finally {
-         returnContainer(containerName);
+         returnContainer(container);
       }
    }
 
    protected void validateMetadata(BlobMetadata metadata) throws IOException {
       assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata()
-            .getContentType();
+               .getContentType();
       assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       checkMD5(metadata);

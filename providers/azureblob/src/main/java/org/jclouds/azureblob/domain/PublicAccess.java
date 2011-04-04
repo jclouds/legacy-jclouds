@@ -17,38 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.blobstore.domain;
-
-import java.net.URI;
-
-import javax.annotation.Nullable;
-
-import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
-import org.jclouds.io.ContentMetadata;
-
-import com.google.inject.ImplementedBy;
+package org.jclouds.azureblob.domain;
 
 /**
- * System and user Metadata for the {@link Blob}.
+ * Indicates whether data in the container may be accessed publicly and the level of access.
  * 
  * @author Adrian Cole
+ * 
+ * @see <a href="http://msdn.microsoft.com/en-us/library/dd179469.aspx"/>
  */
-@ImplementedBy(BlobMetadataImpl.class)
-public interface BlobMetadata extends StorageMetadata {
+public enum PublicAccess {
    /**
-    * If the blob is publicly readable, what is the URI one can access it at.
-    * 
-    * @return uri, or null, if not readable
+    * Indicates full public read access for container and blob data. Clients can enumerate blobs
+    * within the container via anonymous request, but cannot enumerate containers within the storage
+    * account.
     */
-   @Nullable
-   URI getPublicUri();
-   
+   CONTAINER,
    /**
-    * 
-    * @return the container holding this blob
+    * Indicates public read access for blobs. Blob data within this container can be read via
+    * anonymous request, but container data is not available. Clients cannot enumerate blobs within
+    * the container via anonymous request.
     */
-   @Nullable
-   String getContainer();
+   BLOB,
+   /**
+    * the container is private to the account owner.
+    */
+   PRIVATE;
 
-   ContentMetadata getContentMetadata();
 }

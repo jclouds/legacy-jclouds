@@ -28,6 +28,7 @@ import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
@@ -99,6 +100,14 @@ public interface BlobStore {
     * @return true if the container was created, false if it already existed.
     */
    boolean createContainerInLocation(@Nullable Location location, String container);
+
+   /**
+    * 
+    * @param options
+    *           controls default access control
+    * @see #createContainerInLocation(Location,String)
+    */
+   boolean createContainerInLocation(@Nullable Location location, String container, CreateContainerOptions options);
 
    /**
     * Lists all resources in a container non-recursive.

@@ -19,10 +19,40 @@
 
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.CreateContainerOptions.Builder.publicRead;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
+
 /**
  * 
  * @author Adrian Cole
  */
 public class BaseContainerLiveTest extends BaseBlobStoreIntegrationTest {
 
+   @Test(groups = { "live" })
+   public void testPublicAccess() throws InterruptedException, MalformedURLException, IOException {
+      final String containerName = getScratchContainerName();
+      try {
+         context.getBlobStore().createContainerInLocation(null, containerName, publicRead());
+         assertConsistencyAwareContainerSize(containerName, 0);
+
+         context.getBlobStore().putBlob(containerName,
+                  context.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build());
+         assertConsistencyAwareContainerSize(containerName, 1);
+
+         BlobMetadata metadata = context.getBlobStore().blobMetadata(containerName, "hello");
+
+         assertEquals(Strings2.toStringAndClose(metadata.getPublicUri().toURL().openStream()), TEST_STRING);
+
+      } finally {
+         // this container is now public, so we can't reuse it directly
+         recycleContainer(containerName);
+      }
+   }
 }

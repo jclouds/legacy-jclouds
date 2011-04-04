@@ -21,7 +21,7 @@ package org.jclouds.azureblob;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withMetadata;
-import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withPublicAcl;
+import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withPublicAccess;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -39,6 +39,7 @@ import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
+import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -151,7 +152,7 @@ public class AzureBlobClientLiveTest {
       while (!created) {
          publicContainer = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = client.createContainer(publicContainer, withPublicAcl());
+            created = client.createContainer(publicContainer, withPublicAccess(PublicAccess.BLOB));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)

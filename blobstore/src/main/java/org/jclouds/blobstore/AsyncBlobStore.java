@@ -28,6 +28,7 @@ import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
@@ -76,6 +77,12 @@ public interface AsyncBlobStore {
     * @see BlobStore#createContainerInLocation(Location, String)
     */
    ListenableFuture<Boolean> createContainerInLocation(@Nullable Location location, String container);
+
+   /**
+    * @see BlobStore#createContainerInLocation(Location,String,CreateContainerOptions)
+    */
+   ListenableFuture<Boolean> createContainerInLocation(@Nullable Location location, String container,
+            CreateContainerOptions options);
 
    /**
     * @see BlobStore#list(String)

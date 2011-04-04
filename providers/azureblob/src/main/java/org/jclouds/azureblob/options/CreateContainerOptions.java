@@ -20,6 +20,7 @@
 package org.jclouds.azureblob.options;
 
 import org.jclouds.azure.storage.options.CreateOptions;
+import org.jclouds.azureblob.domain.PublicAccess;
 
 import com.google.common.collect.Multimap;
 
@@ -34,7 +35,7 @@ import com.google.common.collect.Multimap;
  * import org.jclouds.azureblob.AzureBlobClient;
  * <p/>
  * AzureBlobClient connection = // get connection
- * boolean createdWithPublicAcl = connection.createContainer("containerName", withPublicAcl());
+ * boolean createdWithPublicAccess = connection.createContainer("containerName", withPublicAccess(PublicAccess.BLOB));
  * <code> *
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd179466.aspx" />
@@ -51,19 +52,20 @@ public class CreateContainerOptions extends CreateOptions {
    /**
     * Indicates whether a container may be accessed publicly
     */
-   public CreateContainerOptions withPublicAcl() {
-      this.headers.put("x-ms-prop-publicaccess", "true");
+   public CreateContainerOptions withPublicAccess(PublicAccess access) {
+      if (access != PublicAccess.PRIVATE)
+         this.headers.put("x-ms-blob-public-access", access.name().toLowerCase());
       return this;
    }
 
    public static class Builder {
 
       /**
-       * @see CreateContainerOptions#withPublicAcl()
+       * @see CreateContainerOptions#withPublicAccess
        */
-      public static CreateContainerOptions withPublicAcl() {
+      public static CreateContainerOptions withPublicAccess(PublicAccess access) {
          CreateContainerOptions options = new CreateContainerOptions();
-         return options.withPublicAcl();
+         return options.withPublicAccess(access);
       }
 
       /**

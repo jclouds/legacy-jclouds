@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
 
+import java.net.URI;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -54,6 +55,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
    private final Provider<MutableBlobMetadata> metadataFactory;
 
    private String name;
+   private URI endpoint;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
@@ -69,6 +71,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
       MutableBlobMetadata to = metadataFactory.get();
       to.setName(name);
+      to.setUri(endpoint);
       if (from.getPayload() != null)
          HttpUtils.copy(from.getPayload().getContentMetadata(), to.getContentMetadata());
       addETagTo(from, to);
@@ -115,6 +118,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
    }
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
+      this.endpoint = request.getEndpoint();
       checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       return setName(getNameFor(GeneratedHttpRequest.class.cast(request)));
    }

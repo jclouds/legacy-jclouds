@@ -21,6 +21,7 @@ package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -30,19 +31,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
-import org.jclouds.s3.blobstore.functions.BlobToObject;
-import org.jclouds.s3.blobstore.functions.BucketToResourceList;
-import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
-import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
-import org.jclouds.s3.blobstore.functions.ObjectToBlob;
-import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.s3.domain.ListBucketResponse;
-import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.options.ListBucketOptions;
-import org.jclouds.s3.util.S3Utils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -51,6 +39,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
@@ -58,6 +47,25 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.blobstore.functions.BucketToResourceList;
+import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
+import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
+import org.jclouds.s3.blobstore.functions.ObjectToBlob;
+import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.BucketMetadata;
+import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.ListBucketResponse;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
+import org.jclouds.s3.domain.AccessControlList.Permission;
+import org.jclouds.s3.options.ListBucketOptions;
+import org.jclouds.s3.options.PutBucketOptions;
+import org.jclouds.s3.options.PutObjectOptions;
+import org.jclouds.s3.util.S3Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -81,15 +89,16 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToObject blob2Object;
    private final ObjectToBlobMetadata object2BlobMd;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
+   private final Map<String, AccessControlList> bucketAcls;
 
    @Inject
    protected S3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, S3AsyncClient async, S3Client sync,
-         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, S3AsyncClient async, S3Client sync,
+            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.async = checkNotNull(async, "async");
@@ -101,6 +110,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
       this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
+      this.bucketAcls = checkNotNull(bucketAcls, "bucketAcls");
    }
 
    /**
@@ -109,11 +119,11 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
       return Futures.compose(async.listOwnedBuckets(),
-            new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-               public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<BucketMetadata> from) {
-                  return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd), null);
-               }
-            }, service);
+               new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<BucketMetadata> from) {
+                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd), null);
+                  }
+               }, service);
    }
 
    /**
@@ -137,8 +147,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
-      location = location != null ? location : defaultLocation.get();
-      return async.putBucketInRegion(location.getId(), container);
+      return createContainerInLocation(location, container, CreateContainerOptions.NONE);
    }
 
    /**
@@ -153,9 +162,9 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
       ListenableFuture<PageSet<? extends StorageMetadata>> list = Futures.compose(returnVal, bucket2ResourceList,
-            service);
+               service);
       return (options.isDetailed()) ? Futures.compose(list,
-            fetchBlobMetadataProvider.get().setContainerName(container), service) : list;
+               fetchBlobMetadataProvider.get().setContainerName(container), service) : list;
    }
 
    /**
@@ -222,7 +231,11 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob) {
-      return async.putObject(container, blob2Object.apply(blob));
+      PutObjectOptions options = new PutObjectOptions();
+      AccessControlList acl = bucketAcls.get(container);
+      if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
+         options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+      return async.putObject(container, blob2Object.apply(blob), options);
    }
 
    /**
@@ -241,6 +254,16 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
       return putBlob(container, blob);
+   }
+
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container,
+            CreateContainerOptions options) {
+      PutBucketOptions putBucketOptions = new PutBucketOptions();
+      if (options.isPublicRead())
+         putBucketOptions.withBucketAcl(CannedAccessPolicy.PUBLIC_READ);
+      location = location != null ? location : defaultLocation.get();
+      return async.putBucketInRegion(location.getId(), container, putBucketOptions);
    }
 
 }

@@ -44,7 +44,11 @@ public interface MutableBlobProperties extends BlobProperties {
     * @see ListableContainerProperties#getName
     */
    void setName(String name);
-
+   /**
+    * @see ListableContainerProperties#getContainer
+    */
+   void setContainer(String container);
+   
    /**
     * @see ListableContainerProperties#getLastModified
     */

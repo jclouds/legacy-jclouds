@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.s3.blobstore;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -30,7 +31,6 @@ import org.jclouds.Constants;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
-import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -45,9 +45,9 @@ import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.s3.domain.AccessControlList;
 
 import com.google.common.base.Supplier;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -60,16 +60,16 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
 
    @Inject
    public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, AWSS3AsyncClient async, AWSS3Client sync,
-         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
-         Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, AWSS3AsyncClient async, AWSS3Client sync,
+            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls,
+            Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd,
-            container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
-            object2BlobMd, fetchBlobMetadataProvider);
+               container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
+               object2BlobMd, fetchBlobMetadataProvider, bucketAcls);
       this.multipartUploadStrategy = multipartUploadStrategy;
    }
 

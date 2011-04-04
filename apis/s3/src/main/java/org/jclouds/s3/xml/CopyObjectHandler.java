@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -51,9 +53,9 @@ public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ETag")) {
-         this.currentETag = currentText.toString().trim();
+         this.currentETag = currentOrNull(currentText);
       } else if (qName.equals("LastModified")) {
-         this.currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
+         this.currentLastModified = dateParser.iso8601DateParse(currentOrNull(currentText));
       } else if (qName.equals("CopyObjectResult")) {
          metadata = new CopyObjectResult(currentLastModified, currentETag);
       }

@@ -295,19 +295,6 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   private void assertNotExists(final String containerName) throws InterruptedException {
-      assertConsistencyAware(new Runnable() {
-         public void run() {
-            try {
-               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
-                     + " still exists";
-            } catch (Exception e) {
-               propagateIfPossible(e);
-            }
-         }
-      });
-   }
-
    @Test(groups = { "integration", "live" })
    public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException,
          UnsupportedEncodingException {

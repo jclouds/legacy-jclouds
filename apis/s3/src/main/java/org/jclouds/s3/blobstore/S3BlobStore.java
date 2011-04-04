@@ -21,22 +21,13 @@ package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.S3Client;
-import org.jclouds.s3.blobstore.functions.BlobToObject;
-import org.jclouds.s3.blobstore.functions.BucketToResourceList;
-import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
-import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
-import org.jclouds.s3.blobstore.functions.ObjectToBlob;
-import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.s3.options.ListBucketOptions;
-import org.jclouds.s3.util.S3Utils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -45,12 +36,29 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.blobstore.functions.BucketToResourceList;
+import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
+import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
+import org.jclouds.s3.blobstore.functions.ObjectToBlob;
+import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.BucketMetadata;
+import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
+import org.jclouds.s3.domain.AccessControlList.Permission;
+import org.jclouds.s3.options.ListBucketOptions;
+import org.jclouds.s3.options.PutBucketOptions;
+import org.jclouds.s3.options.PutObjectOptions;
+import org.jclouds.s3.util.S3Utils;
 import org.jclouds.util.Assertions;
 
 import com.google.common.base.Function;
@@ -72,6 +80,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
+   private final Map<String, AccessControlList> bucketAcls;
 
    @Inject
    protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
@@ -79,7 +88,7 @@ public class S3BlobStore extends BaseBlobStore {
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -90,6 +99,7 @@ public class S3BlobStore extends BaseBlobStore {
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
       this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
+      this.bucketAcls = checkNotNull(bucketAcls, "bucketAcls");
    }
 
    /**
@@ -125,8 +135,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public boolean createContainerInLocation(Location location, String container) {
-      location = location != null ? location : defaultLocation.get();
-      return sync.putBucketInRegion(location.getId(), container);
+      return createContainerInLocation(location, container, CreateContainerOptions.NONE);
    }
 
    /**
@@ -222,7 +231,11 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob) {
-      return sync.putObject(container, blob2Object.apply(blob));
+      PutObjectOptions options = new PutObjectOptions();
+      AccessControlList acl = bucketAcls.get(container);
+      if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
+         options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+      return sync.putObject(container, blob2Object.apply(blob), options);
    }
 
    /**
@@ -256,5 +269,14 @@ public class S3BlobStore extends BaseBlobStore {
     */
    protected boolean deleteAndVerifyContainerGone(final String container) {
       return S3Utils.deleteAndVerifyContainerGone(sync, container);
+   }
+
+   @Override
+   public boolean createContainerInLocation(Location location, String container, CreateContainerOptions options) {
+      PutBucketOptions putBucketOptions = new PutBucketOptions();
+      if (options.isPublicRead())
+         putBucketOptions.withBucketAcl(CannedAccessPolicy.PUBLIC_READ);
+      location = location != null ? location : defaultLocation.get();
+      return sync.putBucketInRegion(location.getId(), container, putBucketOptions);
    }
 }

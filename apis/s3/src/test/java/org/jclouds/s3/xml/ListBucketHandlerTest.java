@@ -22,19 +22,20 @@ package org.jclouds.s3.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.TreeSet;
 
-import org.jclouds.s3.domain.CanonicalUser;
-import org.jclouds.s3.domain.ListBucketResponse;
-import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
-import org.jclouds.s3.domain.internal.BucketListObjectMetadata;
-import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.s3.domain.CanonicalUser;
+import org.jclouds.s3.domain.ListBucketResponse;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadataBuilder;
+import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -63,59 +64,68 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/list_bucket.xml");
+
+      ListBucketResponse result = createParser().parse(is);
+
       CanonicalUser owner = new CanonicalUser("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0",
-            "ferncam");
-      ListBucketResponse expected = new ListBucketResponseImpl("adriancole.org.jclouds.s3.amazons3testdelimiter",
-            ImmutableList.of(
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/0", dateService
-                        .iso8601DateParse("2009-05-07T18:27:08.000Z"), "\"c82e6a0025c31c5de5947fda62ac51ab\"",
-                        CryptoStreams.hex("c82e6a0025c31c5de5947fda62ac51ab"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/1", dateService
-                        .iso8601DateParse("2009-05-07T18:27:09.000Z"), "\"944fab2c5a9a6bacf07db5e688310d7a\"",
-                        CryptoStreams.hex("944fab2c5a9a6bacf07db5e688310d7a"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/2", dateService
-                        .iso8601DateParse("2009-05-07T18:27:09.000Z"), "\"a227b8888045c8fd159fb495214000f0\"",
-                        CryptoStreams.hex("a227b8888045c8fd159fb495214000f0"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/3", dateService
-                        .iso8601DateParse("2009-05-07T18:27:09.000Z"), "\"c9caa76c3dec53e2a192608ce73eef03\"",
-                        CryptoStreams.hex("c9caa76c3dec53e2a192608ce73eef03"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/4", dateService
-                        .iso8601DateParse("2009-05-07T18:27:09.000Z"), "\"1ce5d0dcc6154a647ea90c7bdf82a224\"",
-                        CryptoStreams.hex("1ce5d0dcc6154a647ea90c7bdf82a224"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/5", dateService
-                        .iso8601DateParse("2009-05-07T18:27:09.000Z"), "\"79433524d87462ee05708a8ef894ed55\"",
-                        CryptoStreams.hex("79433524d87462ee05708a8ef894ed55"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/6", dateService
-                        .iso8601DateParse("2009-05-07T18:27:10.000Z"), "\"dd00a060b28ddca8bc5a21a49e306f67\"",
-                        CryptoStreams.hex("dd00a060b28ddca8bc5a21a49e306f67"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/7", dateService
-                        .iso8601DateParse("2009-05-07T18:27:10.000Z"), "\"8cd06eca6e819a927b07a285d750b100\"",
-                        CryptoStreams.hex("8cd06eca6e819a927b07a285d750b100"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/8", dateService
-                        .iso8601DateParse("2009-05-07T18:27:10.000Z"), "\"174495094d0633b92cbe46603eee6bad\"",
-                        CryptoStreams.hex("174495094d0633b92cbe46603eee6bad"), 8, owner, StorageClass.STANDARD),
-                  (ObjectMetadata) new BucketListObjectMetadata("apps/9", dateService
-                        .iso8601DateParse("2009-05-07T18:27:10.000Z"), "\"cd8a19b26fea8a827276df0ad11c580d\"",
-                        CryptoStreams.hex("cd8a19b26fea8a827276df0ad11c580d"), 8, owner, StorageClass.STANDARD)),
-            "apps/", null, null, 1000, null, false, new TreeSet<String>());
+               "ferncam");
+      String bucket = "adriancole.org.jclouds.aws.s3.amazons3testdelimiter";
+      ListBucketResponse expected = new ListBucketResponseImpl(bucket, ImmutableList.<ObjectMetadata> of(
+               new ObjectMetadataBuilder().key("apps/0").bucket(bucket).uri(URI.create("http://bucket.com/apps/0"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:08.000Z")).eTag(
+                                 "\"c82e6a0025c31c5de5947fda62ac51ab\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("c82e6a0025c31c5de5947fda62ac51ab")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/1").bucket(bucket).uri(URI.create("http://bucket.com/apps/1"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
+                                 "\"944fab2c5a9a6bacf07db5e688310d7a\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("944fab2c5a9a6bacf07db5e688310d7a")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/2").bucket(bucket).uri(URI.create("http://bucket.com/apps/2"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
+                                 "\"a227b8888045c8fd159fb495214000f0\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("a227b8888045c8fd159fb495214000f0")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/3").bucket(bucket).uri(URI.create("http://bucket.com/apps/3"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
+                                 "\"c9caa76c3dec53e2a192608ce73eef03\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("c9caa76c3dec53e2a192608ce73eef03")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/4").bucket(bucket).uri(URI.create("http://bucket.com/apps/4"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
+                                 "\"1ce5d0dcc6154a647ea90c7bdf82a224\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("1ce5d0dcc6154a647ea90c7bdf82a224")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/5").bucket(bucket).uri(URI.create("http://bucket.com/apps/5"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
+                                 "\"79433524d87462ee05708a8ef894ed55\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("79433524d87462ee05708a8ef894ed55")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/6").bucket(bucket).uri(URI.create("http://bucket.com/apps/6"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
+                                 "\"dd00a060b28ddca8bc5a21a49e306f67\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("dd00a060b28ddca8bc5a21a49e306f67")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/7").bucket(bucket).uri(URI.create("http://bucket.com/apps/7"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
+                                 "\"8cd06eca6e819a927b07a285d750b100\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("8cd06eca6e819a927b07a285d750b100")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/8").bucket(bucket).uri(URI.create("http://bucket.com/apps/8"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
+                                 "\"174495094d0633b92cbe46603eee6bad\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("174495094d0633b92cbe46603eee6bad")).contentLength(8l).build(),
+               new ObjectMetadataBuilder().key("apps/9").bucket(bucket).uri(URI.create("http://bucket.com/apps/9"))
+                        .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
+                                 "\"cd8a19b26fea8a827276df0ad11c580d\"").owner(owner).contentMD5(
+                                 CryptoStreams.hex("cd8a19b26fea8a827276df0ad11c580d")).contentLength(8l).build()),
+               "apps/", null, null, 1000, null, false, new TreeSet<String>());
 
-      ListBucketResponse result = (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class))
-            .parse(is);
-
-      assertEquals(result, expected);
+      assertEquals(result.toString(), expected.toString());
    }
 
    ParseSax<ListBucketResponse> createParser() {
-      ParseSax<ListBucketResponse> parser = (ParseSax<ListBucketResponse>) factory.create(injector
-            .getInstance(ListBucketHandler.class));
-      return parser;
+      return factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
+               HttpRequest.builder().method("GET").endpoint(URI.create("http://bucket.com")).build());
    }
 
    @Test
    public void testListMyBucketsWithDelimiterSlashAndCommonPrefixesAppsSlash() throws HttpException {
 
       ListBucketResponse bucket = createParser().parse(
-            Strings2.toInputStream(listBucketWithSlashDelimiterAndCommonPrefixApps));
+               Strings2.toInputStream(listBucketWithSlashDelimiterAndCommonPrefixApps));
       assertEquals(bucket.getCommonPrefixes().iterator().next(), "apps/");
       assertEquals(bucket.getDelimiter(), "/");
       assert bucket.getMarker() == null;

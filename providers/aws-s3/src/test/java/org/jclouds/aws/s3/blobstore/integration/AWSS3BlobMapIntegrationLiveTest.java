@@ -19,13 +19,13 @@
 
 package org.jclouds.aws.s3.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.jclouds.s3.blobstore.integration.S3BlobMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "AWSS3BlobMapIntegrationLiveTest")
-public class AWSS3BlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
+@Test(groups = "live", testName = "AWSS3BlobMapIntegrationLiveTest")
+public class AWSS3BlobMapIntegrationLiveTest extends S3BlobMapIntegrationLiveTest {
 
 }

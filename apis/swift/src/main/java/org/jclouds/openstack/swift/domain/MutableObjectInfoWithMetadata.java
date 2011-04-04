@@ -19,6 +19,7 @@
 
 package org.jclouds.openstack.swift.domain;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
@@ -43,6 +44,10 @@ public interface MutableObjectInfoWithMetadata extends ObjectInfo {
    void setLastModified(Date lastModified);
 
    void setContentType(String contentType);
+
+   void setContainer(String container);
+
+   void setUri(URI uri);
 
    Map<String, String> getMetadata();
 

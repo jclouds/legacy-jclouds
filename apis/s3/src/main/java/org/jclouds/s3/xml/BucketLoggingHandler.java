@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.net.URI;
 import java.util.Set;
 
@@ -68,9 +70,9 @@ public class BucketLoggingHandler extends ParseSax.HandlerWithResult<BucketLoggi
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("TargetBucket")) {
-         this.targetBucket = currentText.toString().trim();
+         this.targetBucket = currentOrNull(currentText);
       } else if (qName.equals("TargetPrefix")) {
-         this.targetPrefix = currentText.toString().trim();
+         this.targetPrefix = currentOrNull(currentText);
       } else if (qName.equals("Grantee")) {
          if ("AmazonCustomerByEmail".equals(currentGranteeType)) {
             currentGrantee = new EmailAddressGrantee(currentId);
@@ -82,11 +84,11 @@ public class BucketLoggingHandler extends ParseSax.HandlerWithResult<BucketLoggi
       } else if (qName.equals("Grant")) {
          targetGrants.add(new Grant(currentGrantee, currentPermission));
       } else if (qName.equals("ID") || qName.equals("EmailAddress") || qName.equals("URI")) {
-         currentId = currentText.toString().trim();
+         currentId = currentOrNull(currentText);
       } else if (qName.equals("DisplayName")) {
-         currentDisplayName = currentText.toString().trim();
+         currentDisplayName = currentOrNull(currentText);
       } else if (qName.equals("Permission")) {
-         currentPermission = currentText.toString().trim();
+         currentPermission = currentOrNull(currentText);
       }
       currentText = new StringBuilder();
    }

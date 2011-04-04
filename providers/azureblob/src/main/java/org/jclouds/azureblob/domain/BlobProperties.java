@@ -45,6 +45,8 @@ public interface BlobProperties extends Comparable<BlobProperties> {
 
    String getName();
 
+   String getContainer();
+
    Date getLastModified();
 
    String getETag();

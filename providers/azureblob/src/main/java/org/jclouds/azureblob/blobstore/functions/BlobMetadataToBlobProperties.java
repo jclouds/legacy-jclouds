@@ -42,6 +42,7 @@ public class BlobMetadataToBlobProperties implements Function<BlobMetadata, Muta
       HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setETag(from.getETag());
       to.setName(from.getName());
+      to.setUrl(from.getUri());
       to.setLastModified(from.getLastModified());
       if (from.getUserMetadata() != null) {
          for (Entry<String, String> entry : from.getUserMetadata().entrySet())

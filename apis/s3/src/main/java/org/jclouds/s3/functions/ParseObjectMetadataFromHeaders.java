@@ -106,6 +106,7 @@ public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, Mu
    @Override
    public ParseObjectMetadataFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
+      blobToObjectMetadata.setContext(request);
       return this;
    }
 

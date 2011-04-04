@@ -51,6 +51,7 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
@@ -256,6 +257,14 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
       return putBlob(container, blob);
+   }
+
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container,
+            CreateContainerOptions options) {
+      if (options.isPublicRead())
+         throw new UnsupportedOperationException("publicRead");
+      return createContainerInLocation(location, container);
    }
 
 }

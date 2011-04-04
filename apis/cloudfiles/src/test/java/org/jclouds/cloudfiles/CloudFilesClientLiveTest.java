@@ -25,10 +25,8 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -74,28 +72,21 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
          assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getCDNUri(), cdnUri);
-         final long initialTTL = cdnMetadata.getTTL();
+         
+         
+         cdnMetadata = getApi().getCDNMetadata(containerNameWithoutCDN);
+         assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
+                  + " should not have metadata";
 
-         try {
-            cdnMetadata = getApi().getCDNMetadata(containerNameWithoutCDN);
-            assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
-                     + " should not have metadata";
-         } catch (ContainerNotFoundException e) {
-         } catch (HttpResponseException e) {
-         }
+         assert getApi().getCDNMetadata("DoesNotExist") == null;
 
-         try {
-            cdnMetadata = getApi().getCDNMetadata("DoesNotExist");
-            assert false : "should not exist";
-         } catch (ContainerNotFoundException e) {
-         } catch (HttpResponseException e) {
-         }
          // List CDN metadata for containers, and ensure all CDN info is
          // available for enabled
          // container
          Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
          assertTrue(cdnMetadataList.size() >= 1);
 
+         final long initialTTL = cdnMetadata.getTTL();
          assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true, initialTTL, cdnUri)));
 
          // Test listing with options

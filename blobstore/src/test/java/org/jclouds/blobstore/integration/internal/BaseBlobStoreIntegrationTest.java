@@ -20,6 +20,7 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagateIfPossible;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.testng.Assert.assertEquals;
 
@@ -40,6 +41,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -62,13 +64,13 @@ public class BaseBlobStoreIntegrationTest {
    protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
 
    protected Map<String, String> fiveStrings = ImmutableMap.of("one", String.format(XML_STRING_FORMAT, "apple"), "two",
-         String.format(XML_STRING_FORMAT, "bear"), "three", String.format(XML_STRING_FORMAT, "candy"), "four",
-         String.format(XML_STRING_FORMAT, "dogma"), "five", String.format(XML_STRING_FORMAT, "emma"));
+            String.format(XML_STRING_FORMAT, "bear"), "three", String.format(XML_STRING_FORMAT, "candy"), "four",
+            String.format(XML_STRING_FORMAT, "dogma"), "five", String.format(XML_STRING_FORMAT, "emma"));
 
-   protected Map<String, String> fiveStringsUnderPath = ImmutableMap.of("path/1",
-         String.format(XML_STRING_FORMAT, "apple"), "path/2", String.format(XML_STRING_FORMAT, "bear"), "path/3",
-         String.format(XML_STRING_FORMAT, "candy"), "path/4", String.format(XML_STRING_FORMAT, "dogma"), "path/5",
-         String.format(XML_STRING_FORMAT, "emma"));
+   protected Map<String, String> fiveStringsUnderPath = ImmutableMap.of("path/1", String.format(XML_STRING_FORMAT,
+            "apple"), "path/2", String.format(XML_STRING_FORMAT, "bear"), "path/3", String.format(XML_STRING_FORMAT,
+            "candy"), "path/4", String.format(XML_STRING_FORMAT, "dogma"), "path/5", String.format(XML_STRING_FORMAT,
+            "emma"));
 
    public static long INCONSISTENCY_WINDOW = 10000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
@@ -92,7 +94,7 @@ public class BaseBlobStoreIntegrationTest {
 
    @SuppressWarnings("unchecked")
    private BlobStoreContext getCloudResources(ITestContext testContext) throws ClassNotFoundException,
-         InstantiationException, IllegalAccessException, Exception {
+            InstantiationException, IllegalAccessException, Exception {
       String initializerClass = checkNotNull(System.getProperty("test.initializer"), "test.initializer");
       Class<BaseTestInitializer> clazz = (Class<BaseTestInitializer>) Class.forName(initializerClass);
       BaseTestInitializer initializer = clazz.newInstance();
@@ -125,7 +127,7 @@ public class BaseBlobStoreIntegrationTest {
    private static volatile boolean initialized = false;
 
    protected void createContainersSharedByAllThreads(BlobStoreContext context, ITestContext testContext)
-         throws Exception {
+            throws Exception {
       while (!initialized) {
          synchronized (BaseBlobStoreIntegrationTest.class) {
             if (!initialized) {
@@ -176,12 +178,12 @@ public class BaseBlobStoreIntegrationTest {
       try {
          for (int i = 0; i < 2; i++) {
             Iterable<? extends StorageMetadata> testContainers = Iterables.filter(context.getBlobStore().list(),
-                  new Predicate<StorageMetadata>() {
-                     public boolean apply(StorageMetadata input) {
-                        return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
-                              && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
-                     }
-                  });
+                     new Predicate<StorageMetadata>() {
+                        public boolean apply(StorageMetadata input) {
+                           return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
+                                    && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
+                        }
+                     });
             for (StorageMetadata container : testContainers) {
                deleteContainerOrWarnIfUnable(context, container.getName());
             }
@@ -202,7 +204,7 @@ public class BaseBlobStoreIntegrationTest {
     * we will try up to the inconsistency window to see if the assertion completes.
     */
    protected static void assertConsistencyAware(BlobStoreContext context, Runnable assertion)
-         throws InterruptedException {
+            throws InterruptedException {
       if (context.getConsistencyModel() == ConsistencyModel.STRICT) {
          assertion.run();
          return;
@@ -228,7 +230,7 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    protected static void createContainerAndEnsureEmpty(BlobStoreContext context, final String containerName)
-         throws InterruptedException {
+            throws InterruptedException {
       context.getBlobStore().createContainerInLocation(null, containerName);
       if (context.getConsistencyModel() == ConsistencyModel.EVENTUAL)
          Thread.sleep(1000);
@@ -250,8 +252,8 @@ public class BaseBlobStoreIntegrationTest {
 
    protected void add5BlobsUnderPathAnd5UnderRootToContainer(String sourceContainer) {
       for (Entry<String, String> entry : Iterables.concat(fiveStrings.entrySet(), fiveStringsUnderPath.entrySet())) {
-         Blob sourceObject = context.getBlobStore().blobBuilder(entry.getKey()).payload(entry.getValue())
-               .contentType("text/xml").build();
+         Blob sourceObject = context.getBlobStore().blobBuilder(entry.getKey()).payload(entry.getValue()).contentType(
+                  "text/xml").build();
          addBlobToContainer(sourceContainer, sourceObject);
       }
    }
@@ -260,10 +262,18 @@ public class BaseBlobStoreIntegrationTest {
       return context.getBlobStore().putBlob(sourceContainer, object);
    }
 
-   protected Blob validateContent(String sourceContainer, String key) throws InterruptedException {
-      assertConsistencyAwareContainerSize(sourceContainer, 1);
-      Blob newObject = context.getBlobStore().getBlob(sourceContainer, key);
+   protected <T extends BlobMetadata> T validateMetadata(T md, String container, String name) {
+      assertEquals(md.getName(), name);
+      assertEquals(md.getContainer(), container);
+      assert md.getUri() != null;
+      return md;
+   }
+
+   protected Blob validateContent(String container, String name) throws InterruptedException {
+      assertConsistencyAwareContainerSize(container, 1);
+      Blob newObject = context.getBlobStore().getBlob(container, name);
       assert newObject != null;
+      validateMetadata(newObject.getMetadata(), container, name);
       try {
          assertEquals(getContentAsStringOrNullAndClose(newObject), TEST_STRING);
       } catch (IOException e) {
@@ -273,19 +283,19 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    protected void assertConsistencyAwareContainerSize(final String containerName, final int count)
-         throws InterruptedException {
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
                assert context.getBlobStore().countBlobs(containerName) == count : String.format(
-                     "expected only %d values in %s: %s", count, containerName, Sets.newHashSet(Iterables.transform(
-                           context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
+                        "expected only %d values in %s: %s", count, containerName, Sets.newHashSet(Iterables.transform(
+                                 context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
 
-                              public String apply(StorageMetadata from) {
-                                 return from.getName();
-                              }
+                                    public String apply(StorageMetadata from) {
+                                       return from.getName();
+                                    }
 
-                           })));
+                                 })));
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
             }
@@ -332,6 +342,19 @@ public class BaseBlobStoreIntegrationTest {
             }
          }
       }
+   }
+
+   protected void assertNotExists(final String containerName) throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
+                        + " still exists";
+            } catch (Exception e) {
+               propagateIfPossible(e);
+            }
+         }
+      });
    }
 
    /**

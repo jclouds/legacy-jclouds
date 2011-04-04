@@ -19,6 +19,7 @@
 
 package org.jclouds.openstack.swift.domain.internal;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -37,44 +38,82 @@ import com.google.common.collect.Maps;
  */
 public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithMetadata {
    private String name;
+   private String container;
+   private URI uri;
    private Long bytes;
    private byte[] hash;
    private String contentType = MediaType.APPLICATION_OCTET_STREAM;
    private Date lastModified;
-   private final Map<String, String> metadata = Maps.newHashMap();
+   private final Map<String, String> metadata = Maps.newLinkedHashMap();
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Map<String, String> getMetadata() {
       return metadata;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setBytes(Long bytes) {
       this.bytes = bytes;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setContentType(String contentType) {
       this.contentType = contentType;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setHash(byte[] hash) {
       this.hash = hash;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setName(String name) {
       this.name = name;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Long getBytes() {
       return bytes;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getContentType() {
       return contentType;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public byte[] getHash() {
       return hash;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -83,11 +122,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      result = prime * result + Arrays.hashCode(hash);
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
+      result = prime * result + ((container == null) ? 0 : container.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -101,27 +136,10 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       if (getClass() != obj.getClass())
          return false;
       MutableObjectInfoWithMetadataImpl other = (MutableObjectInfoWithMetadataImpl) obj;
-      if (bytes == null) {
-         if (other.bytes != null)
+      if (container == null) {
+         if (other.container != null)
             return false;
-      } else if (!bytes.equals(other.bytes))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
-         return false;
-      if (!Arrays.equals(hash, other.hash))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
+      } else if (!container.equals(other.container))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -131,16 +149,60 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       return true;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getName() {
       return name;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int compareTo(ObjectInfo o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContainer() {
+      return container;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContainer(String container) {
+      this.container = container;
+   }
+
+   @Override
+   public void setUri(URI uri) {
+      this.uri = uri;
+   }
+
+   @Override
+   public URI getUri() {
+      return uri;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s]", name,
+               container, uri, bytes, contentType, lastModified, Arrays.toString(hash));
    }
 
 }

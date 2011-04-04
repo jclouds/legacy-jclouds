@@ -39,6 +39,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
@@ -82,14 +83,14 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   SwiftAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, CommonSwiftClient sync, CommonSwiftAsyncClient async,
-         ContainerToResourceMetadata container2ResourceMd,
-         BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
-         ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
-         ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+   protected SwiftAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, CommonSwiftClient sync,
+            CommonSwiftAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
+            BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
+            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.sync = sync;
       this.async = async;
@@ -109,11 +110,12 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
       return Futures.compose(async.listContainers(),
-            new Function<Set<ContainerMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-               public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<ContainerMetadata> from) {
-                  return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), null);
-               }
-            }, service);
+               new Function<Set<ContainerMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
+                           Set<ContainerMetadata> from) {
+                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), null);
+                  }
+               }, service);
    }
 
    /**
@@ -144,12 +146,12 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options) {
       org.jclouds.openstack.swift.options.ListContainerOptions httpOptions = container2ContainerListOptions
-            .apply(options);
+               .apply(options);
       ListenableFuture<PageSet<ObjectInfo>> returnVal = async.listObjects(container, httpOptions);
       ListenableFuture<PageSet<? extends StorageMetadata>> list = Futures.compose(returnVal, container2ResourceList,
-            service);
+               service);
       return options.isDetailed() ? Futures.compose(list, fetchBlobMetadataProvider.get().setContainerName(container),
-            service) : list;
+               service) : list;
    }
 
    /**
@@ -176,14 +178,14 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
       return Futures.compose(async.getObjectInfo(container, key),
-            new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
+               new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
 
-               @Override
-               public BlobMetadata apply(MutableObjectInfoWithMetadata from) {
-                  return object2BlobMd.apply(from);
-               }
+                  @Override
+                  public BlobMetadata apply(MutableObjectInfoWithMetadata from) {
+                     return object2BlobMd.apply(from);
+                  }
 
-            }, service);
+               }, service);
    }
 
    /**
@@ -239,4 +241,11 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
       return putBlob(container, blob);
    }
 
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container,
+            CreateContainerOptions options) {
+      if (options.isPublicRead())
+         throw new UnsupportedOperationException("publicRead");
+      return createContainerInLocation(location, container);
+   }
 }

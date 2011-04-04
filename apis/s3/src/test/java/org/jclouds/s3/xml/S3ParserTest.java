@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -30,16 +31,19 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.PerformanceTest;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.s3.domain.BucketMetadata;
 import org.jclouds.s3.domain.CanonicalUser;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -49,13 +53,14 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests parsing of S3 responses
  * 
  * @author Adrian Cole
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "S3ParserTest")
 public class S3ParserTest extends PerformanceTest {
    Injector injector = null;
@@ -63,7 +68,12 @@ public class S3ParserTest extends PerformanceTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule());
+      injector = Guice.createInjector(new SaxParserModule() {
+         public void configure() {
+            super.configure();
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
+         }
+      });
       factory = injector.getInstance(ParseSax.Factory.class);
       assert factory != null;
    }
@@ -140,7 +150,8 @@ public class S3ParserTest extends PerformanceTest {
    }
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
-      return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class)).parse(
+      return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
+               HttpRequest.builder().method("GET").endpoint(URI.create("http://bucket.com")).build()).parse(
                Strings2.toInputStream(listContainerResult));
    }
 

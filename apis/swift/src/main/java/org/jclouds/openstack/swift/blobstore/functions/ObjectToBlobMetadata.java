@@ -54,8 +54,9 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
       if (from.getHash() != null)
          to.setETag(CryptoStreams.hex(from.getHash()));
       to.setName(from.getName());
-      if (from.getBytes() != null)
-         to.getContentMetadata().setContentLength(from.getBytes());
+      to.setContainer(from.getContainer());
+      to.setUri(from.getUri());
+      to.getContentMetadata().setContentLength(from.getBytes());
       if (from.getLastModified() != null)
          to.setLastModified(from.getLastModified());
       if (from instanceof MutableObjectInfoWithMetadata)

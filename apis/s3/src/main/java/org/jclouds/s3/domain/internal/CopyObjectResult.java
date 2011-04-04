@@ -20,13 +20,16 @@
 package org.jclouds.s3.domain.internal;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.s3.domain.CanonicalUser;
-import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
+import org.jclouds.s3.domain.CanonicalUser;
+import org.jclouds.s3.domain.ObjectMetadata;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Returns the metadata parsable from a bucket listing
@@ -38,57 +41,68 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4415449798024051115L;
 
-   private final String key;
    private final Date lastModified;
    private final String eTag;
-   private final CanonicalUser owner;
-   private final StorageClass storageClass;
-   private final String cacheControl;
-   private final Map<String, String> userMetadata;
    private final BaseImmutableContentMetadata contentMetadata;
 
    public CopyObjectResult(Date lastModified, String eTag) {
-      this.key = null;
       this.lastModified = lastModified;
       this.eTag = eTag;
-      this.owner = null;
-      this.storageClass = StorageClass.STANDARD;
       this.contentMetadata = new BaseImmutableContentMetadata(null, null, null, null, null, null);
-      this.cacheControl = null;
-      this.userMetadata = null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getKey() {
-      return key;
+      return null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
+   public String getBucket() {
+      return null;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public URI getUri() {
+      return null;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
    public CanonicalUser getOwner() {
-      return owner;
+      return null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public StorageClass getStorageClass() {
-      return storageClass;
+      return null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getCacheControl() {
-      return cacheControl;
+      return null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -96,6 +110,7 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getETag() {
       return eTag;
    }
@@ -103,15 +118,17 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public int compareTo(ObjectMetadata o) {
-      return (this == o) ? 0 : getKey().compareTo(o.getKey());
+      return (this == o) ? 0 : getETag().compareTo(o.getETag());
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public Map<String, String> getUserMetadata() {
-      return userMetadata;
+      return ImmutableMap.of();
    }
 
    /**
@@ -126,14 +143,8 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((cacheControl == null) ? 0 : cacheControl.hashCode());
-      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
       result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((key == null) ? 0 : key.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + ((storageClass == null) ? 0 : storageClass.hashCode());
-      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
    }
 
@@ -146,47 +157,22 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
       if (getClass() != obj.getClass())
          return false;
       CopyObjectResult other = (CopyObjectResult) obj;
-      if (cacheControl == null) {
-         if (other.cacheControl != null)
-            return false;
-      } else if (!cacheControl.equals(other.cacheControl))
-         return false;
-      if (contentMetadata == null) {
-         if (other.contentMetadata != null)
-            return false;
-      } else if (!contentMetadata.equals(other.contentMetadata))
-         return false;
       if (eTag == null) {
          if (other.eTag != null)
             return false;
       } else if (!eTag.equals(other.eTag))
-         return false;
-      if (key == null) {
-         if (other.key != null)
-            return false;
-      } else if (!key.equals(other.key))
          return false;
       if (lastModified == null) {
          if (other.lastModified != null)
             return false;
       } else if (!lastModified.equals(other.lastModified))
          return false;
-      if (owner == null) {
-         if (other.owner != null)
-            return false;
-      } else if (!owner.equals(other.owner))
-         return false;
-      if (storageClass == null) {
-         if (other.storageClass != null)
-            return false;
-      } else if (!storageClass.equals(other.storageClass))
-         return false;
-      if (userMetadata == null) {
-         if (other.userMetadata != null)
-            return false;
-      } else if (!userMetadata.equals(other.userMetadata))
-         return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("[eTag=%s, lastModified=%s]", eTag, lastModified);
    }
 
 }

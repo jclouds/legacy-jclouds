@@ -42,6 +42,7 @@ import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
+import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -51,6 +52,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
@@ -79,18 +81,18 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, AzureBlobAsyncClient async,
-         ContainerToResourceMetadata container2ResourceMd,
-         ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
-         ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
-         BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
-         BlobToHttpGetOptions blob2ObjectGetOptions) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, AzureBlobAsyncClient async,
+            ContainerToResourceMetadata container2ResourceMd,
+            ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
+            ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
+            BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
-            "blobStore2AzureContainerListOptions");
+               "blobStore2AzureContainerListOptions");
       this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList, "azure2BlobStoreResourceList");
       this.azureBlob2Blob = checkNotNull(azureBlob2Blob, "azureBlob2Blob");
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
@@ -105,15 +107,15 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>> list() {
       return Futures
-            .compose(
-                  async.listContainers(includeMetadata()),
-                  new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-                     public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
-                           BoundedSet<ContainerProperties> from) {
-                        return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), from
-                              .getNextMarker());
-                     }
-                  }, service);
+               .compose(
+                        async.listContainers(includeMetadata()),
+                        new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+                           public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
+                                    BoundedSet<ContainerProperties> from) {
+                              return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd),
+                                       from.getNextMarker());
+                           }
+                        }, service);
    }
 
    /**
@@ -248,4 +250,12 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
       return putBlob(container, blob);
    }
 
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container,
+            CreateContainerOptions options) {
+      org.jclouds.azureblob.options.CreateContainerOptions createContainerOptions = new org.jclouds.azureblob.options.CreateContainerOptions();
+      if (options.isPublicRead())
+         createContainerOptions.withPublicAccess(PublicAccess.CONTAINER);
+      return async.createContainer(container, createContainerOptions);
+   }
 }

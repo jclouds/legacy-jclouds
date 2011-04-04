@@ -47,6 +47,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    private static final long serialVersionUID = -4648755473986695062L;
    private final BlobType type;
    private final String name;
+   private final String container;
    private final URI url;
    private final Date lastModified;
    private final String eTag;
@@ -54,12 +55,13 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    private final LeaseStatus leaseStatus;
    private final BaseImmutableContentMetadata contentMetadata;
 
-   public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag, long size,
-            String contentType, @Nullable byte[] contentMD5, @Nullable String contentMetadata,
+   public BlobPropertiesImpl(BlobType type, String name, String container, URI url, Date lastModified, String eTag,
+            long size, String contentType, @Nullable byte[] contentMD5, @Nullable String contentMetadata,
             @Nullable String contentLanguage, LeaseStatus leaseStatus, Map<String, String> metadata) {
       this.type = checkNotNull(type, "type");
       this.leaseStatus = checkNotNull(leaseStatus, "leaseStatus");
       this.name = checkNotNull(name, "name");
+      this.container = checkNotNull(container, "container");
       this.url = checkNotNull(url, "url");
       this.lastModified = checkNotNull(lastModified, "lastModified");
       this.eTag = checkNotNull(eTag, "eTag");
@@ -82,6 +84,14 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    @Override
    public String getName() {
       return name;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public String getContainer() {
+      return container;
    }
 
    /**
@@ -144,13 +154,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((leaseStatus == null) ? 0 : leaseStatus.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
@@ -164,41 +167,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       if (getClass() != obj.getClass())
          return false;
       BlobPropertiesImpl other = (BlobPropertiesImpl) obj;
-      if (contentMetadata == null) {
-         if (other.contentMetadata != null)
-            return false;
-      } else if (!contentMetadata.equals(other.contentMetadata))
-         return false;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (leaseStatus == null) {
-         if (other.leaseStatus != null)
-            return false;
-      } else if (!leaseStatus.equals(other.leaseStatus))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
       if (url == null) {
          if (other.url != null)
             return false;
@@ -209,8 +177,9 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", type=" + type + ", contentMetadata=" + contentMetadata + ", eTag=" + eTag
-               + ", lastModified=" + lastModified + "]";
+      return String
+               .format(
+                        "[name=%s, container=%s, url=%s, contentMetadata=%s, eTag=%s, lastModified=%s, leaseStatus=%s, metadata=%s, type=%s]",
+                        name, container, url, contentMetadata, eTag, lastModified, leaseStatus, metadata, type);
    }
-
 }

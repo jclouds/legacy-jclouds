@@ -17,16 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.s3.blobstore.functions;
+package org.jclouds.cloudfiles.blobstore.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.s3.domain.S3Object;
+import org.jclouds.openstack.swift.domain.ObjectInfo;
 
 import com.google.common.base.Function;
 
@@ -34,22 +35,25 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ObjectToBlob implements Function<S3Object, Blob> {
-   private final Factory blobFactory;
-   private final ObjectToBlobMetadata object2BlobMd;
+public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
+   private final Map<String, URI> cdnContainer;
+   private final Provider<UriBuilder> uriBuilders;
 
    @Inject
-   ObjectToBlob(Factory blobFactory, ObjectToBlobMetadata object2BlobMd) {
-      this.blobFactory = blobFactory;
-      this.object2BlobMd = object2BlobMd;
+   public PublicUriForObjectInfo(Map<String, URI> cdnContainer, Provider<UriBuilder> uriBuilders) {
+      this.cdnContainer = cdnContainer;
+      this.uriBuilders = uriBuilders;
    }
 
-   public Blob apply(S3Object from) {
+   public URI apply(ObjectInfo from) {
       if (from == null)
          return null;
-      Blob blob = blobFactory.create(object2BlobMd.apply(from.getMetadata()));
-      blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
-      blob.setAllHeaders(from.getAllHeaders());
-      return blob;
+      try {
+         return uriBuilders.get().uri(cdnContainer.get(from.getContainer())).path(from.getName()).replaceQuery("")
+                  .build();
+      } catch (NullPointerException e) {
+         // MapMaker constructed maps are not allowed to return null;
+         return null;
+      }
    }
 }

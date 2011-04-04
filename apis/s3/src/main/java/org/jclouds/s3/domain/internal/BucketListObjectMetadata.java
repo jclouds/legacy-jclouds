@@ -19,16 +19,19 @@
 
 package org.jclouds.s3.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.s3.domain.CanonicalUser;
-import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
+import org.jclouds.s3.domain.CanonicalUser;
+import org.jclouds.s3.domain.ObjectMetadata;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Returns the metadata parsable from a bucket listing
@@ -41,29 +44,38 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    private static final long serialVersionUID = -4415449798024051115L;
 
    private final String key;
+   private final String bucket;
+   private final URI uri;
    private final Date lastModified;
    private final String eTag;
    private final CanonicalUser owner;
    private final StorageClass storageClass;
-   private final String cacheControl;
-   private final Map<String, String> userMetadata;
    private final ContentMetadata contentMetadata;
 
-   public BucketListObjectMetadata(String key, Date lastModified, String eTag, byte[] md5, long contentLength,
-            CanonicalUser owner, StorageClass storageClass) {
-      this.key = key;
+   public BucketListObjectMetadata(String key, String bucket, URI uri, Date lastModified, String eTag, byte[] md5,
+            long contentLength, CanonicalUser owner, StorageClass storageClass) {
+      this.key = checkNotNull(key, "key");
+      this.bucket = checkNotNull(bucket, "bucket");
+      this.uri = checkNotNull(uri, "uri");
       this.lastModified = lastModified;
       this.eTag = eTag;
       this.owner = owner;
       this.contentMetadata = new BaseImmutableContentMetadata(null, contentLength, md5, null, null, null);
       this.storageClass = storageClass;
-      this.cacheControl = null;
-      this.userMetadata = Maps.newHashMap();
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
+   public URI getUri() {
+      return uri;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
    public String getKey() {
       return key;
    }
@@ -71,6 +83,15 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
+   public String getBucket() {
+      return bucket;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
    public CanonicalUser getOwner() {
       return owner;
    }
@@ -78,6 +99,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public StorageClass getStorageClass() {
       return storageClass;
    }
@@ -85,13 +107,15 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getCacheControl() {
-      return cacheControl;
+      return null;
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -99,6 +123,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getETag() {
       return eTag;
    }
@@ -106,15 +131,17 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
+   @Override
    public int compareTo(ObjectMetadata o) {
-      return (this == o) ? 0 : getKey().compareTo(o.getKey());
+      return (this == o) ? 0 : getUri().compareTo(o.getUri());
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public Map<String, String> getUserMetadata() {
-      return userMetadata;
+      return ImmutableMap.of();
    }
 
    /**
@@ -129,14 +156,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((cacheControl == null) ? 0 : cacheControl.hashCode());
-      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((key == null) ? 0 : key.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + ((storageClass == null) ? 0 : storageClass.hashCode());
-      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
+      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
       return result;
    }
 
@@ -149,47 +169,19 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
       if (getClass() != obj.getClass())
          return false;
       BucketListObjectMetadata other = (BucketListObjectMetadata) obj;
-      if (cacheControl == null) {
-         if (other.cacheControl != null)
+      if (uri == null) {
+         if (other.uri != null)
             return false;
-      } else if (!cacheControl.equals(other.cacheControl))
-         return false;
-      if (contentMetadata == null) {
-         if (other.contentMetadata != null)
-            return false;
-      } else if (!contentMetadata.equals(other.contentMetadata))
-         return false;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
-      if (key == null) {
-         if (other.key != null)
-            return false;
-      } else if (!key.equals(other.key))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (owner == null) {
-         if (other.owner != null)
-            return false;
-      } else if (!owner.equals(other.owner))
-         return false;
-      if (storageClass == null) {
-         if (other.storageClass != null)
-            return false;
-      } else if (!storageClass.equals(other.storageClass))
-         return false;
-      if (userMetadata == null) {
-         if (other.userMetadata != null)
-            return false;
-      } else if (!userMetadata.equals(other.userMetadata))
+      } else if (!uri.equals(other.uri))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return String.format(
+               "[uri=%s, key=%s, bucket=%s, contentMetadata=%s, eTag=%s, lastModified=%s, owner=%s, storageClass=%s]",
+               uri, key, bucket, contentMetadata, eTag, lastModified, owner, storageClass);
    }
 
 }

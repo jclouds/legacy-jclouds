@@ -21,10 +21,13 @@ package org.jclouds.azureblob.blobstore.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azureblob.domain.BlobProperties;
+import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
@@ -39,10 +42,13 @@ import com.google.common.base.Function;
 @Singleton
 public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, MutableBlobMetadata> {
    private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
+   private final Map<String, PublicAccess> containerAcls;
 
    @Inject
-   public BlobPropertiesToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
+   public BlobPropertiesToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+            Map<String, PublicAccess> containerAcls) {
       this.ifDirectoryReturnName = checkNotNull(ifDirectoryReturnName, "ifDirectoryReturnName");
+      this.containerAcls = checkNotNull(containerAcls, "containerAcls");
    }
 
    public MutableBlobMetadata apply(BlobProperties from) {
@@ -54,6 +60,15 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
       to.setName(from.getName());
+      to.setContainer(from.getContainer());
+      to.setUri(from.getUrl());
+      try {
+         PublicAccess containerAcl = containerAcls.get(from.getContainer());
+         if (containerAcl != null && containerAcl != PublicAccess.PRIVATE)
+            to.setPublicUri(from.getUrl());
+      } catch (NullPointerException e) {
+         // MapMaker cannot return null, but a call to get acls can
+      }
       String directoryName = ifDirectoryReturnName.execute(to);
       if (directoryName != null) {
          to.setName(directoryName);

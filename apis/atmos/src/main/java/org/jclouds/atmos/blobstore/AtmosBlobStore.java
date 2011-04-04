@@ -43,6 +43,7 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
@@ -225,4 +226,10 @@ public class AtmosBlobStore extends BaseBlobStore {
       sync.deletePath(container + "/" + key);
    }
 
+   @Override
+   public boolean createContainerInLocation(Location location, String container, CreateContainerOptions options) {
+      if (options.isPublicRead())
+         throw new UnsupportedOperationException("publicRead");
+      return createContainerInLocation(location, container);
+   }
 }

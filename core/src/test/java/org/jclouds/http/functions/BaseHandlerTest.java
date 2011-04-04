@@ -19,6 +19,8 @@
 
 package org.jclouds.http.functions;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -26,6 +28,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * 
@@ -39,7 +42,12 @@ public class BaseHandlerTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule());
+      injector = Guice.createInjector(new SaxParserModule() {
+         public void configure() {
+            super.configure();
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
+         }
+      });
       factory = injector.getInstance(ParseSax.Factory.class);
       assert factory != null;
    }

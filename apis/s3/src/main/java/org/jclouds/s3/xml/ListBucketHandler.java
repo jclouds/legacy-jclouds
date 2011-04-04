@@ -19,24 +19,25 @@
 
 package org.jclouds.s3.xml;
 
-import java.util.Date;
-import java.util.Set;
+import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.s3.domain.CanonicalUser;
-import org.jclouds.s3.domain.ListBucketResponse;
-import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
-import org.jclouds.s3.domain.internal.BucketListObjectMetadata;
-import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.s3.domain.CanonicalUser;
+import org.jclouds.s3.domain.ListBucketResponse;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadataBuilder;
+import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.util.Strings2;
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Parses the following XML document:
@@ -49,11 +50,14 @@ import com.google.common.collect.Sets;
  *      />
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
-   private Set<ObjectMetadata> contents;
-   private Set<String> commonPrefixes;
+   private Builder<ObjectMetadata> contents = ImmutableSet.<ObjectMetadata> builder();
+   private Builder<String> commonPrefixes = ImmutableSet.<String> builder();
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
+   private ObjectMetadataBuilder builder = new ObjectMetadataBuilder();
+
+   private final Provider<UriBuilder> uriBuilders;
    private final DateService dateParser;
 
    private String bucketName;
@@ -64,25 +68,19 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private boolean isTruncated;
 
    @Inject
-   public ListBucketHandler(DateService dateParser) {
+   public ListBucketHandler(DateService dateParser, Provider<UriBuilder> uriBuilders) {
       this.dateParser = dateParser;
-      this.contents = Sets.newLinkedHashSet();
-      this.commonPrefixes = Sets.newLinkedHashSet();
+      this.uriBuilders = uriBuilders;
    }
 
    public ListBucketResponse getResult() {
-      return new ListBucketResponseImpl(bucketName, contents, prefix, marker,
+      return new ListBucketResponseImpl(bucketName, contents.build(), prefix, marker,
                (isTruncated && nextMarker == null) ? currentKey : nextMarker, maxResults, delimiter, isTruncated,
-               commonPrefixes);
+               commonPrefixes.build());
    }
 
    private boolean inCommonPrefixes;
    private String currentKey;
-   private Date currentLastModified;
-   private String currentETag;
-   private byte[] currentMD5;
-   private long currentSize;
-   private StorageClass currentStorageClass;
    private String nextMarker;
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
@@ -93,45 +91,48 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ID")) {
-         currentOwner = new CanonicalUser(currentText.toString().trim());
+         currentOwner = new CanonicalUser(currentOrNull(currentText));
       } else if (qName.equals("DisplayName")) {
-         currentOwner.setDisplayName(currentText.toString().trim());
+         currentOwner.setDisplayName(currentOrNull(currentText));
       } else if (qName.equals("Key")) { // content stuff
-         currentKey = currentText.toString().trim();
+         currentKey = currentOrNull(currentText);
+         builder.key(currentKey);
+         builder.uri(uriBuilders.get().uri(getRequest().getEndpoint()).path(currentKey).replaceQuery("").build());
       } else if (qName.equals("LastModified")) {
-         currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
+         builder.lastModified(dateParser.iso8601DateParse(currentOrNull(currentText)));
       } else if (qName.equals("ETag")) {
-         currentETag = currentText.toString().trim();
-         currentMD5 = CryptoStreams.hex(Strings2.replaceAll(currentETag, '"', ""));
+         String currentETag = currentOrNull(currentText);
+         builder.eTag(currentETag);
+         builder.contentMD5(CryptoStreams.hex(Strings2.replaceAll(currentETag, '"', "")));
       } else if (qName.equals("Size")) {
-         currentSize = new Long(currentText.toString().trim());
+         builder.contentLength(new Long(currentOrNull(currentText)));
       } else if (qName.equals("Owner")) {
+         builder.owner(currentOwner);
+         currentOwner = null;
       } else if (qName.equals("StorageClass")) {
-         currentStorageClass = ObjectMetadata.StorageClass.valueOf(currentText.toString().trim());
+         builder.storageClass(ObjectMetadata.StorageClass.valueOf(currentOrNull(currentText)));
       } else if (qName.equals("Contents")) {
-         contents.add(new BucketListObjectMetadata(currentKey, currentLastModified, currentETag, currentMD5,
-                  currentSize, currentOwner, currentStorageClass));
+         contents.add(builder.build());
+         builder = new ObjectMetadataBuilder().bucket(bucketName);
       } else if (qName.equals("Name")) {
-         this.bucketName = currentText.toString().trim();
+         this.bucketName = currentOrNull(currentText);
+         builder.bucket(bucketName);
       } else if (qName.equals("Prefix")) {
-         String prefix = currentText.toString().trim();
+         String prefix = currentOrNull(currentText);
          if (inCommonPrefixes)
             commonPrefixes.add(prefix);
          else
             this.prefix = prefix;
       } else if (qName.equals("Delimiter")) {
-         if (!currentText.toString().equals(""))
-            this.delimiter = currentText.toString().trim();
+         this.delimiter = currentOrNull(currentText);
       } else if (qName.equals("Marker")) {
-         if (!currentText.toString().equals(""))
-            this.marker = currentText.toString().trim();
+         this.marker = currentOrNull(currentText);
       } else if (qName.equals("NextMarker")) {
-         if (!currentText.toString().equals(""))
-            this.nextMarker = currentText.toString().trim();
+         this.nextMarker = currentOrNull(currentText);
       } else if (qName.equals("MaxKeys")) {
-         this.maxResults = Integer.parseInt(currentText.toString().trim());
+         this.maxResults = Integer.parseInt(currentOrNull(currentText));
       } else if (qName.equals("IsTruncated")) {
-         this.isTruncated = Boolean.parseBoolean(currentText.toString().trim());
+         this.isTruncated = Boolean.parseBoolean(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }

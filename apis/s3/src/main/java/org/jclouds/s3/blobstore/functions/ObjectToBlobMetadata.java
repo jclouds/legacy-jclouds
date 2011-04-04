@@ -19,15 +19,20 @@
 
 package org.jclouds.s3.blobstore.functions;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
+import org.jclouds.s3.domain.AccessControlList.Permission;
 
 import com.google.common.base.Function;
 
@@ -37,10 +42,13 @@ import com.google.common.base.Function;
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlobMetadata> {
    private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
+   private final Map<String, AccessControlList> bucketAcls;
 
    @Inject
-   public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
+   public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+            Map<String, AccessControlList> bucketAcls) {
       this.ifDirectoryReturnName = ifDirectoryReturnName;
+      this.bucketAcls = bucketAcls;
    }
 
    public MutableBlobMetadata apply(ObjectMetadata from) {
@@ -48,6 +56,15 @@ public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlo
          return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
+      try {
+         AccessControlList bucketAcl = bucketAcls.get(from.getBucket());
+         if (bucketAcl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
+            to.setPublicUri(from.getUri());
+      } catch (NullPointerException e) {
+         // MapMaker cannot return null, but a call to get acls can
+      }
+      to.setUri(from.getUri());
+      to.setContainer(from.getBucket());
       to.setETag(from.getETag());
       to.setName(from.getKey());
       to.setLastModified(from.getLastModified());

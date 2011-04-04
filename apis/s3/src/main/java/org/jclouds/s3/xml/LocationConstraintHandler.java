@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.http.functions.ParseSax;
 
@@ -39,7 +41,7 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
    }
 
    public void endElement(String uri, String name, String qName) {
-      region = fromValue(currentText.toString().trim());
+      region = fromValue(currentOrNull(currentText));
    }
 
    /**
@@ -48,14 +50,8 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
     * {@code US_STANDARD} is returned as "" xml documents.
     */
    public static String fromValue(String v) {
-      if (v.equals(""))
+      if (v == null || "".equals(v))
          return Region.US_STANDARD;
-      if (v.equals(Region.EU))
-         return Region.EU;
-      else if (v.equals(Region.US_WEST_1))
-         return Region.US_WEST_1;
-      else if (v.equals(Region.AP_SOUTHEAST_1))
-         return Region.AP_SOUTHEAST_1;
       return v;
    }
 

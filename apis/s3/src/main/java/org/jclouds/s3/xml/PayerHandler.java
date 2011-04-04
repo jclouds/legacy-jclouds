@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import org.jclouds.s3.domain.Payer;
 import org.jclouds.http.functions.ParseSax;
 
@@ -39,7 +41,7 @@ public class PayerHandler extends ParseSax.HandlerWithResult<Payer> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      constraint = Payer.fromValue(currentText.toString().trim());
+      constraint = Payer.fromValue(currentOrNull(currentText));
    }
 
    public void characters(char ch[], int start, int length) {

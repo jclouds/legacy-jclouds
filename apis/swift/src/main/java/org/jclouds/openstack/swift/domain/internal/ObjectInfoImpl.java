@@ -19,56 +19,159 @@
 
 package org.jclouds.openstack.swift.domain.internal;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ObjectInfoImpl implements ObjectInfo {
-   String name;
-   byte[] hash;
-   long bytes;
-   String content_type;
-   Date last_modified;
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String name;
+      private String container;
+      private URI uri;
+      private byte[] hash;
+      private Long bytes;
+      private String contentType;
+      private Date lastModified;
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder container(String container) {
+         this.container = container;
+         return this;
+      }
+
+      public Builder uri(URI uri) {
+         this.uri = uri;
+         return this;
+      }
+
+      public Builder hash(byte[] hash) {
+         this.hash = hash;
+         return this;
+      }
+
+      public Builder bytes(Long bytes) {
+         this.bytes = bytes;
+         return this;
+      }
+
+      public Builder contentType(String contentType) {
+         this.contentType = contentType;
+         return this;
+      }
+
+      public Builder lastModified(Date lastModified) {
+         this.lastModified = lastModified;
+         return this;
+      }
+
+      public ObjectInfoImpl build() {
+         return new ObjectInfoImpl(name, uri, container, hash, bytes, contentType, lastModified);
+      }
+
+      public Builder fromObjectInfo(ObjectInfo in) {
+         return name(in.getName()).container(in.getContainer()).uri(uri).hash(in.getHash()).bytes(in.getBytes())
+                  .contentType(in.getContentType()).lastModified(in.getLastModified());
+      }
+   }
+
+   private String name;
+   private String container;
+   private URI uri;
+   private byte[] hash;
+   private Long bytes;
+   @SerializedName("content_type")
+   private String contentType;
+   @SerializedName("last_modified")
+   private Date lastModified;
+
+   public ObjectInfoImpl(String name, URI uri, String container, byte[] hash, Long bytes, String contentType,
+            Date lastModified) {
+      this.name = name;
+      this.container = container;
+      this.uri = uri;
+      this.hash = hash;
+      this.bytes = bytes;
+      this.contentType = contentType;
+      this.lastModified = lastModified;
+   }
 
    ObjectInfoImpl() {
 
    }
 
-   public int compareTo(ObjectInfoImpl o) {
-      return (this == o) ? 0 : name.compareTo(o.name);
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getName() {
+      return name;
    }
 
-   public Long getBytes() {
-      return bytes;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContainer() {
+      return container;
    }
 
-   public String getContentType() {
-      return content_type;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getUri() {
+      return uri;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public byte[] getHash() {
       return hash;
    }
 
-   public Date getLastModified() {
-      return last_modified;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Long getBytes() {
+      return bytes;
    }
 
-   public String getName() {
-      return name;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentType() {
+      return contentType;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Date getLastModified() {
+      return lastModified;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (bytes ^ (bytes >>> 32));
-      result = prime * result
-            + ((content_type == null) ? 0 : content_type.hashCode());
-      result = prime * result + Arrays.hashCode(hash);
-      result = prime * result
-            + ((last_modified == null) ? 0 : last_modified.hashCode());
+      result = prime * result + ((container == null) ? 0 : container.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -82,19 +185,10 @@ public class ObjectInfoImpl implements ObjectInfo {
       if (getClass() != obj.getClass())
          return false;
       ObjectInfoImpl other = (ObjectInfoImpl) obj;
-      if (bytes != other.bytes)
-         return false;
-      if (content_type == null) {
-         if (other.content_type != null)
+      if (container == null) {
+         if (other.container != null)
             return false;
-      } else if (!content_type.equals(other.content_type))
-         return false;
-      if (!Arrays.equals(hash, other.hash))
-         return false;
-      if (last_modified == null) {
-         if (other.last_modified != null)
-            return false;
-      } else if (!last_modified.equals(other.last_modified))
+      } else if (!container.equals(other.container))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -104,15 +198,19 @@ public class ObjectInfoImpl implements ObjectInfo {
       return true;
    }
 
-   public int compareTo(ObjectInfo o) {
-      return (this == o) ? 0 : getName().compareTo(o.getName());
+   @Override
+   public String toString() {
+      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s]", name,
+               container, uri, bytes, contentType, lastModified, Arrays.toString(hash));
+   }
+
+   public Builder toBuilder() {
+      return builder().fromObjectInfo(this);
    }
 
    @Override
-   public String toString() {
-      return "ObjectInfoImpl [bytes=" + bytes + ", content_flavor="
-            + content_type + ", hash=" + Arrays.asList(hash)
-            + ", last_modified=" + last_modified.getTime() + ", name=" + name
-            + "]";
+   public int compareTo(ObjectInfo o) {
+      return name.compareTo(o.getName());
    }
+
 }

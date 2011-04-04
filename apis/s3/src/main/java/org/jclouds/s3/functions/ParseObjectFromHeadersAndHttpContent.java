@@ -53,7 +53,6 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       S3Object object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());
-
       return object;
    }
 

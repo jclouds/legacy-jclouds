@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.s3.blobstore;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.s3.domain.AccessControlList;
 
 import com.google.common.base.Supplier;
 
@@ -54,14 +56,15 @@ public class AWSS3BlobStore extends S3BlobStore {
 
    @Inject
    AWSS3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, AWSS3Client sync,
-         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Provider<MultipartUploadStrategy> multipartUploadStrategy) {
+            @Memoized Supplier<Set<? extends Location>> locations, AWSS3Client sync,
+            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls,
+            Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, defaultLocation, locations, sync, bucket2ResourceMd, container2BucketListOptions,
-            bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object, object2BlobMd,
-            fetchBlobMetadataProvider);
+               bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object, object2BlobMd,
+               fetchBlobMetadataProvider, bucketAcls);
       this.multipartUploadStrategy = multipartUploadStrategy;
    }
 

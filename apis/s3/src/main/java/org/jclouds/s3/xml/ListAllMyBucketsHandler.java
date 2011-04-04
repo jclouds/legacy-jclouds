@@ -19,6 +19,8 @@
 
 package org.jclouds.s3.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -62,15 +64,15 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<Set<Buck
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ID")) { // owner stuff
-         currentOwner = new CanonicalUser(currentText.toString().trim());
+         currentOwner = new CanonicalUser(currentOrNull(currentText));
       } else if (qName.equals("DisplayName")) {
-         currentOwner.setDisplayName(currentText.toString().trim());
+         currentOwner.setDisplayName(currentOrNull(currentText));
       } else if (qName.equals("Bucket")) {
          buckets.add(new BucketMetadata(currentName, currentCreationDate, currentOwner));
       } else if (qName.equals("Name")) {
-         currentName = currentText.toString().trim();
+         currentName = currentOrNull(currentText);
       } else if (qName.equals("CreationDate")) {
-         currentCreationDate = dateParser.iso8601DateParse(currentText.toString().trim());
+         currentCreationDate = dateParser.iso8601DateParse(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }

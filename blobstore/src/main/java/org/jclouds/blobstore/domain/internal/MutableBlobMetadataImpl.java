@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.domain.internal;
 
+import java.net.URI;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -36,9 +38,10 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
    private MutableContentMetadata contentMetadata;
+   private URI publicUri;
+   private String container;
 
    public MutableBlobMetadataImpl() {
-      super();
       this.setType(StorageType.BLOB);
       this.contentMetadata = new BaseMutableContentMetadata();
    }
@@ -47,6 +50,8 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
       super(from);
       this.contentMetadata = new BaseMutableContentMetadata();
       HttpUtils.copy(from.getContentMetadata(), this.contentMetadata);
+      this.publicUri = from.getPublicUri();
+      this.container = from.getContainer();
    }
 
    /**
@@ -63,6 +68,38 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
    @Override
    public void setContentMetadata(MutableContentMetadata contentMetadata) {
       this.contentMetadata = contentMetadata;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setPublicUri(URI publicUri) {
+      this.publicUri = publicUri;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getPublicUri() {
+      return publicUri;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContainer() {
+      return container;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContainer(String container) {
+      this.container = container;
    }
 
 }
