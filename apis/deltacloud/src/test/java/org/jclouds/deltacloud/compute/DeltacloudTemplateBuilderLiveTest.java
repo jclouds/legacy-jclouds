@@ -72,7 +72,7 @@ public class DeltacloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "us");
+      assertEquals(defaultTemplate.getLocation().getId(), "http://localhost:3001/api/realms/us");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

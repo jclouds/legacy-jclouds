@@ -86,8 +86,8 @@ public class DeltacloudComputeServiceAdapter implements
    @Override
    public Instance createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore) {
-      Instance instance = client.createInstance(template.getImage().getId(), CreateInstanceOptions.Builder.named(name)
-               .hardwareProfile(template.getHardware().getId()).realm(template.getLocation().getId()));
+      Instance instance = client.createInstance(template.getImage().getProviderId(), CreateInstanceOptions.Builder
+               .named(name).hardwareProfile(template.getHardware().getId()).realm(template.getLocation().getId()));
       if (instance.getAuthentication() != null && instance.getAuthentication() instanceof PasswordAuthentication) {
          Credentials creds = PasswordAuthentication.class.cast(instance.getAuthentication()).getLoginCredentials();
          // store the credentials so that later functions can use them

@@ -42,7 +42,8 @@ public class DeltacloudImageToImage implements Function<org.jclouds.deltacloud.d
    @Override
    public Image apply(org.jclouds.deltacloud.domain.Image from) {
       ImageBuilder builder = new ImageBuilder();
-      builder.ids(from.getId());
+      builder.id(from.getHref().toASCIIString());
+      builder.providerId(from.getId());
       builder.uri(from.getHref());
       builder.name(from.getName());
       builder.description(from.getDescription());
