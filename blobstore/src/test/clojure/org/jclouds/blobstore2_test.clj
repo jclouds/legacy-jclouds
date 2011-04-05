@@ -62,42 +62,47 @@
   (is (create-container *blobstore* "fred"))
   (is (= 1 (count (containers *blobstore*)))))
 
-(deftest list-container-test
+(deftest blobs-test
   (is (create-container *blobstore* "container"))
-  (is (empty? (list-container *blobstore* "container")))
-  (is (upload-blob *blobstore* "container" "blob1" "blob1"))
-  (is (upload-blob *blobstore* "container" "blob2" "blob2"))
-  (is (= 2 (count (list-container *blobstore* "container"))))
-  (is (= 1 (count (list-container *blobstore* "container" :max-results 1))))
+  (is (empty? (blobs *blobstore* "container")))
+  (is (put-blob *blobstore* "container"
+                (blob "blob1" :payload "blob1" :calculate-md5 true)))
+  (is (put-blob *blobstore* "container"
+                (blob "blob2" :payload "blob2" :calculate-md5 true)))
+  (is (= 2 (count (blobs *blobstore* "container"))))
+  (is (= 1 (count (blobs *blobstore* "container" :max-results 1))))
   (create-directory *blobstore* "container" "dir")
-  (is (upload-blob *blobstore* "container" "dir/blob2" "blob2"))
+  (is (put-blob *blobstore* "container"
+                (blob "dir/blob2" :payload "blob2" :calculate-md5 true)))
   (is (= 3 (count-blobs *blobstore* "container")))
-  (is (= 3 (count (list-container *blobstore* "container"))))
-  (is (= 4 (count (list-container *blobstore* "container" :recursive true))))
-  (is (= 3 (count (list-container *blobstore* "container" :with-details true))))
-  (is (= 1 (count (list-container *blobstore* "container"
-                                  :in-directory "dir")))))
+  (is (= 3 (count (blobs *blobstore* "container"))))
+  (is (= 4 (count (blobs *blobstore* "container" :recursive true))))
+  (is (= 3 (count (blobs *blobstore* "container" :with-details true))))
+  (is (= 1 (count (blobs *blobstore* "container" :in-directory "dir")))))
 
 (deftest large-container-list-test
   (let [container-name "test"
         total-blobs 5000]
-
     ;; create a container full of blobs
     (create-container *blobstore* container-name)
-    (dotimes [i total-blobs] (upload-blob *blobstore*
-                                          container-name (str i) (str i)))
-
+    (dotimes [i total-blobs] (put-blob *blobstore* container-name
+                                       (blob (str i)
+                                             :payload (str i)
+                                             :calculate-md5 true)))
     ;; verify
     (is (= total-blobs (count-blobs *blobstore* container-name)))))
 
-(deftest list-blobs-test
+(deftest container-seq-test
   (is (create-container *blobstore* "container"))
-  (is (empty? (list-blobs *blobstore* "container"))))
+  (is (empty? (container-seq *blobstore* "container")))
+  (is (empty? (container-seq *blobstore* "container" "/a"))))
 
 (deftest get-blob-test
   (is (create-container *blobstore* "blob"))
-  (is (upload-blob *blobstore* "blob" "blob1" "blob1"))
-  (is (upload-blob *blobstore* "blob" "blob2" "blob2"))
+  (is (put-blob *blobstore* "blob"
+                (blob "blob1" :payload "blob1" :calculate-md5 true)))
+  (is (put-blob *blobstore* "blob"
+                (blob "blob2" :payload "blob2" :calculate-md5 true)))
   (is (= "blob2" (Strings2/toStringAndClose (get-blob-stream *blobstore*
                                                              "blob" "blob2")))))
 
@@ -108,7 +113,7 @@
 
 (deftest sign-put-test
   (let [request (sign-put *blobstore* "container"
-                          (blob *blobstore* "path" {:content-length 10}))]
+                          (blob "path" :content-length 10))]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
     (is (= "PUT" (.getMethod request)))
     (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
@@ -118,11 +123,12 @@
 (deftest sign-put-with-headers-test
   (let [request (sign-put *blobstore*
                  "container"
-                 (blob *blobstore* "path" {:content-length 10
-                                           :content-type "x"
-                                           :content-language "en"
-                                           :content-disposition "f"
-                                           :content-encoding "g"}))]
+                 (blob "path"
+                       :content-length 10
+                       :content-type "x"
+                       :content-language "en"
+                       :content-disposition "f"
+                       :content-encoding "g"))]
     (is (= "PUT" (.getMethod request)))
     (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
     (is (= "x" (first (.get (.getHeaders request) "Content-Type"))))
@@ -136,9 +142,9 @@
     (is (= "DELETE" (.getMethod request)))))
 
 (deftest blob-test
-  (let [a-blob (blob *blobstore* "test-name"
-                     {:payload (.getBytes "test-payload")
-                      :calculate-md5 true})]
+  (let [a-blob (blob "test-name"
+                     :payload (.getBytes "test-payload")
+                     :calculate-md5 true)]
     (is (= (seq (.. a-blob (getPayload) (getContentMetadata) (getContentMD5)))
            (seq (CryptoStreams/md5 (.getBytes "test-payload")))))))
 

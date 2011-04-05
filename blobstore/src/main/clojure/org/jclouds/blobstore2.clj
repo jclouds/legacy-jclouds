@@ -47,17 +47,30 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.blobstore
             AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
             BlobStoreContextFactory domain.BlobMetadata domain.StorageMetadata
-            domain.Blob options.ListContainerOptions]
+            domain.Blob domain.internal.BlobBuilderImpl
+            options.ListContainerOptions]
            org.jclouds.io.Payloads
-           org.jclouds.io.payloads.PhantomPayload
            java.util.Arrays
            [java.security DigestOutputStream MessageDigest]
-           com.google.common.collect.ImmutableSet))
+           com.google.common.collect.ImmutableSet
+           org.jclouds.encryption.internal.JCECrypto))
 
 (try
   (require '[clojure.contrib.io :as io])
   (catch Exception e
     (require '[clojure.contrib.duck-streams :as io])))
+
+(def ^{:private true}
+     crypto-impl
+     ;; BouncyCastle might not be present. Try to load it, but fall back to
+     ;; JCECrypto if we can't.
+     (try
+       (import 'org.jclouds.encryption.bouncycastle.BouncyCastleCrypto)
+       (.newInstance
+        (Class/forName
+         "org.jclouds.encryption.bouncycastle.BouncyCastleCrypto"))
+       (catch Exception e
+         (JCECrypto.))))
 
 (defn blobstore
   "Create a logged in context.
@@ -110,14 +123,15 @@ Options can also be specified for extension modules
       :with-details #(when %2 (.withDetails %1))
       :recursive #(when %2 (.recursive %1))})
 
-(defn list-container
-  "Low-level container listing. Use list-blobs where possible since
-  it's higher-level and returns a lazy seq. Options are:
-  :after-marker string
-  :in-direcory path
-  :max-results n
-  :with-details true
-  :recursive true"
+(defn blobs
+  "Returns a set of blobs in the given container, as directed by the
+   query options below.
+   Options are:
+     :after-marker string
+     :in-directory path
+     :max-results n
+     :with-details true
+     :recursive true"
   [blobstore container-name & args]
   (let [options (apply hash-map args)
         list-options (reduce
@@ -128,19 +142,20 @@ Options can also be specified for extension modules
                       options)]
     (.list blobstore container-name list-options)))
 
-(defn- list-blobs-chunk [blobstore container prefix & [marker]]
-  (apply list-container blobstore container
+(defn- container-seq-chunk
+  [blobstore container prefix marker]
+  (apply blobs blobstore container
          (concat (when prefix
                    [:in-directory prefix])
                  (when (string? marker)
                    [:after-marker marker]))))
 
-(defn- list-blobs-chunks [blobstore container prefix marker]
-  (when marker
-    (let [chunk (list-blobs-chunk blobstore container prefix marker)]
+(defn- container-seq-chunks [blobstore container prefix marker]
+  (when marker ;; When getNextMarker returns null, there's no more.
+    (let [chunk (container-seq-chunk blobstore container prefix marker)]
       (lazy-seq (cons chunk
-                      (list-blobs-chunks blobstore container prefix
-                                         (.getNextMarker chunk)))))))
+                      (container-seq-chunks blobstore container prefix
+                                            (.getNextMarker chunk)))))))
 
 (defn- concat-elements
   "Make a lazy concatenation of the lazy sequences contained in coll.
@@ -150,12 +165,15 @@ Options can also be specified for extension modules
   (if-let [s (seq coll)]
     (lazy-seq (concat (first s) (concat-elements (next s))))))
 
-(defn list-blobs
+(defn container-seq
   "Returns a lazy seq of all blobs in the given container."
   ([blobstore container]
-     (list-blobs blobstore container nil))
+     (container-seq blobstore container nil))
   ([blobstore container prefix]
-     (concat-elements (list-blobs-chunks blobstore container prefix :start))))
+     ;; :start has no special meaning, it is just a non-null (null indicates
+     ;; end), non-string (markers are strings).
+     (concat-elements (container-seq-chunks blobstore container prefix
+                                            :start))))
 
 (defn locations
   "Retrieve the available container locations for the blobstore context."
@@ -243,7 +261,7 @@ Options can also be specified for extension modules
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
   [^BlobStore blobstore container-name path]
-  (.getInput (.getPayload (.getBlob blobstore container-name path))))
+  (.getInput (.getPayload (get-blob blobstore container-name path))))
 
 (defn remove-blob
   "Remove blob from given path"
@@ -255,34 +273,17 @@ Options can also be specified for extension modules
   [^BlobStore blobstore container-name]
   (.countBlobs blobstore container-name))
 
-(defn blobs
-  "List the blobs in a container:
-     blobstore container -> blobs
-
-   List the blobs in a container under a path:
-     blobstore container dir -> blobs
-
-   example:
-     (pprint
-       (blobs
-         (blobstore-context flightcaster-creds)
-         \"somecontainer\" \"some-dir\"))"
-  ([^BlobStore blobstore container-name]
-     (.list blobstore container-name))
-  ([^BlobStore blobstore container-name dir]
-     (.list blobstore container-name
-            (.inDirectory (new ListContainerOptions) dir))))
-
 (defn blob
   "Create a new blob with the specified payload and options."
-  ([^BlobStore blobstore ^String name
+  ([^String name &
     {:keys [payload content-type content-length content-md5 calculate-md5
             content-disposition content-encoding content-language metadata]}]
      {:pre [(not (and content-md5 calculate-md5))
             (not (and (nil? payload) calculate-md5))]}
-     (let [blob-builder (if payload
-                          (.payload (.blobBuilder blobstore name) payload)
-                          (.forSigning (.blobBuilder blobstore name)))
+     (let [blob-builder (.name (BlobBuilderImpl. crypto-impl) name)
+           blob-builder (if payload
+                          (.payload blob-builder payload)
+                          (.forSigning blob-builder))
            blob-builder (if content-length ;; Special case, arg is prim.
                           (.contentLength blob-builder content-length)
                           blob-builder)
@@ -298,21 +299,6 @@ Options can also be specified for extension modules
          (.contentLanguage content-language)
          (.userMetadata metadata))
        (.build blob-builder))))
-
-(defn md5-blob
-  "add a content md5 to a blob, or make a new blob that has an md5.
-   note that this implies rebuffering, if the blob's payload isn't repeatable"
-  ([^Blob blob]
-     (Payloads/calculateMD5 blob))
-  ([^BlobStore blobstore ^String name payload]
-     (md5-blob (blob blobstore name {:payload payload}))))
-
-(defn upload-blob
-  "Create anrepresenting text data:
-     container, name, string -> etag"
-  ([^BlobStore blobstore container-name name data]
-     (put-blob blobstore container-name
-               (md5-blob blobstore name data))))
 
 (define-accessors StorageMetadata "blob" type id name
   location-id uri last-modfied)
