@@ -48,7 +48,7 @@ See http://code.google.com/p/jclouds for details."
             AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
             BlobStoreContextFactory domain.BlobMetadata domain.StorageMetadata
             domain.Blob domain.internal.BlobBuilderImpl
-            options.ListContainerOptions]
+            options.CreateContainerOptions options.ListContainerOptions]
            org.jclouds.io.Payloads
            java.util.Arrays
            [java.security DigestOutputStream MessageDigest]
@@ -182,10 +182,10 @@ Options can also be specified for extension modules
 
 (defn create-container
   "Create a container."
-  ([blobstore container-name]
-     (create-container blobstore container-name nil))
-  ([^BlobStore blobstore container-name location]
-     (.createContainerInLocation blobstore location container-name)))
+  [^BlobStore blobstore container-name & {:keys [location public-read?]}]
+  (let [cco (CreateContainerOptions.)
+        cco (if public-read? (.publicRead cco) cco)]
+    (.createContainerInLocation blobstore location container-name cco)))
 
 (defn clear-container
   "Clear a container."

@@ -55,7 +55,8 @@
 
 (deftest locations-test
   (is (not (empty? (locations *blobstore*))))
-  (is (create-container *blobstore* "fred" (first (locations *blobstore*)))))
+  (is (create-container *blobstore* "fred"
+                        :location (first (locations *blobstore*)))))
 
 (deftest containers-test
   (is (empty? (containers *blobstore*)))
