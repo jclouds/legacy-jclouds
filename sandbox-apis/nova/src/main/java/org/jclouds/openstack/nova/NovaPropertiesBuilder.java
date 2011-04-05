@@ -23,6 +23,8 @@ import org.jclouds.PropertiesBuilder;
 
 import java.util.Properties;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+
 /**
  * Builds properties used in Openstack Nova Clients
  * 
@@ -32,6 +34,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       return properties;
    }
 
