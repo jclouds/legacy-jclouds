@@ -68,7 +68,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "FuturesComposePerformanceTest")
+@Test(groups = "performance", enabled = false, sequential = true, testName = "FuturesComposePerformanceTest")
 public class FuturesComposePerformanceTest {
    private static final int FUDGE = 5;
    private static final int COUNT = 100;
@@ -81,6 +81,7 @@ public class FuturesComposePerformanceTest {
     * When we use threadpools for both the chain and invoking listener, user experience is
     * consistent.
     */
+   @Test(enabled = false)
    public void whenCachedThreadPoolIsUsedForChainAndListenerMaxDurationIsSumOfCallableAndListener()
             throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION + LISTENER_DURATION;
@@ -102,6 +103,7 @@ public class FuturesComposePerformanceTest {
     * When we use threadpools for the chain, but same thread for invoking listener, user experience
     * is still consistent.
     */
+   @Test(enabled = false)
    public void whenCachedThreadPoolIsUsedForChainButSameThreadForListenerMaxDurationIsSumOfCallableAndListener()
             throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION + LISTENER_DURATION;
@@ -125,6 +127,7 @@ public class FuturesComposePerformanceTest {
     * case, listeners are executed in a different thread pool.
     * 
     */
+   @Test(enabled = false)
    public void whenSameThreadIsUsedForChainButCachedThreadPoolForListenerMaxDurationIsSumOfAllIOAndOneListener()
             throws InterruptedException, ExecutionException {
       long expectedMax = (IO_DURATION * COUNT) + LISTENER_DURATION;
@@ -149,6 +152,7 @@ public class FuturesComposePerformanceTest {
     * listener duration. An efficient implementation would call get() on the i/o future lazily. Such
     * an impl would have a max duration of I/O + Listener * count.
     */
+   @Test(enabled = false)
    public void whenSameThreadIsUsedForChainAndListenerMaxDurationIsSumOfAllIOAndAllListeners()
             throws InterruptedException, ExecutionException {
 

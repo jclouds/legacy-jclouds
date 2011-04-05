@@ -44,10 +44,11 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "FutureIterablesTest")
+@Test(groups = "performance", enabled = false, sequential = true, testName = "FutureIterablesTest")
 public class FutureIterablesTest {
    ExecutorService ioFunctionExecutor = newCachedThreadPool();
 
+   @Test(enabled = false)
    public void testMakeListenableDoesntSerializeFutures() throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION;
       long expectedMin = IO_DURATION;
@@ -60,6 +61,7 @@ public class FutureIterablesTest {
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
 
+   @Test(enabled = false)
    public void testAwaitCompletionUsingSameThreadExecutorDoesntSerializeFutures() throws InterruptedException,
             ExecutionException {
       long expectedMax = IO_DURATION;
@@ -76,7 +78,9 @@ public class FutureIterablesTest {
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
 
-   public void whenCachedThreadPoolIsUsedForChainAndListenerMaxDurationIsSumOfCallableAndListener() throws InterruptedException, ExecutionException {
+   @Test(enabled = false)
+   public void whenCachedThreadPoolIsUsedForChainAndListenerMaxDurationIsSumOfCallableAndListener()
+            throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION + LISTENER_DURATION;
       long expectedMin = IO_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT * 4 + FUDGE;
@@ -92,7 +96,9 @@ public class FutureIterablesTest {
       }
    }
 
-   public void whenCachedThreadPoolIsUsedForChainButSameThreadForListenerMaxDurationIsSumOfCallableAndListener() throws InterruptedException, ExecutionException {
+   @Test(enabled = false)
+   public void whenCachedThreadPoolIsUsedForChainButSameThreadForListenerMaxDurationIsSumOfCallableAndListener()
+            throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION + LISTENER_DURATION;
       long expectedMin = IO_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
@@ -108,7 +114,9 @@ public class FutureIterablesTest {
       }
    }
 
-   public void whenSameThreadIsUsedForChainButCachedThreadPoolForListenerMaxDurationIsIOAndSumOfAllListeners() throws InterruptedException, ExecutionException {
+   @Test(enabled = false)
+   public void whenSameThreadIsUsedForChainButCachedThreadPoolForListenerMaxDurationIsIOAndSumOfAllListeners()
+            throws InterruptedException, ExecutionException {
       long expectedMax = IO_DURATION + (LISTENER_DURATION * COUNT);
       long expectedMin = IO_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
@@ -124,7 +132,9 @@ public class FutureIterablesTest {
       }
    }
 
-   public void whenSameThreadIsUsedForChainAndListenerMaxDurationIsIOAndSumOfAllListeners() throws InterruptedException, ExecutionException {
+   @Test(enabled = false)
+   public void whenSameThreadIsUsedForChainAndListenerMaxDurationIsIOAndSumOfAllListeners()
+            throws InterruptedException, ExecutionException {
 
       long expectedMax = IO_DURATION + (LISTENER_DURATION * COUNT);
       long expectedMin = IO_DURATION + LISTENER_DURATION;
