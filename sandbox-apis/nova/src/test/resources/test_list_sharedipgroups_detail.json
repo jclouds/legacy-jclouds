@@ -1,0 +1,14 @@
+{ 
+    "sharedIpGroups" : [ 
+        { 
+            "id" : 1234, 
+            "name" : "Shared IP Group 1", 
+    "servers" : [422, 3445] 
+        }, 
+        { 
+            "id" : 5678, 
+            "name" : "Shared IP Group 2", 
+    "servers" : [23203, 2456, 9891] 
+        } 
+    ] 
+} 

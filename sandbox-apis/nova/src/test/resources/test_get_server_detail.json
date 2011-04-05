@@ -1,0 +1,25 @@
+{ 
+    "server" :  { 
+       "id" : 1234, 
+        "name" : "sample-server", 
+        "imageId" : 2, 
+        "flavorId" : 1, 
+        "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0", 
+        "status" : "BUILD", 
+        "progress" : 60, 
+        "addresses" : { 
+            "public" : [ 
+                "67.23.10.132", 
+                "67.23.10.131" 
+            ], 
+            "private" : [ 
+                "10.176.42.16" 
+            ] 
+        }, 
+        "metadata" : { 
+            "Server Label" : "Web Head 1", 
+            "Image Version" : "2.1" 
+        } 
+        }
+     
+} 

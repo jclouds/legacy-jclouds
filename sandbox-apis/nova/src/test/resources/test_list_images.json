@@ -1,0 +1,12 @@
+{ 
+    "images" : [ 
+        { 
+            "id" : 2, 
+            "name" : "CentOS 5.2"
+        }, 
+        { 
+            "id" : 743, 
+            "name" : "My Server Backup"
+        } 
+    ] 
+} 
