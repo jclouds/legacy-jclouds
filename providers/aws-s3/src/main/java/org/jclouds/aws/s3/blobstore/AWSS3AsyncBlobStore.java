@@ -34,6 +34,7 @@ import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
@@ -74,7 +75,7 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
    }
 
    @Override
-   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+   public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
       // need to use a provider if the strategy object is stateful
       return multipartUploadStrategy.get().execute(container, blob);
    }

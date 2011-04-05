@@ -30,6 +30,7 @@ import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
@@ -69,8 +70,8 @@ public class AWSS3BlobStore extends S3BlobStore {
    }
 
    @Override
-   public String putBlobMultipart(String container, Blob blob) {
-      // need to use a provider if the strategy object is stateful
+   public String putBlob(String container, Blob blob, PutOptions options) {
+    // need to use a provider if the strategy object is stateful
       return multipartUploadStrategy.get().execute(container, blob);
    }
 }

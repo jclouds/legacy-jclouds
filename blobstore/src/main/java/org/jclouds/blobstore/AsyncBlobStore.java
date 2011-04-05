@@ -31,9 +31,9 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.domain.Location;
 
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -130,15 +130,14 @@ public interface AsyncBlobStore {
    ListenableFuture<Boolean> blobExists(String container, String name);
 
    /**
-    * @see BlobStore#putBlob
+    * @see BlobStore#putBlob(String,Blob)
     */
    ListenableFuture<String> putBlob(String container, Blob blob);
 
    /**
-    * @see BlobStore#putBlobMultipart
+    * @see BlobStore#putBlob(String,Blob,PutOptions)
     */
-   @Beta
-   ListenableFuture<String> putBlobMultipart(String container, Blob blob);
+   ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options);
 
    /**
     * @see BlobStore#blobMetadata
