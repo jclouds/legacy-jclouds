@@ -1,0 +1,11 @@
+{ 
+    "image" : { 
+        "id" : 2, 
+        "name" : "CentOS 5.2", 
+		"serverId" : 12, 
+        "updated" : "2010-10-10T12:00:00Z", 
+        "created" : "2010-08-10T12:00:00Z", 
+        "status" : "SAVING", 
+        "progress" : 80 
+   } 
+}

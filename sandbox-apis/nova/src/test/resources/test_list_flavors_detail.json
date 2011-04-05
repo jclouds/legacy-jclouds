@@ -1,0 +1,16 @@
+{ 
+    "flavors" : [ 
+        { 
+            "id" : 1, 
+            "name" : "256 MB Server", 
+    		"ram"  : 256, 
+			"disk" : 10 
+        }, 
+        { 
+            "id" : 2, 
+			"name" : "512 MB Server", 
+			"ram"  : 512, 
+			"disk" : 20 
+        } 
+    ] 
+} 
