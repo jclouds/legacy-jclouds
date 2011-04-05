@@ -80,7 +80,7 @@
 
 (deftest large-container-list-test
   (let [container-name "test"
-        total-blobs 9000]
+        total-blobs 5000]
 
     ;; create a container full of blobs
     (create-container *blobstore* container-name)
