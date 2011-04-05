@@ -25,7 +25,6 @@ import static org.jclouds.io.Payloads.newPayload;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -128,12 +127,12 @@ public class BlobBuilderImpl implements BlobBuilder {
    public class PayloadBlobBuilderImpl implements PayloadBlobBuilder {
       private final BlobBuilder builder;
       private final Payload payload;
-      private MessageDigest digest;
+      private final Crypto crypto;
 
       public PayloadBlobBuilderImpl(BlobBuilder builder, Payload payload, Crypto crypto) {
          this.builder = checkNotNull(builder, "builder");
          this.payload = checkNotNull(payload, "payload");
-         this.digest = checkNotNull(crypto, "crypto").md5();
+         this.crypto = checkNotNull(crypto, "crypto");
       }
 
       @Override
@@ -158,7 +157,7 @@ public class BlobBuilderImpl implements BlobBuilder {
 
       @Override
       public PayloadBlobBuilder calculateMD5() throws IOException {
-         return builder.payload(Payloads.calculateMD5(payload, digest));
+         return builder.payload(Payloads.calculateMD5(payload, crypto.md5()));
       }
 
       @Override
