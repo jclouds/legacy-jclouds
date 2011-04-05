@@ -58,6 +58,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 
 @Singleton
@@ -107,10 +108,17 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          return this.hashCode();
       } else if (method.isAnnotationPresent(Provides.class)) {
          try {
-            Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
-            return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
-         } catch (NoSuchElementException e) {
-            return injector.getInstance(Key.get(method.getGenericReturnType()));
+            try {
+               Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
+               return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
+            } catch (NoSuchElementException e) {
+               return injector.getInstance(Key.get(method.getGenericReturnType()));
+            }
+         } catch (ProvisionException e) {
+            AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
+            if (aex != null)
+               throw aex;
+            throw e;
          }
       } else if (method.isAnnotationPresent(Delegate.class)) {
          return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));

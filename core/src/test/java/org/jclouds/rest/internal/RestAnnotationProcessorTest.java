@@ -108,6 +108,7 @@ import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
@@ -2179,6 +2180,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Provides
       Set<String> foo();
 
+      @Named("exception")
+      @Provides
+      Set<String> exception();
+
       @POST
       @Path("/")
       void oneForm(@PathParam("bucket") String path);
@@ -2195,6 +2200,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
             UnsupportedEncodingException {
       Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).foo();
       assertEquals(set, ImmutableSet.of("bar"));
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testProvidesWithGenericQualifiedAuthorizationException() throws SecurityException,
+            NoSuchMethodException, UnsupportedEncodingException {
+      injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).exception();
    }
 
    @Test
@@ -2250,6 +2261,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                               }).annotatedWith(Names.named("bar")).toInstance(ImmutableSet.of("bar"));
                               bind(URI.class).annotatedWith(Localhost2.class).toInstance(
                                        URI.create("http://localhost:1111"));
+                           }
+
+                           @SuppressWarnings("unused")
+                           @Provides
+                           @Named("exception")
+                           Set<String> exception() {
+                              throw new AuthorizationException();
                            }
 
                         }));

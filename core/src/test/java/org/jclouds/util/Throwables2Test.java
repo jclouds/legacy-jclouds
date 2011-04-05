@@ -81,10 +81,9 @@ public class Throwables2Test {
    public void testReturnExceptionThatsInList() throws Exception {
       Exception e = new TestException();
       assertEquals(returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class }, e),
-            e);
-      assertEquals(
-            returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class },
-                  new RuntimeException(e)), e);
+               e);
+      assertEquals(returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class },
+               new RuntimeException(e)), e);
    }
 
    @Test(expectedExceptions = TestException.class)
@@ -116,13 +115,20 @@ public class Throwables2Test {
       Exception e = new AuthorizationException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
-   
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testPropagateProvisionExceptionAuthorizationException() throws Exception {
+      Exception e = new AuthorizationException();
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new ProvisionException(ImmutableSet.of(new Message(
+               ImmutableList.of(), "Error in custom provider",e))));
+   }
+
    @Test(expectedExceptions = InsufficientResourcesException.class)
    public void testPropagateStandardExceptionInsufficientResourcesException() throws Exception {
       Exception e = new InsufficientResourcesException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
-   
+
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
       Exception e = new ResourceNotFoundException();
@@ -133,36 +139,36 @@ public class Throwables2Test {
    public void testPropagateStandardExceptionIllegalStateExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new IllegalStateException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-            createNiceMock(HttpCommand.class), null, e));
+               createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPropagateStandardExceptionIllegalArgumentExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new IllegalArgumentException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-            createNiceMock(HttpCommand.class), null, e));
+               createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testPropagateStandardExceptionUnsupportedOperationExceptionNestedInHttpResponseException()
-         throws Exception {
+            throws Exception {
       Exception e = new UnsupportedOperationException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-            createNiceMock(HttpCommand.class), null, e));
+               createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateStandardExceptionAuthorizationExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new AuthorizationException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-            createNiceMock(HttpCommand.class), null, e));
+               createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new ResourceNotFoundException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-            createNiceMock(HttpCommand.class), null, e));
+               createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
@@ -170,6 +176,7 @@ public class Throwables2Test {
       Exception e = new HttpResponseException("goo", createNiceMock(HttpCommand.class), null);
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
+
    static class TestException extends Exception {
 
       /**

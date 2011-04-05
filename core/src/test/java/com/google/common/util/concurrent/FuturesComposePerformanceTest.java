@@ -17,13 +17,11 @@
  * ====================================================================
  */
 
-package org.jclouds.concurrent;
+package com.google.common.util.concurrent;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
-import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -40,44 +37,50 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of FutureIterables
+ * In google appengine, we can get a future without using an executorservice, using its async http
+ * fetch command. However, we still may need to do some conversions, or add listeners. In
+ * googleappengine, we cannot employ a *real* executorservice, but we can employ a same thread
+ * executor. This test identifies efficiencies that can be made by strengthening guava's handling of
+ * same thread execution.
+ * 
+ * <p/>
+ * 
+ * We simulate an i/o future by running a callable that simply sleeps. How this is created isn't
+ * important.
+ * 
+ * <ol>
+ * <li>{@code IO_DURATION} is the time that the source future spends doing work</li>
+ * <li>{@code LISTENER_DURATION} is the time that the attached listener or function</li>
+ * </ol>
+ * 
+ * The execution time of a composed task within a composite should not be more than {@code
+ * IO_DURATION} + {@code LISTENER_DURATION} + overhead when a threadpool is used. This is because
+ * the listener should be invoked as soon as the result is available.
+ * <p/>
+ * The execution time of a composed task within a composite should not be more than {@code
+ * IO_DURATION} + {@code LISTENER_DURATION} * {@code COUNT} + overhead when caller thread is used
+ * for handling the listeners.
+ * <p/>
+ * This test shows that Futures.compose eagerly issues a get() on the source future. code iterating
+ * over futures and assigning listeners will take the same amount of time as calling get() on each
+ * one, if using a within thread executor. This exposes an inefficiency which can make some use
+ * cases in google appengine impossible to achieve within the cutoff limits.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", enabled = false, sequential = true, testName = "FutureIterablesTest")
-public class FutureIterablesTest {
+@Test(groups = "performance", enabled = false, sequential = true, testName = "FuturesComposePerformanceTest")
+public class FuturesComposePerformanceTest {
+   private static final int FUDGE = 5;
+   private static final int COUNT = 100;
+   private static final int IO_DURATION = 50;
+   private static final int LISTENER_DURATION = 100;
+
    ExecutorService ioFunctionExecutor = newCachedThreadPool();
 
-   @Test(enabled = false)
-   public void testMakeListenableDoesntSerializeFutures() throws InterruptedException, ExecutionException {
-      long expectedMax = IO_DURATION;
-      long expectedMin = IO_DURATION;
-      long expectedOverhead = COUNT + FUDGE;
-
-      ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
-
-      long start = System.currentTimeMillis();
-      Map<String, Future<Long>> responses = runCallables(chainExecutor);
-      checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
-   }
-
-   @Test(enabled = false)
-   public void testAwaitCompletionUsingSameThreadExecutorDoesntSerializeFutures() throws InterruptedException,
-            ExecutionException {
-      long expectedMax = IO_DURATION;
-      long expectedMin = IO_DURATION;
-      long expectedOverhead = COUNT + FUDGE;
-
-      ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
-
-      long start = System.currentTimeMillis();
-      Map<String, Future<Long>> responses = runCallables(chainExecutor);
-      Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null,
-               Logger.CONSOLE, "test same thread");
-      assertEquals(exceptions.size(), 0);
-      checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
-   }
-
+   /**
+    * When we use threadpools for both the chain and invoking listener, user experience is
+    * consistent.
+    */
    @Test(enabled = false)
    public void whenCachedThreadPoolIsUsedForChainAndListenerMaxDurationIsSumOfCallableAndListener()
             throws InterruptedException, ExecutionException {
@@ -90,12 +93,16 @@ public class FutureIterablesTest {
          ExecutorService chainExecutor = userthreads;
          ExecutorService listenerExecutor = userthreads;
 
-         checkThresholdsUsingCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
    }
 
+   /**
+    * When we use threadpools for the chain, but same thread for invoking listener, user experience
+    * is still consistent.
+    */
    @Test(enabled = false)
    public void whenCachedThreadPoolIsUsedForChainButSameThreadForListenerMaxDurationIsSumOfCallableAndListener()
             throws InterruptedException, ExecutionException {
@@ -108,16 +115,22 @@ public class FutureIterablesTest {
          ExecutorService chainExecutor = userthreads;
          ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
-         checkThresholdsUsingCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
    }
 
+   /**
+    * When using same thread for the chain, the futures are being called (get()) eagerly, resulting
+    * in the max duration being the sum of all i/o plus the cost of executing the listeners. In this
+    * case, listeners are executed in a different thread pool.
+    * 
+    */
    @Test(enabled = false)
-   public void whenSameThreadIsUsedForChainButCachedThreadPoolForListenerMaxDurationIsIOAndSumOfAllListeners()
+   public void whenSameThreadIsUsedForChainButCachedThreadPoolForListenerMaxDurationIsSumOfAllIOAndOneListener()
             throws InterruptedException, ExecutionException {
-      long expectedMax = IO_DURATION + (LISTENER_DURATION * COUNT);
+      long expectedMax = (IO_DURATION * COUNT) + LISTENER_DURATION;
       long expectedMin = IO_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
 
@@ -126,17 +139,24 @@ public class FutureIterablesTest {
          ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = userthreads;
 
-         checkThresholdsUsingCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
    }
 
+   /**
+    * This case can be optimized for sure. The side effect of the eager get() is that all i/o must
+    * complete before *any* listeners are run. In this case, if you are inside google appengine and
+    * using same thread executors, worst experience is sum of all io duration plus the sum of all
+    * listener duration. An efficient implementation would call get() on the i/o future lazily. Such
+    * an impl would have a max duration of I/O + Listener * count.
+    */
    @Test(enabled = false)
-   public void whenSameThreadIsUsedForChainAndListenerMaxDurationIsIOAndSumOfAllListeners()
+   public void whenSameThreadIsUsedForChainAndListenerMaxDurationIsSumOfAllIOAndAllListeners()
             throws InterruptedException, ExecutionException {
 
-      long expectedMax = IO_DURATION + (LISTENER_DURATION * COUNT);
+      long expectedMax = (IO_DURATION * COUNT) + (LISTENER_DURATION * COUNT);
       long expectedMin = IO_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
 
@@ -145,44 +165,32 @@ public class FutureIterablesTest {
          ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
-         checkThresholdsUsingCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
    }
 
-   public static final int FUDGE = 5;
-   public static final int COUNT = 100;
-   public static final int IO_DURATION = 50;
-   public static final int LISTENER_DURATION = 100;
-
-   private void checkThresholdsUsingCompose(long expectedMin, long expectedMax, long expectedOverhead,
+   private void checkThresholdsUsingFuturesCompose(long expectedMin, long expectedMax, long expectedOverhead,
             ExecutorService chainExecutor, final ExecutorService listenerExecutor) {
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", org.jclouds.concurrent.Futures.compose(org.jclouds.concurrent.Futures.makeListenable(
-                  simultateIO(), chainExecutor), new Function<Long, Long>() {
+         responses.put(i + "", Futures.compose(Futures.makeListenable(simultateIO(), chainExecutor),
+                  new Function<Long, Long>() {
 
-            @Override
-            public Long apply(Long from) {
-               try {
-                  Thread.sleep(LISTENER_DURATION);
-               } catch (InterruptedException e) {
-                  propagate(e);
-               }
-               return System.currentTimeMillis();
-            }
+                     @Override
+                     public Long apply(Long from) {
+                        try {
+                           Thread.sleep(LISTENER_DURATION);
+                        } catch (InterruptedException e) {
+                           propagate(e);
+                        }
+                        return System.currentTimeMillis();
+                     }
 
-         }, listenerExecutor));
+                  }, listenerExecutor));
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
-   }
-
-   private Map<String, Future<Long>> runCallables(ExecutorService chainExecutor) {
-      Map<String, Future<Long>> responses = newHashMap();
-      for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", org.jclouds.concurrent.Futures.makeListenable(simultateIO(), chainExecutor));
-      return responses;
    }
 
    private Future<Long> simultateIO() {
@@ -197,7 +205,7 @@ public class FutureIterablesTest {
       });
    }
 
-   public static long getMaxIn(Map<String, Future<Long>> responses) {
+   private static long getMaxIn(Map<String, Future<Long>> responses) {
       Iterable<Long> collection = Iterables.transform(responses.values(), new Function<Future<Long>, Long>() {
 
          @Override
@@ -215,7 +223,7 @@ public class FutureIterablesTest {
       return time;
    }
 
-   public static long getMinIn(Map<String, Future<Long>> responses) {
+   private static long getMinIn(Map<String, Future<Long>> responses) {
       Iterable<Long> collection = Iterables.transform(responses.values(), new Function<Future<Long>, Long>() {
 
          @Override
