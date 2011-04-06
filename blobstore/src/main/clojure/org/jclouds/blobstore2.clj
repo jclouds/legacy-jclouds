@@ -47,7 +47,8 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.blobstore
             AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
             BlobStoreContextFactory domain.BlobMetadata domain.StorageMetadata
-            domain.Blob domain.internal.BlobBuilderImpl
+            domain.Blob domain.internal.BlobBuilderImpl options.PutOptions
+            options.PutOptions$Builder
             options.CreateContainerOptions options.ListContainerOptions]
            org.jclouds.io.Payloads
            java.util.Arrays
@@ -225,9 +226,10 @@ Options can also be specified for extension modules
 (defn put-blob
   "Put a blob.  Metadata in the blob determines location."
   [^BlobStore blobstore container-name blob & {:keys [multipart?]}]
-  (if multipart?
-    (.putBlobMultipart blobstore container-name blob)
-    (.putBlob blobstore container-name blob)))
+  (let [options (if multipart?
+                  (PutOptions$Builder/multipart)
+                  (PutOptions.))]
+    (.putBlob blobstore container-name blob options)))
 
 (defn blob-metadata
   "Get metadata from given path"

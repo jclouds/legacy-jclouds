@@ -107,6 +107,14 @@
   (is (= "blob2" (Strings2/toStringAndClose (get-blob-stream *blobstore*
                                                              "blob" "blob2")))))
 
+(deftest put-blob-test
+  ;; Check multipart works
+  (is (create-container *blobstore* "blobs"))
+  (is (put-blob *blobstore* "blobs"
+                (blob "blob1" :payload "blob1")
+                :multipart? true))
+  (is (= 1 (count (blobs *blobstore* "blobs")))))
+
 (deftest sign-get-test
   (let [request (sign-get *blobstore* "container" "path")]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
