@@ -54,6 +54,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.concurrent.Futures;
@@ -246,7 +247,8 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    @Override
-   public ListenableFuture<String> putBlobMultipart(String container, Blob blob) {
+   public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
+      // TODO implement options
       return putBlob(container, blob);
    }
 

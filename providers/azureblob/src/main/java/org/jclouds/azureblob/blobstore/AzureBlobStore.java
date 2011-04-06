@@ -48,6 +48,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
@@ -203,7 +204,8 @@ public class AzureBlobStore extends BaseBlobStore {
     *           object
     */
    @Override
-   public String putBlobMultipart(String container, Blob blob) {
+   public String putBlob(String container, Blob blob, PutOptions options) {
+      // TODO implement options
       return putBlob(container, blob);
    }
 

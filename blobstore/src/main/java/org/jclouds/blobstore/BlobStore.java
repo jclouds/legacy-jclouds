@@ -31,9 +31,8 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.domain.Location;
-
-import com.google.common.annotations.Beta;
 
 /**
  * Synchronous access to a BlobStore such as Amazon S3
@@ -214,20 +213,19 @@ public interface BlobStore {
 
    /**
     * Adds a {@code Blob} representing the data at location {@code container/blob.metadata.name}
-    * using multipart strategies.
+    * options using multipart strategies.
     * 
     * @param container
     *           container to place the blob.
     * @param blob
     *           fully qualified name relative to the container.
     * @param options
-    *           byte range or condition options
+    *           byte range options
     * @return etag of the blob you uploaded, possibly null where etags are unsupported
     * @throws ContainerNotFoundException
     *            if the container doesn't exist
     */
-   @Beta
-   String putBlobMultipart(String container, Blob blob);
+   String putBlob(String container, Blob blob, PutOptions options);
 
    /**
     * Retrieves the metadata of a {@code Blob} at location {@code container/name}

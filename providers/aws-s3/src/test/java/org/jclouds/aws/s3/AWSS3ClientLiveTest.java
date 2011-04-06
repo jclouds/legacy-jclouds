@@ -36,6 +36,7 @@ import java.util.zip.GZIPInputStream;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.io.Payload;
@@ -153,7 +154,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          blobStore.createContainerInLocation(null, containerName);
          Blob blob = blobStore.blobBuilder("const.txt")
             .payload(new File("target/const.txt")).build();
-         blobStore.putBlobMultipart(containerName, blob);
+         blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
       } finally {
          returnContainer(containerName);
       }
