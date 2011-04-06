@@ -224,8 +224,10 @@ Options can also be specified for extension modules
 
 (defn put-blob
   "Put a blob.  Metadata in the blob determines location."
-  [^BlobStore blobstore container-name blob]
-  (.putBlob blobstore container-name blob))
+  [^BlobStore blobstore container-name blob & {:keys [multipart?]}]
+  (if multipart?
+    (.putBlobMultipart blobstore container-name blob)
+    (.putBlob blobstore container-name blob)))
 
 (defn blob-metadata
   "Get metadata from given path"
