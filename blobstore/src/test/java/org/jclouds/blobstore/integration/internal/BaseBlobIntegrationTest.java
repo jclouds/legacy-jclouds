@@ -39,10 +39,13 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
 import javax.ws.rs.core.MediaType;
@@ -61,6 +64,7 @@ import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.WriteTo;
 import org.jclouds.io.payloads.StreamingPayload;
@@ -78,6 +82,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -109,6 +114,59 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
       oneHundredOneConstitutionsLength = oneConstitution.length * 101l;
       return temp;
+   }
+
+   /**
+    * Attempt to capture the issue detailed in
+    * http://groups.google.com/group/jclouds/browse_thread/thread/4a7c8d58530b287f
+    */
+   @Test(groups = { "integration", "live" })
+   public void testPutFileParallel() throws InterruptedException, IOException {
+
+      File payloadFile = File.createTempFile("testPutFileParallel", "png");
+      Files.copy(InputSuppliers.of(getClass().getResource("/testimg.png").openStream()), payloadFile);
+      payloadFile.deleteOnExit();
+      
+      
+      final Payload testPayload = Payloads.newFilePayload(payloadFile);
+      final byte[] md5 = CryptoStreams.md5(testPayload);
+      testPayload.getContentMetadata().setContentType("image/png");
+      
+      final AtomicInteger blobCount = new AtomicInteger();
+      final String container = getContainerName();
+      try {
+         Map<Integer, Future<?>> responses = Maps.newHashMap();
+         for (int i = 0; i < 10; i++) {
+
+            responses.put(i, this.exec.submit(new Callable<Void>() {
+
+               @SuppressWarnings("deprecation")
+               @Override
+               public Void call() throws Exception {
+                  String name = blobCount.incrementAndGet() + "";
+                  Blob blob = context.getBlobStore().newBlob(name);
+                  blob.setPayload(testPayload);
+                  context.getBlobStore().putBlob(container, blob);
+                  assertConsistencyAwareBlobExists(container, name);
+                  blob = context.getBlobStore().getBlob(container, name);
+
+                  assert Arrays.equals(CryptoStreams.md5(blob.getPayload()), md5) : String.format(
+                           "md5 didn't match on %s/%s", container, name);
+
+                  context.getBlobStore().removeBlob(container, name);
+                  assertConsistencyAwareBlobDoesntExist(container, name);
+                  return null;
+               }
+
+            }));
+         }
+         Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
+                  "putFileParallel");
+         assert exceptions.size() == 0 : exceptions;
+
+      } finally {
+         returnContainer(container);
+      }
    }
 
    @Test(groups = { "integration", "live" })

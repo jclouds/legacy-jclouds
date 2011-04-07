@@ -26,8 +26,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -54,6 +54,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
@@ -288,7 +289,29 @@ public class BaseBlobStoreIntegrationTest {
          public void run() {
             try {
                assert context.getBlobStore().countBlobs(containerName) == count : String.format(
-                        "expected only %d values in %s: %s", count, containerName, Sets.newHashSet(Iterables.transform(
+                        "expected only %d values in %s: %s", count, containerName, ImmutableSet.copyOf(Iterables
+                                 .transform(context.getBlobStore().list(containerName),
+                                          new Function<StorageMetadata, String>() {
+
+                                             public String apply(StorageMetadata from) {
+                                                return from.getName();
+                                             }
+
+                                          })));
+            } catch (Exception e) {
+               Throwables.propagateIfPossible(e);
+            }
+         }
+      });
+   }
+
+   protected void assertConsistencyAwareBlobExists(final String containerName, final String name)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               assert context.getBlobStore().blobExists(containerName, name) : String.format(
+                        "could not find %s in %s: %s", name, containerName, ImmutableSet.copyOf(Iterables.transform(
                                  context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
 
                                     public String apply(StorageMetadata from) {
@@ -296,6 +319,20 @@ public class BaseBlobStoreIntegrationTest {
                                     }
 
                                  })));
+            } catch (Exception e) {
+               Throwables.propagateIfPossible(e);
+            }
+         }
+      });
+   }
+
+   protected void assertConsistencyAwareBlobDoesntExist(final String containerName, final String name)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               assert !context.getBlobStore().blobExists(containerName, name) : String.format("found %s in %s", name,
+                        containerName);
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
             }
