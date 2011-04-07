@@ -50,8 +50,8 @@ public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       super.setUpResourcesOnThisThread(testContext);
       exec = Executors.newCachedThreadPool();
-      s3 = new AmazonS3Client(new BasicAWSCredentials(System.getProperty("test.s3.identity"),
-            System.getProperty("test.s3.credential")));
+      s3 = new AmazonS3Client(new BasicAWSCredentials(System.getProperty("test.aws-s3.identity"),
+            System.getProperty("test.aws-s3.credential")));
    }
 
    @Override

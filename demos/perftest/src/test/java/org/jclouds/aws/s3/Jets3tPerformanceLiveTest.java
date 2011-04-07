@@ -49,8 +49,8 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       super.setUpResourcesOnThisThread(testContext);
       exec = Executors.newCachedThreadPool();
-      jetClient = new RestS3Service(new AWSCredentials(System.getProperty("test.s3.identity"),
-            System.getProperty("test.s3.credential")));
+      jetClient = new RestS3Service(new AWSCredentials(System.getProperty("test.aws-s3.identity"),
+            System.getProperty("test.aws-s3.credential")));
    }
 
    @Override

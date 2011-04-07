@@ -30,7 +30,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.domain.S3Object;
 
 import com.google.common.base.Throwables;
 
@@ -59,7 +60,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // }
    protected void overrideWithSysPropertiesAndPrint(Properties overrides, String contextName) {
       overrides.putAll(System.getProperties());
-      System.out.printf("%s: loopCount(%s), perContext(%s), perHost(%s),ioWorkers(%s), userThreads(%s)%n", contextName,
+      System.out.printf("%s: loopCount(%s), perContext(%s), perHost(%s), ioWorkers(%s), userThreads(%s)%n", contextName,
             loopCount, overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT), overrides
                   .getProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST), overrides.getProperty(PROPERTY_IO_WORKER_THREADS),
             overrides.getProperty(PROPERTY_USER_THREADS));
