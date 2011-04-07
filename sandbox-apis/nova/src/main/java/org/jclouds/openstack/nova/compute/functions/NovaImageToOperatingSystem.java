@@ -63,13 +63,15 @@ public class NovaImageToOperatingSystem implements
       String osName = null;
       String osArch = null;
       String osVersion = null;
-      String osDescription = from.getName();
+      String osDescription = from.getName() != null ? from.getName() : "unspecified";
+
+      String name = from.getName() != null ? from.getName() : "unspecified";
       boolean is64Bit = true;
-      if (from.getName().indexOf("Red Hat EL") != -1) {
+      if (name.indexOf("Red Hat EL") != -1) {
          osFamily = OsFamily.RHEL;
-      } else if (from.getName().indexOf("Oracle EL") != -1) {
+      } else if (name.indexOf("Oracle EL") != -1) {
          osFamily = OsFamily.OEL;
-      } else if (from.getName().indexOf("Windows") != -1) {
+      } else if (name.indexOf("Windows") != -1) {
          osFamily = OsFamily.WINDOWS;
          Matcher matcher = WINDOWS_PATTERN.matcher(from.getName());
          if (matcher.find()) {
@@ -77,7 +79,7 @@ public class NovaImageToOperatingSystem implements
             is64Bit = matcher.group(2).equals("x64");
          }
       } else {
-         Matcher matcher = DEFAULT_PATTERN.matcher(from.getName());
+         Matcher matcher = DEFAULT_PATTERN.matcher(name);
          if (matcher.find()) {
             try {
                osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());

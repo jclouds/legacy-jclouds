@@ -31,14 +31,17 @@ public class _NovaClient {
 
         ComputeService cs = context.getComputeService();
 
+        System.out.println(cs.listImages());
+        //System.out.println(cs.listNodes());
+
         TemplateOptions options = new TemplateOptions();
         //options.authorizePublicKey("");
-        Template template = cs.templateBuilder().hardwareId("m1.small").imageId("ami-0000000d").options(options).build();
-        try {
+        Template template = cs.templateBuilder().hardwareId("m1.small").imageId("13").options(options).build();
+        /*try {
             cs.runNodesWithTag("test", 1, template);
         } catch (RunNodesException e) {
             e.printStackTrace();
-        }
+        }*/
 
         //System.out.println(cs.listNodes());
         //System.out.println(cs.listImages());
