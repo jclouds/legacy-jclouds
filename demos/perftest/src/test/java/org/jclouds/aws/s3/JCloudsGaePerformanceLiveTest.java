@@ -30,6 +30,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.s3.S3AsyncClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -143,7 +144,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       Properties overrides = new Properties();
       String contextName = "gae";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = new BlobStoreContextFactory().createContext("s3", accesskeyid, secretkey, ImmutableSet.of(
+      context = new BlobStoreContextFactory().createContext("aws-s3", accesskeyid, secretkey, ImmutableSet.of(
             new NullLoggingModule(), new GoogleAppEngineConfigurationModule()), overrides);
    }
 

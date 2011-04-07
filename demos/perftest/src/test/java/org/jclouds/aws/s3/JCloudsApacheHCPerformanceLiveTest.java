@@ -33,6 +33,7 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.s3.S3AsyncClient;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -46,8 +47,8 @@ public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLi
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       exec = Executors.newCachedThreadPool();
-      String accesskeyid = System.getProperty("test.s3.identity");
-      String secretkey = System.getProperty("test.s3.credential");
+      String accesskeyid = System.getProperty("test.aws-s3.identity");
+      String secretkey = System.getProperty("test.aws-s3.credential");
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_SO_TIMEOUT, 5000 + "");
       overrides.setProperty(PROPERTY_CONNECTION_TIMEOUT, 5000 + "");
@@ -57,7 +58,7 @@ public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLi
       overrides.setProperty(PROPERTY_USER_THREADS, 0 + "");
       String contextName = "enterprise";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = new BlobStoreContextFactory().createContext("s3", accesskeyid, secretkey, ImmutableSet.of(
+      context = new BlobStoreContextFactory().createContext("aws-s3", accesskeyid, secretkey, ImmutableSet.of(
             new NullLoggingModule(), new ApacheHCHttpCommandExecutorServiceModule(),
             new EnterpriseConfigurationModule()), overrides);
    }

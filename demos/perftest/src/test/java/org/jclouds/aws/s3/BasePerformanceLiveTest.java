@@ -51,7 +51,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       containerCount = 1;
    }
    protected int timeoutSeconds = 15;
-   protected int loopCount = Integer.parseInt(System.getProperty("test.s3.loopcount", "1000"));
+   protected int loopCount = Integer.parseInt(System.getProperty("test.aws-s3.loopcount", "1000"));
    protected ExecutorService exec;
    protected Logger logger = Logger.NULL;;
 
@@ -141,13 +141,13 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    }
 
    private void doParallel(Provider<ListenableFuture<?>> provider, int loopCount, String containerName)
-         throws InterruptedException, ExecutionException, TimeoutException {
+            throws InterruptedException, ExecutionException, TimeoutException {
       Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
       for (int i = 0; i < loopCount; i++)
          responses.put(i, provider.get());
 
       Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, null, Logger.NULL, String.format(
-            "putting into containerName: %s", containerName));
+               "putting into containerName: %s", containerName));
 
       assert exceptions.size() == 0 : exceptions;
 
@@ -164,13 +164,13 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
 
       public ListenableFuture<?> get() {
          return Futures.makeListenable(putByteArray(bucketName, key.getAndIncrement() + "", test,
-               "application/octetstring"));
+                  "application/octetstring"));
       }
    }
 
    class PutFileFuture implements Provider<ListenableFuture<?>> {
       final AtomicInteger key = new AtomicInteger(0);
-      protected File file = new File("pom.xml");
+      protected File file = new File(getClass().getResource("/testimg.png").getFile());
       private final String bucketName;
 
       public PutFileFuture(String bucketName) {
@@ -195,7 +195,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       public ListenableFuture<?> get() {
 
          return Futures.makeListenable(putInputStream(bucketName, key.getAndIncrement() + "", new ByteArrayInputStream(
-               test), "application/octetstring"));
+                  test), "application/octetstring"));
 
       }
    }
