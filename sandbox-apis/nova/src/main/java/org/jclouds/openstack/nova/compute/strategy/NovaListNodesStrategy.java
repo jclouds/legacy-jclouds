@@ -56,7 +56,7 @@ public class NovaListNodesStrategy implements ListNodesStrategy {
 
    @Override
    public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-      return Iterables.filter(Iterables.transform(client.listServers(ListOptions.Builder.withDetails()),
+      return Iterables.filter(Iterables.transform(client.listServers(/*ListOptions.Builder.withDetails()*/),
                serverToNodeMetadata), filter);
    }
 }

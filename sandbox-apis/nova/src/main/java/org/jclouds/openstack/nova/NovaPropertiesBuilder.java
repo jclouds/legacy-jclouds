@@ -34,7 +34,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-       properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "1.1");
       return properties;
    }
 
