@@ -26,11 +26,12 @@ import java.util.Set;
 
 import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
 import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
-import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.location.Region;
@@ -53,9 +54,10 @@ public class DescribeImagesResponseHandlerTest {
 
    public void testUNIX() {
       Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.I386, null, null, "ami-be3adfd7",
-            "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE,
-            ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
-            RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(), "paravirtual"));
+               "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE,
+               ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
+               RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
+               VirtualizationType.PARAVIRTUAL));
 
       Set<Image> result = parseImages("/describe_images.xml");
 
@@ -64,9 +66,10 @@ public class DescribeImagesResponseHandlerTest {
 
    public void testWindows() {
       Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, null, null, "ami-02eb086b",
-            "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml", "771350841976",
-            ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet("5771E9A6"), null, "windows", null,
-            RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(), "paravirtual"));
+               "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml", "771350841976",
+               ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet("5771E9A6"), null, "windows",
+               null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
+               VirtualizationType.PARAVIRTUAL));
 
       Set<Image> result = parseImages("/describe_images_windows.xml");
 
@@ -75,10 +78,11 @@ public class DescribeImagesResponseHandlerTest {
 
    public void testEBS() {
       Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.I386, "websrv_2009-12-10",
-            "Web Server AMI", "ami-246f8d4d", "706093390852/websrv_2009-12-10", "706093390852", ImageState.AVAILABLE,
-            ImageType.MACHINE, true, Sets.<String> newHashSet(), null, "windows", null, RootDeviceType.EBS,
-            "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1", new EbsBlockDevice("snap-d01272b9", 30,
-                  true), "xvdf", new EbsBlockDevice("snap-d31272ba", 250, false)), "hvm"));
+               "Web Server AMI", "ami-246f8d4d", "706093390852/websrv_2009-12-10", "706093390852",
+               ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet(), null, "windows", null,
+               RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
+                        new EbsBlockDevice("snap-d01272b9", 30, true), "xvdf", new EbsBlockDevice("snap-d31272ba", 250,
+                                 false)), VirtualizationType.HVM));
 
       Set<Image> result = parseImages("/describe_images_ebs.xml");
 
@@ -95,7 +99,7 @@ public class DescribeImagesResponseHandlerTest {
 
       });
       ParseSax<Set<Image>> parser = (ParseSax<Set<Image>>) injector.getInstance(ParseSax.Factory.class).create(
-            injector.getInstance(DescribeImagesResponseHandler.class));
+               injector.getInstance(DescribeImagesResponseHandler.class));
       return parser;
    }
 

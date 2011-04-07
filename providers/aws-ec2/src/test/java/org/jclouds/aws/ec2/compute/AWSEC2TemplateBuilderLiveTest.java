@@ -89,7 +89,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
       assertEquals(template.getHardware().getId(), InstanceType.M1_SMALL);
-
+      assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
    @Test
@@ -108,7 +108,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 4.0d);
       assertEquals(template.getHardware().getId(), InstanceType.M2_2XLARGE);
-
+      assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
    @Test
@@ -116,27 +116,27 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1-beta");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
    @Test
    public void testFastestTemplateBuilder() throws IOException {
 
-      Template defaultTemplate = context.getComputeService().templateBuilder().fastest().build();
-      assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1-beta");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
-      assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
-      assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
-      assertEquals(getCores(defaultTemplate.getHardware()), 8.0d);
-
+      Template fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1-beta");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+      assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
+      assertEquals(getCores(fastestTemplate.getHardware()), 8.0d);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
    }
 
    @Test
@@ -152,7 +152,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(microTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(microTemplate.getLocation().getId(), "us-east-1");
       assertEquals(getCores(microTemplate.getHardware()), 1.0d);
-
+      assertEquals(microTemplate.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
    @Test

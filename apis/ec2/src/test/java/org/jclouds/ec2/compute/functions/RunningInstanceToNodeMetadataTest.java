@@ -32,6 +32,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
@@ -138,7 +139,7 @@ public class RunningInstanceToNodeMetadataTest {
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
                ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
                "us-east-1/ami-82e4b5c7").hardware(m1_small().build()).operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
+               new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
                .providerId("i-0799056f").location(provider).build());
    }

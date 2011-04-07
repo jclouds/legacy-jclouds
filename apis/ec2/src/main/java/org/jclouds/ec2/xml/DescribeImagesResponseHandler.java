@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
@@ -46,8 +47,7 @@ import com.google.common.collect.Sets;
  * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/"
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
  *      />
  */
 public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
@@ -86,7 +86,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
    private String snapshotId;
-   private String virtualizationType = "paravirtual";
+   private VirtualizationType virtualizationType = VirtualizationType.PARAVIRTUAL;
 
    private int volumeSize;
    private boolean deleteOnTermination = true;// correct default is true.
@@ -150,7 +150,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
       } else if (qName.equals("rootDeviceName")) {
          rootDeviceName = currentText.toString().trim();
       } else if (qName.equals("virtualizationType")) {
-         virtualizationType = currentText.toString().trim();
+         virtualizationType = VirtualizationType.fromValue(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inBlockDeviceMapping) {
             ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize, deleteOnTermination));
@@ -164,8 +164,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
-                     imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                     rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
+                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -185,7 +185,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.rootDeviceType = RootDeviceType.INSTANCE_STORE;
             this.rootDeviceName = null;
             this.ebsBlockDevices = Maps.newHashMap();
-            this.virtualizationType = "paravirtual";
+            this.virtualizationType = VirtualizationType.PARAVIRTUAL;
          }
 
       }

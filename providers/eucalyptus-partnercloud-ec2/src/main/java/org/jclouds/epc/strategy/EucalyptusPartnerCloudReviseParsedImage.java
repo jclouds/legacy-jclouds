@@ -32,7 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeServiceUtils;
@@ -62,7 +62,7 @@ public class EucalyptusPartnerCloudReviseParsedImage implements ReviseParsedImag
 
    @Override
    public void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
-            OperatingSystemBuilder osBuilder) {
+            OperatingSystem.Builder osBuilder) {
       try {
          if (from.getImageLocation().startsWith("windows")) {
             family = OsFamily.WINDOWS;

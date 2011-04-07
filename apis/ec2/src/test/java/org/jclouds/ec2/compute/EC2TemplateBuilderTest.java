@@ -91,7 +91,7 @@ public class EC2TemplateBuilderTest {
       // assert m2_xlarge().build().equals(template.getHardware()) : format(
       // "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
       // String.valueOf(template.getHardware()));
-      assertEquals(m2_xlarge().build(), template.getHardware());
+      assertEquals(m2_xlarge().build().getId(), template.getHardware().getId());
    }
 
    @Test
@@ -100,15 +100,15 @@ public class EC2TemplateBuilderTest {
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert CC1_4XLARGE.equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), String
-                        .valueOf(template.getHardware()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), template
+                        .getHardware().getId());
    }
 
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
     * on physical attributes (# of cores, ram, etc).
     * 
-    * Expected size: m2.xlarge
+    * Expected size: CC1_4XLARGE
     */
    @Test
    public void testTemplateChoiceForInstanceByAttributes() throws Exception {
@@ -116,9 +116,7 @@ public class EC2TemplateBuilderTest {
                "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-      assert CC1_4XLARGE.equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE, String
-                        .valueOf(template.getHardware()));
+      assertEquals(template.getHardware().getId(), "cc1.4xlarge");
    }
 
    /**
@@ -136,8 +134,8 @@ public class EC2TemplateBuilderTest {
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert !m2_xlarge().build().equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", String
-                        .valueOf(template.getHardware()));
+               "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", template
+                        .getHardware().getId());
    }
 
    @SuppressWarnings("unchecked")
@@ -149,15 +147,19 @@ public class EC2TemplateBuilderTest {
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
-               .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", null, "ubuntu", true)).description(
-                        "description").version("1.0").defaultCredentials(new Credentials("root", null)).build();
       replay(optionsProvider);
       replay(templateBuilderProvider);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-               .<Image> of(image));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+               new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
+                        .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
+                        .description("description").version("1.0").defaultCredentials(new Credentials("root", null))
+                        .build(), new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/cc-image")
+                        .location(location).operatingSystem(
+                                 new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
+                        .description("description").version("1.0").defaultCredentials(new Credentials("root", null))
+                        .build()));
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),
                         m1_small().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),

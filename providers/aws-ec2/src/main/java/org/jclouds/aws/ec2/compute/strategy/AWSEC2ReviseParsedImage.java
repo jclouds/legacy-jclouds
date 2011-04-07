@@ -32,7 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeServiceUtils;
@@ -78,7 +78,7 @@ public class AWSEC2ReviseParsedImage implements ReviseParsedImage {
 
    @Override
    public void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
-            OperatingSystemBuilder osBuilder) {
+            OperatingSystem.Builder osBuilder) {
       try {
          Matcher matcher = getMatcherAndFind(from.getImageLocation());
          if (matcher.pattern() == AMZN_PATTERN) {

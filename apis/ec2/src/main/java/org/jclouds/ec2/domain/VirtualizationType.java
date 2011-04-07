@@ -1,7 +1,5 @@
 /**
  *
-/**
- *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
@@ -19,31 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute.strategy;
+package org.jclouds.ec2.domain;
 
-import javax.inject.Singleton;
-
-import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-
-import com.google.inject.ImplementedBy;
+import com.google.common.base.CaseFormat;
 
 /**
+ * Virtualization type of the image.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(ReviseParsedImage.NoopReviseParsedImage.class)
-public interface ReviseParsedImage {
-   void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
-            OperatingSystem.Builder osBuilder);
+public enum VirtualizationType {
 
-   @Singleton
-   public static class NoopReviseParsedImage implements ReviseParsedImage {
+   PARAVIRTUAL,
 
-      @Override
-      public void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
-               OperatingSystem.Builder osBuilder) {
+   HVM, UNRECOGNIZED;
+
+   public String value() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+   }
+
+   public String toString() {
+      return value();
+   }
+
+   public static VirtualizationType fromValue(String v) {
+      try {
+         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
       }
    }
 }

@@ -118,7 +118,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       expect(os.getVersion()).andReturn(null).atLeastOnce();
       expect(os.getFamily()).andReturn(null).atLeastOnce();
       expect(os.getDescription()).andReturn(null).atLeastOnce();
-      expect(os.getArch()).andReturn(null).atLeastOnce();
+      expect(os.getArch()).andReturn("paravirtual").atLeastOnce();
       expect(os.is64Bit()).andReturn(false).atLeastOnce();
 
       replay(knownImage);

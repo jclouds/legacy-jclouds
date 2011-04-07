@@ -40,10 +40,10 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  */
 public class HardwareBuilder extends ComputeMetadataBuilder {
-   private List<Processor> processors = Lists.newArrayList();
-   private int ram;
-   private List<Volume> volumes = Lists.newArrayList();
-   private Predicate<Image> supportsImage = any();
+   protected List<Processor> processors = Lists.newArrayList();
+   protected int ram;
+   protected List<Volume> volumes = Lists.newArrayList();
+   protected Predicate<Image> supportsImage = any();
 
    public HardwareBuilder() {
       super(ComputeType.HARDWARE);
