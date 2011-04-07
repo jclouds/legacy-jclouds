@@ -64,19 +64,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>1.6.2</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-netty</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-bouncycastle</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
-            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
