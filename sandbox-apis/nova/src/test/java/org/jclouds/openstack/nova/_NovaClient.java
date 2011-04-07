@@ -3,6 +3,10 @@ package org.jclouds.openstack.nova;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 
 import java.util.Collections;
@@ -26,9 +30,20 @@ public class _NovaClient {
         ComputeServiceContext context = contextFactory.createContext("nova", identity, credential, Collections.singleton(new JschSshClientModule()), overrides);
 
         ComputeService cs = context.getComputeService();
-        System.out.println(cs.listImages());
-        System.out.println(cs.listNodes());
-        System.out.println(cs.listAssignableLocations());
-        System.out.println(cs.listHardwareProfiles());
+
+        TemplateOptions options = new TemplateOptions();
+        //options.authorizePublicKey("");
+        Template template = cs.templateBuilder().hardwareId("m1.small").imageId("ami-0000000d").options(options).build();
+        try {
+            cs.runNodesWithTag("test", 1, template);
+        } catch (RunNodesException e) {
+            e.printStackTrace();
+        }
+
+        //System.out.println(cs.listNodes());
+        //System.out.println(cs.listImages());
+        //System.out.println(cs.listNodes());
+        //System.out.println(cs.listAssignableLocations());
+        //System.out.println(cs.listHardwareProfiles());
     }
 }
