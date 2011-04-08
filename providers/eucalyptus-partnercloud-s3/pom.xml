@@ -40,6 +40,7 @@
         <test.eucalyptus-partnercloud-s3.apiversion>2006-03-01</test.eucalyptus-partnercloud-s3.apiversion>
         <test.eucalyptus-partnercloud-s3.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-s3.identity>
         <test.eucalyptus-partnercloud-s3.credential>FIXME_CREDENTIAL</test.eucalyptus-partnercloud-s3.credential>
+        <test.blobstore.container-count>15</test.blobstore.container-count>
     </properties>
 
     <dependencies>
@@ -135,6 +136,10 @@
                                         <property>
                                             <name>jclouds.blobstore.httpstream.md5</name>
                                             <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.blobstore.container-count</name>
+                                            <value>${test.blobstore.container-count}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

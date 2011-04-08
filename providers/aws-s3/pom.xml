@@ -40,6 +40,7 @@
         <test.aws-s3.apiversion>2006-03-01</test.aws-s3.apiversion>
         <test.aws-s3.identity>${test.aws.identity}</test.aws-s3.identity>
         <test.aws-s3.credential>${test.aws.credential}</test.aws-s3.credential>
+        <test.blobstore.container-count>25</test.blobstore.container-count>
     </properties>
 
     <!-- temporary -->
@@ -149,6 +150,10 @@
                                         <property>
                                             <name>jclouds.blobstore.httpstream.md5</name>
                                             <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.blobstore.container-count</name>
+                                            <value>${test.blobstore.container-count}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
