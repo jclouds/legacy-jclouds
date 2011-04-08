@@ -52,10 +52,10 @@ import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.s3.domain.AccessControlList.Permission;
+import org.jclouds.s3.domain.BucketMetadata;
+import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
@@ -85,11 +85,11 @@ public class S3BlobStore extends BaseBlobStore {
 
    @Inject
    protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-            @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
-            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls) {
+         @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
+         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -233,9 +233,13 @@ public class S3BlobStore extends BaseBlobStore {
    @Override
    public String putBlob(String container, Blob blob) {
       PutObjectOptions options = new PutObjectOptions();
-      AccessControlList acl = bucketAcls.get(container);
-      if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
-         options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+      try {
+         AccessControlList acl = bucketAcls.get(container);
+         if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
+            options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+      } catch (NullPointerException e) {
+         // MapMaker
+      }
       return sync.putObject(container, blob2Object.apply(blob), options);
    }
 
