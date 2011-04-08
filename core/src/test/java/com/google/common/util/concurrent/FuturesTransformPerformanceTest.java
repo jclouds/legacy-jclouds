@@ -53,23 +53,23 @@ import com.google.common.collect.Sets;
  * <li>{@code LISTENER_DURATION} is the time that the attached listener or function</li>
  * </ol>
  * 
- * The execution time of a composed task within a composite should not be more than {@code
+ * The execution time of a transformd task within a composite should not be more than {@code
  * IO_DURATION} + {@code LISTENER_DURATION} + overhead when a threadpool is used. This is because
  * the listener should be invoked as soon as the result is available.
  * <p/>
- * The execution time of a composed task within a composite should not be more than {@code
+ * The execution time of a transformd task within a composite should not be more than {@code
  * IO_DURATION} + {@code LISTENER_DURATION} * {@code COUNT} + overhead when caller thread is used
  * for handling the listeners.
  * <p/>
- * This test shows that Futures.compose eagerly issues a get() on the source future. code iterating
+ * This test shows that Futures.transform eagerly issues a get() on the source future. code iterating
  * over futures and assigning listeners will take the same amount of time as calling get() on each
  * one, if using a within thread executor. This exposes an inefficiency which can make some use
  * cases in google appengine impossible to achieve within the cutoff limits.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", enabled = false, sequential = true, testName = "FuturesComposePerformanceTest")
-public class FuturesComposePerformanceTest {
+@Test(groups = "performance", enabled = false, sequential = true, testName = "FuturesTransformPerformanceTest")
+public class FuturesTransformPerformanceTest {
    private static final int FUDGE = 5;
    private static final int COUNT = 100;
    private static final int IO_DURATION = 50;
@@ -93,7 +93,7 @@ public class FuturesComposePerformanceTest {
          ExecutorService chainExecutor = userthreads;
          ExecutorService listenerExecutor = userthreads;
 
-         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesTransform(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
@@ -115,7 +115,7 @@ public class FuturesComposePerformanceTest {
          ExecutorService chainExecutor = userthreads;
          ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
-         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesTransform(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
@@ -139,7 +139,7 @@ public class FuturesComposePerformanceTest {
          ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = userthreads;
 
-         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesTransform(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
@@ -165,18 +165,18 @@ public class FuturesComposePerformanceTest {
          ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
-         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesTransform(expectedMin, expectedMax, expectedOverhead, chainExecutor, listenerExecutor);
       } finally {
          userthreads.shutdownNow();
       }
    }
 
-   private void checkThresholdsUsingFuturesCompose(long expectedMin, long expectedMax, long expectedOverhead,
+   private void checkThresholdsUsingFuturesTransform(long expectedMin, long expectedMax, long expectedOverhead,
             ExecutorService chainExecutor, final ExecutorService listenerExecutor) {
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", Futures.compose(Futures.makeListenable(simultateIO(), chainExecutor),
+         responses.put(i + "", Futures.transform(Futures.makeListenable(simultateIO(), chainExecutor),
                   new Function<Long, Long>() {
 
                      @Override

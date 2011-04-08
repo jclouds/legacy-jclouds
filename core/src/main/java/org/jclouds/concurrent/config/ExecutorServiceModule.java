@@ -178,7 +178,7 @@ public class ExecutorServiceModule extends AbstractModule {
          return new AddToStringFuture<T>(delegate.submit(task), task.toString());
       }
 
-      @SuppressWarnings("unchecked")
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Future<?> submit(Runnable task) {
          return new AddToStringFuture(delegate.submit(task), task.toString());
