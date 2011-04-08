@@ -21,7 +21,7 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
@@ -42,6 +42,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-ec2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jclouds.common</groupId>
             <artifactId>openstack-common</artifactId>
@@ -130,6 +135,14 @@
                                         <property>
                                             <name>test.nova.credential</name>
                                             <value>${test.nova.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.nova.credential</name>
+                                            <value>${test.ssh.keyfile.public}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.nova.credential</name>
+                                            <value>${test.ssh.keyfile.private}</value>
                                         </property>
                                         <property>
                                             <name>test.initializer</name>
