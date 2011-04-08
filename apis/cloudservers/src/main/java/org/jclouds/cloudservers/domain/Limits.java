@@ -19,28 +19,58 @@
 
 package org.jclouds.cloudservers.domain;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class Limits {
 
-   private List<RateLimit> rate = Lists.newArrayList();
-   private List<AbsoluteLimit> absolute = Lists.newArrayList();
+   private Set<RateLimit> rate = Sets.newLinkedHashSet();
+   private Map<String, Integer> absolute = Maps.newLinkedHashMap();
 
-   public void setRate(List<RateLimit> rate) {
-      this.rate = rate;
-   }
-
-   public List<RateLimit> getRate() {
+   public Set<RateLimit> getRate() {
       return rate;
    }
 
-   public void setAbsolute(List<AbsoluteLimit> absolute) {
-      this.absolute = absolute;
+   @Override
+   public String toString() {
+      return "Limits [rate=" + rate + ", absolute=" + absolute + "]";
    }
 
-   public List<AbsoluteLimit> getAbsolute() {
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((absolute == null) ? 0 : absolute.hashCode());
+      result = prime * result + ((rate == null) ? 0 : rate.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Limits other = (Limits) obj;
+      if (absolute == null) {
+         if (other.absolute != null)
+            return false;
+      } else if (!absolute.equals(other.absolute))
+         return false;
+      if (rate == null) {
+         if (other.rate != null)
+            return false;
+      } else if (!rate.equals(other.rate))
+         return false;
+      return true;
+   }
+
+   public Map<String, Integer> getAbsolute() {
       return absolute;
    }
 

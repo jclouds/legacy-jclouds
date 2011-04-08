@@ -19,8 +19,6 @@
 
 package org.jclouds.cloudservers.domain;
 
-import javax.ws.rs.HttpMethod;
-
 /**
  * 
  * RateLimit.
@@ -40,16 +38,69 @@ import javax.ws.rs.HttpMethod;
  */
 public class RateLimit {
 
-   private final String uri;
-   private final String regex;
-   private final int remaining;
-   private final long resetTime;
-   private final RateLimitUnit unit;
-   private final int value;
-   private final HttpMethod verb;
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((regex == null) ? 0 : regex.hashCode());
+      result = prime * result + remaining;
+      result = prime * result + (int) (resetTime ^ (resetTime >>> 32));
+      result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+      result = prime * result + value;
+      result = prime * result + ((verb == null) ? 0 : verb.hashCode());
+      return result;
+   }
 
-   public RateLimit(String uri, String regex, int remaining, long resetTime, RateLimitUnit unit,
-            int value, HttpMethod verb) {
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      RateLimit other = (RateLimit) obj;
+      if (regex == null) {
+         if (other.regex != null)
+            return false;
+      } else if (!regex.equals(other.regex))
+         return false;
+      if (remaining != other.remaining)
+         return false;
+      if (resetTime != other.resetTime)
+         return false;
+      if (unit != other.unit)
+         return false;
+      if (uri == null) {
+         if (other.uri != null)
+            return false;
+      } else if (!uri.equals(other.uri))
+         return false;
+      if (value != other.value)
+         return false;
+      if (verb == null) {
+         if (other.verb != null)
+            return false;
+      } else if (!verb.equals(other.verb))
+         return false;
+      return true;
+   }
+
+   private String uri;
+   private String regex;
+   private int remaining;
+   private long resetTime;
+   private RateLimitUnit unit;
+   private int value;
+   private String verb;
+
+   // for deserializer
+   public RateLimit() {
+
+   }
+
+   public RateLimit(String uri, String regex, int remaining, long resetTime, RateLimitUnit unit, int value, String verb) {
       this.uri = uri;
       this.regex = regex;
       this.remaining = remaining;
@@ -83,8 +134,14 @@ public class RateLimit {
       return value;
    }
 
-   public HttpMethod getVerb() {
+   public String getVerb() {
       return verb;
+   }
+
+   @Override
+   public String toString() {
+      return "[uri=" + uri + ", regex=" + regex + ", remaining=" + remaining + ", resetTime=" + resetTime + ", unit="
+            + unit + ", value=" + value + ", verb=" + verb + "]";
    }
 
 }

@@ -199,6 +199,21 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       checkFilters(request);
    }
 
+   public void testLimits() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = CloudServersAsyncClient.class.getMethod("getLimits");
+      HttpRequest request = processor.createRequest(method);
+
+      assertRequestLineEquals(request, "GET http://serverManagementUrl/limits?format=json HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testListServers() throws IOException, SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);

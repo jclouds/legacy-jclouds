@@ -37,6 +37,7 @@ import org.jclouds.cloudservers.domain.Addresses;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.Image;
+import org.jclouds.cloudservers.domain.Limits;
 import org.jclouds.cloudservers.domain.RebootType;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
@@ -79,6 +80,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(ServerManagement.class)
 public interface CloudServersAsyncClient {
+
+   /**
+    * @see CloudServersClient#getLimits
+    */
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/limits")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Limits> getLimits();
 
    /**
     * @see CloudServersClient#listServers

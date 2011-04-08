@@ -21,15 +21,16 @@ package org.jclouds.cloudservers;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.PathParam;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.cloudservers.domain.Addresses;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.Image;
+import org.jclouds.cloudservers.domain.Limits;
 import org.jclouds.cloudservers.domain.RebootType;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
@@ -37,16 +38,14 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.ResourceNotFoundException;
-
-import java.util.concurrent.Future;
 
 /**
  * Provides access to Cloud Servers via their REST API.
  * <p/>
- * All commands return a Future of the result from Cloud Servers. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link Future#get()}.
+ * All commands return a Future of the result from Cloud Servers. Any exceptions incurred during
+ * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
  * 
  * @see CloudServersAsyncClient
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
@@ -54,13 +53,22 @@ import java.util.concurrent.Future;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudServersClient {
+   /**
+    * All accounts, by default, have a preconfigured set of thresholds (or limits) to manage
+    * capacity and prevent abuse of the system. The system recognizes two kinds of limits: rate
+    * limits and absolute limits. Rate limits are thresholds that are reset after a certain amount
+    * of time passes. Absolute limits are fixed.
+    * 
+    * @return limits on the account
+    */
+   Limits getLimits();
 
    /**
     * 
     * List all servers (IDs and names only)
     * 
-    * This operation provides a list of servers associated with your identity. Servers that have been
-    * deleted are not included in this list.
+    * This operation provides a list of servers associated with your identity. Servers that have
+    * been deleted are not included in this list.
     * <p/>
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
@@ -194,8 +202,7 @@ public interface CloudServersClient {
     *           (e.g. keepalived) can then be used within the servers to perform health checks and
     *           manage IP failover.
     */
-   void shareIp(String addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
-            boolean configureServer);
+   void shareIp(String addressToShare, int serverToTosignBindressTo, int sharedIpGroup, boolean configureServer);
 
    /**
     * This operation removes a shared IP address from the specified server.
