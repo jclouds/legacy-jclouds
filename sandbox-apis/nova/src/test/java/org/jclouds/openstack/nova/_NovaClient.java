@@ -36,12 +36,12 @@ public class _NovaClient {
 
         TemplateOptions options = new TemplateOptions();
         //options.authorizePublicKey("");
-        Template template = cs.templateBuilder().hardwareId("m1.small").imageId("13").options(options).build();
-        /*try {
-            cs.runNodesWithTag("test", 1, template);
-        } catch (RunNodesException e) {
-            e.printStackTrace();
-        }*/
+        //Template template = cs.templateBuilder().hardwareId("m1.small").imageId("13").options(options).build();
+        //try {
+        //    cs.runNodesWithTag("test", 1, template);
+        //} catch (RunNodesException e) {
+        //    e.printStackTrace();
+        //}
 
         //System.out.println(cs.listNodes());
         //System.out.println(cs.listImages());
