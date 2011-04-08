@@ -244,7 +244,7 @@ public class Utils {
    @SuppressWarnings("unchecked")
    @Deprecated
    public static Iterable<String> getSupportedProvidersOfTypeInProperties(
-            final Class<? extends RestContextBuilder> type, final Properties properties) {
+            final Class<? extends RestContextBuilder<?,?>> type, final Properties properties) {
       return Providers.getSupportedProvidersOfTypeInProperties(type, properties);
    }
 

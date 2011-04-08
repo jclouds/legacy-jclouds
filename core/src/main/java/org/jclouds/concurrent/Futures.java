@@ -226,11 +226,12 @@ public class Futures {
             return Futures.LazyListenableFutureFunctionAdapter.create(
                      ((org.jclouds.concurrent.Futures.ListenableFutureAdapter<I>) future).futureListener, function);
          else
-            return com.google.common.util.concurrent.Futures.compose(lf, function, executorService);
+            return com.google.common.util.concurrent.Futures.transform(lf, function, executorService);
       } else if (executorService.getClass().isAnnotationPresent(SingleThreaded.class)) {
          return Futures.LazyListenableFutureFunctionAdapter.create(future, function, executorService);
       } else {
-         return com.google.common.util.concurrent.Futures.compose(Futures.makeListenable(future, executorService), function, executorService);
+         return com.google.common.util.concurrent.Futures.transform(Futures.makeListenable(future, executorService),
+                  function, executorService);
       }
    }
 

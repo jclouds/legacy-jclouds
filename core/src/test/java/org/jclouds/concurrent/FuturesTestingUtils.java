@@ -51,7 +51,7 @@ public class FuturesTestingUtils {
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", Futures.compose(createFuture(callableExecutor, chainExecutor),
+         responses.put(i + "", Futures.transform(createFuture(callableExecutor, chainExecutor),
                   new Function<Long, Long>() {
 
                      @Override
