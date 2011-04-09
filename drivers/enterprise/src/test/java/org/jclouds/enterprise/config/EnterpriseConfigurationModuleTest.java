@@ -23,13 +23,9 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
-import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
-import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
@@ -38,7 +34,6 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 10, groups = "integration", singleThreaded = true, testName = "EnterpriseConfigurationModuleTest")
 public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorServiceIntegrationTest {
 
    protected Module createConnectionModule() {
@@ -53,16 +48,4 @@ public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorSe
       props.setProperty(PROPERTY_USER_THREADS, 5 + "");
    }
 
-   @Override
-   @Test(invocationCount = 5, timeOut = 10000)
-   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      super.testPostAsInputStream();
-   }
-
-   @Override
-   @Test(dependsOnMethods = "testPostAsInputStream")
-   public void testPostResults() {
-      super.testPostResults();
-   }
 }

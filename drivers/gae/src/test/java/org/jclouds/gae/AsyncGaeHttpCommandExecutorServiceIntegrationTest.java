@@ -19,7 +19,6 @@
 package org.jclouds.gae;
 
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
-import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,10 +63,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 10, groups = "integration", singleThreaded = true, testName = "AsyncGaeHttpCommandExecutorServiceIntegrationTest")
 public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    Logger logger = Logger.CONSOLE;
 
+   @Override
    protected void setupAndStartSSLServer(final int testPort) throws Exception {
    }
 
@@ -191,19 +190,10 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
-   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
+   @Test(enabled = false)
    public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
          TimeoutException {
-      setupApiProxy();
-      super.testPostAsInputStream();
-   }
-
-   @Override
-   @Test(enabled = true, dependsOnMethods = "testPostAsInputStream")
-   public void testPostResults() {
-      // GAE converts everything to byte arrays and so failures are not gonna
-      // happen
-      assertEquals(postFailures.get(), 0);
+      // streams aren't supported
    }
 
    @Override
