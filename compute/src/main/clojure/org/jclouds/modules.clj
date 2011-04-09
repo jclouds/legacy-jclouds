@@ -1,6 +1,6 @@
 ;
 ;
-; Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+; Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 ;
 ; ====================================================================
 ; Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,6 @@
 ; limitations under the License.
 ; ====================================================================
 ;
-(ns org.jclouds.modules
-  (:require
-   [clojure.contrib.logging :as logging])
-  (:import
-   org.jclouds.ssh.SshClient
-   org.jclouds.compute.domain.ExecResponse
-   com.google.inject.Module
-   com.google.common.collect.ImmutableSet
-   org.jclouds.domain.Credentials
-   org.jclouds.net.IPSocket
-   [org.jclouds.compute ComputeService ComputeServiceContextFactory StandaloneComputeServiceContextSpec]
-   [java.util Set Map]
-   [org.jclouds.compute.domain NodeMetadata Template]
-   [com.google.common.base Supplier Predicate]
-   org.jclouds.compute.domain.NodeMetadataBuilder))
-
 
 (defn compute-module
   []
