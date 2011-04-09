@@ -35,6 +35,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
@@ -71,7 +72,7 @@ public class ConvertToGaeRequestTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToGaeRequest();
+      req = new ConvertToGaeRequest(new HttpUtils(0, 0, 0, 0));
    }
 
    @Test
@@ -101,10 +102,9 @@ public class ConvertToGaeRequestTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getPayload() == null;
-      assertEquals(gaeRequest.getHeaders().size(), 2);// content length, user
-      // agent
+      assertEquals(gaeRequest.getHeaders().size(), 1);// user agent
       assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.USER_AGENT);
-      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.3.5");
+      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.4.3");
    }
 
    @Test
@@ -157,7 +157,8 @@ public class ConvertToGaeRequestTest {
          builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
       assertEquals(builder.toString(),
-            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
+      // note content-length is prohibited in gae
+            "User-Agent: jclouds/1.0 urlfetch/1.4.3\nExpect: 100-continue\nContent-Type: text/plain\nContent-MD5: AQIDBA==\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }

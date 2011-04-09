@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-sdk</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.3</version>
             <scope>system</scope>
             <systemPath>${env.APPENGINE_HOME}/lib/appengine-tools-api.jar</systemPath>
         </dependency>
