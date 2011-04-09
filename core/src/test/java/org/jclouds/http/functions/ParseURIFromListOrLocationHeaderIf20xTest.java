@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http.functions;
 
 import static org.easymock.EasyMock.expect;
@@ -33,11 +32,11 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
+import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
-import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;

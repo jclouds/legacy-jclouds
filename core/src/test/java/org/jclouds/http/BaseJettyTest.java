@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http;
 
 import static com.google.common.base.Throwables.propagate;
@@ -46,6 +45,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
@@ -53,12 +58,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.util.Strings2;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.AbstractHandler;
-import org.mortbay.jetty.ssl.SslSocketConnector;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -87,7 +86,7 @@ public abstract class BaseJettyTest {
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
    @BeforeTest
-   @Parameters( { "test-jetty-port" })
+   @Parameters({ "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
       this.testPort = testPort;
 
@@ -96,8 +95,8 @@ public abstract class BaseJettyTest {
       md5 = CryptoStreams.md5Base64(oneHundredOneConstitutions);
 
       Handler server1Handler = new AbstractHandler() {
-         public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
-                  throws IOException, ServletException {
+         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+               throws IOException, ServletException {
             if (failIfNoContentLength(request, response)) {
                return;
             } else if (target.indexOf("sleep") > 0) {
@@ -187,7 +186,7 @@ public abstract class BaseJettyTest {
             }
          } else {
             for (String header : new String[] { "Content-Disposition", HttpHeaders.CONTENT_LANGUAGE,
-                     HttpHeaders.CONTENT_ENCODING })
+                  HttpHeaders.CONTENT_ENCODING })
                if (request.getHeader(header) != null) {
                   response.addHeader("x-" + header, request.getHeader(header));
                }
@@ -207,8 +206,8 @@ public abstract class BaseJettyTest {
 
    protected void setupAndStartSSLServer(final int testPort) throws Exception {
       Handler server2Handler = new AbstractHandler() {
-         public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
-                  throws IOException, ServletException {
+         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+               throws IOException, ServletException {
             if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
@@ -262,12 +261,12 @@ public abstract class BaseJettyTest {
    }
 
    public static RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> newBuilder(int testPort,
-            Properties properties, Module... connectionModules) {
+         Properties properties, Module... connectionModules) {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:" + testPort, "1", "", "identity", null, IntegrationTestClient.class,
-               IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
+            "http://localhost:" + testPort, "1", "", "identity", null, IntegrationTestClient.class,
+            IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
       return createContextBuilder(contextSpec, properties);
    }
 
@@ -293,7 +292,7 @@ public abstract class BaseJettyTest {
     */
    protected boolean failEveryTenRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
       if (cycle.incrementAndGet() % 10 == 0) {
-         response.sendError(500);
+         response.sendError(500, "unlucky 10");
          ((Request) request).setHandled(true);
          return true;
       }
@@ -301,7 +300,7 @@ public abstract class BaseJettyTest {
    }
 
    protected boolean redirectEveryTwentyRequests(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+         throws IOException {
       if (cycle.incrementAndGet() % 20 == 0) {
          response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
          ((Request) request).setHandled(true);
@@ -325,7 +324,7 @@ public abstract class BaseJettyTest {
       if (realHeaders.get(CONTENT_LENGTH) == null) {
          response.getWriter().println("no content length!");
          response.getWriter().println(realHeaders.toString());
-         response.sendError(500);
+         response.sendError(500, "no content length!");
          ((Request) request).setHandled(true);
          return true;
       }

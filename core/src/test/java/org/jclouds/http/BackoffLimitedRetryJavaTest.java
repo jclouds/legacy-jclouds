@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http;
 
 import static org.testng.Assert.assertEquals;
@@ -29,9 +28,9 @@ import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.server.Request;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.mortbay.jetty.Request;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;

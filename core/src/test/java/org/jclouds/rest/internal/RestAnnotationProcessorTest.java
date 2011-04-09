@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -77,6 +76,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.easymock.IArgumentMatcher;
+import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -138,7 +138,6 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.util.Strings2;
-import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
