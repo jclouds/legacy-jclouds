@@ -79,9 +79,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.guice</groupId>
+			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-servlet</artifactId>
-			<version>3.0-RC2</version>
+			<version>3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>displaytag</groupId>
