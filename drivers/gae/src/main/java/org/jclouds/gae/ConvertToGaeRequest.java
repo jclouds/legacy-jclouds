@@ -20,7 +20,6 @@
 package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
-import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,7 +27,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -42,6 +43,8 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Throwables;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Closeables;
 
 /**
  * 
@@ -49,7 +52,16 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
-   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
+   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.4.3";
+   protected final HttpUtils utils;
+   // http://code.google.com/appengine/docs/java/urlfetch/overview.html
+   public final Set<String> prohibitedHeaders = ImmutableSet.of("Accept-Encoding", "Content-Length", "Host", "Var",
+         "X-Forwarded-For");
+
+   @Inject
+   ConvertToGaeRequest(HttpUtils utils) {
+      this.utils = utils;
+   }
 
    /**
     * byte [] content is replayable and the only content type supportable by GAE. As such, we
@@ -66,12 +78,15 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
 
       FetchOptions options = disallowTruncate();
       options.doNotFollowRedirects();
+      if (utils.relaxHostname() || utils.trustAllCerts())
+         options.doNotFollowRedirects();
+      options.setDeadline(10.0);
 
       HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod().toString()), options);
 
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header)) {
-            if (!"Transfer-Encoding".equals(header))
+            if (!prohibitedHeaders.contains(header))
                gaeRequest.addHeader(new HTTPHeader(header, value));
          }
       }
@@ -93,20 +108,19 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
             }
             gaeRequest.setPayload(array);
             if (array.length > 0) {
-              gaeRequest.setHeader(new HTTPHeader("Expect", "100-continue"));
+               gaeRequest.setHeader(new HTTPHeader("Expect", "100-continue"));
             }
          } catch (IOException e) {
             Throwables.propagate(e);
          } finally {
-            closeQuietly(input);
+            Closeables.closeQuietly(input);
          }
 
          for (Entry<String, String> header : HttpUtils.getContentHeadersFromMetadata(
                request.getPayload().getContentMetadata()).entries()) {
-            gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));
-         }         
-      } else {
-         gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
+            if (!prohibitedHeaders.contains(header.getKey()))
+               gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));
+         }
       }
       return gaeRequest;
    }

@@ -34,7 +34,7 @@
     <test.aws-s3.credential>${test.aws.credential}</test.aws-s3.credential>
     <test.initializer>org.jclouds.aws.s3.blobstore.integration.AWSS3TestInitializer</test.initializer>
     <jclouds.version>1.0-SNAPSHOT</jclouds.version>
-    <gae.version>1.4.0</gae.version>
+    <gae.version>1.4.3</gae.version>
   </properties>
   <!-- bootstrapping: need to fetch the project POM -->
   <repositories>

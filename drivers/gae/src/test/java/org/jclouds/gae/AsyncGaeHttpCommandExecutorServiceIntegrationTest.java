@@ -277,10 +277,8 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
-   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
-   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
-      setupApiProxy();
-      super.testPost();
+   @Test(enabled = false)
+   public void testPost() {
    }
 
    @Override
@@ -292,8 +290,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
 
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
-   public void testGetStringViaRequest() throws ExecutionException, InterruptedException,
-         TimeoutException, IOException {
+   public void testGetStringViaRequest() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       setupApiProxy();
       super.testGetStringViaRequest();
    }
@@ -366,6 +363,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
+   @Test(enabled = false)
    public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
          IOException {
       setupApiProxy();
@@ -373,12 +371,14 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
+   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       setupApiProxy();
       super.testPostContentEncoding();
    }
 
    @Override
+   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       setupApiProxy();
       super.testPostContentLanguage();
