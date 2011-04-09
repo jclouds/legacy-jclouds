@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.s3.xml;
 
 import static org.testng.Assert.assertEquals;
@@ -24,22 +23,23 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.TreeSet;
 
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.date.DateService;
+import org.jclouds.http.HttpException;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.s3.domain.CanonicalUser;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.s3.domain.internal.BucketListObjectMetadata;
 import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.date.DateService;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code ListBucketHandler}
@@ -102,7 +102,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
       ListBucketResponse result = (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class))
             .parse(is);
 
-      assertEquals(result, expected);
+      assertEquals(ImmutableSet.copyOf(result).toString(), ImmutableSet.copyOf(expected).toString());
    }
 
    ParseSax<ListBucketResponse> createParser() {

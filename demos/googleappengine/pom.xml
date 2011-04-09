@@ -25,11 +25,11 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.0-beta-9b-SNAPSHOT</version>
+        <version>1.0-beta-9c-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.examples</groupId>
-    <version>1.0-beta-9b-SNAPSHOT</version>
+    <version>1.0-beta-9c-SNAPSHOT</version>
     <artifactId>jclouds-googleappengine-example</artifactId>
     <packaging>war</packaging>
     <name>JClouds Sample for Google App Engine</name>

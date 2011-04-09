@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds;
 
 import java.util.List;
@@ -40,7 +39,7 @@ import org.testng.annotations.Test;
 @Test(groups="performance")
 public abstract class PerformanceTest {
    protected static int LOOP_COUNT = 1000;
-   protected static int THREAD_COUNT = 1000;
+   protected static int THREAD_COUNT = 100;
    protected ExecutorService exec;
 
    @BeforeTest

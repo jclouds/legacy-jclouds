@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.s3.filters;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
@@ -61,13 +60,13 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
     */
    @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 10000)
    void testIdempotent(HttpRequest request) {
-      filter.filter(request);
+      request = filter.filter(request);
       String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
       String date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
       int iterations = 1;
       while (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
          date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
-         filter.filter(request);
+         request = filter.filter(request);
          if (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date))
             assert signature.equals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION)) : String.format(
                   "sig: %s != %s on attempt %s", signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION),

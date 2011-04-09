@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.openstack.swift.domain.internal;
 
 import static org.easymock.EasyMock.expect;
@@ -25,7 +24,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Set;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -39,7 +37,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -63,7 +62,7 @@ public class ParseObjectInfoListFromJsonResponseTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
-      Set<ObjectInfo> expects = Sets.newLinkedHashSet();
+      Builder<ObjectInfo> expects = ImmutableSet.<ObjectInfo>builder();
       ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
       one.name = "test_obj_1";
       one.hash = CryptoStreams.hex("4281c348eaf83e70ddce0e07221c3d28");
@@ -85,6 +84,6 @@ public class ParseObjectInfoListFromJsonResponseTest {
       replay(request);
       ParseObjectInfoListFromJsonResponse parser = i.getInstance(ParseObjectInfoListFromJsonResponse.class);
       parser.setContext(request);
-      assertEquals(parser.apply(is), expects);
+      assertEquals(ImmutableSet.copyOf(parser.apply(is)), expects.build());
    }
 }
