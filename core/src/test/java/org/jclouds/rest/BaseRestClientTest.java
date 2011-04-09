@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,12 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.rest;
 
 import static com.google.common.base.Throwables.propagate;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
-import static org.mortbay.jetty.HttpHeaders.TRANSFER_ENCODING;
+import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
