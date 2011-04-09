@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http.apachehc;
 
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
@@ -25,6 +24,7 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -40,7 +40,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(threadPoolSize = 10, singleThreaded = true, groups = "integration", testName = "ApacheHCHttpCommandExecutorServiceTest")
 public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    static {
       System.setProperty("http.conn-manager.timeout", 1000 + "");
@@ -60,6 +60,20 @@ public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecu
    }
 
    @Override
+   @Test(invocationCount = 5, timeOut = 10000)
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
+      super.testPostAsInputStream();
+   }
+
+   @Override
+   @Test(dependsOnMethods = "testPostAsInputStream")
+   public void testPostResults() {
+      super.testPostResults();
+   }
+
+   @Override
+   @Test(enabled = false)
    public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
          IOException {
       // TODO: currently times out, see issue
@@ -67,12 +81,14 @@ public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecu
    }
 
    @Override
+   @Test(enabled = false)
    public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       // TODO: currently times out, see issue
       // http://code.google.com/p/jclouds/issues/detail?id=353
    }
 
    @Override
+   @Test(enabled = false)
    public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       // TODO: currently times out, see issue
       // http://code.google.com/p/jclouds/issues/detail?id=353

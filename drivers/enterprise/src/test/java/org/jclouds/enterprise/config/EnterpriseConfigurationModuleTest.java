@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.enterprise.config;
 
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
@@ -24,7 +23,10 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
+import java.net.MalformedURLException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.testng.annotations.Test;
@@ -36,7 +38,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(threadPoolSize = 10, groups = "integration", singleThreaded = true, testName = "EnterpriseConfigurationModuleTest")
 public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorServiceIntegrationTest {
 
    protected Module createConnectionModule() {
@@ -51,4 +53,16 @@ public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorSe
       props.setProperty(PROPERTY_USER_THREADS, 5 + "");
    }
 
+   @Override
+   @Test(invocationCount = 5, timeOut = 10000)
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
+      super.testPostAsInputStream();
+   }
+
+   @Override
+   @Test(dependsOnMethods = "testPostAsInputStream")
+   public void testPostResults() {
+      super.testPostResults();
+   }
 }

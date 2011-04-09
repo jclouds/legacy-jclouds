@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http;
 
 import static org.testng.Assert.assertEquals;
@@ -57,7 +56,6 @@ import com.google.common.io.Closeables;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 10, groups = "integration", sequential = true)
 public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends BaseJettyTest {
 
    @Test(invocationCount = 25, timeOut = 5000)
@@ -86,8 +84,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetStringViaRequest() throws ExecutionException, InterruptedException,
-         TimeoutException, IOException {
+   public void testGetStringViaRequest() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       assertEquals(
             Strings2.toStringAndClose(
                   client.invoke(
@@ -167,16 +164,6 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       assertEquals(client.post("", "foo").trim(), "fooPOST");
    }
 
-   @Test(invocationCount = 5, timeOut = 10000)
-   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      try {
-         assertEquals(client.postAsInputStream("", "foo").trim(), "fooPOST");
-      } catch (Exception e) {
-         postFailures.incrementAndGet();
-      }
-   }
-
    /**
     * Tests sending a big file to the server. Note: this is a heavy test, takes several minutes to
     * finish.
@@ -229,6 +216,16 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    @BeforeTest
    void resetCounters() {
       postFailures.set(0);
+   }
+
+   @Test(invocationCount = 5, timeOut = 10000)
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
+      try {
+         assertEquals(client.postAsInputStream("", "foo").trim(), "fooPOST");
+      } catch (Exception e) {
+         postFailures.incrementAndGet();
+      }
    }
 
    @Test(dependsOnMethods = "testPostAsInputStream")

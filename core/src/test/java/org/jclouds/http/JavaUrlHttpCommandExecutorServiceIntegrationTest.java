@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.http;
 
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
@@ -37,7 +36,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(threadPoolSize = 10, groups = "integration", testName = "JavaUrlHttpCommandExecutorServiceIntegrationTest")
 public class JavaUrlHttpCommandExecutorServiceIntegrationTest extends
       BaseHttpCommandExecutorServiceIntegrationTest {
 

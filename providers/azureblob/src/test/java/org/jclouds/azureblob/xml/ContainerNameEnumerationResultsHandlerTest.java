@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.azureblob.xml;
 
 import static org.testng.Assert.assertEquals;
@@ -37,6 +36,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -59,24 +59,27 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_blobs.xml");
-      Set<BlobProperties> contents = Sets.newTreeSet();
-      contents.add(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob1.txt", URI
-            .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"), dateService
-            .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55D050B8B", 8, "text/plain; charset=UTF-8",
-            null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
-      contents.add(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob2.txt", URI
-            .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"), dateService
-            .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 14, "text/plain; charset=UTF-8",
-            null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
-      contents.add(new BlobPropertiesImpl(BlobType.PAGE_BLOB, "newblob1.txt", URI
-            .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"), dateService
-            .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 25, "text/plain; charset=UTF-8",
-            null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
+
+      Set<BlobProperties> contents = ImmutableSet.<BlobProperties> of(
+            new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob1.txt", URI
+                  .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"), dateService
+                  .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55D050B8B", 8,
+                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                        .<String, String> of()),
+            new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob2.txt", URI
+                  .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"), dateService
+                  .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 14,
+                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                        .<String, String> of()),
+            new BlobPropertiesImpl(BlobType.PAGE_BLOB, "newblob1.txt", URI
+                  .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"), dateService
+                  .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 25,
+                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                        .<String, String> of()));
 
       ListBlobsResponse list = new HashSetListBlobsResponse(contents,
-            URI.create("http://myaccount.blob.core.windows.net/mycontainer"),
-
-            "myfolder/", null, 4, "newblob2.txt", "/", Sets.<String> newTreeSet());
+            URI.create("http://myaccount.blob.core.windows.net/mycontainer"), "myfolder/", null, 4, "newblob2.txt",
+            null, ImmutableSet.<String> of("myfolder/"));
 
       ListBlobsResponse result = (ListBlobsResponse) factory.create(
             injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
@@ -86,11 +89,11 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
 
    public void testOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_blobs_options.xml");
-      Set<BlobProperties> contents = Sets.newTreeSet();
-      contents.add(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "a", URI
-            .create("https://jclouds.blob.core.windows.net/adriancole-blobstore3/a"), dateService
-            .rfc822DateParse("Sat, 30 Jan 2010 17:46:15 GMT"), "0x8CC6FEB41736428", 8, "application/octet-stream",
-            null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
+
+      Set<BlobProperties> contents = ImmutableSet.<BlobProperties> of(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "a",
+            URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore3/a"),
+            dateService.rfc822DateParse("Sat, 30 Jan 2010 17:46:15 GMT"), "0x8CC6FEB41736428", 8,
+            "application/octet-stream", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
 
       ListBlobsResponse list = new HashSetListBlobsResponse(contents,
             URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore3"),
