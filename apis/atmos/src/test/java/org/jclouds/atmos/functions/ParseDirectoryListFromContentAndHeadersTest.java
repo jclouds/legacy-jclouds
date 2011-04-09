@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.atmos.functions;
 
 import static org.testng.Assert.assertEquals;
@@ -35,7 +34,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Tests behavior of {@code ParseDirectoryListFromContentAndHeaders}
@@ -64,16 +64,16 @@ public class ParseDirectoryListFromContentAndHeadersTest extends BaseHandlerTest
             "/list_basic.xml")));
       BoundedSet<DirectoryEntry> result = createFn().apply(response);
 
-      assertEquals(result, values());
+      assertEquals(ImmutableSet.copyOf(result), values());
       assertEquals(result.getToken(), null);
    }
 
    protected Set<DirectoryEntry> values() {
-      Set<DirectoryEntry> expected = Sets.newLinkedHashSet();
+      Builder<DirectoryEntry> expected = ImmutableSet.<DirectoryEntry>builder();
       expected.add(new DirectoryEntry("4980cdb2a411106a04a4538c92a1b204ad92077de6e3", FileType.DIRECTORY,
             "adriancole-blobstore-2096685753"));
       expected.add(new DirectoryEntry("4980cdb2a410105404980d99e53a0504ad93939e7dc3", FileType.DIRECTORY,
             "adriancole-blobstore247496608"));
-      return expected;
+      return expected.build();
    }
 }
