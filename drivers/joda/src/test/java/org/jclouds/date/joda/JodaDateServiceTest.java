@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.jclouds.date.joda;
 
 import org.jclouds.date.DateService;
@@ -40,7 +39,7 @@ import com.google.inject.Injector;
  * @author James Murty
  */
 //NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "JodaDateServiceTest")
+@Test(groups = "performance", singleThreaded = true, timeOut = 2 * 60 * 1000, testName = "JodaDateServiceTest")
 public class JodaDateServiceTest extends DateServiceTest {
    @Override
    @BeforeTest

@@ -1,6 +1,6 @@
 ;
 ;
-; Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+; Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 ;
 ; ====================================================================
 ; Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,6 @@
 ; limitations under the License.
 ; ====================================================================
 ;
-(ns org.jclouds.ssh-test
-  (:require
-   [clojure.contrib.logging :as logging]
-   [org.jclouds.modules :as modules])
-  (:import
-   org.jclouds.ssh.SshClient
-   org.jclouds.compute.domain.ExecResponse
-   org.jclouds.io.Payload
-   org.jclouds.net.IPSocket))
 
 (defn instantiate [impl-class & args]
   (let [constructor (first
