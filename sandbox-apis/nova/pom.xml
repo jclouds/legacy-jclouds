@@ -35,13 +35,15 @@
     <description>jclouds components to access an implementation of OpenStack Nova</description>
 
     <properties>
-        <test.nova.endpoint>https://auth.api.rackspacecloud.com</test.nova.endpoint>
-        <test.nova.apiversion>1.1</test.nova.apiversion>
-        <test.nova.identity>FIXME</test.nova.identity>
-        <test.nova.credential>FIXME</test.nova.credential>
+
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-ec2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jclouds.common</groupId>
             <artifactId>openstack-common</artifactId>
@@ -132,11 +134,11 @@
                                             <value>${test.nova.credential}</value>
                                         </property>
                                         <property>
-                                            <name>test.nova.credential</name>
+                                            <name>test.ssh.keyfile.public</name>
                                             <value>${test.ssh.keyfile.public}</value>
                                         </property>
                                         <property>
-                                            <name>test.nova.credential</name>
+                                            <name>test.ssh.keyfile.private</name>
                                             <value>${test.ssh.keyfile.private}</value>
                                         </property>
                                         <property>
