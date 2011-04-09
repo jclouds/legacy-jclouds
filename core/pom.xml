@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.4</version>
+            <version>1.6</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
