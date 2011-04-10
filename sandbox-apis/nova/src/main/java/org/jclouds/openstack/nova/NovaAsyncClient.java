@@ -31,14 +31,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.nova.binders.BindBackupScheduleToJsonPayload;
 import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.BackupSchedule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.SharedIpGroup;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
@@ -170,25 +167,6 @@ public interface NovaAsyncClient {
    @MapBinder(RebuildServerOptions.class)
    ListenableFuture<Void> rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
-   /**
-    * @see NovaClient#shareIp
-    */
-   @PUT
-   @Path("/servers/{id}/ips/public/{address}")
-   @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"shareIp\":%7B\"sharedIpGroupId\":{sharedIpGroupId},\"configureServer\":{configureServer}%7D%7D")
-   ListenableFuture<Void> shareIp(@PathParam("address") String addressToShare,
-         @PathParam("id") int serverToTosignBindressTo, @PayloadParam("sharedIpGroupId") int sharedIpGroup,
-         @PayloadParam("configureServer") boolean configureServer);
-
-   /**
-    * @see NovaClient#unshareIp
-    */
-   @DELETE
-   @Path("/servers/{id}/ips/public/{address}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> unshareIp(@PathParam("address") String addressToShare,
-         @PathParam("id") int serverToTosignBindressTo);
 
    /**
     * @see NovaClient#changeAdminPass
@@ -272,75 +250,6 @@ public interface NovaAsyncClient {
    @Payload("%7B\"image\":%7B\"serverId\":{serverId},\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Image> createImageFromServer(@PayloadParam("name") String imageName,
          @PayloadParam("serverId") int serverId);
-
-   /**
-    * @see NovaClient#listSharedIpGroups
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<SharedIpGroup>> listSharedIpGroups(ListOptions... options);
-
-   /**
-    * @see NovaClient#getSharedIpGroup
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SharedIpGroup> getSharedIpGroup(@PathParam("id") int id);
-
-   /**
-    * @see NovaClient#createSharedIpGroup
-    */
-   @POST
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
-   @MapBinder(CreateSharedIpGroupOptions.class)
-   ListenableFuture<SharedIpGroup> createSharedIpGroup(@PayloadParam("name") String name,
-         CreateSharedIpGroupOptions... options);
-
-   /**
-    * @see NovaClient#deleteSharedIpGroup
-    */
-   @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Path("/shared_ip_groups/{id}")
-   ListenableFuture<Boolean> deleteSharedIpGroup(@PathParam("id") int id);
-
-   /**
-    * @see NovaClient#listBackupSchedule
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<BackupSchedule> getBackupSchedule(@PathParam("id") int serverId);
-
-   /**
-    * @see NovaClient#deleteBackupSchedule
-    */
-   @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<Boolean> deleteBackupSchedule(@PathParam("id") int serverId);
-
-   /**
-    * @see NovaClient#replaceBackupSchedule
-    */
-   @POST
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<Void> replaceBackupSchedule(@PathParam("id") int id,
-         @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
 
    /**
     * @see NovaClient#listAddresses

@@ -260,68 +260,6 @@ public class NovaClientLiveTest {
         assert client.getFlavor(12312987) == null;
     }
 
-    public void testListSharedIpGroups() throws Exception {
-        Set<SharedIpGroup> response = client.listSharedIpGroups();
-        assert null != response;
-        long sharedIpGroupCount = response.size();
-        assertTrue(sharedIpGroupCount >= 0);
-        for (SharedIpGroup sharedIpGroup : response) {
-            assertTrue(sharedIpGroup.getId() >= 0);
-            assert null != sharedIpGroup.getName() : sharedIpGroup;
-        }
-
-    }
-
-    public void testListSharedIpGroupsDetail() throws Exception {
-        Set<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
-        assert null != response;
-        long sharedIpGroupCount = response.size();
-        assertTrue(sharedIpGroupCount >= 0);
-        for (SharedIpGroup sharedIpGroup : response) {
-            assertTrue(sharedIpGroup.getId() >= 1);
-            assert null != sharedIpGroup.getName() : sharedIpGroup;
-            assert null != sharedIpGroup.getServers() : sharedIpGroup;
-        }
-    }
-
-    public void testGetSharedIpGroupsDetail() throws Exception {
-        Set<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
-        assert null != response;
-        long sharedIpGroupCount = response.size();
-        assertTrue(sharedIpGroupCount >= 0);
-        for (SharedIpGroup sharedIpGroup : response) {
-            SharedIpGroup newDetails = client.getSharedIpGroup(sharedIpGroup.getId());
-            assertEquals(sharedIpGroup, newDetails);
-        }
-    }
-
-    @Test
-    public void testGetSharedIpGroupDetailsNotFound() throws Exception {
-        assert client.getSharedIpGroup(12312987) == null;
-    }
-
-    @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
-    public void testCreateSharedIpGroup() throws Exception {
-        SharedIpGroup sharedIpGroup = null;
-        while (sharedIpGroup == null) {
-            String sharedIpGroupName = serverPrefix + "createSharedIpGroup" + new SecureRandom().nextInt();
-            try {
-                sharedIpGroup = client.createSharedIpGroup(sharedIpGroupName, withServer(serverId));
-            } catch (UndeclaredThrowableException e) {
-                HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-                if (htpe.getResponse().getStatusCode() == 400)
-                    continue;
-                throw e;
-            }
-        }
-        assertNotNull(sharedIpGroup.getName());
-        sharedIpGroupId = sharedIpGroup.getId();
-        // Response doesn't include the server id Web Hosting #119311
-        // assertEquals(sharedIpGroup.getServers(), ImmutableList.of(serverId));
-    }
-
-    private int sharedIpGroupId;
-
     private String serverPrefix = System.getProperty("user.name") + ".cs";
     private int serverId;
     private String adminPass;
@@ -468,33 +406,6 @@ public class NovaClientLiveTest {
         this.adminPass = "elmo";
     }
 
-    @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSharedIpGroup")
-    public void testCreateServerIp() throws Exception {
-        int imageId = 14362;
-        int flavorId = 1;
-        Server server = null;
-        while (server == null) {
-            String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
-            try {
-                server = client
-                        .createServer(serverName, imageId, flavorId, withFile("/etc/jclouds.txt", "rackspace".getBytes())
-                                .withMetadata(metadata).withSharedIpGroup(sharedIpGroupId).withSharedIp(ip));
-            } catch (UndeclaredThrowableException e) {
-                HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-                if (htpe.getResponse().getStatusCode() == 400)
-                    continue;
-                throw e;
-            }
-        }
-        assertNotNull(server.getAdminPass());
-        serverId2 = server.getId();
-        adminPass2 = server.getAdminPass();
-        blockUntilServerActive(serverId2);
-        assertIpConfigured(server, adminPass2);
-        assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses() + " doesn't contain " + ip;
-        assertEquals(server.getSharedIpGroupId(), new Integer(sharedIpGroupId));
-    }
-
     private void assertIpConfigured(Server server, String password) {
         try {
             ExecResponse response = exec(server, password, "ifconfig -a");
@@ -507,15 +418,6 @@ public class NovaClientLiveTest {
         }
     }
 
-    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
-    public void testUnshare() throws Exception {
-        client.unshareIp(ip, serverId2);
-        blockUntilServerActive(serverId2);
-        Server server = client.getServer(serverId2);
-        assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
-        assertIpNotConfigured(server, adminPass2);
-    }
-
     private void assertIpNotConfigured(Server server, String password) {
         try {
             ExecResponse response = exec(server, password, "ifconfig -a");
@@ -526,39 +428,6 @@ public class NovaClientLiveTest {
         } catch (AssertionError e) {
             e.printStackTrace();
         }
-    }
-
-    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
-    public void testShareConfig() throws Exception {
-        client.shareIp(ip, serverId2, sharedIpGroupId, true);
-        blockUntilServerActive(serverId2);
-        Server server = client.getServer(serverId2);
-        assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
-        assertIpConfigured(server, adminPass2);
-        testUnshare();
-    }
-
-    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
-    public void testShareNoConfig() throws Exception {
-        client.shareIp(ip, serverId2, sharedIpGroupId, false);
-        blockUntilServerActive(serverId2);
-        Server server = client.getServer(serverId2);
-        assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
-        assertIpNotConfigured(server, adminPass2);
-        testUnshare();
-    }
-
-    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
-    public void testBackup() throws Exception {
-        assertEquals(new BackupSchedule(), client.getBackupSchedule(serverId));
-        BackupSchedule dailyWeekly = new BackupSchedule();
-        dailyWeekly.setEnabled(true);
-        dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
-        dailyWeekly.setDaily(DailyBackup.H_0400_0600);
-        client.replaceBackupSchedule(serverId, dailyWeekly);
-        client.deleteBackupSchedule(serverId);
-        // disables, doesn't delete: Web Hosting #119571
-        assertEquals(client.getBackupSchedule(serverId).isEnabled(), false);
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
@@ -633,14 +502,6 @@ public class NovaClientLiveTest {
         }
     }
 
-    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = {"deleteServer1"})
-    void testDeleteSharedIpGroup() {
-        if (sharedIpGroupId > 0) {
-            client.deleteSharedIpGroup(sharedIpGroupId);
-            assert client.getSharedIpGroup(sharedIpGroupId) == null;
-        }
-    }
-
     @AfterTest
     void deleteServersOnEnd() {
         if (serverId > 0) {
@@ -648,9 +509,6 @@ public class NovaClientLiveTest {
         }
         if (serverId2 > 0) {
             client.deleteServer(serverId2);
-        }
-        if (sharedIpGroupId > 0) {
-            client.deleteSharedIpGroup(sharedIpGroupId);
         }
     }
 }
