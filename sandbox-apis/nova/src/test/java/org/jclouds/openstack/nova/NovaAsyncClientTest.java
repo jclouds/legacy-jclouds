@@ -33,10 +33,7 @@ import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.config.NovaRestClientModule;
-import org.jclouds.openstack.nova.domain.BackupSchedule;
-import org.jclouds.openstack.nova.domain.DailyBackup;
 import org.jclouds.openstack.nova.domain.RebootType;
-import org.jclouds.openstack.nova.domain.WeeklyBackup;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
@@ -98,25 +95,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
     }
 
     @Test
-    public void testCreateServerWithIpGroup() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
-                createServerOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, "ralphie", 2, 1, withSharedIpGroup(2));
-
-        assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request,
-                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2}}",
-                "application/json", false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
-    }
-
-    @Test
     public void testCreateServerWithFile() throws IOException, SecurityException, NoSuchMethodException {
         Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
                 createServerOptionsVarargsClass);
@@ -157,27 +135,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
         checkFilters(request);
 
-    }
-
-    public void testCreateServerWithIpGroupAndSharedIp() throws IOException, SecurityException, NoSuchMethodException,
-            UnknownHostException {
-        Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
-                createServerOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
-                withSharedIpGroup(2).withSharedIp("127.0.0.1"));
-
-        assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(
-                request,
-                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-                "application/json", false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
     }
 
     public void testDeleteImage() throws IOException, SecurityException, NoSuchMethodException {
@@ -427,94 +384,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
         checkFilters(request);
     }
 
-    public void testShareIpNoConfig() throws IOException, SecurityException, NoSuchMethodException, UnknownHostException {
-        Method method = NovaAsyncClient.class.getMethod("shareIp", String.class, int.class, int.class,
-                boolean.class);
-        HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, false);
-
-        assertRequestLineEquals(request, "PUT http://endpoint/vapiversion/servers/2/ips/public/127.0.0.1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, "{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":false}}",
-                MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
-
-    }
-
-    public void testShareIpConfig() throws IOException, SecurityException, NoSuchMethodException, UnknownHostException {
-        Method method = NovaAsyncClient.class.getMethod("shareIp", String.class, int.class, int.class,
-                boolean.class);
-        HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, true);
-
-        assertRequestLineEquals(request, "PUT http://endpoint/vapiversion/servers/2/ips/public/127.0.0.1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, "{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}",
-                MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
-
-    }
-
-    public void testUnshareIpNoConfig() throws IOException, SecurityException, NoSuchMethodException,
-            UnknownHostException {
-        Method method = NovaAsyncClient.class.getMethod("unshareIp", String.class, int.class);
-        HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, false);
-
-        assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/2/ips/public/127.0.0.1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
-
-        checkFilters(request);
-
-    }
-
-    public void testReplaceBackupSchedule() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("replaceBackupSchedule", int.class, BackupSchedule.class);
-        HttpRequest request = processor.createRequest(method, 2, new BackupSchedule(WeeklyBackup.MONDAY,
-                DailyBackup.H_0800_1000, true));
-
-        assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/backup_schedule HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request,
-                "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}",
-                MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnFalseOn404.class);
-
-        checkFilters(request);
-
-    }
-
-    public void testDeleteBackupSchedule() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("deleteBackupSchedule", int.class);
-        HttpRequest request = processor.createRequest(method, 2);
-
-        assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/2/backup_schedule HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
-
-        checkFilters(request);
-
-    }
-
     public void testChangeAdminPass() throws IOException, SecurityException, NoSuchMethodException {
         Method method = NovaAsyncClient.class.getMethod("changeAdminPass", int.class, String.class);
         HttpRequest request = processor.createRequest(method, 2, "foo");
@@ -545,135 +414,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
         checkFilters(request);
 
-    }
-
-    public void testListSharedIpGroups() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method);
-
-        assertRequestLineEquals(request, "GET http://endpoint/vapiversion/shared_ip_groups?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    public void testListSharedIpGroupsOptions() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
-
-        assertRequestLineEquals(request,
-                "GET http://endpoint/vapiversion/shared_ip_groups?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    public void testListSharedIpGroupsDetail() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, withDetails());
-
-        assertRequestLineEquals(request, "GET http://endpoint/vapiversion/shared_ip_groups/detail?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    public void testListSharedIpGroupsDetailOptions() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
-
-        assertRequestLineEquals(request,
-                "GET http://endpoint/vapiversion/shared_ip_groups/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    public void testGetSharedIpGroup() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("getSharedIpGroup", int.class);
-        HttpRequest request = processor.createRequest(method, 2);
-
-        assertRequestLineEquals(request, "GET http://endpoint/vapiversion/shared_ip_groups/2?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    private static final Class<? extends CreateSharedIpGroupOptions[]> createSharedIpGroupOptionsVarargsClass = new CreateSharedIpGroupOptions[]{}
-            .getClass();
-
-    public void testCreateSharedIpGroup() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("createSharedIpGroup", String.class,
-                createSharedIpGroupOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, "ralphie");
-
-        assertRequestLineEquals(request, "POST http://endpoint/vapiversion/shared_ip_groups?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, "{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
-
-    }
-
-    public void testCreateSharedIpGroupWithIpGroup() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("createSharedIpGroup", String.class,
-                createSharedIpGroupOptionsVarargsClass);
-        HttpRequest request = processor.createRequest(method, "ralphie", withServer(2));
-
-        assertRequestLineEquals(request, "POST http://endpoint/vapiversion/shared_ip_groups?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, "{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}",
-                MediaType.APPLICATION_JSON, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
-
-        checkFilters(request);
-    }
-
-    public void testDeleteSharedIpGroup() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("deleteSharedIpGroup", int.class);
-        HttpRequest request = processor.createRequest(method, 2);
-
-        assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/shared_ip_groups/2 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
-
-        checkFilters(request);
     }
 
     public void testListAddresses() throws IOException, SecurityException, NoSuchMethodException {
@@ -718,22 +458,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
         assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
         assertSaxResponseParserClassEquals(method, null);
         assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-        checkFilters(request);
-    }
-
-    @Test
-    public void testListBackupSchedule() throws IOException, SecurityException, NoSuchMethodException {
-        Method method = NovaAsyncClient.class.getMethod("getBackupSchedule", int.class);
-        HttpRequest request = processor.createRequest(method, 2);
-
-        assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/2/backup_schedule?format=json HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, null, null, false);
-
-        assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
         checkFilters(request);
     }
