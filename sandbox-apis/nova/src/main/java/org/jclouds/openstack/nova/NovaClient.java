@@ -19,6 +19,8 @@
 
 package org.jclouds.openstack.nova;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -153,7 +155,7 @@ public interface NovaClient {
     * @param options
     *           - used to specify extra files, metadata, or ip parameters during server creation.
     */
-   Server createServer(String name, int imageId, int flavorId, CreateServerOptions... options);
+   Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**
     * The rebuild function removes all data on the server and replaces it with the specified image.

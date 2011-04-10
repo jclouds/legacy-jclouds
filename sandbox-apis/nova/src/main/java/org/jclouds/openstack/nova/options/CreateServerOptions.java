@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,17 +72,17 @@ public class CreateServerOptions extends BindToJsonPayload {
    @SuppressWarnings("unused")
    private class ServerRequest {
       final String name;
-      final int imageId;
-      final int flavorId;
+      final String imageRef;
+      final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
       Integer sharedIpGroupId;
       Addresses addresses;
 
-      private ServerRequest(String name, int imageId, int flavorId) {
+      private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
-         this.imageId = imageId;
-         this.flavorId = flavorId;
+         this.imageRef = imageRef;
+         this.flavorRef = flavorRef;
       }
 
    }
@@ -94,9 +95,9 @@ public class CreateServerOptions extends BindToJsonPayload {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"),
-               "name parameter not present"), Integer.parseInt(checkNotNull(postParams
-               .get("imageId"), "imageId parameter not present")), Integer.parseInt(checkNotNull(
-               postParams.get("flavorId"), "flavorId parameter not present")));
+               "name parameter not present"), checkNotNull(postParams
+               .get("imageRef"), "imageRef parameter not present"), checkNotNull(
+            postParams.get("flavorRef"), "flavorRef parameter not present"));
       if (metadata.size() > 0)
          server.metadata = metadata;
       if (files.size() > 0)

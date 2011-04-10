@@ -19,6 +19,8 @@
 
 package org.jclouds.openstack.nova;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -156,8 +158,8 @@ public interface NovaAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageId") int imageId,
-         @PayloadParam("flavorId") int flavorId, CreateServerOptions... options);
+   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
+         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
     * @see NovaClient#rebuildServer

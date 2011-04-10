@@ -19,7 +19,20 @@
 
 package org.jclouds.openstack.nova.domain;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import javax.annotation.Nullable;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An image is a collection of files used to create or rebuild a server. Rackspace provides a number
@@ -29,7 +42,7 @@ import java.util.Date;
  * 
  * @author Adrian Cole
  */
-public class Image {
+public class Image extends Resource {
 
    private Date created;
    private int id;
@@ -38,6 +51,7 @@ public class Image {
    private Integer serverId;
    private ImageStatus status;
    private Date updated;
+   private Map<String, String> metadata = Maps.newHashMap();
 
    public Image() {
    }
@@ -102,8 +116,17 @@ public class Image {
    public Date getUpdated() {
       return updated;
    }
+
+   public Map<String, String> getMetadata() {
+      return Collections.unmodifiableMap(metadata);
+   }
+
+   public void setMetadata(Map<String, String> metadata) {
+      this.metadata = Maps.newHashMap(metadata);
+   }
+
    /**
-    * note that this ignores the create time
+    * note that this ignores some fields
     */
    @Override
    public int hashCode() {
@@ -116,7 +139,7 @@ public class Image {
    }
 
    /**
-    * note that this ignores the serverid and create time.
+    * note that this ignores some fields
     */
    @Override
    public boolean equals(Object obj) {

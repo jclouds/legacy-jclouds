@@ -29,6 +29,9 @@ import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Function;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 
  * @author Adrian Cole
@@ -50,6 +53,7 @@ public class NovaImageToImage implements Function<org.jclouds.openstack.nova.dom
       builder.version(from.getUpdated().getTime() + "");
       builder.operatingSystem(imageToOs.apply(from)); //image name may not represent the OS type
       builder.defaultCredentials(new Credentials("root", null));
+      builder.uri(from.getURI());
       Image image = builder.build();
       return image;
    }

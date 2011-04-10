@@ -29,7 +29,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class Server {
+public class Server extends Resource {
    private int id;
    private String name;
 
@@ -40,7 +40,6 @@ public class Server {
    private Integer flavorId;
    private String hostId;
    private Integer imageId;
-   private Integer sharedIpGroupId;
 
    private Integer progress;
    private ServerStatus status;
@@ -125,14 +124,6 @@ public class Server {
       return progress;
    }
 
-   public void setSharedIpGroupId(Integer sharedIpGroupId) {
-      this.sharedIpGroupId = sharedIpGroupId;
-   }
-
-   public Integer getSharedIpGroupId() {
-      return sharedIpGroupId;
-   }
-
    public void setStatus(ServerStatus status) {
       this.status = status;
    }
@@ -157,7 +148,6 @@ public class Server {
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((sharedIpGroupId == null) ? 0 : sharedIpGroupId.hashCode());
       return result;
    }
 
@@ -207,11 +197,6 @@ public class Server {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (sharedIpGroupId == null) {
-         if (other.sharedIpGroupId != null)
-            return false;
-      } else if (!sharedIpGroupId.equals(other.sharedIpGroupId))
-         return false;
       return true;
    }
 
@@ -223,8 +208,7 @@ public class Server {
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorId="
                + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId=" + imageId
-               + ", metadata=" + metadata + ", name=" + name + ", sharedIpGroupId="
-               + sharedIpGroupId + "]";
+               + ", metadata=" + metadata + ", name=" + name + "]";
    }
 
 }

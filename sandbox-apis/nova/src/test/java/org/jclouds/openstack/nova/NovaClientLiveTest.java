@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Properties;
@@ -272,13 +273,13 @@ public class NovaClientLiveTest {
 
     @Test(enabled = true)
     public void testCreateServer() throws Exception {
-        int imageId = 14362;
-        int flavorId = 1;
+        String imageRef = "14362";
+        String flavorRef = "1";
         Server server = null;
         while (server == null) {
             String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
             try {
-                server = client.createServer(serverName, imageId, flavorId, withFile("/etc/jclouds.txt",
+                server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
                         "rackspace".getBytes()).withMetadata(metadata));
             } catch (UndeclaredThrowableException e) {
                 HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
