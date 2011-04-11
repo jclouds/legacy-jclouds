@@ -4,6 +4,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -13,6 +14,7 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
@@ -42,7 +44,8 @@ public class _NovaClient {
       //options.authorizePublicKey("");
       Template template = cs.templateBuilder().imageId("13").options(options).build();
       try {
-         cs.runNodesWithTag("test", 1, template);
+         Set<? extends NodeMetadata> metedata = cs.runNodesWithTag("test", 1, template);
+         System.out.println(metedata);
       } catch (RunNodesException e) {
          e.printStackTrace();
       }
