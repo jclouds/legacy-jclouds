@@ -19,13 +19,7 @@
 
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.UnknownHostException;
-
-import org.jclouds.openstack.nova.domain.Image;
-import org.jclouds.openstack.nova.domain.ImageStatus;
+import com.google.inject.*;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
@@ -33,61 +27,66 @@ import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.openstack.nova.domain.Image;
+import org.jclouds.openstack.nova.domain.ImageStatus;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+import java.net.UnknownHostException;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseImageFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class ParseImageFromJsonResponseTest {
-   Injector i = Guice.createInjector(new AbstractModule() {
+    Injector i = Guice.createInjector(new AbstractModule() {
 
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      }
-
-   }, new GsonModule());
-
-   DateService dateService = i.getInstance(DateService.class);
-
-   public void testApplyInputStreamDetails() throws UnknownHostException {
-      Image response = parseImage();
-
-      assertEquals(response.getId(), 2);
-      assertEquals(response.getName(), "CentOS 5.2");
-      assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
-      assertEquals(response.getProgress(), new Integer(80));
-      assertEquals(response.getServerId(), new Integer(12));
-      assertEquals(response.getStatus(), ImageStatus.SAVING);
-      assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
-
-   }
-
-   public static Image parseImage() {
-      Injector i = Guice.createInjector(new AbstractModule() {
-
-         @Override
-         protected void configure() {
+        @Override
+        protected void configure() {
             bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         }
+        }
 
-      }, new GsonModule());
+    }, new GsonModule());
 
-      InputStream is = ParseImageFromJsonResponseTest.class.getResourceAsStream("/test_get_image_details.json");
+    DateService dateService = i.getInstance(DateService.class);
 
-      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
-      }));
-      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-      return response;
-   }
+    @Test
+    public void testApplyInputStreamDetails() throws UnknownHostException {
+        Image response = parseImage();
+
+        assertEquals(response.getId(), 2);
+        assertEquals(response.getName(), "CentOS 5.2");
+        assertEquals(response.getServerId(), new Integer(12));
+        assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
+        assertEquals(response.getProgress(), new Integer(80));
+        assertEquals(response.getStatus(), ImageStatus.SAVING);
+        assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
+        assertEquals(response.getServerId(), "http://servers.api.openstack.org/v1.1/1234/servers/12", "Change serverId to serverRefs");
+        assertEquals(response.getMetadata().get("ImageVersion"), "1.5");
+        assertEquals(response.getMetadata().get("ImageType"), "Gold");
+        assertEquals(response.getMetadata().size(), 2);
+    }
+
+    public static Image parseImage() {
+        Injector i = Guice.createInjector(new AbstractModule() {
+
+            @Override
+            protected void configure() {
+                bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            }
+
+        }, new GsonModule());
+
+        InputStream is = ParseImageFromJsonResponseTest.class.getResourceAsStream("/test_get_image_details.json");
+
+        UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
+        }));
+        Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+        return response;
+    }
 
 }
