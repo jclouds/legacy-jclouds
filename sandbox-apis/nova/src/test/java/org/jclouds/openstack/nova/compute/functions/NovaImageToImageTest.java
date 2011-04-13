@@ -18,14 +18,11 @@
  */
 package org.jclouds.openstack.nova.compute.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.net.UnknownHostException;
-
+import com.google.inject.Guice;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
@@ -34,7 +31,9 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.functions.ParseImageFromJsonResponseTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
+import java.net.UnknownHostException;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole
@@ -42,25 +41,25 @@ import com.google.inject.Guice;
 @Test(groups = "unit")
 public class NovaImageToImageTest {
 
-   @Test
-   public void testApplyWhereImageNotFound() throws UnknownHostException {
-      assertEquals(
-            convertImage(),
-            new ImageBuilder()
-                  .name("CentOS 5.2")
-                  .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
-                              .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
-                  .ids("2").version("1286712000000").build());
-   }
+    @Test
+    public void testApplyWhereImageNotFound() throws UnknownHostException {
+        assertEquals(
+                convertImage(),
+                new ImageBuilder()
+                        .name("CentOS 5.2")
+                        .operatingSystem(
+                                new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
+                                        .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
+                        .ids("2").version("1286712000000").build());
+    }
 
-   public static Image convertImage() {
-      org.jclouds.openstack.nova.domain.Image image = ParseImageFromJsonResponseTest.parseImage();
+    public static Image convertImage() {
+        org.jclouds.openstack.nova.domain.Image image = ParseImageFromJsonResponseTest.parseImage();
 
-      NovaImageToImage parser = new NovaImageToImage(new NovaImageToOperatingSystem(new BaseComputeServiceContextModule() {
-      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-            .getInstance(Json.class))));
+        NovaImageToImage parser = new NovaImageToImage(new NovaImageToOperatingSystem(new BaseComputeServiceContextModule() {
+        }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+                .getInstance(Json.class))));
 
-      return parser.apply(image);
-   }
+        return parser.apply(image);
+    }
 }

@@ -4,6 +4,7 @@
             {
                 "id" : 1,
                 "name" : "CentOS 5.2",
+                },
                 "links": [
                     {
                         "rel" : "self",

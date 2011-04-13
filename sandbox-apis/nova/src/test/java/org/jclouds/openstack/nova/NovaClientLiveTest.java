@@ -37,7 +37,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
@@ -45,8 +44,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +52,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;
 
@@ -274,19 +270,10 @@ public class NovaClientLiveTest {
     public void testCreateServer() throws Exception {
         String imageRef = "14362";
         String flavorRef = "1";
-        Server server = null;
-        while (server == null) {
-            String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
-            try {
-                server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
-                        "rackspace".getBytes()).withMetadata(metadata));
-            } catch (UndeclaredThrowableException e) {
-                HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-                if (htpe.getResponse().getStatusCode() == 400)
-                    continue;
-                throw e;
-            }
-        }
+        String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
+        Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
+                "rackspace".getBytes()).withMetadata(metadata));
+
         assertNotNull(server.getAdminPass());
         serverId = server.getId();
         adminPass = server.getAdminPass();
@@ -296,7 +283,7 @@ public class NovaClientLiveTest {
     }
 
     private void blockUntilServerActive(int serverId) throws InterruptedException {
-        Server currentDetails = null;
+        Server currentDetails;
         for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
                 .getServer(serverId)) {
             System.out.printf("blocking on status active%n%s%n", currentDetails);
@@ -305,7 +292,7 @@ public class NovaClientLiveTest {
     }
 
     private void blockUntilServerVerifyResize(int serverId) throws InterruptedException {
-        Server currentDetails = null;
+        Server currentDetails;
         for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.VERIFY_RESIZE; currentDetails = client
                 .getServer(serverId)) {
             System.out.printf("blocking on status verify resize%n%s%n", currentDetails);
@@ -314,7 +301,7 @@ public class NovaClientLiveTest {
     }
 
     private void blockUntilImageActive(int imageId) throws InterruptedException {
-        Image currentDetails = null;
+        Image currentDetails;
         for (currentDetails = client.getImage(imageId); currentDetails.getStatus() != ImageStatus.ACTIVE; currentDetails = client
                 .getImage(imageId)) {
             System.out.printf("blocking on status active%n%s%n", currentDetails);
@@ -350,16 +337,9 @@ public class NovaClientLiveTest {
      */
 
     private void checkPassOk(Server newDetails, String pass) throws IOException {
-        try {
-            doCheckPass(newDetails, pass);
-        } catch (SshException e) {// try twice in case there is a network timeout
-            try {
-                Thread.sleep(10 * 1000);
-            } catch (InterruptedException e1) {
-            }
-            doCheckPass(newDetails, pass);
-        }
+        doCheckPass(newDetails, pass);
     }
+
 
     private void doCheckPass(Server newDetails, String pass) throws IOException {
         IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
@@ -419,17 +399,12 @@ public class NovaClientLiveTest {
         }
     }
 
-    private void assertIpNotConfigured(Server server, String password) {
-        try {
-            ExecResponse response = exec(server, password, "ifconfig -a");
-            assert response.getOutput().indexOf(ip) == -1 : String.format("server %s still has get ip %s%n%s", server, ip,
-                    response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (AssertionError e) {
-            e.printStackTrace();
-        }
+    private void assertIpNotConfigured(Server server, String password) throws IOException {
+        ExecResponse response = exec(server, password, "ifconfig -a");
+        assert response.getOutput().indexOf(ip) == -1 : String.format("server %s still has get ip %s%n%s", server, ip,
+                response);
     }
+
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
     public void testCreateImage() throws Exception {
@@ -445,7 +420,7 @@ public class NovaClientLiveTest {
         client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
         blockUntilServerActive(serverId);
         // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-        // assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
+        assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")

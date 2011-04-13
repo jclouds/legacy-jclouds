@@ -18,45 +18,45 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
-import org.testng.annotations.Test;
-
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class ParseAddressesFromJsonResponseTest {
-   Injector i = Guice.createInjector(new GsonModule());
+    Injector i = Guice.createInjector(new GsonModule());
 
-   public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
+    public void testApplyInputStreamDetails() throws UnknownHostException {
+        InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
 
-      UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
-      }));
-      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-      List<String> publicAddresses = ImmutableList.of("67.23.10.132", "67.23.10.131");
+        UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
+        }));
+        Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      List<String> privateAddresses = ImmutableList.of("10.176.42.16");
+        List<String> publicAddresses = ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83");
 
-      assertEquals(response.getPublicAddresses(), publicAddresses);
-      assertEquals(response.getPrivateAddresses(), privateAddresses);
-   }
+        List<String> privateAddresses = ImmutableList.of("10.176.42.16", "::babe:10.176.42.16");
+
+        assertEquals(response.getPublicAddresses(), publicAddresses);
+        assertEquals(response.getPrivateAddresses(), privateAddresses);
+    }
 }
