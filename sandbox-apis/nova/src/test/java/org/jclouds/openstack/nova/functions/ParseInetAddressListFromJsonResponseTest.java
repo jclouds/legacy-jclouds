@@ -18,53 +18,54 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseInetAddressListFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class ParseInetAddressListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new GsonModule());
+    Injector i = Guice.createInjector(new GsonModule());
 
-   public void testPublic() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/test_list_addresses_public.json");
+    @Test
+    public void testPublic() throws UnknownHostException {
+        InputStream is = getClass().getResourceAsStream("/test_list_addresses_public.json");
 
-      UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
-            }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+        UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
+                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
+                }));
+        List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      assertEquals(response, ImmutableList.of("67.23.10.132", "67.23.10.131"));
-   }
+        assertEquals(response, ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"));
+    }
 
-   public void testPrivate() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/test_list_addresses_private.json");
+    @Test
+    public void testPrivate() throws UnknownHostException {
+        InputStream is = getClass().getResourceAsStream("/test_list_addresses_private.json");
 
-      UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
-            }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+        UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
+                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
+                }));
+        List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      assertEquals(response, ImmutableList.of("10.176.42.16"));
-   }
+        assertEquals(response, ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"));
+    }
 }

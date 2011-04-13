@@ -45,6 +45,7 @@ import static org.testng.Assert.assertEquals;
 public class ParseAddressesFromJsonResponseTest {
     Injector i = Guice.createInjector(new GsonModule());
 
+    @Test
     public void testApplyInputStreamDetails() throws UnknownHostException {
         InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
 

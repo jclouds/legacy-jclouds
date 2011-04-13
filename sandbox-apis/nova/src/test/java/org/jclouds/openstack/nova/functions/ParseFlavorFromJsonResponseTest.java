@@ -43,7 +43,9 @@ import static org.testng.Assert.assertEquals;
  */
 @Test(groups = "unit")
 public class ParseFlavorFromJsonResponseTest {
-    public void test() throws IOException {
+
+    @Test
+    public void testParseFlavorFromJsonResponseTest() throws IOException {
         Flavor response = parseFlavor();
 
         String json = new Gson().toJson(response);
@@ -51,6 +53,11 @@ public class ParseFlavorFromJsonResponseTest {
         String expectedJson = Strings2.toStringAndClose(
                 ParseFlavorFromJsonResponseTest.class.getResourceAsStream("/test_get_flavor_details.json"))
                 .replace("\n", "").replace("\t", "").replace("\r", "").replace(" ", "");
+
+        assertEquals(response.getId(), 1);
+        assertEquals(response.getName(), "256 MB Server");
+        assertEquals(response.getDisk().intValue(), 10);
+        assertEquals(response.getRam().intValue(), 256);
 
         assertEquals(json, expectedJson);
     }

@@ -101,7 +101,7 @@
                     {
                         "rel" : "bookmark",
                         "type" : "application/vnd.openstack.compute-v1.1+json",
-                        "href" : "http://servers.api.openstack.org/1234/servers/5678"
+                        "href" : "http://servers.api.openstack.org/1234/servers/56789"
                     }
                 ]
             }
