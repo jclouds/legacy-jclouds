@@ -29,7 +29,7 @@ import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Container for node filters (predicates).
@@ -160,13 +160,13 @@ public class NodePredicates {
     *           ids of the resources
     * @return predicate
     */
-   public static Predicate<ComputeMetadata> withIds(String... ids) {
+   public static <T extends ComputeMetadata> Predicate<T> withIds(String... ids) {
       checkNotNull(ids, "ids must be defined");
-      final Set<String> search = Sets.newHashSet(ids);
-      return new Predicate<ComputeMetadata>() {
+      final Set<String> search = ImmutableSet.copyOf(ids);
+      return new Predicate<T>() {
          @Override
-         public boolean apply(ComputeMetadata nodeMetadata) {
-            return search.contains(nodeMetadata.getProviderId());
+         public boolean apply(T nodeMetadata) {
+            return search.contains(nodeMetadata.getId());
          }
 
          @Override
