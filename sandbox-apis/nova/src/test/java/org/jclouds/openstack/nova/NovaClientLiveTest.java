@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;
@@ -73,11 +74,20 @@ public class NovaClientLiveTest {
     protected String endpoint;
     protected String apiversion;
 
-    private void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
-        if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))
-            properties.setProperty(propertyName, System.getProperty(propertyName));
-    }
 
+    protected Properties setupProperties() throws IOException {
+        Properties overrides = new Properties();
+        overrides.load(this.getClass().getResourceAsStream("/test.properties"));
+        overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
+        overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
+        overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
+        overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
+        overridePropertyFromSystemProperty(overrides, "test.initializer");
+        overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+        overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+
+        return overrides;
+    }
 
     protected void setupCredentials(Properties properties) {
         identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -96,19 +106,6 @@ public class NovaClientLiveTest {
             properties.setProperty(provider + ".apiversion", apiversion);
     }
 
-    protected Properties setupProperties() throws IOException {
-        Properties overrides = new Properties();
-        overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-        overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
-        overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
-        overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
-        overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
-        overridePropertyFromSystemProperty(overrides, "test.initializer");
-        overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-        overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-        return overrides;
-    }
 
     @BeforeGroups(groups = {"live"})
     public void setupClient() throws IOException {
@@ -268,7 +265,7 @@ public class NovaClientLiveTest {
 
     @Test(enabled = true)
     public void testCreateServer() throws Exception {
-        String imageRef = "14362";
+        String imageRef = "3";
         String flavorRef = "1";
         String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
         Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",

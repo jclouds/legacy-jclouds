@@ -74,6 +74,7 @@ import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCreden
 import static org.jclouds.compute.predicates.NodePredicates.*;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -108,11 +109,6 @@ public class NovaComputeServiceLiveTest {
     }
 
 
-    private void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
-        if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))
-            properties.setProperty(propertyName, System.getProperty(propertyName));
-    }
-
     protected void setupCredentials(Properties properties) {
         identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
         credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
@@ -131,13 +127,10 @@ public class NovaComputeServiceLiveTest {
     }
 
 
-    protected Properties setupProperties() {
+    protected Properties setupProperties() throws IOException {
         Properties overrides = new Properties();
-        try {
-            overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-        } catch (IOException e) {
-            throw new RuntimeException("Can't load properties");
-        }
+        overrides.load(this.getClass().getResourceAsStream("/test.properties"));
+
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
