@@ -141,7 +141,7 @@ public class SpotInstanceClientLiveTest {
             assertEquals(spot.getRegion(), region);
             assert in(ImmutableSet.of("Linux/UNIX", "SUSE Linux", "Windows")).apply(spot.getProductDescription()) : spot;
             assert in(
-                     ImmutableSet.of("c1.medium", "c1.xlarge", "c1g.4xlarge", "m1.large", "m1.small", "m1.xlarge",
+                     ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small", "m1.xlarge",
                               "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(spot.getInstanceType()) : spot;
 
          }
