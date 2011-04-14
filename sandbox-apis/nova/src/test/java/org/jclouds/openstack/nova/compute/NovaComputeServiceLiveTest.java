@@ -34,7 +34,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaAsyncClient;
 import org.jclouds.openstack.nova.NovaClient;
@@ -74,7 +74,6 @@ import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCreden
 import static org.jclouds.compute.predicates.NodePredicates.*;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -109,6 +108,11 @@ public class NovaComputeServiceLiveTest {
     }
 
 
+    private void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
+        if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))
+            properties.setProperty(propertyName, System.getProperty(propertyName));
+    }
+
     protected void setupCredentials(Properties properties) {
         identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
         credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
@@ -127,10 +131,13 @@ public class NovaComputeServiceLiveTest {
     }
 
 
-    protected Properties setupProperties() throws IOException {
+    protected Properties setupProperties() {
         Properties overrides = new Properties();
-        overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-
+        try {
+            overrides.load(this.getClass().getResourceAsStream("/test.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("Can't load properties");
+        }
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
         overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
@@ -152,7 +159,7 @@ public class NovaComputeServiceLiveTest {
         if (context != null)
             context.close();
         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
-                new Log4JLoggingModule(), getSshModule()), properties);
+                new SLF4JLoggingModule(), getSshModule()), properties);
         client = context.getComputeService();
     }
 
@@ -227,7 +234,7 @@ public class NovaComputeServiceLiveTest {
         ComputeServiceContext context = null;
         try {
             context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
-                    .<Module>of(new Log4JLoggingModule()), overrides);
+                    .<Module>of(new SLF4JLoggingModule()), overrides);
             context.getComputeService().listNodes();
         } catch (AuthorizationException e) {
             throw e;
