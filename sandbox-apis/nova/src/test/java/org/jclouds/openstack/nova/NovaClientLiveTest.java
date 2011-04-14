@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.domain.*;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
@@ -123,7 +123,7 @@ public class NovaClientLiveTest {
 //       ComputeServiceContext context = contextFactory.createContext(provider, identity, credential, Collections.singleton(new JschSshClientModule()), overrides);
 
         Injector injector = new RestContextFactory().createContextBuilder(provider, identity, credential,
-                ImmutableSet.<Module>of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
+                ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), overrides)
                 .buildInjector();
 
         client = injector.getInstance(NovaClient.class);

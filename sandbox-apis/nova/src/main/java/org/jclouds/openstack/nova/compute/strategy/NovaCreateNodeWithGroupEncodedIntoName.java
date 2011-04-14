@@ -54,8 +54,7 @@ public class NovaCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGro
 
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
-      Server from = client.createServer(name, template.getImage().getUri().toString(),
-            template.getHardware().getUri().toString());
+      Server from = client.createServer(name, template.getImage().getId(), template.getHardware().getId());
       credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
       return serverToNodeMetadata.apply(from);
    }

@@ -35,7 +35,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaAsyncClient;
 import org.jclouds.openstack.nova.NovaClient;
@@ -160,7 +160,7 @@ public class NovaComputeServiceLiveTest {
         if (context != null)
             context.close();
         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
-                new Log4JLoggingModule(), getSshModule()), properties);
+                new SLF4JLoggingModule(), getSshModule()), properties);
         client = context.getComputeService();
     }
 
@@ -235,7 +235,7 @@ public class NovaComputeServiceLiveTest {
         ComputeServiceContext context = null;
         try {
             context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
-                    .<Module>of(new Log4JLoggingModule()), overrides);
+                    .<Module>of(new SLF4JLoggingModule()), overrides);
             context.getComputeService().listNodes();
         } catch (AuthorizationException e) {
             throw e;
