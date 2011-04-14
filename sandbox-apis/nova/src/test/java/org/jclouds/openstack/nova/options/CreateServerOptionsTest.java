@@ -19,123 +19,66 @@
 
 package org.jclouds.openstack.nova.options;
 
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSharedIp;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSharedIpGroup;
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.HttpMethod;
+import java.net.URI;
+
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class CreateServerOptionsTest {
 
-   Injector injector = Guice.createInjector(new GsonModule());
+    Injector injector = Guice.createInjector(new GsonModule());
 
-   @Test
-   public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
-      CreateServerOptions options = new CreateServerOptions();
-      HttpRequest request = buildRequest(options);
-      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2}}", request.getPayload().getRawContent());
-   }
+    @Test
+    public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
+        CreateServerOptions options = new CreateServerOptions();
+        HttpRequest request = buildRequest(options);
+        assertEquals("{\"server\":{\"name\":\"foo\",\"imageRef\":1,\"flavorRef\":2}}", request.getPayload().getRawContent());
+    }
 
-   private HttpRequest buildRequest(CreateServerOptions options) {
-      injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.bindToRequest(request, ImmutableMap.of("name", "foo", "imageId", "1", "flavorId", "2"));
-      return request;
-   }
+    private HttpRequest buildRequest(CreateServerOptions options) {
+        injector.injectMembers(options);
+        HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+        options.bindToRequest(request, ImmutableMap.of("name", "foo", "imageRef", "1", "flavorRef", "2"));
+        return request;
+    }
 
-   @Test
-   public void testWithFile() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withFile("/tmp/rhubarb", "foo".getBytes());
-      HttpRequest request = buildRequest(options);
-      assertFile(request);
-   }
+    @Test
+    public void testWithFile() {
+        CreateServerOptions options = new CreateServerOptions();
+        options.withFile("/tmp/rhubarb", "foo".getBytes());
+        HttpRequest request = buildRequest(options);
+        assertFile(request);
+    }
 
-   @Test
-   public void testWithFileStatic() {
-      CreateServerOptions options = withFile("/tmp/rhubarb", "foo".getBytes());
-      HttpRequest request = buildRequest(options);
-      assertFile(request);
-   }
+    @Test
+    public void testWithFileStatic() {
+        CreateServerOptions options = withFile("/tmp/rhubarb", "foo".getBytes());
+        HttpRequest request = buildRequest(options);
+        assertFile(request);
+    }
 
-   private void assertFile(HttpRequest request) {
-      assertEquals(
-            "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}",
-            request.getPayload().getRawContent());
-   }
+    private void assertFile(HttpRequest request) {
+        assertEquals(request.getPayload().getRawContent(),
+                "{\"server\":{\"name\":\"foo\",\"imageRef\":1,\"flavorRef\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}");
+    }
 
-   @Test
-   public void testWithSharedIpGroup() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIpGroup(3);
-      HttpRequest request = buildRequest(options);
-      assertSharedIpGroup(request);
-   }
+    @Test
+    public void testWithMetadata() {
+    }
 
-   @Test
-   public void testWithSharedIpGroupStatic() {
-      CreateServerOptions options = withSharedIpGroup(3);
-      HttpRequest request = buildRequest(options);
-      assertSharedIpGroup(request);
-   }
 
-   private void assertSharedIpGroup(HttpRequest request) {
-      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3}}", request
-            .getPayload().getRawContent());
-   }
-
-   @Test
-   public void testWithMetadata() {
-   }
-
-   @Test
-   public void testWithSharedIp() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIpGroup(3).withSharedIp("127.0.0.1");
-      HttpRequest request = buildRequest(options);
-      assertSharedIp(request);
-   }
-
-   @Test
-   public void testWithSharedIpStatic() {
-      CreateServerOptions options = withSharedIpGroup(3).withSharedIp("127.0.0.1");
-      HttpRequest request = buildRequest(options);
-      assertSharedIp(request);
-   }
-
-   private void assertSharedIp(HttpRequest request) {
-      assertEquals(
-            "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-            request.getPayload().getRawContent());
-   }
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroup() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIp("127.0.0.1");
-      buildRequest(options);
-   }
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroupStatic() {
-      CreateServerOptions options = withSharedIp("127.0.0.1");
-      buildRequest(options);
-   }
 }
