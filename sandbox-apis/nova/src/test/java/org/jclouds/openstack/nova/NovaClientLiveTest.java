@@ -273,11 +273,11 @@ public class NovaClientLiveTest {
                 "rackspace".getBytes()).withMetadata(metadata));
 
         assertNotNull(server.getAdminPass());
+        assertEquals(server.getStatus(), ServerStatus.BUILD);
         serverId = server.getId();
         adminPass = server.getAdminPass();
-        ip = server.getAddresses().getPublicAddresses().iterator().next();
-        assertEquals(server.getStatus(), ServerStatus.BUILD);
         blockUntilServerActive(serverId);
+        ip = client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next();
     }
 
     private void blockUntilServerActive(int serverId) throws InterruptedException {
@@ -314,8 +314,8 @@ public class NovaClientLiveTest {
         assertNotNull(server.getHostId());
         assertEquals(server.getStatus(), ServerStatus.ACTIVE);
         assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-        assertEquals(new Integer(14362), server.getImageId());
-        assertEquals(new Integer(1), server.getFlavorId());
+        assertEquals("14362", server.getImageRef());
+        assertEquals("1", server.getFlavorRef());
         assertNotNull(server.getAddresses());
         // listAddresses tests..
         assertEquals(client.getAddresses(serverId), server.getAddresses());
@@ -326,21 +326,12 @@ public class NovaClientLiveTest {
 
         // check metadata
         assertEquals(server.getMetadata(), metadata);
-
-        checkPassOk(server, adminPass);
-    }
-
-    /**
-     * this tests "personality" as the file looked up was sent during server creation
-     */
-
-    private void checkPassOk(Server newDetails, String pass) throws IOException {
-        doCheckPass(newDetails, pass);
+        assertPassword(server, adminPass);
     }
 
 
-    private void doCheckPass(Server newDetails, String pass) throws IOException {
-        IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
+    private void assertPassword(Server server, String pass) throws IOException {
+        IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0), 22);
         socketTester.apply(socket);
 
         SshClient client = sshFactory.create(socket, new Credentials("root", pass));
@@ -381,7 +372,7 @@ public class NovaClientLiveTest {
     public void testChangePassword() throws Exception {
         client.changeAdminPass(serverId, "elmo");
         blockUntilServerActive(serverId);
-        checkPassOk(client.getServer(serverId), "elmo");
+        assertPassword(client.getServer(serverId), "elmo");
         this.adminPass = "elmo";
     }
 
@@ -418,7 +409,7 @@ public class NovaClientLiveTest {
         client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
         blockUntilServerActive(serverId);
         // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-        assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
+        assertEquals(imageId, client.getServer(serverId).getImageRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
@@ -439,7 +430,7 @@ public class NovaClientLiveTest {
         blockUntilServerVerifyResize(serverId);
         client.revertResizeServer(serverId);
         blockUntilServerActive(serverId);
-        assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
+        assertEquals(new Integer(1), client.getServer(serverId).getFlavorRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
@@ -448,7 +439,7 @@ public class NovaClientLiveTest {
         blockUntilServerVerifyResize(serverId2);
         client.confirmResizeServer(serverId2);
         blockUntilServerActive(serverId2);
-        assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
+        assertEquals(new Integer(2), client.getServer(serverId2).getFlavorRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = {"testRebootSoft", "testRevertResize",
