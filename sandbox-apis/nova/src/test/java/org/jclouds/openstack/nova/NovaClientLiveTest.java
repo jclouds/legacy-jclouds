@@ -75,6 +75,15 @@ public class NovaClientLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   private String serverPrefix = System.getProperty("user.name") + ".cs";
+   private int serverId;
+   private String adminPass;
+   Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
+   private String ip;
+   private int serverId2;
+   private String adminPass2;
+   private int imageId;
+
 
    protected Properties setupProperties() throws IOException {
       Properties overrides = new Properties();
@@ -206,14 +215,14 @@ public class NovaClientLiveTest {
    public void testGetServersDetail() throws Exception {
       Set<Server> response = client.listServers(withDetails());
       assert null != response;
-      long serverCount = response.size();
-      assertTrue(serverCount >= 0);
+      assertTrue(response.size() >= 0);
       for (Server server : response) {
          Server newDetails = client.getServer(server.getId());
          assertEquals(server, newDetails);
       }
    }
 
+   @Test
    public void testListFlavors() throws Exception {
       Set<Flavor> response = client.listFlavors();
       assert null != response;
@@ -226,6 +235,7 @@ public class NovaClientLiveTest {
 
    }
 
+   @Test
    public void testListFlavorsDetail() throws Exception {
       Set<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
@@ -239,6 +249,7 @@ public class NovaClientLiveTest {
       }
    }
 
+   @Test
    public void testGetFlavorsDetail() throws Exception {
       Set<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
@@ -255,19 +266,10 @@ public class NovaClientLiveTest {
       assert client.getFlavor(12312987) == null;
    }
 
-   private String serverPrefix = System.getProperty("user.name") + ".cs";
-   private int serverId;
-   private String adminPass;
-   Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
-   private String ip;
-   private int serverId2;
-   private String adminPass2;
-   private int imageId;
-
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-      String imageRef = "3";
-      String flavorRef = "1";
+      String imageRef = client.getImage(13).getURI().toASCIIString();
+      String flavorRef = client.getFlavor(1).getURI().toASCIIString();
       String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
       Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
             "rackspace".getBytes()).withMetadata(metadata));
@@ -307,16 +309,23 @@ public class NovaClientLiveTest {
       }
    }
 
-   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(enabled = true, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testServerDetails() throws Exception {
       Server server = client.getServer(serverId);
 
       assertNotNull(server.getHostId());
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
-      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-      assertEquals("3", server.getImageRef());
-      assertEquals("1", server.getFlavorRef());
+
+
       assertNotNull(server.getAddresses());
+
+
+      // check metadata
+      assertEquals(server.getMetadata(), metadata);
+      assertPassword(server, adminPass);
+      assertEquals(server.getFlavorRef(), endpoint + "/flavors/1");
+      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
+      assertEquals(server.getImageRef(), endpoint + "/images/13");
       // listAddresses tests..
       assertEquals(client.getAddresses(serverId), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
@@ -324,9 +333,6 @@ public class NovaClientLiveTest {
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
       assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
 
-      // check metadata
-      assertEquals(server.getMetadata(), metadata);
-      assertPassword(server, adminPass);
    }
 
 
@@ -470,7 +476,7 @@ public class NovaClientLiveTest {
    @AfterTest
    void deleteServersOnEnd() {
       if (serverId > 0) {
-         client.deleteServer(serverId);
+         //client.deleteServer(serverId);
       }
       if (serverId2 > 0) {
          client.deleteServer(serverId2);
