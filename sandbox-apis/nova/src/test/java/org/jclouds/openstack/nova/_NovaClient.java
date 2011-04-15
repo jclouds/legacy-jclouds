@@ -41,14 +41,14 @@ public class _NovaClient {
       System.out.println(cs.listAssignableLocations());
       System.out.println(cs.listNodes());
 
-      TemplateOptions options = new TemplateOptions();
+      /*TemplateOptions options = new TemplateOptions();
       Template template = cs.templateBuilder().imageId("13").options(options).build();
       try {
          Set<? extends NodeMetadata> metedata = cs.runNodesWithTag("test", 1, template);
          System.out.println(metedata);
       } catch (RunNodesException e) {
          e.printStackTrace();
-      }
+      }*/
 
       context.close();
    }

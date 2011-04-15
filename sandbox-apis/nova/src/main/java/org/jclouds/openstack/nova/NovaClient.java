@@ -19,8 +19,6 @@
 
 package org.jclouds.openstack.nova;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +32,6 @@ import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
-import org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
 import org.jclouds.rest.ResourceNotFoundException;

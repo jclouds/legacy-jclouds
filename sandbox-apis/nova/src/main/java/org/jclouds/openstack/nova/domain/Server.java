@@ -37,9 +37,9 @@ public class Server extends Resource {
 
    private Addresses addresses;
    private String adminPass;
-   private Integer flavorId;
+   private String flavorRef;
    private String hostId;
-   private Integer imageId;
+   private String imageRef;
 
    private Integer progress;
    private ServerStatus status;
@@ -76,12 +76,12 @@ public class Server extends Resource {
       return adminPass;
    }
 
-   public void setFlavorId(Integer flavorId) {
-      this.flavorId = flavorId;
+   public void setFlavorRef(String flavorRef) {
+      this.flavorRef = flavorRef;
    }
 
-   public Integer getFlavorId() {
-      return flavorId;
+   public String getFlavorRef() {
+      return flavorRef;
    }
 
    public void setHostId(String hostId) {
@@ -104,12 +104,12 @@ public class Server extends Resource {
       return id;
    }
 
-   public void setImageId(Integer imageId) {
-      this.imageId = imageId;
+   public void setImageRef(String imageRef) {
+      this.imageRef = imageRef;
    }
 
-   public Integer getImageId() {
-      return imageId;
+   public String getImageRef() {
+      return imageRef;
    }
 
    public String getName() {
@@ -142,10 +142,10 @@ public class Server extends Resource {
       int result = 1;
       result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
       result = prime * result + ((adminPass == null) ? 0 : adminPass.hashCode());
-      result = prime * result + ((flavorId == null) ? 0 : flavorId.hashCode());
+      result = prime * result + ((flavorRef == null) ? 0 : flavorRef.hashCode());
       result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
       result = prime * result + id;
-      result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+      result = prime * result + ((imageRef == null) ? 0 : imageRef.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
@@ -170,10 +170,10 @@ public class Server extends Resource {
             return false;
       } else if (!adminPass.equals(other.adminPass))
          return false;
-      if (flavorId == null) {
-         if (other.flavorId != null)
+      if (flavorRef == null) {
+         if (other.flavorRef != null)
             return false;
-      } else if (!flavorId.equals(other.flavorId))
+      } else if (!flavorRef.equals(other.flavorRef))
          return false;
       if (hostId == null) {
          if (other.hostId != null)
@@ -182,10 +182,10 @@ public class Server extends Resource {
          return false;
       if (id != other.id)
          return false;
-      if (imageId == null) {
-         if (other.imageId != null)
+      if (imageRef == null) {
+         if (other.imageRef != null)
             return false;
-      } else if (!imageId.equals(other.imageId))
+      } else if (!imageRef.equals(other.imageRef))
          return false;
       if (metadata == null) {
          if (other.metadata != null)
@@ -206,8 +206,8 @@ public class Server extends Resource {
 
    @Override
    public String toString() {
-      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorId="
-               + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId=" + imageId
+      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
+               + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
                + ", metadata=" + metadata + ", name=" + name + "]";
    }
 

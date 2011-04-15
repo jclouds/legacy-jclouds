@@ -19,8 +19,6 @@
 
 package org.jclouds.openstack.nova;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -40,13 +38,10 @@ import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
-import org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
@@ -59,7 +54,6 @@ import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

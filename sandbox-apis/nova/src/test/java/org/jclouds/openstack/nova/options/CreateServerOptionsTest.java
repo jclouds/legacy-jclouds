@@ -20,8 +20,6 @@
 package org.jclouds.openstack.nova.options;
 
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSharedIp;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSharedIpGroup;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -82,60 +80,6 @@ public class CreateServerOptionsTest {
    }
 
    @Test
-   public void testWithSharedIpGroup() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIpGroup(3);
-      HttpRequest request = buildRequest(options);
-      assertSharedIpGroup(request);
-   }
-
-   @Test
-   public void testWithSharedIpGroupStatic() {
-      CreateServerOptions options = withSharedIpGroup(3);
-      HttpRequest request = buildRequest(options);
-      assertSharedIpGroup(request);
-   }
-
-   private void assertSharedIpGroup(HttpRequest request) {
-      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3}}", request
-            .getPayload().getRawContent());
-   }
-
-   @Test
    public void testWithMetadata() {
-   }
-
-   @Test
-   public void testWithSharedIp() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIpGroup(3).withSharedIp("127.0.0.1");
-      HttpRequest request = buildRequest(options);
-      assertSharedIp(request);
-   }
-
-   @Test
-   public void testWithSharedIpStatic() {
-      CreateServerOptions options = withSharedIpGroup(3).withSharedIp("127.0.0.1");
-      HttpRequest request = buildRequest(options);
-      assertSharedIp(request);
-   }
-
-   private void assertSharedIp(HttpRequest request) {
-      assertEquals(
-            "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-            request.getPayload().getRawContent());
-   }
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroup() {
-      CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIp("127.0.0.1");
-      buildRequest(options);
-   }
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroupStatic() {
-      CreateServerOptions options = withSharedIp("127.0.0.1");
-      buildRequest(options);
    }
 }

@@ -31,31 +31,31 @@ import com.google.gson.annotations.SerializedName;
 public class Addresses {
 
    @SerializedName("public")
-   private Set<String> publicAddresses = Sets.newLinkedHashSet();
+   private Set<Address> publicAddresses = Sets.newLinkedHashSet();
    @SerializedName("private")
-   private Set<String> privateAddresses = Sets.newLinkedHashSet();
+   private Set<Address> privateAddresses = Sets.newLinkedHashSet();
 
    public Addresses() {
    }
 
-   public Addresses(Set<String> publicAddresses, Set<String> privateAddresses) {
+   public Addresses(Set<Address> publicAddresses, Set<Address> privateAddresses) {
       this.publicAddresses = publicAddresses;
       this.privateAddresses = privateAddresses;
    }
 
-   public void setPublicAddresses(Set<String> publicAddresses) {
+   public void setPublicAddresses(Set<Address> publicAddresses) {
       this.publicAddresses = publicAddresses;
    }
 
-   public Set<String> getPublicAddresses() {
+   public Set<Address> getPublicAddresses() {
       return publicAddresses;
    }
 
-   public void setPrivateAddresses(Set<String> privateAddresses) {
+   public void setPrivateAddresses(Set<Address> privateAddresses) {
       this.privateAddresses = privateAddresses;
    }
 
-   public Set<String> getPrivateAddresses() {
+   public Set<Address> getPrivateAddresses() {
       return privateAddresses;
    }
 

@@ -278,7 +278,7 @@ public class NovaClientLiveTest {
         assertNotNull(server.getAdminPass());
         serverId = server.getId();
         adminPass = server.getAdminPass();
-        ip = server.getAddresses().getPublicAddresses().iterator().next();
+        ip = server.getAddresses().getPublicAddresses().iterator().next().getAddress();
         assertEquals(server.getStatus(), ServerStatus.BUILD);
         blockUntilServerActive(serverId);
     }
@@ -317,8 +317,8 @@ public class NovaClientLiveTest {
         assertNotNull(server.getHostId());
         assertEquals(server.getStatus(), ServerStatus.ACTIVE);
         assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-        assertEquals(new Integer(14362), server.getImageId());
-        assertEquals(new Integer(1), server.getFlavorId());
+        assertEquals(new Integer(14362), server.getImageRef());
+        assertEquals(new Integer(1), server.getFlavorRef());
         assertNotNull(server.getAddresses());
         // listAddresses tests..
         assertEquals(client.getAddresses(serverId), server.getAddresses());
@@ -343,7 +343,7 @@ public class NovaClientLiveTest {
 
 
     private void doCheckPass(Server newDetails, String pass) throws IOException {
-        IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
+        IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
         socketTester.apply(socket);
 
         SshClient client = sshFactory.create(socket, new Credentials("root", pass));
@@ -359,7 +359,7 @@ public class NovaClientLiveTest {
     }
 
     private ExecResponse exec(Server details, String pass, String command) throws IOException {
-        IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
+        IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
         socketTester.apply(socket);
         SshClient client = sshFactory.create(socket, new Credentials("root", pass));
         try {
@@ -421,7 +421,7 @@ public class NovaClientLiveTest {
         client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
         blockUntilServerActive(serverId);
         // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-        assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
+        assertEquals(new Integer(imageId), client.getServer(serverId).getImageRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
@@ -442,7 +442,7 @@ public class NovaClientLiveTest {
         blockUntilServerVerifyResize(serverId);
         client.revertResizeServer(serverId);
         blockUntilServerActive(serverId);
-        assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
+        assertEquals(new Integer(1), client.getServer(serverId).getFlavorRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
@@ -451,7 +451,7 @@ public class NovaClientLiveTest {
         blockUntilServerVerifyResize(serverId2);
         client.confirmResizeServer(serverId2);
         blockUntilServerActive(serverId2);
-        assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
+        assertEquals(new Integer(2), client.getServer(serverId2).getFlavorRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = {"testRebootSoft", "testRevertResize",

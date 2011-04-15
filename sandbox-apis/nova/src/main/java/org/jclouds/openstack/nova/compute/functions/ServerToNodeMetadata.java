@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.jclouds.collect.Memoized;
@@ -76,7 +77,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Image input) {
-         return input.getProviderId().equals(instance.getImageId() + "");
+         return input.getProviderId().equals(instance.getImageRef() + "");
       }
    }
 
@@ -89,7 +90,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Hardware input) {
-         return input.getProviderId().equals(instance.getFlavorId() + "");
+         return input.getProviderId().equals(instance.getFlavorRef() + "");
       }
    }
 
@@ -113,12 +114,12 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
                from.getHostId()).parent(location.get()).build());
       builder.userMetadata(from.getMetadata());
       builder.group(parseGroupFromName(from.getName()));
-      builder.imageId(from.getImageId() + "");
+      builder.imageId(from.getImageRef() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));
       builder.state(serverToNodeState.get(from.getStatus()));
-      builder.publicAddresses(from.getAddresses().getPublicAddresses());
-      builder.privateAddresses(from.getAddresses().getPrivateAddresses());
+      builder.publicAddresses(Iterables.transform(from.getAddresses().getPublicAddresses(), Address.newAddress2StringFunction()));
+      builder.privateAddresses(Iterables.transform(from.getAddresses().getPrivateAddresses(), Address.newAddress2StringFunction()));
       builder.credentials(credentialStore.get("node#" + from.getId()));
       builder.uri(from.getURI());
       return builder.build();
