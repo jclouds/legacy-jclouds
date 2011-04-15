@@ -32,6 +32,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>project</module>
+        <module>resources</module>
         <module>assemblies</module>
         <module>archetypes</module>
         <module>core</module>
