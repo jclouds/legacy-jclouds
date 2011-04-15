@@ -77,12 +77,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.44-1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
