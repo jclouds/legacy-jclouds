@@ -486,7 +486,7 @@ pageTracker._trackPageview();
                                 <resourceBundle>org.jclouds:jclouds-resources:${project.version}</resourceBundle>
                             </resourceBundles>
                         </configuration>
-                    </execution>                    
+                    </execution>          
                 </executions>
             </plugin>
         </plugins>
@@ -859,6 +859,34 @@ pageTracker._trackPageview();
                         </plugin>
                     </plugins>
                 </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>jclouds-project</id>
+            <activation>
+                <file>
+                    <!-- only in the jclouds-project module -->
+                    <exists>src/etc/header.txt</exists>
+                </file>
+            </activation>        
+            <build>
+                <plugins>
+                   <plugin>      
+                        <artifactId>maven-remote-resources-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+                            <execution>
+                                <id>process-remote-resources</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>true</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>        
+                </plugins>            
             </build>
         </profile>
     </profiles>
