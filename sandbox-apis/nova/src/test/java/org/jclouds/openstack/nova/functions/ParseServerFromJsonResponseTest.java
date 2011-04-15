@@ -49,37 +49,35 @@ import static org.testng.Assert.assertEquals;
 public class ParseServerFromJsonResponseTest {
 
     @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
+    public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException, ClassNotFoundException {
         Server response = parseServer();
 
         assertEquals(response.getId(), 1234);
         assertEquals(response.getName(), "sample-server");
-        assertEquals(response.getImageId().intValue(), 1234);
-        assertEquals(response.getFlavorId().intValue(), 1);
-        assertEquals(response.getImageId(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
-        assertEquals(response.getFlavorId(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
+        assertEquals(response.getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
+        assertEquals(response.getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
         assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
-        assertEquals(true, false, "Uncomment next line");
-        //assertEquals(response.getAffinityId(), "fc88bcf8394db9c8d0564e08ca6a9724188a84d1");
+        assertEquals(response.getAffinityId(), "fc88bcf8394db9c8d0564e08ca6a9724188a84d1");
         assertEquals(response.getStatus(), ServerStatus.BUILD);
         assertEquals(response.getProgress(), new Integer(60));
 
         List<String> publicAddresses = ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83");
         List<String> privateAddresses = ImmutableList.of("10.176.42.16", "::babe:10.176.42.16");
         Addresses addresses1 = new Addresses(new HashSet<String>(publicAddresses), new HashSet<String>(privateAddresses));
-        assertEquals(response.getAddresses(), addresses1);
         assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
+        assertEquals(response.getAddresses(), addresses1);
     }
 
-    public static Server parseServer() {
+    public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
         Injector i = Guice.createInjector(new GsonModule());
 
         InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 
         UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
         }));
-        Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-        return response;
+
+        //Function<HttpResponse, ?> parser = i.getInstance(getParserOrThrowException(NovaClient.class.getMethod("getServer", int.class)));
+        return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
     }
 
 }

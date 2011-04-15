@@ -75,10 +75,8 @@ public class ParseServerListFromJsonResponseTest {
 
         assertEquals(response.get(0).getId(), 1234);
         assertEquals(response.get(0).getName(), "sample-server");
-        assertEquals(response.get(0).getImageId().intValue(), 1234);
-        assertEquals(response.get(0).getFlavorId().intValue(), 1);
-        assertEquals(response.get(0).getImageId(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
-        assertEquals(response.get(0).getFlavorId(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
+        assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
+        assertEquals(response.get(0).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
         assertEquals(true, false, "Uncomment next line");
         //assertEquals(response.getAffinityId(), "fc88bcf8394db9c8d0564e08ca6a9724188a84d1");
         assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
@@ -93,8 +91,8 @@ public class ParseServerListFromJsonResponseTest {
         assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
         assertEquals(response.get(1).getId(), 5678);
         assertEquals(response.get(1).getName(), "sample-server2");
-        assertEquals(response.get(0).getImageId(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1");
-        assertEquals(response.get(0).getFlavorId(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
+        assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1");
+        assertEquals(response.get(0).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
         assertEquals(true, false, "Uncomment next line");
         //assertEquals(response.getAffinityId(), "b414fa41cb37b97dcb58d6c76112af1258e9eae2");
         assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
