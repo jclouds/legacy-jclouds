@@ -39,7 +39,7 @@
     <licenses>
         <license>
             <name>Apache License</name>
-            <url>LICENSE.txt</url>
+            <url>../resources/LICENSE.txt</url>
         </license>
     </licenses>
 
@@ -471,7 +471,24 @@ pageTracker._trackPageview();
                         </manifestEntries>
                     </archive>
                 </configuration>
-            </plugin>        
+            </plugin>
+            <plugin>      
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.2</version>
+                <executions>             
+                    <execution>
+                        <id>process-remote-resources</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.jclouds:jclouds-resources:${project.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>                    
+                </executions>                      
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
