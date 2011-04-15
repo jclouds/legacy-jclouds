@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.functions;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -28,6 +29,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
@@ -49,7 +51,7 @@ import static org.testng.Assert.assertEquals;
 public class ParseServerFromJsonResponseTest {
 
     @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException, ClassNotFoundException {
+    public void testApplyInputStreamDetails() throws UnknownHostException {
         Server response = parseServer();
 
         assertEquals(response.getId(), 1234);
@@ -57,27 +59,25 @@ public class ParseServerFromJsonResponseTest {
         assertEquals(response.getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
         assertEquals(response.getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
         assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
-        assertEquals(response.getAffinityId(), "fc88bcf8394db9c8d0564e08ca6a9724188a84d1");
         assertEquals(response.getStatus(), ServerStatus.BUILD);
         assertEquals(response.getProgress(), new Integer(60));
 
-        List<String> publicAddresses = ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83");
-        List<String> privateAddresses = ImmutableList.of("10.176.42.16", "::babe:10.176.42.16");
-        Addresses addresses1 = new Addresses(new HashSet<String>(publicAddresses), new HashSet<String>(privateAddresses));
-        assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
+        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
+        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+        Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
         assertEquals(response.getAddresses(), addresses1);
+        assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
     }
 
-    public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
+    public static Server parseServer() {
         Injector i = Guice.createInjector(new GsonModule());
 
         InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 
         UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
         }));
-
-        //Function<HttpResponse, ?> parser = i.getInstance(getParserOrThrowException(NovaClient.class.getMethod("getServer", int.class)));
-        return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+        Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+        return response;
     }
 
 }

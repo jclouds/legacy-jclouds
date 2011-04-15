@@ -39,9 +39,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.*;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -54,8 +52,7 @@ import java.util.Properties;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.*;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
@@ -81,7 +78,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
         assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
         assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-        assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1}}",
+        assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}",
                 "application/json", false);
 
         assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -103,7 +100,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
         assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
         assertPayloadEquals(
                 request,
-                "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
+                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
                 "application/json", false);
 
         assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -124,7 +121,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
         assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
         assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
         assertPayloadEquals(request,
-                "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1,\"metadata\":{\"foo\":\"bar\"}}}",
+                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"metadata\":{\"foo\":\"bar\"}}}",
                 "application/json", false);
 
         assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -506,7 +503,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
         assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
         assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, "{\"rebuild\":{\"imageRef\":2}}", MediaType.APPLICATION_JSON, false);
+        assertPayloadEquals(request, "{\"rebuild\":{\"imageId\":2}}", MediaType.APPLICATION_JSON, false);
 
         assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
         assertSaxResponseParserClassEquals(method, null);

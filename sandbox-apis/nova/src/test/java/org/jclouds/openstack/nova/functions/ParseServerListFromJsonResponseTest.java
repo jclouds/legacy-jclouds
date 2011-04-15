@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.functions;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -28,6 +29,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
@@ -77,15 +79,13 @@ public class ParseServerListFromJsonResponseTest {
         assertEquals(response.get(0).getName(), "sample-server");
         assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
         assertEquals(response.get(0).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
-        assertEquals(true, false, "Uncomment next line");
-        //assertEquals(response.getAffinityId(), "fc88bcf8394db9c8d0564e08ca6a9724188a84d1");
         assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
         assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
         assertEquals(response.get(0).getProgress(), new Integer(60));
 
-        List<String> publicAddresses = ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83");
-        List<String> privateAddresses = ImmutableList.of("10.176.42.16", "::babe:10.176.42.16");
-        Addresses addresses1 = new Addresses(new HashSet<String>(publicAddresses), new HashSet<String>(privateAddresses));
+        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
+        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+        Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
 
         assertEquals(response.get(0).getAddresses(), addresses1);
         assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
@@ -99,9 +99,9 @@ public class ParseServerListFromJsonResponseTest {
         assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
         assertEquals(response.get(1).getProgress(), null);
 
-        List<String> publicAddresses2 = ImmutableList.of("67.23.10.133", "::babe:67.23.10.133");
-        List<String> privateAddresses2 = ImmutableList.of("10.176.42.17", "::babe:10.176.42.17");
-        Addresses addresses2 = new Addresses(new HashSet<String>(publicAddresses2), new HashSet<String>(privateAddresses2));
+        List<Address> publicAddresses2 = ImmutableList.of(new Address("67.23.10.133", 4), new Address("::babe:67.23.10.133", 4));
+        List<Address> privateAddresses2 = ImmutableList.of(new Address("10.176.42.17", 4), new Address("::babe:10.176.42.17", 4));
+        Addresses addresses2 = new Addresses(new HashSet<Address>(publicAddresses2), new HashSet<Address>(privateAddresses2));
 
         assertEquals(response.get(1).getAddresses(), addresses2);
         assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));

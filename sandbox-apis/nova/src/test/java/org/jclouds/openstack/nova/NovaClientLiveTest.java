@@ -275,11 +275,11 @@ public class NovaClientLiveTest {
                 "rackspace".getBytes()).withMetadata(metadata));
 
         assertNotNull(server.getAdminPass());
-        assertEquals(server.getStatus(), ServerStatus.BUILD);
         serverId = server.getId();
         adminPass = server.getAdminPass();
+        ip = server.getAddresses().getPublicAddresses().iterator().next().getAddress();
+        assertEquals(server.getStatus(), ServerStatus.BUILD);
         blockUntilServerActive(serverId);
-        ip = client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next();
     }
 
     private void blockUntilServerActive(int serverId) throws InterruptedException {
@@ -316,8 +316,8 @@ public class NovaClientLiveTest {
         assertNotNull(server.getHostId());
         assertEquals(server.getStatus(), ServerStatus.ACTIVE);
         assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-        assertEquals("14362", server.getImageRef());
-        assertEquals("1", server.getFlavorRef());
+        assertEquals(new Integer(14362), server.getImageRef());
+        assertEquals(new Integer(1), server.getFlavorRef());
         assertNotNull(server.getAddresses());
         // listAddresses tests..
         assertEquals(client.getAddresses(serverId), server.getAddresses());
@@ -328,12 +328,21 @@ public class NovaClientLiveTest {
 
         // check metadata
         assertEquals(server.getMetadata(), metadata);
-        assertPassword(server, adminPass);
+
+        checkPassOk(server, adminPass);
+    }
+
+    /**
+     * this tests "personality" as the file looked up was sent during server creation
+     */
+
+    private void checkPassOk(Server newDetails, String pass) throws IOException {
+        doCheckPass(newDetails, pass);
     }
 
 
-    private void assertPassword(Server server, String pass) throws IOException {
-        IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0), 22);
+    private void doCheckPass(Server newDetails, String pass) throws IOException {
+        IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
         socketTester.apply(socket);
 
         SshClient client = sshFactory.create(socket, new Credentials("root", pass));
@@ -349,7 +358,7 @@ public class NovaClientLiveTest {
     }
 
     private ExecResponse exec(Server details, String pass, String command) throws IOException {
-        IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
+        IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
         socketTester.apply(socket);
         SshClient client = sshFactory.create(socket, new Credentials("root", pass));
         try {
@@ -374,7 +383,7 @@ public class NovaClientLiveTest {
     public void testChangePassword() throws Exception {
         client.changeAdminPass(serverId, "elmo");
         blockUntilServerActive(serverId);
-        assertPassword(client.getServer(serverId), "elmo");
+        checkPassOk(client.getServer(serverId), "elmo");
         this.adminPass = "elmo";
     }
 
@@ -411,7 +420,7 @@ public class NovaClientLiveTest {
         client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
         blockUntilServerActive(serverId);
         // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-        assertEquals(imageId, client.getServer(serverId).getImageRef());
+        assertEquals(new Integer(imageId), client.getServer(serverId).getImageRef());
     }
 
     @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
