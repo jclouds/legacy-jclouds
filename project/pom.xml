@@ -29,7 +29,7 @@
     </parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.0-beta-9c-SNAPSHOT</version>
+    <version>1.0-beta-9c</version>
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
