@@ -279,7 +279,7 @@ public class NovaClientLiveTest {
       serverId = server.getId();
       adminPass = server.getAdminPass();
       blockUntilServerActive(serverId);
-      ip = client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next();
+      ip = client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
    }
 
    private void blockUntilServerActive(int serverId) throws InterruptedException {
@@ -337,7 +337,7 @@ public class NovaClientLiveTest {
 
 
    private void assertPassword(Server server, String pass) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, new Credentials("root", pass));
@@ -353,7 +353,7 @@ public class NovaClientLiveTest {
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, new Credentials("root", pass));
       try {

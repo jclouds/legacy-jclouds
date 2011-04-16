@@ -19,6 +19,13 @@
 
 package org.jclouds.openstack.nova.options;
 
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
+import javax.ws.rs.HttpMethod;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -76,9 +83,7 @@ public class CreateServerOptionsTest {
                 "{\"server\":{\"name\":\"foo\",\"imageRef\":1,\"flavorRef\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}");
     }
 
-    @Test
-    public void testWithMetadata() {
-    }
-
-
+   @Test
+   public void testWithMetadata() {
+   }
 }

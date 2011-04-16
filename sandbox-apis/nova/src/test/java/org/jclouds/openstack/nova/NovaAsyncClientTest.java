@@ -55,8 +55,7 @@ import java.util.Properties;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.*;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
