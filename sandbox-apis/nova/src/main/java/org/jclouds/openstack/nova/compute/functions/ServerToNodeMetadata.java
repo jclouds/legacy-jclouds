@@ -76,7 +76,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Image input) {
-         return input.getProviderId().equals(instance.getImageRef() + "");
+         return input.getUri().toString().equals(instance.getImageRef() + "");
       }
    }
 
@@ -89,7 +89,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Hardware input) {
-         return input.getProviderId().equals(instance.getFlavorRef() + "");
+         return input.getUri().toString().equals(instance.getFlavorRef() + "");
       }
    }
 
