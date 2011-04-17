@@ -47,6 +47,8 @@ public class _NovaClient {
       } catch (RunNodesException e) {
          e.printStackTrace();
       }*/
+      
+      //cs.destroyNode("64");
 
       context.close();
    }
