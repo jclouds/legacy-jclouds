@@ -98,7 +98,7 @@
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>    
+        </snapshotRepository>
         <site>
             <id>website</id>
             <name>website</name>
@@ -677,6 +677,13 @@ pageTracker._trackPageview();
             <reporting>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-jxr-plugin</artifactId>
+                        <version>2.2</version>
+                        <configuration>
+                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-project-info-reports-plugin</artifactId>
                         <version>2.1.2</version>
                         <reportSets>
@@ -719,22 +726,9 @@ pageTracker._trackPageview();
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>surefire-report-maven-plugin</artifactId>
-                        <version>2.0-beta-1</version>
-                        <inherited>true</inherited>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rat-maven-plugin</artifactId>
                         <version>1.0-alpha-3</version>
                         <inherited>true</inherited>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-jxr-plugin</artifactId>
-                        <version>2.2</version>
-                        <configuration>
-                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <artifactId>maven-pmd-plugin</artifactId>
@@ -792,7 +786,6 @@ pageTracker._trackPageview();
                                             <reportSet>
                                                 <reports>
                                                     <report>index</report>
-                                                    <report>dependencies</report>
                                                     <report>project-team</report>
                                                     <report>mailing-list</report>
                                                     <report>issue-tracking</report>
@@ -824,6 +817,13 @@ pageTracker._trackPageview();
                                         <version>1.2</version>
                                     </plugin>
                                     <plugin>
+                                        <artifactId>maven-jxr-plugin</artifactId>
+                                        <version>2.2</version>
+                                        <configuration>
+                                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                                        </configuration>
+                                    </plugin>
+                                    <plugin>
                                         <artifactId>maven-surefire-report-plugin</artifactId>
                                         <version>2.8</version>
                                     </plugin>
@@ -831,13 +831,6 @@ pageTracker._trackPageview();
                                         <groupId>org.apache.rat</groupId>
                                         <artifactId>apache-rat-plugin</artifactId>
                                         <version>0.7</version>
-                                    </plugin>
-                                    <plugin>
-                                        <artifactId>maven-jxr-plugin</artifactId>
-                                        <version>2.2</version>
-                                        <configuration>
-                                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-                                        </configuration>
                                     </plugin>
                                     <plugin>
                                         <artifactId>maven-pmd-plugin</artifactId>
