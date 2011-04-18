@@ -19,28 +19,21 @@
 
 package org.jclouds.openstack.nova.options;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.jclouds.encryption.internal.Base64;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jclouds.encryption.internal.Base64;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.rest.binders.BindToJsonPayload;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import static com.google.common.base.Preconditions.*;
 
 /**
- * 
  * @author Adrian Cole
- * 
  */
 public class CreateServerOptions extends BindToJsonPayload {
 
@@ -52,11 +45,11 @@ public class CreateServerOptions extends BindToJsonPayload {
          this.path = checkNotNull(path, "path");
          this.contents = Base64.encodeBytes(checkNotNull(contents, "contents"));
          checkArgument(path.getBytes().length < 255, String.format(
-                  "maximum length of path is 255 bytes.  Path specified %s is %d bytes", path, path
-                           .getBytes().length));
+               "maximum length of path is 255 bytes.  Path specified %s is %d bytes", path, path
+                     .getBytes().length));
          checkArgument(contents.length < 10 * 1024, String.format(
-                  "maximum size of the file is 10KB.  Contents specified is %d bytes",
-                  contents.length));
+               "maximum size of the file is 10KB.  Contents specified is %d bytes",
+               contents.length));
       }
 
       public String getContents() {
@@ -76,8 +69,6 @@ public class CreateServerOptions extends BindToJsonPayload {
       final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
-      Integer sharedIpGroupId;
-      Addresses addresses;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -93,8 +84,8 @@ public class CreateServerOptions extends BindToJsonPayload {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"),
-               "name parameter not present"), checkNotNull(postParams
-               .get("imageRef"), "imageRef parameter not present"), checkNotNull(
+            "name parameter not present"), checkNotNull(postParams
+            .get("imageRef"), "imageRef parameter not present"), checkNotNull(
             postParams.get("flavorRef"), "flavorRef parameter not present"));
       if (metadata.size() > 0)
          server.metadata = metadata;
@@ -134,18 +125,18 @@ public class CreateServerOptions extends BindToJsonPayload {
    public CreateServerOptions withMetadata(Map<String, String> metadata) {
       checkNotNull(metadata, "metadata");
       checkArgument(metadata.size() <= 5,
-               "you cannot have more then 5 metadata values.  You specified: " + metadata.size());
+            "you cannot have more then 5 metadata values.  You specified: " + metadata.size());
       for (Entry<String, String> entry : metadata.entrySet()) {
          checkArgument(entry.getKey().getBytes().length < 255, String.format(
-                  "maximum length of metadata key is 255 bytes.  Key specified %s is %d bytes",
-                  entry.getKey(), entry.getKey().getBytes().length));
+               "maximum length of metadata key is 255 bytes.  Key specified %s is %d bytes",
+               entry.getKey(), entry.getKey().getBytes().length));
          checkArgument(
-                  entry.getKey().getBytes().length < 255,
-                  String
-                           .format(
-                                    "maximum length of metadata value is 255 bytes.  Value specified for %s (%s) is %d bytes",
-                                    entry.getKey(), entry.getValue(),
-                                    entry.getValue().getBytes().length));
+               entry.getKey().getBytes().length < 255,
+               String
+                     .format(
+                           "maximum length of metadata value is 255 bytes.  Value specified for %s (%s) is %d bytes",
+                           entry.getKey(), entry.getValue(),
+                           entry.getValue().getBytes().length));
       }
       this.metadata = metadata;
       return this;
@@ -154,7 +145,7 @@ public class CreateServerOptions extends BindToJsonPayload {
    public static class Builder {
 
       /**
-       * @see CreateServerOptions#withFile(String,byte [])
+       * @see CreateServerOptions#withFile(String, byte [])
        */
       public static CreateServerOptions withFile(String path, byte[] contents) {
          CreateServerOptions options = new CreateServerOptions();

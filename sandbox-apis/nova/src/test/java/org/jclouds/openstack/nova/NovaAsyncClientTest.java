@@ -503,7 +503,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    public void testRebuildServerWithImage() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("rebuildServer", int.class,
             rebuildServerOptionsVarargsClass);
-      HttpRequest request = processor.createRequest(method, 3, withImage(2));
+      HttpRequest request = processor.createRequest(method, 3, withImage("2"));
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");

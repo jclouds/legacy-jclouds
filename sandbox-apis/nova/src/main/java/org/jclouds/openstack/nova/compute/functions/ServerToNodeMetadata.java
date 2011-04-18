@@ -19,39 +19,32 @@
 
 package org.jclouds.openstack.nova.compute.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.openstack.nova.domain.Address;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.ServerStatus;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.*;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
+import org.jclouds.openstack.nova.domain.Address;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 /**
  * @author Adrian Cole
@@ -77,7 +70,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Image input) {
-         return input.getProviderId().equals(instance.getImageRef() + "");
+         return input.getUri().toString().equals(instance.getImageRef() + "");
       }
    }
 
@@ -90,14 +83,14 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Hardware input) {
-         return input.getProviderId().equals(instance.getFlavorRef() + "");
+         return input.getUri().toString().equals(instance.getFlavorRef() + "");
       }
    }
 
    @Inject
    ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
-            @Memoized Supplier<Set<? extends Hardware>> hardwares) {
+                        @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
+                        @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
@@ -111,7 +104,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.ids(from.getId() + "");
       builder.name(from.getName());
       builder.location(new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId()).description(
-               from.getHostId()).parent(location.get()).build());
+            from.getHostId()).parent(location.get()).build());
       builder.userMetadata(from.getMetadata());
       builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageRef() + "");

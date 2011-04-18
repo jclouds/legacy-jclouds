@@ -1,6 +1,6 @@
 {
     "image" : {
-        "id" : 2,
+        "id" : 1,
         "name" : "CentOS 5.2",
         "serverRef" : "http://servers.api.openstack.org/v1.1/1234/servers/12",
         "updated" : "2010-10-10T12:00:00Z",
@@ -10,7 +10,7 @@
         "metadata" : {
             "ImageVersion" : "1.5",
             "ImageType" : "Gold"
-            },
+        },
         "links": [
             {
                 "rel" : "self",

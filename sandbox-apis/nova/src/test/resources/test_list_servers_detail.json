@@ -12,17 +12,17 @@
             "status" : "BUILD",
             "progress" : 60,
             "addresses" : {
-                "public" : [
+            	"public" : [
                     {"version" : 4, "addr" : "67.23.10.132"},
                     {"version" : 6, "addr" : "::babe:67.23.10.132"},
                     {"version" : 4, "addr" : "67.23.10.131"},
                     {"version" : 6, "addr" : "::babe:4317:0A83"}
                 ],
                 "private" : [
-                        {"version" : 4, "addr" : "10.176.42.16"},
-                        {"version" : 6, "addr" : "::babe:10.176.42.16"}
-                ]
-            },
+                    {"version" : 4, "addr" : "10.176.42.16"},
+                    {"version" : 6, "addr" : "::babe:10.176.42.16"}
+				]
+			},
             "metadata" : {
                 "Server Label" : "Web Head 1",
                 "Image Version" : "2.1"
@@ -55,14 +55,14 @@
             "affinityId" : "b414fa41cb37b97dcb58d6c76112af1258e9eae2",
             "status" : "ACTIVE",
             "addresses" : {
-                "public" : [
-                        {"version" : 4, "addr" : "67.23.10.133"},
-                        {"version" : 6, "addr" : "::babe:67.23.10.133"}
-                ],
-                "private" : [
-                        {"version" : 4, "addr" : "10.176.42.17"},
-                        {"version" : 6, "addr" : "::babe:10.176.42.17"}
-                ]
+				"public" : [
+		            {"version" : 4, "addr" : "67.23.10.133"},
+		            {"version" : 6, "addr" : "::babe:67.23.10.133"}
+		        ],
+		        "private" : [
+		            {"version" : 4, "addr" : "10.176.42.17"},
+		            {"version" : 6, "addr" : "::babe:10.176.42.17"}
+		        ]
             },
             "metadata" : {
                 "Server Label" : "DB 1"

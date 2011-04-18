@@ -19,10 +19,13 @@
 
 package org.jclouds.openstack.nova.domain;
 
+import com.google.common.collect.Lists;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 /**
@@ -35,12 +38,19 @@ public class ServerStatusTest {
 
    @Test
    public void testAllKnownStatusesIsRecognized() {
-      for (String status : Arrays.asList(
+      List<String> knownStatuses = Arrays.asList(
             "ACTIVE", "BUILD", "REBUILD", "SUSPENDED", "QUEUE_RESIZE",
             "PREP_RESIZE", "RESIZE", "VERIFY_RESIZE",
             "PASSWORD", "RESCUE", "REBOOT",
-            "HARD_REBOOT", "DELETE_IP", "UNKNOWN")) {
+            "HARD_REBOOT", "DELETE_IP", "UNKNOWN");
+      List<String> allStatuses = Lists.newArrayList(knownStatuses);
+      allStatuses.add("UNRECOGNIZED");
+      for (String status : knownStatuses) {
          assertFalse(ServerStatus.fromValue(status).equals(ServerStatus.UNRECOGNIZED));
       }
+
+      assertEquals(Arrays.asList(ServerStatus.values()), allStatuses);
    }
+
 }
+

@@ -58,7 +58,7 @@ public class ParseImageFromJsonResponseTest {
    public void testApplyInputStreamDetails() throws UnknownHostException {
       Image response = parseImage();
 
-      assertEquals(response.getId(), 2);
+      assertEquals(response.getId(), 1);
       assertEquals(response.getName(), "CentOS 5.2");
       assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.getProgress(), new Integer(80));

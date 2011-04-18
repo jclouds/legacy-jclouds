@@ -73,9 +73,12 @@ public class ParseServerFromJsonResponseTest {
       assertEquals(response.getUpdated(),
             dateFormat.parse("2010-10-10T12:00:00Z"));
 
-
-      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
-      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+            Address.newString2AddressFunction()));
+      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+            Address.newString2AddressFunction()));
       Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));

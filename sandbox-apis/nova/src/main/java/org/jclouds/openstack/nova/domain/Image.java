@@ -26,33 +26,20 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * An image is a collection of files used to create or rebuild a server. Rackspace provides a number
- * of pre-built OS images by default. You may also create custom images from cloud servers you have
- * launched. These custom images are useful for backup purposes or for producing gold server images
- * if you plan to deploy a particular server configuration frequently.
+ * An image is a collection of files used to create or rebuild a server.
  *
  * @author Adrian Cole
  */
 public class Image extends Resource {
 
+   private Date created;
    private int id;
    private String name;
    private Integer progress;
    private String serverRef;
    private ImageStatus status;
-   private Map<String, String> metadata = Maps.newHashMap();
-
-   private Date created;
    private Date updated;
-
-   public Date getCreated() {
-      return created;
-   }
-
-   public Date getUpdated() {
-      return updated;
-   }
-
+   private Map<String, String> metadata = Maps.newHashMap();
 
    public Image() {
    }
@@ -62,6 +49,13 @@ public class Image extends Resource {
       this.name = name;
    }
 
+   public void setCreated(Date created) {
+      this.created = created;
+   }
+
+   public Date getCreated() {
+      return created;
+   }
 
    public void setId(int id) {
       this.id = id;
@@ -103,6 +97,13 @@ public class Image extends Resource {
       return status;
    }
 
+   public void setUpdated(Date updated) {
+      this.updated = updated;
+   }
+
+   public Date getUpdated() {
+      return updated;
+   }
 
    public Map<String, String> getMetadata() {
       return Collections.unmodifiableMap(metadata);
@@ -149,7 +150,7 @@ public class Image extends Resource {
 
    @Override
    public String toString() {
-      return "Image [created=" + getCreated() + ", id=" + id + ", name=" + name + ", serverRef="
+      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", serverId="
             + serverRef + "]";
    }
 
