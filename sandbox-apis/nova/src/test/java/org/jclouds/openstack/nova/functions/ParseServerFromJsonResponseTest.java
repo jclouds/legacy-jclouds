@@ -51,7 +51,7 @@ import static org.testng.Assert.assertEquals;
 public class ParseServerFromJsonResponseTest {
 
     @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
+    public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException, ClassNotFoundException {
         Server response = parseServer();
 
         assertEquals(response.getId(), 1234);
@@ -62,22 +62,26 @@ public class ParseServerFromJsonResponseTest {
         assertEquals(response.getStatus(), ServerStatus.BUILD);
         assertEquals(response.getProgress(), new Integer(60));
 
-        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
-        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+                    Address.newString2AddressFunction()));
+        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+                    Address.newString2AddressFunction()));
         Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
         assertEquals(response.getAddresses(), addresses1);
         assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
+        assertEquals(response.getAddresses(), addresses1);
     }
 
-    public static Server parseServer() {
+    public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
         Injector i = Guice.createInjector(new GsonModule());
 
         InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 
-        UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
-        }));
-        Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-        return response;
+        UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {}));
+
+        return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
     }
 
 }

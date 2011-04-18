@@ -18,12 +18,12 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.List;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
@@ -32,11 +32,13 @@ import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
@@ -51,8 +53,7 @@ public class ParseAddressesFromJsonResponseTest {
     public void testApplyInputStreamDetails() throws UnknownHostException {
         InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
 
-        UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
-        }));
+        UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {}));
         Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
         List<Address> publicAddresses = ImmutableList.copyOf(
@@ -63,7 +64,7 @@ public class ParseAddressesFromJsonResponseTest {
               Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
                     Address.newString2AddressFunction()));
 
-        assertEquals(response.getPublicAddresses(), publicAddresses);
-        assertEquals(response.getPrivateAddresses(), privateAddresses);
+        assertEquals(response.getPublicAddresses(), Sets.newHashSet(publicAddresses));
+        assertEquals(response.getPrivateAddresses(), Sets.newHashSet(privateAddresses));
     }
 }

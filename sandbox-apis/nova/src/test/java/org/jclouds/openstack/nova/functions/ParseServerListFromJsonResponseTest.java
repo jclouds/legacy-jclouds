@@ -36,6 +36,8 @@ import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.List;
@@ -67,7 +69,7 @@ public class ParseServerListFromJsonResponseTest {
     }
 
     @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
+    public void testApplyInputStreamDetails() throws UnknownHostException, URISyntaxException {
         InputStream is = getClass().getResourceAsStream("/test_list_servers_detail.json");
 
         UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
@@ -83,29 +85,35 @@ public class ParseServerListFromJsonResponseTest {
         assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
         assertEquals(response.get(0).getProgress(), new Integer(60));
 
-        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
-        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+        List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+                    Address.newString2AddressFunction()));
+        List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+                    Address.newString2AddressFunction()));
         Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
 
         assertEquals(response.get(0).getAddresses(), addresses1);
         assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
         assertEquals(response.get(1).getId(), 5678);
         assertEquals(response.get(1).getName(), "sample-server2");
-        assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1");
+        assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
         assertEquals(response.get(0).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
-        assertEquals(true, false, "Uncomment next line");
-        //assertEquals(response.getAffinityId(), "b414fa41cb37b97dcb58d6c76112af1258e9eae2");
         assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
         assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
         assertEquals(response.get(1).getProgress(), null);
 
-        List<Address> publicAddresses2 = ImmutableList.of(new Address("67.23.10.133", 4), new Address("::babe:67.23.10.133", 4));
-        List<Address> privateAddresses2 = ImmutableList.of(new Address("10.176.42.17", 4), new Address("::babe:10.176.42.17", 4));
+        List<Address> publicAddresses2 = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("67.23.10.133", "::babe:67.23.10.133"),
+                    Address.newString2AddressFunction()));
+        List<Address> privateAddresses2 = ImmutableList.copyOf(Iterables.transform(
+              ImmutableList.of("10.176.42.17", "::babe:10.176.42.17"),
+              Address.newString2AddressFunction()));
         Addresses addresses2 = new Addresses(new HashSet<Address>(publicAddresses2), new HashSet<Address>(privateAddresses2));
 
         assertEquals(response.get(1).getAddresses(), addresses2);
         assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));
-        assertEquals(response.get(1).getURI(), "http://servers.api.openstack.org/1234/servers/56789");
+        assertEquals(response.get(1).getURI(), new URI("http://servers.api.openstack.org/v1.1/1234/servers/5678"));
 
     }
 

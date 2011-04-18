@@ -22,14 +22,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
@@ -75,8 +73,6 @@ public class CreateServerOptions extends BindToJsonPayload {
       final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
-      Integer sharedIpGroupId;
-      Addresses addresses;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -88,7 +84,6 @@ public class CreateServerOptions extends BindToJsonPayload {
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
-    private String publicIp;
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
@@ -100,13 +95,9 @@ public class CreateServerOptions extends BindToJsonPayload {
          server.metadata = metadata;
       if (files.size() > 0)
          server.personality = files;
-        if (publicIp != null) {
-            server.addresses = new Addresses();
-            server.addresses.getPublicAddresses().add(publicIp);
-            server.addresses.setPrivateAddresses(null);
-        }
-        return bindToRequest(request, ImmutableMap.of("server", server));
-    }
+
+      return bindToRequest(request, ImmutableMap.of("server", server));
+   }
 
    /**
     * You may further customize a cloud server by injecting data into the file system of the cloud
