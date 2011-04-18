@@ -43,50 +43,49 @@ import static org.testng.Assert.assertEquals;
  */
 @Test(groups = "unit")
 public class ParseImageFromJsonResponseTest {
-    Injector i = Guice.createInjector(new AbstractModule() {
+   Injector i = Guice.createInjector(new AbstractModule() {
 
-        @Override
-        protected void configure() {
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      }
+
+   }, new GsonModule());
+
+   DateService dateService = i.getInstance(DateService.class);
+
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      Image response = parseImage();
+
+      assertEquals(response.getId(), 2);
+      assertEquals(response.getName(), "CentOS 5.2");
+      assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
+      assertEquals(response.getProgress(), new Integer(80));
+      assertEquals(response.getStatus(), ImageStatus.SAVING);
+      assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
+      assertEquals(response.getServerRef(), "http://servers.api.openstack.org/v1.1/1234/servers/12");
+      assertEquals(response.getMetadata().get("ImageVersion"), "1.5");
+      assertEquals(response.getMetadata().get("ImageType"), "Gold");
+      assertEquals(response.getMetadata().size(), 2);
+   }
+
+   public static Image parseImage() {
+      Injector i = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
             bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-        }
+         }
 
-    }, new GsonModule());
+      }, new GsonModule());
 
-    DateService dateService = i.getInstance(DateService.class);
+      InputStream is = ParseImageFromJsonResponseTest.class.getResourceAsStream("/test_get_image_details.json");
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        Image response = parseImage();
-
-        assertEquals(response.getId(), 2);
-        assertEquals(response.getName(), "CentOS 5.2");
-        assertEquals(response.getServerId(), new Integer(12));
-        assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
-        assertEquals(response.getProgress(), new Integer(80));
-        assertEquals(response.getStatus(), ImageStatus.SAVING);
-        assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
-        assertEquals(response.getServerId(), "http://servers.api.openstack.org/v1.1/1234/servers/12", "Change serverId to serverRefs");
-        assertEquals(response.getMetadata().get("ImageVersion"), "1.5");
-        assertEquals(response.getMetadata().get("ImageType"), "Gold");
-        assertEquals(response.getMetadata().size(), 2);
-    }
-
-    public static Image parseImage() {
-        Injector i = Guice.createInjector(new AbstractModule() {
-
-            @Override
-            protected void configure() {
-                bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-            }
-
-        }, new GsonModule());
-
-        InputStream is = ParseImageFromJsonResponseTest.class.getResourceAsStream("/test_get_image_details.json");
-
-        UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
-        }));
-        Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-        return response;
-    }
+      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
+      }));
+      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return response;
+   }
 
 }

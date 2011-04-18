@@ -11,6 +11,7 @@ import java.util.Map;
  * @author Dmitri Babaev
  */
 public class Resource {
+
    private List<Map<String, String>> links = Lists.newArrayList();
 
    public URI getURI() {

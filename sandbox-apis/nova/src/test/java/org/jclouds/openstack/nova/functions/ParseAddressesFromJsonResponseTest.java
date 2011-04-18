@@ -19,7 +19,7 @@
 
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -28,14 +28,14 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
-import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertEqualsNoOrder;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
@@ -44,21 +44,23 @@ import static org.testng.Assert.assertEquals;
  */
 @Test(groups = "unit")
 public class ParseAddressesFromJsonResponseTest {
-    Injector i = Guice.createInjector(new GsonModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/test_list_addresses.json");
 
-        UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
-        }));
-        Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
+      }));
+      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-        List<String> publicAddresses = ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83");
+      ImmutableSet<Address> publicAddresses = ImmutableSet.of(new Address("67.23.10.132", 4)
+            , new Address("::babe:67.23.10.132", 6), new Address("67.23.10.131", 4), new Address("::babe:4317:0A83", 6));
 
-        List<String> privateAddresses = ImmutableList.of("10.176.42.16", "::babe:10.176.42.16");
+      ImmutableSet<Address> privateAddresses = ImmutableSet.of(new Address("10.176.42.16", 4),
+            new Address("::babe:10.176.42.16", 6));
 
-        assertEquals(response.getPublicAddresses(), publicAddresses);
-        assertEquals(response.getPrivateAddresses(), privateAddresses);
-    }
+      assertEqualsNoOrder(response.getPublicAddresses().toArray(), publicAddresses.toArray());
+      assertEqualsNoOrder(response.getPrivateAddresses().toArray(), privateAddresses.toArray());
+   }
 }

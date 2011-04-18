@@ -19,14 +19,15 @@
 
 package org.jclouds.openstack.nova.domain;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * A server is a virtual machine instance in the OpenStack Nova system. Flavor and image are
  * requisite elements when creating a server.
- * 
+ *
  * @author Adrian Cole
  */
 public class Server extends Resource {
@@ -40,6 +41,19 @@ public class Server extends Resource {
    private String flavorRef;
    private String hostId;
    private String imageRef;
+   private String affinityId;
+
+   private Date created;
+   private Date updated;
+
+   public Date getCreated() {
+      return created;
+   }
+
+   public Date getUpdated() {
+      return updated;
+   }
+
 
    private Integer progress;
    private ServerStatus status;
@@ -50,6 +64,14 @@ public class Server extends Resource {
    public Server(int id, String name) {
       this.id = id;
       this.name = name;
+   }
+
+   public String getAffinityId() {
+      return affinityId;
+   }
+
+   public void setAffinityId(String affinityId) {
+      this.affinityId = affinityId;
    }
 
    public void setMetadata(Map<String, String> metadata) {
@@ -207,8 +229,8 @@ public class Server extends Resource {
    @Override
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
-               + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-               + ", metadata=" + metadata + ", name=" + name + "]";
+            + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
+            + ", metadata=" + metadata + ", name=" + name + "]";
    }
 
 }

@@ -405,7 +405,7 @@ public class NovaClientLiveTest {
    public void testCreateImage() throws Exception {
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
-      assertEquals(new Integer(serverId), image.getServerId());
+      assertEquals(serverId, image.getServerRef());
       imageId = image.getId();
       blockUntilImageActive(imageId);
    }
