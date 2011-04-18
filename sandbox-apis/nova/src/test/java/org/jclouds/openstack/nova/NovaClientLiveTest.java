@@ -316,7 +316,7 @@ public class NovaClientLiveTest {
       if (serverId <= 0) testCreateServer();
       Server server = client.getServer(serverId);
 
-      assertNotNull(server.getHostId());
+      assertNotNull(server.getHostId(), "Host id: ");
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
 
       assertNotNull(server.getAddresses());
@@ -366,13 +366,13 @@ public class NovaClientLiveTest {
    @Test(enabled = true, timeOut = 5 * 60 * 1000)
    public void testChangePassword() throws Exception {
       if (serverId <= 0) testCreateServer();
-      client.changeAdminPass(serverId, "elmo");
       blockUntilServerActive(serverId);
+      client.changeAdminPass(serverId, "elmo");
       assertPassword(client.getServer(serverId), "elmo");
       this.adminPass = "elmo";
    }
 
-   @Test(enabled = true, timeOut = 10 * 60 * 1000)
+   @Test(enabled = true, timeOut = 10 * 600 * 1000)
    public void testCreateImage() throws Exception {
       if (serverId <= 0) testCreateServer();
       Image image = client.createImageFromServer("hoofie", serverId);
@@ -405,7 +405,7 @@ public class NovaClientLiveTest {
       blockUntilServerActive(serverId);
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(enabled = false, timeOut = 60000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
       if (serverId <= 0) testCreateServer();
       client.resizeServer(serverId, 2);
@@ -425,17 +425,16 @@ public class NovaClientLiveTest {
       assertEquals(2, client.getServer(serverId).getFlavorRef());
    }
 
-   @Test(enabled = true, timeOut = 10 * 60 * 1000)
+   @Test(enabled = true, timeOut = 60000)
    void deleteServer2() throws Exception {
       if (serverId <= 0) testCreateServer();
       if (serverId > 0) {
          client.deleteServer(serverId);
-         Thread.sleep(1000);
-         assert client.getServer(serverId) == null;
+         waitServerDeleted(serverId);
       }
    }
 
-   @Test(enabled = true, timeOut = 10 * 60 * 1000)
+   @Test(enabled = true, timeOut = 60000)
    void testDeleteImage() throws Exception {
       if (createdImageId <= 0) {
          testCreateImage();
@@ -446,13 +445,17 @@ public class NovaClientLiveTest {
       }
    }
 
-   @Test(enabled = true, timeOut = 10 * 60 * 1000)
+   @Test(enabled = true, timeOut = 60000)
    void deleteServer1() throws Exception {
       if (serverId <= 0) testCreateServer();
       if (serverId > 0) {
          client.deleteServer(serverId);
-         assert client.getServer(serverId) == null;
+         waitServerDeleted(serverId);
       }
+   }
+
+   private void waitServerDeleted(int serverId) throws InterruptedException {
+      while (null != client.getServer(serverId)) Thread.sleep(1000);
    }
 
    @AfterTest

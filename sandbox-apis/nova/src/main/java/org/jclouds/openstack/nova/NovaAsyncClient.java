@@ -18,43 +18,22 @@
  */
 package org.jclouds.openstack.nova;
 
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.Flavor;
-import org.jclouds.openstack.nova.domain.Image;
-import org.jclouds.openstack.nova.domain.RebootType;
-import org.jclouds.openstack.nova.domain.Server;
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.openstack.filters.AddTimestampQuery;
+import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.nova.domain.*;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.openstack.filters.AddTimestampQuery;
-import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Provides asynchronous access to OpenStack Nova via their REST API.
@@ -62,13 +41,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * All commands return a ListenableFuture of the result from OpenStack Nova. Any exceptions incurred
  * during processing will be wrapped in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
- * 
+ *
+ * @author Adrian Cole
  * @see NovaClient
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
- * @author Adrian Cole
  */
-@SkipEncoding({ '/', '=' })
-@RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
+@SkipEncoding({'/', '='})
+@RequestFilters({AuthenticateRequest.class, AddTimestampQuery.class})
 @Endpoint(ServerManagement.class)
 public interface NovaAsyncClient {
 
@@ -152,7 +131,7 @@ public interface NovaAsyncClient {
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
    ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
-         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
+                                         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
     * @see NovaClient#rebuildServer
@@ -167,10 +146,10 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#changeAdminPass
     */
-   @PUT
-   @Path("/servers/{id}")
+   @POST
+   @Path("/servers/{id}/action")
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"server\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
+   @Payload("%7B\"changePassword\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
    ListenableFuture<Void> changeAdminPass(@PathParam("id") int id, @PayloadParam("adminPass") String adminPass);
 
    /**
@@ -245,7 +224,7 @@ public interface NovaAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"image\":%7B\"serverId\":{serverId},\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Image> createImageFromServer(@PayloadParam("name") String imageName,
-         @PayloadParam("serverId") int serverId);
+                                                 @PayloadParam("serverId") int serverId);
 
    /**
     * @see NovaClient#listAddresses
