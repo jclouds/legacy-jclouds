@@ -26,6 +26,7 @@ import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Address;
 import org.testng.annotations.Test;
 
@@ -43,7 +44,7 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "unit")
 public class ParseInetAddressListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
    @Test
    public void testPublic() throws UnknownHostException {

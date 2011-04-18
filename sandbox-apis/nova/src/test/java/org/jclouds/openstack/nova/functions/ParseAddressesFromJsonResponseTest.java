@@ -18,7 +18,9 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -33,8 +35,9 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
+import java.util.List;
 
-import static org.testng.Assert.assertEqualsNoOrder;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
@@ -53,13 +56,15 @@ public class ParseAddressesFromJsonResponseTest {
       }));
       Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      ImmutableSet<Address> publicAddresses = ImmutableSet.of(new Address("67.23.10.132", 4)
-            , new Address("::babe:67.23.10.132", 6), new Address("67.23.10.131", 4), new Address("::babe:4317:0A83", 6));
+      List<Address> publicAddresses = ImmutableList.copyOf(
+            Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+                  Address.newString2AddressFunction()));
 
-      ImmutableSet<Address> privateAddresses = ImmutableSet.of(new Address("10.176.42.16", 4),
-            new Address("::babe:10.176.42.16", 6));
+      List<Address> privateAddresses = ImmutableList.copyOf(
+            Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+                  Address.newString2AddressFunction()));
 
-      assertEqualsNoOrder(response.getPublicAddresses().toArray(), publicAddresses.toArray());
-      assertEqualsNoOrder(response.getPrivateAddresses().toArray(), privateAddresses.toArray());
+      assertTrue(response.getPublicAddresses().equals(Sets.newHashSet(publicAddresses)));
+      assertTrue(response.getPrivateAddresses().equals(Sets.newHashSet(privateAddresses)));
    }
 }

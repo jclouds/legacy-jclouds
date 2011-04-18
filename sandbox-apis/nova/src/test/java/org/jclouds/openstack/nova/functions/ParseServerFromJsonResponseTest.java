@@ -18,21 +18,7 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.openstack.nova.domain.Address;
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.ServerStatus;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -43,7 +29,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 
-import static org.testng.Assert.assertEquals;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseServerFromJsonResponse}
@@ -72,9 +74,12 @@ public class ParseServerFromJsonResponseTest {
       assertEquals(response.getUpdated(),
             dateFormat.parse("2010-10-10T12:00:00Z"));
 
-
-      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"), Address.newString2AddressFunction()));
-      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+            Address.newString2AddressFunction()));
+      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+            Address.newString2AddressFunction()));
       Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
@@ -84,14 +89,18 @@ public class ParseServerFromJsonResponseTest {
 
    public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
 
-      Injector i = Guice.createInjector(new ParserModule());
+      Injector i = Guice.createInjector(new GsonModule() {
+         @Override
+         protected void configure() {
+            super.configure();
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         }
+      });
 
       InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 
-      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
-      }));
-
-      //Function<HttpResponse, ?> parser = i.getInstance(getParserOrThrowException(NovaClient.class.getMethod("getServer", int.class)));
+      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {}));
+      
       return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
    }
 
