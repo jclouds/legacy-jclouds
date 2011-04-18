@@ -61,20 +61,20 @@ public class RebuildServerOptionsTest {
    @Test
    public void testWithServer() {
       RebuildServerOptions options = new RebuildServerOptions();
-      options.withImage(3);
+      options.withImage("3");
       HttpRequest request = buildRequest(options);
       assertRebuild(request);
    }
 
    @Test
    public void testWithServerStatic() {
-      RebuildServerOptions options = withImage(3);
+      RebuildServerOptions options = withImage("3");
       HttpRequest request = buildRequest(options);
       assertRebuild(request);
    }
 
    private void assertRebuild(HttpRequest request) {
-      assertEquals("{\"rebuild\":{\"imageId\":3}}", request.getPayload().getRawContent());
+      assertEquals("{\"rebuild\":{\"imageRef\":\"3\"}}", request.getPayload().getRawContent());
    }
 
 }

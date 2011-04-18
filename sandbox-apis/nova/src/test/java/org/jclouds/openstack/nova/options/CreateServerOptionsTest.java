@@ -26,18 +26,13 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.HttpMethod;
-import java.net.URI;
-
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
@@ -53,7 +48,7 @@ public class CreateServerOptionsTest {
     public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
         CreateServerOptions options = new CreateServerOptions();
         HttpRequest request = buildRequest(options);
-        assertEquals("{\"server\":{\"name\":\"foo\",\"imageRef\":1,\"flavorRef\":2}}", request.getPayload().getRawContent());
+        assertEquals("{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\"}}", request.getPayload().getRawContent());
     }
 
     private HttpRequest buildRequest(CreateServerOptions options) {
@@ -80,7 +75,7 @@ public class CreateServerOptionsTest {
 
     private void assertFile(HttpRequest request) {
         assertEquals(request.getPayload().getRawContent(),
-                "{\"server\":{\"name\":\"foo\",\"imageRef\":1,\"flavorRef\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}");
+                "{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}");
     }
 
    @Test

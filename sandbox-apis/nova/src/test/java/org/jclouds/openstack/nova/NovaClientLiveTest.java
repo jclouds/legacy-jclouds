@@ -19,20 +19,33 @@
 
 package org.jclouds.openstack.nova;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.Constants;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
-import org.jclouds.openstack.nova.domain.*;
+import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.Image;
+import org.jclouds.openstack.nova.domain.ImageStatus;
+import org.jclouds.openstack.nova.domain.RebootType;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -44,18 +57,12 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -259,9 +266,7 @@ public class NovaClientLiveTest {
    private int serverId;
    private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
-   private String ip;
    private int serverId2;
-   private String adminPass2;
    private int imageId;
 
    @Test(enabled = true)
@@ -277,7 +282,7 @@ public class NovaClientLiveTest {
       serverId = server.getId();
       adminPass = server.getAdminPass();
       blockUntilServerActive(serverId);
-      ip = client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
+      client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
    }
 
    private void blockUntilServerActive(int serverId) throws InterruptedException {
@@ -346,19 +351,6 @@ public class NovaClientLiveTest {
       }
    }
 
-   private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
-      socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
-      try {
-         client.connect();
-         return client.exec(command);
-      } finally {
-         if (client != null)
-            client.disconnect();
-      }
-   }
-
    @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testRenameServer() throws Exception {
       Server server = client.getServer(serverId);
@@ -376,37 +368,18 @@ public class NovaClientLiveTest {
       this.adminPass = "elmo";
    }
 
-   private void assertIpConfigured(Server server, String password) {
-      try {
-         ExecResponse response = exec(server, password, "ifconfig -a");
-         assert response.getOutput().indexOf(ip) > 0 : String.format("server %s didn't get ip %s%n%s", server, ip,
-               response);
-      } catch (Exception e) {
-         e.printStackTrace();
-      } catch (AssertionError e) {
-         e.printStackTrace();
-      }
-   }
-
-   private void assertIpNotConfigured(Server server, String password) throws IOException {
-      ExecResponse response = exec(server, password, "ifconfig -a");
-      assert response.getOutput().indexOf(ip) == -1 : String.format("server %s still has get ip %s%n%s", server, ip,
-            response);
-   }
-
-
    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
    public void testCreateImage() throws Exception {
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
-      assertEquals(new Integer(serverId), image.getServerId());
+      assertEquals(new Integer(serverId), image.getServerRef());
       imageId = image.getId();
       blockUntilImageActive(imageId);
    }
 
    @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
    public void testRebuildServer() throws Exception {
-      client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
+      client.rebuildServer(serverId, new RebuildServerOptions().withImage(String.valueOf(imageId)));
       blockUntilServerActive(serverId);
       // issue Web Hosting #119580 imageId comes back incorrect after rebuild
       assertEquals(imageId, client.getServer(serverId).getImageRef());

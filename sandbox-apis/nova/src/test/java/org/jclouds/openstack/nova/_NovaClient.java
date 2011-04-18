@@ -10,6 +10,8 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Set;
@@ -30,7 +32,7 @@ public class _NovaClient {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_ENDPOINT, endpoint);
       ComputeServiceContext context = contextFactory.createContext("nova", identity, credential,
-            Arrays.asList(new JschSshClientModule(), new SLF4JLoggingModule()), overrides);
+            ImmutableSet.of(new JschSshClientModule(), new SLF4JLoggingModule()), overrides);
 
       ComputeService cs = context.getComputeService();
 
@@ -39,7 +41,7 @@ public class _NovaClient {
       System.out.println(cs.listAssignableLocations());
       System.out.println(cs.listNodes());
 
-      /*TemplateOptions options = new TemplateOptions();
+      /*TemplateOptions options = new TemplateOptions().blockUntilRunning(false);
       Template template = cs.templateBuilder().imageId("13").options(options).build();
       try {
          Set<? extends NodeMetadata> metedata = cs.runNodesWithTag("test", 1, template);
@@ -47,6 +49,8 @@ public class _NovaClient {
       } catch (RunNodesException e) {
          e.printStackTrace();
       }*/
+      
+      //System.out.println(cs.getNodeMetadata("64"));
       
       //cs.destroyNode("64");
 

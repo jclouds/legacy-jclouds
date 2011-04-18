@@ -19,10 +19,11 @@
 
 package org.jclouds.openstack.nova.functions;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -33,10 +34,10 @@ import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.handlers.ParseNovaErrorFromHttpResponse;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseServerListFromJsonResponse}

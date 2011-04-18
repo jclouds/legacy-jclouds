@@ -58,14 +58,13 @@ public class ParseImageFromJsonResponseTest {
     public void testApplyInputStreamDetails() throws UnknownHostException {
         Image response = parseImage();
 
-        assertEquals(response.getId(), 2);
+        assertEquals(response.getId(), 1);
         assertEquals(response.getName(), "CentOS 5.2");
-        assertEquals(response.getServerId(), new Integer(12));
         assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
         assertEquals(response.getProgress(), new Integer(80));
         assertEquals(response.getStatus(), ImageStatus.SAVING);
         assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
-        assertEquals(response.getServerId(), "http://servers.api.openstack.org/v1.1/1234/servers/12", "Change serverId to serverRefs");
+        assertEquals(response.getServerRef(), "http://servers.api.openstack.org/v1.1/1234/servers/12");
         assertEquals(response.getMetadata().get("ImageVersion"), "1.5");
         assertEquals(response.getMetadata().get("ImageType"), "Gold");
         assertEquals(response.getMetadata().size(), 2);

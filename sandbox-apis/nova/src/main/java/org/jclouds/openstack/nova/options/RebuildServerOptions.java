@@ -20,6 +20,7 @@
 package org.jclouds.openstack.nova.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
@@ -36,13 +37,13 @@ import com.google.common.collect.Maps;
  * 
  */
 public class RebuildServerOptions extends BindToJsonPayload {
-   Integer imageId;
+   String imageRef;
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      Map<String, Integer> image = Maps.newHashMap();
-      if (imageId != null)
-         image.put("imageId", imageId);
+      Map<String, String> image = Maps.newHashMap();
+      if (imageRef != null)
+         image.put("imageRef", imageRef);
       return super.bindToRequest(request, ImmutableMap.of("rebuild", image));
    }
 
@@ -52,24 +53,23 @@ public class RebuildServerOptions extends BindToJsonPayload {
    }
 
    /**
-    * 
-    * @param id
-    *           of the image to rebuild the server with.
+    * @param ref - reference of the image to rebuild the server with.
     */
-   public RebuildServerOptions withImage(int id) {
-      checkArgument(id > 0, "server id must be a positive number");
-      this.imageId = id;
+   public RebuildServerOptions withImage(String ref) {
+      checkNotNull(ref, "image reference should not be null");
+      checkArgument(!ref.isEmpty(), "image reference should not be empty");
+      this.imageRef = ref;
       return this;
    }
 
    public static class Builder {
 
       /**
-       * @see RebuildServerOptions#withImage(int)
+       * @see RebuildServerOptions#withImage(String)
        */
-      public static RebuildServerOptions withImage(int id) {
+      public static RebuildServerOptions withImage(String ref) {
          RebuildServerOptions options = new RebuildServerOptions();
-         return options.withImage(id);
+         return options.withImage(ref);
       }
    }
 }

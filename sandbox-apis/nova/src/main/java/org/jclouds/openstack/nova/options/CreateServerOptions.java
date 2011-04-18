@@ -23,14 +23,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
@@ -76,8 +74,6 @@ public class CreateServerOptions extends BindToJsonPayload {
       final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
-      Integer sharedIpGroupId;
-      Addresses addresses;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;

@@ -7,12 +7,10 @@
         "created" : "2010-08-10T12:00:00Z",
         "status" : "SAVING",
         "progress" : 80,
-            "metadata" : {
-                "values" : {
-                "ImageVersion" : "1.5",
-                "ImageType" : "Gold"
-                }
-            },
+        "metadata" : {
+            "ImageVersion" : "1.5",
+            "ImageType" : "Gold"
+        },
         "links": [
             {
                 "rel" : "self",

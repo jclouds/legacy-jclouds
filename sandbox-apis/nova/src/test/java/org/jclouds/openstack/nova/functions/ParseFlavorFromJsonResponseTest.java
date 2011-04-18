@@ -19,23 +19,22 @@
 
 package org.jclouds.openstack.nova.functions;
 
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.testng.Assert.assertEquals;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
@@ -49,18 +48,10 @@ public class ParseFlavorFromJsonResponseTest {
     public void testParseFlavorFromJsonResponseTest() throws IOException {
         Flavor response = parseFlavor();
 
-        String json = new Gson().toJson(response);
-
-        String expectedJson = Strings2.toStringAndClose(
-                ParseFlavorFromJsonResponseTest.class.getResourceAsStream("/test_get_flavor_details.json"))
-                .replace("\n", "").replace("\t", "").replace("\r", "").replace(" ", "");
-
         assertEquals(response.getId(), 1);
         assertEquals(response.getName(), "256 MB Server");
         assertEquals(response.getDisk().intValue(), 10);
         assertEquals(response.getRam().intValue(), 256);
-
-        assertEquals(json, expectedJson);
     }
 
     public static Flavor parseFlavor() {
