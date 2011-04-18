@@ -14,6 +14,7 @@ public class Address {
    private int version;
 
    //for de-serialization
+   @SuppressWarnings("unused")
    private Address() {
    }
 

@@ -29,9 +29,6 @@ import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Function;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * 
  * @author Adrian Cole

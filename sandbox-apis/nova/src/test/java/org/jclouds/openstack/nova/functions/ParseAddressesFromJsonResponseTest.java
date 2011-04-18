@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
@@ -65,7 +65,7 @@ public class ParseAddressesFromJsonResponseTest {
             Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
                   Address.newString2AddressFunction()));
 
-      assertEquals(response.getPublicAddresses(), Sets.newHashSet(publicAddresses));
-      assertEquals(response.getPrivateAddresses(), Sets.newHashSet(privateAddresses));
+      assertTrue(response.getPublicAddresses().equals(Sets.newHashSet(publicAddresses)));
+      assertTrue(response.getPrivateAddresses().equals(Sets.newHashSet(privateAddresses)));
    }
 }

@@ -49,7 +49,7 @@ public class FlavorToHardwareTest {
             .ram(256)
             .volumes(ImmutableList.of(
                   new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true).bootDevice(true).build()))
-            .uri(new URI("http://servers.api.openstack.org/v1.1/1234/flavors/1"))
+            .uri(new URI("http://servers.api.openstack.org/1234/flavors/1"))
             .build();
       assertEquals(flavor, tempFlavor);
    }

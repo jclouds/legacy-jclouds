@@ -107,8 +107,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
             from.getHostId()).parent(location.get()).build());
       builder.userMetadata(from.getMetadata());
       builder.group(parseGroupFromName(from.getName()));
-      builder.imageId(from.getImageRef() + "");
-      builder.operatingSystem(parseOperatingSystem(from));
+      Image image = parseImage(from);
+      if (image != null) {
+         builder.imageId(image.getId());
+         builder.operatingSystem(image.getOperatingSystem());
+      }
       builder.hardware(parseHardware(from));
       builder.state(serverToNodeState.get(from.getStatus()));
       builder.publicAddresses(Iterables.transform(from.getAddresses().getPublicAddresses(), Address.newAddress2StringFunction()));
@@ -126,10 +129,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       }
       return null;
    }
-
-   protected OperatingSystem parseOperatingSystem(Server from) {
+   
+   protected Image parseImage(Server from) {
       try {
-         return Iterables.find(images.get(), new FindImageForServer(from)).getOperatingSystem();
+         return Iterables.find(images.get(), new FindImageForServer(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s in location %s", from, location);
       }

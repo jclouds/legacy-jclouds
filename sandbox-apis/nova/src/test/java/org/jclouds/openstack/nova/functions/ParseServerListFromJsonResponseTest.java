@@ -19,6 +19,23 @@
 
 package org.jclouds.openstack.nova.functions;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.List;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
+import org.testng.annotations.Test;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -26,22 +43,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.openstack.nova.domain.Address;
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.ServerStatus;
-import org.testng.annotations.Test;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.HashSet;
-import java.util.List;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseServerListFromJsonResponse}
@@ -51,7 +52,13 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "unit")
 public class ParseServerListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new GsonModule() {
+      @Override
+      protected void configure() {
+         super.configure();
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      }
+   });
 
    @Test
    public void testApplyInputStream() {
@@ -68,7 +75,7 @@ public class ParseServerListFromJsonResponseTest {
    }
 
    @Test
-   public void testApplyInputStreamDetails() throws UnknownHostException, URISyntaxException {
+   public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_list_servers_detail.json");
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
@@ -113,7 +120,7 @@ public class ParseServerListFromJsonResponseTest {
 
       assertEquals(response.get(1).getAddresses(), addresses2);
       assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));
-      assertEquals(response.get(1).getURI(), "http://servers.api.openstack.org/1234/servers/56789");
+      assertEquals(response.get(1).getURI().toString(), "http://servers.api.openstack.org/1234/servers/56789");
 
    }
 
