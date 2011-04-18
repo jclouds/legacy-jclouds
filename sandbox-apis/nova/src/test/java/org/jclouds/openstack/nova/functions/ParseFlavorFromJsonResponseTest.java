@@ -18,11 +18,11 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
@@ -30,10 +30,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
@@ -43,24 +44,27 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public class ParseFlavorFromJsonResponseTest {
 
-    @Test
-    public void testParseFlavorFromJsonResponseTest() throws IOException {
-        Flavor response = parseFlavor();
+   @Test
+   public void testParseFlavorFromJsonResponseTest() throws IOException {
+      Flavor response = parseFlavor();
 
-        assertEquals(response.getId(), 1);
-        assertEquals(response.getName(), "256 MB Server");
-        assertEquals(response.getDisk().intValue(), 10);
-        assertEquals(response.getRam().intValue(), 256);
-    }
+      String json = new Gson().toJson(response);
+      assertNotNull(json);
 
-    public static Flavor parseFlavor() {
-        Injector i = Guice.createInjector(new GsonModule());
+      assertEquals(response.getId(), 1);
+      assertEquals(response.getName(), "256 MB Server");
+      assertEquals(response.getDisk().intValue(), 10);
+      assertEquals(response.getRam().intValue(), 256);
+   }
 
-        InputStream is = ParseFlavorFromJsonResponseTest.class.getResourceAsStream("/test_get_flavor_details.json");
+   public static Flavor parseFlavor() {
+      Injector i = Guice.createInjector(new GsonModule());
 
-        UnwrapOnlyJsonValue<Flavor> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Flavor>>() {
-        }));
-        return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-    }
+      InputStream is = ParseFlavorFromJsonResponseTest.class.getResourceAsStream("/test_get_flavor_details.json");
+
+      UnwrapOnlyJsonValue<Flavor> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Flavor>>() {
+      }));
+      return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+   }
 
 }

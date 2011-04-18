@@ -18,13 +18,13 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import static org.testng.Assert.assertEquals;
-
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code CreateImageBinder}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")

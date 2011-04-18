@@ -44,39 +44,39 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "unit")
 public class ParseFlavorListFromJsonResponseTest {
 
-    Injector i = Guice.createInjector(new GsonModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
-    @Test
-    public void testApplyInputStream() {
-        InputStream is = getClass().getResourceAsStream("/test_list_flavors.json");
+   @Test
+   public void testApplyInputStream() {
+      InputStream is = getClass().getResourceAsStream("/test_list_flavors.json");
 
-        List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"), new Flavor(2, "512 MB Server"));
+      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"), new Flavor(2, "512 MB Server"));
 
-        UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
-                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
-                }));
-        List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-        assertEquals(response, expects);
-    }
+      UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+            }));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      assertEquals(response, expects);
+   }
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        InputStream is = getClass().getResourceAsStream("/test_list_flavors_detail.json");
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/test_list_flavors_detail.json");
 
-        UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
-                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
-                }));
-        List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-        assertEquals(response.get(0).getId(), 1);
-        assertEquals(response.get(0).getName(), "256 MB Server");
-        assertEquals(response.get(0).getDisk(), new Integer(10));
-        assertEquals(response.get(0).getRam(), new Integer(256));
+      UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+            }));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      assertEquals(response.get(0).getId(), 1);
+      assertEquals(response.get(0).getName(), "256 MB Server");
+      assertEquals(response.get(0).getDisk(), new Integer(10));
+      assertEquals(response.get(0).getRam(), new Integer(256));
 
-        assertEquals(response.get(1).getId(), 2);
-        assertEquals(response.get(1).getName(), "512 MB Server");
-        assertEquals(response.get(1).getDisk(), new Integer(20));
-        assertEquals(response.get(1).getRam(), new Integer(512));
+      assertEquals(response.get(1).getId(), 2);
+      assertEquals(response.get(1).getName(), "512 MB Server");
+      assertEquals(response.get(1).getDisk(), new Integer(20));
+      assertEquals(response.get(1).getRam(), new Integer(512));
 
-    }
+   }
 
 }

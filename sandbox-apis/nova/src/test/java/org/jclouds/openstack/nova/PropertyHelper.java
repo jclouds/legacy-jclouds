@@ -11,10 +11,10 @@ import java.util.Properties;
  */
 public class PropertyHelper {
 
-    public static void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
-        if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))
-            properties.setProperty(propertyName, System.getProperty(propertyName));
-    }
+   public static void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
+      if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))
+         properties.setProperty(propertyName, System.getProperty(propertyName));
+   }
 
 
 }

@@ -19,11 +19,10 @@
 
 package org.jclouds.openstack.nova.functions;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -34,10 +33,10 @@ import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.handlers.ParseNovaErrorFromHttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Tests behavior of {@code ParseServerListFromJsonResponse}
@@ -47,25 +46,25 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public class ParseFaultFromJsonResponseTest {
 
-    Injector i = Guice.createInjector(new GsonModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
-    @Test
-    public void testApplyInputStream() {
-        InputStream is = getClass().getResourceAsStream("/test_list_servers.json");
+   @Test
+   public void testApplyInputStream() {
+      InputStream is = getClass().getResourceAsStream("/test_list_servers.json");
 
 
-        UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
-                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
-                }));
-        //List<Server> response = parser.apply(new HttpResponse(413, "Over limit", Payloads.newInputStreamPayload(is)));
-        new ParseNovaErrorFromHttpResponse().handleError(createHttpCommand(), new HttpResponse(413, "Over limit", Payloads.newInputStreamPayload(is)));
+      UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
+            }));
+      //List<Server> response = parser.apply(new HttpResponse(413, "Over limit", Payloads.newInputStreamPayload(is)));
+      new ParseNovaErrorFromHttpResponse().handleError(createHttpCommand(), new HttpResponse(413, "Over limit", Payloads.newInputStreamPayload(is)));
 
-        //assertEquals(response, expects);
-    }
+      //assertEquals(response, expects);
+   }
 
-    @Test
-    public void testHandler() {
-        //InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
+   @Test
+   public void testHandler() {
+      //InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
 
 //
 //
@@ -90,62 +89,62 @@ public class ParseFaultFromJsonResponseTest {
 //      } catch (IOException e) {
 //         // this is the excepted output
 //      }
-    }
+   }
 
-    HttpCommand createHttpCommand() {
-        return new HttpCommand() {
-            private Exception exception;
+   HttpCommand createHttpCommand() {
+      return new HttpCommand() {
+         private Exception exception;
 
-            @Override
-            public int incrementRedirectCount() {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+         @Override
+         public int incrementRedirectCount() {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         @Override
+         public int getRedirectCount() {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         @Override
+         public boolean isReplayable() {
+            return false;  //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         @Override
+         public int incrementFailureCount() {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         @Override
+         public int getFailureCount() {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         @Override
+         public HttpRequest getCurrentRequest() {
+            try {
+               return new HttpRequest("method", new URI("http://endpoint"));
+            } catch (URISyntaxException e) {
+               throw new RuntimeException(e);
             }
+         }
 
-            @Override
-            public int getRedirectCount() {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+         @Override
+         public void setCurrentRequest(HttpRequest request) {
+            //To change body of implemented methods use File | Settings | File Templates.
+         }
 
-            @Override
-            public boolean isReplayable() {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+         @Override
+         public void setException(Exception exception) {
+            this.exception = exception;
+         }
 
-            @Override
-            public int incrementFailureCount() {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public int getFailureCount() {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public HttpRequest getCurrentRequest() {
-                try {
-                    return new HttpRequest("method", new URI("http://endpoint"));
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public void setCurrentRequest(HttpRequest request) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void setException(Exception exception) {
-                this.exception = exception;
-            }
-
-            @Override
-            public Exception getException() {
-                return exception;
-            }
-        };
-    }
+         @Override
+         public Exception getException() {
+            return exception;
+         }
+      };
+   }
 
 
 }
