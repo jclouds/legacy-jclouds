@@ -61,8 +61,8 @@ public class ParseServerFromJsonResponseTest {
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "sample-server");
-      assertEquals(response.getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
-      assertEquals(response.getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
+      assertEquals(response.getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/1234/images/1");
+      assertEquals(response.getFlavorRef(), "http://servers.api.openstack.org/1234/flavors/1");
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
       assertEquals(response.getProgress(), new Integer(60));
