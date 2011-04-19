@@ -36,6 +36,7 @@
     <build>
         <resources>
             <resource>
+                <targetPath>META-INF</targetPath>
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>LICENSE.txt</include>
@@ -46,16 +47,18 @@
            <plugin>      
                 <artifactId>maven-remote-resources-plugin</artifactId>
                 <version>1.2</version>
-                <executions>
+                <executions>              
                     <execution>
                         <id>bundle-remote-resources</id>
                         <goals>
                             <goal>bundle</goal>
                         </goals>
+                        <!-- run *after* copying resources to the output directory -->
+                        <phase>process-resources</phase>
                         <configuration>
-                            <resourcesDirectory>${project.basedir}</resourcesDirectory>
+                            <resourcesDirectory>${project.build.outputDirectory}</resourcesDirectory>
                             <includes>
-                                <include>LICENSE.txt</include>
+                                <include>META-INF/LICENSE.txt</include>
                             </includes>
                         </configuration>                        
                     </execution>
