@@ -26,7 +26,7 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.0-beta-9b
+our current version is 1.0-beta-9c
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
@@ -109,13 +109,13 @@ Compute Example (Clojure):
     (create-nodes "mycluster" 2))
  
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-9b.zip
+  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-9c.zip
   * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
   * project page: http://code.google.com/p/jclouds/
-  * javadocs (1.0-beta-9b): http://jclouds.rimuhosting.com/apidocs/
+  * javadocs (1.0-beta-9c): http://jclouds.rimuhosting.com/apidocs/
   * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
   * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds
