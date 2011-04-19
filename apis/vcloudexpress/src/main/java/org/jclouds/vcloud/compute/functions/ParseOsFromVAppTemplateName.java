@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.util.ComputeServiceUtils;
 
@@ -51,7 +50,7 @@ public class ParseOsFromVAppTemplateName implements Function<String, OperatingSy
 
    @Override
    public OperatingSystem apply(String from) {
-      OperatingSystemBuilder builder = new OperatingSystemBuilder();
+      OperatingSystem.Builder builder = OperatingSystem.builder();
       OsFamily osFamily = parseOsFamilyOrUnrecognized(checkNotNull(from, "vapp template name"));
       builder.family(osFamily);
       builder.description(from);

@@ -16,7 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.functions;
+
+package org.jclouds.vcloud.functions;
 
 import java.net.URI;
 import java.util.Date;

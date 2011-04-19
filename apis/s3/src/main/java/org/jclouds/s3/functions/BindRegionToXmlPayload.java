@@ -20,6 +20,8 @@ package org.jclouds.s3.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;

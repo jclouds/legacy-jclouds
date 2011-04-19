@@ -60,7 +60,10 @@ public class VCloudExpressComputeClientImpl extends
    @Override
    protected void deleteVApp(VCloudExpressVApp vApp) {
       logger.debug(">> deleting vApp(%s)", vApp.getName());
-      VCloudExpressClient.class.cast(client).deleteVApp(vApp.getHref());
+      Task task = VCloudExpressClient.class.cast(client).deleteVApp(vApp.getHref());
+      if (task != null)
+         if (!taskTester.apply(task.getHref()))
+            throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vApp.getName(), task));
    }
 
    @Override
