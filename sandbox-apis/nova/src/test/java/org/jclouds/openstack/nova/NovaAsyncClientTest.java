@@ -19,9 +19,22 @@
 
 package org.jclouds.openstack.nova;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -46,21 +59,9 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Date;
-import java.util.Properties;
-
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code NovaAsyncClient}
@@ -76,13 +77,13 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
    @Test
    public void testCreateServer() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
+      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
             createServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-      assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1}}",
+      assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\"}}",
             "application/json", false);
 
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -95,7 +96,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
    @Test
    public void testCreateServerWithFile() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
+      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
             createServerOptionsVarargsClass);
       HttpRequest request = processor
             .createRequest(method, "ralphie", 2, 1, withFile("/etc/jclouds", "foo".getBytes()));
@@ -104,7 +105,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(
             request,
-            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
+            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\",\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
             "application/json", false);
 
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -117,7 +118,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
    @Test
    public void testCreateServerWithMetadata() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, int.class, int.class,
+      Method method = NovaAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
             createServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
             withMetadata(ImmutableMap.of("foo", "bar")));
@@ -125,7 +126,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request,
-            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":2,\"flavorRef\":1,\"metadata\":{\"foo\":\"bar\"}}}",
+            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\",\"metadata\":{\"foo\":\"bar\"}}}",
             "application/json", false);
 
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
@@ -507,7 +508,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(request, "{\"rebuild\":{\"imageRef\":2}}", MediaType.APPLICATION_JSON, false);
+      assertPayloadEquals(request, "{\"rebuild\":{\"imageRef\":\"2\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -607,7 +608,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
       @Override
       protected URI provideServerUrl(AuthenticationResponse response) {
-         return URI.create("http://endpoint");
+         return URI.create("http://endpoint/vapiversion");
       }
 
    }
@@ -622,7 +623,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    @Override
    protected Properties getProperties() {
       Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_REGIONS, "US");
       overrides.setProperty(PROPERTY_API_VERSION, "apiversion");
       overrides.setProperty(provider + ".endpoint", "http://endpoint");
       overrides.setProperty(provider + ".contextbuilder", NovaContextBuilder.class.getName());

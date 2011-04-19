@@ -54,7 +54,7 @@ import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.wit
  */
 
 @Test(groups = "live", sequential = true)
-public class ServerCreateTest {
+public class ServerCreateLiveTest {
 
    protected NovaClient client;
    protected SshClient.Factory sshFactory;

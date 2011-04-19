@@ -90,19 +90,11 @@ public class NovaComputeServiceDependenciesModule extends AbstractModule {
             .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
             .put(ServerStatus.RESIZE, NodeState.PENDING)//
             .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.MOVE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
             .put(ServerStatus.RESCUE, NodeState.PENDING)//
-            .put(ServerStatus.ERROR, NodeState.ERROR)//
             .put(ServerStatus.BUILD, NodeState.PENDING)//
-            .put(ServerStatus.RESTORING, NodeState.PENDING)//
             .put(ServerStatus.PASSWORD, NodeState.PENDING)//
             .put(ServerStatus.REBUILD, NodeState.PENDING)//
             .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
             .put(ServerStatus.REBOOT, NodeState.PENDING)//
             .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
             .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)//

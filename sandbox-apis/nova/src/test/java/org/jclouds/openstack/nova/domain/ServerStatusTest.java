@@ -19,14 +19,18 @@
 
 package org.jclouds.openstack.nova.domain;
 
-import com.google.common.collect.Lists;
-import org.testng.annotations.Test;
+import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code CreateImageBinder}
@@ -42,14 +46,21 @@ public class ServerStatusTest {
             "ACTIVE", "BUILD", "REBUILD", "SUSPENDED", "QUEUE_RESIZE",
             "PREP_RESIZE", "RESIZE", "VERIFY_RESIZE",
             "PASSWORD", "RESCUE", "REBOOT",
-            "HARD_REBOOT", "DELETE_IP", "UNKNOWN");
-      List<String> allStatuses = Lists.newArrayList(knownStatuses);
-      allStatuses.add("UNRECOGNIZED");
+            "HARD_REBOOT", "DELETE_IP", "UNKNOWN", "DELETED");
       for (String status : knownStatuses) {
          assertFalse(ServerStatus.fromValue(status).equals(ServerStatus.UNRECOGNIZED));
       }
 
-      assertEquals(Arrays.asList(ServerStatus.values()), allStatuses);
+      List<String> allStatuses = Lists.newArrayList(knownStatuses);
+      allStatuses.add("UNRECOGNIZED");
+      
+      Set<ServerStatus> enumValues = Sets.newHashSet(ServerStatus.values());
+      
+      assertEquals(enumValues.size(), allStatuses.size());
+      
+      for (String status : allStatuses) {
+         assertTrue(enumValues.contains(ServerStatus.valueOf(status)));
+      }
    }
 
 }
