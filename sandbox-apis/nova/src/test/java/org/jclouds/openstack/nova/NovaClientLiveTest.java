@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
@@ -40,7 +39,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -50,8 +49,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
+import static org.jclouds.openstack.nova.PropertyHelper.*;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;
@@ -69,67 +67,19 @@ public class NovaClientLiveTest {
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   private String ip;
-
-   private String adminPass2;
-
-
    private String serverPrefix = System.getProperty("user.name") + ".cs";
+   protected Map<String, String> keyPair;
    private int serverId;
    private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    private int createdImageId;
 
-   protected Properties setupProperties() throws IOException {
-      Properties overrides = new Properties();
-      overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
-      overridePropertyFromSystemProperty(overrides, "test.initializer");
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      return overrides;
-   }
-
-   protected void setupCredentials(Properties properties) {
-      identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = properties.getProperty("test." + provider + ".endpoint");
-      apiversion = properties.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected void updateProperties(final Properties properties) {
-      properties.setProperty(provider + ".identity", identity);
-      properties.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         properties.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         properties.setProperty(provider + ".apiversion", apiversion);
-   }
-
-
-   @BeforeGroups(groups = {"live"})
+   @BeforeTest
    public void setupClient() throws IOException {
-      Properties overrides = setupProperties();
-      setupCredentials(overrides);
-      updateProperties(overrides);
+      Properties properties = setupOverrides(setupProperties(this.getClass()));
 
-      String identity = "admin";
-      String credential = "d744752f-20d3-4d75-979f-f62f16033b07";
-//       ComputeServiceContextFactory contextFactory = new ComputeServiceContextFactory();
-//       ComputeServiceContext context = contextFactory.createContext(provider, identity, credential, Collections.singleton(new JschSshClientModule()), overrides);
-
-      Injector injector = new RestContextFactory().createContextBuilder(provider, identity, credential,
-            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), overrides)
+      Injector injector = new RestContextFactory().createContextBuilder(provider,
+            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), properties)
             .buildInjector();
 
       client = injector.getInstance(NovaClient.class);
@@ -138,16 +88,16 @@ public class NovaClientLiveTest {
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
+
+      keyPair = setupKeyPair(properties);
    }
 
    @Test
    public void testListServers() throws Exception {
-
       Set<Server> response = client.listServers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
-
    }
 
    @Test
@@ -218,6 +168,14 @@ public class NovaClientLiveTest {
       assertTrue(response.size() >= 0);
       for (Server server : response) {
          Server newDetails = client.getServer(server.getId());
+         System.out.println("====");
+
+         System.out.println(server);
+         System.out.println(newDetails);
+         System.out.println("====");
+      }
+      for (Server server : response) {
+         Server newDetails = client.getServer(server.getId());
          assertEquals(server, newDetails);
       }
    }
@@ -269,7 +227,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-      String imageRef = client.getImage(13).getURI().toASCIIString();
+      String imageRef = client.getImage(95).getURI().toASCIIString();
       String flavorRef = client.getFlavor(1).getURI().toASCIIString();
       String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
       Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
@@ -280,8 +238,15 @@ public class NovaClientLiveTest {
       serverId = server.getId();
       adminPass = server.getAdminPass();
       blockUntilServerActive(serverId);
-      Thread.sleep(2000);
+      blockUntilPublicAddress(serverId);
       client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
+   }
+
+   private void blockUntilPublicAddress(int serverId) throws InterruptedException {
+      while (client.getServer(serverId).getAddresses().getPublicAddresses().isEmpty()) {
+         System.out.println("Awaiting public address");
+         Thread.sleep(1000);
+      }
    }
 
    private void blockUntilServerActive(int serverId) throws InterruptedException {
@@ -313,7 +278,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 300000)
    public void testServerDetails() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       Server server = client.getServer(serverId);
 
       assertNotNull(server.getHostId(), "Host id: ");
@@ -324,7 +289,7 @@ public class NovaClientLiveTest {
       assertEquals(server.getMetadata(), metadata);
 
 
-      assertEquals(server.getImageRef(), endpoint + "/v1.1/images/13");
+      assertEquals(server.getImageRef(), "endpoint" + "/v1.1/images/95");
       // listAddresses tests..
       assertEquals(client.getAddresses(serverId), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
@@ -332,7 +297,7 @@ public class NovaClientLiveTest {
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
       assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
       assertPassword(server, adminPass);
-      assertEquals(server.getFlavorRef(), endpoint + "/v1.1/flavors/1");
+      assertEquals(server.getFlavorRef(), "endpoint" + "/v1.1/flavors/1");
       assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
    }
 
@@ -341,7 +306,7 @@ public class NovaClientLiveTest {
       IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
       socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
+      SshClient client = sshFactory.create(socket, new Credentials("root", keyPair.get("private")));
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
@@ -355,7 +320,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 5 * 60 * 1000)
    public void testRenameServer() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       Server server = client.getServer(serverId);
       String oldName = server.getName();
       client.renameServer(serverId, oldName + "new");
@@ -365,7 +330,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 5 * 60 * 1000)
    public void testChangePassword() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       blockUntilServerActive(serverId);
       client.changeAdminPass(serverId, "elmo");
       assertPassword(client.getServer(serverId), "elmo");
@@ -374,7 +339,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 10 * 600 * 1000)
    public void testCreateImage() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
       assertEquals(serverId, image.getServerRef());
@@ -384,7 +349,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebuildServer() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       client.rebuildServer(serverId, new RebuildServerOptions().withImage(String.valueOf(createdImageId)));
       blockUntilServerActive(serverId);
       // issue Web Hosting #119580 createdImageId comes back incorrect after rebuild
@@ -393,21 +358,21 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebootHard() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       client.rebootServer(serverId, RebootType.HARD);
       blockUntilServerActive(serverId);
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebootSoft() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       client.rebootServer(serverId, RebootType.SOFT);
       blockUntilServerActive(serverId);
    }
 
    @Test(enabled = false, timeOut = 60000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
       client.revertResizeServer(serverId);
@@ -417,7 +382,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = false, timeOut = 10 * 60 * 1000)
    public void testConfirmResize() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
       client.confirmResizeServer(serverId);
@@ -427,11 +392,12 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 60000)
    void deleteServer2() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       if (serverId > 0) {
          client.deleteServer(serverId);
          waitServerDeleted(serverId);
       }
+      serverId = 0;
    }
 
    @Test(enabled = true, timeOut = 60000)
@@ -443,25 +409,43 @@ public class NovaClientLiveTest {
          client.deleteImage(createdImageId);
          assert client.getImage(createdImageId) == null;
       }
+      //TODO all servers created from the image should be deleted
    }
 
    @Test(enabled = true, timeOut = 60000)
    void deleteServer1() throws Exception {
-      if (serverId <= 0) testCreateServer();
+      if (!isServerExist(serverId)) testCreateServer();
       if (serverId > 0) {
          client.deleteServer(serverId);
          waitServerDeleted(serverId);
       }
+      serverId = 0;
+   }
+
+   private boolean isServerExist(int serverId) {
+      return client.getServer(serverId) != null;
    }
 
    private void waitServerDeleted(int serverId) throws InterruptedException {
-      while (null != client.getServer(serverId)) Thread.sleep(1000);
+      while (null != client.getServer(serverId)) {
+         System.out.println("Await deleted server" + serverId);
+         Thread.sleep(1000);
+      }
+   }
+
+   @Test
+   public void testDeleteAllCreatedServers() {
+      for (Server server : client.listServers()) {
+         if (server.getName().startsWith(serverPrefix)) {
+            client.deleteServer(server.getId());
+            System.out.println("Deleted server: " + server);
+         }
+      }
    }
 
    @AfterTest
    void deleteServersOnEnd() {
-      if (serverId > 0) {
-         client.deleteServer(serverId);
-      }
+      testDeleteAllCreatedServers();
    }
+
 }

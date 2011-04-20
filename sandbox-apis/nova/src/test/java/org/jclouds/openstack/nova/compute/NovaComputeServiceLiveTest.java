@@ -18,63 +18,15 @@
  */
 package org.jclouds.openstack.nova.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Throwables.getRootCause;
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.uniqueIndex;
-import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
-import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
-import static org.jclouds.compute.predicates.NodePredicates.all;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
-import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.ComputeTestUtils;
-import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.RunScriptData;
-import org.jclouds.compute.RunScriptOnNodesException;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.*;
+import org.jclouds.compute.domain.*;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -96,15 +48,31 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
-import com.google.inject.Guice;
-import com.google.inject.Module;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Throwables.getRootCause;
+import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.predicates.NodePredicates.*;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
+import static org.jclouds.openstack.nova.PropertyHelper.setupKeyPair;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Generally disabled, as it incurs higher fees.
@@ -119,7 +87,7 @@ public class NovaComputeServiceLiveTest {
    protected RetryablePredicate<IPSocket> socketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
-   protected ComputeService client;
+   protected ComputeService computeService;
 
    protected Template template;
    protected Map<String, String> keyPair;
@@ -181,13 +149,7 @@ public class NovaComputeServiceLiveTest {
          context.close();
       context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
             new SLF4JLoggingModule(), getSshModule()), properties);
-      client = context.getComputeService();
-   }
-
-   public static Map<String, String> setupKeyPair(Properties properties) throws FileNotFoundException, IOException {
-      return ImmutableMap.<String, String>of(
-            "private", Files.toString(new File(properties.getProperty("test.ssh.keyfile.private")), Charsets.UTF_8),
-            "public", Files.toString(new File(properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
+      computeService = context.getComputeService();
    }
 
 
@@ -270,33 +232,33 @@ public class NovaComputeServiceLiveTest {
 
    @Test(enabled = true)
    public void testImagesCache() throws Exception {
-      client.listImages();
+      computeService.listImages();
       long time = System.currentTimeMillis();
-      client.listImages();
+      computeService.listImages();
       long duration = System.currentTimeMillis() - time;
       assert duration < 1000 : String.format("%dms to get images", duration);
    }
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
-      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
+      computeService.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
    // starting this one alphabetically before create2nodes..
-   @Test(enabled = true, dependsOnMethods = {"testCompareSizes"})
+   @Test(enabled = true)
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String group = this.group + "r";
       try {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
 
-      TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
+      Template template = getDefaultTemplateBuilder().options(computeService.templateOptions().blockOnPort(22, 120)).build();
       try {
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, template);
          Credentials good = nodes.iterator().next().getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
@@ -310,7 +272,7 @@ public class NovaComputeServiceLiveTest {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
-         for (Map.Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
+         for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
                runningInGroup(group), Statements.exec("echo hello"),
                overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
@@ -321,14 +283,14 @@ public class NovaComputeServiceLiveTest {
          checkNodes(nodes, group);
 
       } finally {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       }
    }
 
    @Test(enabled = true, dependsOnMethods = {"testImagesCache"})
    public void testTemplateMatch() throws Exception {
-      template = buildTemplate(client.templateBuilder());
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
+      template = buildTemplate(computeService.templateBuilder());
+      Template toMatch = computeService.templateBuilder().imageId(template.getImage().getId()).build();
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
@@ -339,13 +301,13 @@ public class NovaComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       } catch (NoSuchElementException e) {
 
       }
       refreshTemplate();
       try {
-         nodes = newTreeSet(client.createNodesInGroup(group, 2, template));
+         nodes = newTreeSet(computeService.createNodesInGroup(group, 2, template));
       } catch (RunNodesException e) {
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
@@ -366,7 +328,7 @@ public class NovaComputeServiceLiveTest {
    }
 
    private void refreshTemplate() {
-      template = buildTemplate(client.templateBuilder());
+      template = buildTemplate(computeService.templateBuilder());
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
             .runScript(buildScript(template.getImage().getOperatingSystem()));
@@ -396,7 +358,7 @@ public class NovaComputeServiceLiveTest {
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient(overrides);
       refreshTemplate();
-      TreeSet<NodeMetadata> nodes = newTreeSet(client.createNodesInGroup(group, 1, template));
+      TreeSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 1, template));
       checkNodes(nodes, group);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
@@ -415,7 +377,7 @@ public class NovaComputeServiceLiveTest {
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
                                                                           Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
+         return computeService.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
                .nameTask("runScriptWithCreds"));
       } catch (SshException e) {
          throw e;
@@ -429,7 +391,7 @@ public class NovaComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
             .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
             new Function<NodeMetadata, String>() {
 
@@ -441,7 +403,7 @@ public class NovaComputeServiceLiveTest {
             }));
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
-         NodeMetadata metadata = client.getNodeMetadata(node.getId());
+         NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getGroup(), node.getGroup());
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
@@ -462,14 +424,14 @@ public class NovaComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testGet")
    public void testReboot() throws Exception {
-      client.rebootNodesMatching(inGroup(group));// TODO test
+      computeService.rebootNodesMatching(inGroup(group));// TODO test
       // validation
       testGet();
    }
 
    @Test(enabled = true, dependsOnMethods = "testReboot")
    public void testSuspendResume() throws Exception {
-      client.suspendNodesMatching(inGroup(group));
+      computeService.suspendNodesMatching(inGroup(group));
 
       Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
 
@@ -485,13 +447,13 @@ public class NovaComputeServiceLiveTest {
 
       }) : stoppedNodes;
 
-      client.resumeNodesMatching(inGroup(group));
+      computeService.resumeNodesMatching(inGroup(group));
       testGet();
    }
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
-      for (ComputeMetadata node : client.listNodes()) {
+      for (ComputeMetadata node : computeService.listNodes()) {
          assert node.getProviderId() != null;
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
@@ -500,7 +462,7 @@ public class NovaComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testGetNodesWithDetails() throws Exception {
-      for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
+      for (NodeMetadata node : computeService.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
          assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
@@ -522,16 +484,16 @@ public class NovaComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = {"testListNodes", "testGetNodesWithDetails"})
    public void testDestroyNodes() {
       int toDestroy = refreshNodes().size();
-      Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(inGroup(group));
+      Set<? extends NodeMetadata> destroyed = computeService.destroyNodesMatching(inGroup(group));
       assertEquals(toDestroy, destroyed.size());
-      for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
+      for (NodeMetadata node : filter(computeService.listNodesDetailsMatching(all()), inGroup(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
          assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
       }
    }
 
    private Set<? extends NodeMetadata> refreshNodes() {
-      return filter(client.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
+      return filter(computeService.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
    }
 
    @Test(enabled = true)
@@ -539,12 +501,12 @@ public class NovaComputeServiceLiveTest {
 
       String group = this.group + "s";
       try {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
 
-      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
+      template = getDefaultTemplateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
             .build();
 
       // note this is a dependency on the template resolution
@@ -552,11 +514,11 @@ public class NovaComputeServiceLiveTest {
             RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
                   .getOperatingSystem()));
       try {
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, template));
+         NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, template));
 
          checkHttpGet(node);
       } finally {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       }
 
    }
@@ -564,12 +526,12 @@ public class NovaComputeServiceLiveTest {
    @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = client.templateBuilder().smallest().options(options).build();
+      Template t = computeService.templateBuilder().smallest().options(options).build();
       assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
    }
 
    public void testListImages() throws Exception {
-      for (Image image : client.listImages()) {
+      for (Image image : computeService.listImages()) {
          assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
@@ -578,7 +540,7 @@ public class NovaComputeServiceLiveTest {
 
    @Test(groups = {"integration", "live"})
    public void testGetAssignableLocations() throws Exception {
-      for (Location location : client.listAssignableLocations()) {
+      for (Location location : computeService.listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;
@@ -611,21 +573,21 @@ public class NovaComputeServiceLiveTest {
    public void testOptionToNotBlock() throws Exception {
       String group = this.group + "block";
       try {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
       // no inbound ports
-      TemplateOptions options = client.templateOptions().blockUntilRunning(false).inboundPorts();
+      TemplateOptions options = computeService.templateOptions().blockUntilRunning(false).inboundPorts();
       try {
          long time = System.currentTimeMillis();
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
          assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
       } finally {
-         client.destroyNodesMatching(inGroup(group));
+         computeService.destroyNodesMatching(inGroup(group));
       }
    }
 
@@ -635,7 +597,7 @@ public class NovaComputeServiceLiveTest {
    }
 
    public void testListSizes() throws Exception {
-      for (Hardware hardware : client.listHardwareProfiles()) {
+      for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;
          assert hardware.getVolumes().size() >= 0;
@@ -644,13 +606,19 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
+   private TemplateBuilder getDefaultTemplateBuilder() {
+      return computeService.templateBuilder().imageId("95");
+   }
+
    @Test(enabled = true)
    public void testCompareSizes() throws Exception {
-      Hardware defaultSize = client.templateBuilder().build().getHardware();
+      TemplateBuilder templateBuilder = getDefaultTemplateBuilder();
 
-      Hardware smallest = client.templateBuilder().smallest().build().getHardware();
-      Hardware fastest = client.templateBuilder().fastest().build().getHardware();
-      Hardware biggest = client.templateBuilder().biggest().build().getHardware();
+      Hardware defaultSize = templateBuilder.build().getHardware();
+
+      Hardware smallest = templateBuilder.smallest().build().getHardware();
+      Hardware fastest = templateBuilder.fastest().build().getHardware();
+      Hardware biggest = templateBuilder.biggest().build().getHardware();
 
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
