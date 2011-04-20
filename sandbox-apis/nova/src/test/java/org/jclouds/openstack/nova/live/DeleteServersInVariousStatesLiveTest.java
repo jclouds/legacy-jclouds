@@ -21,7 +21,6 @@ package org.jclouds.openstack.nova.live;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import org.jclouds.Constants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaClient;
@@ -31,12 +30,8 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 
 /**
@@ -57,39 +52,6 @@ public class DeleteServersInVariousStatesLiveTest {
 
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    Server server = null;
-
-
-   protected Properties setupProperties() throws IOException {
-      Properties overrides = new Properties();
-      overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
-      overridePropertyFromSystemProperty(overrides, "test.initializer");
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      return overrides;
-   }
-
-   protected void setupCredentials(Properties properties) {
-      identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = properties.getProperty("test." + provider + ".endpoint");
-      apiversion = properties.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected void updateProperties(final Properties properties) {
-      properties.setProperty(provider + ".identity", identity);
-      properties.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         properties.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         properties.setProperty(provider + ".apiversion", apiversion);
-   }
-
 
    @Test(expectedExceptions = HttpResponseException.class, expectedExceptionsMessageRegExp = ".*Internal Server Error.*")
    public void testCreateServerWithUnknownImage() throws Exception {

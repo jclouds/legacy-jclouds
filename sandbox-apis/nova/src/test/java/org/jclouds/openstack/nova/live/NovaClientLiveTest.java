@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.nova;
+package org.jclouds.openstack.nova.live;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -30,6 +30,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
+import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.domain.*;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
 import org.jclouds.predicates.RetryablePredicate;
@@ -49,7 +50,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.jclouds.openstack.nova.PropertyHelper.*;
+import static org.jclouds.openstack.nova.live.PropertyHelper.*;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;

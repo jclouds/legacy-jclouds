@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.jclouds.Constants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
@@ -37,7 +36,7 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -45,8 +44,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.openstack.nova.PropertyHelper.overridePropertyFromSystemProperty;
+import static org.jclouds.openstack.nova.live.PropertyHelper.*;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 
 /**
@@ -60,55 +58,17 @@ public class ServerCreateLiveTest {
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
 
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    Server server = null;
+   Map<String, String> keyPair;
 
-
-   protected Properties setupProperties() throws IOException {
-      Properties overrides = new Properties();
-      overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
-      overridePropertyFromSystemProperty(overrides, "test.initializer");
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      return overrides;
-   }
-
-   protected void setupCredentials(Properties properties) {
-      identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = properties.getProperty("test." + provider + ".endpoint");
-      apiversion = properties.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected void updateProperties(final Properties properties) {
-      properties.setProperty(provider + ".identity", identity);
-      properties.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         properties.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         properties.setProperty(provider + ".apiversion", apiversion);
-   }
-
-
-   @BeforeGroups(groups = {"live"})
+   @BeforeTest
    public void setupClient() throws IOException {
-      Properties overrides = setupProperties();
-      setupCredentials(overrides);
-      updateProperties(overrides);
+      Properties properties = setupOverrides(setupProperties(this.getClass()));
 
-      Injector injector = new RestContextFactory().createContextBuilder(provider, identity, credential,
-            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), overrides)
+      Injector injector = new RestContextFactory().createContextBuilder(provider,
+            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), properties)
             .buildInjector();
 
       client = injector.getInstance(NovaClient.class);
@@ -117,6 +77,8 @@ public class ServerCreateLiveTest {
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
+
+      keyPair = setupKeyPair(properties);
    }
 
    @Test(expectedExceptions = HttpResponseException.class, expectedExceptionsMessageRegExp = ".*Internal Server Error.*")
