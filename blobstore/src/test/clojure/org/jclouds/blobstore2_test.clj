@@ -169,26 +169,26 @@
                            :payload "blob1"))
            (Strings2/toStringAndClose (get-blob-stream *blobstore*
                                                        "container" "blob1")))))
-  (is (= "blob1"
+  (is (= "blob2"
          (do
            (put-blob *blobstore* "container"
-                     (blob "blob1"
-                           :payload (StringBufferInputStream. "blob1")))
+                     (blob "blob2"
+                           :payload (StringBufferInputStream. "blob2")))
            (Strings2/toStringAndClose (get-blob-stream *blobstore*
-                                                       "container" "blob1")))))
-  (is (= "blob1"
+                                                       "container" "blob2")))))
+  (is (= "blob3"
          (do
            (put-blob *blobstore* "container"
-                     (blob "blob1"
-                           :payload (.getBytes "blob1")))
+                     (blob "blob3"
+                           :payload (.getBytes "blob3")))
            (Strings2/toStringAndClose (get-blob-stream *blobstore*
-                                                       "container" "blob1")))))
-  (is (= "blob1"
+                                                       "container" "blob3")))))
+  (is (= "blob4"
          (do
            (put-blob *blobstore* "container"
-                     (blob "blob1"
-                           :payload #(.write % (.getBytes "blob1"))))
+                     (blob "blob4"
+                           :payload #(.write % (.getBytes "blob4"))))
            (Strings2/toStringAndClose (get-blob-stream *blobstore*
-                                                       "container" "blob1"))))))
+                                                       "container" "blob4"))))))
 
 ;; TODO: more tests involving blob-specific functions
