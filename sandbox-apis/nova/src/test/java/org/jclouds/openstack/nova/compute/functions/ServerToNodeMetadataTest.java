@@ -18,25 +18,11 @@
  */
 package org.jclouds.openstack.nova.compute.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.Set;
-
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.VolumeBuilder;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -47,10 +33,13 @@ import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.Map;
+import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole
@@ -93,26 +82,26 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       NodeMetadata constructedMetadata = newNodeMetadataBuilder().build();
-      
+
       assertEquals(metadata, constructedMetadata);
 
    }
 
    private NodeMetadataBuilder newNodeMetadataBuilder() throws URISyntaxException {
       return new NodeMetadataBuilder()
-         .state(NodeState.PENDING)
-         .publicAddresses(ImmutableSet.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"))
-         .privateAddresses(ImmutableSet.of("10.176.42.16", "::babe:10.176.42.16"))
-         .id("1234")
-         .providerId("1234")
-         .name("sample-server")
-         .location(new LocationBuilder()
-               .scope(LocationScope.HOST)
-               .id("e4d909c290d0fb1ca068ffaddf22cbd0")
-               .description("e4d909c290d0fb1ca068ffaddf22cbd0")
-               .parent(provider).build())
-         .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"))
-         .uri(new URI("http://servers.api.openstack.org/1234/servers/1234"));
+            .state(NodeState.PENDING)
+            .publicAddresses(ImmutableSet.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"))
+            .privateAddresses(ImmutableSet.of("10.176.42.16", "::babe:10.176.42.16"))
+            .id("1234")
+            .providerId("1234")
+            .name("sample-server")
+            .location(new LocationBuilder()
+                  .scope(LocationScope.HOST)
+                  .id("e4d909c290d0fb1ca068ffaddf22cbd0")
+                  .description("e4d909c290d0fb1ca068ffaddf22cbd0")
+                  .parent(provider).build())
+            .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"))
+            .uri(new URI("http://servers.api.openstack.org/1234/servers/1234"));
    }
 
    @Test
@@ -137,7 +126,7 @@ public class ServerToNodeMetadataTest {
                   .version("5.2")
                   .is64Bit(true).build())
             .build();
-      
+
       assertEquals(metadata, constructedMetadata);
 
    }
@@ -154,27 +143,27 @@ public class ServerToNodeMetadataTest {
             .ofInstance(provider), Suppliers.<Set<? extends Hardware>>ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
-      
+
       NodeMetadata constructedMetadata = newNodeMetadataBuilder()
-         .imageId("1")
-         .operatingSystem(new OperatingSystem.Builder()
-               .family(OsFamily.CENTOS)
-               .description("CentOS 5.2")
-               .version("5.2")
-               .is64Bit(true).build())
-         .hardware(new HardwareBuilder()
-               .ids("1")
-               .name("256 MB Server")
-               .processors(ImmutableList.of(new Processor(1.0, 1.0)))
-               .ram(256)
-               .volumes(ImmutableList.of(new VolumeBuilder()
-                     .type(Volume.Type.LOCAL)
-                     .size(10.0f)
-                     .durable(true)
-                     .bootDevice(true).build()))
-               .uri(new URI("http://servers.api.openstack.org/1234/flavors/1"))
-               .build())
-         .build();
+            .imageId("1")
+            .operatingSystem(new OperatingSystem.Builder()
+                  .family(OsFamily.CENTOS)
+                  .description("CentOS 5.2")
+                  .version("5.2")
+                  .is64Bit(true).build())
+            .hardware(new HardwareBuilder()
+                  .ids("1")
+                  .name("256 MB Server")
+                  .processors(ImmutableList.of(new Processor(1.0, 1.0)))
+                  .ram(256)
+                  .volumes(ImmutableList.of(new VolumeBuilder()
+                        .type(Volume.Type.LOCAL)
+                        .size(10.0f)
+                        .durable(true)
+                        .bootDevice(true).build()))
+                  .uri(new URI("http://servers.api.openstack.org/1234/flavors/1"))
+                  .build())
+            .build();
 
       assertEquals(metadata, constructedMetadata);
    }

@@ -92,7 +92,7 @@ public class NovaComputeServiceLiveTest {
    protected ComputeServiceContext context;
    protected ComputeService computeService;
 
-   protected Template template;
+
    protected Map<String, String> keyPair;
 
    protected String provider;
@@ -218,10 +218,13 @@ public class NovaComputeServiceLiveTest {
 
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
+      Properties properties = new Properties();
+      properties.putAll(overrides);
+      properties.remove(provider + ".identity");
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
-               .<Module>of(new SLF4JLoggingModule()), overrides);
+               .<Module>of(new SLF4JLoggingModule()), properties);
          context.getComputeService().listNodes();
       } finally {
          if (context != null)
@@ -328,16 +331,16 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = {"testImagesCache"})
+   @Test(enabled = true)
    public void testTemplateMatch() throws Exception {
-      template = buildTemplate(computeService.templateBuilder());
+      Template template = buildTemplate(getDefaultTemplateBuilder());
       Template toMatch = computeService.templateBuilder().imageId(template.getImage().getId()).build();
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
-   protected void checkHttpGet(NodeMetadata node) {
-      ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
-   }
+//   protected void checkHttpGet(NodeMetadata node) {
+//      ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
+//   }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
@@ -346,9 +349,9 @@ public class NovaComputeServiceLiveTest {
       } catch (NoSuchElementException e) {
 
       }
-      refreshTemplate();
+
       try {
-         nodes = newTreeSet(computeService.createNodesInGroup(group, 2, template));
+         nodes = newTreeSet(computeService.createNodesInGroup(group, 2, getDefaultTemplateBuilder().build()));
       } catch (RunNodesException e) {
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
@@ -360,30 +363,23 @@ public class NovaComputeServiceLiveTest {
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
 
-      assertLocationSameOrChild(node1.getLocation(), template.getLocation());
-      assertLocationSameOrChild(node2.getLocation(), template.getLocation());
+      assertLocationSameOrChild(node1.getLocation(), getDefaultTemplateBuilder().build().getLocation());
+      assertLocationSameOrChild(node2.getLocation(), getDefaultTemplateBuilder().build().getLocation());
       checkImageIdMatchesTemplate(node1);
       checkImageIdMatchesTemplate(node2);
       checkOsMatchesTemplate(node1);
       checkOsMatchesTemplate(node2);
    }
 
-   private void refreshTemplate() {
-      template = buildTemplate(computeService.templateBuilder());
-
-      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-            .runScript(buildScript(template.getImage().getOperatingSystem()));
-   }
-
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
       if (node.getImageId() != null)
-         assertEquals(node.getImageId(), template.getImage().getId());
+         assertEquals(node.getImageId(), getDefaultTemplateBuilder().build().getImage().getId());
    }
 
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
-         assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+         assert node.getOperatingSystem().getFamily().equals(getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily()) : String
+               .format("expecting family %s but got %s", getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily(), node
                      .getOperatingSystem());
    }
 
@@ -395,16 +391,17 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
+   @Test(enabled = true)
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
+      testCreateTwoNodesWithRunScript();
       initializeContextAndClient(overrides);
-      refreshTemplate();
-      TreeSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 1, template));
+
+      TreeSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build()));
       checkNodes(nodes, group);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
       assertEquals(nodes.size(), 1);
-      assertLocationSameOrChild(node.getLocation(), template.getLocation());
+      assertLocationSameOrChild(node.getLocation(), getDefaultTemplateBuilder().build().getLocation());
       checkOsMatchesTemplate(node);
    }
 
@@ -444,7 +441,7 @@ public class NovaComputeServiceLiveTest {
          NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getGroup(), node.getGroup());
-         assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
+         assertLocationSameOrChild(metadata.getLocation(), getDefaultTemplateBuilder().build().getLocation());
          checkImageIdMatchesTemplate(metadata);
          checkOsMatchesTemplate(metadata);
          assert (metadata.getState() == NodeState.RUNNING) : metadata;
@@ -544,24 +541,25 @@ public class NovaComputeServiceLiveTest {
 
       }
 
-      template = getDefaultTemplateBuilder().options(blockOnComplete(false).inboundPorts(22, 8080))
+      Template template = getDefaultTemplateBuilder().options(blockOnComplete(false).inboundPorts(22, 8080))
             .build();
 
       // note this is a dependency on the template resolution
-      template.getOptions().runScript(
-            RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-                  .getOperatingSystem()));
+//      template.getOptions().runScript(
+//            RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+//                  .getOperatingSystem()));
+
       try {
          NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, template));
 
-         checkHttpGet(node);
+         //checkHttpGet(node);
       } finally {
          computeService.destroyNodesMatching(inGroup(group));
       }
 
    }
 
-   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
+   @Test(enabled = true)
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
       Template t = computeService.templateBuilder().smallest().options(options).build();

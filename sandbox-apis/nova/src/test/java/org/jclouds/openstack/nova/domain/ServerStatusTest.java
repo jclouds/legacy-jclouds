@@ -19,18 +19,17 @@
 
 package org.jclouds.openstack.nova.domain;
 
-import static junit.framework.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 /**
  * Tests behavior of {@code CreateImageBinder}
@@ -53,11 +52,11 @@ public class ServerStatusTest {
 
       List<String> allStatuses = Lists.newArrayList(knownStatuses);
       allStatuses.add("UNRECOGNIZED");
-      
+
       Set<ServerStatus> enumValues = Sets.newHashSet(ServerStatus.values());
-      
+
       assertEquals(enumValues.size(), allStatuses.size());
-      
+
       for (String status : allStatuses) {
          assertTrue(enumValues.contains(ServerStatus.valueOf(status)));
       }

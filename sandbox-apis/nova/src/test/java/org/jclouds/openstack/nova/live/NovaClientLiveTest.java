@@ -64,6 +64,7 @@ import static org.testng.Assert.*;
 @Test(groups = "live", sequential = true)
 public class NovaClientLiveTest {
 
+   private int testImageId = 95;
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
@@ -74,6 +75,7 @@ public class NovaClientLiveTest {
    private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    private int createdImageId;
+
 
    @BeforeTest
    public void setupClient() throws IOException {
@@ -228,7 +230,7 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-      String imageRef = client.getImage(95).getURI().toASCIIString();
+      String imageRef = client.getImage(testImageId).getURI().toASCIIString();
       String flavorRef = client.getFlavor(1).getURI().toASCIIString();
       String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
       Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
@@ -290,7 +292,7 @@ public class NovaClientLiveTest {
       assertEquals(server.getMetadata(), metadata);
 
 
-      assertEquals(server.getImageRef(), "endpoint" + "/v1.1/images/95");
+      assertTrue(server.getImageRef().endsWith(String.valueOf(testImageId)));
       // listAddresses tests..
       assertEquals(client.getAddresses(serverId), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
@@ -298,7 +300,7 @@ public class NovaClientLiveTest {
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
       assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
       assertPassword(server, adminPass);
-      assertEquals(server.getFlavorRef(), "endpoint" + "/v1.1/flavors/1");
+      assertTrue(server.getFlavorRef().endsWith("1"));
       assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
    }
 

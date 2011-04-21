@@ -18,12 +18,7 @@
  */
 package org.jclouds.openstack.nova.compute.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-
+import com.google.inject.Guice;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
@@ -36,7 +31,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.functions.ParseImageFromJsonResponseTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole
@@ -53,7 +52,7 @@ public class NovaImageToImageTest {
                         .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
             .ids("1").version("1286712000000").uri(new URI("https://servers.api.rackspacecloud.com/v1.1/1234/images/1")).build();
       Image parsedImage = convertImage();
-      
+
       assertEquals(parsedImage, image);
    }
 

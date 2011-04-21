@@ -21,7 +21,6 @@ package org.jclouds.openstack.nova.live;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.domain.Server;
@@ -31,8 +30,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.util.Map;
-
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 
 /**
  * @author Victor Galkin
@@ -52,26 +49,6 @@ public class DeleteServersInVariousStatesLiveTest {
 
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    Server server = null;
-
-   @Test(expectedExceptions = HttpResponseException.class, expectedExceptionsMessageRegExp = ".*Internal Server Error.*")
-   public void testCreateServerWithUnknownImage() throws Exception {
-      try {
-         server = client.createServer("serverName", String.valueOf(88888888), "1", withFile("/etc/jclouds.txt",
-               "rackspace".getBytes()).withMetadata(metadata));
-      } catch (HttpResponseException e) {
-         throw e;
-      }
-   }
-
-   @Test(expectedExceptions = HttpResponseException.class, expectedExceptionsMessageRegExp = ".*Internal Server Error.*")
-   public void testCreateServerWithUnknownFlavor() throws Exception {
-      try {
-         server = client.createServer("serverName", String.valueOf(13), "88888888", withFile("/etc/jclouds.txt",
-               "rackspace".getBytes()).withMetadata(metadata));
-      } catch (HttpResponseException e) {
-         throw e;
-      }
-   }
 
    @AfterMethod
    public void after() {
