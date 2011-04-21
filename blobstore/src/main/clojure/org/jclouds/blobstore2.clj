@@ -313,7 +313,7 @@ Options can also be specified for extension modules
 (defn blob
   "Create a new blob with the specified payload and options.
 
-   The payload argument can be anything accepted by org.jclouds.io.Payloads."
+   The payload argument can be anything accepted by the PayloadSource protocol."
   ([^String name &
     {:keys [payload content-type content-length content-md5 calculate-md5
             content-disposition content-encoding content-language metadata]}]
