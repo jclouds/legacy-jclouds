@@ -25,7 +25,6 @@ import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
-import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -107,15 +106,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       InputStream in = null;
       try {
          in = consumeOnClose(connection.getInputStream());
-      } catch (Exception e) {
-         IOException ioe = getFirstThrowableOfType(e, IOException.class);
-         if (ioe != null) {
-            in = bufferAndCloseStream(connection.getErrorStream());
-         } else {
-            closeQuietly(in);
-            propagate(e);
-            assert false : "should have propagated exception";
-         }
+      } catch (IOException e) {
+         in = bufferAndCloseStream(connection.getErrorStream());
+      } catch (RuntimeException e) {
+         closeQuietly(in);
+         propagate(e);
+         assert false : "should have propagated exception";
       }
 
       int responseCode = connection.getResponseCode();
