@@ -50,7 +50,7 @@ See http://code.google.com/p/jclouds for details."
             domain.Blob domain.internal.BlobBuilderImpl options.PutOptions
             options.PutOptions$Builder
             options.CreateContainerOptions options.ListContainerOptions]
-           org.jclouds.io.Payloads
+           [org.jclouds.io Payload Payloads payloads.StreamingPayload]
            java.util.Arrays
            [java.security DigestOutputStream MessageDigest]
            com.google.common.collect.ImmutableSet
@@ -72,6 +72,39 @@ See http://code.google.com/p/jclouds for details."
          "org.jclouds.encryption.bouncycastle.BouncyCastleCrypto"))
        (catch Exception e
          (JCECrypto.))))
+
+;;
+;; Payload support for creating Blobs.
+;;
+
+(def ^{:doc "Type object for a Java primitive byte array, for use in the
+             PayloadSource protocol."
+      :private true}
+     byte-array-type (class (make-array Byte/TYPE 0)))
+
+(defprotocol PayloadSource
+  "Various types can have PayloadSource extended onto them so that they are
+   easily coerced into a Payload."
+  (^Payload payload [arg] "Coerce arg into a Payload."))
+
+(extend-protocol PayloadSource
+  Payload
+  (payload [p] p)
+  java.io.InputStream
+  (payload [is] (Payloads/newInputStreamPayload is))
+  byte-array-type
+  (payload [ba] (Payloads/newByteArrayPayload ba))
+  String
+  (payload [s] (Payloads/newStringPayload s))
+  java.io.File
+  (payload [f] (Payloads/newFilePayload f))
+  clojure.lang.IFn
+  ;; This will let you pass a closure to payload that takes an OutputStream
+  ;; as argument and writes to it when called from a StreamingPayload.
+  (payload [func]
+           (StreamingPayload. (reify org.jclouds.io.WriteTo
+                                     (writeTo [this output-stream]
+                                              (func output-stream))))))
 
 (defn blobstore
   "Create a logged in context.
@@ -278,7 +311,10 @@ Options can also be specified for extension modules
   (.countBlobs blobstore container-name))
 
 (defn blob
-  "Create a new blob with the specified payload and options."
+  "Create a new blob with the specified payload and options.
+
+   The payload argument can be anything accepted by org.jclouds.io.Payloads, or
+   you can make one manually (recommended) with the payload protocol function."
   ([^String name &
     {:keys [payload content-type content-length content-md5 calculate-md5
             content-disposition content-encoding content-language metadata]}]
@@ -286,7 +322,8 @@ Options can also be specified for extension modules
             (not (and (nil? payload) calculate-md5))]}
      (let [blob-builder (.name (BlobBuilderImpl. crypto-impl) name)
            blob-builder (if payload
-                          (.payload blob-builder payload)
+                          (.payload blob-builder
+                                    (org.jclouds.blobstore2/payload payload))
                           (.forSigning blob-builder))
            blob-builder (if content-length ;; Special case, arg is prim.
                           (.contentLength blob-builder content-length)
