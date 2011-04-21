@@ -24,6 +24,7 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.io.Payloads.newInputStreamPayload;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,12 +61,10 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.io.CountingOutputStream;
@@ -130,7 +129,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             headerBuilder.putAll(header, connection.getHeaderFields().get(header));
       }
       ImmutableMultimap<String, String> headers = headerBuilder.build();
-      Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
+      Payload payload = in != null ? newInputStreamPayload(in) : null;
       if (payload != null) {
          payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
          builder.payload(payload);
@@ -202,7 +201,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             methodField.set(connection, request.getMethod());
          } catch (Exception e1) {
             logger.error(e, "could not set request method: ", request.getMethod());
-            Throwables.propagate(e1);
+            propagate(e1);
          }
       }
 
@@ -236,7 +235,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
                      "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
             connection.setFixedLengthStreamingMode(length.intValue());
             if (length.intValue() > 0) {
-              connection.setRequestProperty("Expect", "100-continue");
+               connection.setRequestProperty("Expect", "100-continue");
             }
          }
          CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());

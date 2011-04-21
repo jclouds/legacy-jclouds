@@ -36,7 +36,7 @@ import com.google.common.base.Supplier;
  */
 @Test(groups = "unit", sequential = true)
 public class RetryablePredicateTest {
-   public static int SLOW_BUILD_SERVER_GRACE = 50;
+   public static int SLOW_BUILD_SERVER_GRACE = 100;
 
    @Test
    void testFalseOnIllegalStateExeception() {

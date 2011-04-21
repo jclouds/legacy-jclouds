@@ -61,37 +61,39 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testExponentialBackoffDelayDefaultMaxInterval500() throws InterruptedException {
-      long acceptableDelay = 25; // Delay to forgive if tests run long.
+      long period = 100;
+      long acceptableDelay = period - 1;
 
       long startTime = System.nanoTime();
-      handler.imposeBackoffExponentialDelay(1, "TEST FAILURE: 1");
+      handler.imposeBackoffExponentialDelay(period, 2, 1, 5, "TEST FAILURE: 1");
       long elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 49) : elapsedTime;
-      assertTrue(elapsedTime < 50 + acceptableDelay);
+      assert (elapsedTime >= period - 1) : elapsedTime;
+      assertTrue(elapsedTime < period + acceptableDelay);
 
       startTime = System.nanoTime();
-      handler.imposeBackoffExponentialDelay(2, "TEST FAILURE: 2");
+      handler.imposeBackoffExponentialDelay(period, 2, 2, 5, "TEST FAILURE: 2");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 199) : elapsedTime;
-      assertTrue(elapsedTime < 200 + acceptableDelay);
+      assert (elapsedTime >= period * 4 - 1) : elapsedTime;
+      assertTrue(elapsedTime < period * 9);
 
       startTime = System.nanoTime();
-      handler.imposeBackoffExponentialDelay(3, "TEST FAILURE: 3");
+      handler.imposeBackoffExponentialDelay(period, 2, 3, 5, "TEST FAILURE: 3");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 449) : elapsedTime;
-      assertTrue(elapsedTime < 450 + acceptableDelay);
+      assert (elapsedTime >= period * 9 - 1) : elapsedTime;
+      assertTrue(elapsedTime < period * 10);
 
       startTime = System.nanoTime();
-      handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
+      handler.imposeBackoffExponentialDelay(period, 2, 4, 5, "TEST FAILURE: 4");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 499) : elapsedTime;
-      assertTrue(elapsedTime < 550 + acceptableDelay * 2);
+      assert (elapsedTime >= period * 10 - 1) : elapsedTime;
+      assertTrue(elapsedTime < period * 11);
 
       startTime = System.nanoTime();
-      handler.imposeBackoffExponentialDelay(5, "TEST FAILURE: 5");
+      handler.imposeBackoffExponentialDelay(period, 2, 5, 5, "TEST FAILURE: 5");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert (elapsedTime >= 499) : elapsedTime;
-      assertTrue(elapsedTime < 550 + acceptableDelay * 2);
+      assert (elapsedTime >= period * 10 - 1) : elapsedTime;
+      assertTrue(elapsedTime < period * 11);
+
    }
 
    TransformingHttpCommandExecutorServiceImpl executorService;
