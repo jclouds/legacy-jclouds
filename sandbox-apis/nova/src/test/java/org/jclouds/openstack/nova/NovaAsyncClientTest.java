@@ -387,9 +387,9 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("changeAdminPass", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
-      assertRequestLineEquals(request, "PUT http://endpoint/vapiversion/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(request, "{\"server\":{\"adminPass\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
+      assertPayloadEquals(request, "{\"changePassword\":{\"adminPass\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

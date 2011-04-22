@@ -119,7 +119,7 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       NodeMetadata constructedMetadata = newNodeMetadataBuilder()
-            .imageId("1")
+            .imageId("2")
             .operatingSystem(new OperatingSystem.Builder()
                   .family(OsFamily.CENTOS)
                   .description("CentOS 5.2")
@@ -145,7 +145,7 @@ public class ServerToNodeMetadataTest {
       NodeMetadata metadata = parser.apply(server);
 
       NodeMetadata constructedMetadata = newNodeMetadataBuilder()
-            .imageId("1")
+            .imageId("2")
             .operatingSystem(new OperatingSystem.Builder()
                   .family(OsFamily.CENTOS)
                   .description("CentOS 5.2")
