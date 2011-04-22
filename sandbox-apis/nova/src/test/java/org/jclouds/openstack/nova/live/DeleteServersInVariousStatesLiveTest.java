@@ -29,6 +29,7 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+import java.security.SecureRandom;
 import java.util.Map;
 
 /**

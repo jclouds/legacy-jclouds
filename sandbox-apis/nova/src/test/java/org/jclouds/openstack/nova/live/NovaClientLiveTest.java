@@ -19,41 +19,24 @@
 
 package org.jclouds.openstack.nova.live;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
-import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.domain.*;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import static org.jclouds.openstack.nova.live.PropertyHelper.*;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -62,9 +45,9 @@ import static org.testng.Assert.*;
  */
 // disabled [Web Hosting #129069
 @Test(groups = "live", sequential = true)
-public class NovaClientLiveTest {
+public class NovaClientLiveTest extends ClientBase{
 
-   private int testImageId = 95;
+<<<<<<< .mine   private int testImageId = 95;
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
@@ -75,8 +58,8 @@ public class NovaClientLiveTest {
    private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    private int createdImageId;
-
-
+=======>>>>>>> .theirs
+<<<<<<< .mine
    @BeforeTest
    public void setupClient() throws IOException {
       Properties properties = setupOverrides(setupProperties(this.getClass()));
@@ -95,7 +78,7 @@ public class NovaClientLiveTest {
       keyPair = setupKeyPair(properties);
    }
 
-   @Test
+=======>>>>>>> .theirs   @Test
    public void testListServers() throws Exception {
       Set<Server> response = client.listServers();
       assert null != response;
@@ -228,18 +211,21 @@ public class NovaClientLiveTest {
    }
 
 
+
+
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-      String imageRef = client.getImage(testImageId).getURI().toASCIIString();
+<<<<<<< .mine      String imageRef = client.getImage(testImageId).getURI().toASCIIString();
       String flavorRef = client.getFlavor(1).getURI().toASCIIString();
       String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
       Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
             "rackspace".getBytes()).withMetadata(metadata));
 
-      assertNotNull(server.getAdminPass());
+=======      Server server = getDefaultServerImmediately();
+>>>>>>> .theirs      assertNotNull(server.getAdminPass());
       assertEquals(server.getStatus(), ServerStatus.BUILD);
-      serverId = server.getId();
-      adminPass = server.getAdminPass();
+      int serverId = server.getId();
+      String adminPass = server.getAdminPass();
       blockUntilServerActive(serverId);
       blockUntilPublicAddress(serverId);
       client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
@@ -281,33 +267,34 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 300000)
    public void testServerDetails() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      Server server = client.getServer(serverId);
-
+      Server server = getDefaultServerImmediately();
       assertNotNull(server.getHostId(), "Host id: ");
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
-
       assertNotNull(server.getAddresses());
       // check metadata
       assertEquals(server.getMetadata(), metadata);
-
+<<<<<<< .mine
 
       assertTrue(server.getImageRef().endsWith(String.valueOf(testImageId)));
-      // listAddresses tests..
-      assertEquals(client.getAddresses(serverId), server.getAddresses());
+=======      assertTrue(server.getImageRef().endsWith(String.valueOf(testImageId)));
+>>>>>>> .theirs      // listAddresses tests..
+      assertEquals(client.getAddresses(server.getId()), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
-      assertEquals(client.listPublicAddresses(serverId), server.getAddresses().getPublicAddresses());
+      assertEquals(client.listPublicAddresses(server.getId()), server.getAddresses().getPublicAddresses());
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
-      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
+<<<<<<< .mine      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
       assertPassword(server, adminPass);
       assertTrue(server.getFlavorRef().endsWith("1"));
-      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
+=======      assertEquals(client.listPrivateAddresses(server.getId()), server.getAddresses().getPrivateAddresses());
+      assertPassword(server, server.getAdminPass());
+      assertTrue(server.getFlavorRef().endsWith("1"));
+>>>>>>> .theirs      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
    }
 
 
    private void assertPassword(Server server, String pass) throws IOException {
       IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
-      socketTester.apply(socket);
+      //socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, new Credentials("root", keyPair.get("private")));
       try {
@@ -323,8 +310,8 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 5 * 60 * 1000)
    public void testRenameServer() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      Server server = client.getServer(serverId);
+      Server server = getDefaultServerImmediately();
+      int serverId = server.getId();
       String oldName = server.getName();
       client.renameServer(serverId, oldName + "new");
       blockUntilServerActive(serverId);
@@ -333,49 +320,51 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 5 * 60 * 1000)
    public void testChangePassword() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
+      int serverId = getDefaultServerImmediately().getId();
       blockUntilServerActive(serverId);
       client.changeAdminPass(serverId, "elmo");
       assertPassword(client.getServer(serverId), "elmo");
-      this.adminPass = "elmo";
+
    }
 
    @Test(enabled = true, timeOut = 10 * 600 * 1000)
    public void testCreateImage() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      Image image = client.createImageFromServer("hoofie", serverId);
+      Server server = getDefaultServerImmediately();
+      Image image = getDefaultImageImmediately(server);
+      blockUntilImageActive(image.getId());
       assertEquals("hoofie", image.getName());
-      assertEquals(serverId, image.getServerRef());
-      createdImageId = image.getId();
-      blockUntilImageActive(createdImageId);
+      assertEquals(image.getServerRef(), "");
    }
+
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebuildServer() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      client.rebuildServer(serverId, new RebuildServerOptions().withImage(String.valueOf(createdImageId)));
-      blockUntilServerActive(serverId);
+      Server server = getDefaultServerImmediately();
+      Image image = getDefaultImageImmediately(server);
+      client.rebuildServer(server.getId(), new RebuildServerOptions().withImage(String.valueOf(image.getId())));
+      blockUntilServerActive(server.getId());
       // issue Web Hosting #119580 createdImageId comes back incorrect after rebuild
-      assertEquals(createdImageId, client.getServer(serverId).getImageRef());
+      assertEquals(image.getURI(), client.getServer(server.getId()).getImageRef());
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebootHard() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      client.rebootServer(serverId, RebootType.HARD);
-      blockUntilServerActive(serverId);
+      Server server = getDefaultServerImmediately();
+      client.rebootServer(server.getId(), RebootType.HARD);
+      blockUntilServerActive(server.getId());
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebootSoft() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      client.rebootServer(serverId, RebootType.SOFT);
-      blockUntilServerActive(serverId);
+      Server server = getDefaultServerImmediately();
+      client.rebootServer(server.getId(), RebootType.SOFT);
+      blockUntilServerActive(server.getId());
    }
 
    @Test(enabled = false, timeOut = 60000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
+      Server server = getDefaultServerImmediately();
+      int serverId = server.getId();
       client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
       client.revertResizeServer(serverId);
@@ -385,7 +374,8 @@ public class NovaClientLiveTest {
 
    @Test(enabled = false, timeOut = 10 * 60 * 1000)
    public void testConfirmResize() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
+      Server server = getDefaultServerImmediately();
+      int serverId = server.getId();
       client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
       client.confirmResizeServer(serverId);
@@ -395,45 +385,25 @@ public class NovaClientLiveTest {
 
    @Test(enabled = true, timeOut = 60000)
    void deleteServer2() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      if (serverId > 0) {
-         client.deleteServer(serverId);
-         waitServerDeleted(serverId);
-      }
-      serverId = 0;
+      Server server = getDefaultServerImmediately();
+      int serverId = server.getId();
+      client.deleteServer(serverId);
+      waitServerDeleted(serverId);
    }
 
    @Test(enabled = true, timeOut = 60000)
    void testDeleteImage() throws Exception {
-      if (createdImageId <= 0) {
-         testCreateImage();
-      }
-      if (createdImageId > 0) {
-         client.deleteImage(createdImageId);
-         assert client.getImage(createdImageId) == null;
-      }
-      //TODO all servers created from the image should be deleted
+      Image image = getDefaultImageImmediately(getDefaultServerImmediately());
+      client.deleteImage(image.getId());
+      assert client.getImage(image.getId()) == null;
    }
 
    @Test(enabled = true, timeOut = 60000)
    void deleteServer1() throws Exception {
-      if (!isServerExist(serverId)) testCreateServer();
-      if (serverId > 0) {
-         client.deleteServer(serverId);
-         waitServerDeleted(serverId);
-      }
-      serverId = 0;
-   }
-
-   private boolean isServerExist(int serverId) {
-      return client.getServer(serverId) != null;
-   }
-
-   private void waitServerDeleted(int serverId) throws InterruptedException {
-      while (null != client.getServer(serverId)) {
-         System.out.println("Await deleted server" + serverId);
-         Thread.sleep(1000);
-      }
+      Server server = getDefaultServerImmediately();
+      int serverId = server.getId();
+      client.deleteServer(serverId);
+      waitServerDeleted(serverId);
    }
 
    @Test

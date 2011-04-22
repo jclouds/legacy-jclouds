@@ -46,6 +46,8 @@ import java.util.SimpleTimeZone;
 
 import static org.testng.Assert.assertEquals;
 
+import static org.testng.Assert.assertEquals;
+
 /**
  * Tests behavior of {@code ParseServerFromJsonResponse}
  *
