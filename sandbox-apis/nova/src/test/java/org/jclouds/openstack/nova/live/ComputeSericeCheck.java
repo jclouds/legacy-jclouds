@@ -1,4 +1,4 @@
-package org.jclouds.openstack.nova.live.nonmaven;
+package org.jclouds.openstack.nova.live;
 
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.compute.ComputeService;
@@ -21,7 +21,11 @@ import java.util.Set;
 import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
 import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
 
-public class SimpleCreateServerCheck {
+/**
+ * Not intended to be run with maven and does not performs a cleanup after tests
+ * @author Dmitri Babaev
+ */
+public class ComputeSericeCheck {
    private ComputeServiceContextFactory contextFactory;
    private ComputeServiceContext context;
 
@@ -31,6 +35,16 @@ public class SimpleCreateServerCheck {
       Properties properties = setupOverrides(setupProperties(this.getClass()));
       context = contextFactory.createContext("nova",
             ImmutableSet.of(new JschSshClientModule(), new SLF4JLoggingModule()), properties);
+   }
+   
+   @Test
+   public void testLists() {
+      ComputeService cs = context.getComputeService();
+
+      System.out.println(cs.listImages());
+      System.out.println(cs.listHardwareProfiles());
+      System.out.println(cs.listAssignableLocations());
+      System.out.println(cs.listNodes());
    }
 
    @Test

@@ -8,13 +8,13 @@ import org.jclouds.Constants;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
 /**
  * @author Victor Galkin
  */
-
 public class PropertyHelper {
 
    public static String provider = "nova";
@@ -30,10 +30,12 @@ public class PropertyHelper {
             "public", Files.toString(new File(properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
    }
 
-   public static Properties setupProperties(Class clazz) throws IOException {
+   public static Properties setupProperties(Class<?> clazz) throws IOException {
       Properties properties = new Properties();
 
-      properties.load(clazz.getResourceAsStream("/test.properties"));
+      InputStream propertiesStream = clazz.getResourceAsStream("/test.properties");
+      if (propertiesStream != null)
+         properties.load(propertiesStream);
       overridePropertyFromSystemProperty(properties, "test." + provider + ".endpoint");
       overridePropertyFromSystemProperty(properties, "test." + provider + ".apiversion");
       overridePropertyFromSystemProperty(properties, "test." + provider + ".identity");
