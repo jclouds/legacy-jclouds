@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.nova.live;
+package org.jclouds.openstack.nova.live.compute;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -34,8 +34,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaAsyncClient;
@@ -51,7 +49,6 @@ import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.JschSshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -66,7 +63,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Throwables.getRootCause;
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
@@ -75,8 +73,8 @@ import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.*;
-import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.openstack.nova.live.PropertyHelper.overridePropertyFromSystemProperty;
 import static org.jclouds.openstack.nova.live.PropertyHelper.setupKeyPair;
 import static org.testng.Assert.assertEquals;
@@ -233,7 +231,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testImagesCache() throws Exception {
       computeService.listImages();
       long time = System.currentTimeMillis();
@@ -276,7 +274,7 @@ public class NovaComputeServiceLiveTest {
    }
 
 
-   @Test(enabled = true)
+   @Test
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String group = this.group;
 
@@ -332,7 +330,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testTemplateMatch() throws Exception {
       Template template = buildTemplate(getDefaultTemplateBuilder());
       Template toMatch = computeService.templateBuilder().imageId(template.getImage().getId()).build();
@@ -343,11 +341,12 @@ public class NovaComputeServiceLiveTest {
 //      ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
 //   }
 
-   @Test(enabled = true)
+   @Test
    public void testCreateTwoNodesWithRunScript() throws Exception {
       computeService.destroyNodesMatching(inGroup(group));
 
       SortedSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 2, getDefaultTemplateBuilder().build()));
+      awaitForPublicAddressAssigned(nodes.iterator().next().getId());
       assertEquals(nodes.size(), 2);
       checkNodes(nodes, group);
       NodeMetadata node1 = nodes.first();
@@ -383,12 +382,16 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   private NodeMetadata createDefaultNode() throws RunNodesException {
-      return  computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build())
-               .iterator().next();
+   private NodeMetadata createDefaultNode(TemplateOptions options) throws RunNodesException {
+      return computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().options(options).build())
+            .iterator().next();
    }
 
-   @Test(enabled = true)
+   private NodeMetadata createDefaultNode() throws RunNodesException {
+      return createDefaultNode(getDefaultTemplateOptions());
+   }
+
+   @Test
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       testCreateTwoNodesWithRunScript();
       initializeContextAndClient(overrides);
@@ -401,7 +404,7 @@ public class NovaComputeServiceLiveTest {
 //      checkOsMatchesTemplate(node);
    }
 
-   @Test(enabled = true)
+   @Test
    public void testCredentialsCache() throws Exception {
       LinkedList<NodeMetadata> nodes = new LinkedList<NodeMetadata>();
       nodes.add(createDefaultNode());
@@ -424,8 +427,8 @@ public class NovaComputeServiceLiveTest {
       return templateBuilder.build();
    }
 
-   @Test(enabled = true)
-   public void testGet() throws Exception {
+   @Test
+   public void testGetNodeMetadata() throws Exception {
       Set<NodeMetadata> nodes = Sets.newHashSet(createDefaultNode());
       Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
             .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
@@ -440,6 +443,7 @@ public class NovaComputeServiceLiveTest {
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
          NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
+         assertEquals(parseGroupFromName(metadata.getName()), group);
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getGroup(), node.getGroup());
          assertLocationSameOrChild(metadata.getLocation(), getDefaultTemplateBuilder().build().getLocation());
@@ -458,15 +462,17 @@ public class NovaComputeServiceLiveTest {
             metadataSet, nodes);
    }
 
-   @Test(enabled = true)
+   @Test
    public void testReboot() throws Exception {
+      createDefaultNode();
       computeService.rebootNodesMatching(inGroup(group));// TODO test
       // validation
-      testGet();
+      testGetNodeMetadata();
    }
 
-   @Test(enabled = true)
+   @Test
    public void testSuspendResume() throws Exception {
+      createDefaultNode();
       computeService.suspendNodesMatching(inGroup(group));
 
       Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
@@ -484,10 +490,10 @@ public class NovaComputeServiceLiveTest {
       }) : stoppedNodes;
 
       computeService.resumeNodesMatching(inGroup(group));
-      testGet();
+      testGetNodeMetadata();
    }
 
-   @Test(enabled = true)
+   @Test
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : computeService.listNodes()) {
          assert node.getProviderId() != null;
@@ -496,7 +502,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testGetNodesWithDetails() throws Exception {
       for (NodeMetadata node : computeService.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
@@ -506,7 +512,8 @@ public class NovaComputeServiceLiveTest {
          // nullable
          // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
-         // assert nodeMetadata.getName() != null : nodeMetadata;
+         // assert nodeMetadata.getName().parseGroupFromName() != null : nodeMetadata;
+
          if (node.getState() == NodeState.RUNNING) {
             assert node.getPublicAddresses() != null : node;
             assert node.getPublicAddresses().size() > 0 || node.getPrivateAddresses().size() > 0 : node;
@@ -515,7 +522,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testDestroyNodes() {
       int toDestroy = refreshNodes().size();
       Set<? extends NodeMetadata> destroyed = computeService.destroyNodesMatching(inGroup(group));
@@ -530,7 +537,7 @@ public class NovaComputeServiceLiveTest {
       return filter(computeService.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
    }
 
-   @Test(enabled = true)
+   @Test
    public void testCreateAndRunAService() throws Exception {
 
       String group = this.group;
@@ -558,10 +565,10 @@ public class NovaComputeServiceLiveTest {
 
    }
 
-   @Test(enabled = true)
+   @Test
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = computeService.templateBuilder().smallest().options(options).build();
+      Template t = getDefaultTemplateBuilder().smallest().options(options).build();
       assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
    }
 
@@ -612,11 +619,11 @@ public class NovaComputeServiceLiveTest {
       } catch (Exception e) {
 
       }
-      // no inbound ports
-      TemplateOptions options = computeService.templateOptions().blockUntilRunning(false).inboundPorts();
+      //TODO no inbound ports
+      //TemplateOptions options = computeService.templateOptions().blockUntilRunning(false).inboundPorts();
       try {
          long time = System.currentTimeMillis();
-         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, options);
+         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build());
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
@@ -631,7 +638,7 @@ public class NovaComputeServiceLiveTest {
       assertEquals(provider.getParent(), null);
    }
 
-   public void testListSizes() throws Exception {
+   public void testListHardwareProfiles() throws Exception {
       for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;
@@ -646,14 +653,12 @@ public class NovaComputeServiceLiveTest {
    }
 
    private TemplateOptions getDefaultTemplateOptions() {
-      return TemplateOptions.Builder.installPrivateKey(Payloads.newStringPayload(keyPair.get("private")));
+      return TemplateOptions.Builder.blockUntilRunning(false);
+      //.installPrivateKey(Payloads.newStringPayload(keyPair.get("private")));
    }
 
 
-
-
-
-   @Test(enabled = true)
+   @Test
    public void testCompareSizes() throws Exception {
       TemplateBuilder templateBuilder = getDefaultTemplateBuilder();
 

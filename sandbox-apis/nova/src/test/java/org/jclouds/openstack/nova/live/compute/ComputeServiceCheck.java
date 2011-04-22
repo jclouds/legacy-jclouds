@@ -1,4 +1,4 @@
-package org.jclouds.openstack.nova.live;
+package org.jclouds.openstack.nova.live.compute;
 
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.compute.ComputeService;
@@ -23,9 +23,10 @@ import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
 
 /**
  * Not intended to be run with maven and does not performs a cleanup after tests
+ *
  * @author Dmitri Babaev
  */
-public class ComputeSericeCheck {
+public class ComputeServiceCheck {
    private ComputeServiceContextFactory contextFactory;
    private ComputeServiceContext context;
 
@@ -36,7 +37,7 @@ public class ComputeSericeCheck {
       context = contextFactory.createContext("nova",
             ImmutableSet.of(new JschSshClientModule(), new SLF4JLoggingModule()), properties);
    }
-   
+
    @Test
    public void testLists() {
       ComputeService cs = context.getComputeService();

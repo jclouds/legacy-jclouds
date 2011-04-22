@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.nova.live;
+package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.collect.Iterables;
 import org.jclouds.domain.Credentials;
@@ -307,6 +307,7 @@ public class NovaClientLiveTest extends ClientBase {
       Server server = getDefaultServerImmediately();
       client.rebootServer(server.getId(), RebootType.HARD);
       blockUntilServerActive(server.getId());
+      //TODO check
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
@@ -314,6 +315,7 @@ public class NovaClientLiveTest extends ClientBase {
       Server server = getDefaultServerImmediately();
       client.rebootServer(server.getId(), RebootType.SOFT);
       blockUntilServerActive(server.getId());
+      //TODO check
    }
 
    @Test(enabled = false, timeOut = 60000, dependsOnMethods = "testRebootSoft")

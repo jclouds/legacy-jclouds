@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.nova.live;
+package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -29,7 +29,6 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-import java.security.SecureRandom;
 import java.util.Map;
 
 /**

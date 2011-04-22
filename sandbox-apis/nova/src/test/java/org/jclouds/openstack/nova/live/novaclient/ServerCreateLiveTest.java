@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.nova.live;
+package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
