@@ -18,22 +18,9 @@
  */
 package org.jclouds.openstack.nova;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Date;
-import java.util.Properties;
-
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -58,9 +45,20 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Date;
+import java.util.Properties;
+
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code NovaAsyncClient}

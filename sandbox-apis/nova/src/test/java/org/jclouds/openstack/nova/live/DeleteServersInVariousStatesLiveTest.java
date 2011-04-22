@@ -42,10 +42,8 @@ public class DeleteServersInVariousStatesLiveTest {
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
+
+   private int testImageId = 95;
 
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    Server server = null;
@@ -56,19 +54,8 @@ public class DeleteServersInVariousStatesLiveTest {
    }
 
    @Test(enabled = true)
-   public void testCreateServer() throws Exception {
-//      String imageRef = client.getImage(13).getURI().toASCIIString();
-//      String flavorRef = client.getFlavor(1).getURI().toASCIIString();
-//      String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
-//      Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
-//            "rackspace".getBytes()).withMetadata(metadata));
-//
-//      assertNotNull(server.getAdminPass());
-//      assertEquals(server.getStatus(), ServerStatus.BUILD);
-//      serverId = server.getId();
-//      adminPass = server.getAdminPass();
-//      blockUntilServerActive(serverId);
-//      client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
+   public void testDeleteAfterCreate() throws Exception {
+
    }
 
    private void blockUntilServerActive(int serverId) throws InterruptedException {
