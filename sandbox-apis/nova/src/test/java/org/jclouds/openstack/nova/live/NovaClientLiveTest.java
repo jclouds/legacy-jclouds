@@ -36,7 +36,6 @@ import java.util.Set;
 
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.*;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -45,40 +44,10 @@ import static org.testng.Assert.assertEquals;
  */
 // disabled [Web Hosting #129069
 @Test(groups = "live", sequential = true)
-public class NovaClientLiveTest extends ClientBase{
+public class NovaClientLiveTest extends ClientBase {
 
-<<<<<<< .mine   private int testImageId = 95;
-   protected NovaClient client;
-   protected SshClient.Factory sshFactory;
-   private Predicate<IPSocket> socketTester;
-   protected String provider = "nova";
-   private String serverPrefix = System.getProperty("user.name") + ".cs";
-   protected Map<String, String> keyPair;
-   private int serverId;
-   private String adminPass;
-   Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
-   private int createdImageId;
-=======>>>>>>> .theirs
-<<<<<<< .mine
-   @BeforeTest
-   public void setupClient() throws IOException {
-      Properties properties = setupOverrides(setupProperties(this.getClass()));
 
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), properties)
-            .buildInjector();
-
-      client = injector.getInstance(NovaClient.class);
-
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
-
-      keyPair = setupKeyPair(properties);
-   }
-
-=======>>>>>>> .theirs   @Test
+   @Test
    public void testListServers() throws Exception {
       Set<Server> response = client.listServers();
       assert null != response;
@@ -211,18 +180,10 @@ public class NovaClientLiveTest extends ClientBase{
    }
 
 
-
-
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-<<<<<<< .mine      String imageRef = client.getImage(testImageId).getURI().toASCIIString();
-      String flavorRef = client.getFlavor(1).getURI().toASCIIString();
-      String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
-      Server server = client.createServer(serverName, imageRef, flavorRef, withFile("/etc/jclouds.txt",
-            "rackspace".getBytes()).withMetadata(metadata));
-
-=======      Server server = getDefaultServerImmediately();
->>>>>>> .theirs      assertNotNull(server.getAdminPass());
+      Server server = getDefaultServerImmediately();
+      assertNotNull(server.getAdminPass());
       assertEquals(server.getStatus(), ServerStatus.BUILD);
       int serverId = server.getId();
       String adminPass = server.getAdminPass();
@@ -273,22 +234,16 @@ public class NovaClientLiveTest extends ClientBase{
       assertNotNull(server.getAddresses());
       // check metadata
       assertEquals(server.getMetadata(), metadata);
-<<<<<<< .mine
-
       assertTrue(server.getImageRef().endsWith(String.valueOf(testImageId)));
-=======      assertTrue(server.getImageRef().endsWith(String.valueOf(testImageId)));
->>>>>>> .theirs      // listAddresses tests..
+      // listAddresses tests..
       assertEquals(client.getAddresses(server.getId()), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
       assertEquals(client.listPublicAddresses(server.getId()), server.getAddresses().getPublicAddresses());
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
-<<<<<<< .mine      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
-      assertPassword(server, adminPass);
-      assertTrue(server.getFlavorRef().endsWith("1"));
-=======      assertEquals(client.listPrivateAddresses(server.getId()), server.getAddresses().getPrivateAddresses());
+      assertEquals(client.listPrivateAddresses(server.getId()), server.getAddresses().getPrivateAddresses());
       assertPassword(server, server.getAdminPass());
       assertTrue(server.getFlavorRef().endsWith("1"));
->>>>>>> .theirs      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
+      assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
    }
 
 
