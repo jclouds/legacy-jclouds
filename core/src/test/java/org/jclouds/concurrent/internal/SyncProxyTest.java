@@ -164,6 +164,8 @@ public class SyncProxyTest {
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
                new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+      // just to warm up
+      sync.string();
    }
 
    @Test
