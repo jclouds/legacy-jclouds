@@ -46,15 +46,15 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true)
+@Test(groups = "unit", singleThreaded = true)
 public class SyncProxyTest {
 
    @Test
    void testConvertNanos() {
-      assertEquals(SyncProxy.convertToNanos(Sync.class.getAnnotation(Timeout.class)), 30000000);
+      assertEquals(SyncProxy.convertToNanos(Sync.class.getAnnotation(Timeout.class)), 40000000);
    }
 
-   @Timeout(duration = 30, timeUnit = TimeUnit.MILLISECONDS)
+   @Timeout(duration = 40, timeUnit = TimeUnit.MILLISECONDS)
    private static interface Sync {
       String getString();
 
@@ -69,10 +69,10 @@ public class SyncProxyTest {
 
       String take20Milliseconds();
 
-      String take100MillisecondsAndTimeout();
+      String take200MillisecondsAndTimeout();
 
       @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
-      String take100MillisecondsAndOverride();
+      String take200MillisecondsAndOverride();
 
    }
 
@@ -137,12 +137,12 @@ public class SyncProxyTest {
          }), executorService);
       }
 
-      public ListenableFuture<String> take100MillisecondsAndTimeout() {
+      public ListenableFuture<String> take200MillisecondsAndTimeout() {
          return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() {
                try {
-                  Thread.sleep(100);
+                  Thread.sleep(200);
                } catch (InterruptedException e) {
                   e.printStackTrace();
                }
@@ -152,8 +152,8 @@ public class SyncProxyTest {
          }), executorService);
       }
 
-      public ListenableFuture<String> take100MillisecondsAndOverride() {
-         return take100MillisecondsAndTimeout();
+      public ListenableFuture<String> take200MillisecondsAndOverride() {
+         return take200MillisecondsAndTimeout();
       }
 
    }
@@ -184,14 +184,13 @@ public class SyncProxyTest {
    }
 
    @Test(expectedExceptions = RuntimeException.class)
-   public void testTake100MillisecondsAndTimeout() {
-      assertEquals(sync.take100MillisecondsAndTimeout(), "foo");
-
+   public void testTake200MillisecondsAndTimeout() {
+      assertEquals(sync.take200MillisecondsAndTimeout(), "foo");
    }
 
    @Test
-   public void testTake100MillisecondsAndOverride() {
-      assertEquals(sync.take100MillisecondsAndOverride(), "foo");
+   public void testTake200MillisecondsAndOverride() {
+      assertEquals(sync.take200MillisecondsAndOverride(), "foo");
    }
 
    @Test
