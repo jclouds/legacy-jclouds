@@ -207,9 +207,9 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
       public Account build() {
          return new Account(id, type, domain, domainId, IPsAvailable, IPLimit, IPs, cleanupRequired, name,
-                  receivedBytes, sentBytes, snapshotsAvailable, snapshotLimit, snapshots, state, templatesAvailable,
-                  templateLimit, templates, VMsAvailable, VMLimit, VMsRunning, VMsStopped, VMs, volumesAvailable,
-                  volumeLimit, volumes, users);
+               receivedBytes, sentBytes, snapshotsAvailable, snapshotLimit, snapshots, state, templatesAvailable,
+               templateLimit, templates, VMsAvailable, VMLimit, VMsRunning, VMsStopped, VMs, volumesAvailable,
+               volumeLimit, volumes, users);
       }
 
    }
@@ -232,42 +232,34 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    public static enum Type {
-
       /**
-       * full API access. This is typically a service administrator or code that executes with
-       * complete trust in the service operator's environment.
+       * API access for all the resources associated with their account. There
+       * may be many users in a domain, many domains in a deployment, and many
+       * users in a deployment. This is typically the end user
+       */
+      USER(0),
+      /**
+       * full API access. This is typically a service administrator or code that
+       * executes with complete trust in the service operator's environment.
        */
       ADMIN(1),
       /**
-       * full API access within a domain. This is the most privileged user that a given customer
-       * has. This may be a reseller for the service provider.
+       * full API access within a domain. This is the most privileged user that
+       * a given customer has. This may be a reseller for the service provider.
        */
-      DOMAIN_ADMIN(2),
-      // TODO get code for read-only user.
-      // /**
-      // * API access limited to viewing most entities. No access is given to create or update those
-      // * entities. This may be useful for monitoring programs in the service operator's
-      // environment.
-      // */
-      // READ_ONLY_ADMIN(?)
-      /**
-       * API access for all the resources associated with their account. There may be many users in
-       * a domain, many domains in a deployment, and many users in a deployment. This is typically
-       * the end user
-       */
-      USER(0), UNRECOGNIZED(Integer.MAX_VALUE);
+      DOMAIN_ADMIN(2), UNRECOGNIZED(Integer.MAX_VALUE);
 
       private int code;
 
       private static final Map<Integer, Type> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(Type.values()),
-               new Function<Type, Integer>() {
+            new Function<Type, Integer>() {
 
-                  @Override
-                  public Integer apply(Type input) {
-                     return input.code;
-                  }
+               @Override
+               public Integer apply(Type input) {
+                  return input.code;
+               }
 
-               });
+            });
 
       Type(int code) {
          this.code = code;
@@ -314,11 +306,10 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    private Set<User> users;
 
    public Account(long id, Type type, String domain, long domainId, Long IPsAvailable, Long IPLimit, long iPs,
-            boolean cleanupRequired, String name, long receivedBytes, long sentBytes, Long snapshotsAvailable,
-            Long snapshotLimit, long snapshots, org.jclouds.cloudstack.domain.Account.State state,
-            Long templatesAvailable, Long templateLimit, long templates, Long VMsAvailable, Long VMLimit,
-            long vMsRunning, long vMsStopped, long vMs, Long volumesAvailable, Long volumeLimit, long volumes,
-            Set<User> users) {
+         boolean cleanupRequired, String name, long receivedBytes, long sentBytes, Long snapshotsAvailable,
+         Long snapshotLimit, long snapshots, org.jclouds.cloudstack.domain.Account.State state,
+         Long templatesAvailable, Long templateLimit, long templates, Long VMsAvailable, Long VMLimit, long vMsRunning,
+         long vMsStopped, long vMs, Long volumesAvailable, Long volumeLimit, long volumes, Set<User> users) {
       this.id = id;
       this.type = type;
       this.domain = domain;
@@ -415,8 +406,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of public ip addresses available for this account to acquire, or null
-    *         if unlimited
+    * @return the total number of public ip addresses available for this account
+    *         to acquire, or null if unlimited
     */
    @Nullable
    public Long getIPsAvailable() {
@@ -425,7 +416,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of public ip addresses this account can acquire, or null if unlimited
+    * @return the total number of public ip addresses this account can acquire,
+    *         or null if unlimited
     */
    @Nullable
    public Long getIPLimit() {
@@ -458,7 +450,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of snapshots available for this account, or null if unlimited
+    * @return the total number of snapshots available for this account, or null
+    *         if unlimited
     */
    @Nullable
    public Long getSnapshotsAvailable() {
@@ -467,8 +460,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of snapshots which can be stored by this account, or null if
-    *         unlimited
+    * @return the total number of snapshots which can be stored by this account,
+    *         or null if unlimited
     */
    @Nullable
    public Long getSnapshotLimit() {
@@ -493,8 +486,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of templates available to be created by this account, or null if
-    *         unlimited
+    * @return the total number of templates available to be created by this
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getTemplatesAvailable() {
@@ -503,8 +496,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of templates which can be created by this account, or null if
-    *         unlimited
+    * @return the total number of templates which can be created by this
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getTemplateLimit() {
@@ -513,7 +506,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of templates which have been created by this account
+    * @return the total number of templates which have been created by this
+    *         account
     */
    public long getTemplates() {
       return templates;
@@ -521,8 +515,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of virtual machines available for this account to acquire, or null if
-    *         unlimited
+    * @return the total number of virtual machines available for this account to
+    *         acquire, or null if unlimited
     */
    @Nullable
    public Long getVMsAvailable() {
@@ -531,8 +525,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total number of virtual machines that can be deployed by this account, or null if
-    *         unlimited
+    * @return the total number of virtual machines that can be deployed by this
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getVMLimit() {
@@ -574,7 +568,8 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * 
-    * @return the total volume which can be used by this account, or null if unlimited
+    * @return the total volume which can be used by this account, or null if
+    *         unlimited
     */
    @Nullable
    public Long getVolumeLimit() {
@@ -597,12 +592,12 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    @Override
    public String toString() {
       return String
-               .format(
-                        "[id=%s, name=%s, type=%s, state=%s, domain=%s, domainId=%s, cleanupRequired=%s, sentBytes=%s, receivedBytes=%s, IPs=%s, IPsAvailable=%s, IPLimit=%s, VMs=%s, VMsAvailable=%s, VMsRunning=%s, VMsStopped=%s, VMLimit=%s, snapshots=%s, snapshotLimit=%s, snapshotsAvailable=%s, templateLimit=%s, templates=%s, templatesAvailable=%s, volumes=%s, volumeLimit=%s, volumesAvailable=%s, users=%s]",
-                        id, name, type, state, domain, domainId, cleanupRequired, sentBytes, receivedBytes, IPs,
-                        IPsAvailable, IPLimit, VMs, VMsAvailable, VMsRunning, VMsStopped, VMLimit, snapshots,
-                        snapshotLimit, snapshotsAvailable, templateLimit, templates, templatesAvailable, volumes,
-                        volumeLimit, volumesAvailable, users);
+            .format(
+                  "[id=%s, name=%s, type=%s, state=%s, domain=%s, domainId=%s, cleanupRequired=%s, sentBytes=%s, receivedBytes=%s, IPs=%s, IPsAvailable=%s, IPLimit=%s, VMs=%s, VMsAvailable=%s, VMsRunning=%s, VMsStopped=%s, VMLimit=%s, snapshots=%s, snapshotLimit=%s, snapshotsAvailable=%s, templateLimit=%s, templates=%s, templatesAvailable=%s, volumes=%s, volumeLimit=%s, volumesAvailable=%s, users=%s]",
+                  id, name, type, state, domain, domainId, cleanupRequired, sentBytes, receivedBytes, IPs,
+                  IPsAvailable, IPLimit, VMs, VMsAvailable, VMsRunning, VMsStopped, VMLimit, snapshots, snapshotLimit,
+                  snapshotsAvailable, templateLimit, templates, templatesAvailable, volumes, volumeLimit,
+                  volumesAvailable, users);
    }
 
    @Override
