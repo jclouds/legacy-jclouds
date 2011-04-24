@@ -22,7 +22,8 @@
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
            [org.jclouds.crypto CryptoStreams]
-           [java.io ByteArrayOutputStream]
+           [java.io ByteArrayInputStream ByteArrayOutputStream
+            StringBufferInputStream]
            [org.jclouds.util Strings2]))
 
 (defn clean-stub-fixture
@@ -156,5 +157,38 @@
                      :calculate-md5 true)]
     (is (= (seq (.. a-blob (getPayload) (getContentMetadata) (getContentMD5)))
            (seq (CryptoStreams/md5 (.getBytes "test-payload")))))))
+
+(deftest payload-protocol-test
+  (is (instance? org.jclouds.io.Payload (payload "test")))
+  (is (blob "blob1" :payload (payload "blob1")))
+  (is (create-container *blobstore* "container"))
+  (is (= "blob1"
+         (do
+           (put-blob *blobstore* "container"
+                     (blob "blob1"
+                           :payload "blob1"))
+           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+                                                       "container" "blob1")))))
+  (is (= "blob2"
+         (do
+           (put-blob *blobstore* "container"
+                     (blob "blob2"
+                           :payload (StringBufferInputStream. "blob2")))
+           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+                                                       "container" "blob2")))))
+  (is (= "blob3"
+         (do
+           (put-blob *blobstore* "container"
+                     (blob "blob3"
+                           :payload (.getBytes "blob3")))
+           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+                                                       "container" "blob3")))))
+  (is (= "blob4"
+         (do
+           (put-blob *blobstore* "container"
+                     (blob "blob4"
+                           :payload #(.write % (.getBytes "blob4"))))
+           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+                                                       "container" "blob4"))))))
 
 ;; TODO: more tests involving blob-specific functions

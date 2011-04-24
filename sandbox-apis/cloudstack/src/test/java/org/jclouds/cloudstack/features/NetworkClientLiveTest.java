@@ -35,7 +35,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "NetworkClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListNetworks() throws Exception {

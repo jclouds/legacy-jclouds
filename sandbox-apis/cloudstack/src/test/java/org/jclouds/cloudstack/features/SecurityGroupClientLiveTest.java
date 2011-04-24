@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "SecurityGroupClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "SecurityGroupClientLiveTest")
 public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public SecurityGroupClientLiveTest() {
       prefix += "2";
@@ -63,7 +63,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
             @Override
             public boolean apply(Zone arg0) {
-               return arg0.isSecurityGroupsEnabled();
+             return true;//  return arg0.isSecurityGroupsEnabled();
             }
 
          });

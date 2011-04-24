@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "GuestOSClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "GuestOSClientLiveTest")
 public class GuestOSClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListOSTypes() throws Exception {

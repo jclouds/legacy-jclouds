@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "AsyncJobClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "AsyncJobClientLiveTest")
 public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
    // disabled as it takes too long
    @Test(enabled = false)
