@@ -18,29 +18,37 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.testng.Assert.assertTrue;
-
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.Zone;
-import org.testng.annotations.Test;
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.options.ListAccountsOptions;
+import org.jclouds.concurrent.Timeout;
 
 /**
- * Tests behavior of {@code HypervisorClientLiveTest}
+ * Provides synchronous access to CloudStack Account features.
+ * <p/>
  * 
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "HypervisorClientLiveTest")
-public class HypervisorClientLiveTest extends BaseCloudStackClientLiveTest {
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface AccountClient {
+   /**
+    * Lists Accounts
+    * 
+    * @param options
+    *           if present, how to constrain the list.
+    * @return Accounts matching query, or empty set, if no Accounts are found
+    */
+   Set<Account> listAccounts(ListAccountsOptions... options);
 
-   public void testListHypervisors() throws Exception {
-      Set<String> response = client.getHypervisorClient().listHypervisors();
-      assert null != response;
-      assertTrue(response.size() >= 0);
-      for (Zone zone : client.getZoneClient().listZones()) {
-         Set<String> zoneHype = client.getHypervisorClient().listHypervisorsInZone(zone.getId());
-         assert response.containsAll(zoneHype);
-      }
-   }
-
+   /**
+    * get a specific Account by id
+    * 
+    * @param id
+    *           Account to get
+    * @return Account or null if not found
+    */
+   Account getAccount(long id);
 }

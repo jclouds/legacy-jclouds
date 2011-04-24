@@ -34,7 +34,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "TemplateClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "TemplateClientLiveTest")
 public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListTemplates() throws Exception {

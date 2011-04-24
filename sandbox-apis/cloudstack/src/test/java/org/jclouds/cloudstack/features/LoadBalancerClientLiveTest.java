@@ -49,7 +49,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "LoadBalancerClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "LoadBalancerClientLiveTest")
 public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;

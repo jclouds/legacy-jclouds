@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "NATClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "NATClientLiveTest")
 public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;

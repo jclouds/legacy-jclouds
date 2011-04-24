@@ -35,7 +35,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ZoneClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "ZoneClientLiveTest")
 public class ZoneClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListZones() throws Exception {

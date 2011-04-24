@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack;
 
+import org.jclouds.cloudstack.features.AccountAsyncClient;
 import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
@@ -127,4 +128,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    ConfigurationAsyncClient getConfigurationClient();
+
+   /**
+    * Provides asynchronous access to Account features.
+    */
+   @Delegate
+   AccountAsyncClient getAccountClient();
 }

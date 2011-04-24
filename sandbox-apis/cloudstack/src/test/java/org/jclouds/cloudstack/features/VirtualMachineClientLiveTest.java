@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.ServiceOffering;
@@ -67,7 +66,7 @@ import com.google.common.net.HostSpecifier;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "VirtualMachineClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "VirtualMachineClientLiveTest")
 public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm = null;
 
@@ -132,7 +131,6 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          throw new NoSuchElementException(templatePredicate.toString());
       }
       long templateId = get(templates, 0).getId();
-
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
@@ -187,11 +185,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.STOPPED);
 
-      job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
-      assert jobComplete.apply(job);
-      vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job).getResult();
-      if (vm.getPassword() != null) {
-         conditionallyCheckSSH();
+      if (vm.isPasswordEnabled()) {
+         job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
+         assert jobComplete.apply(job);
+         vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job).getResult();
+         if (vm.getPassword() != null) {
+            conditionallyCheckSSH();
+         }
       }
 
       job = client.getVirtualMachineClient().startVirtualMachine(vm.getId());
@@ -263,17 +263,15 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
                assert nic.getGateway() != null : vm;
                assert nic.getIPAddress() != null : vm;
                break;
-            default:
-               if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
-                  assert nic.getNetmask() != null : vm;
-                  assert nic.getGateway() != null : vm;
-                  assert nic.getIPAddress() != null : vm;
-               } else {
-                  assert nic.getNetmask() == null : vm;
-                  assert nic.getGateway() == null : vm;
-                  assert nic.getIPAddress() == null : vm;
-               }
+            case STARTING:
+               assert nic.getNetmask() == null : vm;
+               assert nic.getGateway() == null : vm;
+               assert nic.getIPAddress() == null : vm;
                break;
+            default:
+               assert nic.getNetmask() != null : vm;
+               assert nic.getGateway() != null : vm;
+               assert nic.getIPAddress() != null : vm;
          }
 
       }

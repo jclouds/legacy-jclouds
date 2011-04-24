@@ -27,9 +27,12 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.functions.ReuseOrAssociateNewPublicIPAddress;
 import org.jclouds.cloudstack.predicates.JobComplete;
+import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.compute.domain.ExecResponse;
@@ -47,6 +50,7 @@ import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -120,7 +124,16 @@ public class BaseCloudStackClientLiveTest {
                overrides);
 
       client = context.getApi();
-      injector = Guice.createInjector(new JschSshClientModule(),new Log4JLoggingModule());
+      // check access
+      Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
+      User currentUser = Iterables.find(users, UserPredicates.apiKeyEquals(identity));
+
+      if (currentUser.getAccountType() != Account.Type.USER)
+         throw new IllegalArgumentException(String.format(
+                  "invalid account type: %s, please specify an apiKey of a USER, for example: %s", currentUser
+                           .getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
+
+      injector = Guice.createInjector(new JschSshClientModule(), new Log4JLoggingModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);
