@@ -43,7 +43,6 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
@@ -61,7 +60,8 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "AWSS3AsyncClientTest")
 public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3AsyncClient> {
 
@@ -70,16 +70,58 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    }
 
    public void testGetBucketLocationEU() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("getBucketLocation", String.class);
+      Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
       HttpRequest request = processor.createRequest(method, "eubucket");
 
-      assertRequestLineEquals(request, "GET https://eubucket.bucket/?location HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://eubucket.s3-eu-west-1.amazonaws.com/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: eubucket.s3-eu-west-1.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
       assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   @Override
+   public void testGetBucketLocation() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
+      HttpRequest request = processor.createRequest(method, "bucket");
+
+      assertRequestLineEquals(request, "GET https://bucket.bucketendpoint/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
+      assertPayloadEquals(request, null, null, false);
+
+      request = filter.filter(request);
+
+      assertRequestLineEquals(request, "GET https://bucket.bucketendpoint/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(
+            request,
+            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.bucketendpoint\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   @Override
+   public void testPutBucketDefault() throws ArrayIndexOutOfBoundsException, SecurityException,
+         IllegalArgumentException, NoSuchMethodException, IOException {
+      Method method = AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array
+            .newInstance(PutBucketOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, (String) null, "bucket");
+
+      assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
 
       checkFilters(request);
    }
@@ -107,7 +149,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
             + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
-      // as this is a payload-related command, but with no payload, be careful that we check
+      // as this is a payload-related command, but with no payload, be careful
+      // that we check
       // filtering and do not ignore if this fails later.
       request = request.getFilters().get(0).filter(request);
 
@@ -185,8 +228,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
             .newInstance(PutBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket." + url + "/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
       assertPayloadEquals(request,
             "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
             "text/xml", false);
@@ -214,8 +257,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
       }
 
       @Override
-      protected URI provideLocationURI(String endpoint) {
-         return URI.create("https://bucket");
+      protected URI provideBucketURI(String endpoint) {
+         return URI.create("https://bucketendpoint");
       }
 
       @Override

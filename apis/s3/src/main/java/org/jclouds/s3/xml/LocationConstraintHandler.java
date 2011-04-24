@@ -20,7 +20,7 @@ package org.jclouds.s3.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -35,17 +35,19 @@ import org.jclouds.s3.Bucket;
  * <p/>
  * Region is the document we expect to parse.
  * 
- * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html" />
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html"
+ *      />
  * @author Adrian Cole
  */
 public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String> {
-   private final ConcurrentMap<String, String> bucketToRegion;
+   private final Map<String, String> bucketToRegion;
    private StringBuilder currentText = new StringBuilder();
    private String region;
    private String bucket;
 
    @Inject
-   public LocationConstraintHandler(@Bucket ConcurrentMap<String, String> bucketToRegion) {
+   public LocationConstraintHandler(@Bucket Map<String, String> bucketToRegion) {
       this.bucketToRegion = bucketToRegion;
    }
 

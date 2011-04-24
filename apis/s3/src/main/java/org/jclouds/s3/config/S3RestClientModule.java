@@ -21,6 +21,7 @@ package org.jclouds.s3.config;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -33,6 +34,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.s3.Bucket;
@@ -68,6 +70,14 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    @Singleton
    protected Map<String, String> bucketToRegion() {
       return Maps.newConcurrentMap();
+   }
+
+   @Provides
+   @Bucket
+   @Singleton
+   @Nullable
+   protected String defaultRegionForBucket(@Nullable @Region String defaultRegion) {
+      return defaultRegion;
    }
 
    @Override

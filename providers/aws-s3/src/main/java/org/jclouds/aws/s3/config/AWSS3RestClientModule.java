@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfigured;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
@@ -52,8 +53,13 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    @Provides
    @Singleton
    @Bucket
-   protected URI provideLocationURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint) {
+   protected URI provideBucketURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint) {
       return URI.create(endpoint);
+   }
+
+   @Override
+   protected String defaultRegionForBucket(@Region String defaultRegion) {
+      return US_STANDARD;
    }
 
    @Override
