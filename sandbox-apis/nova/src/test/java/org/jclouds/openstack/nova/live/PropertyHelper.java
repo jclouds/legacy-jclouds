@@ -17,7 +17,7 @@ import java.util.Properties;
  */
 public class PropertyHelper {
 
-   public static String provider = "nova";
+   private static String provider = "nova";
 
    public static void overridePropertyFromSystemProperty(final Properties properties, String propertyName) {
       if ((System.getProperty(propertyName) != null) && !System.getProperty(propertyName).equals("${" + propertyName + "}"))

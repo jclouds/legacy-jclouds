@@ -20,34 +20,23 @@
 package org.jclouds.openstack.nova.live.compute;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.Guice;
 import com.google.inject.Module;
-import org.jclouds.Constants;
-import org.jclouds.compute.*;
+import com.jcraft.jsch.JSchException;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.domain.*;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.net.IPSocket;
-import org.jclouds.openstack.nova.NovaAsyncClient;
-import org.jclouds.openstack.nova.NovaClient;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.JschSshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -56,29 +45,21 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Throwables.getRootCause;
-import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.*;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-import static org.jclouds.openstack.nova.live.PropertyHelper.overridePropertyFromSystemProperty;
-import static org.jclouds.openstack.nova.live.PropertyHelper.setupKeyPair;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * Generally disabled, as it incurs higher fees.
@@ -86,122 +67,17 @@ import static org.testng.Assert.assertNotNull;
  * @author Adrian Cole
  */
 @Test(groups = "novalive", enabled = true, sequential = true)
-public class NovaComputeServiceLiveTest {
+public class NovaComputeServiceLiveTest extends ComputeBase {
 
-   protected String group;
-
-   protected RetryablePredicate<IPSocket> socketTester;
-   protected ComputeServiceContext context;
-   protected ComputeService computeService;
-
-
-   protected Map<String, String> keyPair;
-
-   protected String provider;
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   private Properties overrides;
-
-   public NovaComputeServiceLiveTest() {
-      provider = "nova";
-   }
-
-
-   protected void setupCredentials(Properties properties) {
-      identity = checkNotNull(properties.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(properties.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = properties.getProperty("test." + provider + ".endpoint");
-      apiversion = properties.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected void updateProperties(final Properties properties) {
-      properties.setProperty(provider + ".identity", identity);
-      properties.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         properties.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         properties.setProperty(provider + ".apiversion", apiversion);
-   }
-
-
-   protected Properties setupProperties() throws IOException {
-      Properties overrides = new Properties();
-      overrides.load(this.getClass().getResourceAsStream("/test.properties"));
-
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".endpoint");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".apiversion");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".identity");
-      overridePropertyFromSystemProperty(overrides, "test." + provider + ".credential");
-      overridePropertyFromSystemProperty(overrides, "test.ssh.keyfile.public");
-      overridePropertyFromSystemProperty(overrides, "test.ssh.keyfile.private");
-      overridePropertyFromSystemProperty(overrides, "test.initializer");
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      return overrides;
-   }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
-
-   private void initializeContextAndClient(Properties properties) throws IOException {
-      if (context != null)
-         context.close();
-      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
-            new SLF4JLoggingModule(), getSshModule()), properties);
-      computeService = context.getComputeService();
-   }
-
-
-   @BeforeTest
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      group = "compute service test group";
-      Properties properties = setupProperties();
-      setupCredentials(properties);
-      updateProperties(properties);
-      overrides = properties;
-      keyPair = setupKeyPair(properties);
-      initializeContextAndClient(properties);
-      buildSocketTester();
-   }
-
-   protected void buildSocketTester() {
-      SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-   }
-
-
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
-   }
-
-   @Test
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<NovaClient, NovaAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential, Collections.singleton(new JschSshClientModule()), overrides).getProviderSpecificContext();
-   }
+   private String group = "compute service test group";
 
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
-      _checkNodes(nodes, tag);
-
-      for (NodeMetadata node : nodes) {
-         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
-      }
-   }
-
-   protected void _checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getProviderId());
          assertNotNull(node.getGroup());
          assertEquals(node.getGroup(), group);
-         assertEquals(node.getState(), NodeState.RUNNING);
+         //assertEquals(node.getState(), NodeState.RUNNING);
          Credentials fromStore = context.getCredentialStore().get("node#" + node.getId());
          assertEquals(fromStore, node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
@@ -211,18 +87,23 @@ public class NovaComputeServiceLiveTest {
 //            assertNotNull(node.getCredentials().credential);
 //            doCheckJavaIsInstalledViaSsh(node);
 //         }
+         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
       }
    }
 
+   @BeforeTest
+   public void before() {
+      computeService.destroyNodesMatching(inGroup(group));
+   }
 
-   @Test(enabled = true, expectedExceptions = AuthorizationException.class)
+   @Test(enabled = true, expectedExceptions = AuthorizationException.class, timeOut = 60000)
    public void testCorrectAuthException() throws Exception {
       Properties properties = new Properties();
       properties.putAll(overrides);
       properties.remove(provider + ".identity");
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
                .<Module>of(new SLF4JLoggingModule()), properties);
          context.getComputeService().listNodes();
       } finally {
@@ -231,7 +112,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testImagesCache() throws Exception {
       computeService.listImages();
       long time = System.currentTimeMillis();
@@ -240,97 +121,49 @@ public class NovaComputeServiceLiveTest {
       assert duration < 1000 : String.format("%dms to get images", duration);
    }
 
-   @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
+   @Test(enabled = true, expectedExceptions = NoSuchElementException.class, timeOut = 60000)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
       computeService.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   // since surefire and eclipse don't otherwise guarantee the order, we are
-   // starting this one alphabetically before create2nodes..
-   private String awaitForPublicAddressAssigned(String nodeId) throws InterruptedException {
-      while (true) {
-         Set<String> addresses = computeService.getNodeMetadata(nodeId).getPublicAddresses();
-         System.out.println(addresses);
-         if (addresses != null)
-            if (!addresses.isEmpty()) return addresses.iterator().next();
-         Thread.sleep(1000);
-      }
-   }
-
-   private void awaitForSshPort(String address, Credentials credentials) throws URISyntaxException {
-      IPSocket socket = new IPSocket(address, 22);
-
-      JschSshClient ssh = new JschSshClient(
-            new BackoffLimitedRetryHandler(), socket, 10000, credentials.identity, null, credentials.credential.getBytes());
-      while (true) {
-         try {
-            System.out.println("ping: " + socket);
-            ssh.connect();
-            return;
-         } catch (SshException ignore) {
-         }
-      }
-   }
-
-
-   @Test
-   public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String group = this.group;
-
-      computeService.destroyNodesMatching(inGroup(group));
-
-      Template template = getDefaultTemplateBuilder().options(
-            computeService.templateOptions()
-                  .overrideCredentialsWith(new Credentials("root", keyPair.get("private")))
-                  .blockUntilRunning(true))
-            .build();
-
+   @Test(expectedExceptions = JSchException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 60000)
+   void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
+      NodeMetadata node = getDefaultNodeImmediately(group);
+      String address = awaitForPublicAddressAssigned(node.getId());
+      awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
+      OperatingSystem os = node.getOperatingSystem();
       try {
-         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, template);
-
-         System.out.println("==================================================");
-         System.out.println("================ Created       ===================");
-
-         String address = awaitForPublicAddressAssigned(get(nodes, nodes.size() - 1).getId());
-         awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
-
-         OperatingSystem os = get(nodes, 0).getOperatingSystem();
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runJavaInstallationScriptWithCreds(group, os, new Credentials(
-                  "root", "romeo"));
-            assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (RunScriptOnNodesException ignore) {
-            if (!getRootCause(ignore).getMessage().contains("Auth fail")) throw ignore;
-         }
-
-         System.out.println("==================================================");
-         System.out.println("================ Auth failed       ===================");
-
-         for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
-               runningInGroup(group), Statements.exec("echo hello"),
-               overrideCredentialsWith(new Credentials("root", keyPair.get("private"))).wrapInInitScript(false).runAsRoot(false)).entrySet())
-            assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-                  + response.getValue();
-
-         System.out.println("==================================================");
-         System.out.println("================ Script       ===================");
-
-         //TODO runJavaInstallationScriptWithCreds(group, os, new Credentials("root", keyPair.get("private")));
-         //TODO no response? if os is null (ZYPPER)
-
-         checkNodes(nodes, group);
-
-         Credentials good = nodes.iterator().next().getCredentials();
-         //TODO check good is being private key .overrideCredentialsWith
-         //TODO test for .blockOnPort
-
-      } finally {
-         computeService.destroyNodesMatching(inGroup(group));
+         Map<? extends NodeMetadata, ExecResponse> responses = runJavaInstallationScriptWithCreds(group, os, new Credentials(
+               "root", "romeo"));
+      } catch (RunScriptOnNodesException e) {
+         throw e.getNodeErrors().values().iterator().next().getCause();
       }
    }
 
-   @Test
+   @Test(timeOut = 60000)
+   public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException, RunScriptOnNodesException, URISyntaxException, IOException {
+
+      NodeMetadata node = getDefaultNodeImmediately(group);
+      String address = awaitForPublicAddressAssigned(node.getId());
+      awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
+      for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
+            runningInGroup(group), Statements.exec("echo hello"),
+            overrideCredentialsWith(new Credentials("root", keyPair.get("private"))).wrapInInitScript(false).runAsRoot(false)).entrySet())
+         assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
+               + response.getValue();
+
+      //TODO runJavaInstallationScriptWithCreds(group, os, new Credentials("root", keyPair.get("private")));
+      //TODO no response? if os is null (ZYPPER)
+
+      checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
+
+      Credentials good = node.getCredentials();
+      //TODO check good is being private key .overrideCredentialsWith
+      //TODO test for .blockOnPort
+   }
+
+   @Test(timeOut = 60000)
    public void testTemplateMatch() throws Exception {
       Template template = buildTemplate(getDefaultTemplateBuilder());
       Template toMatch = computeService.templateBuilder().imageId(template.getImage().getId()).build();
@@ -341,12 +174,12 @@ public class NovaComputeServiceLiveTest {
 //      ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
 //   }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testCreateTwoNodesWithRunScript() throws Exception {
       computeService.destroyNodesMatching(inGroup(group));
+      Template template = getDefaultTemplateBuilder().options(TemplateOptions.Builder.blockUntilRunning(true)).build();
+      SortedSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 2, template));
 
-      SortedSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 2, getDefaultTemplateBuilder().build()));
-      awaitForPublicAddressAssigned(nodes.iterator().next().getId());
       assertEquals(nodes.size(), 2);
       checkNodes(nodes, group);
       NodeMetadata node1 = nodes.first();
@@ -354,17 +187,13 @@ public class NovaComputeServiceLiveTest {
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
 
-      assertLocationSameOrChild(node1.getLocation(), getDefaultTemplateBuilder().build().getLocation());
-      assertLocationSameOrChild(node2.getLocation(), getDefaultTemplateBuilder().build().getLocation());
-      checkImageIdMatchesTemplate(node1);
-      checkImageIdMatchesTemplate(node2);
+      assertLocationSameOrChild(node1.getLocation(), template.getLocation());
+      assertLocationSameOrChild(node2.getLocation(), template.getLocation());
+      assertEquals(node1.getImageId(), template.getImage().getId());
+      assertEquals(node2.getImageId(), template.getImage().getId());
 //      checkOsMatchesTemplate(node1);
 //      checkOsMatchesTemplate(node2);
-   }
-
-   protected void checkImageIdMatchesTemplate(NodeMetadata node) {
-      if (node.getImageId() != null)
-         assertEquals(node.getImageId(), getDefaultTemplateBuilder().build().getImage().getId());
+      //TODO add with script;
    }
 
 //   protected void checkOsMatchesTemplate(NodeMetadata node) {
@@ -374,43 +203,25 @@ public class NovaComputeServiceLiveTest {
 //                     .getOperatingSystem());
 //   }
 
-   void assertLocationSameOrChild(Location test, Location expected) {
-      if (!test.equals(expected)) {
-         assertEquals(test.getParent().getId(), expected.getId());
-      } else {
-         assertEquals(test, expected);
-      }
-   }
 
-   private NodeMetadata createDefaultNode(TemplateOptions options) throws RunNodesException {
-      return computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().options(options).build())
-            .iterator().next();
-   }
+   @Test(timeOut = 60000)
+   public void testCreateAnotherNodeWithNewContextToEnsureSharedMemIsntRequired() throws Exception {
+      getDefaultNodeImmediately(group);
+      initializeContextAndComputeService(overrides);
 
-   private NodeMetadata createDefaultNode() throws RunNodesException {
-      return createDefaultNode(getDefaultTemplateOptions());
-   }
-
-   @Test
-   public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
-      testCreateTwoNodesWithRunScript();
-      initializeContextAndClient(overrides);
-
-      TreeSet<NodeMetadata> nodes = newTreeSet(computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build()));
-      checkNodes(nodes, group);
-      NodeMetadata node = nodes.first();
-      assertEquals(nodes.size(), 1);
+      NodeMetadata node = createDefaultNode(TemplateOptions.Builder.blockUntilRunning(true), group);
+      checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
       assertLocationSameOrChild(node.getLocation(), getDefaultTemplateBuilder().build().getLocation());
 //      checkOsMatchesTemplate(node);
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testCredentialsCache() throws Exception {
       LinkedList<NodeMetadata> nodes = new LinkedList<NodeMetadata>();
-      nodes.add(createDefaultNode());
-      initializeContextAndClient(overrides);
-      nodes.add(createDefaultNode());
-      initializeContextAndClient(overrides);
+      nodes.add(getDefaultNodeImmediately(group));
+      initializeContextAndComputeService(overrides);
+      nodes.add(createDefaultNode(group));
+      initializeContextAndComputeService(overrides);
       for (NodeMetadata node : nodes)
          assert (context.getCredentialStore().get("node#" + node.getId()) != null) : "credentials for " + node.getId();
    }
@@ -427,9 +238,10 @@ public class NovaComputeServiceLiveTest {
       return templateBuilder.build();
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testGetNodeMetadata() throws Exception {
-      Set<NodeMetadata> nodes = Sets.newHashSet(createDefaultNode());
+      Set<NodeMetadata> nodes = Sets.newHashSet(getDefaultNodeImmediately(group));
+      awaitForPublicAddressAssigned(nodes.iterator().next().getId());
       Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
             .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
             new Function<NodeMetadata, String>() {
@@ -442,58 +254,29 @@ public class NovaComputeServiceLiveTest {
             }));
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
-         NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
-         assertEquals(parseGroupFromName(metadata.getName()), group);
-         assertEquals(metadata.getProviderId(), node.getProviderId());
-         assertEquals(metadata.getGroup(), node.getGroup());
-         assertLocationSameOrChild(metadata.getLocation(), getDefaultTemplateBuilder().build().getLocation());
-         checkImageIdMatchesTemplate(metadata);
+         NodeMetadata nodeMetadata = computeService.getNodeMetadata(node.getId());
+         assertEquals(parseGroupFromName(nodeMetadata.getName()), group);
+         assertEquals(nodeMetadata.getProviderId(), node.getProviderId());
+         assertEquals(nodeMetadata.getGroup(), node.getGroup());
+         assertLocationSameOrChild(nodeMetadata.getLocation(), getDefaultTemplateBuilder().build().getLocation());
+         assertEquals(nodeMetadata.getImageId(), getDefaultTemplateBuilder().build().getImage().getId());
 //         checkOsMatchesTemplate(metadata);
-         assert (metadata.getState() == NodeState.RUNNING) : metadata;
+         assertEquals(nodeMetadata.getState(), NodeState.RUNNING);
          // due to DHCP the addresses can actually change in-between runs.
-         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size());
-         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size());
+         assertTrue(nodeMetadata.getPrivateAddresses().size() > 0);
+         assertTrue(nodeMetadata.getPublicAddresses().size() > 0);
       }
       assertNodeZero(metadataMap.values(), nodes);
    }
+
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet, Set<NodeMetadata> nodes) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
             metadataSet, nodes);
    }
 
-   @Test
-   public void testReboot() throws Exception {
-      createDefaultNode();
-      computeService.rebootNodesMatching(inGroup(group));// TODO test
-      // validation
-      testGetNodeMetadata();
-   }
 
-   @Test
-   public void testSuspendResume() throws Exception {
-      createDefaultNode();
-      computeService.suspendNodesMatching(inGroup(group));
-
-      Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
-
-      assert Iterables.all(stoppedNodes, new Predicate<NodeMetadata>() {
-
-         @Override
-         public boolean apply(NodeMetadata input) {
-            boolean returnVal = input.getState() == NodeState.SUSPENDED;
-            if (!returnVal)
-               System.err.printf("warning: node %s in state %s%n", input.getId(), input.getState());
-            return returnVal;
-         }
-
-      }) : stoppedNodes;
-
-      computeService.resumeNodesMatching(inGroup(group));
-      testGetNodeMetadata();
-   }
-
-   @Test
+   @Test(timeOut = 60000)
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : computeService.listNodes()) {
          assert node.getProviderId() != null;
@@ -502,7 +285,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testGetNodesWithDetails() throws Exception {
       for (NodeMetadata node : computeService.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
@@ -522,9 +305,9 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testDestroyNodes() {
-      int toDestroy = refreshNodes().size();
+      int toDestroy = getFreshNodes(group).size();
       Set<? extends NodeMetadata> destroyed = computeService.destroyNodesMatching(inGroup(group));
       assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(computeService.listNodesDetailsMatching(all()), inGroup(group))) {
@@ -533,39 +316,15 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   private Set<? extends NodeMetadata> refreshNodes() {
-      return filter(computeService.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
+
+   @Test(timeOut = 60000)
+   public void testCreateAndRunService() throws Exception {
+      NodeMetadata node = getDefaultNodeImmediately(group);
+      //TODO .inboundPorts
+      //checkHttpGet(node);
    }
 
-   @Test
-   public void testCreateAndRunAService() throws Exception {
-
-      String group = this.group;
-      try {
-         computeService.destroyNodesMatching(inGroup(group));
-      } catch (Exception e) {
-
-      }
-
-      Template template = getDefaultTemplateBuilder().options(blockOnComplete(false).inboundPorts(22, 8080))
-            .build();
-
-      // note this is a dependency on the template resolution
-//      template.getOptions().runScript(
-//            RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-//                  .getOperatingSystem()));
-
-      try {
-         NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, template));
-
-         //checkHttpGet(node);
-      } finally {
-         computeService.destroyNodesMatching(inGroup(group));
-      }
-
-   }
-
-   @Test
+   @Test(timeOut = 60000)
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
       Template t = getDefaultTemplateBuilder().smallest().options(options).build();
@@ -580,7 +339,7 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(timeOut = 60000)
    public void testGetAssignableLocations() throws Exception {
       for (Location location : computeService.listAssignableLocations()) {
          System.err.printf("location %s%n", location);
@@ -613,24 +372,13 @@ public class NovaComputeServiceLiveTest {
    }
 
    public void testOptionToNotBlock() throws Exception {
-      String group = this.group;
-      try {
-         computeService.destroyNodesMatching(inGroup(group));
-      } catch (Exception e) {
-
-      }
       //TODO no inbound ports
       //TemplateOptions options = computeService.templateOptions().blockUntilRunning(false).inboundPorts();
-      try {
-         long time = System.currentTimeMillis();
-         Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build());
-         NodeMetadata node = getOnlyElement(nodes);
-         assert node.getState() != NodeState.RUNNING;
-         long duration = System.currentTimeMillis() - time;
-         assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
-      } finally {
-         computeService.destroyNodesMatching(inGroup(group));
-      }
+      long time = System.currentTimeMillis();
+      NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build()));
+      assert node.getState() != NodeState.RUNNING;
+      long duration = System.currentTimeMillis() - time;
+      assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
    }
 
    private void assertProvider(Location provider) {
@@ -638,6 +386,7 @@ public class NovaComputeServiceLiveTest {
       assertEquals(provider.getParent(), null);
    }
 
+   @Test(timeOut = 60000)
    public void testListHardwareProfiles() throws Exception {
       for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
@@ -648,17 +397,8 @@ public class NovaComputeServiceLiveTest {
       }
    }
 
-   private TemplateBuilder getDefaultTemplateBuilder() {
-      return computeService.templateBuilder().imageId("95").options(getDefaultTemplateOptions());
-   }
 
-   private TemplateOptions getDefaultTemplateOptions() {
-      return TemplateOptions.Builder.blockUntilRunning(false);
-      //.installPrivateKey(Payloads.newStringPayload(keyPair.get("private")));
-   }
-
-
-   @Test
+   @Test(timeOut = 60000)
    public void testCompareSizes() throws Exception {
       TemplateBuilder templateBuilder = getDefaultTemplateBuilder();
 
@@ -703,7 +443,7 @@ public class NovaComputeServiceLiveTest {
 
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      testDestroyNodes();
+      computeService.destroyNodesMatching(inGroup(group));
       context.close();
    }
 }
