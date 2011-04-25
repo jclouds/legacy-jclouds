@@ -173,13 +173,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
       result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((ingressRules == null) ? 0 : ingressRules.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
 
@@ -192,34 +187,9 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       if (getClass() != obj.getClass())
          return false;
       SecurityGroup other = (SecurityGroup) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
       if (domainId != other.domainId)
          return false;
       if (id != other.id)
-         return false;
-      if (ingressRules == null) {
-         if (other.ingressRules != null)
-            return false;
-      } else if (!ingressRules.equals(other.ingressRules))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
          return false;
       return true;
    }

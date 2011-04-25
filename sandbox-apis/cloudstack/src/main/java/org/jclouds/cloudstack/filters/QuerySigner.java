@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Comparator;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -53,7 +51,9 @@ import com.google.common.collect.Multimap;
 
 /**
  * 
- * @see <a href= "http://download.cloud.com/releases/2.2.0/api/user/2.2api_security_details.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/2.2api_security_details.html"
+ *      />
  * @author Adrian Cole
  * 
  */
@@ -73,8 +73,8 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
 
    @Inject
    public QuerySigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, Crypto crypto, HttpUtils utils,
-            Provider<UriBuilder> builder) {
+         @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, Crypto crypto, HttpUtils utils,
+         Provider<UriBuilder> builder) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
@@ -90,9 +90,11 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
-      request = request.toBuilder().endpoint(
-               builder.get().uri(request.getEndpoint()).replaceQuery(ModifyRequest.makeQueryLine(decodedParams, null))
-                        .build()).build();
+      request = request
+            .toBuilder()
+            .endpoint(
+                  builder.get().uri(request.getEndpoint())
+                        .replaceQuery(ModifyRequest.makeQueryLine(decodedParams, null)).build()).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
@@ -106,8 +108,8 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign), crypto.hmacSHA1(secretKey
-                  .getBytes())));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign),
+               crypto.hmacSHA1(secretKey.getBytes())));
          if (signatureWire.enabled())
             signatureWire.input(Strings2.toInputStream(signature));
       } catch (Exception e) {
@@ -120,11 +122,13 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
       utils.logRequest(signatureLog, request, ">>");
 
+      // encode each parameter value first,
       ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
       for (Entry<String, String> entry : decodedParams.entries())
-         builder.add(entry.getKey().toLowerCase() + "=" + Strings2.urlEncode(entry.getValue()).toLowerCase());
-
-      String stringToSign = Joiner.on('&').join(builder.build());
+         builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
+      
+      // then, lower case the entire query string
+      String stringToSign = Joiner.on('&').join(builder.build()).toLowerCase();
       if (signatureWire.enabled())
          signatureWire.output(stringToSign);
 

@@ -160,7 +160,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
       }
-      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN")).apply(vm.getRootDeviceType()) : vm;
+      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN"), equalTo("VMFS")).apply(vm.getRootDeviceType()) : vm;
       checkVm(vm);
    }
 

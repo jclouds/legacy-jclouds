@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
+import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.net.IPSocket;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterGroups;
@@ -63,13 +64,13 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
             @Override
             public boolean apply(Zone arg0) {
-             return true;//  return arg0.isSecurityGroupsEnabled();
+               return arg0.isSecurityGroupsEnabled();
             }
 
          });
          securityGroupsSupported = true;
          for (SecurityGroup securityGroup : client.getSecurityGroupClient().listSecurityGroups(
-                  ListSecurityGroupsOptions.Builder.named(prefix))) {
+               ListSecurityGroupsOptions.Builder.named(prefix))) {
             for (IngressRule rule : securityGroup.getIngressRules())
                assert this.jobComplete.apply(client.getSecurityGroupClient().revokeIngressRule(rule.getId())) : rule;
             client.getSecurityGroupClient().deleteSecurityGroup(securityGroup.getId());
@@ -92,9 +93,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       URL url = new URL("http://checkip.amazonaws.com/");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.connect();
-      // http://bugs.cloud.com/show_bug.cgi?id=8969
-      // return Strings2.toStringAndClose(connection.getInputStream()).trim()+"/32";
-      return Strings2.toStringAndClose(connection.getInputStream()).trim();
+      return Strings2.toStringAndClose(connection.getInputStream()).trim() + "/32";
    }
 
    @Test(dependsOnMethods = "testCreateDestroySecurityGroup")
@@ -105,11 +104,12 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       ImmutableSet<String> cidrs = ImmutableSet.of(cidr);
       assert jobComplete.apply(client.getSecurityGroupClient().authorizeIngressICMPToCIDRs(group.getId(), 0, 8, cidrs)) : group;
       assert jobComplete.apply(client.getSecurityGroupClient().authorizeIngressPortsToCIDRs(group.getId(), "TCP", 22,
-               22, cidrs)) : group;
+            22, cidrs)) : group;
 
       AccountInDomainOptions.Builder.accountInDomain(group.getAccount(), group.getDomainId());
 
-      // replace with get once bug is fixed where getGroup returns only one ingress rule
+      // replace with get once bug is fixed where getGroup returns only one
+      // ingress rule
       group = Iterables.find(client.getSecurityGroupClient().listSecurityGroups(), new Predicate<SecurityGroup>() {
 
          @Override
@@ -170,13 +170,17 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMInSecurityGroup() throws Exception {
       if (!securityGroupsSupported)
          return;
+      for (VirtualMachine vm : client.getVirtualMachineClient().listVirtualMachines(
+            ListVirtualMachinesOptions.Builder.zoneId(zone.getId()))) {
+      }
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(), group.getId(),
-               client, jobComplete, virtualMachineRunning);
+            client, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null)
          password = vm.getPassword();
       // ingress port 22
       checkSSH(new IPSocket(vm.getIPAddress(), 22));
-      // ingress icmp disabled as this is platform dependent and may actually just try tcp port 7
+      // ingress icmp disabled as this is platform dependent and may actually
+      // just try tcp port 7
       // assert InetAddress.getByName(vm.getIPAddress()).isReachable(1000) : vm;
    }
 
