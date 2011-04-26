@@ -95,7 +95,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
+    <build>
+    	<plugins>
+    		<plugin>
+    			<artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.2</version>
+                <executions>             
+                    <execution>
+                        <id>process-remote-resources</id>
+                        <!-- plugin is tuned off due to incorrect work in Eclipse-->
+                        <phase></phase>
+                    </execution>          
+                </executions>
+    		</plugin>
+    	</plugins>
+    </build>
+    
     <profiles>
         <profile>
             <id>live</id>

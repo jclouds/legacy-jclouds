@@ -103,7 +103,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(1).getId(), 5678);
       assertEquals(response.get(1).getName(), "sample-server2");
       assertEquals(response.get(1).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1");
-      assertEquals(response.get(1).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
+      assertEquals(response.get(1).getFlavorRef(), "1");
       assertEquals(response.get(1).getAffinityId(), "b414fa41cb37b97dcb58d6c76112af1258e9eae2");
       assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
       assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);

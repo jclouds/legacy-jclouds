@@ -48,7 +48,7 @@
             "id" : 5678,
             "name" : "sample-server2",
             "imageRef" : "https://servers.api.rackspacecloud.com/v1.1/32278/images/1",
-            "flavorRef" : "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1",
+            "flavorRef" : 1,
             "updated" : "2010-10-10T12:00:00Z",
             "created" : "2010-08-10T12:00:00Z",
             "hostId" : "9e107d9d372bb6826bd81d3542a419d6",
