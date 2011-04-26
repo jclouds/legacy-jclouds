@@ -1,4 +1,4 @@
-test.nova.endpoint=http://172.18.34.40:8774
+test.nova.endpoint=http://dragon004.hw.griddynamics.net:8774
 test.nova.apiversion=1.1
 test.nova.identity=admin
 test.nova.credential=d744752f-20d3-4d75-979f-f62f16033b07

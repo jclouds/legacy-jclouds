@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -56,6 +57,13 @@ public class ComputeServiceCheck {
       Template template = cs.templateBuilder().imageId("95").hardwareId("2").options(options).build();
       Set<? extends NodeMetadata> metedata = cs.createNodesInGroup("test", 1, template);
       System.out.println(metedata);
+   }
+   
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testDefaultTempateDoesNotSpecifyTheOS() {
+      ComputeService cs = context.getComputeService();
+      Template template = cs.templateBuilder().build();
+      System.out.println(template);
    }
 
    @AfterTest
