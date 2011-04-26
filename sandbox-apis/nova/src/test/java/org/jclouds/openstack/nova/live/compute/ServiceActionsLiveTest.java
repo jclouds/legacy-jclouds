@@ -18,7 +18,7 @@ import static org.jclouds.compute.predicates.NodePredicates.inGroup;
  */
 public class ServiceActionsLiveTest extends ComputeBase {
 
-   private String group = "ServiceActionsLiveTest";
+   static private String group = "ServiceActionsLiveTest";
 
    @Test
    public void testReboot() throws Exception {

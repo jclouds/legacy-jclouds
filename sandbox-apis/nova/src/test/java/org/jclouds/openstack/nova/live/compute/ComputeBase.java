@@ -53,7 +53,7 @@ public class ComputeBase {
    protected Properties overrides;
 
    @BeforeTest
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   public void before() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       Properties properties = setupProperties(this.getClass());
       setupOverrides(properties);
       overrides = properties;

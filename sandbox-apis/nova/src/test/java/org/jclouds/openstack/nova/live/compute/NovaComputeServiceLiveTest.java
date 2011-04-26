@@ -69,7 +69,7 @@ import static org.testng.Assert.*;
 @Test(groups = "novalive", enabled = true, sequential = true)
 public class NovaComputeServiceLiveTest extends ComputeBase {
 
-   private String group = "compute service test group";
+   private static String group = "compute service test group";
 
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
@@ -91,8 +91,11 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       }
    }
 
+
    @BeforeTest
-   public void before() {
+   @Override
+   public void before() throws IOException, ExecutionException, TimeoutException, InterruptedException {
+      super.before();
       computeService.destroyNodesMatching(inGroup(group));
    }
 
