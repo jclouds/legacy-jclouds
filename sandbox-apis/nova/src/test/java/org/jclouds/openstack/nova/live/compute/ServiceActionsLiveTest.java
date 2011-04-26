@@ -5,8 +5,10 @@ import com.google.common.collect.Iterables;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -19,6 +21,13 @@ import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 public class ServiceActionsLiveTest extends ComputeBase {
 
    static private String group = "ServiceActionsLiveTest";
+
+   @BeforeTest
+   @Override
+   public void before() throws IOException, ExecutionException, TimeoutException, InterruptedException {
+      super.before();
+      computeService.destroyNodesMatching(inGroup(group));
+   }
 
    @Test
    public void testReboot() throws Exception {
