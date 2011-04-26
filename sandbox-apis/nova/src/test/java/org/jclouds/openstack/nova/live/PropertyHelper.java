@@ -40,6 +40,8 @@ public class PropertyHelper {
       overridePropertyFromSystemProperty(properties, "test." + provider + ".apiversion");
       overridePropertyFromSystemProperty(properties, "test." + provider + ".identity");
       overridePropertyFromSystemProperty(properties, "test." + provider + ".credential");
+      overridePropertyFromSystemProperty(properties, "test.ssh.keyfile.private");
+      overridePropertyFromSystemProperty(properties, "test.ssh.keyfile.public");
       overridePropertyFromSystemProperty(properties, "test.initializer");
       return properties;
    }
