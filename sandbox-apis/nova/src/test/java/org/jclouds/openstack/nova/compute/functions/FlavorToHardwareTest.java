@@ -16,25 +16,23 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.openstack.nova.compute.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.net.UnknownHostException;
-
-import org.jclouds.openstack.nova.domain.Flavor;
-import org.jclouds.openstack.nova.functions.ParseFlavorFromJsonResponseTest;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.VolumeBuilder;
+import com.google.common.collect.ImmutableList;
+import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.functions.ParseFlavorFromJsonResponseTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole
@@ -44,11 +42,16 @@ public class FlavorToHardwareTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
-   public void test() throws UnknownHostException {
-      assertEquals(convertFlavor(), new HardwareBuilder().ids("1").name("256 MB Server").processors(
-               ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
-               ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true).bootDevice(true)
-                        .build())).build());
+   public void test() throws UnknownHostException, URISyntaxException {
+      Hardware flavor = convertFlavor();
+      Hardware tempFlavor = new HardwareBuilder().ids("1").name("256 MB Server")
+            .processors(ImmutableList.of(new Processor(1.0, 1.0)))
+            .ram(256)
+            .volumes(ImmutableList.of(
+                  new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true).bootDevice(true).build()))
+            .uri(new URI("http://servers.api.openstack.org/1234/flavors/1"))
+            .build();
+      assertEquals(flavor, tempFlavor);
    }
 
    public static Hardware convertFlavor() {

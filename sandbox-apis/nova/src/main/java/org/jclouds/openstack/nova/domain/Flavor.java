@@ -25,7 +25,7 @@ package org.jclouds.openstack.nova.domain;
  * 
  * @author Adrian Cole
  */
-public class Flavor {
+public class Flavor extends Resource {
 
    public Flavor() {
    }

@@ -18,50 +18,22 @@
  */
 package org.jclouds.openstack.nova;
 
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.openstack.nova.binders.BindBackupScheduleToJsonPayload;
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.BackupSchedule;
-import org.jclouds.openstack.nova.domain.Flavor;
-import org.jclouds.openstack.nova.domain.Image;
-import org.jclouds.openstack.nova.domain.RebootType;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.SharedIpGroup;
-import org.jclouds.openstack.nova.options.CreateServerOptions;
-import org.jclouds.openstack.nova.options.CreateSharedIpGroupOptions;
-import org.jclouds.openstack.nova.options.ListOptions;
-import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.http.functions.ReturnFalseOn404;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.openstack.nova.domain.*;
+import org.jclouds.openstack.nova.options.CreateServerOptions;
+import org.jclouds.openstack.nova.options.ListOptions;
+import org.jclouds.openstack.nova.options.RebuildServerOptions;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Provides asynchronous access to OpenStack Nova via their REST API.
@@ -69,13 +41,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * All commands return a ListenableFuture of the result from OpenStack Nova. Any exceptions incurred
  * during processing will be wrapped in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
- * 
+ *
+ * @author Adrian Cole
  * @see NovaClient
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
- * @author Adrian Cole
  */
-@SkipEncoding({ '/', '=' })
-@RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
+@SkipEncoding({'/', '='})
+@RequestFilters({AuthenticateRequest.class, AddTimestampQuery.class})
 @Endpoint(ServerManagement.class)
 public interface NovaAsyncClient {
 
@@ -158,8 +130,8 @@ public interface NovaAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageId") int imageId,
-         @PayloadParam("flavorId") int flavorId, CreateServerOptions... options);
+   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
+                                         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
     * @see NovaClient#rebuildServer
@@ -170,33 +142,14 @@ public interface NovaAsyncClient {
    @MapBinder(RebuildServerOptions.class)
    ListenableFuture<Void> rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
-   /**
-    * @see NovaClient#shareIp
-    */
-   @PUT
-   @Path("/servers/{id}/ips/public/{address}")
-   @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"shareIp\":%7B\"sharedIpGroupId\":{sharedIpGroupId},\"configureServer\":{configureServer}%7D%7D")
-   ListenableFuture<Void> shareIp(@PathParam("address") String addressToShare,
-         @PathParam("id") int serverToTosignBindressTo, @PayloadParam("sharedIpGroupId") int sharedIpGroup,
-         @PayloadParam("configureServer") boolean configureServer);
-
-   /**
-    * @see NovaClient#unshareIp
-    */
-   @DELETE
-   @Path("/servers/{id}/ips/public/{address}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> unshareIp(@PathParam("address") String addressToShare,
-         @PathParam("id") int serverToTosignBindressTo);
 
    /**
     * @see NovaClient#changeAdminPass
     */
-   @PUT
-   @Path("/servers/{id}")
+   @POST
+   @Path("/servers/{id}/action")
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"server\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
+   @Payload("%7B\"changePassword\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
    ListenableFuture<Void> changeAdminPass(@PathParam("id") int id, @PayloadParam("adminPass") String adminPass);
 
    /**
@@ -271,76 +224,7 @@ public interface NovaAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"image\":%7B\"serverId\":{serverId},\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Image> createImageFromServer(@PayloadParam("name") String imageName,
-         @PayloadParam("serverId") int serverId);
-
-   /**
-    * @see NovaClient#listSharedIpGroups
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<SharedIpGroup>> listSharedIpGroups(ListOptions... options);
-
-   /**
-    * @see NovaClient#getSharedIpGroup
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SharedIpGroup> getSharedIpGroup(@PathParam("id") int id);
-
-   /**
-    * @see NovaClient#createSharedIpGroup
-    */
-   @POST
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
-   @MapBinder(CreateSharedIpGroupOptions.class)
-   ListenableFuture<SharedIpGroup> createSharedIpGroup(@PayloadParam("name") String name,
-         CreateSharedIpGroupOptions... options);
-
-   /**
-    * @see NovaClient#deleteSharedIpGroup
-    */
-   @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Path("/shared_ip_groups/{id}")
-   ListenableFuture<Boolean> deleteSharedIpGroup(@PathParam("id") int id);
-
-   /**
-    * @see NovaClient#listBackupSchedule
-    */
-   @GET
-   @Unwrap
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<BackupSchedule> getBackupSchedule(@PathParam("id") int serverId);
-
-   /**
-    * @see NovaClient#deleteBackupSchedule
-    */
-   @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<Boolean> deleteBackupSchedule(@PathParam("id") int serverId);
-
-   /**
-    * @see NovaClient#replaceBackupSchedule
-    */
-   @POST
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<Void> replaceBackupSchedule(@PathParam("id") int id,
-         @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
+                                                 @PayloadParam("serverId") int serverId);
 
    /**
     * @see NovaClient#listAddresses

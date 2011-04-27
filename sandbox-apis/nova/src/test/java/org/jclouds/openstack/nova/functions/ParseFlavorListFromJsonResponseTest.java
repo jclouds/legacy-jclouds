@@ -18,28 +18,27 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import org.jclouds.openstack.nova.domain.Flavor;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
-import org.testng.annotations.Test;
-
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Flavor;
+import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -47,6 +46,7 @@ public class ParseFlavorListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new GsonModule());
 
+   @Test
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_flavors.json");
 
@@ -59,6 +59,7 @@ public class ParseFlavorListFromJsonResponseTest {
       assertEquals(response, expects);
    }
 
+   @Test
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_list_flavors_detail.json");
 

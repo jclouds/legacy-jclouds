@@ -18,25 +18,40 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import com.google.common.collect.Maps;
+
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * An image is a collection of files used to create or rebuild a server. Rackspace provides a number
  * of pre-built OS images by default. You may also create custom images from cloud servers you have
  * launched. These custom images are useful for backup purposes or for producing gold server images
  * if you plan to deploy a particular server configuration frequently.
- * 
+ *
  * @author Adrian Cole
  */
-public class Image {
+public class Image extends Resource {
 
-   private Date created;
    private int id;
    private String name;
    private Integer progress;
-   private Integer serverId;
+   private String serverRef;
    private ImageStatus status;
+   private Map<String, String> metadata = Maps.newHashMap();
+
+   private Date created;
    private Date updated;
+
+   public Date getCreated() {
+      return created;
+   }
+
+   public Date getUpdated() {
+      return updated;
+   }
+
 
    public Image() {
    }
@@ -46,13 +61,6 @@ public class Image {
       this.name = name;
    }
 
-   public void setCreated(Date created) {
-      this.created = created;
-   }
-
-   public Date getCreated() {
-      return created;
-   }
 
    public void setId(int id) {
       this.id = id;
@@ -78,12 +86,12 @@ public class Image {
       return progress;
    }
 
-   public void setServerId(Integer serverId) {
-      this.serverId = serverId;
+   public void setServerRef(String serverRef) {
+      this.serverRef = serverRef;
    }
 
-   public Integer getServerId() {
-      return serverId;
+   public String getServerRef() {
+      return serverRef;
    }
 
    public void setStatus(ImageStatus status) {
@@ -94,15 +102,17 @@ public class Image {
       return status;
    }
 
-   public void setUpdated(Date updated) {
-      this.updated = updated;
+
+   public Map<String, String> getMetadata() {
+      return Collections.unmodifiableMap(metadata);
    }
 
-   public Date getUpdated() {
-      return updated;
+   public void setMetadata(Map<String, String> metadata) {
+      this.metadata = Maps.newHashMap(metadata);
    }
+
    /**
-    * note that this ignores the create time
+    * note that this ignores some fields
     */
    @Override
    public int hashCode() {
@@ -110,12 +120,12 @@ public class Image {
       int result = 1;
       result = prime * result + id;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
+      result = prime * result + ((serverRef == null) ? 0 : serverRef.hashCode());
       return result;
    }
 
    /**
-    * note that this ignores the serverid and create time.
+    * note that this ignores some fields
     */
    @Override
    public boolean equals(Object obj) {
@@ -138,8 +148,8 @@ public class Image {
 
    @Override
    public String toString() {
-      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", serverId="
-               + serverId + "]";
+      return "Image [created=" + getCreated() + ", id=" + id + ", name=" + name + ", serverRef="
+            + serverRef + "]";
    }
 
 }
