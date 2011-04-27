@@ -18,10 +18,27 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
+import javax.annotation.Nullable;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.savvis.vpdc.binders.BindFirewallRuleToXmlPayload;
+import org.jclouds.savvis.vpdc.domain.FirewallRule;
+import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
+import org.jclouds.savvis.vpdc.functions.DefaultOrgIfNull;
+import org.jclouds.savvis.vpdc.xml.TaskHandler;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Symphony VPDC resources via their REST API.
@@ -31,8 +48,29 @@ import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-@Path("v{jclouds.api-version}")
 public interface FirewallAsyncClient {
 
+	/**
+    * @see FirewallClient#addFirewallRule
+    */
+   @PUT
+   @XMLResponseParser(TaskHandler.class)
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService/")
+   @MapBinder(BindFirewallRuleToXmlPayload.class)
+   ListenableFuture<Task> addFirewallRule(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, @PayloadParam("firewallRule") FirewallRule firewallRule);
+	   
+   /**
+    * @see FirewallClient#deleteFirewallRule
+    */
+   @DELETE
+   @XMLResponseParser(TaskHandler.class)
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService/")
+   @MapBinder(BindFirewallRuleToXmlPayload.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> deleteFirewallRule(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, @PayloadParam("firewallRule") FirewallRule firewallRule);
 
 }
