@@ -56,6 +56,7 @@ public class ServerCreateLiveTest {
 
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
+   @SuppressWarnings("unused")
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
 
@@ -122,6 +123,7 @@ public class ServerCreateLiveTest {
 //      client.getServer(serverId).getAddresses().getPublicAddresses().iterator().next().getAddress();
    }
 
+   @SuppressWarnings("unused")
    private void blockUntilServerActive(int serverId) throws InterruptedException {
       Server currentDetails;
       for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client

@@ -186,6 +186,7 @@ public class NovaClientLiveTest extends ClientBase {
       assertNotNull(server.getAdminPass());
       assertEquals(server.getStatus(), ServerStatus.BUILD);
       int serverId = server.getId();
+      @SuppressWarnings("unused")
       String adminPass = server.getAdminPass();
       blockUntilServerActive(serverId);
       blockUntilPublicAddress(serverId);

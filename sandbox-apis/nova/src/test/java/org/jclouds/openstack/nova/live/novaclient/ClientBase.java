@@ -1,3 +1,21 @@
+/**
+ *
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
 package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.base.Predicate;
@@ -32,15 +50,12 @@ public class ClientBase {
    protected int testImageId = 95;
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
+   @SuppressWarnings("unused")
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
    protected String serverPrefix = System.getProperty("user.name") + ".cs";
    protected Map<String, String> keyPair;
-   private int serverId;
-   private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
-   private int createdImageId;
-
 
    @BeforeTest
    public void before() throws IOException {

@@ -137,6 +137,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       OperatingSystem os = node.getOperatingSystem();
       try {
+         @SuppressWarnings("unused")
          Map<? extends NodeMetadata, ExecResponse> responses = runJavaInstallationScriptWithCreds(group, os, new Credentials(
                "root", "romeo"));
       } catch (RunScriptOnNodesException e) {
@@ -161,6 +162,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
       checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
 
+      @SuppressWarnings("unused")
       Credentials good = node.getCredentials();
       //TODO check good is being private key .overrideCredentialsWith
       //TODO test for .blockOnPort
@@ -322,6 +324,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
    @Test(timeOut = 60000)
    public void testCreateAndRunService() throws Exception {
+      @SuppressWarnings("unused")
       NodeMetadata node = getDefaultNodeImmediately(group);
       //TODO .inboundPorts
       //checkHttpGet(node);

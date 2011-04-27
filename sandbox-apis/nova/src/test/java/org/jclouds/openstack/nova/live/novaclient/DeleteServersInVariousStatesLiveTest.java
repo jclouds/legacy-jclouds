@@ -40,10 +40,9 @@ public class DeleteServersInVariousStatesLiveTest {
 
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
+   @SuppressWarnings("unused")
    private Predicate<IPSocket> socketTester;
    protected String provider = "nova";
-
-   private int testImageId = 95;
 
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
    Server server = null;
@@ -58,6 +57,7 @@ public class DeleteServersInVariousStatesLiveTest {
 
    }
 
+   @SuppressWarnings("unused")
    private void blockUntilServerActive(int serverId) throws InterruptedException {
       Server currentDetails;
       for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client

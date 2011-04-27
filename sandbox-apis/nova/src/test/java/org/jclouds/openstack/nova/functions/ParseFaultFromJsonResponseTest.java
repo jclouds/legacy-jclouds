@@ -52,7 +52,7 @@ public class ParseFaultFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_servers.json");
 
-
+      @SuppressWarnings("unused")
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
             }));

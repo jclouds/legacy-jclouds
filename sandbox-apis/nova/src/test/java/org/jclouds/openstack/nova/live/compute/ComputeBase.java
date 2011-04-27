@@ -1,7 +1,43 @@
+/**
+ *
+ * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
 package org.jclouds.openstack.nova.live.compute;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Sets.filter;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupKeyPair;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -23,21 +59,8 @@ import org.jclouds.ssh.jsch.JschSshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Sets.filter;
-import static org.jclouds.compute.predicates.NodePredicates.*;
-import static org.jclouds.openstack.nova.live.PropertyHelper.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Victor Galkin
@@ -62,7 +85,7 @@ public class ComputeBase {
 
    }
 
-
+   @SuppressWarnings("unused")
    private RetryablePredicate<IPSocket> buildSocket() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       return new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
