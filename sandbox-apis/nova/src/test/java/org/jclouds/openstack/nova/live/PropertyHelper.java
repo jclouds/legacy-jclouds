@@ -18,17 +18,17 @@
  */
 package org.jclouds.openstack.nova.live;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-import org.jclouds.Constants;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+
+import org.jclouds.Constants;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 
 /**
  * @author Victor Galkin
@@ -44,8 +44,8 @@ public class PropertyHelper {
 
    public static Map<String, String> setupKeyPair(Properties properties) throws FileNotFoundException, IOException {
       return ImmutableMap.<String, String>of(
-            "private", Files.toString(new File(properties.getProperty("test.ssh.keyfile.private")), Charsets.UTF_8),
-            "public", Files.toString(new File(properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
+            "private", Resources.toString(Resources.getResource(properties.getProperty("test.ssh.keyfile.private")), Charsets.UTF_8),
+            "public", Resources.toString(Resources.getResource(properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
    }
 
    public static Properties setupProperties(Class<?> clazz) throws IOException {
