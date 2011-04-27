@@ -36,8 +36,13 @@ import com.google.common.collect.ImmutableList;
 @Singleton
 public class FlavorToHardware implements Function<Flavor, Hardware> {
    public Hardware apply(Flavor from) {
-      return new HardwareBuilder().ids(from.getId() + "").name(from.getName())
-            .processors(ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0))).ram(from.getRam())
-            .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDisk(), true, true))).build();
+      return new HardwareBuilder()
+            .ids(from.getId() + "")
+            .name(from.getName())
+            .processors(ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0)))
+            .ram(from.getRam())
+            .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDisk(), true, true)))
+            .uri(from.getURI())
+            .build();
    }
 }

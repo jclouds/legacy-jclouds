@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
@@ -70,43 +69,33 @@ public class CreateServerOptions extends BindToJsonPayload {
    @SuppressWarnings("unused")
    private class ServerRequest {
       final String name;
-      final int imageId;
-      final int flavorId;
+      final String imageRef;
+      final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
-      Integer sharedIpGroupId;
-      Addresses addresses;
 
-      private ServerRequest(String name, int imageId, int flavorId) {
+      private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
-         this.imageId = imageId;
-         this.flavorId = flavorId;
+         this.imageRef = imageRef;
+         this.flavorRef = flavorRef;
       }
 
    }
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
-   private Integer sharedIpGroupId;
-   private String publicIp;
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"),
-               "name parameter not present"), Integer.parseInt(checkNotNull(postParams
-               .get("imageId"), "imageId parameter not present")), Integer.parseInt(checkNotNull(
-               postParams.get("flavorId"), "flavorId parameter not present")));
+               "name parameter not present"), checkNotNull(postParams
+               .get("imageRef"), "imageRef parameter not present"), checkNotNull(
+            postParams.get("flavorRef"), "flavorRef parameter not present"));
       if (metadata.size() > 0)
          server.metadata = metadata;
       if (files.size() > 0)
          server.personality = files;
-      if (sharedIpGroupId != null)
-         server.sharedIpGroupId = this.sharedIpGroupId;
-      if (publicIp != null) {
-         server.addresses = new Addresses();
-         server.addresses.getPublicAddresses().add(publicIp);
-         server.addresses.setPrivateAddresses(null);
-      }
+
       return bindToRequest(request, ImmutableMap.of("server", server));
    }
 
@@ -128,29 +117,6 @@ public class CreateServerOptions extends BindToJsonPayload {
    public CreateServerOptions withFile(String path, byte[] contents) {
       checkState(files.size() < 5, "maximum number of files allowed is 5");
       files.add(new File(path, contents));
-      return this;
-   }
-
-   /**
-    * A shared IP group is a collection of servers that can share IPs with other members of the
-    * group. Any server in a group can share one or more public IPs with any other server in the
-    * group. With the exception of the first server in a shared IP group, servers must be launched
-    * into shared IP groups. A server may only be a member of one shared IP group.
-    * 
-    * <p/>
-    * Servers in the same shared IP group can share public IPs for various high availability and
-    * load balancing configurations. To launch an HA server, include the optional sharedIpGroupId
-    * element and the server will be launched into that shared IP group.
-    * <p />
-    * 
-    * Note: sharedIpGroupId is an optional parameter and for optimal performance, should ONLY be
-    * specified when intending to share IPs between servers.
-    * 
-    * @see #withSharedIp(String)
-    */
-   public CreateServerOptions withSharedIpGroup(int id) {
-      checkArgument(id > 0, "id must be positive or zero.  was: " + id);
-      this.sharedIpGroupId = id;
       return this;
    }
 
@@ -180,28 +146,6 @@ public class CreateServerOptions extends BindToJsonPayload {
       return this;
    }
 
-   /**
-    * Public IP addresses can be shared across multiple servers for use in various high availability
-    * scenarios. When an IP address is shared to another server, the cloud network restrictions are
-    * modified to allow each server to listen to and respond on that IP address (you may optionally
-    * specify that the target server network configuration be modified). Shared IP addresses can be
-    * used with many standard heartbeat facilities (e.g. keepalived) that monitor for failure and
-    * manage IP failover.
-    * 
-    * <p/>
-    * If you intend to use a shared IP on the server being created and have no need for a separate
-    * public IP address, you may launch the server into a shared IP group and specify an IP address
-    * from that shared IP group to be used as its public IP. You can accomplish this by specifying
-    * the public shared IP address in your request. This is optional and is only valid if
-    * sharedIpGroupId is also supplied.
-    */
-   public CreateServerOptions withSharedIp(String publicIp) {
-      checkState(sharedIpGroupId != null,
-               "sharedIp is invalid unless a shared ip group is specified.");
-      this.publicIp = checkNotNull(publicIp, "ip");
-      return this;
-   }
-
    public static class Builder {
 
       /**
@@ -213,28 +157,11 @@ public class CreateServerOptions extends BindToJsonPayload {
       }
 
       /**
-       * @see CreateServerOptions#withSharedIpGroup(int)
-       */
-      public static CreateServerOptions withSharedIpGroup(int id) {
-         CreateServerOptions options = new CreateServerOptions();
-         return options.withSharedIpGroup(id);
-      }
-
-      /**
        * @see CreateServerOptions#withMetadata(Map<String, String>)
        */
       public static CreateServerOptions withMetadata(Map<String, String> metadata) {
          CreateServerOptions options = new CreateServerOptions();
          return options.withMetadata(metadata);
       }
-
-      /**
-       * @see CreateServerOptions#withSharedIp(String)
-       */
-      public static CreateServerOptions withSharedIp(String publicIp) {
-         CreateServerOptions options = new CreateServerOptions();
-         return options.withSharedIp(publicIp);
-      }
-
    }
 }

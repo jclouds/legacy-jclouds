@@ -1,7 +1,0 @@
-{ 
-    "backupSchedule" : { 
-        "enabled" : true, 
-        "weekly" : "THURSDAY", 
-        "daily" : "H_0400_0600" 
-    } 
-}

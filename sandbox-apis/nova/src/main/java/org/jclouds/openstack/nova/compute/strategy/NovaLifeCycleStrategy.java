@@ -47,7 +47,7 @@ public class NovaLifeCycleStrategy implements RebootNodeStrategy, SuspendNodeStr
    public NodeMetadata rebootNode(String id) {
       int serverId = Integer.parseInt(id);
       // if false server wasn't around in the first place
-      client.rebootServer(serverId, RebootType.HARD);
+      client.rebootServer(serverId, RebootType.SOFT);
       return getNode.getNode(id);
    }
 

@@ -18,24 +18,22 @@
  */
 package org.jclouds.openstack.nova.options;
 
-import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-import java.util.HashMap;
-
-import javax.ws.rs.HttpMethod;
-
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.HttpMethod;
+import java.net.URI;
+import java.util.HashMap;
+
+import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -60,20 +58,20 @@ public class RebuildServerOptionsTest {
    @Test
    public void testWithServer() {
       RebuildServerOptions options = new RebuildServerOptions();
-      options.withImage(3);
+      options.withImage("3");
       HttpRequest request = buildRequest(options);
       assertRebuild(request);
    }
 
    @Test
    public void testWithServerStatic() {
-      RebuildServerOptions options = withImage(3);
+      RebuildServerOptions options = withImage("3");
       HttpRequest request = buildRequest(options);
       assertRebuild(request);
    }
 
    private void assertRebuild(HttpRequest request) {
-      assertEquals("{\"rebuild\":{\"imageId\":3}}", request.getPayload().getRawContent());
+      assertEquals("{\"rebuild\":{\"imageRef\":\"3\"}}", request.getPayload().getRawContent());
    }
 
 }

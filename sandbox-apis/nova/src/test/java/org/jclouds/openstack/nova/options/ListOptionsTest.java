@@ -18,21 +18,17 @@
  */
 package org.jclouds.openstack.nova.options;
 
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.maxResults;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.startAt;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import org.testng.annotations.Test;
 
 import java.util.Date;
 
-import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ListOptions}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -52,7 +48,7 @@ public class ListOptionsTest {
       Date ifModifiedSince = new Date();
       ListOptions options = new ListOptions().changesSince(ifModifiedSince);
       assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
-               .buildQueryParameters().get("changes-since"));
+            .buildQueryParameters().get("changes-since"));
    }
 
    public void testStartAt() {
@@ -71,7 +67,7 @@ public class ListOptionsTest {
       Date ifModifiedSince = new Date();
       ListOptions options = changesSince(ifModifiedSince);
       assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
-               .buildQueryParameters().get("changes-since"));
+            .buildQueryParameters().get("changes-since"));
    }
 
    public void testStartAtStatic() {

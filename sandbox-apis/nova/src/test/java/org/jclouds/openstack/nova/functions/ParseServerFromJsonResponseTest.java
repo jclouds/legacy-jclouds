@@ -18,65 +18,90 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.ServerStatus;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
-import org.testng.annotations.Test;
-
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
+import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code ParseServerFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class ParseServerFromJsonResponseTest {
 
-   public void testApplyInputStreamDetails() throws UnknownHostException {
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException, ClassNotFoundException, ParseException {
       Server response = parseServer();
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "sample-server");
-      assertEquals(response.getImageId(), new Integer(2));
-      assertEquals(response.getFlavorId(), new Integer(1));
+      assertEquals(response.getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/1234/images/1");
+      assertEquals(response.getFlavorRef(), "http://servers.api.openstack.org/1234/flavors/1");
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
       assertEquals(response.getProgress(), new Integer(60));
-      List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
-      List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
-      Addresses addresses1 = new Addresses();
-      addresses1.getPrivateAddresses().addAll(privateAddresses);
-      addresses1.getPublicAddresses().addAll(publicAddresses);
+      SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+      dateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
+      assertEquals(response.getCreated(),
+            dateFormat.parse("2010-08-10T12:00:00Z"));
+      assertEquals(response.getUpdated(),
+            dateFormat.parse("2010-10-10T12:00:00Z"));
+
+      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+            Address.newString2AddressFunction()));
+      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+            ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
+            Address.newString2AddressFunction()));
+      Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
-
+      assertEquals(response.getAddresses(), addresses1);
    }
 
-   public static Server parseServer() {
-      Injector i = Guice.createInjector(new GsonModule());
+
+   public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
+
+      Injector i = Guice.createInjector(new GsonModule() {
+         @Override
+         protected void configure() {
+            super.configure();
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         }
+      });
 
       InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 
       UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
       }));
-      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-      return response;
+
+      return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
    }
 
 }
