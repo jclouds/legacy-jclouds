@@ -23,6 +23,7 @@ import java.net.URI;
 import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -93,4 +94,22 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> removeVM(@EndpointParam URI vm);
+   
+   /**
+    * @see VMClient#powerOffVM
+    */
+   @POST
+   @XMLResponseParser(TaskHandler.class)
+   @Path("action/powerOff")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> powerOffVM(@EndpointParam URI vm);
+   
+   /**
+    * @see VMClient#powerOnVM
+    */
+   @POST
+   @XMLResponseParser(TaskHandler.class)
+   @Path("action/powerOn")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> powerOnVM(@EndpointParam URI vm);
 }

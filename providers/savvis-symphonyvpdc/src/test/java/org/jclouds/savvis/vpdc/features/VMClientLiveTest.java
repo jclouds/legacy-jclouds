@@ -21,6 +21,7 @@ package org.jclouds.savvis.vpdc.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cim.OSType;
@@ -34,7 +35,10 @@ import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.domain.VM;
+import org.jclouds.savvis.vpdc.domain.VM.Status;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
+import org.jclouds.savvis.vpdc.options.GetVMOptions;
+import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
@@ -114,7 +118,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
                .operatingSystem(os).memoryInGig(2).addDataDrive("/data01", 25).build());
 
       // make sure there's no error
-      assert task.getId() != null && task.getError() != null : task;
+      assert task.getId() != null && task.getError() == null : task;
 
       assert this.taskTester.apply(task.getId());
       vm = restContext.getApi().getBrowsingClient().getVMInVDC(billingSiteId, vpdcId, task.getOwner().getId());
@@ -148,6 +152,88 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       }
    }
 
+   public void testPowerOffVM() throws Exception {
+	   billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
+	   vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+	               new Predicate<Resource>() {
+	
+	                  // try to find the first VDC owned by the current user
+	                  // check here for what the email property might be, or in
+	                  // the jclouds-wire.log
+	                  @Override
+	                  public boolean apply(Resource arg0) {
+	                     String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                              arg0.getId()).getDescription();
+	                     return description.indexOf(email) != -1;
+	                  }
+	
+	               }).getId();
+
+      VDC vpdc = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+      URI vmURI = Iterables.find(vpdc.getResourceEntities(), new Predicate<Resource>() {
+			  		@Override
+			  		public boolean apply(Resource arg0) {
+			  			if(VCloudMediaType.VAPP_XML.equals(arg0.getType())){
+			  				VM response1 = restContext.getApi().getBrowsingClient().getVM(arg0.getHref(), (GetVMOptions[]) null);
+			  				System.out.printf("powering off vm - %s%n", response1.getName());
+			  				if(response1.getStatus().equals(Status.ON)){
+			  					return true;
+			  				}
+			  			}
+			  			return false;
+			  		}
+			  		
+			  	}).getHref();
+      
+      Task task = client.powerOffVM(vmURI);
+      
+      // make sure there's no error
+      assert task.getId() != null && task.getError() == null : task;
+
+      assert this.taskTester.apply(task.getId());
+   }
+   
+   public void testPowerOnVM() throws Exception {
+	   billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
+	   vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+	               new Predicate<Resource>() {
+	
+	                  // try to find the first VDC owned by the current user
+	                  // check here for what the email property might be, or in
+	                  // the jclouds-wire.log
+	                  @Override
+	                  public boolean apply(Resource arg0) {
+	                     String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                              arg0.getId()).getDescription();
+	                     return description.indexOf(email) != -1;
+	                  }
+	
+	               }).getId();
+
+      VDC vpdc = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+      URI vmURI = Iterables.find(vpdc.getResourceEntities(), new Predicate<Resource>() {
+			  		@Override
+			  		public boolean apply(Resource arg0) {
+			  			if(VCloudMediaType.VAPP_XML.equals(arg0.getType())){
+			  				VM response1 = restContext.getApi().getBrowsingClient().getVM(arg0.getHref(), (GetVMOptions[]) null);
+			  				System.out.printf("powering on vm - %s%n", response1.getName());
+			  				if(response1.getStatus().equals(Status.OFF)){
+			  					return true;
+			  				}
+			  			}
+			  			return false;
+			  		}
+			  		
+			  	}).getHref();
+      
+      Task task = client.powerOnVM(vmURI);
+      
+      // make sure there's no error
+      assert task.getId() != null && task.getError() == null : task;
+
+      assert this.taskTester.apply(task.getId());
+   }
+   
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vm != null) {
