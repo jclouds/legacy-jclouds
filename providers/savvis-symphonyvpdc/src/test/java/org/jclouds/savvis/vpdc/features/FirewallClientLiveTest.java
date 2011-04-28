@@ -76,7 +76,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   
 	   // make sure there's no error
 	   assert task.getId() != null && task.getError() == null : task;
-	   taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 30, 10, TimeUnit.MINUTES);
+	   
 	   assert this.taskTester.apply(task.getId());
    }
    
@@ -111,7 +111,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   
 	   // make sure there's no error
 	   assert task.getId() != null && task.getError() == null : task;
-	   taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 30, 10, TimeUnit.MINUTES);
+
 	   assert this.taskTester.apply(task.getId());
    }
 
