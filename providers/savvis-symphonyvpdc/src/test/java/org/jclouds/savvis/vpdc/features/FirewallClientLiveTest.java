@@ -18,13 +18,9 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.domain.FirewallRule;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
-import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;

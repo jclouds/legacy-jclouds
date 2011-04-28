@@ -141,6 +141,40 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
 
       checkFilters(request);
    }
+   
+   public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VMAsyncClient.class.getMethod("powerOffVM", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+
+      assertRequestLineEquals(request,
+               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+   
+   public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
+	      Method method = VMAsyncClient.class.getMethod("powerOnVM", URI.class);
+	      HttpRequest request = processor.createRequest(method, URI
+	               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+
+	      assertRequestLineEquals(request,
+	               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "");
+	      assertPayloadEquals(request, null, null, false);
+
+	      assertResponseParserClassEquals(method, request, ParseSax.class);
+	      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+	      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+	      checkFilters(request);
+	   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<VMAsyncClient>> createTypeLiteral() {
