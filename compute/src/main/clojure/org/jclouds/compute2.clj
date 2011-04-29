@@ -124,17 +124,10 @@
 (defn create-nodes
   "Create the specified number of nodes using the default or specified
    template.
-
   ;; Simplest way to add 2 small linux nodes to the group webserver is to run
   (create-nodes \"webserver\" 2 compute)
-
-  ;; which is the same as wrapping the create-nodes command with an implicit
-  ;; compute service.
   ;; Note that this will actually add another 2 nodes to the set called
-  ;; \"webserver\"
-
-  TODO: Examples
-  "
+  ;; \"webserver\""
   ([group count compute]
       (create-nodes
         group count (default-template compute) compute))
@@ -148,12 +141,8 @@
   ;; simplest way to add a small linux node to the group webserver is to run
   (create-node \"webserver\" compute)
 
-  ;; which is the same as wrapping the create-node command with an implicit compute
-  ;; service.
   ;; Note that this will actually add another node to the set called
-  ;;  \"webserver\"
-  TODO: Examples
-  "
+  ;;  \"webserver\""
   ([group compute]
     (create-node group compute (default-template compute)))
   ([group compute template]
