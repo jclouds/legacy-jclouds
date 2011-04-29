@@ -155,8 +155,7 @@
   TODO: Examples
   "
   ([group compute]
-    (create-nodes group 1 (default-template compute)))
-
+    (create-node group compute (default-template compute)))
   ([group compute template]
     (first (create-nodes group 1 template compute))))
 
