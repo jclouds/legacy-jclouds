@@ -222,7 +222,7 @@ public class NodePredicates {
     * @return predicate
     */
    public static Predicate<NodeMetadata> runningInGroup(final String group) {
-      Preconditions2.checkNotEmpty(group, "Tag must be defined");
+      Preconditions2.checkNotEmpty(group, "group must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
