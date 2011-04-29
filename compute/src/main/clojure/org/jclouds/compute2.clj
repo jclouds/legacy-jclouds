@@ -27,11 +27,39 @@
     slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts,
     openhosting-east1, serverlove-z1-man, skalicloud-sdg-my, deltacloud]
 
-  Here's an example of getting some compute configuration from rackspace:"
+Here's an example of getting some compute configuration from rackspace:
+
+  (use 'org.jclouds.compute2)
+  (use 'clojure.pprint)
+
+  (def provider \"cloudservers\")
+  (def provider-identity \"username\")
+  (def provider-credential \"password\")
+
+  ;; create a compute service
+  (def compute
+    (compute-service provider provider-identity provider-credential))
+
+  (pprint (locations compute))
+  (pprint (images compute))
+  (pprint (nodes compute))
+  (pprint (hardware-profiles compute)))
+
+Here's an example of creating and running a small linux node in the group webserver:
+
+  ;; create a compute service using ssh and log4j extensions
+  (def compute
+    (compute-service
+      provider provider-identity provider-credential :ssh :log4j))
+
+  (create-node \"webserver\" compute)
+
+  See http://code.google.com/p/jclouds for details.
+  "
   (:use org.jclouds.core
     (clojure.contrib logging core))
   (:require
-   [clojure.contrib.condition :as condition])
+    [clojure.contrib.condition :as condition])
   (:import java.io.File
     java.util.Properties
     [org.jclouds.domain Location]
@@ -129,8 +157,8 @@
   ;; Note that this will actually add another 2 nodes to the set called
   ;; \"webserver\""
   ([group count compute]
-      (create-nodes
-        group count (default-template compute) compute))
+    (create-nodes
+      group count (default-template compute) compute))
   ([group count template #^ComputeService compute]
     (seq
       (.createNodesInGroup compute group count template))))
