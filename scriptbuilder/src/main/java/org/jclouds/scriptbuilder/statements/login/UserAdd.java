@@ -128,7 +128,7 @@ public class UserAdd implements Statement {
    private final String shell;
 
    @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
+   public Iterable<String> functionDependencies(OsFamily family) {
       return ImmutableList.of();
    }
 

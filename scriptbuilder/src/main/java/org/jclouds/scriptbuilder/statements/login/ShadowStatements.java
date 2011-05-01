@@ -16,15 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.domain;
+package org.jclouds.scriptbuilder.statements.login;
+
+import org.jclouds.scriptbuilder.domain.Statement;
 
 /**
- * Statement used in a shell script
+ * Statements used to manipulate the shadow file
  * 
  * @author Adrian Cole
  */
-public interface Statement {
-   Iterable<String> functionDependencies(OsFamily family);
+public class ShadowStatements {
 
-   String render(OsFamily family);
+   /**
+    * note must be run as root, and will either reset the root password, or
+    * whoever sudoed to root.
+    */
+   public static Statement resetLoginUserPasswordTo(String password) {
+      return new ReplaceShadowPasswordEntryOfLoginUser(password);
+   }
 }

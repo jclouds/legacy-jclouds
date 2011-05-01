@@ -126,10 +126,10 @@ public class SwitchArg implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
+   public Iterable<String> functionDependencies(OsFamily family) {
       List<String> functions = Lists.newArrayList();
       for (Statement statement : valueToActions.values()) {
-         Iterables.addAll(functions, statement.functionDependecies(family));
+         Iterables.addAll(functions, statement.functionDependencies(family));
       }
       return functions;
    }

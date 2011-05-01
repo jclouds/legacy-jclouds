@@ -52,7 +52,7 @@ public class AuthorizeRSAPublicKeys implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
+   public Iterable<String> functionDependencies(OsFamily family) {
       return Collections.emptyList();
    }
 

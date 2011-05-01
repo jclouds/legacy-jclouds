@@ -16,15 +16,17 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.domain;
+package org.jclouds.scriptbuilder.statements.login;
+
 
 /**
- * Statement used in a shell script
  * 
  * @author Adrian Cole
  */
-public interface Statement {
-   Iterable<String> functionDependencies(OsFamily family);
+public class ReplaceShadowPasswordEntryOfLoginUser extends ReplaceShadowPasswordEntry {
 
-   String render(OsFamily family);
+   public ReplaceShadowPasswordEntryOfLoginUser(String password) {
+      super("${SUDO_USER:=${USER}}", password);
+   }
+
 }
