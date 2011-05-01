@@ -128,7 +128,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn nodes-in-group
   "list details of all the nodes in the given group."
-  ([#^String group #^ComputeService compute]
+  ([#^ComputeService compute #^String group]
     (filter #(= (.getTag %) group) (nodes-with-details compute))))
 
 (defn images
@@ -159,7 +159,7 @@ Here's an example of creating and running a small linux node in the group webser
   ([group count compute]
     (create-nodes
       group count (default-template compute) compute))
-  ([group count template #^ComputeService compute]
+  ([#^ComputeService compute group count template]
     (seq
       (.createNodesInGroup compute group count template))))
 
@@ -171,19 +171,19 @@ Here's an example of creating and running a small linux node in the group webser
 
   ;; Note that this will actually add another node to the set called
   ;;  \"webserver\""
-  ([group compute]
-    (create-node group compute (default-template compute)))
-  ([group compute template]
-    (first (create-nodes group 1 template compute))))
+  ([compute group]
+    (create-node compute group (default-template compute)))
+  ([compute group template]
+    (first (create-nodes compute group 1 template))))
 
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.getNodeMetadata compute id)))
 
 (defn suspend-nodes-in-group
   "Reboot all the nodes in the given group."
-  ([#^String group #^ComputeService compute]
+  ([#^ComputeService compute #^String group]
     (.suspendNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn suspend-node
@@ -193,7 +193,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn resume-nodes-in-group
   "Suspend all the nodes in the given group."
-  ([#^String group #^ComputeService compute]
+  ([#^ComputeService compute #^String group]
     (.resumeNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn resume-node
@@ -203,7 +203,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn reboot-nodes-in-group
   "Reboot all the nodes in the given group."
-  ([#^String group #^ComputeService compute]
+  ([#^ComputeService compute #^String group]
     (.rebootNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn reboot-node
@@ -213,7 +213,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn destroy-nodes-in-group
   "Destroy all the nodes in the given group."
-  ([#^String group #^ComputeService compute]
+  ([#^ComputeService compute #^String group]
     (.destroyNodesMatching compute (NodePredicates/inGroup group))))
 
 (defn destroy-node

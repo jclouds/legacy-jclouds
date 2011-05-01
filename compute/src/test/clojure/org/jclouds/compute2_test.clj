@@ -56,20 +56,20 @@ list, Alan Dipert and MeikelBrandmeyer."
 
 (deftest nodes-test
   (is (empty? (nodes *compute*)))
-  (is (create-node "fred" *compute* (build-template *compute* {} )))
+  (is (create-node *compute* "fred" (build-template *compute* {} )))
   (is (= 1 (count (nodes *compute*))))
-  (is (= 1 (count (nodes-in-group "fred" *compute*))))
-  (suspend-nodes-in-group "fred" *compute*)
-  (is (suspended? (first (nodes-in-group "fred" *compute*))))
-  (resume-nodes-in-group "fred" *compute*)
-  (is (running? (first (nodes-in-group "fred" *compute*))))
-  (reboot-nodes-in-group "fred" *compute*)
-  (is (running? (first (nodes-in-group "fred" *compute*))))
-  (is (create-nodes "fred" 2 (build-template *compute* {} ) *compute*))
-  (is (= 3 (count (nodes-in-group "fred" *compute*))))
+  (is (= 1 (count (nodes-in-group *compute* "fred"))))
+  (suspend-nodes-in-group *compute* "fred")
+  (is (suspended? (first (nodes-in-group *compute* "fred"))))
+  (resume-nodes-in-group *compute* "fred")
+  (is (running? (first (nodes-in-group *compute* "fred"))))
+  (reboot-nodes-in-group *compute* "fred")
+  (is (running? (first (nodes-in-group *compute* "fred"))))
+  (is (create-nodes *compute* "fred" 2 (build-template *compute* {} )))
+  (is (= 3 (count (nodes-in-group *compute* "fred"))))
   (is (= "fred" (group (first (nodes *compute*)))))
-  (destroy-nodes-in-group "fred" *compute*)
-  (is (terminated? (first (nodes-in-group "fred" *compute*)))))
+  (destroy-nodes-in-group *compute* "fred")
+  (is (terminated? (first (nodes-in-group *compute* "fred")))))
 
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]
