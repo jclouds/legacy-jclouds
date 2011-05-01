@@ -18,7 +18,7 @@
  */
 package org.jclouds.gogrid.compute.strategy;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 import java.security.SecureRandom;
 import java.util.Set;
@@ -26,12 +26,13 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.compute.options.GoGridTemplateOptions;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.domain.PowerCommand;
@@ -48,22 +49,23 @@ import com.google.common.collect.Iterables;
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class FindPublicIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIntoName {
+public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIntoName {
    private final GoGridClient client;
    private final Function<Hardware, String> sizeToRam;
    private final Function<Server, NodeMetadata> serverToNodeMetadata;
    private RetryablePredicate<Server> serverLatestJobCompleted;
    private RetryablePredicate<Server> serverLatestJobCompletedShort;
-
+ 
    @Inject
-   protected FindPublicIpThenCreateNodeInGroup(GoGridClient client,
+   protected FindIpThenCreateNodeInGroup(GoGridClient client,
             Function<Server, NodeMetadata> serverToNodeMetadata, Function<Hardware, String> sizeToRam,
             Timeouts timeouts) {
       this.client = client;
       this.serverToNodeMetadata = serverToNodeMetadata;
       this.sizeToRam = sizeToRam;
-      this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(
-               client.getJobServices()), timeouts.nodeRunning * 9l / 10l);
+      this.serverLatestJobCompleted = new RetryablePredicate<Server>(
+               new ServerLatestJobCompleted(client.getJobServices()),
+               timeouts.nodeRunning * 9l / 10l);
       this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
                new ServerLatestJobCompleted(client.getJobServices()),
                timeouts.nodeRunning * 1l / 10l);
@@ -74,15 +76,19 @@ public class FindPublicIpThenCreateNodeInGroup implements CreateNodeWithGroupEnc
       Server addedServer = null;
       boolean notStarted = true;
       int numOfRetries = 20;
+      GetIpListOptions unassignedIps = new GetIpListOptions()
+            .onlyUnassigned()
+            .inDatacenter(template.getLocation().getId());
+      if (template.getOptions() instanceof GoGridTemplateOptions) {
+         IpType ipType = GoGridTemplateOptions.class.cast(template.getOptions()).getIpType();
+	     unassignedIps = unassignedIps.onlyWithType(ipType);
+      }
       // lock-free consumption of a shared resource: IP address pool
       while (notStarted) { // TODO: replace with Predicate-based thread
-         // collision avoidance for
-         // simplicity
-         Set<Ip> availableIps = client.getIpServices().getIpList(
-                  new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC).inDatacenter(
-                           template.getLocation().getId()));
-         if (availableIps.size() == 0)
-            throw new RuntimeException("No public IPs available on this identity.");
+         // collision avoidance for simplicity
+         Set<Ip> availableIps = client.getIpServices().getIpList(unassignedIps);
+         if (availableIps.isEmpty())
+            throw new RuntimeException("No IPs available on this identity.");
          int ipIndex = new SecureRandom().nextInt(availableIps.size());
          Ip availableIp = Iterables.get(availableIps, ipIndex);
          try {
