@@ -36,15 +36,10 @@
         <jclouds.test.listener></jclouds.test.listener>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>r09</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>1.3.9</version>
+       <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

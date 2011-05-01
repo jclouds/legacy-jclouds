@@ -16,24 +16,27 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.domain;
+package org.jclouds.scriptbuilder.statements.login;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
- * @see AuthorizeRSAPublicKeys
  */
-@Deprecated
-public class AuthorizeRSAPublicKey extends AuthorizeRSAPublicKeys {
+@Test(groups = "unit")
+public class SudoStatementsTest {
 
-   public AuthorizeRSAPublicKey(String publicKey) {
-      super(ImmutableSet.of(checkNotNull(publicKey, "publicKey")));
+   public void testCreateWheelUNIX() {
+      assertEquals(
+               SudoStatements.createWheel().render(OsFamily.UNIX),
+               "rm /etc/sudoers\ncat >> /etc/sudoers <<'END_OF_FILE'\nroot ALL = (ALL) ALL\n%wheel ALL = (ALL) NOPASSWD:ALL\nEND_OF_FILE\nchmod 0440 /etc/sudoers\n");
    }
 
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   public void testCreateWheelWindowsNotSupported() {
+      SudoStatements.createWheel().render(OsFamily.WINDOWS);
+   }
 }

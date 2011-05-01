@@ -73,7 +73,8 @@ public class JCECrypto implements Crypto {
 
    public final static String MD5 = "MD5";
    public final static String SHA1 = "SHA1";
-   public final static String SHA256 = "SHA256";
+   public final static String SHA256 = "SHA-256";
+   public final static String SHA512 = "SHA-512";
 
    @Override
    public MessageDigest md5() {
@@ -98,7 +99,16 @@ public class JCECrypto implements Crypto {
       try {
          return digest(SHA256);
       } catch (NoSuchAlgorithmException e) {
-         throw new IllegalStateException("SHA256 must be supported", e);
+         throw new IllegalStateException(SHA256 + " must be supported", e);
+      }
+   }
+
+   @Override
+   public MessageDigest sha512() {
+      try {
+         return digest(SHA512);
+      } catch (NoSuchAlgorithmException e) {
+         throw new IllegalStateException(SHA512 + " must be supported", e);
       }
    }
 

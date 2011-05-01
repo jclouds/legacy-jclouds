@@ -16,27 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.domain;
+package org.jclouds.scriptbuilder.statements.login;
 
-import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
+import org.jclouds.scriptbuilder.domain.Statement;
 
 /**
+ * Statements used in sudo control
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class AuthorizeRSAPublicKeyTest {
+public class SudoStatements {
 
-   AuthorizeRSAPublicKey auth = new AuthorizeRSAPublicKey("ssh-dss AAAAB");
-
-   public void testAuthorizeRSAPublicKeyUNIX() {
-      assertEquals(
-               auth.render(OsFamily.UNIX),
-               "mkdir -p ~/.ssh\ncat >> ~/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 ~/.ssh/authorized_keys\n");   }
-
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testAuthorizeRSAPublicKeyWINDOWS() {
-      auth.render(OsFamily.WINDOWS);
+   /**
+    * create new sudoers file with the wheel group authorized to all commands without a password
+    */
+   public static Statement createWheel() {
+      return new Sudoers();
    }
 }

@@ -16,28 +16,29 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.domain;
+package org.jclouds.scriptbuilder.statements.ssh;
 
-import static org.testng.Assert.assertEquals;
+import java.util.Map;
 
-import org.testng.annotations.Test;
+import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
+ * Statements used in ssh control
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class InstallRSAPrivateKeyTest {
+public class SshStatements {
 
-   InstallRSAPrivateKey key = new InstallRSAPrivateKey("-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n");
-
-   public void testInstallRSAPrivateKeyUNIX() {
-      assertEquals(
-               key.render(OsFamily.UNIX),
-               "mkdir -p ~/.ssh\nrm ~/.ssh/id_rsa\ncat >> ~/.ssh/id_rsa <<'END_OF_FILE'\n-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n\nEND_OF_FILE\nchmod 600 ~/.ssh/id_rsa\n");
+   /**
+    * lock sshd down so root cannot login, and password auth is disabled,
+    */
+   public static Statement lockSshd() {
+      return sshdConfig(ImmutableMap.of("PasswordAuthentication","no", "PermitRootLogin","no"));
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testInstallRSAPrivateKeyWINDOWS() {
-      key.render(OsFamily.WINDOWS);
+   public static Statement sshdConfig(Map<String, String> params) {
+      return new SshdConfig(params);
    }
 }

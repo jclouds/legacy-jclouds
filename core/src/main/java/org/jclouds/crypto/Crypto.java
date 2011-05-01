@@ -57,4 +57,6 @@ public interface Crypto {
 
    MessageDigest sha256();
 
+   MessageDigest sha512();
+
 }
