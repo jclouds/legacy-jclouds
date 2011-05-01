@@ -129,7 +129,7 @@ Here's an example of creating and running a small linux node in the group webser
 (defn nodes-in-group
   "list details of all the nodes in the given group."
   ([#^ComputeService compute #^String group]
-    (filter #(= (.getTag %) group) (nodes-with-details compute))))
+    (filter #(= (.getGroup %) group) (nodes-with-details compute))))
 
 (defn images
   "Retrieve the available images for the compute context."
