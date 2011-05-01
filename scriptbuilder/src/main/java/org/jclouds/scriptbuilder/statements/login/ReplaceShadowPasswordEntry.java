@@ -19,18 +19,21 @@
 package org.jclouds.scriptbuilder.statements.login;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+import static java.lang.String.format;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.util.Sha512Crypt;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 
 /**
+ * Replaces the password entry for a user in the shadow file, using SHA-512
+ * crypt syntax.
  * 
  * @author Adrian Cole
  */
@@ -57,16 +60,21 @@ public class ReplaceShadowPasswordEntry implements Statement {
       try {
          String shadowPasswordEntry = Sha512Crypt.makeShadowLine(password, null, new JCECrypto());
          String shadowFile = "/etc/shadow";
-         Statement replaceEntryInTempFile = Statements
-               .exec(String
-                     .format(
-                           "awk -v user=^%1$s: -v password='%2$s' 'BEGIN { FS=OFS=\":\" } $0 ~ user { $2 = password } 1' %3$s >%3$s.%1$s",
-                           login, shadowPasswordEntry, shadowFile));
-         Statement replaceShadowFile = Statements.exec(String.format("test -f %2$s.%1$s && mv %2$s.%1$s %2$s", login,
-               shadowFile));
+         // note we are using awk variables so that the user can be defined as a
+         // shell variable (ex. $USER) As the block is in single quotes,
+         // shell interpolation wouldn't work otherwise
+         Statement replaceEntryInTempFile = exec(format(
+               "awk -v user=^%1$s: -v password='%2$s' 'BEGIN { FS=OFS=\":\" } $0 ~ user { $2 = password } 1' %3$s >%3$s.%1$s",
+               login, shadowPasswordEntry, shadowFile));
+         // would have preferred to use exec <>3 && style, but for some reason
+         // the sha512 line breaks in both awk and sed during an inline
+         // expansion. unfortunately, we have to save a temp file. In this case,
+         // somewhat avoiding collisions by naming the file .user, conceding it
+         // isn't using any locks to prevent overlapping changes
+         Statement replaceShadowFile = exec(format("test -f %2$s.%1$s && mv %2$s.%1$s %2$s", login, shadowFile));
          return new StatementList(ImmutableList.of(replaceEntryInTempFile, replaceShadowFile)).render(family);
       } catch (Exception e) {
-         Throwables.propagate(e);
+         propagate(e);
          return null;
       }
    }
