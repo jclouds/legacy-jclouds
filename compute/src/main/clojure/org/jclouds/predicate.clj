@@ -28,5 +28,5 @@
     (reify com.google.common.base.Predicate
       (apply [this input] (p input))))
 
-  nil
-  (to-predicate [_] nil))
+  com.google.common.base.Predicate
+  (to-predicate [p] p))

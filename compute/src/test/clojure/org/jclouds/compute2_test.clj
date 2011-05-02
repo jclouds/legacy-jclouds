@@ -62,6 +62,9 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (= 1 (count (nodes *compute*))))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))
   (is (= 1 (count (nodes-with-details-matching *compute* (in-group "fred")))))
+  (is (= 1 (count (nodes-with-details-matching *compute*
+    (reify com.google.common.base.Predicate
+      (apply [this input] (= (.getGroup input) "fred")))))))
   (is (= 0 (count (nodes-with-details-matching *compute* (in-group "othergroup")))))
   (suspend-nodes-matching *compute* (in-group "fred"))
   (is (suspended? (first (nodes-with-details-matching *compute* (in-group "fred")))))
