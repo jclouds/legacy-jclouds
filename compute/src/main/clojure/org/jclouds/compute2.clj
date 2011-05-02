@@ -57,7 +57,8 @@ Here's an example of creating and running a small linux node in the group webser
   See http://code.google.com/p/jclouds for details.
   "
   (:use org.jclouds.core
-    (clojure.contrib logging core))
+    (clojure.contrib logging core)
+    (org.jclouds predicate))
   (:require
     [clojure.contrib.condition :as condition])
   (:import java.io.File
@@ -126,6 +127,13 @@ Here's an example of creating and running a small linux node in the group webser
   ([#^ComputeService compute]
     (seq (.listNodesDetailsMatching compute (NodePredicates/all)))))
 
+(defn nodes-with-details-matching
+  "List details for all nodes matching fn pred.
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false.
+  "
+  ([#^ComputeService compute pred]
+    (seq (.listNodesDetailsMatching compute (to-predicate pred)))))
+
 (defn nodes-in-group
   "list details of all the nodes in the given group."
   ([#^ComputeService compute #^String group]
@@ -181,40 +189,44 @@ Here's an example of creating and running a small linux node in the group webser
   ([#^ComputeService compute id]
     (.getNodeMetadata compute id)))
 
-(defn suspend-nodes-in-group
-  "Reboot all the nodes in the given group."
-  ([#^ComputeService compute #^String group]
-    (.suspendNodesMatching compute (NodePredicates/inGroup group))))
+(defn suspend-nodes-matching
+  "Suspend all nodes matching the fn pred.
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false."
+  ([#^ComputeService compute pred]
+    (.suspendNodesMatching compute (to-predicate pred))))
 
 (defn suspend-node
   "Suspend a node, given its id."
   ([id #^ComputeService compute]
     (.suspendNode compute id)))
 
-(defn resume-nodes-in-group
-  "Suspend all the nodes in the given group."
-  ([#^ComputeService compute #^String group]
-    (.resumeNodesMatching compute (NodePredicates/inGroup group))))
+(defn resume-nodes-matching
+  "Suspend all the nodes in the fn pred.
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false."
+  ([#^ComputeService compute pred]
+    (.resumeNodesMatching compute (to-predicate pred))))
 
 (defn resume-node
   "Resume a node, given its id."
   ([id #^ComputeService compute]
     (.resumeNode compute id)))
 
-(defn reboot-nodes-in-group
-  "Reboot all the nodes in the given group."
-  ([#^ComputeService compute #^String group]
-    (.rebootNodesMatching compute (NodePredicates/inGroup group))))
+(defn reboot-nodes-matching
+  "Reboot all the nodes in the fn pred.
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false."
+  ([#^ComputeService compute pred]
+    (.rebootNodesMatching compute (to-predicate pred))))
 
 (defn reboot-node
   "Reboot a node, given its id."
   ([id #^ComputeService compute]
     (.rebootNode compute id)))
 
-(defn destroy-nodes-in-group
-  "Destroy all the nodes in the given group."
-  ([#^ComputeService compute #^String group]
-    (.destroyNodesMatching compute (NodePredicates/inGroup group))))
+(defn destroy-nodes-matching
+  "Destroy all the nodes in the fn pred.
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false."
+  ([#^ComputeService compute pred]
+    (.destroyNodesMatching compute (to-predicate pred))))
 
 (defn destroy-node
   "Destroy a node, given its id."
