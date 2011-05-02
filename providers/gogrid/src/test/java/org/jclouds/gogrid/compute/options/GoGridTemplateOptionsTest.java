@@ -18,41 +18,20 @@
  */
 package org.jclouds.gogrid.compute.options;
 
-import static org.jclouds.gogrid.compute.options.GoGridTemplateOptions.Builder.*;
 import static org.testng.Assert.*;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.gogrid.domain.IpType;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of {@code GoGridTemplateOptions} and {@code GoGridTemplateOptions.Builder.*}
- * with {@link IpType} option.
+ * Tests possible uses of {@code GoGridTemplateOptions} and {@code GoGridTemplateOptions.Builder.*}.
  * 
  * @author Andrew Kennedy
  */
 public class GoGridTemplateOptionsTest {
    @Test
-   public void testipTypePrivate() {
-      GoGridTemplateOptions options = new GoGridTemplateOptions();
-      options.ipType(IpType.PRIVATE);
-      assertEquals(options.getIpType(), IpType.PRIVATE);
-   }
-
-   @Test
-   public void testipTypePublic() {
-      GoGridTemplateOptions options = ipType(IpType.PUBLIC);
-      assertEquals(options.getIpType(), IpType.PUBLIC);
-   }
-
    public void testAs() {
       TemplateOptions options = new GoGridTemplateOptions();
       assertEquals(options.as(GoGridTemplateOptions.class), options);
-   }
-
-   @Test
-   public void testNullIpType() {
-      GoGridTemplateOptions options = new GoGridTemplateOptions();
-      assertEquals(options.getIpType(), null);
    }
 }

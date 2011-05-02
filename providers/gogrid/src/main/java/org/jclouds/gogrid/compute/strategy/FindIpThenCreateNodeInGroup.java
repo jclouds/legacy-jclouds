@@ -32,7 +32,6 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.compute.options.GoGridTemplateOptions;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.domain.PowerCommand;
@@ -78,11 +77,8 @@ public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIn
       int numOfRetries = 20;
       GetIpListOptions unassignedIps = new GetIpListOptions()
             .onlyUnassigned()
-            .inDatacenter(template.getLocation().getId());
-      if (template.getOptions() instanceof GoGridTemplateOptions) {
-         IpType ipType = GoGridTemplateOptions.class.cast(template.getOptions()).getIpType();
-	     unassignedIps = unassignedIps.onlyWithType(ipType);
-      }
+            .inDatacenter(template.getLocation().getId())
+            .onlyWithType(IpType.PUBLIC);
       // lock-free consumption of a shared resource: IP address pool
       while (notStarted) { // TODO: replace with Predicate-based thread
          // collision avoidance for simplicity
