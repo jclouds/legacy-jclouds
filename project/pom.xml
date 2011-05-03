@@ -101,7 +101,7 @@
         </snapshotRepository>
         <site>
             <id>jclouds-googlecode-site</id>
-            <url>dav+https://jclouds.googlecode.com/svn/maven-sites/${project.version}</url>
+            <url>${maven.site.url.base}/${project.version}</url>
         </site>
     </distributionManagement>
 
@@ -179,6 +179,7 @@
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <maven.site.url.base>davs://jclouds.googlecode.com/svn/maven-sites</maven.site.url.base>
         <http.proxyHost />
         <http.proxyPort />
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
@@ -731,7 +732,7 @@ pageTracker._trackPageview();
                     </plugin>
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.6.1</version>
+                        <version>2.7</version>
                         <configuration>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <quiet>true</quiet>
@@ -789,7 +790,7 @@ pageTracker._trackPageview();
                     <plugins>
                         <plugin>
                             <artifactId>maven-site-plugin</artifactId>
-                            <version>3.0-beta-3</version>
+                            <version>3.0-beta-4-SNAPSHOT</version>
                             <configuration>
                                 <reportPlugins>
                                     <plugin>
@@ -814,6 +815,7 @@ pageTracker._trackPageview();
                                         <configuration>
                                             <encoding>${project.build.sourceEncoding}</encoding>
                                             <quiet>true</quiet>
+                                            <additionalJOption>-J-Xmx256m</additionalJOption>
                                         </configuration>
                                         <reportSets>
                                             <reportSet>
@@ -874,7 +876,15 @@ pageTracker._trackPageview();
                     <!-- only in the jclouds-project module -->
                     <exists>src/etc/header.txt</exists>
                 </file>
-            </activation>        
+            </activation>
+
+            <!-- Maven generates incorrect links without the <site> declaration here -->
+            <distributionManagement>
+                <site>
+                    <id>jclouds-googlecode-site</id>
+                    <url>${maven.site.url.base}/${project.version}/${project.artifactId}</url>
+                </site>
+            </distributionManagement>
             <build>
                 <plugins>
                    <plugin>      
