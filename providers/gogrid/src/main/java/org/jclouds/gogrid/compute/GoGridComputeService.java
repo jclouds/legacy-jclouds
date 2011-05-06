@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
@@ -48,6 +49,7 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.compute.options.GoGridTemplateOptions;
+import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -59,23 +61,22 @@ import com.google.common.base.Supplier;
 public class GoGridComputeService extends BaseComputeService {
    @Inject
    protected GoGridComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images,
-            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
-            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy,
-            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
-            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy resumeNodeStrategy,
-            SuspendNodeStrategy suspendNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
+         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+         ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
+         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       super(context, credentialStore, images, hardwareProfiles, locations, listNodesStrategy, getNodeMetadataStrategy,
-            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy, suspendNodeStrategy,
-            templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
-            initScriptRunnerFactory, timeouts, executor);
+            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
+            suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
+            nodeSuspended, initScriptRunnerFactory, initAdminAccess, persistNodeCredentials, timeouts, executor);
    }
 
    /**
