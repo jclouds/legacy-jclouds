@@ -16,11 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.cloudstack.functions;
+package org.jclouds.cloudstack.parse;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 
@@ -28,42 +25,34 @@ import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 import org.jclouds.cloudstack.domain.TrafficType;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListNetworksResponseTest {
+public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
 
-   Injector i = Guice.createInjector(new GsonModule() {
+   @Override
+   public Class<Network> type() {
+      return Network.class;
+   }
 
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         super.configure();
-      }
+   @Override
+   public String resource() {
+      return "/listnetworksresponse.json";
+   }
 
-   });
-
-   public void test() {
-      InputStream is = getClass().getResourceAsStream("/listnetworksresponse.json");
-
-      Set<Network> expects = ImmutableSet
+   @Override
+   public Set<Network> expected() {
+      return ImmutableSet
             .<Network> of(Network
                   .builder()
                   .id(204)
@@ -89,12 +78,12 @@ public class ListNetworksResponseTest {
                   .domain("ROOT")
                   .isDefault(true)
                   .services(
-                        ImmutableSet.of(
+                        ImmutableSortedSet.of(
                               new NetworkService("Vpn", ImmutableMap.of("SupportedVpnTypes", "pptp,l2tp,ipsec")),
                               new NetworkService("Gateway"),
                               new NetworkService("UserData"),
                               new NetworkService("Dhcp"),
-                              new NetworkService("Firewall", ImmutableMap.<String, String> builder()
+                              new NetworkService("Firewall", ImmutableSortedMap.<String, String> naturalOrder()
                                     .put("SupportedSourceNatTypes", "per account").put("StaticNat", "true")
                                     .put("TrafficStatistics", "per public ip").put("PortForwarding", "true")
                                     .put("MultipleIps", "true").put("SupportedProtocols", "tcp,udp").build()),
@@ -102,12 +91,5 @@ public class ListNetworksResponseTest {
                               new NetworkService("Lb", ImmutableMap.of("SupportedLbAlgorithms",
                                     "roundrobin,leastconn,source", "SupportedProtocols", "tcp, udp"))))
                   .networkDomain("cs3cloud.internal").build());
-
-      UnwrapOnlyNestedJsonValue<Set<Network>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<Network>>>() {
-            }));
-      Set<Network> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-
-      assertEquals(Sets.newHashSet(response), expects);
    }
 }

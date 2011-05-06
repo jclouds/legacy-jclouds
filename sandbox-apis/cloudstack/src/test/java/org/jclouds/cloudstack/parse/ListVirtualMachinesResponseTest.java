@@ -16,11 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.cloudstack.functions;
+package org.jclouds.cloudstack.parse;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.GuestIPType;
@@ -28,40 +25,30 @@ import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListVirtualMachinesResponseTest {
+public class ListVirtualMachinesResponseTest extends BaseSetParserTest<VirtualMachine> {
 
-   Injector i = Guice.createInjector(new GsonModule() {
+   @Override
+   public Class<VirtualMachine> type() {
+      return VirtualMachine.class;
+   }
 
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         super.configure();
-      }
+   @Override
+   public String resource() {
+      return "/listvirtualmachinesresponse.json";
+   }
 
-   });
-
-   public void test() {
-      InputStream is = getClass().getResourceAsStream("/listvirtualmachinesresponse.json");
-
-      VirtualMachine expects = VirtualMachine
+   @Override
+   public Set<VirtualMachine> expected() {
+      return ImmutableSet.of(VirtualMachine
             .builder()
             .id(54)
             .name("i-3-54-VM")
@@ -90,14 +77,7 @@ public class ListVirtualMachinesResponseTest {
             .jobStatus(0)
             .nics(ImmutableSet.of(NIC.builder().id(72).networkId(204).netmask("255.255.255.0").gateway("10.1.1.1")
                   .IPAddress("10.1.1.18").trafficType(TrafficType.GUEST).guestIPType(GuestIPType.VIRTUAL)
-                  .isDefault(true).build())).hypervisor("XenServer").build();
-
-      UnwrapOnlyNestedJsonValue<Set<VirtualMachine>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<VirtualMachine>>>() {
-            }));
-      Set<VirtualMachine> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-
-      assertEquals(Iterables.getOnlyElement(response), expects);
+                  .isDefault(true).build())).hypervisor("XenServer").build());
    }
 
 }

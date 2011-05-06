@@ -16,49 +16,36 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.cloudstack.functions;
+package org.jclouds.cloudstack.parse;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListDiskOfferingsResponseTest {
+public class ListDiskOfferingsResponseTest extends BaseSetParserTest<DiskOffering> {
 
-   Injector i = Guice.createInjector(new GsonModule() {
+   @Override
+   public Class<DiskOffering> type() {
+      return DiskOffering.class;
+   }
 
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         super.configure();
-      }
+   @Override
+   public String resource() {
+      return "/listdiskofferingsresponse.json";
+   }
 
-   });
-
-   public void test() {
-      InputStream is = getClass().getResourceAsStream("/listdiskofferingsresponse.json");
-
-      Set<DiskOffering> expects = ImmutableSet.<DiskOffering> of(
+   @Override
+   public Set<DiskOffering> expected() {
+      return ImmutableSet.<DiskOffering> of(
             DiskOffering.builder().id(3).domainId(1).domain("ROOT").name("Small").displayText("Small Disk, 5 GB")
                   .diskSize(5)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
@@ -71,13 +58,5 @@ public class ListDiskOfferingsResponseTest {
                   .diskSize(100)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
                   .customized(false).build());
-
-      UnwrapOnlyNestedJsonValue<Set<DiskOffering>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<DiskOffering>>>() {
-            }));
-      Set<DiskOffering> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-
-      assertEquals(Sets.newHashSet(response), expects);
    }
-
 }

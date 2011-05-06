@@ -21,8 +21,10 @@ package org.jclouds.cloudstack.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -91,7 +93,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    @SerializedName("domainid")
    private long domainId;
    @SerializedName("ingressrule")
-   private Set<IngressRule> ingressRules = ImmutableSet.of();
+   // so that tests and serialization come out expected
+   private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule> of();
 
    public SecurityGroup(long id, String account, String name, String description, String domain, long domainId,
          Set<IngressRule> ingressRules) {
@@ -101,7 +104,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       this.description = description;
       this.domain = domain;
       this.domainId = domainId;
-      this.ingressRules = ImmutableSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
+      this.ingressRules = ImmutableSortedSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
    }
 
    /**

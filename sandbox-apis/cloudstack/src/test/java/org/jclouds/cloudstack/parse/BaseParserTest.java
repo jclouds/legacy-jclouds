@@ -16,33 +16,29 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.cloudstack.functions;
+package org.jclouds.cloudstack.parse;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.InputStream;
-import java.util.Set;
-
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class ListPortForwardingRuleResponseTest {
+public abstract class BaseParserTest<T, G> {
 
    Injector i = Guice.createInjector(new GsonModule() {
 
@@ -52,23 +48,32 @@ public class ListPortForwardingRuleResponseTest {
          super.configure();
       }
 
-   });
+   }, new CloudStackParserModule());
 
+   @Test
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/listportforwardingrulesresponse.json");
 
-      Set<PortForwardingRule> expects = ImmutableSortedSet.<PortForwardingRule> of(PortForwardingRule.builder().id(15)
-               .privatePort(22).protocol("tcp").publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM")
-               .IPAddressId(3).IPAddress("72.52.126.32").state("Active").build(), PortForwardingRule.builder().id(18)
-               .privatePort(22).protocol("tcp").publicPort(22).virtualMachineId(89).virtualMachineName("i-3-89-VM")
-               .IPAddressId(34).IPAddress("72.52.126.63").state("Active").build());
+      T expects = expected();
 
-      UnwrapOnlyNestedJsonValue<Set<PortForwardingRule>> parser = i.getInstance(Key
-               .get(new TypeLiteral<UnwrapOnlyNestedJsonValue<Set<PortForwardingRule>>>() {
-               }));
-      Set<PortForwardingRule> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-
-      assertEquals(Sets.newTreeSet(response), expects);
+      Function<HttpResponse, T> parser = getParser();
+      T response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(getClass()
+            .getResourceAsStream(resource()))));
+      compare(expects, response);
    }
 
+   public void compare(T expects, T response) {
+      assertEquals(response.toString(), expects.toString());
+   }
+
+   @SuppressWarnings("unchecked")
+   protected Function<HttpResponse, T> getParser(){
+     return  (Function<HttpResponse, T>) i.getInstance(Key.get(TypeLiteral.get(
+            Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, type())).getType()));
+   }
+
+   public abstract Class<G> type();
+
+   public abstract String resource();
+
+   public abstract T expected();
 }
