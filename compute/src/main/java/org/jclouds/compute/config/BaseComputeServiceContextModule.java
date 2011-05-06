@@ -73,6 +73,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 public abstract class BaseComputeServiceContextModule extends AbstractModule {
+
    @Override
    protected void configure() {
       install(new LocationModule(authException));
@@ -88,6 +89,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
                   RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class)
             .implement(RunScriptOnNode.class, Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class)
             .build(RunScriptOnNodeFactoryImpl.Factory.class));
+
+      install(new PersistNodeCredentialsModule());
 
       bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
 
@@ -170,8 +173,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    }
 
    /**
-    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
-    * and tag is the first
+    * supplies how the tag is encoded into the name. A string of hex characters
+    * is the last argument and tag is the first
     */
    @Provides
    @Named("NAMING_CONVENTION")
@@ -207,8 +210,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-            new Supplier<Set<? extends Image>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
+            seconds, new Supplier<Set<? extends Image>>() {
                @Override
                public Set<? extends Image> get() {
                   return imageSupplier.get();
@@ -241,8 +244,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Hardware>> hardwareSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-            new Supplier<Set<? extends Hardware>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException,
+            seconds, new Supplier<Set<? extends Hardware>>() {
                @Override
                public Set<? extends Hardware> get() {
                   return hardwareSupplier.get();

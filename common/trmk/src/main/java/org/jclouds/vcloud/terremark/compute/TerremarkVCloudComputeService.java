@@ -36,18 +36,20 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
@@ -66,28 +68,29 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
 
    @Inject
    protected TerremarkVCloudComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
-            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
+         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+         ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
+         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
+         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
-               suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
-               nodeSuspended, initScriptRunnerFactory, timeouts, executor);
+            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
+            suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
+            nodeSuspended, initScriptRunnerFactory, initAdminAccess, persistNodeCredentials, timeouts, executor);
       this.cleanupOrphanKeys = cleanupOrphanKeys;
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will clean implicit
-    * keypairs.
+    * like {@link BaseComputeService#destroyNodesMatching} except that this will
+    * clean implicit keypairs.
     */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
@@ -97,7 +100,8 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
    }
 
    /**
-    * returns template options, except of type {@link TerremarkVCloudTemplateOptions}.
+    * returns template options, except of type
+    * {@link TerremarkVCloudTemplateOptions}.
     */
    @Override
    public TerremarkVCloudTemplateOptions templateOptions() {

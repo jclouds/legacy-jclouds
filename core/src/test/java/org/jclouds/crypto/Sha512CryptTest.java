@@ -16,11 +16,10 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.util;
+package org.jclouds.crypto;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.crypto.Crypto;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

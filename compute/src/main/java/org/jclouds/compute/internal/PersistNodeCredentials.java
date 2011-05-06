@@ -16,21 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.statements.login;
+package org.jclouds.compute.internal;
 
+import javax.annotation.Nullable;
+import javax.inject.Named;
 
-/**
- * Statements used to manipulate the shadow file
- * 
- * @author Adrian Cole
- */
-public class ShadowStatements {
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.scriptbuilder.domain.Statement;
 
-   /**
-    * note must be run as root, and will either reset the root password, or
-    * whoever sudoed to root.
-    */
-   public static ReplaceShadowPasswordEntryOfLoginUser resetLoginUserPasswordTo(String password) {
-      return new ReplaceShadowPasswordEntryOfLoginUser(password);
-   }
+import com.google.common.base.Function;
+
+public interface PersistNodeCredentials {
+   @Named("ifAdminAccess")
+   Function<NodeMetadata, NodeMetadata> ifAdminAccess(@Nullable Statement statement);
+
+   @Named("always")
+   Function<NodeMetadata, NodeMetadata> always(@Nullable Statement statement);
 }

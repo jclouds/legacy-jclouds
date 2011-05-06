@@ -20,6 +20,7 @@ package org.jclouds.encryption.internal;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
@@ -41,6 +42,7 @@ import org.jclouds.crypto.Crypto;
 @Singleton
 public class JCECrypto implements Crypto {
 
+   private final KeyPairGenerator rsaKeyPairGenerator;
    private final KeyFactory rsaKeyFactory;
    private final CertificateFactory certFactory;
    private final Provider provider;
@@ -51,9 +53,11 @@ public class JCECrypto implements Crypto {
    }
 
    public JCECrypto(@Nullable Provider provider) throws NoSuchAlgorithmException, CertificateException {
+      this.rsaKeyPairGenerator = provider == null ? KeyPairGenerator.getInstance("RSA") : KeyPairGenerator.getInstance(
+            "RSA", provider);
       this.rsaKeyFactory = provider == null ? KeyFactory.getInstance("RSA") : KeyFactory.getInstance("RSA", provider);
       this.certFactory = provider == null ? CertificateFactory.getInstance("X.509") : CertificateFactory.getInstance(
-               "X.509", provider);
+            "X.509", provider);
       this.provider = provider;
    }
 
@@ -141,5 +145,10 @@ public class JCECrypto implements Crypto {
    @Override
    public KeyFactory rsaKeyFactory() {
       return rsaKeyFactory;
+   }
+
+   @Override
+   public KeyPairGenerator rsaKeyPairGenerator() {
+      return rsaKeyPairGenerator;
    }
 }

@@ -44,28 +44,32 @@
 
  */
 
-package org.jclouds.scriptbuilder.util;
+package org.jclouds.crypto;
 
 import java.security.MessageDigest;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.internal.JCECrypto;
+
+import com.google.common.base.Throwables;
 
 /**
  * This class defines a method,
- * {@link Sha512Crypt#Sha512_crypt(java.lang.String, java.lang.String, int) Sha512_crypt()}, which
- * takes a password and a salt string and generates a Sha512 encrypted password entry.
+ * {@link Sha512Crypt#Sha512_crypt(java.lang.String, java.lang.String, int)
+ * Sha512_crypt()}, which takes a password and a salt string and generates a
+ * Sha512 encrypted password entry.
  * 
- * This class implements the new generation, scalable, SHA512-based Unix 'crypt' algorithm developed
- * by a group of engineers from Red Hat, Sun, IBM, and HP for common use in the Unix and Linux
- * /etc/shadow files.
+ * This class implements the new generation, scalable, SHA512-based Unix 'crypt'
+ * algorithm developed by a group of engineers from Red Hat, Sun, IBM, and HP
+ * for common use in the Unix and Linux /etc/shadow files.
  * 
- * The Linux glibc library (starting at version 2.7) includes support for validating passwords
- * hashed using this algorithm.
+ * The Linux glibc library (starting at version 2.7) includes support for
+ * validating passwords hashed using this algorithm.
  * 
  * The algorithm itself was released into the Public Domain by Ulrich Drepper
- * &lt;drepper@redhat.com&gt;. A discussion of the rationale and development of this algorithm is at
+ * &lt;drepper@redhat.com&gt;. A discussion of the rationale and development of
+ * this algorithm is at
  * 
  * http://people.redhat.com/drepper/sha-crypt.html
  * 
@@ -74,6 +78,34 @@ import org.jclouds.crypto.Crypto;
  * http://people.redhat.com/drepper/SHA-crypt.txt
  */
 public class Sha512Crypt {
+   public static com.google.common.base.Function<String, String> function() {
+      return Function.INSTANCE;
+   }
+
+   public static enum Function implements com.google.common.base.Function<String, String> {
+      INSTANCE;
+      private Crypto crypto;
+
+      Function() {
+         try {
+            this.crypto = new JCECrypto();
+         } catch (Exception e) {
+            Throwables.propagate(e);
+         }
+      }
+
+      @Override
+      public String apply(String input) {
+         return Sha512Crypt.makeShadowLine(input, null, crypto);
+      }
+
+      @Override
+      public String toString() {
+         return "sha512Crypt()";
+      }
+
+   }
+
    static private final String sha512_salt_prefix = "$6$";
    static private final String sha512_rounds_prefix = "rounds=";
    static private final int SALT_LEN_MAX = 16;
@@ -84,19 +116,20 @@ public class Sha512Crypt {
    static private final String itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
    /**
-    * This method actually generates an Sha512 crypted password hash from a plaintext password and a
-    * salt.
+    * This method actually generates an Sha512 crypted password hash from a
+    * plaintext password and a salt.
     * 
     * <p>
-    * The resulting string will be in the form '$6$&lt;rounds=n&gt;$&lt;salt&gt;$&lt;hashed mess&gt;
+    * The resulting string will be in the form
+    * '$6$&lt;rounds=n&gt;$&lt;salt&gt;$&lt;hashed mess&gt;
     * </p>
     * 
     * @param password
     *           Plaintext password
     * 
     * @param shadowPrefix
-    *           An encoded salt/rounds which will be consulted to determine the salt and round
-    *           count, if not null
+    *           An encoded salt/rounds which will be consulted to determine the
+    *           salt and round count, if not null
     * 
     * @return The Sha512 Unix Crypt hash text for the password
     */
@@ -206,7 +239,8 @@ public class Sha512Crypt {
       System.arraycopy(temp_result, 0, s_bytes, cnt2, cnt);
 
       /*
-       * Repeatedly run the collected hash value through SHA512 to burn CPU cycles.
+       * Repeatedly run the collected hash value through SHA512 to burn CPU
+       * cycles.
        */
 
       for (cnt = 0; cnt < rounds; ++cnt) {
@@ -270,8 +304,8 @@ public class Sha512Crypt {
       buffer.append(b64_from_24bit((byte) 0x00, (byte) 0x00, alt_result[63], 2));
 
       /*
-       * Clear the buffer for the intermediate result so that people attaching to processes or
-       * reading core dumps cannot get any information.
+       * Clear the buffer for the intermediate result so that people attaching
+       * to processes or reading core dumps cannot get any information.
        */
 
       ctx.reset();

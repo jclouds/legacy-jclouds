@@ -20,6 +20,7 @@ package org.jclouds.crypto;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateFactory;
@@ -31,13 +32,14 @@ import org.jclouds.encryption.internal.JCECrypto;
 import com.google.inject.ImplementedBy;
 
 /**
- * Allows you to access cryptographic objects and factories without adding a provider to the JCE
- * runtime.
+ * Allows you to access cryptographic objects and factories without adding a
+ * provider to the JCE runtime.
  * 
  * @author Adrian Cole
  */
 @ImplementedBy(JCECrypto.class)
 public interface Crypto {
+   KeyPairGenerator rsaKeyPairGenerator();
 
    KeyFactory rsaKeyFactory();
 
