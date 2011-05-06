@@ -18,27 +18,28 @@
  */
 package org.jclouds.gogrid.compute.options;
 
-import java.util.Arrays;
-
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.io.Payload;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the "gogrid"
- * provider.
+ * Contains options supported by the {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)}
+ * and {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)} operations on
+ * the <em>gogrid</em> provider.
  * 
  * <h2>Usage</h2>
  * The recommended way to instantiate a {@link GoGridTemplateOptions} object is to statically
  * import {@code GoGridTemplateOptions.*} and invoke a static creation method followed by an
  * instance mutator (if needed):
  * <p>
- * <code>
+ * <pre>
  * import static org.jclouds.compute.options.GoGridTemplateOptions.Builder.*;
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
- * <code>
+ * Set&lt;? extends NodeMetadata&gt; set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * </pre>
+ * 
+ * TODO add GoGrid specific options
  * 
  * @author Adrian Cole
  * @author Andrew Kennedy
@@ -55,36 +56,18 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
    public void copyTo(TemplateOptions to) {
       super.copyTo(to);
       if (to instanceof GoGridTemplateOptions) {
+         @SuppressWarnings("unused")
          GoGridTemplateOptions eTo = GoGridTemplateOptions.class.cast(to);
-         if (getIpType() != null)
-            eTo.ipType(getIpType());
       }
    }
-
-   private IpType ipType = null;
 
    public static final GoGridTemplateOptions NONE = new GoGridTemplateOptions();
 
-   /**
-    * Specifies the ipType used for network interfaces on the VMs
-    */
-   public GoGridTemplateOptions ipType(IpType ipType) {
-      this.ipType = ipType;
-      return this;
-   }
-
    public static class Builder {
-      /**
-       * @see GoGridTemplateOptions#ipAddressAllocationMode
-       */
-      public static GoGridTemplateOptions ipType(IpType ipType) {
-         GoGridTemplateOptions options = new GoGridTemplateOptions();
-         return GoGridTemplateOptions.class.cast(options.ipType(ipType));
-      }
-
       // methods that only facilitate returning the correct object type
+
       /**
-       * @see TemplateOptions#inboundPorts
+       * @see TemplateOptions#inboundPorts(int...)
        */
       public static GoGridTemplateOptions inboundPorts(int... ports) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
@@ -92,7 +75,7 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#port
+       * @see TemplateOptions#blockOnPort(int, int)
        */
       public static GoGridTemplateOptions blockOnPort(int port, int seconds) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
@@ -100,7 +83,7 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#runScript
+       * @see TemplateOptions#runScript(Payload)
        */
       public static GoGridTemplateOptions runScript(Payload script) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
@@ -108,41 +91,36 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#installPrivateKey
+       * @see TemplateOptions#installPrivateKey(Payload)
        */
+      @Deprecated
       public static GoGridTemplateOptions installPrivateKey(Payload rsaKey) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
          return GoGridTemplateOptions.class.cast(options.installPrivateKey(rsaKey));
       }
 
       /**
-       * @see TemplateOptions#authorizePublicKey
+       * @see TemplateOptions#authorizePublicKey(Payload)
        */
+      @Deprecated
       public static GoGridTemplateOptions authorizePublicKey(Payload rsaKey) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
          return GoGridTemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
       }
 
       /**
-       * @see TemplateOptions#withDetails
+       * @see TemplateOptions#withMetadata()
        */
-      public static GoGridTemplateOptions withDetails() {
+      public static GoGridTemplateOptions withMetadata() {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
          return GoGridTemplateOptions.class.cast(options.withMetadata());
       }
    }
 
-   /**
-    * @return ipType on the vms
-    */
-   public IpType getIpType() {
-      return ipType;
-   }
-
    // methods that only facilitate returning the correct object type
 
    /**
-    * @see TemplateOptions#blockOnPort
+    * @see TemplateOptions#blockOnPort(int, int)
     */
    @Override
    public GoGridTemplateOptions blockOnPort(int port, int seconds) {
@@ -150,12 +128,7 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * 
-    * special thing is that we do assume if you are passing groups that you have everything you need
-    * already defined. for example, our option inboundPorts normally creates ingress rules
-    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
-    * 
-    * @see TemplateOptions#inboundPorts
+    * @see TemplateOptions#inboundPorts(int...)
     */
    @Override
    public GoGridTemplateOptions inboundPorts(int... ports) {
@@ -214,40 +187,10 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * @see TemplateOptions#withMetadata
+    * @see TemplateOptions#withMetadata()
     */
    @Override
    public GoGridTemplateOptions withMetadata() {
       return GoGridTemplateOptions.class.cast(super.withMetadata());
    }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((ipType == null) ? 0 : ipType.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      GoGridTemplateOptions other = (GoGridTemplateOptions) obj;
-      if (ipType != other.ipType)
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return  "[" + (ipType != null ? "ipType=" + ipType : "") + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
-            + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null)
-            + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
-   }
-
 }
