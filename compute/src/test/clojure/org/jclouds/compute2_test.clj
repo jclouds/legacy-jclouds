@@ -61,7 +61,11 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (create-node *compute* "fred" (build-template *compute* {} )))
   (is (= 1 (count (nodes *compute*))))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))
+  ;; pass in a function that selects node metadata based on NodeMetadata field
   (is (= 1 (count (nodes-with-details-matching *compute* (in-group "fred")))))
+  ;; or make your query inline
+  (is (= 1 (count (nodes-with-details-matching *compute* #(= (.getGroup %) "fred")))))
+  ;; or get real fancy, and use the underlying Predicate object jclouds uses
   (is (= 1 (count (nodes-with-details-matching *compute*
     (reify com.google.common.base.Predicate
       (apply [this input] (= (.getGroup input) "fred")))))))
