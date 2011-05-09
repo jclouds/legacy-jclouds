@@ -48,6 +48,7 @@
         <module>scriptbuilder</module>
         <module>allcompute</module>
         <module>allblobstore</module>
+        <module>allloadbalancer</module>
         <module>all</module>
     </modules>
     <build>
