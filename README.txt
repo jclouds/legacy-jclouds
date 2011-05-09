@@ -49,6 +49,11 @@ our blobstore api supports: aws-s3, cloudfiles-us, cloudfiles-uk, filesystem,
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
+our loadbalancer api supports: cloudloadbalancers-us
+ 
+  * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
+           to all of these providers
+
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,
                           azurequeue, simpledb, cloudstack as well as a async-http-client
                           driver in the sandbox

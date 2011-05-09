@@ -52,6 +52,7 @@
         <module>cloudservers-uk</module>
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
+        <module>cloudloadbalancers-us</module>
         <module>bluelock-vcdirector</module>
         <module>trmk-ecloud</module>
         <module>trmk-vcloudexpress</module>
