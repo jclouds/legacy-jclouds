@@ -20,40 +20,37 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.json.Json;
-import org.jclouds.rest.MapBinder;
+import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.assistedinject.Assisted;
 
 /**
- * Binds the object to the request as a json object.
+ * Sometimes, cloud apis wrap requests inside an envelope. This addresses this.
  * 
  * @author Adrian Cole
  */
-public class BindToJsonPayload implements MapBinder {
+public class BindToJsonPayloadWrappedWith implements Binder {
 
-   protected final Json jsonBinder;
-
-   @Inject
-   public BindToJsonPayload(Json jsonBinder) {
-      this.jsonBinder = checkNotNull(jsonBinder, "jsonBinder");
+   public static interface Factory {
+      BindToJsonPayloadWrappedWith create(String envelope);
    }
 
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      return bindToRequest(request, (Object) postParams);
+   private final BindToJsonPayload jsonBinder;
+   private final String envelope;
+
+   @Inject
+   BindToJsonPayloadWrappedWith(BindToJsonPayload jsonBinder, @Assisted String envelope) {
+      this.jsonBinder = checkNotNull(jsonBinder, "jsonBinder");
+      this.envelope = checkNotNull(envelope, "envelope");
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      String json = jsonBinder.toJson(checkNotNull(payload, "payload"));
-      request.setPayload(json);
-      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
-      return request;
+      return jsonBinder.bindToRequest(request, (Object) ImmutableMap.of(envelope, checkNotNull(payload, "payload")));
    }
 
 }

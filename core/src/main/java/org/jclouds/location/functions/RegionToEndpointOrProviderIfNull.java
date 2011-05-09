@@ -62,7 +62,6 @@ public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
             + ", but only the default location " + defaultProvider + " is configured");
       checkArgument(from.equals(defaultProvider) || (regionToEndpoint != null && regionToEndpoint.containsKey(from)),
             "requested location %s, which is not in the configured locations: %s", from, regionToEndpoint);
-
       return regionToEndpoint.get(from);
    }
 }
