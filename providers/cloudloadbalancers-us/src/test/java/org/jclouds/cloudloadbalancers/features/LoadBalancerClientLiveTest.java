@@ -44,7 +44,6 @@ import com.google.common.collect.Sets;
 public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    private Set<LoadBalancer> lbs = Sets.newLinkedHashSet();
 
-   // ticket 130960 getting 500 errors deleting load balancers
    @AfterGroups(groups = "live")
    protected void tearDown() {
       for (LoadBalancer lb : lbs) {
@@ -60,6 +59,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
          assert null != response;
          assertTrue(response.size() >= 0);
          for (LoadBalancer lb : response) {
+            if (lb.getStatus() == LoadBalancer.Status.DELETED)
+               continue;
             assert lb.getRegion() != null : lb;
             assert lb.getName() != null : lb;
             assert lb.getId() != -1 : lb;
@@ -73,17 +74,21 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
             assert lb.getNodes().size() == 0 : lb;
 
             LoadBalancer getDetails = client.getLoadBalancerClient(region).getLoadBalancer(lb.getId());
-            assertEquals(getDetails.getRegion(), lb.getRegion());
-            assertEquals(getDetails.getName(), lb.getName());
-            assertEquals(getDetails.getId(), lb.getId());
-            assertEquals(getDetails.getProtocol(), lb.getProtocol());
-            assertEquals(getDetails.getPort(), lb.getPort());
-            assertEquals(getDetails.getStatus(), lb.getStatus());
-            assertEquals(getDetails.getCreated(), lb.getCreated());
-            assertEquals(getDetails.getUpdated(), lb.getUpdated());
-            assertEquals(getDetails.getVirtualIPs(), lb.getVirtualIPs());
-            // node info not available during list;
-            assert getDetails.getNodes().size() > 0 : lb;
+            try {
+               assertEquals(getDetails.getRegion(), lb.getRegion());
+               assertEquals(getDetails.getName(), lb.getName());
+               assertEquals(getDetails.getId(), lb.getId());
+               assertEquals(getDetails.getProtocol(), lb.getProtocol());
+               assertEquals(getDetails.getPort(), lb.getPort());
+               assertEquals(getDetails.getStatus(), lb.getStatus());
+               assertEquals(getDetails.getCreated(), lb.getCreated());
+               assertEquals(getDetails.getUpdated(), lb.getUpdated());
+               assertEquals(getDetails.getVirtualIPs(), lb.getVirtualIPs());
+               // node info not available during list;
+               assert getDetails.getNodes().size() > 0 : lb;
+            } catch (AssertionError e) {
+               throw new AssertionError(String.format("%s\n%s - %s", e.getMessage(),getDetails, lb));
+            }
          }
       }
    }
@@ -122,7 +127,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
       assertEquals(lb.getRegion(), region);
       assertEquals(lb.getName(), name);
       assertEquals(lb.getProtocol(), "HTTP");
-      assertEquals(lb.getPort(), 80);
+      assertEquals(lb.getPort(), new Integer(80));
       assertEquals(Iterables.get(lb.getVirtualIPs(), 0).getType(), Type.PUBLIC);
    }
 

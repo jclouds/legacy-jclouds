@@ -106,6 +106,7 @@ public interface LoadBalancerAsyncClient {
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
+   @Consumes("*/*")
    ListenableFuture<Void> removeLoadBalancer(@PathParam("id") int id);
 
 }
