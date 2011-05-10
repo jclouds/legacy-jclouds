@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

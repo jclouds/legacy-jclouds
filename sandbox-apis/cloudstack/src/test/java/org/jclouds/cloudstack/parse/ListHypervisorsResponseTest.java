@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -50,7 +52,7 @@ public class ListHypervisorsResponseTest extends BaseSetParserTest<String> {
    }
 
    @Override
-   protected Function<HttpResponse, Set<String>> getParser() {
-      return i.getInstance(ParseNamesFromHttpResponse.class);
+   protected Function<HttpResponse, Set<String>> getParser(Injector injector) {
+      return injector.getInstance(ParseNamesFromHttpResponse.class);
    }
 }

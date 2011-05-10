@@ -25,8 +25,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreateNetworkOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
@@ -34,6 +36,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -69,4 +72,22 @@ public interface NetworkAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Network> getNetwork(@QueryParam("id") long id);
 
+   /**
+    * @see NetworkClient#createNetworkInZone
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createNetwork")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> createNetworkInZone(@QueryParam("zoneid") long zoneId,
+            @QueryParam("networkofferingid") long networkOfferingId, @QueryParam("name") String name,
+            @QueryParam("displaytext") String displayText, CreateNetworkOptions... options);
+
+   /**
+    * @see NetworkClient#deleteNetwork
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteNetwork")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteNetwork(@QueryParam("id") long id);
 }

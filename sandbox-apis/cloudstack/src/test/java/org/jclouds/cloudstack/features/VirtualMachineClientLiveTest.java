@@ -135,7 +135,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
                zoneId, options);
-      AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
+      AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(serviceOfferingId, templateId,
                zoneId, options);
       assert jobComplete.apply(job.getJobId());
       AsyncJob<VirtualMachine> jobWithResult = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId());

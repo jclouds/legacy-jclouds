@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.StorageType;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

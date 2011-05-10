@@ -82,7 +82,7 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
 
    public static PublicIPAddress associateIPAddressInNetwork(Network network, CloudStackClient client,
             Predicate<Long> jobComplete) {
-      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(network.getZoneId(),
+      AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(network.getZoneId(),
                networkId(network.getId()));
       checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
       PublicIPAddress ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();

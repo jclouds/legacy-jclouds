@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.TrafficType;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

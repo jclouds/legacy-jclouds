@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

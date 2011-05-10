@@ -22,10 +22,12 @@ import java.util.Map;
 
 import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.json.BaseItemParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -41,17 +43,17 @@ public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<Long, S
 
    @Override
    public Map<Long, String> expected() {
-      return ImmutableMap.<Long, String> builder().put(1l, "CentOS").put(2l, "Debian").put(3l, "Oracle")
-            .put(4l, "RedHat").put(5l, "SUSE").put(6l, "Windows").put(7l, "Other").put(8l, "Novel").put(9l, "Unix")
-            .put(10l, "Ubuntu").build();
+      return ImmutableMap.<Long, String> builder().put(1l, "CentOS").put(2l, "Debian").put(3l, "Oracle").put(4l,
+               "RedHat").put(5l, "SUSE").put(6l, "Windows").put(7l, "Other").put(8l, "Novel").put(9l, "Unix").put(10l,
+               "Ubuntu").build();
    }
 
    @Override
-   protected Function<HttpResponse, Map<Long, String>> getParser() {
-      return i.getInstance(ParseIdToNameFromHttpResponse.class);
+   protected Function<HttpResponse, Map<Long, String>> getParser(Injector injector) {
+      return injector.getInstance(ParseIdToNameFromHttpResponse.class);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
    public Class<Map<Long, String>> type() {
       return (Class) Map.class;

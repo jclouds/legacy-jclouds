@@ -20,14 +20,19 @@ package org.jclouds.cloudstack.parse;
 
 import java.util.Set;
 
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.Account.State;
 import org.jclouds.cloudstack.domain.Account.Type;
-import org.jclouds.cloudstack.domain.User;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -35,6 +40,19 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
+   @Override
+   protected Injector getInjector() {
+      return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
+
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
+
+      });
+
+   }
 
    @Override
    public Class<Account> type() {

@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.parse;
 
 import org.jclouds.cloudstack.domain.Capabilities;
+import org.jclouds.json.BaseItemParserTest;
 import org.testng.annotations.Test;
 
 /**

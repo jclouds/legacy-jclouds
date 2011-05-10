@@ -24,6 +24,7 @@ import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.Template.Format;
 import org.jclouds.cloudstack.domain.Template.Type;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

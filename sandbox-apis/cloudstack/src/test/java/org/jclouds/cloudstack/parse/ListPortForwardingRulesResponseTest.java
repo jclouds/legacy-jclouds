@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.parse;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.json.BaseSetParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

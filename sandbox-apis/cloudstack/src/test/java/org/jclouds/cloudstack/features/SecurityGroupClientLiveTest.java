@@ -31,7 +31,6 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
-import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.net.IPSocket;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterGroups;
@@ -170,9 +169,6 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMInSecurityGroup() throws Exception {
       if (!securityGroupsSupported)
          return;
-      for (VirtualMachine vm : client.getVirtualMachineClient().listVirtualMachines(
-            ListVirtualMachinesOptions.Builder.zoneId(zone.getId()))) {
-      }
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(), group.getId(),
             client, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null)
