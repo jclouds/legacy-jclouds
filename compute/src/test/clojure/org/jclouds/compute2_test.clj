@@ -41,7 +41,7 @@ list, Alan Dipert and MeikelBrandmeyer."
   [compute-service]
   (fn [f]
     (doseq [node (nodes compute-service)]
-      (destroy-node *compute* (.getId node)))
+      (destroy-node compute-service (.getId node)))
     (f)))
 
 (use-fixtures :each (clean-stub-fixture *compute*))
