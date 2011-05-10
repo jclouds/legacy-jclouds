@@ -34,15 +34,15 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest os-families-test
   (is (some #{"centos"} (map str (os-families)))))
 
+(def *compute* (compute-service "stub" "" ""))
+
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
   [compute-service]
   (fn [f]
     (doseq [node (nodes compute-service)]
-      (destroy-node (.getId node)))
+      (destroy-node *compute* (.getId node)))
     (f)))
-
-(def *compute* (compute-service "stub" "" ""))
 
 (use-fixtures :each (clean-stub-fixture *compute*))
 
