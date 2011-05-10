@@ -21,7 +21,6 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.options.CreateNetworkOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
@@ -68,17 +67,18 @@ public interface NetworkClient {
     *           the display text of the network
     * @param options
     *           optional parameters
-    * @return task in progress
+    * @return newly created network
     */
-   AsyncCreateResponse createNetworkInZone(long zoneId, long networkOfferingId, String name, String displayText,
-            CreateNetworkOptions... options);
-   
+   Network createNetworkInZone(long zoneId, long networkOfferingId, String name, String displayText,
+         CreateNetworkOptions... options);
 
    /**
     * Deletes a network
     * 
     * @param id
     *           the ID of the network
+    * @return job id related to destroying the network, or null if resource was not
+    *         found
     */
-   void deleteNetwork(long id);
+   Long deleteNetwork(long id);
 }

@@ -25,14 +25,11 @@ import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.options.CreateNetworkOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -108,7 +105,7 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -128,7 +125,7 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -142,12 +139,12 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
 
       assertRequestLineEquals(httpRequest,
                "GET http://localhost:8080/client/api?response=json&command=deleteNetwork&id=5 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyNestedJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 

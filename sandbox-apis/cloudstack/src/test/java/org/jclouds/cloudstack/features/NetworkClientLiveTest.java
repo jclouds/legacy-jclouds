@@ -25,7 +25,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
@@ -60,13 +59,13 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
 
       try {
          zone = find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
-         offering = Iterables.find(client.getOfferingClient().listNetworkOfferings(),new Predicate<NetworkOffering>(){
+         offering = Iterables.find(client.getOfferingClient().listNetworkOfferings(), new Predicate<NetworkOffering>() {
 
             @Override
             public boolean apply(NetworkOffering arg0) {
                return "Optional".equals(arg0.getAvailability());
             }
-            
+
          });
          networksSupported = true;
       } catch (NoSuchElementException e) {
@@ -76,17 +75,14 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateNetworks() throws Exception {
       if (!networksSupported)
          return;
-      AsyncCreateResponse job = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), prefix,
-               prefix);
-      assert jobComplete.apply(job.getJobId()) : job;
-      network = client.getNetworkClient().getNetwork(job.getId());
+      network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), prefix, prefix);
       checkNetwork(network);
    }
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (network != null) {
-         client.getNetworkClient().deleteNetwork(network.getId());
+         jobComplete.apply(client.getNetworkClient().deleteNetwork(network.getId()));
       }
       super.tearDown();
    }
@@ -100,7 +96,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(networkCount >= 0);
       for (Network network : response) {
          Network newDetails = Iterables.getOnlyElement(client.getNetworkClient().listNetworks(
-                  ListNetworksOptions.Builder.id(network.getId())));
+               ListNetworksOptions.Builder.id(network.getId())));
          assertEquals(network, newDetails);
          assertEquals(network, client.getNetworkClient().getNetwork(network.getId()));
          checkNetwork(network);
@@ -129,21 +125,21 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       assert network.getDomain() != null : network;
       assert network.getDomainId() > 0 : network;
       switch (network.getGuestIPType()) {
-         case VIRTUAL:
-            assert network.getNetmask() == null : network;
-            assert network.getGateway() == null : network;
-            assert network.getVLAN() == null : network;
-            assert network.getStartIP() == null : network;
-            assert network.getEndIP() == null : network;
-            break;
-         case DIRECT:
-            assert network.getNetmask() != null : network;
-            assert network.getGateway() != null : network;
-            assert network.getVLAN() != null : network;
-            assertEquals(network.getBroadcastURI(), "vlan://" + network.getVLAN());
-            assert network.getStartIP() != null : network;
-            assert network.getEndIP() != null : network;
-            break;
+      case VIRTUAL:
+         assert network.getNetmask() == null : network;
+         assert network.getGateway() == null : network;
+         assert network.getVLAN() == null : network;
+         assert network.getStartIP() == null : network;
+         assert network.getEndIP() == null : network;
+         break;
+      case DIRECT:
+         assert network.getNetmask() != null : network;
+         assert network.getGateway() != null : network;
+         assert network.getVLAN() != null : network;
+         assertEquals(network.getBroadcastURI(), "vlan://" + network.getVLAN());
+         assert network.getStartIP() != null : network;
+         assert network.getEndIP() != null : network;
+         break;
       }
    }
 }
