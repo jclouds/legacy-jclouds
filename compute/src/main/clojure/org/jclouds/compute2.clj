@@ -197,7 +197,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn suspend-node
   "Suspend a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.suspendNode compute id)))
 
 (defn resume-nodes-matching
@@ -208,7 +208,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn resume-node
   "Resume a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.resumeNode compute id)))
 
 (defn reboot-nodes-matching
@@ -219,7 +219,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn reboot-node
   "Reboot a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.rebootNode compute id)))
 
 (defn destroy-nodes-matching
@@ -230,7 +230,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn destroy-node
   "Destroy a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.destroyNode compute id)))
 
 (defmacro state-predicate [node state]
