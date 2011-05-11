@@ -21,9 +21,9 @@
   (:use [org.jclouds.compute2] :reload-all)
   (:use clojure.test)
   (:import
-   org.jclouds.compute.domain.OsFamily
-   clojure.contrib.condition.Condition))
-
+    org.jclouds.compute.domain.OsFamily
+    clojure.contrib.condition.Condition
+    java.net.InetAddress))
 
 (defmacro with-private-vars [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context.  From users mailing
@@ -74,6 +74,17 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (= "fred" (group (first (nodes *compute*)))))
   (destroy-nodes-matching *compute* #(= (.getGroup %) "fred"))
   (is (terminated? (first (nodes-in-group *compute* "fred")))))
+
+(defn localhost? [node]
+  "Returns true if the localhost address is in the node's private ips"
+  (seq? (some #(= (InetAddress/getLocalHost) %) (private-ips node))))
+
+(deftest compound-predicate-test
+  (is (create-node *compute* "my-group" (build-template *compute* {})))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (suspended? %) (not (localhost? %)))))))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (suspended? %) (localhost? %))))))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (running? %) (localhost? %))))))
+  (is (= 1 (count (nodes-with-details-matching *compute* #(and (running? %) (not (localhost? %))))))))
 
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]
