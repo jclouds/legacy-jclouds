@@ -30,12 +30,12 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
+import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -58,21 +58,17 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       super.setupClient();
 
       try {
-         zone = find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
-         offering = Iterables.find(client.getOfferingClient().listNetworkOfferings(), new Predicate<NetworkOffering>() {
-
-            @Override
-            public boolean apply(NetworkOffering arg0) {
-               return "Optional".equals(arg0.getAvailability());
-            }
-
-         });
+         // you can create guest direct network by Admin user, but since we are
+         // not admin, let's try to create a guest virtual one
+         zone = find(client.getZoneClient().listZones(), ZonePredicates.supportsGuestVirtualNetworks());
+         offering = Iterables.find(client.getOfferingClient().listNetworkOfferings(),
+               NetworkOfferingPredicates.supportsGuestVirtualNetworks());
          networksSupported = true;
       } catch (NoSuchElementException e) {
       }
    }
 
-   public void testCreateNetworks() throws Exception {
+   public void testCreateNetwork() throws Exception {
       if (!networksSupported)
          return;
       network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), prefix, prefix);

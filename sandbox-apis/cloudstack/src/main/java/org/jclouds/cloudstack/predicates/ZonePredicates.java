@@ -19,46 +19,64 @@
 package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
 
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class ZonePredicates {
-
-   public static class SupportsNetworkType implements Predicate<Zone> {
-      private final org.jclouds.cloudstack.domain.NetworkType type;
-
-      public SupportsNetworkType(org.jclouds.cloudstack.domain.NetworkType type) {
-         this.type = checkNotNull(type, "type");
-      }
-
-      @Override
-      public boolean apply(Zone input) {
-         return type.equals(checkNotNull(input, "zone").getNetworkType());
-      }
-
-      @Override
-      public String toString() {
-         return "supportsNetworkType(" + type + ")";
-      }
-   }
-
-   static Predicate<Zone> supportsAdvancedNetworks = new SupportsNetworkType(
-            org.jclouds.cloudstack.domain.NetworkType.ADVANCED);
-
    /**
     * 
     * @return true, if the zone supports {@link NetworkType.ADVANCED}
     */
    public static Predicate<Zone> supportsAdvancedNetworks() {
-      return supportsAdvancedNetworks;
+      return new Predicate<Zone>() {
+
+         @Override
+         public boolean apply(Zone input) {
+            return NetworkType.ADVANCED.equals(checkNotNull(input, "zone").getNetworkType());
+         }
+
+         @Override
+         public String toString() {
+            return "supportsAvancedNetworks()";
+         }
+      };
+   }
+
+   /**
+    * 
+    * @return true, if the zone supports security groups
+    */
+   public static Predicate<Zone> supportsSecurityGroups() {
+      return new Predicate<Zone>() {
+
+         @Override
+         public boolean apply(Zone input) {
+            return input.isSecurityGroupsEnabled();
+         }
+
+         @Override
+         public String toString() {
+            return "supportsSecurityGroups()";
+         }
+      };
+   }
+
+   /**
+    * 
+    * @return true, if the zone supports creation of GuestVirtual Networks
+    */
+   public static Predicate<Zone> supportsGuestVirtualNetworks() {
+      return and(supportsAdvancedNetworks(), not(supportsSecurityGroups()));
    }
 
    /**
@@ -66,6 +84,6 @@ public class ZonePredicates {
     * @return always returns true.
     */
    public static Predicate<Zone> any() {
-      return Predicates.alwaysTrue();
+      return alwaysTrue();
    }
 }
