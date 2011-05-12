@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.simpledb.SimpleDBAsyncClient;
 import org.jclouds.simpledb.SimpleDBAsyncClientTest;
 import org.testng.annotations.Test;
@@ -53,4 +54,8 @@ public class AWSSimpleDBAsyncClientTest extends SimpleDBAsyncClientTest {
       }
    }
 
+   @Override
+   public RestContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec(provider, "foo", "bar", getProperties());
+   }
 }

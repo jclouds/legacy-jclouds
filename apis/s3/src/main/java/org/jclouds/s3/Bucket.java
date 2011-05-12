@@ -18,16 +18,20 @@
  */
 package org.jclouds.s3;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.inject.Qualifier;
+
 /**
  * Annotates the parameter that this is a bucket.
  */
-@Target(PARAMETER)
+@Target({ PARAMETER, METHOD })
 @Retention(RUNTIME)
+@Qualifier
 public @interface Bucket {
 }

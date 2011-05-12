@@ -1,8 +1,0 @@
-{ 
-    "flavor" : { 
-       "id" : 1, 
-       "name" : "256 MB Server", 
- "ram"  : 256, 
-  "disk" : 10 
-    } 
-} 

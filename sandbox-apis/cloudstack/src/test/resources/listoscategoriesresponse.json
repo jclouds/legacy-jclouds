@@ -1,0 +1,1 @@
+{ "listoscategoriesresponse" : { "oscategory" : [  {"id":1,"name":"CentOS"}, {"id":2,"name":"Debian"}, {"id":3,"name":"Oracle"}, {"id":4,"name":"RedHat"}, {"id":5,"name":"SUSE"}, {"id":6,"name":"Windows"}, {"id":7,"name":"Other"}, {"id":8,"name":"Novel"}, {"id":9,"name":"Unix"}, {"id":10,"name":"Ubuntu"} ] } }

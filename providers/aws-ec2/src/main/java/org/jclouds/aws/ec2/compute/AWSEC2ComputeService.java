@@ -40,6 +40,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
@@ -56,6 +57,7 @@ import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -83,7 +85,8 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
          @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
          @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
          Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
@@ -91,7 +94,8 @@ public class AWSEC2ComputeService extends EC2ComputeService {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
-            initScriptRunnerFactory, timeouts, executor, ec2Client, credentialsMap, securityGroupMap);
+            initScriptRunnerFactory, initAdminAccess, persistNodeCredentials, timeouts, executor, ec2Client,
+            credentialsMap, securityGroupMap);
       this.ec2Client = ec2Client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;

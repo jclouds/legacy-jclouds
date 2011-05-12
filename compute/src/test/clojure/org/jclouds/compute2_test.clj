@@ -61,24 +61,30 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? *compute*))
   (is (compute-service? (compute-service (compute-context *compute*)))))
 
+(defn in-group [group] #(= (.getGroup %) group))
+
 (deftest nodes-test
   (is (create-node *compute* "fred" (build-template *compute* {} )))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))
+  ;; pass in a function that selects node metadata based on NodeMetadata field
+  (is (= 1 (count (nodes-with-details-matching *compute* (in-group "fred")))))
+  ;; or make your query inline
   (is (= 1 (count (nodes-with-details-matching *compute* #(= (.getGroup %) "fred")))))
+  ;; or get real fancy, and use the underlying Predicate object jclouds uses
   (is (= 1 (count (nodes-with-details-matching *compute*
     (reify com.google.common.base.Predicate
       (apply [this input] (= (.getGroup input) "fred")))))))
-  (is (= 0 (count (nodes-with-details-matching *compute* #(= (.getGroup %) "othergroup")))))
-  (suspend-nodes-matching *compute* #(= (.getGroup %) "fred"))
-  (is (suspended? (first (nodes-with-details-matching *compute* #(= (.getGroup %) "fred")))))
-  (resume-nodes-matching *compute* #(= (.getGroup %) "fred"))
+  (is (= 0 (count (nodes-with-details-matching *compute* (in-group "othergroup")))))
+  (suspend-nodes-matching *compute* (in-group "fred"))
+  (is (suspended? (first (nodes-with-details-matching *compute* (in-group "fred")))))
+  (resume-nodes-matching *compute* (in-group "fred"))
   (is (running? (first (nodes-in-group *compute* "fred"))))
-  (reboot-nodes-matching *compute* #(= (.getGroup %) "fred"))
+  (reboot-nodes-matching *compute* (in-group "fred"))
   (is (running? (first (nodes-in-group *compute* "fred"))))
   (is (create-nodes *compute* "fred" 2 (build-template *compute* {} )))
   (is (= 3 (count (nodes-in-group *compute* "fred"))))
   (is (= "fred" (group (first (nodes *compute*)))))
-  (destroy-nodes-matching *compute* #(= (.getGroup %) "fred"))
+  (destroy-nodes-matching *compute* (in-group "fred"))
   (is (terminated? (first (nodes-in-group *compute* "fred")))))
 
 (defn localhost? [node]

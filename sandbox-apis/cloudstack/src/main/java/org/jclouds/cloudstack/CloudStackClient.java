@@ -20,6 +20,7 @@ package org.jclouds.cloudstack;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
@@ -130,4 +131,10 @@ public interface CloudStackClient {
     */
    @Delegate
    ConfigurationClient getConfigurationClient();
+
+   /**
+    * Provides synchronous access to Account features.
+    */
+   @Delegate
+   AccountClient getAccountClient();
 }

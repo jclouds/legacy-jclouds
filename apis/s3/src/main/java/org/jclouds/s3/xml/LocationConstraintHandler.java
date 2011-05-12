@@ -20,20 +20,36 @@ package org.jclouds.s3.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.jclouds.aws.domain.Region;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.s3.Bucket;
 
 /**
  * Parses the response from Amazon S3 GET Bucket Location
  * <p/>
  * Region is the document we expect to parse.
  * 
- * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html" />
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html"
+ *      />
  * @author Adrian Cole
  */
 public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String> {
+   private final Map<String, String> bucketToRegion;
    private StringBuilder currentText = new StringBuilder();
    private String region;
+   private String bucket;
+
+   @Inject
+   public LocationConstraintHandler(@Bucket Map<String, String> bucketToRegion) {
+      this.bucketToRegion = bucketToRegion;
+   }
 
    public String getResult() {
       return region;
@@ -41,6 +57,18 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
 
    public void endElement(String uri, String name, String qName) {
       region = fromValue(currentOrNull(currentText));
+      bucketToRegion.put(bucket, region);
+   }
+
+   @Override
+   public LocationConstraintHandler setContext(HttpRequest request) {
+      super.setContext(request);
+      setBucket(GeneratedHttpRequest.class.cast(getRequest()).getArgs().get(0).toString());
+      return this;
+   }
+
+   void setBucket(String bucket) {
+      this.bucket = bucket;
    }
 
    /**

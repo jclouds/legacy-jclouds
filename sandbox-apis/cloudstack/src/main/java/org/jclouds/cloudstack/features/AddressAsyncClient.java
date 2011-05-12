@@ -73,13 +73,13 @@ public interface AddressAsyncClient {
    ListenableFuture<PublicIPAddress> getPublicIPAddress(@QueryParam("id") long id);
 
    /**
-    * @see AddressClient#associateIPAddress
+    * @see AddressClient#associateIPAddressInZone
     */
    @GET
    @QueryParams(keys = "command", values = "associateIpAddress")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> associateIPAddress(@QueryParam("zoneid") long zoneId,
+   ListenableFuture<AsyncCreateResponse> associateIPAddressInZone(@QueryParam("zoneid") long zoneId,
             AssociateIPAddressOptions... options);
 
    /**

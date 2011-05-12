@@ -19,37 +19,21 @@
 package org.jclouds.scriptbuilder.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
-import java.util.Collections;
+import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
+ * @see AuthorizeRSAPublicKeys
  */
-public class AuthorizeRSAPublicKey implements Statement {
-
-   private final String publicKey;
+@Deprecated
+public class AuthorizeRSAPublicKey extends AuthorizeRSAPublicKeys {
 
    public AuthorizeRSAPublicKey(String publicKey) {
-      this.publicKey = checkNotNull(publicKey, "publicKey");
+      super(ImmutableSet.of(checkNotNull(publicKey, "publicKey")));
    }
 
-   @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
-      return Collections.emptyList();
-   }
-
-   @Override
-   public String render(OsFamily family) {
-      checkNotNull(family, "family");
-      if (family == OsFamily.WINDOWS)
-         throw new UnsupportedOperationException("windows not yet implemented");
-      return new StatementList(ImmutableList.of(exec("{md} ~/.ssh"), appendFile("~/.ssh/authorized_keys", Splitter.on('\n')
-               .split(publicKey)), exec("chmod 600 ~/.ssh/authorized_keys"))).render(family);
-   }
 }

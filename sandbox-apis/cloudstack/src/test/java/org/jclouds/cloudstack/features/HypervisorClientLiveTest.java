@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "HypervisorClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "HypervisorClientLiveTest")
 public class HypervisorClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListHypervisors() throws Exception {

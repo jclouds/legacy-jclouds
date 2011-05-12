@@ -43,7 +43,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "FirewallClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "FirewallClientLiveTest")
 public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;

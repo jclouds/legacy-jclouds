@@ -23,14 +23,16 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Maps.filterKeys;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * General utilities used in jclouds code for {@link Map}s.
@@ -39,9 +41,17 @@ import com.google.common.collect.Maps;
  */
 public class Maps2 {
 
+   public static <K, V> Map<K, V> convertUnsafe(Multimap<K, V> in) {
+      LinkedHashMap<K, V> out = Maps.newLinkedHashMap();
+      for (Entry<K, V> entry : in.entries()) {
+         out.put(entry.getKey(), entry.getValue());
+      }
+      return ImmutableMap.copyOf(out);
+   }
+
    /**
-    * If the supplied map contains the key {@code k1}, its value will be assigned to the key
-    * {@code k2}. Note that this doesn't modify the input map.
+    * If the supplied map contains the key {@code k1}, its value will be assigned to the key {@code
+    * k2}. Note that this doesn't modify the input map.
     * 
     * @param <V>
     *           type of value the map holds

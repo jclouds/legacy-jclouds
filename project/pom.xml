@@ -100,9 +100,8 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <site>
-            <id>website</id>
-            <name>website</name>
-            <url>file://${basedir}/target/dist/site/jclouds-testing/</url>
+            <id>jclouds-googlecode-site</id>
+            <url>${maven.site.url.base}/${project.version}</url>
         </site>
     </distributionManagement>
 
@@ -180,6 +179,7 @@
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <maven.site.url.base>davs://jclouds.googlecode.com/svn/maven-sites</maven.site.url.base>
         <http.proxyHost />
         <http.proxyPort />
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
@@ -501,7 +501,17 @@ pageTracker._trackPageview();
             <plugins>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>2.2</version>
+                    <configuration>
+                        <stagingRepositoryId>${project.distributionManagement.site.id}</stagingRepositoryId>
+                        <stagingSiteURL>${project.distributionManagement.site.url}</stagingSiteURL>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-webdav-jackrabbit</artifactId>
+                            <version>1.0-beta-8-WAGON-319</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
@@ -681,6 +691,16 @@ pageTracker._trackPageview();
                     <missing>${basedir}</missing>
                 </file>
             </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-site-plugin</artifactId>
+                            <version>2.2</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
             <reporting>
                 <plugins>
                     <plugin>
@@ -712,7 +732,7 @@ pageTracker._trackPageview();
                     </plugin>
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.6.1</version>
+                        <version>2.7</version>
                         <configuration>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <quiet>true</quiet>
@@ -766,24 +786,11 @@ pageTracker._trackPageview();
                 </file>
             </activation>
             <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-descriptor</id>
-                                <goals>
-                                    <goal>attach-descriptor</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
                 <pluginManagement>
                     <plugins>
                         <plugin>
                             <artifactId>maven-site-plugin</artifactId>
-                            <version>3.0-beta-3</version>
+                            <version>3.0-beta-4-SNAPSHOT</version>
                             <configuration>
                                 <reportPlugins>
                                     <plugin>
@@ -808,6 +815,7 @@ pageTracker._trackPageview();
                                         <configuration>
                                             <encoding>${project.build.sourceEncoding}</encoding>
                                             <quiet>true</quiet>
+                                            <additionalJOption>-J-Xmx256m</additionalJOption>
                                         </configuration>
                                         <reportSets>
                                             <reportSet>
@@ -868,7 +876,15 @@ pageTracker._trackPageview();
                     <!-- only in the jclouds-project module -->
                     <exists>src/etc/header.txt</exists>
                 </file>
-            </activation>        
+            </activation>
+
+            <!-- Maven generates incorrect links without the <site> declaration here -->
+            <distributionManagement>
+                <site>
+                    <id>jclouds-googlecode-site</id>
+                    <url>${maven.site.url.base}/${project.version}/${project.artifactId}</url>
+                </site>
+            </distributionManagement>
             <build>
                 <plugins>
                    <plugin>      

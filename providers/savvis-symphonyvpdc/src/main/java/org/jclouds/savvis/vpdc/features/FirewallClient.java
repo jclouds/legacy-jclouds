@@ -21,6 +21,8 @@ package org.jclouds.savvis.vpdc.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.savvis.vpdc.domain.FirewallRule;
+import org.jclouds.savvis.vpdc.domain.Task;
 
 /**
  * Provides access to Symphony VPDC resources via their REST API.
@@ -31,5 +33,30 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface FirewallClient {
-
+	
+	/**
+	 * Add a new firewall rule
+	 * 		
+	 * @param billingSiteId
+	 * 		billing site Id, or null for default
+	 * @param vpdcId
+	 * 		vpdc Id
+	 * @param firewallRule
+	 * 		firewall rule to be added
+	 * @return
+	 */
+	Task addFirewallRule(String billingSiteId, String vpdcId, FirewallRule firewallRule);
+	
+	/**
+	 * Delete a firewall rule
+	 * 		
+	 * @param billingSiteId
+	 * 		billing site Id, or null for default
+	 * @param vpdcId
+	 * 		vpdc Id
+	 * @param firewallRule
+	 * 		firewall rule to be deleted
+	 * @return
+	 */
+	Task deleteFirewallRule(String billingSiteId, String vpdcId, FirewallRule firewallRule);
 }

@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.ServiceOffering;
@@ -67,45 +66,45 @@ import com.google.common.net.HostSpecifier;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "VirtualMachineClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "VirtualMachineClientLiveTest")
 public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm = null;
 
    static final Ordering<ServiceOffering> DEFAULT_SIZE_ORDERING = new Ordering<ServiceOffering>() {
       public int compare(ServiceOffering left, ServiceOffering right) {
-         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber()).compare(left.getMemory(),
-                  right.getMemory()).result();
+         return ComparisonChain.start().compare(left.getCpuNumber(), right.getCpuNumber())
+               .compare(left.getMemory(), right.getMemory()).result();
       }
    };
 
    public static VirtualMachine createVirtualMachine(CloudStackClient client, RetryablePredicate<Long> jobComplete,
-            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       Set<Network> networks = client.getNetworkClient().listNetworks();
       if (networks.size() > 0) {
          return createVirtualMachineInNetwork(get(networks, 0), client, jobComplete, virtualMachineRunning);
       } else {
-         return createVirtualMachineWithSecurityGroupInZone(find(client.getZoneClient().listZones(),
-                  new Predicate<Zone>() {
+         return createVirtualMachineWithSecurityGroupInZone(
+               find(client.getZoneClient().listZones(), new Predicate<Zone>() {
 
-                     @Override
-                     public boolean apply(Zone arg0) {
-                        return arg0.isSecurityGroupsEnabled();
-                     }
+                  @Override
+                  public boolean apply(Zone arg0) {
+                     return arg0.isSecurityGroupsEnabled();
+                  }
 
-                  }).getId(), get(client.getSecurityGroupClient().listSecurityGroups(), 0).getId(), client,
-                  jobComplete, virtualMachineRunning);
+               }).getId(), get(client.getSecurityGroupClient().listSecurityGroups(), 0).getId(), client, jobComplete,
+               virtualMachineRunning);
       }
    }
 
    public static VirtualMachine createVirtualMachineWithSecurityGroupInZone(long zoneId, long groupId,
-            CloudStackClient client, RetryablePredicate<Long> jobComplete,
-            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         CloudStackClient client, RetryablePredicate<Long> jobComplete,
+         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       return createVirtualMachineWithOptionsInZone(new DeployVirtualMachineOptions().securityGroupId(groupId), zoneId,
-               client, jobComplete, virtualMachineRunning);
+            client, jobComplete, virtualMachineRunning);
    }
 
    public static VirtualMachine createVirtualMachineInNetwork(Network network, CloudStackClient client,
-            RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
       long zoneId = network.getZoneId();
       options.networkId(network.getId());
@@ -113,8 +112,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public static VirtualMachine createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions options,
-            final long zoneId, CloudStackClient client, RetryablePredicate<Long> jobComplete,
-            RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         final long zoneId, CloudStackClient client, RetryablePredicate<Long> jobComplete,
+         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       // TODO enum, as this is way too easy to mess up.
       Set<String> acceptableCategories = ImmutableSet.of("Ubuntu", "CentOS");
 
@@ -122,9 +121,9 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       final Predicate<Template> osTypePredicate = new OSCategoryIn(client).apply(acceptableCategories);
 
       Predicate<Template> templatePredicate = Predicates.<Template> and(TemplatePredicates.isReady(),
-               hypervisorPredicate, osTypePredicate);
-      Iterable<Template> templates = filter(client.getTemplateClient().listTemplates(
-               ListTemplatesOptions.Builder.zoneId(zoneId)), templatePredicate);
+            hypervisorPredicate, osTypePredicate);
+      Iterable<Template> templates = filter(
+            client.getTemplateClient().listTemplates(ListTemplatesOptions.Builder.zoneId(zoneId)), templatePredicate);
       if (Iterables.any(templates, TemplatePredicates.isPasswordEnabled())) {
          templates = filter(templates, TemplatePredicates.isPasswordEnabled());
       }
@@ -132,18 +131,17 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          throw new NoSuchElementException(templatePredicate.toString());
       }
       long templateId = get(templates, 0).getId();
-
       long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
-               zoneId, options);
-      AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachine(serviceOfferingId, templateId,
-               zoneId, options);
+            zoneId, options);
+      AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
+            templateId, options);
       assert jobComplete.apply(job.getJobId());
       AsyncJob<VirtualMachine> jobWithResult = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId());
       if (jobWithResult.getError() != null)
          Throwables.propagate(new ExecutionException(String.format("job %s failed with exception %s", job.getId(),
-                  jobWithResult.getError().toString())) {
+               jobWithResult.getError().toString())) {
             private static final long serialVersionUID = 4371112085613620239L;
          });
       VirtualMachine vm = jobWithResult.getResult();
@@ -162,7 +160,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
       }
-      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN")).apply(vm.getRootDeviceType()) : vm;
+      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN"), equalTo("VMFS")).apply(vm.getRootDeviceType()) : vm;
       checkVm(vm);
    }
 
@@ -187,11 +185,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.STOPPED);
 
-      job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
-      assert jobComplete.apply(job);
-      vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job).getResult();
-      if (vm.getPassword() != null) {
-         conditionallyCheckSSH();
+      if (vm.isPasswordEnabled()) {
+         job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
+         assert jobComplete.apply(job);
+         vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job).getResult();
+         if (vm.getPassword() != null) {
+            conditionallyCheckSSH();
+         }
       }
 
       job = client.getVirtualMachineClient().startVirtualMachine(vm.getId());
@@ -221,7 +221,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(response.size() >= 0);
       for (VirtualMachine vm : response) {
          VirtualMachine newDetails = getOnlyElement(client.getVirtualMachineClient().listVirtualMachines(
-                  ListVirtualMachinesOptions.Builder.id(vm.getId())));
+               ListVirtualMachinesOptions.Builder.id(vm.getId())));
          assertEquals(vm.getId(), newDetails.getId());
          checkVm(vm);
       }
@@ -258,22 +258,20 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          assert nic.getTrafficType() != null : vm;
          assert nic.getGuestIPType() != null : vm;
          switch (vm.getState()) {
-            case RUNNING:
-               assert nic.getNetmask() != null : vm;
-               assert nic.getGateway() != null : vm;
-               assert nic.getIPAddress() != null : vm;
-               break;
-            default:
-               if (nic.getGuestIPType() == GuestIPType.VIRTUAL) {
-                  assert nic.getNetmask() != null : vm;
-                  assert nic.getGateway() != null : vm;
-                  assert nic.getIPAddress() != null : vm;
-               } else {
-                  assert nic.getNetmask() == null : vm;
-                  assert nic.getGateway() == null : vm;
-                  assert nic.getIPAddress() == null : vm;
-               }
-               break;
+         case RUNNING:
+            assert nic.getNetmask() != null : vm;
+            assert nic.getGateway() != null : vm;
+            assert nic.getIPAddress() != null : vm;
+            break;
+         case STARTING:
+            assert nic.getNetmask() == null : vm;
+            assert nic.getGateway() == null : vm;
+            assert nic.getIPAddress() == null : vm;
+            break;
+         default:
+            assert nic.getNetmask() != null : vm;
+            assert nic.getGateway() != null : vm;
+            assert nic.getIPAddress() != null : vm;
          }
 
       }

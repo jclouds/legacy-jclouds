@@ -72,14 +72,14 @@ public interface VirtualMachineAsyncClient {
    ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") long id);
 
    /**
-    * @see VirtualMachineClient#deployVirtualMachine
+    * @see VirtualMachineClient#deployVirtualMachineInZone
     */
    @GET
    @QueryParams(keys = "command", values = "deployVirtualMachine")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> deployVirtualMachine(@QueryParam("serviceofferingid") long serviceOfferingId,
-            @QueryParam("templateid") long templateId, @QueryParam("zoneid") long zoneId,
+   ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone( @QueryParam("zoneid") long zoneId, @QueryParam("serviceofferingid") long serviceOfferingId,
+            @QueryParam("templateid") long templateId,
             DeployVirtualMachineOptions... options);
 
    /**

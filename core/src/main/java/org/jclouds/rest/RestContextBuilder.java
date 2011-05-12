@@ -43,8 +43,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
@@ -69,12 +72,16 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -97,6 +104,17 @@ public class RestContextBuilder<S, A> {
 
       protected BindPropertiesAndPrincipalContext(Properties properties) {
          this.properties = checkNotNull(properties, "properties");
+      }
+
+      @Provides
+      @Singleton
+      @Named("CONSTANTS")
+      protected Multimap<String, String> constants() {
+         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+         for (Entry<Object, Object> entry : properties.entrySet())
+            if (entry.getValue() != null)
+               builder.put(entry.getKey().toString(), entry.getValue().toString());
+         return LinkedHashMultimap.create(builder.build());
       }
 
       @Override

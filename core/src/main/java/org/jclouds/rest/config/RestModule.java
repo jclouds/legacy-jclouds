@@ -36,8 +36,10 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.rest.internal.SeedAnnotationCache;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -49,6 +51,7 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 import com.sun.jersey.api.uri.UriBuilderImpl;
@@ -63,12 +66,19 @@ public class RestModule extends AbstractModule {
    protected void configure() {
       install(new SaxParserModule());
       install(new GsonModule());
+      install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(UriBuilder.class).to(UriBuilderImpl.class);
       bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
-      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class,
-            ImmutableMap.<Class<?>, Class<?>> of(HttpClient.class, HttpAsyncClient.class));
+      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
+               HttpClient.class, HttpAsyncClient.class));
+   }
+
+   @Provides
+   @Singleton
+   protected ConcurrentMap<Class<?>, Boolean> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
+      return new MapMaker().makeComputingMap(seedAnnotationCache);
    }
 
    @Provides
@@ -88,19 +98,19 @@ public class RestModule extends AbstractModule {
          this.factory = factory;
       }
 
-      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @SuppressWarnings( { "unchecked", "rawtypes" })
       @Override
       public Object apply(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
          RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key.get(TypeLiteral.get(Types
-               .newParameterizedType(RestAnnotationProcessor.class, clazz))));
+                  .newParameterizedType(RestAnnotationProcessor.class, clazz))));
          // cannot use child injectors due to the super coarse guice lock on
          // Singleton
          util.setCaller(from);
          ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-               new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
-               }, Names.named("async")));
+                  new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+                  }, Names.named("async")));
          AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);
          return AsyncClientFactory.create(clazz, proxy);
@@ -111,10 +121,9 @@ public class RestModule extends AbstractModule {
       @Inject
       private TransformingHttpCommandExecutorService executorService;
 
-      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @SuppressWarnings( { "unchecked", "rawtypes" })
       @Override
-      public TransformingHttpCommand<?> create(HttpRequest request,
-            Function<HttpResponse, ?> transformer) {
+      public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer) {
          return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 

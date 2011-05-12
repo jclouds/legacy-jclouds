@@ -89,4 +89,22 @@ public interface VMClient {
     * @see #removeVMFromVDC
     */
    Task removeVM(URI vm);
+   
+   /**
+    * Power off a VM
+    * 
+    * @param vm
+    * 			href of the vm
+    * @return
+    */
+   Task powerOffVM(URI vm);
+   
+   /**
+    * Power on a VM
+    * 
+    * @param vm
+    * 			href of the vm
+    * @return
+    */
+   Task powerOnVM(URI vm);
 }

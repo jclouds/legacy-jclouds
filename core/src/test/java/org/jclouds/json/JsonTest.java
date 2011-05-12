@@ -21,6 +21,7 @@ package org.jclouds.json;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
+import java.util.Properties;
 
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -42,6 +43,19 @@ public class JsonTest {
       }
 
       private Test enumValue;
+   }
+
+   public void testPropertiesSerializesDefaults() {
+      Properties props = new Properties();
+      props.put("string", "string");
+      props.put("number", "1");
+      props.put("boolean", "true");
+      assertEquals(json.toJson(props), "{\"string\":\"string\",\"boolean\":\"true\",\"number\":\"1\"}");
+      Properties props3 = new Properties(props);
+      assertEquals(json.toJson(props3), "{\"string\":\"string\",\"boolean\":\"true\",\"number\":\"1\"}");
+      Properties props2 = json.fromJson(json.toJson(props), Properties.class);
+      assertEquals(props2, props);
+      assertEquals(json.toJson(props2), json.toJson(props));
    }
 
    public void testMapStringObjectWithAllValidValuesOneDeep() {

@@ -95,7 +95,7 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
     * 
     */
    InternetService addInternetServiceToExistingIp(URI existingIpId, String serviceName, Protocol protocol, int port,
-            AddInternetServiceOptions... options);
+         AddInternetServiceOptions... options);
 
    void deleteInternetService(URI internetServiceId);
 
@@ -177,4 +177,5 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    // keyPairConfiguration);
 
    void deleteKeyPair(URI keyPair);
+
 }

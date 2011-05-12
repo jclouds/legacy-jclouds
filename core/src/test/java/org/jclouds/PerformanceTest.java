@@ -25,8 +25,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import org.jclouds.concurrent.DynamicExecutors;
 import org.jclouds.date.DateService;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -44,7 +44,7 @@ public abstract class PerformanceTest {
 
    @BeforeTest
    public void setupExecutorService() {
-      exec = Executors.newCachedThreadPool();
+      exec = DynamicExecutors.newScalingThreadPool(1, THREAD_COUNT, 1000);
    }
 
    @AfterTest

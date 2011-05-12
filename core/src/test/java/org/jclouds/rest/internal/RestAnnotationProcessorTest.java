@@ -132,6 +132,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.binders.BindAsHostPrefix;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
@@ -200,6 +201,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public Callee getCallee();
+
+      @Delegate
+      public Callee getCallee(@EndpointParam URI endpoint);
    }
 
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
@@ -212,6 +216,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public AsyncCallee getCallee();
+
+      @Delegate
+      public AsyncCallee getCallee(@EndpointParam URI endpoint);
    }
 
    @SuppressWarnings("unchecked")
@@ -279,6 +286,31 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       replay(mock);
 
       caller.getCallee().onePath("foo");
+
+      verify(mock);
+
+   }
+
+   public void testDelegateWithOverridingEndpointOnMethod() throws SecurityException, NoSuchMethodException,
+            InterruptedException, ExecutionException {
+      Injector child = injectorForClient();
+      TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
+
+      ReleasePayloadAndReturn function = child.getInstance(ReleasePayloadAndReturn.class);
+
+      try {
+         child.getInstance(Callee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      Caller caller = child.getInstance(Caller.class);
+      expect(mock.submit(requestLineEquals("GET http://howdyboys/client/1/foo HTTP/1.1"), eq(function)))
+               .andReturn(Futures.<Void> immediateFuture(null)).atLeastOnce();
+      replay(mock);
+
+      caller.getCallee(URI.create("http://howdyboys")).onePath("foo");
 
       verify(mock);
 
@@ -768,6 +800,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Consumes(MediaType.APPLICATION_JSON)
       String testUnwrap();
 
+      @POST
+      @Path("/")
+      String testWrapWith(@WrapWith("foo") String param);
+
       @GET
       @Path("/")
       @Unwrap
@@ -926,6 +962,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
 
+   }
+
+   public void testWrapWith() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("testWrapWith", String.class);
+      HttpRequest request = factory(TestPut.class).createRequest(method, "bar");
+      assertPayloadEquals(request, "{\"foo\":\"bar\"}", "application/json", false);
    }
 
    @SuppressWarnings("unchecked")
