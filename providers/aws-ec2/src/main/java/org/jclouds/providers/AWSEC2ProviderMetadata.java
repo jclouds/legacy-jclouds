@@ -21,49 +21,51 @@ package org.jclouds.providers;
 import java.net.URI;
 
 /**
- * The ProviderMetadata interface allows jclouds to provide a plugin framework
- * for gathering cloud provider metadata.
+ * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Amazon's
+ * Elastic Compute Cloud (EC2) provider.
  *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public interface ProviderMetadata {
-
-   public static final String BLOBSTORE_TYPE = "blobstore";
-   public static final String COMPUTE_TYPE = "compute";
+public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
 
    /**
-    * Returns an identifier unique to the provider.
-    *
-    * @return the provider's unique identifier
+    * {@ see org.jclouds.types.ProviderMetadata#getId()}
     */
-   public String getId();
+   @Override
+   public String getId() {
+      return "aws-ec2";
+   }
 
    /**
-    * Returns the provider type.
-    *
-    * @return the provider's type
+    * {@ see org.jclouds.types.ProviderMetadata#getType()}
     */
-   public String getType();
+   @Override
+   public String getType() {
+      return ProviderMetadata.COMPUTE_TYPE;
+   }
 
    /**
-    * Returns the name of the provider.
-    *
-    * @return the name (display name) of the provider
+    * {@ see org.jclouds.types.ProviderMetadata#getName()}
     */
-   public String getName();
+   @Override
+   public String getName() {
+      return "Amazon Elastic Compute Cloud (EC2)";
+   }
 
    /**
-    * Returns the URI to the provider's homepage.
-    *
-    * @return the url for the provider's homepage
+    * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
     */
-   public URI getHomepage();
+   @Override
+   public URI getHomepage() {
+      return URI.create("http://aws.amazon.com/");
+   }
 
    /**
-    * Returns the URI to the provider's console.
-    *
-    * @return the url for the provider's console
+    * {@ see org.jclouds.types.ProviderMetadata#getConsole()}
     */
-   public URI getConsole();
+   @Override
+   public URI getConsole() {
+      return URI.create("http://aws.amazon.com/console/");
+   }
 
 }
