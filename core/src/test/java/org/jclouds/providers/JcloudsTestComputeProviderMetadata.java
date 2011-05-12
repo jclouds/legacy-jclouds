@@ -25,7 +25,7 @@ import java.net.URI;
  *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestComputeProviderMetadata implements ProviderMetadata {
+public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@ see org.jclouds.types.ProviderMetadata#getId()}
