@@ -24,6 +24,8 @@ import java.net.URI;
  * The BaseProviderMetadata class is an abstraction of {@link ProviderMetadata} to be extended
  * by those implementing ProviderMetadata.
  *
+ * (Note: This class must be abstract to allow {@link java.util.ServiceLoader} to work properly.
+ *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public abstract class BaseProviderMetadata implements ProviderMetadata {
