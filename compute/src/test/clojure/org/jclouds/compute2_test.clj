@@ -20,10 +20,17 @@
 (ns org.jclouds.compute2-test
   (:use [org.jclouds.compute2] :reload-all)
   (:use clojure.test)
+  (:require [org.jclouds.ssh-test :as ssh-test])
   (:import
     org.jclouds.compute.domain.OsFamily
     clojure.contrib.condition.Condition
-    java.net.InetAddress))
+    java.net.InetAddress
+    org.jclouds.scriptbuilder.domain.Statements
+    org.jclouds.compute.options.TemplateOptions
+    org.jclouds.compute.options.TemplateOptions$Builder
+    org.jclouds.domain.Credentials
+    java.util.NoSuchElementException
+    ))
 
 (defmacro with-private-vars [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context.  From users mailing
@@ -34,7 +41,7 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest os-families-test
   (is (some #{"centos"} (map str (os-families)))))
 
-(def *compute* (compute-service "stub" "" ""))
+(def *compute* (compute-service "stub" "" "" :extensions [(ssh-test/ssh-test-client ssh-test/no-op-ssh-client)]))
 
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
@@ -84,6 +91,17 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (= 0 (count (nodes-with-details-matching *compute* #(and (suspended? %) (localhost? %))))))
   (is (= 0 (count (nodes-with-details-matching *compute* #(and (running? %) (localhost? %))))))
   (is (= 1 (count (nodes-with-details-matching *compute* #(and (running? %) (not (localhost? %))))))))
+
+(deftest run-script-on-nodes-matching-test
+  (let [echo (Statements/exec "echo hello")
+        script-options (.. (TemplateOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+                        (runAsRoot false)
+                        (wrapInInitScript false))
+        pred #(= (.getGroup %) "scriptednode")]
+    (is (create-node *compute* "scriptednode" (build-template *compute* {})))
+    (is (run-script-on-nodes-matching *compute* pred echo script-options))
+    (is (thrown? NoSuchElementException
+      (run-script-on-nodes-matching *compute* #(= (.getGroup %) "nonexistingnode") echo script-options)))))
 
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]
