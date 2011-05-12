@@ -33,6 +33,9 @@ import org.testng.annotations.Test;
 @Test( groups = "unit" )
 public class ProvidersTest {
 
+   private final ProviderMetadata testBlobstoreProvider = new JcloudsTestBlobStoreProviderMetadata();
+   private final ProviderMetadata testComputeProvider = new JcloudsTestComputeProviderMetadata();
+
    @Test
    public void testWithId() {
       ProviderMetadata providerMetadata;
@@ -45,9 +48,9 @@ public class ProvidersTest {
          ; // Expected
       }
 
-      providerMetadata = Providers.withId("test-blobstore-provider");
+      providerMetadata = Providers.withId(testBlobstoreProvider.getId());
 
-      assertEquals("Test Blobstore Provider", providerMetadata.getName());
+      assertEquals(testBlobstoreProvider, providerMetadata);
    }
 
    @Test
@@ -55,21 +58,13 @@ public class ProvidersTest {
       Iterable<ProviderMetadata> providersMetadata = Providers.ofType(ProviderMetadata.BLOBSTORE_TYPE);
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals("Test Blobstore Provider", providerMetadata.getName());
-         assertEquals("test-blobstore-provider", providerMetadata.getId());
-         assertEquals(ProviderMetadata.BLOBSTORE_TYPE, providerMetadata.getType());
-         assertEquals("http://jclouds.org", providerMetadata.getHomepage().toString());
-         assertEquals("http://jclouds.org/console", providerMetadata.getConsole().toString());
+         assertEquals(testBlobstoreProvider, providerMetadata);
       }
 
       providersMetadata = Providers.ofType(ProviderMetadata.COMPUTE_TYPE);
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals("Test Compute Provider", providerMetadata.getName());
-         assertEquals("test-compute-provider", providerMetadata.getId());
-         assertEquals(ProviderMetadata.COMPUTE_TYPE, providerMetadata.getType());
-         assertEquals("http://jclouds.org", providerMetadata.getHomepage().toString());
-         assertEquals("http://jclouds.org/console", providerMetadata.getConsole().toString());
+         assertEquals(testComputeProvider, providerMetadata);
       }
 
       providersMetadata = Providers.ofType("fake-type");
@@ -83,16 +78,9 @@ public class ProvidersTest {
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
          if (providerMetadata.getName().equals("Test Blobstore Provider")) {
-            assertEquals("test-blobstore-provider", providerMetadata.getId());
-            assertEquals(ProviderMetadata.BLOBSTORE_TYPE, providerMetadata.getType());
-            assertEquals("http://jclouds.org", providerMetadata.getHomepage().toString());
-            assertEquals("http://jclouds.org/console", providerMetadata.getConsole().toString());
+            assertEquals(testBlobstoreProvider, providerMetadata);
          } else {
-            assertEquals("Test Compute Provider", providerMetadata.getName());
-            assertEquals("test-compute-provider", providerMetadata.getId());
-            assertEquals(ProviderMetadata.COMPUTE_TYPE, providerMetadata.getType());
-            assertEquals("http://jclouds.org", providerMetadata.getHomepage().toString());
-            assertEquals("http://jclouds.org/console", providerMetadata.getConsole().toString());
+            assertEquals(testComputeProvider, providerMetadata);
          }
       }
    }

@@ -31,39 +31,39 @@ public interface ProviderMetadata {
    public static final String BLOBSTORE_TYPE = "blobstore";
    public static final String COMPUTE_TYPE = "compute";
 
-  /**
-   * Returns an identifier unique to the provider.
-   *
-   * @return the provider's unique identifier
-   */
-  public String getId();
+   /**
+    * Returns an identifier unique to the provider.
+    *
+    * @return the provider's unique identifier
+    */
+   public String getId();
 
-  /**
-   * Returns the provider type.
-   *
-   * @return the provider's type
-   */
-  public String getType();
+   /**
+    * Returns the provider type.
+    *
+    * @return the provider's type
+    */
+   public String getType();
 
-  /**
-   * Returns the name of the provider.
-   *
-   * @return the name (display name) of the provider
-   */
-  public String getName();
+   /**
+    * Returns the name of the provider.
+    *
+    * @return the name (display name) of the provider
+    */
+   public String getName();
 
-  /**
-   * Returns the URI to the provider's homepage.
-   *
-   * @return the url for the provider's homepage
-   */
-  public URI getHomepage();
+   /**
+    * Returns the URI to the provider's homepage.
+    *
+    * @return the url for the provider's homepage
+    */
+   public URI getHomepage();
 
-  /**
-   * Returns the URI to the provider's console.
-   *
-   * @return the url for the provider's console
-   */
-  public URI getConsole();
+   /**
+    * Returns the URI to the provider's console.
+    *
+    * @return the url for the provider's console
+    */
+   public URI getConsole();
 
 }
