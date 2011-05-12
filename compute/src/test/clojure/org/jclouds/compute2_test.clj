@@ -56,7 +56,6 @@ list, Alan Dipert and MeikelBrandmeyer."
 
 (deftest nodes-test
   (is (create-node *compute* "fred" (build-template *compute* {} )))
-  (is (= 1 (count (nodes *compute*))))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))
   (is (= 1 (count (nodes-with-details-matching *compute* #(= (.getGroup %) "fred")))))
   (is (= 1 (count (nodes-with-details-matching *compute*
