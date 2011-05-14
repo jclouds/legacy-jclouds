@@ -37,11 +37,6 @@ import com.google.inject.Injector;
 public class ListHypervisorsResponseTest extends BaseSetParserTest<String> {
 
    @Override
-   public Class<String> type() {
-      return String.class;
-   }
-
-   @Override
    public String resource() {
       return "/listhypervisorsresponse.json";
    }
@@ -52,7 +47,7 @@ public class ListHypervisorsResponseTest extends BaseSetParserTest<String> {
    }
 
    @Override
-   protected Function<HttpResponse, Set<String>> getParser(Injector injector) {
+   protected Function<HttpResponse, Set<String>> parser(Injector injector) {
       return injector.getInstance(ParseNamesFromHttpResponse.class);
    }
 }

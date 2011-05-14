@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -38,16 +39,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListVirtualMachinesResponseTest extends BaseSetParserTest<VirtualMachine> {
 
    @Override
-   public Class<VirtualMachine> type() {
-      return VirtualMachine.class;
-   }
-
-   @Override
    public String resource() {
       return "/listvirtualmachinesresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<VirtualMachine> expected() {
       return ImmutableSet.of(VirtualMachine
             .builder()

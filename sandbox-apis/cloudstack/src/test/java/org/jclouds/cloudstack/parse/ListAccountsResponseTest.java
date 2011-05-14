@@ -28,6 +28,7 @@ import org.jclouds.cloudstack.domain.Account.Type;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,8 +41,9 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit")
 public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
+   
    @Override
-   protected Injector getInjector() {
+   protected Injector injector() {
       return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
 
          @Override
@@ -55,16 +57,12 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
    }
 
    @Override
-   public Class<Account> type() {
-      return Account.class;
-   }
-
-   @Override
    public String resource() {
       return "/listaccountsresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<Account> expected() {
       return ImmutableSet.<Account> of(Account
             .builder()

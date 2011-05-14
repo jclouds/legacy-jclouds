@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -35,16 +36,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListZonesResponseTest extends BaseSetParserTest<Zone> {
 
    @Override
-   public Class<Zone> type() {
-      return Zone.class;
-   }
-
-   @Override
    public String resource() {
       return "/listzonesresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<Zone> expected() {
       return ImmutableSet.of(Zone.builder().id(1).name("San Jose 1").networkType(NetworkType.ADVANCED)
             .securityGroupsEnabled(false).build(),

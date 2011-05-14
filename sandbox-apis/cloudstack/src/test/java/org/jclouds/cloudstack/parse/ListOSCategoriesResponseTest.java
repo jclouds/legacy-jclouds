@@ -49,13 +49,7 @@ public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<Long, S
    }
 
    @Override
-   protected Function<HttpResponse, Map<Long, String>> getParser(Injector injector) {
+   protected Function<HttpResponse, Map<Long, String>> parser(Injector injector) {
       return injector.getInstance(ParseIdToNameFromHttpResponse.class);
-   }
-
-   @SuppressWarnings( { "unchecked", "rawtypes" })
-   @Override
-   public Class<Map<Long, String>> type() {
-      return (Class) Map.class;
    }
 }

@@ -20,18 +20,24 @@ package org.jclouds.json;
 
 import static org.testng.Assert.assertEquals;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
+
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
+import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * 
@@ -39,22 +45,41 @@ import com.google.inject.util.Types;
  */
 public abstract class BaseParserTest<T, G> {
 
+   @Retention(value = RetentionPolicy.RUNTIME)
+   @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+   @Qualifier
+   public @interface Nested {
+
+   }
+
+   @SuppressWarnings("unchecked")
+   protected Function<HttpResponse, T> parser(Injector i) {
+      try {
+         return (Function<HttpResponse, T>) i.getInstance(RestAnnotationProcessor.getJsonParserKeyForMethod(getClass()
+                  .getMethod("expected")));
+      } catch (Exception e) {
+         Throwables.propagate(e);
+         return null;
+      }
+   }
+
    @Test
    public void test() {
-
       T expects = expected();
-
-      Function<HttpResponse, T> parser = getParser(getInjector());
-      T response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream(resource()))));
+      Function<HttpResponse, T> parser = parser(injector());
+      T response = parser.apply(new HttpResponse(200, "ok", payload()));
       compare(expects, response);
+   }
+
+   protected Payload payload() {
+      return Payloads.newInputStreamPayload(getClass().getResourceAsStream(resource()));
    }
 
    public void compare(T expects, T response) {
       assertEquals(response.toString(), expects.toString());
    }
 
-   protected Injector getInjector() {
+   protected Injector injector() {
       return Guice.createInjector(new GsonModule() {
 
          @Override
@@ -67,15 +92,9 @@ public abstract class BaseParserTest<T, G> {
 
    }
 
-   @SuppressWarnings("unchecked")
-   protected Function<HttpResponse, T> getParser(Injector i) {
-      return (Function<HttpResponse, T>) i.getInstance(Key.get(TypeLiteral.get(
-               Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, type())).getType()));
+   protected String resource() {
+      throw new IllegalStateException("please define resource such as \"/testaddresses.json\"");
    }
-
-   public abstract Class<G> type();
-
-   public abstract String resource();
 
    public abstract T expected();
 }

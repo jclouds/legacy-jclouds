@@ -19,9 +19,12 @@
 package org.jclouds.cloudstack.parse;
 
 import java.util.Set;
+
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
+
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -30,17 +33,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ListOSTypesResponseTest extends BaseSetParserTest<OSType> {
-   @Override
-   public Class<OSType> type() {
-      return OSType.class;
-   }
-
+   
    @Override
    public String resource() {
       return "/listostypesresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<OSType> expected() {
       return ImmutableSet.<OSType> builder().add(
                OSType.builder().id(69).OSCategoryId(7).description("Asianux 3(32-bit)").build()).add(

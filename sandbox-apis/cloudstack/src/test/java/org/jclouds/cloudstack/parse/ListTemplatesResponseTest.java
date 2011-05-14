@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.domain.Template.Format;
 import org.jclouds.cloudstack.domain.Template.Type;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -37,11 +38,6 @@ import com.google.common.collect.ImmutableSet;
 public class ListTemplatesResponseTest extends BaseSetParserTest<Template> {
 
    @Override
-   public Class<Template> type() {
-      return Template.class;
-   }
-
-   @Override
    public String resource() {
       // grep listtemplatesresponse ./target/test-data/jclouds-wire.log|tail
       // -1|sed -e 's/.*<< "//g' -e 's/"$//g'
@@ -49,6 +45,7 @@ public class ListTemplatesResponseTest extends BaseSetParserTest<Template> {
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<Template> expected() {
       return ImmutableSet.of(
             Template.builder().id(2).name("CentOS 5.3(64-bit) no GUI (XenServer)")
