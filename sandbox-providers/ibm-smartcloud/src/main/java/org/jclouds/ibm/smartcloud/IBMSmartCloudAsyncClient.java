@@ -181,6 +181,7 @@ public interface IBMSmartCloudAsyncClient {
    @POST
    @Path(IBMSmartCloudAsyncClient.VERSION + "/instances")
    @Consumes(MediaType.APPLICATION_JSON)
+   @Unwrap(depth = 2, edgeCollection = Set.class)
    ListenableFuture<Instance> createInstanceInLocation(@FormParam("location") String location,
             @FormParam("name") String name, @FormParam("imageID") String imageID,
             @FormParam("instanceType") String instanceType, CreateInstanceOptions... options);

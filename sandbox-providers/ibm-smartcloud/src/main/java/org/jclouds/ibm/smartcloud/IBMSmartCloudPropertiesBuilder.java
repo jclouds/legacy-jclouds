@@ -21,6 +21,7 @@ package org.jclouds.ibm.smartcloud;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
@@ -50,6 +51,7 @@ public class IBMSmartCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_API_VERSION, IBMSmartCloudAsyncClient.VERSION);
       properties.setProperty(PROPERTY_ENDPOINT, "https://www-147.ibm.com/computecloud/enterprise/api/rest");
       properties.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, (15 * 60 * 1000) + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 60 * 5 + "");
       return properties;
    }
 

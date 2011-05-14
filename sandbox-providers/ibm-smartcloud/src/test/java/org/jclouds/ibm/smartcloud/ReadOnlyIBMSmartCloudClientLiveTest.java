@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "IBMSmartCloudClientLiveTest")
+@Test(groups = "live", testName = "ReadOnlyIBMSmartCloudClientLiveTest")
 public class ReadOnlyIBMSmartCloudClientLiveTest extends BaseIBMSmartCloudClientLiveTest {
 
    @Test

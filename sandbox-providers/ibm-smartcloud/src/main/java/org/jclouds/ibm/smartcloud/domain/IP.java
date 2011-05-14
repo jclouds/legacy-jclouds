@@ -74,11 +74,11 @@ public class IP {
 
    // TODO custom parser to do this once
    public String getHostname() {
-      return "".equals(hostname.trim()) ? null : hostname;
+      return "".equals(hostname.trim()) ? null : hostname.trim();
    }
 
    public String getIP() {
-      return "".equals(ip.trim()) ? null : ip;
+      return "".equals(ip.trim()) ? null : ip.trim();
    }
 
    public int getType() {

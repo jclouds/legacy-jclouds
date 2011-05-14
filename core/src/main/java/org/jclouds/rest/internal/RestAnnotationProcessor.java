@@ -82,6 +82,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -787,6 +788,8 @@ public class RestAnnotationProcessor<T> {
             parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
          else if (depth == 2 && edgeCollection == Map.class)
             parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
+         else if (depth == 2 && edgeCollection == Set.class)
+            parserType = Types.newParameterizedType(UnwrapOnlyJsonValueInSet.class, returnVal);
          else if (depth == 3 && edgeCollection == Set.class)
             parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValueInSet.class, returnVal);
          else

@@ -31,6 +31,7 @@ import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.ibm.smartcloud.domain.Image;
 import org.jclouds.ibm.smartcloud.options.CreateInstanceOptions;
 import org.jclouds.ibm.smartcloud.options.RestartInstanceOptions;
@@ -470,7 +471,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
       assertPayloadEquals(httpRequest, "location=1&imageID=22&name=name&instanceType=instanceType",
                "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValueInSet.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -495,7 +496,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
                "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3",
                "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValueInSet.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

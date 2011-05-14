@@ -82,7 +82,7 @@ public class Address implements Comparable<Address> {
    }
 
    public String getIP() {
-      return "".equals(ip.trim()) ? null : ip;
+      return "".equals(ip.trim()) ? null : ip.trim();
    }
 
    public String getId() {
