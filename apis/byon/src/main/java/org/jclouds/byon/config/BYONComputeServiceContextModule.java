@@ -44,7 +44,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings( { "rawtypes", "unchecked" })
+@SuppressWarnings("unchecked")
 @SingleThreaded
 public class BYONComputeServiceContextModule extends
          JCloudsNativeComputeServiceAdapterContextModule<Supplier, Supplier> {
@@ -53,7 +53,6 @@ public class BYONComputeServiceContextModule extends
       super(Supplier.class, Supplier.class, BYONComputeServiceAdapter.class);
    }
 
-   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    Supplier provideApi(Supplier<Map<String, Node>> in) {
