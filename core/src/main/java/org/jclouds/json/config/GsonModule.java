@@ -22,6 +22,9 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -67,6 +70,7 @@ public class GsonModule extends AbstractModule {
             ByteArrayAdapter byteArrayAdapter, SerializePropertiesDefaults propertiesAdapter,
             JsonAdapterBindings bindings) throws ClassNotFoundException, Exception {
       GsonBuilder builder = new GsonBuilder();
+      Logger.getLogger("com.google.gson.ParameterizedTypeHandlerMap").setLevel(Level.OFF);
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());
       builder.registerTypeHierarchyAdapter(Map.class, new ObjectMapTypeAdapter());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter);
