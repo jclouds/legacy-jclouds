@@ -23,11 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 
 /**
- * The gson project use package to control access to their objects. However,
- * this prevents us from doing valid work, like controling the json emitted on a
- * per-object basis. This is here to afford us to do this.
+ * The gson project use package to control access to their objects. However, this prevents us from
+ * doing valid work, like controling the json emitted on a per-object basis. This is here to afford
+ * us to do this.
  * 
  * @author Adrian Cole
+ * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
  */
 public final class JsonLiteral extends JsonElement {
    private final CharSequence literal;
