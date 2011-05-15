@@ -33,6 +33,7 @@
     <artifactId>aws-ec2</artifactId>
     <name>jclouds Amazon EC2 provider</name>
     <description>EC2 implementation targeted to Amazon Web Services</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.aws-ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-ec2.endpoint>
@@ -141,6 +142,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.aws.ec2.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,12 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
+
     <groupId>org.jclouds.api</groupId>
     <artifactId>atmos</artifactId>
     <name>jclouds atmos components</name>
+    <packaging>bundle</packaging>
+
     <properties>
         <test.initializer>org.jclouds.atmos.blobstore.integration.AtmosStorageTestInitializer</test.initializer>
         <test.atmos.endpoint>https://accesspoint.atmos.com</test.atmos.endpoint>
@@ -38,6 +41,7 @@
         <test.atmos.identity>FIXME</test.atmos.identity>
         <test.atmos.credential>FIXME</test.atmos.credential>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -125,5 +129,22 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.atmos.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
   
 </project>

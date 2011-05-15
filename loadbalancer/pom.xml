@@ -32,6 +32,7 @@
     <artifactId>jclouds-loadbalancer</artifactId>
     <name>jclouds loadbalancer core</name>
     <description>jclouds components to access loadbalancer providers</description>
+    <packaging>bundle</packaging>
 
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -75,4 +76,21 @@
            <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.loadbalancer.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <Fragment-Host>jclouds-core;version="${project.version}"</Fragment-Host>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

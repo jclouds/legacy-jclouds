@@ -33,6 +33,7 @@
     <artifactId>rimuhosting</artifactId>
     <name>jclouds RimuHosting provider</name>
     <description>ComputeService implementation of RimuHosting datacenters </description>
+    <packaging>bundle</packaging>
 
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
@@ -127,4 +128,21 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.rimuhosting.miro.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

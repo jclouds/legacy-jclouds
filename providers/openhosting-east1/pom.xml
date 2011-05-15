@@ -33,6 +33,7 @@
     <artifactId>openhosting-east1</artifactId>
     <name>jclouds Open Hosting East1 provider</name>
     <description>Open Hosting implementation targeted to East1</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.openhosting-east1.endpoint>https://api.east1.openhosting.com</test.openhosting-east1.endpoint>
@@ -136,6 +137,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.openhosting.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

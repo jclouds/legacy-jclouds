@@ -33,6 +33,7 @@
     <artifactId>filesystem</artifactId>
     <name>jcloud filesystem core</name>
     <description>jclouds components to access filesystem</description>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -71,6 +72,23 @@
     <properties>
         <test.initializer>org.jclouds.filesystem.integration.FilesystemTestInitializer</test.initializer>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.filesystem.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

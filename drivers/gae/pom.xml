@@ -2,7 +2,7 @@
 	<!--
 
 
-		Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+		Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 
 		====================================================================
 		Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -31,6 +31,7 @@
     <artifactId>jclouds-gae</artifactId>
     <name>jclouds Google App Engine Components</name>
     <description>Google App Engine Components</description>
+    <packaging>bundle</packaging>
 
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -96,6 +97,18 @@
                     <parallel>classes</parallel>
                 </configuration>
             </plugin>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration> 
+                    <instructions>      
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.gae.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses> 
+                    </instructions>     
+                </configuration>
+            </plugin>   
         </plugins>
     </build>
 </project>

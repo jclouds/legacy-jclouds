@@ -32,6 +32,7 @@
     <artifactId>jclouds-scriptbuilder</artifactId>
     <name>jclouds script builder</name>
     <description>creates scripts that can be used to manage services</description>
+    <packaging>bundle</packaging>
     <properties>
         <jclouds.test.listener></jclouds.test.listener>
     </properties>
@@ -42,4 +43,21 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.scriptbuilder.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

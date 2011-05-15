@@ -33,6 +33,7 @@
     <artifactId>hosteurope-storage</artifactId>
     <name>jclouds Host Europe Cloud Storage provider</name>
     <description>Scality RING (ScalityRS2) implementation targeted to Host Europe Cloud Storage</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.hosteurope.storage.blobstore.HostEuropeStorageTestInitializer</test.initializer>
@@ -146,6 +147,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.hosteurope.storage.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

@@ -33,6 +33,7 @@
     <artifactId>azureblob</artifactId>
     <name>jclouds Azure Storage provider</name>
     <description>jclouds components to access Azure Blob Service</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.azureblob.blobstore.integration.AzureBlobTestInitializer</test.initializer>
@@ -138,6 +139,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.azureblob.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

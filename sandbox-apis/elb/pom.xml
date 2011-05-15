@@ -33,6 +33,7 @@
     <artifactId>elb</artifactId>
     <name>jcloud elb api</name>
     <description>jclouds components to access an implementation of Elastic Load Balancer</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.elb.zone>us-east-1a</test.elb.zone>
@@ -164,6 +165,23 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.elb.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

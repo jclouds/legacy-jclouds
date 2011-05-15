@@ -33,6 +33,7 @@
     <artifactId>aws-elb</artifactId>
     <name>jclouds Amazon Elastic Load Balancer provider</name>
     <description>Elastic Load Balancer implementation targeted to Amazon Web Services</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.aws-elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.aws-elb.endpoint>
@@ -168,6 +169,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.aws.elb.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

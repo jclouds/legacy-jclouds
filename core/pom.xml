@@ -2,7 +2,7 @@
     <!--
 
 
-        Copyright (C) 2010 Cloud Conscious, LLC.
+        Copyright (C) 2011 Cloud Conscious, LLC.
         <info@cloudconscious.com>
 
         ====================================================================
@@ -30,7 +30,7 @@
     </parent>
     <artifactId>jclouds-core</artifactId>
     <name>jclouds Components Core</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <description>Core components to access jclouds services</description>
 
     <scm>
@@ -140,6 +140,18 @@
                         <exclude>META-INF/services/</exclude>
                         <exclude>org/jclouds/providers/*Test*.class</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>com.google.gson;-split-package:=merge-first,
+                                        org.jclouds.*;version=${project.version}</Export-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>

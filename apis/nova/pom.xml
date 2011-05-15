@@ -33,6 +33,7 @@
     <artifactId>nova</artifactId>
     <name>jcloud nova api</name>
     <description>jclouds components to access an implementation of OpenStack Nova</description>
+    <packaging>bundle</packaging>
 
     <properties>
 
@@ -95,22 +96,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
-    <build>
-    	<plugins>
-    		<plugin>
-    			<artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.2</version>
-                <executions>             
-                    <execution>
-                        <id>process-remote-resources</id>
-                        <!-- plugin is tuned off due to incorrect work in Eclipse-->
-                        <phase></phase>
-                    </execution>          
-                </executions>
-    		</plugin>
-    	</plugins>
-    </build>
     
     <profiles>
         <profile>
@@ -175,5 +160,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.openstack.nova.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

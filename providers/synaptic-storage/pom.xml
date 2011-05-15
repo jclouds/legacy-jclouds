@@ -33,6 +33,7 @@
     <artifactId>synaptic-storage</artifactId>
     <name>jclouds Synaptic Storage as a Service provider</name>
     <description>Atmos implementation targeted to ATT Synaptic Storage as a Service</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageTestInitializer</test.initializer>
@@ -139,6 +140,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.synaptic.storage.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

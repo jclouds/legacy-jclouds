@@ -33,6 +33,7 @@
     <artifactId>s3</artifactId>
     <name>jcloud s3 api</name>
     <description>jclouds components to access an implementation of S3</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.s3.blobstore.integration.S3TestInitializer</test.initializer>
@@ -143,6 +144,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.s3.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

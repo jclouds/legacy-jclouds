@@ -33,6 +33,7 @@
     <artifactId>aws-simpledb</artifactId>
     <name>jclouds Amazon SimpleDB provider</name>
     <description>SimpleDB implementation targeted to Amazon Web Services</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.aws-simpledb.endpoint>https://sdb.amazonaws.com</test.aws-simpledb.endpoint>
@@ -119,6 +120,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.aws.simpledb.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

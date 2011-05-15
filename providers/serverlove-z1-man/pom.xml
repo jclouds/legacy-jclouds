@@ -33,6 +33,7 @@
     <artifactId>serverlove-z1-man</artifactId>
     <name>jclouds Serverlove Manchester provider</name>
     <description>Serverlove implementation targeted to Manchester</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.serverlove-z1-man.endpoint>https://api.z1-man.serverlove.com</test.serverlove-z1-man.endpoint>
@@ -136,6 +137,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.serverlove.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

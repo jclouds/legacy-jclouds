@@ -33,6 +33,7 @@
     <artifactId>elastichosts-lon-b</artifactId>
     <name>jclouds ElasticHosts BlueSquare London provider</name>
     <description>ElasticHosts implementation targeted to BlueSquare London</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.elastichosts-lon-b.endpoint>https://api.lon-b.elastichosts.com</test.elastichosts-lon-b.endpoint>
@@ -136,6 +137,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.elastichosts.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <_nouses>true</_nouses>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 
