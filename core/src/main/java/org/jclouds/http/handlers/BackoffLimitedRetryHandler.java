@@ -106,7 +106,7 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
          logger.warn("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
-               command);
+                  command);
          return false;
       } else {
          imposeBackoffExponentialDelay(command.getFailureCount(), "server error: " + command.toString());
@@ -119,8 +119,14 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
    }
 
    public void imposeBackoffExponentialDelay(long period, int pow, int failureCount, int max, String commandDescription) {
+      imposeBackoffExponentialDelay(period, period * 10l, pow, failureCount, max, commandDescription);
+   }
+
+   public void imposeBackoffExponentialDelay(long period, long maxPeriod, int pow, int failureCount, int max,
+            String commandDescription) {
       long delayMs = (long) (period * Math.pow(failureCount, pow));
-      logger.debug("Retry %d/%d: delaying for %d ms: %s", failureCount, retryCountLimit, delayMs, commandDescription);
+      delayMs = delayMs > maxPeriod ? maxPeriod : delayMs;
+      logger.debug("Retry %d/%d: delaying for %d ms: %s", failureCount, max, delayMs, commandDescription);
       try {
          Thread.sleep(delayMs);
       } catch (InterruptedException e) {
@@ -129,3 +135,4 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
    }
 
 }
+

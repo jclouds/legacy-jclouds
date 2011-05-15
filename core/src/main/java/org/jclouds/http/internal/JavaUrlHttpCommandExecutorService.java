@@ -18,11 +18,13 @@
  */
 package org.jclouds.http.internal;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.io.Payloads.newInputStreamPayload;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -59,14 +61,13 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.io.CountingOutputStream;
 
 /**
  * Basic implementation of a {@link HttpCommandExecutorService}.
@@ -85,11 +86,11 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-         DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-         @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
-         NoSuchFieldException {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
+            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
+            NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
@@ -101,6 +102,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
+      HttpResponse.Builder builder = HttpResponse.builder();
       InputStream in = null;
       try {
          in = consumeOnClose(connection.getInputStream());
@@ -112,19 +114,28 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          assert false : "should have propagated exception";
       }
 
-      if (connection.getResponseCode() == 204) {
+      int responseCode = connection.getResponseCode();
+      if (responseCode == 204) {
          closeQuietly(in);
          in = null;
       }
-      Multimap<String, String> headers = LinkedHashMultimap.create();
+      builder.statusCode(responseCode);
+      builder.message(connection.getResponseMessage());
+
+      Builder<String, String> headerBuilder = ImmutableMultimap.<String, String> builder();
       for (String header : connection.getHeaderFields().keySet()) {
-         headers.putAll(header, connection.getHeaderFields().get(header));
+         // HTTP message comes back as a header without a key
+         if (header != null)
+            headerBuilder.putAll(header, connection.getHeaderFields().get(header));
       }
-      Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
-      if (payload != null)
+      ImmutableMultimap<String, String> headers = headerBuilder.build();
+      Payload payload = in != null ? newInputStreamPayload(in) : null;
+      if (payload != null) {
          payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
-      return new HttpResponse(connection.getResponseCode(), connection.getResponseMessage(), payload,
-            RestAnnotationProcessor.filterOutContentHeaders(headers));
+         builder.payload(payload);
+      }
+      builder.headers(RestAnnotationProcessor.filterOutContentHeaders(headers));
+      return builder.build();
    }
 
    private InputStream bufferAndCloseStream(InputStream inputStream) throws IOException {
@@ -171,6 +182,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          if (utils.trustAllCerts())
             sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
       }
+      if (utils.getConnectionTimeout() > 0) {
+         connection.setConnectTimeout(utils.getConnectionTimeout());
+      }
+      if (utils.getSocketOpenTimeout() > 0) {
+         connection.setReadTimeout(utils.getSocketOpenTimeout());
+      }
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
       // do not follow redirects since https redirects don't work properly
@@ -184,7 +201,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             methodField.set(connection, request.getMethod());
          } catch (Exception e1) {
             logger.error(e, "could not set request method: ", request.getMethod());
-            Throwables.propagate(e1);
+            propagate(e1);
          }
       }
 
@@ -213,14 +230,20 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          } else {
             Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
             connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
+            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
+            checkArgument(length < Integer.MAX_VALUE,
+                     "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
             connection.setFixedLengthStreamingMode(length.intValue());
+            if (length.intValue() > 0) {
+               connection.setRequestProperty("Expect", "100-continue");
+            }
          }
-         // writeTo will close the output stream
+         CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
          try {
-            request.getPayload().writeTo(connection.getOutputStream());
+            request.getPayload().writeTo(out);
          } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
+            throw new RuntimeException(String.format("error after writing %d/%s bytes to %s", out.getCount(), md
+                     .getContentLength(), request.getRequestLine()), e);
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
