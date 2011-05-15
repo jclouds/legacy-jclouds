@@ -20,6 +20,7 @@ package org.jclouds.json.config;
 
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,6 +56,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Contains logic for parsing objects from Strings.
@@ -171,6 +173,28 @@ public class GsonModule extends AbstractModule {
          } catch (RuntimeException e) {
             return dateService.iso8601SecondsDateParse(toParse);
          }
+      }
+
+   }
+
+   @Singleton
+   public static class SerializePropertiesDefaults implements JsonSerializer<Properties> {
+      private final Json json;
+      private final Type mapType = new TypeLiteral<Map<String, String>>() {
+      }.getRawType();
+
+      @Inject
+      public SerializePropertiesDefaults(Json json) {
+         this.json = json;
+      }
+
+      public JsonElement serialize(Properties src, Type typeOfSrc, JsonSerializationContext context) {
+         Builder<String, String> srcMap = ImmutableMap.<String, String> builder();
+         for (Enumeration<?> propNames = src.propertyNames(); propNames.hasMoreElements();) {
+            String propName = (String) propNames.nextElement();
+            srcMap.put(propName, src.getProperty(propName));
+         }
+         return new JsonLiteral(json.toJson(srcMap.build(), mapType));
       }
 
    }
