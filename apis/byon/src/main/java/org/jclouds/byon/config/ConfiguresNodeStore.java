@@ -16,24 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.byon.suppliers;
+package org.jclouds.byon.config;
 
-import org.jclouds.byon.functions.NodesFromYamlStream;
-import org.jclouds.util.Strings2;
-import org.testng.annotations.Test;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.common.base.Suppliers;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import com.google.common.annotations.Beta;
 
 /**
+ * designates the module configures a {@code Map<String, Node>}
  * 
  * @author Adrian Cole
+ * 
  */
-public class NodesParsedFromSupplierTest {
+@Beta
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface ConfiguresNodeStore {
 
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testMustParseSomething() throws Exception {
-
-      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYamlStream()).get();
-
-   }
 }

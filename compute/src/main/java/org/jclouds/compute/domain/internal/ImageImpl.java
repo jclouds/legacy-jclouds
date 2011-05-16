@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -47,9 +48,9 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private final Credentials defaultCredentials;
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
+            Map<String, String> userMetadata,  Set<String> tags, OperatingSystem operatingSystem, String description,
             @Nullable String version, @Nullable String adminPassword, @Nullable Credentials defaultCredentials) {
-      super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata);
+      super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.version = version;
       this.description = checkNotNull(description, "description");
@@ -102,7 +103,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       return "[id=" + getId() + ", name=" + getName() + ", operatingSystem=" + operatingSystem + ", description="
                + description + ", version=" + version + ", location=" + getLocation() + ", loginUser="
                + ((defaultCredentials != null) ? defaultCredentials.identity : null) + ", userMetadata="
-               + getUserMetadata() + "]";
+               + getUserMetadata() + ", tags=" + tags + "]";
    }
 
    @Override

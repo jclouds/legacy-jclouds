@@ -125,11 +125,11 @@ public class AWSEC2ImageParserTest {
 
       assertEquals(
                new Gson().toJson(Iterables.get(result, 1)),
-               "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"providerId\":\"ami-c19db6b5\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
+               "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
 
       assertEquals(
                new Gson().toJson(Iterables.get(result, 2)),
-               "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"providerId\":\"ami-710c2605\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
+               "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
    }
 
    public void testParseAmznImage() {

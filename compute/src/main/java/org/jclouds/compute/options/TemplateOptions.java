@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
@@ -31,6 +32,7 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
@@ -70,6 +72,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          to.blockOnPort(this.getPort(), this.getSeconds());
       if (this.isIncludeMetadata())
          to.withMetadata();
+      if (this.getTags().size() > 0)
+         to.tags(getTags());
       if (!this.shouldBlockUntilRunning())
          to.blockUntilRunning(false);
       if (!this.shouldBlockOnComplete())
@@ -276,6 +280,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    protected Statement script;
 
+   protected Set<String> tags = ImmutableSet.of();
+
    protected String privateKey;
 
    protected String publicKey;
@@ -290,6 +296,10 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    public Statement getRunScript() {
       return script;
+   }
+
+   public Set<String> getTags() {
+      return tags;
    }
 
    public String getPrivateKey() {
@@ -350,7 +360,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
     */
    public TemplateOptions installPrivateKey(String privateKey) {
       checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
-            "key should start with -----BEGIN RSA PRIVATE KEY-----");
+               "key should start with -----BEGIN RSA PRIVATE KEY-----");
       this.privateKey = privateKey;
       return this;
    }
@@ -401,6 +411,14 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          Throwables.propagate(e);
          return this;
       }
+   }
+
+   /**
+    * assigns tags to the created nodes
+    */
+   public TemplateOptions tags(Iterable<String> tags) {
+      this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+      return this;
    }
 
    /**
@@ -459,6 +477,14 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       public static TemplateOptions inboundPorts(int... ports) {
          TemplateOptions options = new TemplateOptions();
          return options.inboundPorts(ports);
+      }
+
+      /**
+       * @see TemplateOptions#tags
+       */
+      public static TemplateOptions tags(Iterable<String> tags) {
+         TemplateOptions options = new TemplateOptions();
+         return options.tags(tags);
       }
 
       /**
@@ -556,9 +582,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    @Override
    public String toString() {
       return "[inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-            + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
-            + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds
-            + ", metadata/details: " + includeMetadata + "]";
+               + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
+               + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds
+               + ", metadata/details: " + includeMetadata + "]";
    }
 
    public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {

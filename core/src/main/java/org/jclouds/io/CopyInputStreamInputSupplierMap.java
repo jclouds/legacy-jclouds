@@ -16,24 +16,32 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.byon.suppliers;
+package org.jclouds.io;
 
-import org.jclouds.byon.functions.NodesFromYamlStream;
-import org.jclouds.util.Strings2;
-import org.testng.annotations.Test;
+import java.io.InputStream;
+import java.util.Map;
 
-import com.google.common.base.Suppliers;
+import javax.inject.Inject;
+
+import org.jclouds.collect.InputSupplierMap;
+
+import com.google.common.annotations.Beta;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class NodesParsedFromSupplierTest {
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testMustParseSomething() throws Exception {
-
-      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYamlStream()).get();
-
+@Beta
+public class CopyInputStreamInputSupplierMap extends InputSupplierMap<String, InputStream> {
+   @Inject
+   public CopyInputStreamInputSupplierMap(Map<String, InputSupplier<InputStream>> toMap,
+         CopyInputStreamIntoSupplier putFunction) {
+      super(toMap, putFunction);
    }
+
+   public CopyInputStreamInputSupplierMap(Map<String, InputSupplier<InputStream>> toMap) {
+      super(toMap, new CopyInputStreamIntoSupplier());
+   }
+
 }

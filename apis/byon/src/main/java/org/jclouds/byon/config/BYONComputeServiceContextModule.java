@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.byon.Node;
-import org.jclouds.byon.functions.NodesFromYaml;
+import org.jclouds.byon.functions.NodesFromYamlStream;
 import org.jclouds.byon.internal.BYONComputeServiceAdapter;
 import org.jclouds.byon.suppliers.NodesParsedFromSupplier;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
@@ -72,7 +72,7 @@ public class BYONComputeServiceContextModule extends
       }).to(SupplyFromProviderURIOrNodesProperty.class);
       // TODO make this somehow overridable via user request
       bind(new TypeLiteral<Function<InputStream, Map<String, Node>>>() {
-      }).to(NodesFromYaml.class);
+      }).to(NodesFromYamlStream.class);
    }
 
 }

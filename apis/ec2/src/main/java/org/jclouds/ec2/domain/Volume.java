@@ -65,7 +65,7 @@ public class Volume implements Comparable<Volume> {
    }
 
    public static enum Status {
-      CREATING, AVAILABLE, IN_USE, DELETING, UNRECOGNIZED;
+      CREATING, AVAILABLE, IN_USE, DELETING, ERROR, UNRECOGNIZED;
       public String value() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
       }

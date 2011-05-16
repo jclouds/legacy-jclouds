@@ -41,22 +41,22 @@ public class NodesFromYamlTest {
             .toString();
 
    public static final Node TEST1 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
-            "cluster-1.mydomain.com", null, "x86", "rhel", "redhat", "5.3", "hadoop", ImmutableList.of("vanilla"),
+            "cluster-1.mydomain.com", null, "x86", "rhel", "redhat", "5.3", false, "hadoop", ImmutableList.of("vanilla"),
             "myUser", key, null, "happy bear");
 
    public static final Node TEST2 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
-            "cluster-1.mydomain.com", "virginia", "x86", "rhel", "redhat", "5.3", "hadoop",
+            "cluster-1.mydomain.com", "virginia", "x86", "rhel", "redhat", "5.3", false, "hadoop",
             ImmutableList.of("vanilla"), "myUser", key, null, "happy bear");
 
    public static final Node TEST3 = new Node("cluster-2", "cluster-2", "accounting analytics cluster",
-            "cluster-2.mydomain.com", "maryland", "x86", "rhel", "redhat", "5.3", "hadoop",
+            "cluster-2.mydomain.com", "maryland", "x86", "rhel", "redhat", "5.3", false, "hadoop",
             ImmutableList.of("vanilla"), "myUser", key, null, "happy bear");
 
    @Test
    public void testNodesParse() throws Exception {
 
       InputStream is = getClass().getResourceAsStream("/test1.yaml");
-      NodesFromYaml parser = new NodesFromYaml();
+      NodesFromYamlStream parser = new NodesFromYamlStream();
 
       assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));
    }
@@ -65,7 +65,7 @@ public class NodesFromYamlTest {
    public void testNodesParseLocation() throws Exception {
 
       InputStream is = getClass().getResourceAsStream("/test_location.yaml");
-      NodesFromYaml parser = new NodesFromYaml();
+      NodesFromYamlStream parser = new NodesFromYamlStream();
 
       assertEquals(parser.apply(is), ImmutableMap.of(TEST2.getId(), TEST2, TEST3.getId(), TEST3));
    }
@@ -74,14 +74,14 @@ public class NodesFromYamlTest {
    public void testNodesParseWhenCredentialInUrl() throws Exception {
 
       InputStream is = getClass().getResourceAsStream("/test_with_url.yaml");
-      NodesFromYaml parser = new NodesFromYaml();
+      NodesFromYamlStream parser = new NodesFromYamlStream();
 
       assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testMustParseSomething() throws Exception {
-      new NodesFromYaml().apply(Strings2.toInputStream(""));
+      new NodesFromYamlStream().apply(Strings2.toInputStream(""));
    }
 
 }

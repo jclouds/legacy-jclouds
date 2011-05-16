@@ -66,7 +66,7 @@ import static org.testng.Assert.assertEquals;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "NovaAsyncClientTest")
+@Test(groups = "unit", singleThreaded = true, testName = "NovaAsyncClientTest")
 public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[]{}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[]{}

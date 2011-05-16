@@ -44,6 +44,7 @@ public class Node {
       private String osFamily;
       private String osDescription;
       private String osVersion;
+      private boolean os64Bit;
       private String group;
       private Set<String> tags = ImmutableSet.of();
       private String username;
@@ -96,6 +97,11 @@ public class Node {
          return this;
       }
 
+      public Builder os64Bit(boolean os64Bit) {
+         this.os64Bit = os64Bit;
+         return this;
+      }
+
       public Builder group(String group) {
          this.group = group;
          return this;
@@ -128,13 +134,13 @@ public class Node {
 
       public Node build() {
          return new Node(id, name, description, hostname, locationId, osArch, osFamily, osDescription, osVersion,
-                  group, tags, username, credential, credentialUrl, sudoPassword);
+                  os64Bit, group, tags, username, credential, credentialUrl, sudoPassword);
       }
    }
 
    public Node(String id, String name, String description, String hostname, String locationId, String osArch,
-            String osFamily, String osDescription, String osVersion, String group, Iterable<String> tags,
-            String username, String credential, URI credentialUrl, String sudoPassword) {
+            String osFamily, String osDescription, String osVersion, boolean os64Bit, String group,
+            Iterable<String> tags, String username, String credential, URI credentialUrl, String sudoPassword) {
       this.id = id;
       this.name = name;
       this.description = description;
@@ -144,6 +150,7 @@ public class Node {
       this.osFamily = osFamily;
       this.osDescription = osDescription;
       this.osVersion = osVersion;
+      this.os64Bit = os64Bit;
       this.group = group;
       this.tags = ImmutableSet.copyOf(tags);
       this.username = username;
@@ -161,6 +168,7 @@ public class Node {
    private final String osFamily;
    private final String osDescription;
    private final String osVersion;
+   private final boolean os64Bit;
    private final String group;
    private final Set<String> tags;
    private final String username;
@@ -208,6 +216,10 @@ public class Node {
       return osVersion;
    }
 
+   public boolean isOs64Bit() {
+      return os64Bit;
+   }
+
    public Set<String> getTags() {
       Set<String> tagSet = new HashSet<String>();
       for (String tag : tags)
@@ -227,13 +239,13 @@ public class Node {
       return credentialUrl;
    }
 
+   public String getSudoPassword() {
+      return sudoPassword;
+   }
+
    @Override
    public int hashCode() {
       return Objects.hashCode(id);
-   }
-
-   public String getSudoPassword() {
-      return sudoPassword;
    }
 
    @Override
@@ -247,9 +259,10 @@ public class Node {
    public String toString() {
       return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
                "locationId", locationId).add("hostname", hostname).add("osArch", osArch).add("osFamily", osFamily).add(
-               "osDescription", osDescription).add("osVersion", osVersion).add("group", group).add("tags", tags).add(
-               "username", username).add("hasCredential", credential != null || credentialUrl != null).add(
-               "hasSudoPassword", sudoPassword != null).toString();
+               "osDescription", osDescription).add("osVersion", osVersion).add("os64Bit", os64Bit).add("group", group)
+               .add("tags", tags).add("username", username).add("hasCredential",
+                        credential != null || credentialUrl != null).add("hasSudoPassword", sudoPassword != null)
+               .toString();
    }
 
 }
