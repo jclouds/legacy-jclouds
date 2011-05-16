@@ -140,7 +140,6 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>org.jclouds.atmos.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
-                        <_nouses>true</_nouses>
                     </instructions>
                 </configuration>
             </plugin>

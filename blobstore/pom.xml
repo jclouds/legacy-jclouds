@@ -128,7 +128,6 @@
                         <Export-Package>org.jclouds.blobstore.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                         <Fragment-Host>jclouds-core;version="${project.version}"</Fragment-Host>
-                        <_nouses>true</_nouses>
                     </instructions>
                 </configuration>
             </plugin>

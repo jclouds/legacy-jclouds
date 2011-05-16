@@ -87,7 +87,6 @@
                         <Export-Package>org.jclouds.loadbalancer.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                         <Fragment-Host>jclouds-core;version="${project.version}"</Fragment-Host>
-                        <_nouses>true</_nouses>
                     </instructions>
                 </configuration>
             </plugin>
