@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -77,14 +78,16 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
          @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
          @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
          @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+         RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
          ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
             suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
-            nodeSuspended, initScriptRunnerFactory, initAdminAccess, persistNodeCredentials, timeouts, executor);
+            nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials,
+            timeouts, executor);
       this.cleanupOrphanKeys = cleanupOrphanKeys;
    }
 

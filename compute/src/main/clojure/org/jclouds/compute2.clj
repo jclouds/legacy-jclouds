@@ -69,7 +69,8 @@ Here's an example of creating and running a small linux node in the group webser
     [org.jclouds.compute.domain
      Template TemplateBuilder ComputeMetadata NodeMetadata Hardware
      OsFamily Image]
-    [org.jclouds.compute.options TemplateOptions]
+    [org.jclouds.compute.options TemplateOptions RunScriptOptions
+     RunScriptOptions$Builder]
     [org.jclouds.compute.predicates
      NodePredicates]
     [com.google.common.collect ImmutableSet])
@@ -233,9 +234,15 @@ Here's an example of creating and running a small linux node in the group webser
   ([#^ComputeService compute id]
     (.destroyNode compute id)))
 
-(defn run-script-on-nodes-matching [#^ComputeService compute pred command template]
+(defn run-script-on-node
+  "Run a script on a node"
+  ([#^ComputeService compute id command #^RunScriptOptions options]
+    (.runScriptOnNode compute id command options)))
+
+(defn run-script-on-nodes-matching
   "Run a script on the nodes matching the given predicate"
-  (.runScriptOnNodesMatching compute (to-predicate pred) command template))
+  ([#^ComputeService compute pred command #^RunScriptOptions options]
+    (.runScriptOnNodesMatching compute (to-predicate pred) command options)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)

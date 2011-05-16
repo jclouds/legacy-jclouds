@@ -28,6 +28,8 @@
     org.jclouds.scriptbuilder.domain.Statements
     org.jclouds.compute.options.TemplateOptions
     org.jclouds.compute.options.TemplateOptions$Builder
+    org.jclouds.compute.options.RunScriptOptions
+    org.jclouds.compute.options.RunScriptOptions$Builder
     org.jclouds.domain.Credentials
     java.util.NoSuchElementException
     ))
@@ -98,9 +100,9 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (= 0 (count (nodes-with-details-matching *compute* #(and (running? %) (localhost? %))))))
   (is (= 1 (count (nodes-with-details-matching *compute* #(and (running? %) (not (localhost? %))))))))
 
-(deftest run-script-on-nodes-matching-test
+(deftest run-script-on-nodes-matching-with-options-test
   (let [echo (Statements/exec "echo hello")
-        script-options (.. (TemplateOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
                         (runAsRoot false)
                         (wrapInInitScript false))
         pred #(= (.getGroup %) "scriptednode")]
@@ -108,6 +110,16 @@ list, Alan Dipert and MeikelBrandmeyer."
     (is (run-script-on-nodes-matching *compute* pred echo script-options))
     (is (thrown? NoSuchElementException
       (run-script-on-nodes-matching *compute* #(= (.getGroup %) "nonexistingnode") echo script-options)))))
+
+(deftest run-script-on-node-with-options-test
+  (let [echo (Statements/exec "echo hello")
+        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+                        (runAsRoot false)
+                        (wrapInInitScript false))
+        test_node (create-node *compute* "scriptednode" (build-template *compute* {}))]
+    (is (run-script-on-node *compute* (id test_node) echo script-options))
+    (is (thrown? NoSuchElementException
+      (run-script-on-node *compute* "nonexistingnode" echo script-options)))))
 
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]
