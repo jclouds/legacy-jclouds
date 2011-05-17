@@ -16,20 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.providers;
+package org.jclouds.vcloud.terremark;
 
-import org.jclouds.vcloud.terremark.TerremarkVCloudExpressProviderMetadata;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The TerremarkVCloudExpressProviderTest tests the org.jclouds.providers.TerremarkVCloudExpressProvider class.
+ * The TerremarkECloudProviderTest tests the org.jclouds.providers.TerremarkECloudProvider class.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "TerremarkVCloudExpressProviderTest")
-public class TerremarkVCloudExpressProviderTest extends BaseProviderTest {
+@Test(groups = "unit", testName = "TerremarkECloudProviderTest")
+public class TerremarkECloudProviderTest extends BaseProviderMetadataTest {
 
-   public TerremarkVCloudExpressProviderTest() {
-      super(new TerremarkVCloudExpressProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   public TerremarkECloudProviderTest() {
+      super(new TerremarkECloudProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }

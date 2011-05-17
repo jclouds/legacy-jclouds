@@ -16,23 +16,30 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.providers;
+package org.jclouds.aws.s3;
 
 import java.net.URI;
+import java.util.Set;
+
+import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
+ * (S3) provider.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
+public class AWSS3ProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "test-blobstore-provider";
+      return "aws-s3";
    }
 
    /**
@@ -48,15 +55,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "Test Blobstore Provider";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
+      return "Amazon Elastic Compute Cloud (S3)";
    }
 
    /**
@@ -64,7 +63,15 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "password";
+      return "accessKeyID";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
+      return "secretAccessKey";
    }
 
    /**
@@ -72,7 +79,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://jclouds.org");
+      return URI.create("http://aws.amazon.com/s3/");
    }
 
    /**
@@ -80,7 +87,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
+      return URI.create("https://console.aws.amazon.com/s3/home");
    }
 
    /**
@@ -88,7 +95,15 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
+      return URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getLinkedServices() {
+      return ImmutableSet.of(getId(), "aws-ec2");
    }
 
 }

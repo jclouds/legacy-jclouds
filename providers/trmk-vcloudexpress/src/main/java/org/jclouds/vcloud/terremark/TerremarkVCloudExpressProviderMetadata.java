@@ -25,7 +25,7 @@ import org.jclouds.providers.ProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's vCloud Express.
- *
+ * 
  * @author Adrian Cole
  */
 public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
@@ -50,6 +50,22 @@ public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata
     * {@inheritDoc}
     */
    @Override
+   public String getIdentityName() {
+      return "email";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
+      return "password";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getName() {
       return "Terremark vCloud Express";
    }
@@ -68,6 +84,14 @@ public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata
    @Override
    public URI getConsole() {
       return URI.create("https://my.vcloudexpress.terremark.com");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getApiDocumentation() {
+      return URI.create("https://community.vcloudexpress.terremark.com/en-us/product_docs/m/vcefiles/2342.aspx");
    }
 
 }

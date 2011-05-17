@@ -16,23 +16,26 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.providers;
+package org.jclouds.vcloud.terremark;
 
 import java.net.URI;
 
+import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
+public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "test-blobstore-provider";
+      return "trmk-ecloud";
    }
 
    /**
@@ -40,7 +43,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+      return ProviderMetadata.COMPUTE_TYPE;
    }
 
    /**
@@ -48,15 +51,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "Test Blobstore Provider";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
+      return "Terremark Enterprise Cloud";
    }
 
    /**
@@ -64,6 +59,14 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
+      return "email";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
       return "password";
    }
 
@@ -72,7 +75,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://jclouds.org");
+      return URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx");
    }
 
    /**
@@ -80,7 +83,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
+      return URI.create("https://icenter.digitalops.net");
    }
 
    /**
@@ -88,7 +91,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
+      return URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID=");
    }
 
 }

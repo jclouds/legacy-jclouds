@@ -19,11 +19,14 @@
 package org.jclouds.providers;
 
 import java.net.URI;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 /**
- * The ProviderMetadata interface allows jclouds to provide a plugin framework
- * for gathering cloud provider metadata.
- *
+ * The ProviderMetadata interface allows jclouds to provide a plugin framework for gathering cloud
+ * provider metadata.
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public interface ProviderMetadata {
@@ -32,38 +35,59 @@ public interface ProviderMetadata {
    public static final String COMPUTE_TYPE = "compute";
 
    /**
-    * Returns an identifier unique to the provider.
-    *
+    * 
     * @return the provider's unique identifier
     */
    public String getId();
 
    /**
-    * Returns the provider type.
-    *
+    * 
     * @return the provider's type
     */
    public String getType();
 
    /**
-    * Returns the name of the provider.
-    *
+    * 
     * @return the name (display name) of the provider
     */
    public String getName();
 
    /**
-    * Returns the URI to the provider's homepage.
-    *
+    * 
+    * @return the name (display name) of an identity on this provider (ex. user, email, account,
+    *         apikey)
+    */
+   public String getIdentityName();
+
+   /**
+    * 
+    * @return the name (display name) of a credential on this provider, or null if there is none
+    *         (ex. password, secret, rsaKey)
+    */
+   @Nullable
+   public String getCredentialName();
+
+   /**
+    * 
     * @return the url for the provider's homepage
     */
    public URI getHomepage();
 
    /**
-    * Returns the URI to the provider's console.
-    *
+    * 
     * @return the url for the provider's console
     */
    public URI getConsole();
 
+   /**
+    * 
+    * @return the url for the API documentation related to this service
+    */
+   public URI getApiDocumentation();
+
+   /**
+    * 
+    * @return all known services linked to the same account on this provider
+    */
+   public Set<String> getLinkedServices();
 }

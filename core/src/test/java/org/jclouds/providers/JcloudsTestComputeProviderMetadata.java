@@ -21,8 +21,8 @@ package org.jclouds.providers;
 import java.net.URI;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for testing.
- *
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
@@ -52,6 +52,22 @@ public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
+      return "user";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getIdentityName() {
+      return "password";
+   }
+
+   /**
     * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
     */
    @Override
@@ -65,6 +81,14 @@ public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getConsole() {
       return URI.create("http://jclouds.org/console");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getApiDocumentation() {
+      return URI.create("http://jclouds.org/documentation");
    }
 
 }

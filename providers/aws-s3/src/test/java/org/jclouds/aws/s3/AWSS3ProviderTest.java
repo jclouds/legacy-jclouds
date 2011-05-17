@@ -16,34 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark;
+package org.jclouds.aws.s3;
 
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.rest.Providers;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
-
 /**
+ * The AWSS3ProviderTest tests the org.jclouds.providers.AWSS3Provider class.
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
+@Test(groups = "unit", testName = "AWSS3ProviderTest")
+public class AWSS3ProviderTest extends BaseProviderMetadataTest {
 
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "trmk-ecloud") : providers;
-
+   public AWSS3ProviderTest() {
+      super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
    }
-
-   @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "trmk-ecloud") : providers;
-
-   }
-
 }

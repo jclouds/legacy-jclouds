@@ -16,9 +16,11 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.providers;
+package org.jclouds.aws.ec2;
 
 import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -27,7 +29,7 @@ import org.testng.annotations.Test;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 @Test(groups = "unit", testName = "AWSEC2ProviderTest")
-public class AWSEC2ProviderTest extends BaseProviderTest {
+public class AWSEC2ProviderTest extends BaseProviderMetadataTest {
 
    public AWSEC2ProviderTest() {
       super(new AWSEC2ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);

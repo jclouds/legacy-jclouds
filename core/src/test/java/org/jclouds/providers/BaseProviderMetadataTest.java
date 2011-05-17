@@ -33,12 +33,12 @@ import com.google.common.collect.Sets;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 @Test(groups = "unit")
-public abstract class BaseProviderTest {
+public abstract class BaseProviderMetadataTest {
    protected Set<String> allTypes = ImmutableSet.of(ProviderMetadata.BLOBSTORE_TYPE, ProviderMetadata.COMPUTE_TYPE);
    private final ProviderMetadata toTest;
    private final String expectedType;
 
-   public BaseProviderTest(ProviderMetadata toTest, String expectedType) {
+   public BaseProviderMetadataTest(ProviderMetadata toTest, String expectedType) {
       this.toTest = toTest;
       this.expectedType = expectedType;
    }
@@ -48,6 +48,7 @@ public abstract class BaseProviderTest {
       ProviderMetadata providerMetadata = Providers.withId(toTest.getId());
 
       assertEquals(toTest, providerMetadata);
+      assert providerMetadata.getLinkedServices().contains(toTest.getId());
    }
 
    @Test

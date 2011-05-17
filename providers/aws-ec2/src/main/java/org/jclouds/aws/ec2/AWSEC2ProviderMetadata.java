@@ -19,9 +19,12 @@
 package org.jclouds.aws.ec2;
 
 import java.net.URI;
+import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Amazon's
@@ -59,6 +62,22 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
+   public String getIdentityName() {
+      return "accessKeyID";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
+      return "secretAccessKey";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public URI getHomepage() {
       return URI.create("http://aws.amazon.com/ec2/");
    }
@@ -69,6 +88,21 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getConsole() {
       return URI.create("https://console.aws.amazon.com/ec2/home");
+   }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getApiDocumentation() {
+      return URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getLinkedServices() {
+      return ImmutableSet.of(getId(), "aws-s3");
    }
 
 }

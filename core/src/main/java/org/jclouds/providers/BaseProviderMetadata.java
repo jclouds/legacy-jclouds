@@ -19,13 +19,16 @@
 package org.jclouds.providers;
 
 import java.net.URI;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * The BaseProviderMetadata class is an abstraction of {@link ProviderMetadata} to be extended
- * by those implementing ProviderMetadata.
- *
+ * The BaseProviderMetadata class is an abstraction of {@link ProviderMetadata} to be extended by
+ * those implementing ProviderMetadata.
+ * 
  * (Note: This class must be abstract to allow {@link java.util.ServiceLoader} to work properly.
- *
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public abstract class BaseProviderMetadata implements ProviderMetadata {
@@ -39,18 +42,26 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       int result = 1;
       URI console = getConsole();
       URI homepage = getHomepage();
+      URI docs = getApiDocumentation();
       String id = getId();
       String name = getName();
+      String identityName = getIdentityName();
+      String credentialName = getCredentialName();
       String type = getType();
+      Set<String> linkedServices = getLinkedServices();
 
       result = prime * result + ((console == null) ? 0 : console.hashCode());
       result = prime * result + ((homepage == null) ? 0 : homepage.hashCode());
+      result = prime * result + ((docs == null) ? 0 : docs.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((identityName == null) ? 0 : identityName.hashCode());
+      result = prime * result + ((credentialName == null) ? 0 : credentialName.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((linkedServices == null) ? 0 : linkedServices.hashCode());
 
       return result;
-    }
+   }
 
    /**
     * @see java.lang.Object#equals(java.lang.Object)
@@ -59,9 +70,13 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
    public boolean equals(Object obj) {
       URI tConsole = getConsole();
       URI tHomepage = getHomepage();
+      URI tDocs = getApiDocumentation();
       String tId = getId();
       String tName = getName();
+      String tIdentityName = getIdentityName();
+      String tCredentialName = getCredentialName();
       String tType = getType();
+      Set<String> tLinkedServices = getLinkedServices();
 
       if (this == obj)
          return true;
@@ -73,14 +88,23 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       ProviderMetadata other = (ProviderMetadata) obj;
       URI oConsole = other.getConsole();
       URI oHomepage = other.getHomepage();
+      URI oDocs = other.getApiDocumentation();
       String oId = other.getId();
       String oName = other.getName();
+      String oIdentityName = other.getIdentityName();
+      String oCredentialName = other.getCredentialName();
       String oType = other.getType();
+      Set<String> oLinkedServices = other.getLinkedServices();
 
       if (tConsole == null) {
          if (oConsole != null)
             return false;
       } else if (!tConsole.equals(oConsole))
+         return false;
+      if (tDocs == null) {
+         if (oDocs != null)
+            return false;
+      } else if (!tDocs.equals(oDocs))
          return false;
       if (tHomepage == null) {
          if (oHomepage != null)
@@ -97,13 +121,38 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
             return false;
       } else if (!tName.equals(oName))
          return false;
+      if (tIdentityName == null) {
+         if (oIdentityName != null)
+            return false;
+      } else if (!tIdentityName.equals(oIdentityName))
+         return false;
+      if (tCredentialName == null) {
+         if (oCredentialName != null)
+            return false;
+      } else if (!tCredentialName.equals(oCredentialName))
+         return false;
       if (tType == null) {
          if (oType != null)
             return false;
       } else if (!tType.equals(oType))
          return false;
-
+      if (tLinkedServices == null) {
+         if (oLinkedServices != null)
+            return false;
+      } else if (!tLinkedServices.equals(oLinkedServices))
+         return false;
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "[id=" + getId() + ", type=" + getType() + ", name=" + getName() + ", identityName=" + getIdentityName()
+               + ", credentialName=" + getCredentialName() + ", homePage=" + getHomepage() + ", console="
+               + getConsole() + ", apiDocs=" + getApiDocumentation() + ", linkedServices=" + getLinkedServices() + "]";
+   }
+
+   @Override
+   public Set<String> getLinkedServices() {
+      return ImmutableSet.of(getId());
+   }
 }
