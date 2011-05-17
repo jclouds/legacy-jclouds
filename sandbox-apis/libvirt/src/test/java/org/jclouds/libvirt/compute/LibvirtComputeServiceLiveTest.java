@@ -42,7 +42,7 @@ public class LibvirtComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   protected Properties getRestProperties() {
+   protected Properties setupRestProperties() {
       Properties restProperties = new Properties();
       restProperties.setProperty("libvirt.contextbuilder", LibvirtComputeServiceContextBuilder.class.getName());
       restProperties.setProperty("libvirt.propertiesbuilder", LibvirtPropertiesBuilder.class.getName());

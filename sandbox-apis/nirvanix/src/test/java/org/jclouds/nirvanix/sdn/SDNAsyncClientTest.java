@@ -176,7 +176,6 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
          bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
          bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPKEY)).toInstance("appKey");
          bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPNAME)).toInstance("appname");
-
          bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_USERNAME)).toInstance("username");
       }
 
