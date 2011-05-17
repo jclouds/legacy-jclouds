@@ -55,12 +55,14 @@ public abstract class BaseProviderMetadataTest {
    // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)
    @Test
    public void testOfTypeContains() {
-      assert ImmutableSet.of(Providers.ofType(expectedType)).contains(toTest);
+      ImmutableSet<ProviderMetadata> ofType = ImmutableSet.copyOf(Providers.ofType(expectedType));
+      assert ofType.contains(toTest) : String.format("%s not found in %s", toTest, ofType);
    }
 
    @Test
    public void testAllContains() {
-      assert ImmutableSet.of(Providers.all()).contains(toTest);
+      ImmutableSet<ProviderMetadata> all = ImmutableSet.copyOf(Providers.all());
+      assert all.contains(toTest) : String.format("%s not found in %s", toTest, all);
    }
 
    @Test
