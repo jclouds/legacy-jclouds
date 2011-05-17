@@ -18,48 +18,18 @@
  */
 package org.jclouds.providers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-
+import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
  * The AWSEC2ProviderTest tests the org.jclouds.providers.AWSEC2Provider class.
- *
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-@Test( groups = "unit" )
-public class AWSEC2ProviderTest {
+@Test(groups = "unit", testName = "AWSEC2ProviderTest")
+public class AWSEC2ProviderTest extends BaseProviderTest {
 
-   private final ProviderMetadata awsEc2ProviderMetadata = new AWSEC2ProviderMetadata();
-
-   @Test
-   public void testWithId() {
-      ProviderMetadata providerMetadata = Providers.withId(awsEc2ProviderMetadata.getId());
-
-      assertEquals(awsEc2ProviderMetadata, providerMetadata);
+   public AWSEC2ProviderTest() {
+      super(new AWSEC2ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
-
-   @Test
-   public void testOfType() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.ofType(ProviderMetadata.COMPUTE_TYPE);
-
-      for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals(awsEc2ProviderMetadata, providerMetadata);
-      }
-
-      providersMetadata = Providers.ofType(ProviderMetadata.BLOBSTORE_TYPE);
-
-      assertFalse(providersMetadata.iterator().hasNext());
-   }
-
-   @Test
-   public void testAll() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.all();
-
-      for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals(awsEc2ProviderMetadata, providerMetadata);
-      }
-   }
-
 }

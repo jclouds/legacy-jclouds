@@ -16,28 +16,30 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.providers;
+package org.jclouds.vcloud.terremark;
 
 import java.net.URI;
 
+import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Amazon's
- * Elastic Compute Cloud (EC2) provider.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's vCloud Express.
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
+public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getId()}
+    * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "aws-ec2";
+      return "trmk-vcloudexpress";
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getType()}
+    * {@inheritDoc}
     */
    @Override
    public String getType() {
@@ -45,27 +47,27 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getName()}
+    * {@inheritDoc}
     */
    @Override
    public String getName() {
-      return "Amazon Elastic Compute Cloud (EC2)";
+      return "Terremark vCloud Express";
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
+    * {@inheritDoc}
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/");
+      return URI.create("https://vcloudexpress.terremark.com/");
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getConsole()}
+    * {@inheritDoc}
     */
    @Override
    public URI getConsole() {
-      return URI.create("http://aws.amazon.com/console/");
+      return URI.create("https://my.vcloudexpress.terremark.com");
    }
 
 }

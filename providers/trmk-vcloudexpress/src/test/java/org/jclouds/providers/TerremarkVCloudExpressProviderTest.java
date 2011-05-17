@@ -16,33 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark;
+package org.jclouds.providers;
 
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.rest.Providers;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressProviderMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
-
 /**
+ * The TerremarkVCloudExpressProviderTest tests the org.jclouds.providers.TerremarkVCloudExpressProvider class.
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
+@Test(groups = "unit", testName = "TerremarkVCloudExpressProviderTest")
+public class TerremarkVCloudExpressProviderTest extends BaseProviderTest {
 
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "trmk-vcloudexpress") : providers;
-
+   public TerremarkVCloudExpressProviderTest() {
+      super(new TerremarkVCloudExpressProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
-
-   @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "trmk-vcloudexpress") : providers;
-   }
-
 }

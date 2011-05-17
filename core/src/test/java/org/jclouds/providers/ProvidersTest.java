@@ -39,7 +39,7 @@ public class ProvidersTest {
    @Test
    public void testWithId() {
       ProviderMetadata providerMetadata;
-
+    
       try {
          providerMetadata = Providers.withId("fake-id");
          fail("Looking for a provider with an id that doesn't exist should " +
