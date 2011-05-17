@@ -34,7 +34,8 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = "unit")
 public abstract class BaseProviderMetadataTest {
-   protected Set<String> allTypes = ImmutableSet.of(ProviderMetadata.BLOBSTORE_TYPE, ProviderMetadata.COMPUTE_TYPE);
+   protected Set<String> allTypes = ImmutableSet.of(ProviderMetadata.BLOBSTORE_TYPE, ProviderMetadata.COMPUTE_TYPE,
+            ProviderMetadata.LOADBALANCER_TYPE, ProviderMetadata.QUEUE_TYPE, ProviderMetadata.TABLE_TYPE);
    private final ProviderMetadata toTest;
    private final String expectedType;
 

@@ -33,6 +33,9 @@ public interface ProviderMetadata {
 
    public static final String BLOBSTORE_TYPE = "blobstore";
    public static final String COMPUTE_TYPE = "compute";
+   public static final String LOADBALANCER_TYPE = "loadbalancer";
+   public static final String TABLE_TYPE = "table";
+   public static final String QUEUE_TYPE = "queue";
 
    /**
     * 

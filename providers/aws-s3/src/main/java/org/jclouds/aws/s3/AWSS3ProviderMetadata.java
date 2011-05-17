@@ -103,7 +103,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of(getId(), "aws-ec2");
+      return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
    }
 
 }
