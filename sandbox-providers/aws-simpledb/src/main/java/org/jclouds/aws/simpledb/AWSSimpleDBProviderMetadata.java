@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.simpledb;
 
 import java.net.URI;
 import java.util.Set;
@@ -27,19 +27,18 @@ import org.jclouds.providers.ProviderMetadata;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
- * (S3) provider.
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's SimpleDB provider.
  * 
  * @author Adrian Cole
  */
-public class AWSS3ProviderMetadata extends BaseProviderMetadata {
+public class AWSSimpleDBProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "aws-s3";
+      return "aws-simpledb";
    }
 
    /**
@@ -47,7 +46,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+      return ProviderMetadata.TABLE_TYPE;
    }
 
    /**
@@ -55,7 +54,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "Amazon Simple Storage Service (S3)";
+      return "Amazon SimpleDB";
    }
 
    /**
@@ -79,7 +78,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/s3/");
+      return URI.create("http://aws.amazon.com/simpledb");
    }
 
    /**
@@ -87,7 +86,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://console.aws.amazon.com/s3/home");
+      return null;
    }
 
    /**
@@ -95,7 +94,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API");
+      return URI.create("http://docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide");
    }
 
    /**

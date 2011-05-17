@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.elb;
 
 import java.net.URI;
 import java.util.Set;
@@ -27,19 +27,19 @@ import org.jclouds.providers.ProviderMetadata;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
- * (S3) provider.
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Elastic Load Balancing
+ * provider.
  * 
  * @author Adrian Cole
  */
-public class AWSS3ProviderMetadata extends BaseProviderMetadata {
+public class AWSELBProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "aws-s3";
+      return "aws-elb";
    }
 
    /**
@@ -47,7 +47,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+      return ProviderMetadata.LOADBALANCER_TYPE;
    }
 
    /**
@@ -55,7 +55,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "Amazon Simple Storage Service (S3)";
+      return "Amazon Elastic Load Balancing";
    }
 
    /**
@@ -79,7 +79,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/s3/");
+      return URI.create("http://aws.amazon.com/elasticloadbalancing");
    }
 
    /**
@@ -87,15 +87,14 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://console.aws.amazon.com/s3/home");
+      return URI.create("https://console.aws.amazon.com/ec2/home");
    }
-
    /**
     * {@inheritDoc}
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API");
+      return URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference");
    }
 
    /**

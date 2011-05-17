@@ -63,7 +63,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "accessKeyID";
+      return "Access Key ID";
    }
 
    /**
@@ -71,7 +71,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getCredentialName() {
-      return "secretAccessKey";
+      return "Secret Access Key";
    }
 
    /**
@@ -102,7 +102,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of(getId(), "aws-s3");
+      return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
    }
 
 }

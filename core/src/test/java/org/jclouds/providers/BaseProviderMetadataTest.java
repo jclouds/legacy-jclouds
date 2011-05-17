@@ -26,7 +26,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -36,6 +35,7 @@ import com.google.common.collect.Sets;
 public abstract class BaseProviderMetadataTest {
    protected Set<String> allTypes = ImmutableSet.of(ProviderMetadata.BLOBSTORE_TYPE, ProviderMetadata.COMPUTE_TYPE,
             ProviderMetadata.LOADBALANCER_TYPE, ProviderMetadata.QUEUE_TYPE, ProviderMetadata.TABLE_TYPE);
+
    private final ProviderMetadata toTest;
    private final String expectedType;
 
@@ -52,21 +52,15 @@ public abstract class BaseProviderMetadataTest {
       assert providerMetadata.getLinkedServices().contains(toTest.getId());
    }
 
+   // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)
    @Test
-   public void testOfType() {
-      assertEquals(Iterables.getOnlyElement(Providers.ofType(expectedType)), toTest);
-
-      for (String type : Sets.difference(allTypes, ImmutableSet.of(expectedType)))
-         assertEquals(Iterables.size(Providers.ofType(type)), 0);
+   public void testOfTypeContains() {
+      assert ImmutableSet.of(Providers.ofType(expectedType)).contains(toTest);
    }
 
    @Test
-   public void testAll() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.all();
-
-      for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals(toTest, providerMetadata);
-      }
+   public void testAllContains() {
+      assert ImmutableSet.of(Providers.all()).contains(toTest);
    }
 
    @Test

@@ -16,25 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.elb;
+package org.jclouds.aws.simpledb;
 
-import org.jclouds.rest.Providers;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
-
 /**
+ * The AWSSimpleDBProviderTest tests the org.jclouds.providers.AWSSimpleDBProvider class.
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
-   
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "aws-elb") : providers;
-   }
+@Test(groups = "unit", testName = "AWSSimpleDBProviderTest")
+public class AWSSimpleDBProviderTest extends BaseProviderMetadataTest {
 
+   public AWSSimpleDBProviderTest() {
+      super(new AWSSimpleDBProviderMetadata(), ProviderMetadata.TABLE_TYPE);
+   }
 }
