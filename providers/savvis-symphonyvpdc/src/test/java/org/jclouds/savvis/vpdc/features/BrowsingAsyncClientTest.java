@@ -49,7 +49,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       Method method = BrowsingAsyncClient.class.getMethod("getOrg", String.class);
       HttpRequest request = processor.createRequest(method, "11");
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -64,7 +64,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       Method method = BrowsingAsyncClient.class.getMethod("getOrg", String.class);
       HttpRequest request = processor.createRequest(method, (String) null);
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -79,7 +79,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       Method method = BrowsingAsyncClient.class.getMethod("getVDCInOrg", String.class, String.class);
       HttpRequest request = processor.createRequest(method, "11", "22");
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -94,7 +94,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       Method method = BrowsingAsyncClient.class.getMethod("getVDCInOrg", String.class, String.class);
       HttpRequest request = processor.createRequest(method, (String) null, "22");
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/1/vdc/22 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -110,7 +110,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       HttpRequest request = processor.createRequest(method, "11", "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/network/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/network/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -126,7 +126,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/network/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/1/vdc/22/network/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -143,7 +143,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       HttpRequest request = processor.createRequest(method, "11", "22", "33");
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -157,10 +157,10 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
    public void testVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BrowsingAsyncClient.class.getMethod("getVM", URI.class, GetVMOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -178,7 +178,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
                .withPowerState());
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/VM-Tier01/withpowerstate HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/VM-Tier01/withpowerstate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -195,7 +195,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       HttpRequest request = processor.createRequest(method, (String) null, "22", "VM-Tier01");
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1/vdc/22/vApp/VM-Tier01 HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/1/vdc/22/vApp/VM-Tier01 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -210,7 +210,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       Method method = BrowsingAsyncClient.class.getMethod("getTask", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/task/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -226,7 +226,7 @@ public class BrowsingAsyncClientTest extends BaseVPDCAsyncClientTest<BrowsingAsy
       HttpRequest request = processor.createRequest(method, "11", "22");
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/FirewallService HTTP/1.1");
+               "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
