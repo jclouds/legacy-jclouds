@@ -18,6 +18,8 @@
  */
 package org.jclouds.savvis.vpdc.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import javax.inject.Singleton;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 
+import com.google.common.collect.Iterables;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -33,23 +36,29 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class BindVMSpecToXmlPayload extends BaseBindVMSpecToXmlPayload<VMSpec> {
+public class BindVMSpecsToXmlPayload extends BaseBindVMSpecToXmlPayload<Iterable<VMSpec>> {
 
-   protected VMSpec findSpecInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   @SuppressWarnings("unchecked")
+   protected Iterable<VMSpec> findSpecInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof VMSpec) {
-            return VMSpec.class.cast(arg);
+         if (arg instanceof Iterable<?>) {
+            Iterable<VMSpec> specs = (Iterable<VMSpec>) arg;
+            checkArgument(Iterables.size(specs) > 0,
+                     "At least one VMSpec must be included in the argument list");
+            return specs;
          }
       }
       throw new IllegalArgumentException("Iterbable<VMSpec> must be included in the argument list");
    }
 
    @Override
-   protected void bindSpec(VMSpec spec, XMLBuilder rootBuilder) throws ParserConfigurationException,
-            FactoryConfigurationError {
-      checkSpec(spec);
-      rootBuilder.a("name", spec.getName()).a("type", "application/vnd.vmware.vcloud.vApp+xml").a("href", "");
-      addOperatingSystemAndVirtualHardware(spec, rootBuilder);
+   protected void bindSpec(Iterable<VMSpec> specs, XMLBuilder rootBuilder) throws ParserConfigurationException, FactoryConfigurationError {
+      rootBuilder.a("name", "");
+      XMLBuilder specBuilder = buildChildren(rootBuilder);
+      for (VMSpec spec : specs) {
+         checkSpec(spec);
+         XMLBuilder vAppBuilder = buildRootForName(specBuilder, spec.getName());
+         addOperatingSystemAndVirtualHardware(spec, vAppBuilder);
+      }
    }
-
 }

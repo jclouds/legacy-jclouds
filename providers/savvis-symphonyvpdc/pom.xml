@@ -53,11 +53,11 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>node-924</jclouds.compute.blacklist-nodes>
-        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/rest/api</test.savvis-symphonyvpdc.endpoint>
-        <test.savvis-symphonyvpdc.apiversion>0.8</test.savvis-symphonyvpdc.apiversion>
+        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
+        <test.savvis-symphonyvpdc.apiversion>1.0</test.savvis-symphonyvpdc.apiversion>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
-        <test.savvis-symphonyvpdc.vpdc-email>FIXME</test.savvis-symphonyvpdc.vpdc-email>
+        <test.savvis-symphonyvpdc.vdc-email>FIXME</test.savvis-symphonyvpdc.vdc-email>
         <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
         <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>
     </properties>
@@ -144,7 +144,7 @@
                                             <value>${test.savvis-symphonyvpdc.credential}</value>
                                         </property>
                                         <property>
-                                            <name>savvis-symphonyvpdc.vpdc-email</name>
+                                            <name>test.savvis-symphonyvpdc.vdc-email</name>
                                             <value>${test.savvis-symphonyvpdc.vdc-email}</value>
                                         </property>
                                         <property>
