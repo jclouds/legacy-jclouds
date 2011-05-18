@@ -32,6 +32,8 @@
     <artifactId>aws-common</artifactId>
     <name>jclouds Amazon AWS Components Core</name>
     <description>jclouds Core components to access Amazon AWS</description>
+    <packaging>bundle</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -46,5 +48,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration> 
+                    <instructions>      
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.aws.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>     
+                </configuration>
+            </plugin>   
+        </plugins>
+    </build>
 
 </project>

@@ -33,6 +33,7 @@
     <artifactId>elastichosts-sat-p</artifactId>
     <name>jclouds ElasticHosts Peer1 San Antonio provider</name>
     <description>ElasticHosts implementation targeted to Peer1 San Antonio</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.elastichosts-sat-p.endpoint>https://api.sat-p.elastichosts.com</test.elastichosts-sat-p.endpoint>
@@ -136,6 +137,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.elastichosts.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

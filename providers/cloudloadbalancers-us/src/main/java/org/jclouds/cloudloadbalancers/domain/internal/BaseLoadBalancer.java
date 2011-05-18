@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudloadbalancers.domain.internal;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
@@ -50,7 +49,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    public static class Builder<N extends BaseNode<N>, T extends BaseLoadBalancer<N, T>> {
       protected String name;
       protected String protocol;
-      protected int port = -1;
+      protected Integer port;
       protected String algorithm;
       protected Set<N> nodes = Sets.newLinkedHashSet();
 
@@ -64,7 +63,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
          return this;
       }
 
-      public Builder<N, T> port(int port) {
+      public Builder<N, T> port(Integer port) {
          this.port = port;
          return this;
       }
@@ -103,17 +102,16 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
 
    protected String name;
    protected String protocol;
-   protected int port;
+   protected Integer port;
    protected String algorithm;
    // so tests will come out consistently
    protected SortedSet<N> nodes = ImmutableSortedSet.of();
 
-   public BaseLoadBalancer(String name, String protocol, int port, String algorithm, Iterable<N> nodes) {
+   public BaseLoadBalancer(String name, String protocol, Integer port, String algorithm, Iterable<N> nodes) {
       this.name = checkNotNull(name, "name");
-      this.protocol = checkNotNull(protocol, "protocol");
-      checkArgument(port != -1, "port must be specified");
-      this.port = port;
-      this.algorithm = algorithm;
+      this.protocol = protocol;// null on deleted LB
+      this.port = port;// null on deleted LB
+      this.algorithm = algorithm;// null on deleted LB
       this.nodes = ImmutableSortedSet.copyOf(checkNotNull(nodes, "nodes"));
    }
 
@@ -130,7 +128,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       return protocol;
    }
 
-   public int getPort() {
+   public Integer getPort() {
       return port;
    }
 
@@ -144,8 +142,8 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
+      final Integer prime = 31;
+      Integer result = 1;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }

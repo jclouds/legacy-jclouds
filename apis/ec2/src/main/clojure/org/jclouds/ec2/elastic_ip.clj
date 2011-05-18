@@ -22,12 +22,12 @@
      :doc "A clojure binding for the jclouds AWS elastic IP address interface."}
   org.jclouds.ec2.elastic-ip
   (:require (org.jclouds [compute :as compute])
-    [org.jclouds.aws.ebs :as ebs])
+    [org.jclouds.ec2.ebs :as ebs])
   (:use (clojure.contrib def core))
   (:import org.jclouds.compute.domain.NodeMetadata
-    (org.jclouds.aws.ec2.domain PublicIpInstanceIdPair)))
+    (org.jclouds.ec2.domain PublicIpInstanceIdPair)))
 
-(defn #^org.jclouds.aws.ec2.services.ElasticIPAddressClient
+(defn #^org.jclouds.ec2.services.ElasticIPAddressClient
   eip-service
   "Returns the synchronous ElasticIPAddressClient associated with
    the specified compute service, or compute/*compute* as bound by with-compute-service."

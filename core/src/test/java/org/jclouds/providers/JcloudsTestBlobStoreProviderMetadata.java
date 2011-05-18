@@ -21,14 +21,14 @@ package org.jclouds.providers;
 import java.net.URI;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for testing.
- *
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestBlobStoreProviderMetadata implements ProviderMetadata {
+public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getId()}
+    * {@inheritDoc}
     */
    @Override
    public String getId() {
@@ -36,7 +36,7 @@ public class JcloudsTestBlobStoreProviderMetadata implements ProviderMetadata {
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getType()}
+    * {@inheritDoc}
     */
    @Override
    public String getType() {
@@ -44,7 +44,7 @@ public class JcloudsTestBlobStoreProviderMetadata implements ProviderMetadata {
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getName()}
+    * {@inheritDoc}
     */
    @Override
    public String getName() {
@@ -52,7 +52,23 @@ public class JcloudsTestBlobStoreProviderMetadata implements ProviderMetadata {
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
+    * {@inheritDoc}
+    */
+   @Override
+   public String getCredentialName() {
+      return "user";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getIdentityName() {
+      return "password";
+   }
+
+   /**
+    * {@inheritDoc}
     */
    @Override
    public URI getHomepage() {
@@ -60,11 +76,19 @@ public class JcloudsTestBlobStoreProviderMetadata implements ProviderMetadata {
    }
 
    /**
-    * {@ see org.jclouds.types.ProviderMetadata#getConsole()}
+    * {@inheritDoc}
     */
    @Override
    public URI getConsole() {
       return URI.create("http://jclouds.org/console");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getApiDocumentation() {
+      return URI.create("http://jclouds.org/documentation");
    }
 
 }

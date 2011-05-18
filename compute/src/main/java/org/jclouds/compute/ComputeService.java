@@ -319,4 +319,40 @@ public interface ComputeService {
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException;
 
+   /**
+    * Run the script on a specific node
+    * 
+    * @param id
+    *           node the script is to be executed on
+    * @param runScript
+    *           statement containing the script to run
+    * @param options
+    *           nullable options to how to run the script, whether to override credentials
+    * @return map with node identifiers and corresponding responses
+    * @throws NoSuchElementException
+    *            if the node is not found
+    * @throws IllegalStateException
+    *            if the node is not in running state
+    * 
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.scriptbuilder.domain.Statements
+    */
+   ExecResponse runScriptOnNode(String id, Statement runScript, RunScriptOptions options);
+
+   /**
+    * @see #runScriptOnNode(String, Statement, RunScriptOptions)
+    */
+   ExecResponse runScriptOnNode(String id, Statement runScript);
+   
+   /**
+    * @see #runScriptOnNode(String, Statement, RunScriptOptions)
+    * @see org.jclouds.scriptbuilder.domain.Statements#exec
+    */
+   ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options);
+   
+   /**
+    * @see #runScriptOnNode(String, String, RunScriptOptions)
+    */
+   ExecResponse runScriptOnNode(String id, String runScript);
+
 }

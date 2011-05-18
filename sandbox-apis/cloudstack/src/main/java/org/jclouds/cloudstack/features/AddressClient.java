@@ -62,7 +62,7 @@ public interface AddressClient {
     *           the ID of the availability zone you want to acquire an public IP address from
     * @return IPAddress
     */
-   AsyncCreateResponse associateIPAddress(long zoneId, AssociateIPAddressOptions... options);
+   AsyncCreateResponse associateIPAddressInZone(long zoneId, AssociateIPAddressOptions... options);
 
    /**
     * Disassociates an ip address from the account.

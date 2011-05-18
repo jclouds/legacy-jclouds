@@ -34,6 +34,7 @@
     <artifactId>cloudsigma-zrh</artifactId>
     <name>jclouds CloudSigma provider</name>
     <description>ComputeService binding to the CloudSigma datacenter in Zürich</description>
+    <packaging>bundle</packaging>
     
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
@@ -134,4 +135,21 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.cloudsigma.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

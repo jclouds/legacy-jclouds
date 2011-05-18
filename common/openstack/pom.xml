@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,10 +28,13 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
+
     <groupId>org.jclouds.common</groupId>
     <artifactId>openstack-common</artifactId>
-    <name>jclouds Rackspace Components Core</name>
-    <description>jclouds Core components to access Rackspace apis</description>
+    <name>jclouds OpenStack Components Core</name>
+    <description>jclouds Core components to access OpenStack apis</description>
+    <packaging>bundle</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -46,5 +49,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.openstack.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

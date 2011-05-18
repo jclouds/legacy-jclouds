@@ -33,6 +33,7 @@
     <artifactId>cloudfiles-us</artifactId>
     <name>jclouds CloudFiles US provider</name>
     <description>CloudFiles implementation targeted to Rackspace US</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUSTestInitializer</test.initializer>
@@ -146,6 +147,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.rackspace.cloudfiles.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

@@ -33,6 +33,7 @@
     <artifactId>cloudservers-us</artifactId>
     <name>jclouds CloudServers US provider</name>
     <description>CloudServers implementation targeted to Rackspace US</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.cloudservers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudservers-us.endpoint>
@@ -141,6 +142,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.rackspace.cloudservers.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

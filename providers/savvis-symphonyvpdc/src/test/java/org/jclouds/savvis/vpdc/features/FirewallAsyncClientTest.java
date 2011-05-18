@@ -40,38 +40,44 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public class FirewallAsyncClientTest extends BaseVPDCAsyncClientTest<FirewallAsyncClient> {
 
-	public void testAddFirewallRule() throws NoSuchMethodException, IOException{
-		Method method = FirewallAsyncClient.class.getMethod("addFirewallRule", String.class, String.class, FirewallRule.class);
-		HttpRequest request = processor.createRequest(method, "11", "22", FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
-			  	.destination("VM Tier01").port("22").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
+   public void testAddFirewallRule() throws NoSuchMethodException, IOException {
+      Method method = FirewallAsyncClient.class.getMethod("addFirewallRule", String.class, String.class,
+               FirewallRule.class);
+      HttpRequest request = processor.createRequest(method, "11", "22", FirewallRule.builder().firewallType(
+               "SERVER_TIER_FIREWALL").isEnabled(true).source("internet").destination("VM Tier01").port("22").protocol(
+               "Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
 
-		assertRequestLineEquals(request, "PUT https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
-		assertNonPayloadHeadersEqual(request, "");
-		assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/firewallService-default.xml")),
-	               "application/xml", false);
+      assertRequestLineEquals(request,
+               "PUT https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/firewallService-default.xml")), "application/xml", false);
 
-		assertResponseParserClassEquals(method, request, ParseSax.class);
-		assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
 
-		checkFilters(request);
-	}
-	
-	public void testDeleteFirewallRule() throws NoSuchMethodException, IOException{
-		Method method = FirewallAsyncClient.class.getMethod("deleteFirewallRule", String.class, String.class, FirewallRule.class);
-		HttpRequest request = processor.createRequest(method, "11", "22", FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
-			  	.destination("VM Tier01").port("22").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
+      checkFilters(request);
+   }
 
-		assertRequestLineEquals(request, "DELETE https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
-		assertNonPayloadHeadersEqual(request, "");
-		assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/firewallService-default.xml")),
-	               "application/xml", false);
+   public void testDeleteFirewallRule() throws NoSuchMethodException, IOException {
+      Method method = FirewallAsyncClient.class.getMethod("deleteFirewallRule", String.class, String.class,
+               FirewallRule.class);
+      HttpRequest request = processor.createRequest(method, "11", "22", FirewallRule.builder().firewallType(
+               "SERVER_TIER_FIREWALL").isEnabled(true).source("internet").destination("VM Tier01").port("22").protocol(
+               "Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
 
-		assertResponseParserClassEquals(method, request, ParseSax.class);
-		assertSaxResponseParserClassEquals(method, TaskHandler.class);
-		assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertRequestLineEquals(request,
+               "DELETE https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/firewallService-default.xml")), "application/xml", false);
 
-		checkFilters(request);
-	}
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<FirewallAsyncClient>> createTypeLiteral() {

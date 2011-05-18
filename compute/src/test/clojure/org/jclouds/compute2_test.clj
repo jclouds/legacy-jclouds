@@ -20,10 +20,19 @@
 (ns org.jclouds.compute2-test
   (:use [org.jclouds.compute2] :reload-all)
   (:use clojure.test)
+  (:require [org.jclouds.ssh-test :as ssh-test])
   (:import
-   org.jclouds.compute.domain.OsFamily
-   clojure.contrib.condition.Condition))
-
+    org.jclouds.compute.domain.OsFamily
+    clojure.contrib.condition.Condition
+    java.net.InetAddress
+    org.jclouds.scriptbuilder.domain.Statements
+    org.jclouds.compute.options.TemplateOptions
+    org.jclouds.compute.options.TemplateOptions$Builder
+    org.jclouds.compute.options.RunScriptOptions
+    org.jclouds.compute.options.RunScriptOptions$Builder
+    org.jclouds.domain.Credentials
+    java.util.NoSuchElementException
+    ))
 
 (defmacro with-private-vars [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context.  From users mailing
@@ -34,15 +43,15 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest os-families-test
   (is (some #{"centos"} (map str (os-families)))))
 
+(def *compute* (compute-service "stub" "" "" :extensions [(ssh-test/ssh-test-client ssh-test/no-op-ssh-client)]))
+
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
   [compute-service]
   (fn [f]
     (doseq [node (nodes compute-service)]
-      (destroy-node (.getId node)))
+      (destroy-node compute-service (.getId node)))
     (f)))
-
-(def *compute* (compute-service "stub" "" ""))
 
 (use-fixtures :each (clean-stub-fixture *compute*))
 
@@ -54,33 +63,63 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? *compute*))
   (is (compute-service? (compute-service (compute-context *compute*)))))
 
-(defn in-group [group] #(= (.getGroup %) group))
+(defn in-group? [group] #(= (.getGroup %) group))
 
 (deftest nodes-test
-  (is (empty? (nodes *compute*)))
   (is (create-node *compute* "fred" (build-template *compute* {} )))
-  (is (= 1 (count (nodes *compute*))))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))
   ;; pass in a function that selects node metadata based on NodeMetadata field
-  (is (= 1 (count (nodes-with-details-matching *compute* (in-group "fred")))))
+  (is (= 1 (count (nodes-with-details-matching *compute* (in-group? "fred")))))
   ;; or make your query inline
   (is (= 1 (count (nodes-with-details-matching *compute* #(= (.getGroup %) "fred")))))
   ;; or get real fancy, and use the underlying Predicate object jclouds uses
   (is (= 1 (count (nodes-with-details-matching *compute*
     (reify com.google.common.base.Predicate
       (apply [this input] (= (.getGroup input) "fred")))))))
-  (is (= 0 (count (nodes-with-details-matching *compute* (in-group "othergroup")))))
-  (suspend-nodes-matching *compute* (in-group "fred"))
-  (is (suspended? (first (nodes-with-details-matching *compute* (in-group "fred")))))
-  (resume-nodes-matching *compute* (in-group "fred"))
+  (is (= 0 (count (nodes-with-details-matching *compute* (in-group? "othergroup")))))
+  (suspend-nodes-matching *compute* (in-group? "fred"))
+  (is (suspended? (first (nodes-with-details-matching *compute* (in-group? "fred")))))
+  (resume-nodes-matching *compute* (in-group? "fred"))
   (is (running? (first (nodes-in-group *compute* "fred"))))
-  (reboot-nodes-matching *compute* (in-group "fred"))
+  (reboot-nodes-matching *compute* (in-group? "fred"))
   (is (running? (first (nodes-in-group *compute* "fred"))))
   (is (create-nodes *compute* "fred" 2 (build-template *compute* {} )))
   (is (= 3 (count (nodes-in-group *compute* "fred"))))
   (is (= "fred" (group (first (nodes *compute*)))))
-  (destroy-nodes-matching *compute* (in-group "fred"))
+  (destroy-nodes-matching *compute* (in-group? "fred"))
   (is (terminated? (first (nodes-in-group *compute* "fred")))))
+
+(defn localhost? [node]
+  "Returns true if the localhost address is in the node's private ips"
+  (seq? (some #(= (InetAddress/getLocalHost) %) (private-ips node))))
+
+(deftest compound-predicate-test
+  (is (create-node *compute* "my-group" (build-template *compute* {})))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (suspended? %) (not (localhost? %)))))))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (suspended? %) (localhost? %))))))
+  (is (= 0 (count (nodes-with-details-matching *compute* #(and (running? %) (localhost? %))))))
+  (is (= 1 (count (nodes-with-details-matching *compute* #(and (running? %) (not (localhost? %))))))))
+
+(deftest run-script-on-nodes-matching-with-options-test
+  (let [echo (Statements/exec "echo hello")
+        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+                        (runAsRoot false)
+                        (wrapInInitScript false))
+        pred #(= (.getGroup %) "scriptednode")]
+    (is (create-node *compute* "scriptednode" (build-template *compute* {})))
+    (is (run-script-on-nodes-matching *compute* pred echo script-options))
+    (is (thrown? NoSuchElementException
+      (run-script-on-nodes-matching *compute* #(= (.getGroup %) "nonexistingnode") echo script-options)))))
+
+(deftest run-script-on-node-with-options-test
+  (let [echo (Statements/exec "echo hello")
+        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+                        (runAsRoot false)
+                        (wrapInInitScript false))
+        test_node (create-node *compute* "scriptednode" (build-template *compute* {}))]
+    (is (run-script-on-node *compute* (id test_node) echo script-options))
+    (is (thrown? NoSuchElementException
+      (run-script-on-node *compute* "nonexistingnode" echo script-options)))))
 
 (deftest build-template-test
   (let [service (compute-service "stub" "user" "password")]

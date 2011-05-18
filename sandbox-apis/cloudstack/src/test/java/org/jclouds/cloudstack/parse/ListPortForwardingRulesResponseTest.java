@@ -21,6 +21,8 @@ package org.jclouds.cloudstack.parse;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -33,16 +35,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListPortForwardingRulesResponseTest extends BaseSetParserTest<PortForwardingRule> {
 
    @Override
-   public Class<PortForwardingRule> type() {
-      return PortForwardingRule.class;
-   }
-
-   @Override
    public String resource() {
       return "/listportforwardingrulesresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<PortForwardingRule> expected() {
       return ImmutableSet.<PortForwardingRule> of(
             PortForwardingRule.builder().id(15).privatePort(22).protocol("tcp").publicPort(2022).virtualMachineId(3)

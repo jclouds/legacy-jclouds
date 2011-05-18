@@ -33,6 +33,7 @@
     <artifactId>ninefold-storage</artifactId>
     <name>jclouds ninefold storage provider</name>
     <description>BlobStore implementation targeted to ninefold storage</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageTestInitializer</test.initializer>
@@ -139,6 +140,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.ninefold.storage.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

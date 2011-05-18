@@ -53,7 +53,7 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssociateDisassociatePublicIPAddress() throws Exception {
       if (!networksEnabled)
          return;
-      AsyncCreateResponse job = client.getAddressClient().associateIPAddress(
+      AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(
                Iterables.get(client.getNetworkClient().listNetworks(), 0).getZoneId());
       checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
       ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();

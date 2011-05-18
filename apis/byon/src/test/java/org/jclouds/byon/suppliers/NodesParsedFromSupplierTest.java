@@ -18,7 +18,7 @@
  */
 package org.jclouds.byon.suppliers;
 
-import org.jclouds.byon.functions.NodesFromYaml;
+import org.jclouds.byon.functions.NodesFromYamlStream;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -33,7 +33,7 @@ public class NodesParsedFromSupplierTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testMustParseSomething() throws Exception {
 
-      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYaml()).get();
+      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYamlStream()).get();
 
    }
 }

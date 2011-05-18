@@ -30,6 +30,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
@@ -44,12 +45,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -160,8 +161,8 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
+      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
+               new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -182,7 +183,7 @@ public abstract class BaseComputeServiceLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA",
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+                  ImmutableSet.<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -207,7 +208,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
       client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
-            .family(OsFamily.UBUNTU).description("ffoo").build()));
+               .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
@@ -231,17 +232,22 @@ public abstract class BaseComputeServiceLiveTest {
          OperatingSystem os = get(nodes, 0).getOperatingSystem();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
-                  good.identity, "romeo"));
+                     good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-               runningInGroup(group), Statements.exec("echo hello"),
-               overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
+                  runningInGroup(group), Statements.exec("echo hello"),
+                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-                  + response.getValue();
+                     + response.getValue();
+            
+         // test single-node execution
+         ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
+                  .runAsRoot(false));
+         assert response.getOutput().trim().equals("hello") : get(nodes, 0).getId() + ": " + response;
 
          runScriptWithCreds(group, os, good);
 
@@ -298,7 +304,8 @@ public abstract class BaseComputeServiceLiveTest {
       // template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
       // .runScript(buildScript(template.getImage().getOperatingSystem()));
       template.getOptions().runScript(
-            Statements.newStatementList(AdminAccess.standard(), buildScript(template.getImage().getOperatingSystem())));
+               Statements.newStatementList(AdminAccess.standard(),
+                        buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -309,8 +316,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(),
-                     node.getOperatingSystem());
+                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+                           .getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -342,10 +349,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
-         Credentials creds) throws RunScriptOnNodesException {
+            Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-               .nameTask("runScriptWithCreds"));
+                  .nameTask("runScriptWithCreds"));
       } catch (SshException e) {
          throw e;
       }
@@ -375,16 +382,16 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(
-            filter(client.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
-            new Function<NodeMetadata, String>() {
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
+               .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
+               new Function<NodeMetadata, String>() {
 
-               @Override
-               public String apply(NodeMetadata from) {
-                  return from.getId();
-               }
+                  @Override
+                  public String apply(NodeMetadata from) {
+                     return from.getId();
+                  }
 
-            }));
+               }));
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
@@ -403,7 +410,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-            metadataSet, nodes);
+               metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -491,12 +498,12 @@ public abstract class BaseComputeServiceLiveTest {
       }
 
       template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
-            .build();
+               .build();
 
       // note this is a dependency on the template resolution
       template.getOptions().runScript(
-            RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-                  .getOperatingSystem()));
+               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+                        .getOperatingSystem()));
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, template));
 
@@ -530,26 +537,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-         case PROVIDER:
-            assertProvider(location);
-            break;
-         case REGION:
-            assertProvider(location.getParent());
-            break;
-         case ZONE:
-            Location provider = location.getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider == null)
-               provider = location.getParent();
-            assertProvider(provider);
-            break;
-         case HOST:
-            Location provider2 = location.getParent().getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider2 == null)
-               provider2 = location.getParent().getParent();
-            assertProvider(provider2);
-            break;
+            case PROVIDER:
+               assertProvider(location);
+               break;
+            case REGION:
+               assertProvider(location.getParent());
+               break;
+            case ZONE:
+               Location provider = location.getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getParent().getParent();
+               assertProvider(provider2);
+               break;
          }
       }
    }
@@ -582,10 +589,10 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListSizes() throws Exception {
       for (Hardware hardware : client.listHardwareProfiles()) {
-         assert hardware.getProviderId() != null;
-         assert getCores(hardware) > 0;
-         assert hardware.getVolumes().size() >= 0;
-         assert hardware.getRam() > 0;
+         assert hardware.getProviderId() != null : hardware;
+         assert getCores(hardware) > 0 : hardware;
+         assert hardware.getVolumes().size() >= 0 : hardware;
+         assert hardware.getRam() > 0 : hardware;
          assertEquals(hardware.getType(), ComputeType.HARDWARE);
       }
    }
@@ -637,7 +644,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
          assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
-               + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
+                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();

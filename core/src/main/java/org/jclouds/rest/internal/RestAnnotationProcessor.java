@@ -82,6 +82,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -743,34 +744,7 @@ public class RestAnnotationProcessor<T> {
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureHttpResponseLiteral)) {
             return Key.get((Class) IdentityFunction.class);
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
-            Type returnVal;
-            if (method.getReturnType().getTypeParameters().length == 0) {
-               returnVal = method.getReturnType();
-            } else if (method.getReturnType().equals(ListenableFuture.class)) {
-               ParameterizedType futureType = ((ParameterizedType) method.getGenericReturnType());
-               returnVal = futureType.getActualTypeArguments()[0];
-               if (returnVal instanceof WildcardType)
-                  returnVal = WildcardType.class.cast(returnVal).getUpperBounds()[0];
-            } else {
-               returnVal = method.getGenericReturnType();
-            }
-            ParameterizedType parserType;
-            if (method.isAnnotationPresent(Unwrap.class)) {
-               int depth = method.getAnnotation(Unwrap.class).depth();
-               Class edgeCollection = method.getAnnotation(Unwrap.class).edgeCollection();
-               if (depth == 1 && edgeCollection == Map.class)
-                  parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
-               else if (depth == 2 && edgeCollection == Map.class)
-                  parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
-               else if (depth == 3 && edgeCollection == Set.class)
-                  parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValueInSet.class, returnVal);
-               else
-                  throw new IllegalStateException(String.format(
-                           "depth(%d) edgeCollection(%s) not yet supported for @Unwrap", depth, edgeCollection));
-            } else {
-               parserType = Types.newParameterizedType(ParseJson.class, returnVal);
-            }
-            return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
+            return getJsonParserKeyForMethod(method);
          } else if (method.getReturnType().equals(String.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
             return Key.get(ReturnStringIf2xx.class);
@@ -782,6 +756,49 @@ public class RestAnnotationProcessor<T> {
          }
       }
       return Key.get(annotation.value());
+   }
+
+   public static Key<? extends Function<HttpResponse, ?>> getJsonParserKeyForMethod(Method method) {
+      Type returnVal = getReturnTypeForMethod(method);
+      return getJsonParserKeyForMethodAnType(method, returnVal);
+   }
+
+   public static Type getReturnTypeForMethod(Method method) {
+      Type returnVal;
+      if (method.getReturnType().getTypeParameters().length == 0) {
+         returnVal = method.getReturnType();
+      } else if (method.getReturnType().equals(ListenableFuture.class)) {
+         ParameterizedType futureType = ((ParameterizedType) method.getGenericReturnType());
+         returnVal = futureType.getActualTypeArguments()[0];
+         if (returnVal instanceof WildcardType)
+            returnVal = WildcardType.class.cast(returnVal).getUpperBounds()[0];
+      } else {
+         returnVal = method.getGenericReturnType();
+      }
+      return returnVal;
+   }
+
+   @SuppressWarnings( { "unchecked", "rawtypes" })
+   public static Key<? extends Function<HttpResponse, ?>> getJsonParserKeyForMethodAnType(Method method, Type returnVal) {
+      ParameterizedType parserType;
+      if (method.isAnnotationPresent(Unwrap.class)) {
+         int depth = method.getAnnotation(Unwrap.class).depth();
+         Class edgeCollection = method.getAnnotation(Unwrap.class).edgeCollection();
+         if (depth == 1 && edgeCollection == Map.class)
+            parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
+         else if (depth == 2 && edgeCollection == Map.class)
+            parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
+         else if (depth == 2 && edgeCollection == Set.class)
+            parserType = Types.newParameterizedType(UnwrapOnlyJsonValueInSet.class, returnVal);
+         else if (depth == 3 && edgeCollection == Set.class)
+            parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValueInSet.class, returnVal);
+         else
+            throw new IllegalStateException(String.format("depth(%d) edgeCollection(%s) not yet supported for @Unwrap",
+                     depth, edgeCollection));
+      } else {
+         parserType = Types.newParameterizedType(ParseJson.class, returnVal);
+      }
+      return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
    }
 
    public static Class<? extends HandlerWithResult<?>> getSaxResponseParserClassOrNull(Method method) {

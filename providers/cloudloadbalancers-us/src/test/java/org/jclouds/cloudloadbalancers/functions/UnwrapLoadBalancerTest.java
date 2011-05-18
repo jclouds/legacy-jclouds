@@ -40,11 +40,6 @@ import com.google.inject.Injector;
 public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
-   public Class<LoadBalancer> type() {
-      return LoadBalancer.class;
-   }
-
-   @Override
    public String resource() {
       return "/getloadbalancer.json";
    }
@@ -73,7 +68,7 @@ public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
    }
 
    @Override
-   protected Function<HttpResponse, LoadBalancer> getParser(Injector i) {
+   protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
       return i.getInstance(UnwrapLoadBalancer.class).setRegion("DFW");
    }
 }

@@ -144,15 +144,20 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             runScriptAndService(client1, 1);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
-                  client2).times(3);
+                  client2).times(4);
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
                   new SshException("Auth fail"));
 
-            // run script without backgrounding
+            // run script without backgrounding (via predicate)
             client2.connect();
             expect(client2.exec("echo hello\n")).andReturn(new ExecResponse("hello\n", "", 0));
             client2.disconnect();
-
+            
+            // run script without backgrounding (via id)
+            client2.connect();
+            expect(client2.exec("echo hello\n")).andReturn(new ExecResponse("hello\n", "", 0));
+            client2.disconnect();
+            
             client2.connect();
             try {
                runScript(client2, "runScriptWithCreds",

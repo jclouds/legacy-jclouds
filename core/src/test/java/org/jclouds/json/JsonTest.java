@@ -37,6 +37,52 @@ import com.google.inject.TypeLiteral;
 public class JsonTest {
    private Json json = Guice.createInjector(new GsonModule()).getInstance(Json.class);
 
+   private static class ObjectNoDefaultConstructor {
+      private final String stringValue;
+      private final int intValue;
+
+      public ObjectNoDefaultConstructor(String stringValue, int intValue) {
+         this.stringValue = stringValue;
+         this.intValue = intValue;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + intValue;
+         result = prime * result + ((stringValue == null) ? 0 : stringValue.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         ObjectNoDefaultConstructor other = (ObjectNoDefaultConstructor) obj;
+         if (intValue != other.intValue)
+            return false;
+         if (stringValue == null) {
+            if (other.stringValue != null)
+               return false;
+         } else if (!stringValue.equals(other.stringValue))
+            return false;
+         return true;
+      }
+   }
+
+   public void testObjectNoDefaultConstructor() {
+      ObjectNoDefaultConstructor obj = new ObjectNoDefaultConstructor("foo", 1);
+      assertEquals(json.toJson(obj), "{\"stringValue\":\"foo\",\"intValue\":1}");
+      ObjectNoDefaultConstructor obj2 = json.fromJson(json.toJson(obj), ObjectNoDefaultConstructor.class);
+      assertEquals(obj2, obj);
+      assertEquals(json.toJson(obj2), json.toJson(obj));
+   }
+
    private static class EnumInside {
       private static enum Test {
          FOO, BAR;
@@ -66,7 +112,7 @@ public class JsonTest {
       map.put("map", ImmutableMap.of("key", "value"));
       map.put("list", ImmutableList.of("key", "value"));
       assertEquals(json.toJson(map),
-            "{\"string\":\"string\",\"map\":{\"key\":\"value\"},\"list\":[\"key\",\"value\"],\"boolean\":true,\"number\":1}");
+               "{\"string\":\"string\",\"map\":{\"key\":\"value\"},\"list\":[\"key\",\"value\"],\"boolean\":true,\"number\":1}");
       Map<String, Object> map2 = json.fromJson(json.toJson(map), new TypeLiteral<Map<String, Object>>() {
       }.getType());
       assertEquals(map2, map);
@@ -121,12 +167,12 @@ public class JsonTest {
 
    public void testDeserializeEnumWithParser() {
       assertEquals(json.fromJson("{enumValue : \"FOO\"}", EnumInsideWithParser.class).enumValue,
-            EnumInsideWithParser.Test.FOO);
+               EnumInsideWithParser.Test.FOO);
    }
 
    public void testDeserializeEnumWithParserAndBadValue() {
       assertEquals(json.fromJson("{enumValue : \"sd\"}", EnumInsideWithParser.class).enumValue,
-            EnumInsideWithParser.Test.UNRECOGNIZED);
+               EnumInsideWithParser.Test.UNRECOGNIZED);
    }
 
 }

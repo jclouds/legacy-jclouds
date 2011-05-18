@@ -147,7 +147,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudLoadBalancersAsyncClie
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/5 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);

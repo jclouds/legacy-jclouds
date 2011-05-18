@@ -105,7 +105,7 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
       }
 
       @Override
-      public Builder port(int port) {
+      public Builder port(Integer port) {
          return Builder.class.cast(super.port(port));
       }
 

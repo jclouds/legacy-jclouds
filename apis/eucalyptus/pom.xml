@@ -33,6 +33,7 @@
     <artifactId>eucalyptus</artifactId>
     <name>jclouds Eucalyptus api</name>
     <description>EC2 implementation based on Eucalyptus</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
@@ -136,6 +137,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.eucalyptus.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

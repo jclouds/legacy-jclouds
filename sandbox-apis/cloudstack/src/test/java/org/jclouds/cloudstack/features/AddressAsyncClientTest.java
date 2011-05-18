@@ -100,8 +100,8 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
 
    }
 
-   public void testAssociateIPAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("associateIPAddress", 
+   public void testAssociateIPAddressInZone() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AddressAsyncClient.class.getMethod("associateIPAddressInZone", 
             long.class, AssociateIPAddressOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6);
 

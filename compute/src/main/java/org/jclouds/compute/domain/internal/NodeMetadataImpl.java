@@ -63,11 +63,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String group, @Nullable Hardware hardware,
+            Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
             @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
             Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
             @Nullable Credentials credentials) {
-      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
+      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
       this.group = group;
       this.hardware = hardware;
       this.imageId = imageId;
@@ -175,7 +175,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
                + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
                + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
                + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
-               + ", userMetadata=" + getUserMetadata() + "]";
+               + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";
    }
 
    @Override

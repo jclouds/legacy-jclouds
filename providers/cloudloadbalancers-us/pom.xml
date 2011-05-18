@@ -34,6 +34,7 @@
     <artifactId>cloudloadbalancers-us</artifactId>
     <name>jclouds cloudloadbalancers-us core</name>
     <description>jclouds components to access cloudloadbalancers-us</description>
+    <packaging>bundle</packaging>
     
     <properties>
         <test.cloudloadbalancers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers-us.endpoint>
@@ -122,4 +123,20 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.rackspace.cloudloadbalancers.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

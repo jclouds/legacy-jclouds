@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@
     <groupId>org.jclouds.driver</groupId>
     <artifactId>jclouds-apachehc</artifactId>
     <name>jclouds Apache Http Components Client</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <description>Apache HttpComponents client</description>
 
     <!-- bootstrapping: need to fetch the project POM -->
@@ -71,5 +71,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.http.apachehc.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

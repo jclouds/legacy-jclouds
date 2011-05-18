@@ -167,7 +167,7 @@ public abstract class BaseTemplateBuilderLiveTest {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
 
       Template template = context.getComputeService().templateBuilder().imageId(defaultTemplate.getImage().getId())
-               .build();
+               .locationId(defaultTemplate.getLocation().getId()).build();
       assertEquals(template.getImage(), defaultTemplate.getImage());
    }
 

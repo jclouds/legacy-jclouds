@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.TrafficType;
+import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.rest.annotations.Unwrap;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -34,16 +36,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListNetworkOfferingsResponseTest extends BaseSetParserTest<NetworkOffering> {
 
    @Override
-   public Class<NetworkOffering> type() {
-      return NetworkOffering.class;
-   }
-
-   @Override
    public String resource() {
       return "/listnetworkofferingsresponse.json";
    }
 
    @Override
+   @Unwrap(depth = 2)
    public Set<NetworkOffering> expected() {
       return ImmutableSet.<NetworkOffering> of(
             NetworkOffering.builder().id(7).name("DefaultDirectNetworkOffering").displayText("Direct")

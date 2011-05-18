@@ -25,6 +25,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -53,9 +54,9 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    private final Predicate<Image> supportsImage;
 
    public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
-         Map<String, String> userMetadata, Iterable<? extends Processor> processors, int ram,
+         Map<String, String> userMetadata, Set<String> tags, Iterable<? extends Processor> processors, int ram,
          Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
-      super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata);
+      super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata, tags);
       this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
       this.ram = ram;
       this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
@@ -106,7 +107,7 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName() + ", processors="
-            + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + "]";
+            + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + ", tags=" + tags + "]";
    }
 
    /**

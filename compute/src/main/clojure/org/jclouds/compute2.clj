@@ -69,7 +69,8 @@ Here's an example of creating and running a small linux node in the group webser
     [org.jclouds.compute.domain
      Template TemplateBuilder ComputeMetadata NodeMetadata Hardware
      OsFamily Image]
-    [org.jclouds.compute.options TemplateOptions]
+    [org.jclouds.compute.options TemplateOptions RunScriptOptions
+     RunScriptOptions$Builder]
     [org.jclouds.compute.predicates
      NodePredicates]
     [com.google.common.collect ImmutableSet])
@@ -197,7 +198,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn suspend-node
   "Suspend a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.suspendNode compute id)))
 
 (defn resume-nodes-matching
@@ -208,7 +209,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn resume-node
   "Resume a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.resumeNode compute id)))
 
 (defn reboot-nodes-matching
@@ -219,7 +220,7 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn reboot-node
   "Reboot a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.rebootNode compute id)))
 
 (defn destroy-nodes-matching
@@ -230,8 +231,18 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn destroy-node
   "Destroy a node, given its id."
-  ([id #^ComputeService compute]
+  ([#^ComputeService compute id]
     (.destroyNode compute id)))
+
+(defn run-script-on-node
+  "Run a script on a node"
+  ([#^ComputeService compute id command #^RunScriptOptions options]
+    (.runScriptOnNode compute id command options)))
+
+(defn run-script-on-nodes-matching
+  "Run a script on the nodes matching the given predicate"
+  ([#^ComputeService compute pred command #^RunScriptOptions options]
+    (.runScriptOnNodesMatching compute (to-predicate pred) command options)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)

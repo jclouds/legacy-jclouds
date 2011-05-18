@@ -33,6 +33,7 @@
     <artifactId>skalicloud-sdg-my</artifactId>
     <name>jclouds SkaliCloud Malaysia provider</name>
     <description>SkaliCloud implementation targeted to Malaysia</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.skalicloud-sdg-my.endpoint>https://api.sdg-my.skalicloud.com</test.skalicloud-sdg-my.endpoint>
@@ -136,6 +137,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.skalicloud.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

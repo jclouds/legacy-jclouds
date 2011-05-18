@@ -141,7 +141,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       }
 
       @Override
-      public Builder port(int port) {
+      public Builder port(Integer port) {
          return Builder.class.cast(super.port(port));
       }
 
@@ -218,7 +218,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    private final Date updated;
    private final boolean connectionLoggingEnabled;
 
-   public LoadBalancer(String region, int id, String name, String protocol, int port, String algorithm, Status status,
+   public LoadBalancer(String region, int id, String name, String protocol, Integer port, String algorithm, Status status,
             Iterable<VirtualIP> virtualIPs, Iterable<Node> nodes, String sessionPersistenceType, String clusterName,
             Date created, Date updated, boolean connectionLoggingEnabled) {
       super(name, protocol, port, algorithm, nodes);

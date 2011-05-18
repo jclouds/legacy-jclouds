@@ -19,7 +19,6 @@
 package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -40,6 +39,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.savvis.vpdc.binders.BindCaptureVAppTemplateToXmlPayload;
 import org.jclouds.savvis.vpdc.binders.BindCloneVMToXmlPayload;
 import org.jclouds.savvis.vpdc.binders.BindVMSpecToXmlPayload;
+import org.jclouds.savvis.vpdc.binders.BindVMSpecsToXmlPayload;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
@@ -68,8 +68,7 @@ public interface VMAsyncClient {
    @MapBinder(BindVMSpecToXmlPayload.class)
    ListenableFuture<Task> addVMIntoVDC(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
-            @PathParam("vpdcId") String vpdcId, @PayloadParam("networkName") String networkTierName,
-            @PayloadParam("name") String vAppName, VMSpec spec);
+            @PathParam("vpdcId") String vpdcId, VMSpec spec);
 
    /**
     * @see VMClient#addVMIntoVDC
@@ -78,8 +77,18 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @Path("vApp/")
    @MapBinder(BindVMSpecToXmlPayload.class)
-   ListenableFuture<Task> addVMIntoVDC(@EndpointParam URI vpdc, @PayloadParam("networkName") String networkTierName,
-            @PayloadParam("name") String vAppName, VMSpec spec);
+   ListenableFuture<Task> addVMIntoVDC(@EndpointParam URI vpdc, VMSpec spec);
+
+   /**
+    * @see VMClient#addMultipleVMsIntoVDC
+    */
+   @GET
+   @XMLResponseParser(TasksListHandler.class)
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/vApp/")
+   @MapBinder(BindVMSpecsToXmlPayload.class)
+   ListenableFuture<Set<Task>> addMultipleVMsIntoVDC(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, Iterable<VMSpec> vmSpecs);
    
    /**
     * @see VMClient#addMultipleVMsIntoVDC
@@ -87,8 +96,8 @@ public interface VMAsyncClient {
    @GET
    @XMLResponseParser(TasksListHandler.class)
    @Path("vApp/")
-   @MapBinder(BindVMSpecToXmlPayload.class)
-   ListenableFuture<Set<Task>> addMultipleVMsIntoVDC(@EndpointParam URI vpdc, List<VMSpec> vmSpecs);
+   @MapBinder(BindVMSpecsToXmlPayload.class)
+   ListenableFuture<Set<Task>> addMultipleVMsIntoVDC(@EndpointParam URI vpdc, Iterable<VMSpec> vmSpecs);
 
    /**
     * @see VMClient#captureVApp
@@ -97,9 +106,10 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/action/captureVApp")
    @MapBinder(BindCaptureVAppTemplateToXmlPayload.class)
-   ListenableFuture<Task> captureVApp(@PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
-           @PathParam("vpdcId") String vpdcId, URI vAppUri);
-   
+   ListenableFuture<Task> captureVApp(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, URI vAppUri);
+
    /**
     * @see VMClient#cloneVApp
     */
@@ -107,9 +117,9 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @Path("action/cloneVApp")
    @MapBinder(BindCloneVMToXmlPayload.class)
-   ListenableFuture<Task> cloneVApp(@EndpointParam URI vAppUri, @PayloadParam("name") String newVAppName, 
-		   @PayloadParam("networkTierName") String networkTierName);
-   
+   ListenableFuture<Task> cloneVApp(@EndpointParam URI vAppUri, @PayloadParam("name") String newVAppName,
+            @PayloadParam("networkTierName") String networkTierName);
+
    /**
     * @see VMClient#removeVMFromVDC
     */
@@ -128,7 +138,7 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> removeVM(@EndpointParam URI vm);
-   
+
    /**
     * @see VMClient#powerOffVM
     */
@@ -137,7 +147,7 @@ public interface VMAsyncClient {
    @Path("action/powerOff")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> powerOffVM(@EndpointParam URI vm);
-   
+
    /**
     * @see VMClient#powerOnVM
     */

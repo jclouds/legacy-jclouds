@@ -33,6 +33,7 @@
     <artifactId>googlestorage</artifactId>
     <name>jclouds Google Storage for Developers provider</name>
     <description>Simple Storage Service (S3) implementation targeted to Google Storage for Developers</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.googlestorage.blobstore.GoogleStorageTestInitializer</test.initializer>
@@ -139,6 +140,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.googlestorage.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-
