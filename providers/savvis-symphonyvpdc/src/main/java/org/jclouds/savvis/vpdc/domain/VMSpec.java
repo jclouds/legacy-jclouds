@@ -40,6 +40,8 @@ public class VMSpec {
    }
 
    public static class Builder {
+	  private String name;
+	  private Network network;
       private CIMOperatingSystem operatingSystem;
       private int processorCount = 1;
       private int memoryInGig = 1;
@@ -48,6 +50,16 @@ public class VMSpec {
       private int bootDriveSize = 25;
       private Map<String, Integer> dataDriveDeviceNameToSizeInGig = Maps.newLinkedHashMap();
 
+      public Builder name(String name) {
+	     this.name = checkNotNull(name, "name");
+	     return this;
+	  }
+      
+      public Builder network(Network network) {
+	     this.network = checkNotNull(network, "network");
+	     return this;
+      }
+      
       public Builder operatingSystem(CIMOperatingSystem operatingSystem) {
          this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
          return this;
@@ -89,7 +101,7 @@ public class VMSpec {
       }
 
       public VMSpec build() {
-         return new VMSpec(operatingSystem, processorCount, memoryInGig, bootDeviceName, bootDriveSize,
+         return new VMSpec(name, network, operatingSystem, processorCount, memoryInGig, bootDeviceName, bootDriveSize,
                dataDriveDeviceNameToSizeInGig);
       }
 
@@ -106,6 +118,8 @@ public class VMSpec {
       checkArgument(processorCount % .5 == 0, "processorCount must be an increment of 0.5");
    }
 
+   private final String name;
+   private final Network network;
    private final CIMOperatingSystem operatingSystem;
    private final int processorCount;
    private final int memoryInGig;
@@ -113,8 +127,10 @@ public class VMSpec {
    private final int bootDriveSize;
    private final Map<String, Integer> dataDriveDeviceNameToSizeInGig;
 
-   protected VMSpec(CIMOperatingSystem operatingSystem, int processorCount, int memoryInGig, String bootDeviceName,
+   protected VMSpec(String name, Network network, CIMOperatingSystem operatingSystem, int processorCount, int memoryInGig, String bootDeviceName,
          int bootDriveSize, Map<String, Integer> dataDriveDeviceNameToSizeInGig) {
+	  this.name = name;
+	  this.network = network;
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem not specified");
       checkProcessorCount(processorCount);
       this.processorCount = processorCount;
@@ -126,6 +142,14 @@ public class VMSpec {
       this.dataDriveDeviceNameToSizeInGig = ImmutableMap.copyOf(checkNotNull(dataDriveDeviceNameToSizeInGig,
             "dataDriveDeviceNameToSizeInGig"));
    }
+
+   public String getName() {
+		return name;
+	}
+
+   public Network getNetwork() {
+		return network;
+	}
 
    public CIMOperatingSystem getOperatingSystem() {
       return operatingSystem;
@@ -204,8 +228,8 @@ public class VMSpec {
 
    @Override
    public String toString() {
-      return "[operatingSystem=" + operatingSystem + ", processorCount=" + processorCount + ", memoryInGig="
-            + memoryInGig + ", bootDeviceName=" + bootDeviceName + ", bootDriveSize=" + bootDriveSize
+      return "[name= " + name + ", operatingSystem=" + operatingSystem + ", processorCount=" + processorCount + ", memoryInGig="
+            + memoryInGig + ", network="  + network.getName() + ", bootDeviceName=" + bootDeviceName + ", bootDriveSize=" + bootDriveSize
             + ", dataDriveDeviceNameToSizeInGig=" + dataDriveDeviceNameToSizeInGig + "]";
    }
 

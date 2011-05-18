@@ -21,10 +21,13 @@ package org.jclouds.savvis.vpdc.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
+import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -56,10 +59,14 @@ public class BindVMSpecToXmlPayloadTest {
 
       });
 
-      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-default.xml"));
+      Network network = Network.builder().name("VM Tier01").build();
 
-      VMSpec spec = VMSpec.builder().operatingSystem(os).build();
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-multiple-default.xml"));
 
-      assertEquals(new BindVMSpecToXmlPayload().generateXml(spec, "DemoHost-1", "VM Tier01"), expected);
+      VMSpec spec = VMSpec.builder().name("Test VM").operatingSystem(os).network(network).build();
+      List<VMSpec> specs = new ArrayList<VMSpec>();
+      specs.add(spec);
+      
+      assertEquals(new BindVMSpecToXmlPayload().generateXml(specs), expected);
    }
 }

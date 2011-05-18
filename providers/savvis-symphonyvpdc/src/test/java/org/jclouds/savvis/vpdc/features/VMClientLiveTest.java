@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cim.OSType;
@@ -31,6 +34,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VDC;
@@ -125,6 +129,144 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       conditionallyCheckSSH();
    }
 
+   public void testCreateMultipleVMs() throws Exception {
+      billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
+      vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+               new Predicate<Resource>() {
+
+                  // try to find the first VDC owned by the current user
+                  // check here for what the email property might be, or in
+                  // the jclouds-wire.log
+                  @Override
+                  public boolean apply(Resource arg0) {
+            		 String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+            				 arg0.getId()).getDescription();
+            		 return description.indexOf(email) != -1;
+                  }
+
+               }).getId();
+
+      String networkTierName = Iterables.get(
+               restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId).getAvailableNetworks(), 0)
+               .getId();
+      Network networkTier = restContext.getApi().getBrowsingClient().getNetworkInVDC(billingSiteId, vpdcId, networkTierName);
+      
+      String name = prefix;
+
+      // delete any old VM
+      VDC vpdc = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+      CIMOperatingSystem os = Iterables.find(restContext.getApi().listPredefinedOperatingSystems(),
+               new Predicate<CIMOperatingSystem>() {
+
+                  @Override
+                  public boolean apply(CIMOperatingSystem arg0) {
+                     return arg0.getOsType() == OSType.RHEL_64;
+                  }
+
+               });
+      
+      // TODO: Savvis returns network names with a - instead of space on getNetworkInVDC call,
+	  // fix this once savvis api starts returning correctly
+      System.out.printf("vpdcId %s, vpdcName %s, networkName %s, name %s, os %s%n", vpdcId, vpdc.getName(), networkTier.getName().replace("-", " "), name, os);
+
+      List<VMSpec> vmSpecs = new ArrayList<VMSpec>();
+      int noOfVms = 2;
+      for (int i = 0; i < noOfVms; i++) {
+    	  // TODO: determine the sizes available in the VDC, for example there's
+    	  // a minimum size of boot disk, and also a preset combination of cpu count vs ram
+    	  VMSpec vmSpec = VMSpec.builder().name(name + i).operatingSystem(os).memoryInGig(2).network(networkTier).addDataDrive("/data01", 25).build();
+    	  vmSpecs.add(vmSpec);
+      }
+      
+      Set<Task> tasks = client.addMultipleVMsIntoVDC(vpdc.getHref(), vmSpecs);
+      
+      for (Task task : tasks) {
+    	  // make sure there's no error
+    	  assert task.getId() != null && task.getError() == null : task;
+    	  
+    	  assert this.taskTester.apply(task.getId());
+      }
+   }
+   
+   public void testCaptureVAppTemplate() throws Exception {
+	  billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
+      vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+               new Predicate<Resource>() {
+
+                  // try to find the first VDC owned by the current user
+                  // check here for what the email property might be, or in
+                  // the jclouds-wire.log
+                  @Override
+                  public boolean apply(Resource arg0) {
+            		 String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+            				 arg0.getId()).getDescription();
+            		 return description.indexOf(email) != -1;
+                  }
+
+               }).getId();
+
+	      VDC vpdc = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+	      
+	      for (Resource vApp : Iterables.filter(vpdc.getResourceEntities(), new Predicate<Resource>() {
+
+              @Override
+              public boolean apply(Resource arg0) {
+        		 return VCloudMediaType.VAPP_XML.equals(arg0.getType());
+              }
+
+           })) {
+	    	  
+	    	  System.out.printf("Capturing VAppTemplate for vApp - %s%n", vApp.getName());
+	    	  Task task = client.captureVApp(billingSiteId, vpdcId, vApp.getHref());
+	    	
+	          // make sure there's no error
+	          assert task.getId() != null && task.getError() == null : task;
+
+	          assert this.taskTester.apply(task.getId());
+	      }
+   }
+   
+   public void testCloneVApp() throws Exception {
+	  billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
+      vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
+               new Predicate<Resource>() {
+
+                  // try to find the first VDC owned by the current user
+                  // check here for what the email property might be, or in
+                  // the jclouds-wire.log
+                  @Override
+                  public boolean apply(Resource arg0) {
+            		 String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+            				 arg0.getId()).getDescription();
+            		 return description.indexOf(email) != -1;
+                  }
+
+               }).getId();
+
+	      VDC vpdc = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId);
+	      
+	      String networkTierName = Iterables.get(vpdc.getAvailableNetworks(), 0).getId();
+	      
+	      for (Resource vApp : Iterables.filter(vpdc.getResourceEntities(), new Predicate<Resource>() {
+
+              @Override
+              public boolean apply(Resource arg0) {
+        		 return VCloudMediaType.VAPP_XML.equals(arg0.getType());
+              }
+
+           })) {
+	    	  
+	    	 System.out.printf("Cloning VApp - %s%n", vApp.getName());
+	    	 
+	    	 Task task = client.cloneVApp(vApp.getHref(), "clonedvm", networkTierName);
+	    	
+	         // make sure there's no error
+	         assert task.getId() != null && task.getError() == null : task;
+
+	         assert this.taskTester.apply(task.getId());
+	      }
+   }
+   
    private void conditionallyCheckSSH() {
       String ip = Iterables.get(vm.getNetworkConnectionSections(), 0).getIpAddress();
       assert HostSpecifier.isValid(ip);
@@ -152,6 +294,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       }
    }
 
+   @Test(enabled = false)
    public void testPowerOffVM() throws Exception {
 	   billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
 	   vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
@@ -193,6 +336,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       assert this.taskTester.apply(task.getId());
    }
    
+   @Test(enabled = false)
    public void testPowerOnVM() throws Exception {
 	   billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
 	   vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
