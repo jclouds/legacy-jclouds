@@ -107,7 +107,39 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
 
       checkFilters(request);
    }
+   
+   public void testCaptureVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VMAsyncClient.class.getMethod("captureVApp", String.class, String.class, URI.class);
+      HttpRequest request = processor.createRequest(method, "100000.0", "2736", URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"));
 
+      assertRequestLineEquals(request,
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/action/captureVApp HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/capture-vapp-template-default.xml")),
+              "application/xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+
+      checkFilters(request);
+   }
+   
+   public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VMAsyncClient.class.getMethod("cloneVApp", URI.class, String.class, String.class);
+      HttpRequest request = processor.createRequest(method, URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01");
+
+      assertRequestLineEquals(request,
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001/action/cloneVApp HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml")),
+              "application/xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+
+      checkFilters(request);
+   }
+   
    public void testAddMultipleVMsIntoVDCURI() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("addMultipleVMsIntoVDC", URI.class, Iterable.class);
 
