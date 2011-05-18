@@ -35,8 +35,8 @@ public class VPDCPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.8");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.symphonyvpdc.savvis.net/rest/api");
+      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.symphonyvpdc.savvis.net/vpdc");
       properties.setProperty(PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
       return properties;
    }

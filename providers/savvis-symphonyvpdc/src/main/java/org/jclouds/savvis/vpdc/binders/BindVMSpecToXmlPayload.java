@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -54,13 +56,15 @@ public class BindVMSpecToXmlPayload extends BindToStringPayload implements MapBi
 
    }
 
-   protected VMSpec findSpecInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected List<VMSpec> findSpecInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof VMSpec) {
-            return (VMSpec) arg;
-         } else if (arg instanceof VMSpec[]) {
-            VMSpec[] configuration = (VMSpec[]) arg;
-            return (configuration.length > 0) ? configuration[0] : null;
+        	 List<VMSpec> vmSpecs = new ArrayList<VMSpec>();
+        	 vmSpecs.add((VMSpec) arg); 
+            return vmSpecs;
+         } else if (arg instanceof ArrayList) {
+            List<VMSpec> configurations = (List<VMSpec>) arg;
+            return (configurations.size() > 0) ? configurations : null;
          }
       }
       return null;
@@ -74,27 +78,32 @@ public class BindVMSpecToXmlPayload extends BindToStringPayload implements MapBi
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       request = super.bindToRequest(request,
-            generateXml(findSpecInArgsOrNull(gRequest), postParams.get("name"), postParams.get("networkName")));
+            generateXml(findSpecInArgsOrNull(gRequest)));
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
       return request;
    }
 
-   public String generateXml(VMSpec spec, String name, String networkName) {
-      checkNotNull(spec, "VMSpec");
-      checkNotNull(name, "name");
-      checkNotNull(networkName, "networkName");
-
-      try {
-         XMLBuilder rootBuilder = buildRootForName(name);
-         addOperatingSystemSection(rootBuilder, spec.getOperatingSystem());
-         addVirtualHardwareSection(rootBuilder, name, networkName, spec);
-
-         Properties outputProperties = new Properties();
-         outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-         return rootBuilder.asString(outputProperties);
-      } catch (Exception e) {
-         return null;
-      }
+   public String generateXml(List<VMSpec> specs) {
+	  try {
+		  XMLBuilder rootBuilder = buildRoot();
+		  XMLBuilder vAppChildrenBuilder = buildChildren(rootBuilder);
+		  for (VMSpec spec : specs) {
+			  checkNotNull(spec, "VMSpec");
+			  checkNotNull(spec.getName(), "name");
+			  checkNotNull(spec.getNetwork(), "network");
+			  checkNotNull(spec.getNetwork().getName(), "networkName");
+			  XMLBuilder vAppBuilder = buildRootForName(vAppChildrenBuilder, spec.getName());
+			  addOperatingSystemSection(vAppBuilder, spec.getOperatingSystem());
+			  // TODO: Savvis returns network names with a - instead of space on getNetworkInVDC call,
+			  // fix this once savvis api starts returning correctly
+			  addVirtualHardwareSection(vAppBuilder, spec.getName(), spec.getNetwork().getName().replace("-", " "), spec);
+		  } 
+		  Properties outputProperties = new Properties();
+		  outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+		  return rootBuilder.asString(outputProperties);
+	  } catch (Exception e) {
+		  return null;
+	  }
    }
 
    void addVirtualHardwareSection(XMLBuilder rootBuilder, String name, String networkName, VMSpec spec) {
@@ -181,16 +190,28 @@ public class BindVMSpecToXmlPayload extends BindToStringPayload implements MapBi
          dataDiskBuilder.e("rasd:VirtualQuantity").t(dataDisk.getValue() + "");
       }
    }
-
-   protected XMLBuilder buildRootForName(String name) throws ParserConfigurationException, FactoryConfigurationError {
+   
+   protected XMLBuilder buildRoot() throws ParserConfigurationException, FactoryConfigurationError {
       XMLBuilder rootBuilder = XMLBuilder.create("vApp:VApp")
+      		.a("xmlns:vApp", "http://www.vmware.com/vcloud/v0.8")
+      		.a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1")
+      		.a("xmlns:vssd", "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData")
             .a("xmlns:common", "http://schemas.dmtf.org/wbem/wscim/1/common")
-            .a("xmlns:vApp", "http://www.vmware.com/vcloud/v0.8")
             .a("xmlns:rasd", "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
-            .a("xmlns:vssd", "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData")
-            .a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1").a("name", name)
-            .a("type", "application/vnd.vmware.vcloud.vApp+xml").a("href", "");
+      		.a("name", "");
       return rootBuilder;
+   }
+   
+   protected XMLBuilder buildChildren(XMLBuilder rootBuilder) throws ParserConfigurationException, FactoryConfigurationError {
+	   XMLBuilder vAppChildrenBuilder = rootBuilder.e("vApp:Children");
+	   return vAppChildrenBuilder;
+   }
+   
+   protected XMLBuilder buildRootForName(XMLBuilder rootBuilder, String name) throws ParserConfigurationException, FactoryConfigurationError {
+      XMLBuilder vAppBuilder = rootBuilder.e("vApp:VApp")
+            .a("name", name)
+            .a("type", "application/vnd.vmware.vcloud.vApp+xml");
+      return vAppBuilder;
    }
 
    protected String ifNullDefaultTo(String value, String defaultValue) {
