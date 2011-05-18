@@ -37,7 +37,7 @@ public class BindCaptureVAppTemplateToXmlPayloadTest {
    public void test() throws IOException {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/capture-vapp-template-default.xml"));
       
-      URI vAppURI = URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001");
+      URI vAppURI = URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001");
       String xml = new BindCaptureVAppTemplateToXmlPayload().generateXml(vAppURI);
       System.out.println(xml);
       
