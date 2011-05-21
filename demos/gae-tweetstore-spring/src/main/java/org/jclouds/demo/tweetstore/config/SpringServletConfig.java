@@ -51,6 +51,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
 import com.google.appengine.api.labs.taskqueue.QueueFactory;
@@ -88,8 +89,10 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
       try {
-         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"),
-               props.getProperty("twitter.credential"));
+          twitter4j.conf.Configuration twitterConf = new ConfigurationBuilder()
+              .setUser(props.getProperty("twitter.identity"))
+              .setPassword(props.getProperty("twitter.credential")).build();
+      twitterClient = new TwitterFactory(twitterConf).getInstance();
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
