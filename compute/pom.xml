@@ -75,7 +75,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.compute.*;version="${project.version}",org.jclouds.ssh.*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.compute.*;version="${project.version}",org.jclouds.cim.*;version="${project.version}",org.jclouds.ovf.*;version="${project.version}",org.jclouds.ssh.*;version="${project.version}"</Export-Package>
                         <Import-Package>!org.jclouds.compute.*;org.jclouds.*;version="${project.version}",*</Import-Package>
                         <Fragment-Host>jclouds-core;version="${project.version}"</Fragment-Host>
                     </instructions>
