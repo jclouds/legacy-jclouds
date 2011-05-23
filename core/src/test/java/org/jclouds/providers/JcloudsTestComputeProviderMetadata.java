@@ -18,7 +18,10 @@
  */
 package org.jclouds.providers;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
+import java.util.Set;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
@@ -89,6 +92,14 @@ public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getApiDocumentation() {
       return URI.create("http://jclouds.org/documentation");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getIso3166Codes() {
+      return ImmutableSet.of("US-VA", "US-CA");
    }
 
 }

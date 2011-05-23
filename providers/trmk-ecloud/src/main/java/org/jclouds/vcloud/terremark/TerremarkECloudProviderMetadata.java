@@ -18,7 +18,10 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
+import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
@@ -92,6 +95,14 @@ public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getApiDocumentation() {
       return URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID=");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getIso3166Codes() {
+      return ImmutableSet.of("US-FL");
    }
 
 }

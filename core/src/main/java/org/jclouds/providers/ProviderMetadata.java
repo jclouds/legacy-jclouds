@@ -93,4 +93,10 @@ public interface ProviderMetadata {
     * @return all known services linked to the same account on this provider
     */
    public Set<String> getLinkedServices();
+
+   /**
+    * 
+    * @return all known region/location ISO 3166 codes
+    */
+   public Set<String> getIso3166Codes();
 }
