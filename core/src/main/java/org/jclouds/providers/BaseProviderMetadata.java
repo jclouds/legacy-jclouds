@@ -49,6 +49,7 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       String credentialName = getCredentialName();
       String type = getType();
       Set<String> linkedServices = getLinkedServices();
+      Set<String> iso3166Codes = getIso3166Codes();
 
       result = prime * result + ((console == null) ? 0 : console.hashCode());
       result = prime * result + ((homepage == null) ? 0 : homepage.hashCode());
@@ -59,6 +60,7 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       result = prime * result + ((credentialName == null) ? 0 : credentialName.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((linkedServices == null) ? 0 : linkedServices.hashCode());
+      result = prime * result + ((iso3166Codes == null) ? 0 : iso3166Codes.hashCode());
 
       return result;
    }
@@ -77,6 +79,7 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       String tCredentialName = getCredentialName();
       String tType = getType();
       Set<String> tLinkedServices = getLinkedServices();
+      Set<String> tIso3166Codes = getIso3166Codes();
 
       if (this == obj)
          return true;
@@ -95,6 +98,7 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       String oCredentialName = other.getCredentialName();
       String oType = other.getType();
       Set<String> oLinkedServices = other.getLinkedServices();
+      Set<String> oIso3166Codes = other.getIso3166Codes();
 
       if (tConsole == null) {
          if (oConsole != null)
@@ -141,6 +145,11 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
             return false;
       } else if (!tLinkedServices.equals(oLinkedServices))
          return false;
+      if (tIso3166Codes == null) {
+         if (oIso3166Codes != null)
+            return false;
+      } else if (!tIso3166Codes.equals(oIso3166Codes))
+         return false;
       return true;
    }
 
@@ -148,7 +157,8 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
    public String toString() {
       return "[id=" + getId() + ", type=" + getType() + ", name=" + getName() + ", identityName=" + getIdentityName()
                + ", credentialName=" + getCredentialName() + ", homePage=" + getHomepage() + ", console="
-               + getConsole() + ", apiDocs=" + getApiDocumentation() + ", linkedServices=" + getLinkedServices() + "]";
+               + getConsole() + ", apiDocs=" + getApiDocumentation() + ", linkedServices=" + getLinkedServices() +
+               ", iso3166Codes=" + getIso3166Codes() + "]";
    }
 
    @Override

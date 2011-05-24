@@ -18,13 +18,13 @@
  */
 package org.jclouds.aws.s3;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
@@ -104,6 +104,14 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
    @Override
    public Set<String> getLinkedServices() {
       return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getIso3166Codes() {
+      return ImmutableSet.of("US", "US-CA", "IE", "SG", "JP-13");
    }
 
 }
