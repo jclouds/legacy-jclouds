@@ -698,6 +698,39 @@ pageTracker._trackPageview();
             </dependencies>
         </profile>
         <profile>
+            <id>site</id>
+            <build>
+                <plugins>
+                    <!-- disable the Maven enforcer plugin and prevent forking (unlike -Denforcer.skip) -->
+                    <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.0-beta-1</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-banned-dependencies</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>enforce-java</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <phase>none</phase>
+                            </execution>
+                            <!-- inherited from oss-parent -->
+                            <execution>
+                                <id>enforce-maven</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>maven-2</id>
             <activation>
                 <file>
