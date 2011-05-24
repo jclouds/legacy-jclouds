@@ -150,6 +150,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>com.google.gson;-split-package:=merge-first,
                                         org.jclouds.*;version=${project.version}</Export-Package>
+                        <DynamicImport-Package>org.jclouds.*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

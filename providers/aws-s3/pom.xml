@@ -175,7 +175,11 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>org.jclouds.aws.s3.*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <Import-Package>
+                            org.jclouds.*;version="${project.version}",
+                            org.jclouds.http.options;version="${project.version}",
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
