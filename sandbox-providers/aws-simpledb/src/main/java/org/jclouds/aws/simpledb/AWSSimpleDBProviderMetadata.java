@@ -105,4 +105,11 @@ public class AWSSimpleDBProviderMetadata extends BaseProviderMetadata {
       return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<String> getIso3166Codes() {
+      return ImmutableSet.of("US-VA", "US-CA", "IE", "SG", "JP-13");
+   }
 }
