@@ -532,8 +532,8 @@ pageTracker._trackPageview();
                     <configuration>
                         <instructions>
                             <_nouses>true</_nouses>
-                       </instructions>
-                   </configuration>
+                        </instructions>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
