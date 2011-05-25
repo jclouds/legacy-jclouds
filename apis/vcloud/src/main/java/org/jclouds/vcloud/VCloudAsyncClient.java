@@ -363,11 +363,20 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> suspendVAppOrVm(@EndpointParam URI vAppOrVmId);
 
    /**
-    * @see CommonVCloudClient#deleteVApp
+    * @see CommonVCloudClient#deleteVAppTemplateVAppOrMediaImage
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI vAppId);
+   ListenableFuture<? extends Task> deleteVAppTemplateVAppOrMediaImage(@EndpointParam URI id);
+
+   /**
+    * @see CommonVCloudClient#deleteVApp
+    */
+   @Deprecated
+   @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI id);
 
 }
