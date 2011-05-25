@@ -43,7 +43,9 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
+ * @see <a
+ *      href="http://communities.vmware.com/community/developer/forums/vcloudapi"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
@@ -58,8 +60,8 @@ public interface VCloudClient extends CommonVCloudClient {
    InputStream getThumbnailOfVm(URI vm);
 
    /**
-    * The response to a login request includes a list of the organizations to which the
-    * authenticated user has access.
+    * The response to a login request includes a list of the organizations to
+    * which the authenticated user has access.
     * 
     * @return organizations indexed by name
     */
@@ -70,8 +72,8 @@ public interface VCloudClient extends CommonVCloudClient {
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
    /**
-    * The captureVApp request creates a vApp template from an instantiated vApp. <h4>Note</h4>
-    * Before it can be captured, a vApp must be undeployed
+    * The captureVApp request creates a vApp template from an instantiated vApp.
+    * <h4>Note</h4> Before it can be captured, a vApp must be undeployed
     * 
     * @param vDC
     * @param toClone
@@ -108,8 +110,9 @@ public interface VCloudClient extends CommonVCloudClient {
    Task updateNetworkConnectionOfVm(URI vm, NetworkConnectionSection guestCustomizationSection);
 
    /**
-    * returns the vapp template corresponding to a catalog item in the catalog associated with the
-    * specified name. Note that the org and catalog parameters can be null to choose default.
+    * returns the vapp template corresponding to a catalog item in the catalog
+    * associated with the specified name. Note that the org and catalog
+    * parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -119,7 +122,8 @@ public interface VCloudClient extends CommonVCloudClient {
     *           item you wish to lookup
     * 
     * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that isn't present
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
     */
    VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
          String itemName);
@@ -131,97 +135,129 @@ public interface VCloudClient extends CommonVCloudClient {
    Vm getVm(URI vm);
 
    /**
-    * To deploy a vApp, the client makes a request to its action/deploy URL. Deploying a vApp
-    * automatically deploys all of the virtual machines it contains. To deploy a virtual machine,
-    * the client makes a request to its action/deploy URL.
+    * update the cpuCount of an existing VM
+    * 
+    * @param vm
+    *           to update
+    * @param cpuCount
+    *           count to change the primary cpu to
+    */
+   Task updateCPUCountOfVm(URI vm, int cpuCount);
+
+   /**
+    * update the memoryInMB of an existing VM
+    * 
+    * @param vm
+    *           to update
+    * @param memoryInMB
+    *           memory in MB to assign to the VM
+    */
+   Task updateMemoryMBOfVm(URI vm, int memoryInMB);
+
+   /**
+    * To deploy a vApp, the client makes a request to its action/deploy URL.
+    * Deploying a vApp automatically deploys all of the virtual machines it
+    * contains. To deploy a virtual machine, the client makes a request to its
+    * action/deploy URL.
     * <p/>
-    * Deploying a Vm implicitly deploys the parent vApp if that vApp is not already deployed.
+    * Deploying a Vm implicitly deploys the parent vApp if that vApp is not
+    * already deployed.
     */
    Task deployVAppOrVm(URI vAppOrVmId);
 
    /**
-    * like {@link #deployVAppOrVm(URI)}, except deploy transistions to power on state
+    * like {@link #deployVAppOrVm(URI)}, except deploy transistions to power on
+    * state
     * 
     */
    Task deployAndPowerOnVAppOrVm(URI vAppOrVmId);
 
    /**
-    * Undeploying a vApp powers off or suspends any running virtual machines it contains, then frees
-    * the resources reserved for the vApp and sets the vApp’s deploy attribute to a value of false
-    * to indicate that it is not deployed.
+    * Undeploying a vApp powers off or suspends any running virtual machines it
+    * contains, then frees the resources reserved for the vApp and sets the
+    * vApp’s deploy attribute to a value of false to indicate that it is not
+    * deployed.
     * <p/>
-    * Undeploying a virtual machine powers off or suspends the virtual machine, then frees the
-    * resources reserved for it and sets the its deploy attribute to a value of false to indicate
-    * that it is not deployed. This operation has no effect on the containing vApp.
+    * Undeploying a virtual machine powers off or suspends the virtual machine,
+    * then frees the resources reserved for it and sets the its deploy attribute
+    * to a value of false to indicate that it is not deployed. This operation
+    * has no effect on the containing vApp.
     * <h4>NOTE</h4>
-    * Using this method will simply power off the vms. In order to save their state, use
-    * {@link #undeployAndSaveStateOfVAppOrVm}
+    * Using this method will simply power off the vms. In order to save their
+    * state, use {@link #undeployAndSaveStateOfVAppOrVm}
     * 
     */
    Task undeployVAppOrVm(URI vAppOrVmId);
 
    /**
-    * like {@link #undeployVAppOrVm(URI)}, where the undeployed virtual machines are suspended and
-    * their suspend state saved
+    * like {@link #undeployVAppOrVm(URI)}, where the undeployed virtual machines
+    * are suspended and their suspend state saved
     * 
     */
    Task undeployAndSaveStateOfVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A powerOn request to a vApp URL powers on all of the virtual machines in the vApp, as
-    * specified in the vApp’s StartupSection field.
+    * A powerOn request to a vApp URL powers on all of the virtual machines in
+    * the vApp, as specified in the vApp’s StartupSection field.
     * <p/>
-    * A powerOn request to a virtual machine URL powers on the specified virtual machine and forces
-    * deployment of the parent vApp.
+    * A powerOn request to a virtual machine URL powers on the specified virtual
+    * machine and forces deployment of the parent vApp.
     * <p/>
-    * <h4>NOTE</h4> A powerOn request to a vApp or virtual machine that is undeployed forces
-    * deployment.
+    * <h4>NOTE</h4> A powerOn request to a vApp or virtual machine that is
+    * undeployed forces deployment.
     */
    Task powerOnVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A powerOff request to a vApp URL powers off all of the virtual machines in the vApp, as
-    * specified in its StartupSection field.
+    * A powerOff request to a vApp URL powers off all of the virtual machines in
+    * the vApp, as specified in its StartupSection field.
     * <p/>
-    * A powerOff request to a virtual machine URL powers off the specified virtual machine.
+    * A powerOff request to a virtual machine URL powers off the specified
+    * virtual machine.
     */
    Task powerOffVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A shutdown request to a vApp URL shuts down all of the virtual machines in the vApp, as
-    * specified in its StartupSection field.
+    * A shutdown request to a vApp URL shuts down all of the virtual machines in
+    * the vApp, as specified in its StartupSection field.
     * <p/>
-    * A shutdown request to a virtual machine URL shuts down the specified virtual machine.
+    * A shutdown request to a virtual machine URL shuts down the specified
+    * virtual machine.
     * <p/>
-    * <h4>NOTE</h4Because this request sends a signal to the guest OS, the vCloud API cannot track
-    * the progress or verify the result of the requested operation. Hence, void is returned
+    * <h4>NOTE</h4Because this request sends a signal to the guest OS, the
+    * vCloud API cannot track the progress or verify the result of the requested
+    * operation. Hence, void is returned
     */
    void shutdownVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A reset request to a vApp URL resets all of the virtual machines in the vApp, as specified in
-    * its StartupSection field.
+    * A reset request to a vApp URL resets all of the virtual machines in the
+    * vApp, as specified in its StartupSection field.
     * <p/>
-    * A reset request to a virtual machine URL resets the specified virtual machine.
+    * A reset request to a virtual machine URL resets the specified virtual
+    * machine.
     */
    Task resetVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A reboot request to a vApp URL reboots all of the virtual machines in the vApp, as specified
-    * in its StartupSection field.
+    * A reboot request to a vApp URL reboots all of the virtual machines in the
+    * vApp, as specified in its StartupSection field.
     * <p/>
-    * A reboot request to a virtual machine URL reboots the specified virtual machine.
+    * A reboot request to a virtual machine URL reboots the specified virtual
+    * machine.
     * <p/>
-    * <h4>NOTE</h4> Because this request sends a signal to the guest OS, the vCloud API cannot track
-    * the progress or verify the result of the requested operation. Hence, void is returned
+    * <h4>NOTE</h4> Because this request sends a signal to the guest OS, the
+    * vCloud API cannot track the progress or verify the result of the requested
+    * operation. Hence, void is returned
     */
    void rebootVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A suspend request to a vApp URL suspends all of the virtual machines in the vApp, as specified
-    * in its StartupSection field.
+    * A suspend request to a vApp URL suspends all of the virtual machines in
+    * the vApp, as specified in its StartupSection field.
     * <p/>
-    * A suspend request to a virtual machine URL suspends the specified virtual machine.
+    * A suspend request to a virtual machine URL suspends the specified virtual
+    * machine.
     */
    Task suspendVAppOrVm(URI vAppOrVmId);
 
