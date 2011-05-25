@@ -18,6 +18,7 @@
  */
 package org.jclouds.providers;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -51,7 +52,7 @@ public class ProviderPredicates {
       Preconditions2.checkNotEmpty(id, "id must be defined");
       return new Predicate<ProviderMetadata>() {
          /**
-          * {@see com.google.common.base.Predicate#apply(T)
+          * {@inheritDoc}
           */
          @Override
          public boolean apply(ProviderMetadata providerMetadata) {
@@ -59,7 +60,7 @@ public class ProviderPredicates {
          }
 
          /**
-          * {@see java.lang.Object#toString()
+          * {@inheritDoc}
           */
          @Override
          public String toString() {
@@ -80,7 +81,7 @@ public class ProviderPredicates {
       Preconditions2.checkNotEmpty(type, "type must be defined");
       return new Predicate<ProviderMetadata>() {
          /**
-          * {@see com.google.common.base.Predicate#apply(T)
+          * {@inheritDoc}
           */
          @Override
          public boolean apply(ProviderMetadata providerMetadata) {
@@ -88,7 +89,7 @@ public class ProviderPredicates {
          }
 
          /**
-          * {@see java.lang.Object#toString()
+          * {@inheritDoc}
           */
          @Override
          public String toString() {
@@ -97,4 +98,42 @@ public class ProviderPredicates {
       };
    }
 
+   /**
+    * Returns all providers that are "in" the given ISO 3166 code.
+    * 
+    * @param iso3166Code the ISO 3166 code for the location/region to search for
+    * 
+    * @return the providers "in" the given ISO 3166 code
+    */
+   public static Predicate<ProviderMetadata> inIso3166Code(final String iso3166Code) {
+      Preconditions.checkNotNull(iso3166Code, "iso3166Code must not be null");
+
+      return new Predicate<ProviderMetadata>() {
+          /**
+           * {@inheritDoc}
+           */
+          @Override
+          public boolean apply(ProviderMetadata providerMetadata) {
+             for (String availCode : providerMetadata.getIso3166Codes()) {
+                if(iso3166Code.indexOf('-') == -1) {
+                   if (availCode.startsWith(iso3166Code + "-")) {
+                      return true;
+                   }
+                } else if (availCode.equals(iso3166Code)) {
+                   return true;
+                }
+             }
+
+             return false;
+          }
+
+          /**
+           * {@inheritDoc}
+           */
+          @Override
+          public String toString() {
+             return "iso3166Code(" + iso3166Code + ")";
+          }
+      };
+   }
 }
