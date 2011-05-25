@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
@@ -64,7 +65,10 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
     * object.
     */
    public VCloudSession apply(HttpResponse from) {
-      String cookieHeader = checkNotNull(from.getFirstHeaderOrNull("x-vcloud-authorization"), "x-vcloud-authorization");
+      String cookieHeader = from.getFirstHeaderOrNull("x-vcloud-authorization");
+      if (cookieHeader == null)
+         cookieHeader = from.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE);
+      checkNotNull(cookieHeader, "Header %s or %s must be present", "x-vcloud-authorization", HttpHeaders.SET_COOKIE);
 
       final Matcher matcher = pattern.matcher(cookieHeader);
       boolean matchFound = matcher.find();

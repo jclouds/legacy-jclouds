@@ -39,7 +39,8 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "ParseLoginResponseFromHeadersTest")
 public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
@@ -53,7 +54,8 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    @Test
    public void testApply() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String,String>of("x-vcloud-authorization", "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/"));
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
+            "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/"));
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -67,28 +69,45 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    @Test
    public void testApplyBlueLock() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String,String>of("x-vcloud-authorization","MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0=") );
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
+            "MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0="));
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0=");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+
+   }
+
+   @Test
+   public void testApplyTerremark() {
+      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("Set-Cookie",
+            "vcloud-token=37ce2715-9aba-4f48-8e45-2db8a8da702d; path=/"));
+      response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
+      response.getPayload().getContentMetadata().setContentLength(307l);
+
+      VCloudSession reply = parser.apply(response);
+      assertEquals(reply.getVCloudToken(), "37ce2715-9aba-4f48-8e45-2db8a8da702d");
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
    @Test
    public void testApplyVirtacore() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String,String>of("x-vcloud-authorization","vcloud-token=IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48=") );
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
+            "vcloud-token=IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48="));
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48=");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 }
