@@ -18,15 +18,13 @@
  */
 package org.jclouds.vcloud.compute.strategy;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
-
 import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -74,21 +72,19 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
-      InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
-            template.getHardware().getRam()).disk(
-            (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
 
-      String customizationScript = null;
-      IpAddressAllocationMode ipAddressAllocationMode = null;
-      if (template.getOptions() instanceof VCloudTemplateOptions) {
-         customizationScript = VCloudTemplateOptions.class.cast(template.getOptions()).getCustomizationScript();
-         ipAddressAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions()).getIpAddressAllocationMode();
-         if (customizationScript != null || ipAddressAllocationMode != null) {
-            options.customizeOnInstantiate(false);
-            options.deploy(false);
-            options.powerOn(false);
-         }
-      }
+      // TODO make disk size specifiable
+      // disk((long) ((template.getHardware().getVolumes().get(0).getSize()) *
+      // 1024 * 1024l));
+
+      String customizationScript = VCloudTemplateOptions.class.cast(template.getOptions()).getCustomizationScript();
+      IpAddressAllocationMode ipAddressAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions())
+            .getIpAddressAllocationMode();
+
+      options.customizeOnInstantiate(false);
+      options.deploy(false);
+      options.powerOn(false);
 
       if (!template.getOptions().shouldBlockUntilRunning())
          options.block(false);
@@ -99,44 +95,53 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
       VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
+      waitForTask(vAppResponse.getTasks().get(0), vAppResponse);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
-      Task task = vAppResponse.getTasks().get(0);
-
-      if (customizationScript == null && ipAddressAllocationMode == null) {
-         return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
-      } else {
-         if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(
-                  String.format("failed to %s %s: %s", "instantiate", vAppResponse.getName(), task));
-         }
-         Vm vm = Iterables.get(client.getVApp(vAppResponse.getHref()).getChildren(), 0);
-         if (customizationScript != null)
-            updateVmWithCustomizationScript(vm, customizationScript);
-         if (ipAddressAllocationMode != null)
-            updateVmWithIpAddressAllocationMode(vm, ipAddressAllocationMode);
-         task = client.deployAndPowerOnVAppOrVm(vAppResponse.getHref());
-         return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
+      // note customization is a serial concern at the moment
+      Vm vm = Iterables.get(client.getVApp(vAppResponse.getHref()).getChildren(), 0);
+      if (customizationScript != null) {
+         logger.trace(">> updating customization vm(%s) ", vm.getName());
+         waitForTask(updateVmWithCustomizationScript(vm, customizationScript), vAppResponse);
+         logger.trace("<< updated customization vm(%s) ", vm.getName());
       }
+      if (ipAddressAllocationMode != null) {
+         logger.trace(">> updating ipAddressAllocationMode(%s) vm(%s) ", ipAddressAllocationMode, vm.getName());
+         waitForTask(updateVmWithIpAddressAllocationMode(vm, ipAddressAllocationMode), vAppResponse);
+         logger.trace("<< updated ipAddressAllocationMode vm(%s) ", vm.getName());
+      }
+      int cpuCount = new Double(getCores(template.getHardware())).intValue();
+      logger.trace(">> updating cpuCount(%d) vm(%s) ", cpuCount, vm.getName());
+      waitForTask(updateCPUCountOfVm(vm, cpuCount), vAppResponse);
+      logger.trace("<< updated cpuCount vm(%s) ", vm.getName());
+      int memoryMB = template.getHardware().getRam();
+      logger.trace(">> updating memoryMB(%d) vm(%s) ", memoryMB, vm.getName());
+      waitForTask(updateMemoryMBOfVm(vm, memoryMB), vAppResponse);
+      logger.trace("<< updated memoryMB vm(%s) ", vm.getName());
+      logger.trace(">> deploying and powering on vApp(%s) ", vAppResponse.getName());
+      return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse,
+            client.deployAndPowerOnVAppOrVm(vAppResponse.getHref()));
 
    }
 
-   public void updateVmWithCustomizationScript(Vm vm, String customizationScript) {
-      Task task;
+   public void waitForTask(Task task, VApp vAppResponse) {
+      if (!successTester.apply(task.getHref())) {
+         throw new RuntimeException(String.format("failed to %s %s: %s", task.getName(), vAppResponse.getName(), task));
+      }
+   }
+
+   public Task updateVmWithCustomizationScript(Vm vm, String customizationScript) {
       GuestCustomizationSection guestConfiguration = vm.getGuestCustomizationSection();
-      // TODO: determine if the server version is beyond 1.0.0, and if so append to, but
-      // not overwrite the customization script. In version 1.0.0, the api returns a script that
+      // TODO: determine if the server version is beyond 1.0.0, and if so append
+      // to, but
+      // not overwrite the customization script. In version 1.0.0, the api
+      // returns a script that
       // loses newlines.
       guestConfiguration.setCustomizationScript(customizationScript);
-      task = client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
-      if (!successTester.apply(task.getHref())) {
-         throw new RuntimeException(String.format("failed to %s %s: %s", "updateGuestCustomizationOfVm", vm.getName(),
-               task));
-      }
+      return client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
    }
 
-   public void updateVmWithIpAddressAllocationMode(Vm vm, final IpAddressAllocationMode ipAddressAllocationMode) {
-      Task task;
+   public Task updateVmWithIpAddressAllocationMode(Vm vm, final IpAddressAllocationMode ipAddressAllocationMode) {
       NetworkConnectionSection net = vm.getNetworkConnectionSection();
       Builder builder = net.toBuilder();
       builder.connections(Iterables.transform(net.getConnections(),
@@ -148,20 +153,21 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                }
 
             }));
-      task = client.updateNetworkConnectionOfVm(vm.getHref(), builder.build());
-      if (!successTester.apply(task.getHref())) {
-         throw new RuntimeException(String.format("failed to %s %s: %s", "updateNetworkConnectionOfVm", vm.getName(),
-               task));
-      }
+      return client.updateNetworkConnectionOfVm(vm.getHref(), builder.build());
+   }
+
+   public Task updateCPUCountOfVm(Vm vm, int cpuCount) {
+      return client.updateCPUCountOfVm(vm.getHref(), cpuCount);
+   }
+
+   public Task updateMemoryMBOfVm(Vm vm, int memoryInMB) {
+      return client.updateMemoryMBOfVm(vm.getHref(), memoryInMB);
    }
 
    private NodeMetadata blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse,
          Task task) {
       if (options.shouldBlock()) {
-         if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on",
-                  vAppResponse.getName(), task));
-         }
+         waitForTask(task, vAppResponse);
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }
       return getNode.getNode(vAppResponse.getHref().toASCIIString());

@@ -35,7 +35,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.error+xml"
     */
    public final static MediaType ERROR_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.error+xml");
-   
+
    /**
     * "application/vnd.vmware.vcloud.vcloud+xml"
     */
@@ -98,7 +98,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.catalogItem+xml"
     */
    public final static MediaType CATALOGITEM_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.catalogItem+xml");
+         "vnd.vmware.vcloud.catalogItem+xml");
    /**
     * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
     */
@@ -107,7 +107,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
     */
    public final static MediaType NETWORKCONNECTIONSECTION_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.networkConnectionSection+xml");
+         "vnd.vmware.vcloud.networkConnectionSection+xml");
    /**
     * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
     */
@@ -116,7 +116,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
     */
    public final static MediaType VIRTUALHARDWARESECTION_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.virtualHardwareSection+xml");
+         "vnd.vmware.vcloud.virtualHardwareSection+xml");
    /**
     * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
     */
@@ -125,7 +125,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
     */
    public final static MediaType GUESTCUSTOMIZATIONSECTION_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.guestCustomizationSection+xml");
+         "vnd.vmware.vcloud.guestCustomizationSection+xml");
 
    /**
     * "application/vnd.vmware.vcloud.networkSection+xml"
@@ -135,7 +135,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.networkSection+xml"
     */
    public final static MediaType NETWORKSECTION_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.networkSection+xml");
+         "vnd.vmware.vcloud.networkSection+xml");
 
    /**
     * "application/vnd.vmware.vcloud.task+xml"
@@ -154,7 +154,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.undeployVAppParams+xml"
     */
    public final static MediaType UNDEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.undeployVAppParams+xml");
+         "vnd.vmware.vcloud.undeployVAppParams+xml");
 
    /**
     * "application/vnd.vmware.vcloud.deployVAppParams+xml"
@@ -164,7 +164,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.deployVAppParams+xml"
     */
    public final static MediaType DEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.deployVAppParams+xml");
+         "vnd.vmware.vcloud.deployVAppParams+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vApp+xml"
@@ -201,5 +201,14 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.network+xml"
     */
    public final static MediaType NETWORK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.network+xml");
+
+   /**
+    * "application/vnd.vmware.vcloud.rasdItem+xml"
+    */
+   public final static String RASDITEM_XML = "application/vnd.vmware.vcloud.rasdItem+xml";
+   /**
+    * "application/vnd.vmware.vcloud.rasdItem+xml"
+    */
+   public final static MediaType RASDITEM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.rasdItem+xml");
 
 }

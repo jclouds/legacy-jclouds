@@ -21,6 +21,7 @@ package org.jclouds.vcloud;
 import static org.jclouds.vcloud.VCloudMediaType.DEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORKCONNECTIONSECTION_XML;
+import static org.jclouds.vcloud.VCloudMediaType.RASDITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.UNDEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
@@ -56,11 +57,13 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.vcloud.binders.BindCPUCountToXmlPayload;
 import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindMemoryToXmlPayload;
 import org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
@@ -89,7 +92,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href=
+ *      "https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -215,6 +220,28 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VmHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Vm> getVm(@EndpointParam URI vm);
+
+   /**
+    * @see VCloudClient#updateCPUCountOfVm
+    */
+   @PUT
+   @Consumes(TASK_XML)
+   @Produces(RASDITEM_XML)
+   @Path("/virtualHardwareSection/cpu")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> updateCPUCountOfVm(@EndpointParam URI vm,
+         @BinderParam(BindCPUCountToXmlPayload.class) int cpuCount);
+
+   /**
+    * @see VCloudClient#updateMemoryMBOfVm
+    */
+   @PUT
+   @Consumes(TASK_XML)
+   @Produces(RASDITEM_XML)
+   @Path("/virtualHardwareSection/memory")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> updateMemoryMBOfVm(@EndpointParam URI vm,
+         @BinderParam(BindMemoryToXmlPayload.class) int memoryInMB);
 
    /**
     * @see VCloudClient#updateGuestCustomizationOfVm

@@ -152,7 +152,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VAppTemplate template = null;
 
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.processorCount(1).memory(512).disk(1024);
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
