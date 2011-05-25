@@ -33,6 +33,14 @@ public class EditableResourceAllocationSettingData extends ResourceAllocationSet
       return new Builder();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromEditableResourceAllocationSettingData(this);
+   }
+
    public static class Builder extends ResourceAllocationSettingData.Builder {
       private ReferenceType edit;
 
@@ -46,9 +54,9 @@ public class EditableResourceAllocationSettingData extends ResourceAllocationSet
 
       public EditableResourceAllocationSettingData build() {
          return new EditableResourceAllocationSettingData(elementName, instanceID, caption, description, address,
-                  addressOnParent, allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility,
-                  limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
-                  resourceType, virtualQuantity, virtualQuantityUnits, weight, connections, hostResources, edit);
+               addressOnParent, allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility, limit,
+               mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+               virtualQuantity, virtualQuantityUnits, weight, connections, hostResources, edit);
       }
 
       public Builder fromEditableResourceAllocationSettingData(EditableResourceAllocationSettingData in) {
@@ -265,17 +273,16 @@ public class EditableResourceAllocationSettingData extends ResourceAllocationSet
    private final ReferenceType edit;
 
    public EditableResourceAllocationSettingData(String elementName, String instanceID, String caption,
-            String description, String address, String addressOnParent, String allocationUnits,
-            Boolean automaticAllocation, Boolean automaticDeallocation, ConsumerVisibility consumerVisibility,
-            Long limit, MappingBehavior mappingBehavior, String otherResourceType, String parent, String poolID,
-            Long reservation, String resourceSubType,
-            org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType, Long virtualQuantity,
-            String virtualQuantityUnits, Integer weight, List<String> connections, List<String> hostResources,
-            ReferenceType edit) {
+         String description, String address, String addressOnParent, String allocationUnits,
+         Boolean automaticAllocation, Boolean automaticDeallocation, ConsumerVisibility consumerVisibility, Long limit,
+         MappingBehavior mappingBehavior, String otherResourceType, String parent, String poolID, Long reservation,
+         String resourceSubType, org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType,
+         Long virtualQuantity, String virtualQuantityUnits, Integer weight, List<String> connections,
+         List<String> hostResources, ReferenceType edit) {
       super(elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
-               automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior,
-               otherResourceType, parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity,
-               virtualQuantityUnits, weight, connections, hostResources);
+            automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior, otherResourceType,
+            parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity, virtualQuantityUnits, weight,
+            connections, hostResources);
       this.edit = edit;
    }
 
@@ -284,19 +291,14 @@ public class EditableResourceAllocationSettingData extends ResourceAllocationSet
    }
 
    @Override
-   public Builder toBuilder() {
-      return new Builder().fromEditableResourceAllocationSettingData(this);
-   }
-
-   @Override
    public String toString() {
       return String
-               .format(
-                        "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s, edit=%s]",
-                        elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
-                        automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources,
-                        limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
-                        resourceType, virtualQuantity, virtualQuantityUnits, weight, edit);
+            .format(
+                  "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s, edit=%s]",
+                  elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
+                  automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources, limit,
+                  mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+                  virtualQuantity, virtualQuantityUnits, weight, edit);
    }
 
 }

@@ -32,6 +32,14 @@ public class VCloudHardDisk extends ResourceAllocationSettingData {
       return new Builder();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromVCloudHardDisk(this);
+   }
+
    public static class Builder extends ResourceAllocationSettingData.Builder {
       private long capacity;
       private int busType;
@@ -63,15 +71,14 @@ public class VCloudHardDisk extends ResourceAllocationSettingData {
 
       public VCloudHardDisk build() {
          return new VCloudHardDisk(elementName, instanceID, caption, description, address, addressOnParent,
-                  allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility, limit,
-                  mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
-                  virtualQuantity, virtualQuantityUnits, weight, connections, hostResources, capacity, busType,
-                  busSubType);
+               allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior,
+               otherResourceType, parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity,
+               virtualQuantityUnits, weight, connections, hostResources, capacity, busType, busSubType);
       }
 
       public Builder fromVCloudHardDisk(VCloudHardDisk in) {
          return capacity(in.getCapacity()).busType(in.getBusType()).busSubType(in.getBusSubType())
-                  .fromResourceAllocationSettingData(in);
+               .fromResourceAllocationSettingData(in);
       }
 
       /**
@@ -285,16 +292,16 @@ public class VCloudHardDisk extends ResourceAllocationSettingData {
    private final String busSubType;
 
    public VCloudHardDisk(String elementName, String instanceID, String caption, String description, String address,
-            String addressOnParent, String allocationUnits, Boolean automaticAllocation, Boolean automaticDeallocation,
-            ConsumerVisibility consumerVisibility, Long limit, MappingBehavior mappingBehavior,
-            String otherResourceType, String parent, String poolID, Long reservation, String resourceSubType,
-            org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType, Long virtualQuantity,
-            String virtualQuantityUnits, Integer weight, List<String> connections, List<String> hostResources,
-            long capacity, int busType, String busSubType) {
+         String addressOnParent, String allocationUnits, Boolean automaticAllocation, Boolean automaticDeallocation,
+         ConsumerVisibility consumerVisibility, Long limit, MappingBehavior mappingBehavior, String otherResourceType,
+         String parent, String poolID, Long reservation, String resourceSubType,
+         org.jclouds.cim.ResourceAllocationSettingData.ResourceType resourceType, Long virtualQuantity,
+         String virtualQuantityUnits, Integer weight, List<String> connections, List<String> hostResources,
+         long capacity, int busType, String busSubType) {
       super(elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
-               automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior,
-               otherResourceType, parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity,
-               virtualQuantityUnits, weight, connections, hostResources);
+            automaticAllocation, automaticDeallocation, consumerVisibility, limit, mappingBehavior, otherResourceType,
+            parent, poolID, reservation, resourceSubType, resourceType, virtualQuantity, virtualQuantityUnits, weight,
+            connections, hostResources);
       this.capacity = capacity;
       this.busType = busType;
       this.busSubType = busSubType;
@@ -313,18 +320,13 @@ public class VCloudHardDisk extends ResourceAllocationSettingData {
    }
 
    @Override
-   public Builder toBuilder() {
-      return builder().fromVCloudHardDisk(this);
-   }
-
-   @Override
    public String toString() {
       return String
-               .format(
-                        "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s, busSubType=%s, busType=%s, capacity=%s]",
-                        elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
-                        automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources,
-                        limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
-                        resourceType, virtualQuantity, virtualQuantityUnits, weight, busSubType, busType, capacity);
+            .format(
+                  "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s, busSubType=%s, busType=%s, capacity=%s]",
+                  elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
+                  automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources, limit,
+                  mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+                  virtualQuantity, virtualQuantityUnits, weight, busSubType, busType, capacity);
    }
 }

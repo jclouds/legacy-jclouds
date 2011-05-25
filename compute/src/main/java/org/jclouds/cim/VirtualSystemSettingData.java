@@ -55,6 +55,14 @@ public class VirtualSystemSettingData extends ManagedElement {
       return new Builder();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromVirtualSystemSettingData(this);
+   }
+
    public static class Builder extends ManagedElement.Builder {
       private AutomaticRecoveryAction automaticRecoveryAction;
       private AutomaticShutdownAction automaticShutdownAction;
@@ -528,10 +536,6 @@ public class VirtualSystemSettingData extends ManagedElement {
     */
    public String getNotes() {
       return notes;
-   }
-
-   public Builder toBuilder() {
-      return builder().fromVirtualSystemSettingData(this);
    }
 
    @Override

@@ -192,8 +192,7 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"
     */
    public final static MediaType VAPPTEMPLATE_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.vAppTemplate+xml");
-
+         "vnd.vmware.vcloud.vAppTemplate+xml");
    /**
     * "application/vnd.vmware.vcloud.network+xml"
     */
