@@ -43,6 +43,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -54,9 +55,10 @@ import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
- * This tests that we can use guest customization as an alternative to bootstrapping with ssh. There
- * are a few advantages to this, including the fact that it can work inside google appengine where
- * network sockets (ssh:22) are prohibited.
+ * This tests that we can use guest customization as an alternative to
+ * bootstrapping with ssh. There are a few advantages to this, including the
+ * fact that it can work inside google appengine where network sockets (ssh:22)
+ * are prohibited.
  * 
  * @author Adrian Cole
  */
@@ -117,7 +119,8 @@ public class VCloudGuestCustomizationLiveTest {
       return new JschSshClientModule();
    }
 
-   // make sure the script has a lot of screwy characters, knowing our parser throws-out \r
+   // make sure the script has a lot of screwy characters, knowing our parser
+   // throws-out \r
    private String iLoveAscii = "I '\"love\"' {asc|!}*&";
 
    String script = "cat > /root/foo.txt<<EOF\n" + iLoveAscii + "\nEOF\n";
@@ -129,11 +132,13 @@ public class VCloudGuestCustomizationLiveTest {
 
       TemplateOptions options = client.templateOptions();
       options.as(VCloudTemplateOptions.class).customizationScript(script);
+      options.as(VCloudTemplateOptions.class).description(group);
       node = getOnlyElement(client.createNodesInGroup(group, 1, options));
 
-      Vm vm = Iterables.get(
-            ((VCloudClient) client.getContext().getProviderSpecificContext().getApi()).getVApp(node.getUri())
-                  .getChildren(), 0);
+      VApp vapp = ((VCloudClient) client.getContext().getProviderSpecificContext().getApi()).getVApp(node.getUri());
+      assertEquals(vapp.getDescription(), group);
+
+      Vm vm = Iterables.get(vapp.getChildren(), 0);
       String apiOutput = vm.getGuestCustomizationSection().getCustomizationScript();
       checkApiOutput(apiOutput);
 
@@ -161,7 +166,8 @@ public class VCloudGuestCustomizationLiveTest {
    }
 
    protected void checkApiOutput1_0_1(String apiOutput) {
-      // in 1.0.1, vcloud director seems to pass through characters via api flawlessly
+      // in 1.0.1, vcloud director seems to pass through characters via api
+      // flawlessly
       assertEquals(apiOutput, script);
    }
 

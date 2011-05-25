@@ -23,7 +23,7 @@
         href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320" />
     <Link rel="remove"
         href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320" />
-    <Description />
+    <Description>foo</Description>
     <LeaseSettingsSection
         type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
         href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320/leaseSettingsSection/"

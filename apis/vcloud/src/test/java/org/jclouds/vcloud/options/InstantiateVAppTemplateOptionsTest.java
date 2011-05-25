@@ -20,6 +20,7 @@ package org.jclouds.vcloud.options;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.customizeOnInstantiate;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.description;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -74,4 +75,16 @@ public class InstantiateVAppTemplateOptionsTest {
       assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
    }
 
+   @Test
+   public void testDescription() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.description("foo");
+      assertEquals(options.getDescription(), "foo");
+   }
+
+   @Test
+   public void testDescriptionStatic() {
+      InstantiateVAppTemplateOptions options = description("foo");
+      assertEquals(options.getDescription(), "foo");
+   }
 }
