@@ -21,6 +21,8 @@ package org.jclouds.providers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.testng.annotations.Test;
@@ -82,6 +84,30 @@ public class ProvidersTest {
          } else {
             assertEquals(testComputeProvider, providerMetadata);
          }
+      }
+   }
+
+   @Test
+   public void testWithIso3166Code() {
+      @SuppressWarnings("serial")
+      Map<String, Integer> expectedResults = new HashMap<String, Integer>() {{
+         put("US-CA", 2);
+         put("US-FL", 1);
+         put("US", 2);
+         put("SOME-FAKE-CODE", 0);
+      }};
+
+      for (Map.Entry<String, Integer> result : expectedResults.entrySet()) {
+         Iterable<ProviderMetadata> providersMetadata = Providers.withIso3166Code(result.getKey());
+         int providersFound = 0;
+
+         for (ProviderMetadata providerMetadata : providersMetadata) {
+            if (providerMetadata != null) {
+               providersFound++;
+            }
+         }
+
+         assertEquals(providersFound, result.getValue().intValue());
       }
    }
 

@@ -99,7 +99,7 @@ public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA");
+      return ImmutableSet.of("US-VA", "US-CA", "US-FL");
    }
 
 }
