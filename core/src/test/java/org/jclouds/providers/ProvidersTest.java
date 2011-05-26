@@ -21,8 +21,8 @@ package org.jclouds.providers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.Iterables;
+
 import java.util.NoSuchElementException;
 
 import org.testng.annotations.Test;
@@ -96,50 +96,40 @@ public class ProvidersTest {
 
    @Test
    public void testBoundedByIso3166Code() {
-      @SuppressWarnings("serial")
-      Map<String, Integer> expectedResults = new HashMap<String, Integer>() {{
-         put("US-CA", 2);
-         put("US-FL", 1);
-         put("US", 2);
-         put("JP-13", 1);
-         put("JP", 1);
-         put("SOME-FAKE-CODE", 0);
-      }};
+      // Test filtering by ISO 3166 code alone
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA")), 2);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL")), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US")), 2);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("JP-13")), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("JP")), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE")), 0);
 
-      for (Map.Entry<String, Integer> result : expectedResults.entrySet()) {
-         Iterable<ProviderMetadata> providersMetadata = Providers.boundedByIso3166Code(result.getKey());
-         int providersFound = 0;
-
-         for (ProviderMetadata providerMetadata : providersMetadata) {
-            if (providerMetadata != null) {
-               providersFound++;
-            }
-         }
-
-         assertEquals(providersFound, result.getValue().intValue());
-      }
+      // Test filtering by ISO 3166 code and type
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA", ProviderMetadata.BLOBSTORE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA", ProviderMetadata.COMPUTE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL", ProviderMetadata.BLOBSTORE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL", ProviderMetadata.COMPUTE_TYPE)), 0);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US", ProviderMetadata.BLOBSTORE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US", ProviderMetadata.COMPUTE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE", ProviderMetadata.BLOBSTORE_TYPE)), 0);
+      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE", ProviderMetadata.COMPUTE_TYPE)), 0);
    }
 
    @Test
    public void testCollocatedWith() {
-      @SuppressWarnings("serial")
-      Map<ProviderMetadata, Integer> expectedResults = new HashMap<ProviderMetadata, Integer>() {{
-         put(testBlobstoreProvider, 1);
-         put(testComputeProvider, 1);
-         put(testYetAnotherComputeProvider, 0);
-      }};
+      // Test filtering by collocation alone
+      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider)), 1);
+      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider)), 1);
+      assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider)), 0);
 
-      for (Map.Entry<ProviderMetadata, Integer> result : expectedResults.entrySet()) {
-         Iterable<ProviderMetadata> providersMetadata = Providers.collocatedWith(result.getKey());
-         int providersFound = 0;
-
-         for (ProviderMetadata providerMetadata : providersMetadata) {
-            if (providerMetadata != null) {
-               providersFound++;
-            }
-         }
-
-         assertEquals(providersFound, result.getValue().intValue());
-      }
+      // Test filtering by collocation and type
+      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider, ProviderMetadata.BLOBSTORE_TYPE)), 0);
+      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider, ProviderMetadata.COMPUTE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider, ProviderMetadata.COMPUTE_TYPE)), 0);
+      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider, ProviderMetadata.BLOBSTORE_TYPE)), 1);
+      assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider,
+            ProviderMetadata.COMPUTE_TYPE)), 0);
+      assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider,
+            ProviderMetadata.BLOBSTORE_TYPE)), 0);
    }
 }
