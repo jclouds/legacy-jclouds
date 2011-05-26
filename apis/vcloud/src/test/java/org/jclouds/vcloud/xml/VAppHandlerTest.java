@@ -61,6 +61,7 @@ public class VAppHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       assertEquals(result.getName(), "vApp_acole_2");
+      assertEquals(result.getDescription(), "foo");
       assertEquals(result.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
       assertEquals(result.getStatus(), Status.OFF);
@@ -68,7 +69,6 @@ public class VAppHandlerTest {
             result.getVDC(),
             new ReferenceTypeImpl(null, VCloudMediaType.VDC_XML, URI
                   .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
-      assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assert result.isOvfDescriptorUploaded();
       Vm vm = Iterables.getOnlyElement(result.getChildren());

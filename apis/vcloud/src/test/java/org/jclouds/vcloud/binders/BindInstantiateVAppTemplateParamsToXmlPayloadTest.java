@@ -94,22 +94,54 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(new InstantiateVAppTemplateOptions()))
+            .atLeastOnce();
       request.setPayload(expected);
 
       expect(template.getNetworkSection()).andReturn(net).atLeastOnce();
-      expect(net.getNetworks())
-               .andReturn(
-                        ImmutableSet
-                                 .<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network(
-                                          "vAppNet-vApp Internal", null)));
+      expect(net.getNetworks()).andReturn(
+            ImmutableSet.<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network("vAppNet-vApp Internal", null)));
 
       replay(request);
       replay(template);
       replay(net);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
+
+      Map<String, String> map = Maps.newHashMap();
+      map.put("name", "my-vapp");
+      map.put("template", templateUri.toASCIIString());
+      binder.bindToRequest(request, map);
+
+      verify(request);
+      verify(template);
+      verify(net);
+
+   }
+
+   public void testDescription() throws IOException {
+      URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
+      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudNetworkSection net = createMock(VCloudNetworkSection.class);
+
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-description.xml"));
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(
+            ImmutableList.<Object> of(new InstantiateVAppTemplateOptions().description("my foo"))).atLeastOnce();
+      request.setPayload(expected);
+
+      expect(template.getNetworkSection()).andReturn(net).atLeastOnce();
+      expect(net.getNetworks()).andReturn(
+            ImmutableSet.<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network("vAppNet-vApp Internal", null)));
+
+      replay(request);
+      replay(template);
+      replay(net);
+
+      BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -130,12 +162,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -156,12 +188,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -176,19 +208,19 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = null;
 
-      InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("aloha", URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), FenceMode.NAT_ROUTED));
+      InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("aloha",
+            URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), FenceMode.NAT_ROUTED));
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-network.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -205,27 +237,24 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VCloudNetworkSection net = createMock(VCloudNetworkSection.class);
       InstantiateVAppTemplateOptions options = customizeOnInstantiate(true);
 
-      String expected = Strings2
-               .toStringAndClose(getClass().getResourceAsStream("/instantiationparams-customization.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
+            "/instantiationparams-customization.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
 
       expect(template.getNetworkSection()).andReturn(net).atLeastOnce();
-      expect(net.getNetworks())
-               .andReturn(
-                        ImmutableSet
-                                 .<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network(
-                                          "vAppNet-vApp Internal", null)));
+      expect(net.getNetworks()).andReturn(
+            ImmutableSet.<org.jclouds.ovf.Network> of(new org.jclouds.ovf.Network("vAppNet-vApp Internal", null)));
 
       replay(request);
       replay(template);
       replay(net);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");

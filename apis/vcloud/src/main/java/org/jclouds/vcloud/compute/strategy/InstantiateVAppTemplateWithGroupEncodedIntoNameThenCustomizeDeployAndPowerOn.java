@@ -18,13 +18,14 @@
  */
 package org.jclouds.vcloud.compute.strategy;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+
 import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -82,6 +83,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       IpAddressAllocationMode ipAddressAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions())
             .getIpAddressAllocationMode();
 
+      options.description(VCloudTemplateOptions.class.cast(template.getOptions()).getDescription());
       options.customizeOnInstantiate(false);
       options.deploy(false);
       options.powerOn(false);

@@ -35,10 +35,14 @@ public class InstantiateVAppTemplateOptions {
    private Set<NetworkConfig> networkConfig = Sets.newLinkedHashSet();
 
    private Boolean customizeOnInstantiate;
-
+   private String description = null;
    private boolean block = true;
    private boolean deploy = true;
    private boolean powerOn = true;
+
+   public String getDescription() {
+      return description;
+   }
 
    public boolean shouldBlock() {
       return block;
@@ -50,6 +54,15 @@ public class InstantiateVAppTemplateOptions {
 
    public boolean shouldPowerOn() {
       return powerOn;
+   }
+
+   /**
+    * Optional description. Used for the Description of the vApp created by this
+    * instantiation.
+    */
+   public InstantiateVAppTemplateOptions description(String description) {
+      this.description = description;
+      return this;
    }
 
    /**
@@ -125,6 +138,14 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
+       * @see InstantiateVAppTemplateOptions#description
+       */
+      public static InstantiateVAppTemplateOptions description(String description) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.description(description);
+      }
+
+      /**
        * @see InstantiateVAppTemplateOptions#deploy
        */
       public static InstantiateVAppTemplateOptions deploy(boolean deploy) {
@@ -160,8 +181,8 @@ public class InstantiateVAppTemplateOptions {
 
    @Override
    public String toString() {
-      return "[networkConfig=" + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy="
-            + (deploy) + ", powerOn=" + (powerOn) + "]";
+      return "[networkConfig=" + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate
+            + ", description=" + description + ", block=" + block + ", deploy=" + deploy + ", powerOn=" + powerOn + "]";
    }
 
    @Override
@@ -171,6 +192,7 @@ public class InstantiateVAppTemplateOptions {
       result = prime * result + (block ? 1231 : 1237);
       result = prime * result + ((customizeOnInstantiate == null) ? 0 : customizeOnInstantiate.hashCode());
       result = prime * result + (deploy ? 1231 : 1237);
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
       result = prime * result + (powerOn ? 1231 : 1237);
       return result;
@@ -193,6 +215,11 @@ public class InstantiateVAppTemplateOptions {
       } else if (!customizeOnInstantiate.equals(other.customizeOnInstantiate))
          return false;
       if (deploy != other.deploy)
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
          return false;
       if (networkConfig == null) {
          if (other.networkConfig != null)

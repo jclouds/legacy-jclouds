@@ -729,6 +729,22 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
+   public void testDeleteVAppTemplateVAppOrMediaImage() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("deleteVAppTemplateVAppOrMediaImage", URI.class);
+      HttpRequest request = processor.createRequest(method,
+            URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+
+      assertRequestLineEquals(request, "DELETE https://vcenterprise.bluelock.com/api/v1.0/vApp/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testPowerOnVAppOrVm() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("powerOnVAppOrVm", URI.class);
       HttpRequest request = processor.createRequest(method,

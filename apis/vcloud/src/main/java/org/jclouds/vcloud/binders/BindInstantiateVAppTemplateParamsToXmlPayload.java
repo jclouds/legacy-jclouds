@@ -66,8 +66,6 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder {
-   @Resource
-   protected Logger logger = Logger.NULL;
 
    protected final String ns;
    protected final String schema;
@@ -79,9 +77,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    @Inject
    public BindInstantiateVAppTemplateParamsToXmlPayload(DefaultNetworkNameInTemplate defaultNetworkNameInTemplate,
-            BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
-            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode, VCloudClient client) {
+         BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
+         @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode, VCloudClient client) {
       this.defaultNetworkNameInTemplate = defaultNetworkNameInTemplate;
       this.ns = ns;
       this.schema = schema;
@@ -94,7 +92,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
-               "this binder is only valid for GeneratedHttpRequests!");
+            "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name");
@@ -107,14 +105,14 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       Set<? extends NetworkConfig> networkConfig = null;
 
       NetworkConfigDecorator networknetworkConfigDecorator = new NetworkConfigDecorator(template, defaultNetwork,
-               defaultFenceMode, defaultNetworkNameInTemplate);
+            defaultFenceMode, defaultNetworkNameInTemplate);
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
 
       if (options != null) {
          if (options.getNetworkConfig().size() > 0)
             networkConfig = Sets.newLinkedHashSet(Iterables.transform(options.getNetworkConfig(),
-                     networknetworkConfigDecorator));
+                  networknetworkConfigDecorator));
          deploy = ifNullDefaultTo(options.shouldDeploy(), deploy);
          powerOn = ifNullDefaultTo(options.shouldPowerOn(), powerOn);
          customizeOnInstantiate = options.shouldCustomizeOnInstantiate();
@@ -124,8 +122,10 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
          networkConfig = ImmutableSet.of(networknetworkConfigDecorator.apply(null));
 
       try {
-         return stringBinder.bindToRequest(request, generateXml(name, deploy, powerOn, template, networkConfig,
-                  customizeOnInstantiate));
+         return stringBinder.bindToRequest(
+               request,
+               generateXml(name, options.getDescription(), deploy, powerOn, template, networkConfig,
+                     customizeOnInstantiate));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -155,7 +155,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       private final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
 
       protected NetworkConfigDecorator(URI template, URI defaultNetwork, FenceMode defaultFenceMode,
-               DefaultNetworkNameInTemplate defaultNetworkNameInTemplate) {
+            DefaultNetworkNameInTemplate defaultNetworkNameInTemplate) {
          this.template = checkNotNull(template, "template");
          this.defaultNetwork = checkNotNull(defaultNetwork, "defaultNetwork");
          this.defaultFenceMode = checkNotNull(defaultFenceMode, "defaultFenceMode");
@@ -169,7 +169,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
          URI network = ifNullDefaultTo(from.getParentNetwork(), defaultNetwork);
          FenceMode fenceMode = ifNullDefaultTo(from.getFenceMode(), defaultFenceMode);
          String networkName = from.getNetworkName() != null ? from.getNetworkName() : defaultNetworkNameInTemplate
-                  .apply(template);
+               .apply(template);
          return new NetworkConfig(networkName, network, fenceMode);
       }
    }
@@ -200,10 +200,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       }
    }
 
-   protected String generateXml(String name, boolean deploy, boolean powerOn, URI template,
-            Iterable<? extends NetworkConfig> networkConfig, @Nullable Boolean customizeOnInstantiate)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+   protected String generateXml(String name, @Nullable String description, boolean deploy, boolean powerOn,
+         URI template, Iterable<? extends NetworkConfig> networkConfig, @Nullable Boolean customizeOnInstantiate)
+         throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name).a("deploy", deploy + "").a("powerOn", powerOn + "");
+      if (description != null)
+         rootBuilder.e("Description").t(description);
       XMLBuilder instantiationParamsBuilder = rootBuilder.e("InstantiationParams");
       addNetworkConfig(instantiationParamsBuilder, networkConfig);
       addCustomizationConfig(instantiationParamsBuilder, customizeOnInstantiate);
@@ -217,19 +219,20 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    protected void addCustomizationConfig(XMLBuilder instantiationParamsBuilder, Boolean customizeOnInstantiate) {
       if (customizeOnInstantiate != null) {
-//         XMLBuilder customizationSectionBuilder = instantiationParamsBuilder.e("CustomizationSection");
-//         customizationSectionBuilder.e("ovf:Info").t("VApp template customization section");
-//         customizationSectionBuilder.e("CustomizeOnInstantiate").t(customizeOnInstantiate.toString());
+         // XMLBuilder customizationSectionBuilder =
+         // instantiationParamsBuilder.e("CustomizationSection");
+         // customizationSectionBuilder.e("ovf:Info").t("VApp template customization section");
+         // customizationSectionBuilder.e("CustomizeOnInstantiate").t(customizeOnInstantiate.toString());
       }
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder,
-            Iterable<? extends NetworkConfig> networkConfig) {
+         Iterable<? extends NetworkConfig> networkConfig) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection");
       networkConfigBuilder.e("ovf:Info").t("Configuration parameters for logical networks");
       for (NetworkConfig n : networkConfig) {
          XMLBuilder configurationBuilder = networkConfigBuilder.e("NetworkConfig").a("networkName", n.getNetworkName())
-                  .e("Configuration");
+               .e("Configuration");
          configurationBuilder.e("ParentNetwork").a("href", n.getParentNetwork().toASCIIString());
          if (n.getFenceMode() != null) {
             configurationBuilder.e("FenceMode").t(n.getFenceMode().toString());
@@ -238,8 +241,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected XMLBuilder buildRoot(String name) throws ParserConfigurationException, FactoryConfigurationError {
-      return XMLBuilder.create("InstantiateVAppTemplateParams").a("name", name).a("xmlns", ns).a("xmlns:ovf",
-               "http://schemas.dmtf.org/ovf/envelope/1");
+      return XMLBuilder.create("InstantiateVAppTemplateParams").a("name", name).a("xmlns", ns)
+            .a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
    }
 
    protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
@@ -253,6 +256,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       }
       return null;
    }
+
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("InstantiateVAppTemplateParams is needs parameters");

@@ -261,6 +261,29 @@ public interface VCloudClient extends CommonVCloudClient {
     */
    Task suspendVAppOrVm(URI vAppOrVmId);
 
+   /**
+    * delete a vAppTemplate, vApp, or media image. You cannot delete an object
+    * if it is in use. Any object that is being copied or moved is in use. Other
+    * criteria that determine whether an object is in use depend on the object
+    * type.
+    * <ul>
+    * <li>A vApptemplate is in use if it is being instantiated. After
+    * instantiation is complete, the template is no longer in use.</li>
+    * <li>A vApp is in use if it is deployed.</li>
+    * <li>A media image is in use if it is inserted in a Vm.</li>
+    * </ul>
+    * 
+    * @param id
+    *           href of the vAppTemplate, vApp, or media image
+    * @return task of the operation in progress
+    */
+   Task deleteVAppTemplateVAppOrMediaImage(URI id);
+
+   /**
+    * 
+    * @see deleteVAppTemplateVAppOrMediaImage
+    */
+   @Deprecated
    Task deleteVApp(URI vAppId);
 
 }
