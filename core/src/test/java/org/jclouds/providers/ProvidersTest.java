@@ -37,6 +37,7 @@ public class ProvidersTest {
 
    private final ProviderMetadata testBlobstoreProvider = new JcloudsTestBlobStoreProviderMetadata();
    private final ProviderMetadata testComputeProvider = new JcloudsTestComputeProviderMetadata();
+   private final ProviderMetadata testYetAnotherComputeProvider = new JcloudsTestYetAnotherComputeProviderMetadata();
 
    @Test
    public void testWithId() {
@@ -66,7 +67,11 @@ public class ProvidersTest {
       providersMetadata = Providers.ofType(ProviderMetadata.COMPUTE_TYPE);
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals(testComputeProvider, providerMetadata);
+         if (providerMetadata.getName().equals(testComputeProvider.getName())) {
+            assertEquals(testComputeProvider, providerMetadata);
+         } else {
+            assertEquals(testYetAnotherComputeProvider, providerMetadata);
+         }
       }
 
       providersMetadata = Providers.ofType("fake-type");
@@ -79,10 +84,12 @@ public class ProvidersTest {
       Iterable<ProviderMetadata> providersMetadata = Providers.all();
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
-         if (providerMetadata.getName().equals("Test Blobstore Provider")) {
+         if (providerMetadata.getName().equals(testBlobstoreProvider.getName())) {
             assertEquals(testBlobstoreProvider, providerMetadata);
-         } else {
+         } else if (providerMetadata.getName().equals(testComputeProvider.getName())){
             assertEquals(testComputeProvider, providerMetadata);
+         } else {
+             assertEquals(testYetAnotherComputeProvider, providerMetadata);
          }
       }
    }
@@ -94,6 +101,8 @@ public class ProvidersTest {
          put("US-CA", 2);
          put("US-FL", 1);
          put("US", 2);
+         put("JP-13", 1);
+         put("JP", 1);
          put("SOME-FAKE-CODE", 0);
       }};
 
@@ -111,4 +120,26 @@ public class ProvidersTest {
       }
    }
 
+   @Test
+   public void testIntersectingIso3166Code() {
+      @SuppressWarnings("serial")
+      Map<ProviderMetadata, Integer> expectedResults = new HashMap<ProviderMetadata, Integer>() {{
+         put(testBlobstoreProvider, 1);
+         put(testComputeProvider, 1);
+         put(testYetAnotherComputeProvider, 0);
+      }};
+
+      for (Map.Entry<ProviderMetadata, Integer> result : expectedResults.entrySet()) {
+         Iterable<ProviderMetadata> providersMetadata = Providers.collocatedWith(result.getKey());
+         int providersFound = 0;
+
+         for (ProviderMetadata providerMetadata : providersMetadata) {
+            if (providerMetadata != null) {
+               providersFound++;
+            }
+         }
+
+         assertEquals(providersFound, result.getValue().intValue());
+      }
+   }
 }

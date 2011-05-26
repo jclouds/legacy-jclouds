@@ -135,6 +135,19 @@ public class Providers {
     * @return the providers with the given ISO 3166 code
     */
    public static Iterable<ProviderMetadata> withIso3166Code(String iso3166Code) {
-       return filter(all(), ProviderPredicates.inIso3166Code(iso3166Code));
+      return filter(all(), ProviderPredicates.inIso3166Code(iso3166Code));
+   }
+
+   /**
+    * Returns the providers that have at least one common ISO 3166 code in common
+    * regardless of type.
+    * 
+    * @param providerMetadata
+    *                         the provider metadata to use to filter providers by
+    * 
+    * @return the providers that share at least one common ISO 3166 code
+    */
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata) {
+      return filter(all(), ProviderPredicates.intersectingIso3166Code(providerMetadata));
    }
 }
