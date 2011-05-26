@@ -127,15 +127,15 @@ public class Providers {
    }
 
    /**
-    * Returns the providers that have the given ISO 3166 code regardless of type.
+    * Returns the providers that are bound to the same location as the given ISO 3166 code.
     * 
     * @param isoCode
     *                the ISO 3166 code to filter providers by
     * 
     * @return the providers with the given ISO 3166 code
     */
-   public static Iterable<ProviderMetadata> withIso3166Code(String iso3166Code) {
-      return filter(all(), ProviderPredicates.inIso3166Code(iso3166Code));
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code) {
+      return filter(all(), ProviderPredicates.boundedByIso3166Code(iso3166Code));
    }
 
    /**

@@ -95,7 +95,7 @@ public class ProvidersTest {
    }
 
    @Test
-   public void testWithIso3166Code() {
+   public void testBoundedByIso3166Code() {
       @SuppressWarnings("serial")
       Map<String, Integer> expectedResults = new HashMap<String, Integer>() {{
          put("US-CA", 2);
@@ -107,7 +107,7 @@ public class ProvidersTest {
       }};
 
       for (Map.Entry<String, Integer> result : expectedResults.entrySet()) {
-         Iterable<ProviderMetadata> providersMetadata = Providers.withIso3166Code(result.getKey());
+         Iterable<ProviderMetadata> providersMetadata = Providers.boundedByIso3166Code(result.getKey());
          int providersFound = 0;
 
          for (ProviderMetadata providerMetadata : providersMetadata) {
@@ -121,7 +121,7 @@ public class ProvidersTest {
    }
 
    @Test
-   public void testIntersectingIso3166Code() {
+   public void testCollocatedWith() {
       @SuppressWarnings("serial")
       Map<ProviderMetadata, Integer> expectedResults = new HashMap<ProviderMetadata, Integer>() {{
          put(testBlobstoreProvider, 1);

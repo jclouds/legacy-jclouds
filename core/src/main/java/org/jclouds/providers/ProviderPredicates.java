@@ -99,13 +99,14 @@ public class ProviderPredicates {
    }
 
    /**
-    * Returns all providers that are "in" the given ISO 3166 code.
+    * Returns the providers that are bound to the same location as the given ISO 3166 code.
     * 
-    * @param iso3166Code the ISO 3166 code for the location/region to search for
+    * @param isoCode
+    *                the ISO 3166 code to filter providers by
     * 
-    * @return the providers "in" the given ISO 3166 code
+    * @return the providers with the given ISO 3166 code
     */
-   public static Predicate<ProviderMetadata> inIso3166Code(final String iso3166Code) {
+   public static Predicate<ProviderMetadata> boundedByIso3166Code(final String iso3166Code) {
       Preconditions.checkNotNull(iso3166Code, "iso3166Code must not be null");
 
       return new Predicate<ProviderMetadata>() {
@@ -122,7 +123,7 @@ public class ProviderPredicates {
           */
          @Override
          public String toString() {
-            return "inIso3166Code(" + iso3166Code + ")";
+            return "boundedByIso3166Code(" + iso3166Code + ")";
          }
       };
    }
