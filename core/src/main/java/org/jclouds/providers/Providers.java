@@ -21,6 +21,8 @@ package org.jclouds.providers;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 
+import com.google.common.base.Predicates;
+
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
@@ -127,14 +129,56 @@ public class Providers {
    }
 
    /**
-    * Returns the providers that have the given ISO 3166 code regardless of type.
+    * Returns the providers that are bound to the same location as the given ISO 3166 code regardless of type.
     * 
     * @param isoCode
     *                the ISO 3166 code to filter providers by
     * 
-    * @return the providers with the given ISO 3166 code
+    * @return the providers bound by the given ISO 3166 code
     */
-   public static Iterable<ProviderMetadata> withIso3166Code(String iso3166Code) {
-       return filter(all(), ProviderPredicates.inIso3166Code(iso3166Code));
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code) {
+      return filter(all(), ProviderPredicates.boundedByIso3166Code(iso3166Code));
+   }
+
+   /**
+    * Returns the providers that are bound to the same location as the given ISO 3166 code and of the given type.
+    * 
+    * @param iso3166Code
+    *                    the ISO 3166 code to filter providers by
+    * @param type
+    *             the type to filter providers by
+    * 
+    * @return the providers bound by the given ISO 3166 code and of the proper type
+    */
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code, String type) {
+      return filter(all(), Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code),
+            ProviderPredicates.type(type)));
+   }
+
+   /**
+    * Returns the providers that have at least one common ISO 3166 code in common regardless of type.
+    * 
+    * @param providerMetadata
+    *                         the provider metadata to use to filter providers by
+    * 
+    * @return the providers that share at least one common ISO 3166 code
+    */
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata) {
+      return filter(all(), ProviderPredicates.intersectingIso3166Code(providerMetadata));
+   }
+
+   /**
+    * Returns the providers that have at least one common ISO 3166 code and are of the given type.
+    * 
+    * @param providerMetadata
+    *                         the provider metadata to use to filter providers by
+    * @param type
+    *             the type to filter providers by
+    * 
+    * @return the providers that share at least one common ISO 3166 code and of the given type
+    */
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata, String type) {
+      return filter(all(), Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata),
+            ProviderPredicates.type(type)));
    }
 }
