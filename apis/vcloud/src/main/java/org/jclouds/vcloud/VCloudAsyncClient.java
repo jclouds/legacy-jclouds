@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.DEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORKCONNECTIONSECTION_XML;
@@ -59,6 +60,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCPUCountToXmlPayload;
 import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindCatalogItemToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
@@ -66,6 +68,7 @@ import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindMemoryToXmlPayload;
 import org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -80,6 +83,7 @@ import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -176,6 +180,33 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
    ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @PayloadParam("vApp") URI toClone,
          @PayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName, CloneVAppOptions... options);
+
+   /**
+    * @see VCloudClient#addResourceEntitytoCatalog(URI, String, String, URI)
+    */
+   @POST
+   @Path("/catalogItems")
+   @Consumes(CATALOGITEM_XML)
+   @Produces(CATALOGITEM_XML)
+   @MapBinder(BindCatalogItemToXmlPayload.class)
+   @XMLResponseParser(CatalogItemHandler.class)
+   ListenableFuture<? extends CatalogItem> addResourceEntitytoCatalog(@EndpointParam URI catalog,
+         @PayloadParam("name") String name, @PayloadParam("description") String description,
+         @PayloadParam("entity") URI entity);
+
+   /**
+    * @see VCloudClient#addResourceEntitytoCatalog(URI, String, String, URI,
+    *      Map)
+    */
+   @POST
+   @Path("/catalogItems")
+   @Consumes(CATALOGITEM_XML)
+   @Produces(CATALOGITEM_XML)
+   @MapBinder(BindCatalogItemToXmlPayload.class)
+   @XMLResponseParser(CatalogItemHandler.class)
+   ListenableFuture<? extends CatalogItem> addResourceEntitytoCatalog(@EndpointParam URI catalog,
+         @PayloadParam("name") String name, @PayloadParam("description") String description,
+         @PayloadParam("entity") URI entity, Map<String, String> properties);
 
    /**
     * @see VCloudClient#captureVAppInVDC

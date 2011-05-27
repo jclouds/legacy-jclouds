@@ -762,6 +762,50 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
+   public void testAddResourceEntitytoCatalogProperties() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("addResourceEntitytoCatalog", URI.class, String.class,
+            String.class, URI.class, Map.class);
+      HttpRequest request = processor.createRequest(method,
+            URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), "myname", "mydescription",
+            URI.create("http://fooentity"), ImmutableMap.of("foo", "bar"));
+
+      assertRequestLineEquals(request,
+            "POST https://vcenterprise.bluelock.com/api/v1.0/catalog/1/catalogItems HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertPayloadEquals(
+            request,
+            "<CatalogItem xmlns=\"http://www.vmware.com/vcloud/v1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" name=\"myname\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcloud.safesecureweb.com/ns/vcloud.xsd\"><Description>mydescription</Description><Entity href=\"http://fooentity\"/><Property key=\"foo\">bar</Property></CatalogItem>",
+            "application/vnd.vmware.vcloud.catalogItem+xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogItemHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   public void testAddResourceEntitytoCatalog() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("addResourceEntitytoCatalog", URI.class, String.class,
+            String.class, URI.class);
+      HttpRequest request = processor.createRequest(method,
+            URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), "myname", "mydescription",
+            URI.create("http://fooentity"));
+
+      assertRequestLineEquals(request,
+            "POST https://vcenterprise.bluelock.com/api/v1.0/catalog/1/catalogItems HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertPayloadEquals(
+            request,
+            "<CatalogItem xmlns=\"http://www.vmware.com/vcloud/v1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" name=\"myname\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcloud.safesecureweb.com/ns/vcloud.xsd\"><Description>mydescription</Description><Entity href=\"http://fooentity\"/></CatalogItem>",
+            "application/vnd.vmware.vcloud.catalogItem+xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogItemHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
    public void testPowerOffVAppOrVm() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("powerOffVAppOrVm", URI.class);
       HttpRequest request = processor.createRequest(method,

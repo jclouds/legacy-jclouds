@@ -80,7 +80,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
 
    void deleteVApp(URI vappId) {
       logger.debug(">> deleting vApp(%s)", vappId);
-      Task task = client.deleteVApp(vappId);
+      Task task = client.deleteVAppTemplateVAppOrMediaImage(vappId);
       if (!successTester.apply(task.getHref())) {
          throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vappId, task));
       }

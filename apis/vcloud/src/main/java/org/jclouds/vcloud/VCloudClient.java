@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ovf.Envelope;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -285,5 +286,27 @@ public interface VCloudClient extends CommonVCloudClient {
     */
    @Deprecated
    Task deleteVApp(URI vAppId);
+
+   /**
+    * A catalog can contain references to vApp templates and media images that
+    * have been uploaded to any vDC in an organization. A vApp template or media
+    * image can be listed in at most one catalog.
+    * 
+    * @param catalog
+    *           URI of the catalog to add the resourceEntity from
+    * @param name
+    *           name of the entry in the catalog
+    * @param description
+    *           description of the entry in the catalog
+    * @param entity
+    *           the reference to the item from the VDC
+    * @param properties
+    *           metadata to associate with this item
+    * @return the new catalog item
+    */
+   CatalogItem addResourceEntitytoCatalog(URI catalog, String name, String description, URI entity,
+         Map<String, String> properties);
+
+   CatalogItem addResourceEntitytoCatalog(URI catalog, String name, String description, URI entity);
 
 }
