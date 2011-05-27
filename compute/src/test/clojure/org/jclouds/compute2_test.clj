@@ -63,8 +63,6 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? *compute*))
   (is (compute-service? (compute-service (compute-context *compute*)))))
 
-(defn in-group? [group] #(= (.getGroup %) group))
-
 (deftest nodes-test
   (is (create-node *compute* "fred" (build-template *compute* {} )))
   (is (= 1 (count (nodes-in-group *compute* "fred"))))

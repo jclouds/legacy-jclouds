@@ -278,6 +278,11 @@ Here's an example of creating and running a small linux node in the group webser
   [#^NodeMetadata node]
   (state-predicate node UNRECOGNIZED))
 
+(defn in-group?
+  "Returns a predicate fn which returns true if the node is in the given group, false otherwise"
+  [group]
+  #(= (.getGroup %) group))
+
 (defn public-ips
   "Returns the node's public ips"
   [#^NodeMetadata node]
