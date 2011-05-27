@@ -21,7 +21,10 @@ package org.jclouds.rimuhosting.miro.binder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 /**
@@ -32,6 +35,11 @@ import org.jclouds.rest.binders.BindToJsonPayload;
  * @author Ivan Meredith
  */
 public class RimuHostingJsonBinder extends BindToJsonPayload {
+   @Inject
+   public RimuHostingJsonBinder(Json jsonBinder) {
+      super(jsonBinder);
+   }
+
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       return bindToRequest(request, (Object) postParams);

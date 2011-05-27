@@ -27,6 +27,7 @@ import org.jclouds.util.Patterns;
  * As String is final, using a different marker to imply this is a json object
  * 
  * @author Adrian Cole
+ * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
  */
 public class JsonBall implements java.io.Serializable, Comparable<String>, CharSequence {
 

@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.options.CreateNetworkOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -53,4 +54,31 @@ public interface NetworkClient {
     */
    Network getNetwork(long id);
 
+   /**
+    * Creates a network
+    * 
+    * @param zoneId
+    *           the Zone ID for the Vlan ip range
+    * @param networkOfferingId
+    *           the network offering id
+    * @param name
+    *           the name of the network
+    * @param displayText
+    *           the display text of the network
+    * @param options
+    *           optional parameters
+    * @return newly created network
+    */
+   Network createNetworkInZone(long zoneId, long networkOfferingId, String name, String displayText,
+         CreateNetworkOptions... options);
+
+   /**
+    * Deletes a network
+    * 
+    * @param id
+    *           the ID of the network
+    * @return job id related to destroying the network, or null if resource was not
+    *         found
+    */
+   Long deleteNetwork(long id);
 }

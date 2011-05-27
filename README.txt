@@ -30,7 +30,7 @@ our current version is 1.0-beta-9c
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
-                          cloudservers-uk, vcloud (generic), ec2 (generic), byon,
+                          cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
                           cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
@@ -47,6 +47,11 @@ our blobstore api supports: aws-s3, cloudfiles-us, cloudfiles-uk, filesystem,
                             eucalyptus-partnercloud-s3, swift (generic), transient (in-mem)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
+           to all of these providers
+
+our loadbalancer api supports: cloudloadbalancers-us
+ 
+  * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
            to all of these providers
 
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,

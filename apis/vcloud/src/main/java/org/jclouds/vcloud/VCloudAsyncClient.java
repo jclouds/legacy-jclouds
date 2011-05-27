@@ -18,9 +18,11 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.DEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORKCONNECTIONSECTION_XML;
+import static org.jclouds.vcloud.VCloudMediaType.RASDITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.UNDEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
@@ -56,13 +58,17 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.vcloud.binders.BindCPUCountToXmlPayload;
 import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindCatalogItemToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindMemoryToXmlPayload;
 import org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -77,6 +83,7 @@ import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -89,7 +96,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href=
+ *      "https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -173,6 +182,33 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
          @PayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName, CloneVAppOptions... options);
 
    /**
+    * @see VCloudClient#addResourceEntitytoCatalog(URI, String, String, URI)
+    */
+   @POST
+   @Path("/catalogItems")
+   @Consumes(CATALOGITEM_XML)
+   @Produces(CATALOGITEM_XML)
+   @MapBinder(BindCatalogItemToXmlPayload.class)
+   @XMLResponseParser(CatalogItemHandler.class)
+   ListenableFuture<? extends CatalogItem> addResourceEntitytoCatalog(@EndpointParam URI catalog,
+         @PayloadParam("name") String name, @PayloadParam("description") String description,
+         @PayloadParam("entity") URI entity);
+
+   /**
+    * @see VCloudClient#addResourceEntitytoCatalog(URI, String, String, URI,
+    *      Map)
+    */
+   @POST
+   @Path("/catalogItems")
+   @Consumes(CATALOGITEM_XML)
+   @Produces(CATALOGITEM_XML)
+   @MapBinder(BindCatalogItemToXmlPayload.class)
+   @XMLResponseParser(CatalogItemHandler.class)
+   ListenableFuture<? extends CatalogItem> addResourceEntitytoCatalog(@EndpointParam URI catalog,
+         @PayloadParam("name") String name, @PayloadParam("description") String description,
+         @PayloadParam("entity") URI entity, Map<String, String> properties);
+
+   /**
     * @see VCloudClient#captureVAppInVDC
     */
    @POST
@@ -215,6 +251,28 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VmHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Vm> getVm(@EndpointParam URI vm);
+
+   /**
+    * @see VCloudClient#updateCPUCountOfVm
+    */
+   @PUT
+   @Consumes(TASK_XML)
+   @Produces(RASDITEM_XML)
+   @Path("/virtualHardwareSection/cpu")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> updateCPUCountOfVm(@EndpointParam URI vm,
+         @BinderParam(BindCPUCountToXmlPayload.class) int cpuCount);
+
+   /**
+    * @see VCloudClient#updateMemoryMBOfVm
+    */
+   @PUT
+   @Consumes(TASK_XML)
+   @Produces(RASDITEM_XML)
+   @Path("/virtualHardwareSection/memory")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> updateMemoryMBOfVm(@EndpointParam URI vm,
+         @BinderParam(BindMemoryToXmlPayload.class) int memoryInMB);
 
    /**
     * @see VCloudClient#updateGuestCustomizationOfVm
@@ -336,11 +394,20 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> suspendVAppOrVm(@EndpointParam URI vAppOrVmId);
 
    /**
-    * @see CommonVCloudClient#deleteVApp
+    * @see CommonVCloudClient#deleteVAppTemplateVAppOrMediaImage
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI vAppId);
+   ListenableFuture<? extends Task> deleteVAppTemplateVAppOrMediaImage(@EndpointParam URI id);
+
+   /**
+    * @see CommonVCloudClient#deleteVApp
+    */
+   @Deprecated
+   @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI id);
 
 }

@@ -18,99 +18,113 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.POST;
 
-import org.jclouds.concurrent.MoreExecutors;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.nirvanix.sdn.SDNPropertiesBuilder;
-import org.jclouds.nirvanix.sdn.config.SDNAuthRestClientModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.nirvanix.sdn.SDNAsyncClient;
+import org.jclouds.nirvanix.sdn.SDNClient;
+import org.jclouds.nirvanix.sdn.SessionToken;
+import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
+import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.common.base.Throwables;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
-@Test(groups = "unit", sequential = true, testName = "sdn.InsertUserContextIntoPathTest")
+@Test(groups = "unit", singleThreaded = true, testName = "sdn.InsertUserContextIntoPathTest")
 // sequential as easymock isn't threadsafe
-public class InsertUserContextIntoPathTest {
+public class InsertUserContextIntoPathTest extends RestClientTest<TestService> {
 
-   private Injector injector;
-   private InsertUserContextIntoPath filter;
-   private RestAnnotationProcessor<TestService> factory;
    private Method method;
 
-   private static interface TestService {
-      @POST
-         public void foo(@EndpointParam URI endpoint);
-   }
-
    public void testRequestInvalid() {
-      HttpRequest request = factory.createRequest(method, URI.create("https://host/path"));
+      HttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
       request = filter.filter(request);
       request = filter.filter(request);
-      assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
+      assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
    public void testRequestNoSession() {
-      HttpRequest request = factory.createRequest(method, URI.create("https://host/path"));
+      HttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
       request = filter.filter(request);
-      assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
+      assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
    public void testRequestAlreadyHasSession() {
-      HttpRequest request = factory.createRequest(method, URI.create("https://host/token/appname/username/path"));
+      HttpRequest request = processor.createRequest(method, URI.create("https://host/sessiontoken/appname/username/path"));
       request = filter.filter(request);
-      assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
+      assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
+   private InsertUserContextIntoPath filter;
+
    @BeforeClass
-   protected void createFilter() throws SecurityException, NoSuchMethodException {
-      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
-            MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
-
-         protected void configure() {
-            install(new SDNAuthRestClientModule());
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            AddSessionTokenToRequest sessionManager = createMock(AddSessionTokenToRequest.class);
-            expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
-            replay(sessionManager);
-            bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
-            Names.bindProperties(this.binder(),
-                  new SDNPropertiesBuilder(new Properties()).credentials("appkey/appname/username", "password").build());
-         }
-
-      });
+   @Override
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
       filter = injector.getInstance(InsertUserContextIntoPath.class);
-      factory = injector.getInstance(Key.get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
-      }));
-      method = TestService.class.getMethod("foo", URI.class);
+      try {
+         method = TestService.class.getMethod("foo", URI.class);
+      } catch (Exception e) {
+        Throwables.propagate(e);
+      }
    }
 
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<TestService>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<TestService>>() {
+      };
+   }
+
+   protected Module createModule() {
+      return new TestSDNRestClientModule();
+   }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   static class TestSDNRestClientModule extends SDNRestClientModule {
+      @Override
+      public void configure() {
+         bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPKEY)).toInstance("appKey");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPNAME)).toInstance("appname");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_USERNAME)).toInstance("username");
+      }
+
+   }
+
+   @Override
+   public RestContextSpec<SDNClient, SDNAsyncClient> createContextSpec() {
+      return new RestContextFactory().createContextSpec("sdn", "user", "password", new Properties());
+   }
+
+   @Override
+   protected void checkFilters(HttpRequest request) {
+      
+   }
+}
+
+interface TestService {
+   @POST
+   public void foo(@EndpointParam URI endpoint);
 }

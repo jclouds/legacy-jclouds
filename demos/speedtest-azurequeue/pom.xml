@@ -30,23 +30,23 @@
 	<artifactId>jclouds-demo-speedtest-azurequeue</artifactId>
 	<name>Speed tests of Azure's queue offering</name>
 	<description>Creates a queue and then tests performance against it</description>
-        <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-enterprise</artifactId>
-            <version>${project.version}</version>
-        </dependency> 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-azure</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        </dependencies>
+	
+  <dependencies>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jclouds-enterprise</artifactId>
+          <version>${project.version}</version>
+      </dependency> 
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jclouds-azure</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+  </dependencies>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
-
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
@@ -57,7 +57,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -82,5 +81,4 @@
 			</plugin>
 		</plugins>
 	</build>
-  
 </project>

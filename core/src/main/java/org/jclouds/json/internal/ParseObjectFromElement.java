@@ -24,12 +24,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.MapTypeAdapter;
 
 /**
  * This is a class that helps the default {@link MapTypeAdapter} make a sane object graph when the
  * value is set to {@code Object}
- * 
+ * http://code.google.com/p/google-gson/issues/detail?id=325
  * @author Adrian Cole
  */
 public enum ParseObjectFromElement implements Function<JsonElement, Object> {

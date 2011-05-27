@@ -85,6 +85,8 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
       String billingSiteId = template.getLocation().getParent().getParent().getId();
 
       VMSpec.Builder specBuilder = VMSpec.builder();
+      specBuilder.name(name);
+      specBuilder.networkTierName(networkTierName);
       specBuilder.operatingSystem(CIMOperatingSystem.class.cast(template.getImage().getOperatingSystem()));
       specBuilder.processorCount(template.getHardware().getProcessors().size());
       specBuilder.memoryInGig(template.getHardware().getRam() / 1024);
@@ -96,7 +98,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
             specBuilder.addDataDrive(volume.getDevice(), volume.getSize().intValue());
       }
 
-      Task task = client.getVMClient().addVMIntoVDC(billingSiteId, vpdcId, networkTierName, name, specBuilder.build());
+      Task task = client.getVMClient().addVMIntoVDC(billingSiteId, vpdcId, specBuilder.build());
       // make sure there's no error
       if (task.getError() != null)
          throw new RuntimeException("cloud not add vm: " + task.getError().toString());

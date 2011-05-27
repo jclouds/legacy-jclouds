@@ -92,7 +92,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
       // make sure we created the job relating to a new ip
-      expect(addressClient.associateIPAddress(zoneId, networkId(networkId))).andReturn(job);
+      expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 
       AsyncJobClient jobClient = createMock(AsyncJobClient.class);
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
@@ -132,7 +132,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
       // make sure we created the job relating to a new ip
-      expect(addressClient.associateIPAddress(zoneId, networkId(networkId))).andReturn(job);
+      expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 
       // the alwaysfalse predicate above should blow up with IllegalStateException
 

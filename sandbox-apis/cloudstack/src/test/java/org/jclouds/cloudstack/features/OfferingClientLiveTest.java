@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "OfferingClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "OfferingClientLiveTest")
 public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListDiskOfferings() throws Exception {

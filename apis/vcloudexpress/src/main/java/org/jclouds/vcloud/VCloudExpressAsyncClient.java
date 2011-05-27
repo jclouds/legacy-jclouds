@@ -37,12 +37,12 @@ import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.ParamValidators;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Task;
@@ -52,6 +52,7 @@ import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
+import org.jclouds.vcloud.functions.ParseTaskFromLocationHeader;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.OrgNetworkFromVCloudExpressNetworkHandler;
@@ -164,7 +165,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends VCloudExpressVApp> getVApp(@EndpointParam URI vApp);
 
    /**
-    * @see CommonVCloudClient#deployVApp
+    * @see VCloudExpressClient#deployVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -173,7 +174,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> deployVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#undeployVApp
+    * @see VCloudExpressClient#undeployVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -182,7 +183,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> undeployVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#powerOnVApp
+    * @see VCloudExpressClient#powerOnVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -191,7 +192,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> powerOnVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#powerOffVApp
+    * @see VCloudExpressClient#powerOffVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -200,14 +201,14 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> powerOffVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#shutdownVApp
+    * @see VCloudExpressClient#shutdownVApp
     */
    @POST
    @Path("/power/action/shutdown")
    ListenableFuture<Void> shutdownVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#resetVApp
+    * @see VCloudExpressClient#resetVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -216,7 +217,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> resetVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#suspendVApp
+    * @see VCloudExpressClient#suspendVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -225,10 +226,10 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> suspendVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see CommonVCloudClient#deleteVApp
+    * @see VCloudExpressClient#deleteVApp
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteVApp(@EndpointParam URI vAppId);
-
+   @ResponseParser(ParseTaskFromLocationHeader.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> deleteVApp(@EndpointParam URI vAppId);
 }

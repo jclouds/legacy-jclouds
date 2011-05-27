@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ConfigurationClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "ConfigurationClientLiveTest")
 public class ConfigurationClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListCapabilities() throws Exception {

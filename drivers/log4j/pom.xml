@@ -33,6 +33,7 @@
     <artifactId>jclouds-log4j</artifactId>
     <name>jclouds Log4J Logging Module</name>
     <description>jclouds Log4J Logging Module</description>
+    <packaging>bundle</packaging>
 
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -65,4 +66,21 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration> 
+                    <instructions>      
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.logging.log4j.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>     
+                </configuration>
+            </plugin>   
+        </plugins>
+    </build>
+
 </project>

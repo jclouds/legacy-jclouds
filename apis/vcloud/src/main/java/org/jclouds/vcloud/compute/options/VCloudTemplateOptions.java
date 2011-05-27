@@ -26,11 +26,11 @@ import org.jclouds.util.Preconditions2;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the "vcloud"
- * provider. <h2>
- * Usage</h2> The recommended way to instantiate a VCloudTemplateOptions object is to statically
- * import VCloudTemplateOptions.* and invoke a static creation method followed by an instance
- * mutator (if needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on
+ * the "vcloud" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a VCloudTemplateOptions object
+ * is to statically import VCloudTemplateOptions.* and invoke a static creation
+ * method followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.compute.options.VCloudTemplateOptions.Builder.*;
@@ -57,15 +57,27 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
          VCloudTemplateOptions eTo = VCloudTemplateOptions.class.cast(to);
          if (getCustomizationScript() != null)
             eTo.customizationScript(getCustomizationScript());
+         if (getDescription() != null)
+            eTo.description(getDescription());
          if (getIpAddressAllocationMode() != null)
             eTo.ipAddressAllocationMode(getIpAddressAllocationMode());
       }
    }
 
+   private String description = null;
    private String customizationScript = null;
    private IpAddressAllocationMode ipAddressAllocationMode = null;
 
    public static final VCloudTemplateOptions NONE = new VCloudTemplateOptions();
+
+   /**
+    * Optional description. Used for the Description of the vApp created by this
+    * instantiation.
+    */
+   public VCloudTemplateOptions description(String description) {
+      this.description = description;
+      return this;
+   }
 
    /**
     * Specifies the customizationScript used to run instances with
@@ -77,7 +89,8 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * Specifies the ipAddressAllocationMode used to for network interfaces on the VMs
+    * Specifies the ipAddressAllocationMode used to for network interfaces on
+    * the VMs
     */
    public VCloudTemplateOptions ipAddressAllocationMode(IpAddressAllocationMode ipAddressAllocationMode) {
       this.ipAddressAllocationMode = ipAddressAllocationMode;
@@ -85,6 +98,14 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    public static class Builder {
+      /**
+       * @see VCloudTemplateOptions#description
+       */
+      public static VCloudTemplateOptions description(String description) {
+         VCloudTemplateOptions options = new VCloudTemplateOptions();
+         return VCloudTemplateOptions.class.cast(options.description(description));
+      }
+
       /**
        * @see VCloudTemplateOptions#customizationScript
        */
@@ -153,6 +174,13 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
+    * @return description of the vApp
+    */
+   public String getDescription() {
+      return description;
+   }
+
+   /**
     * @return customizationScript on the vms
     */
    public String getCustomizationScript() {
@@ -178,9 +206,10 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
 
    /**
     * 
-    * special thing is that we do assume if you are passing groups that you have everything you need
-    * already defined. for example, our option inboundPorts normally creates ingress rules
-    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
+    * special thing is that we do assume if you are passing groups that you have
+    * everything you need already defined. for example, our option inboundPorts
+    * normally creates ingress rules accordingly but if we notice you've
+    * specified securityGroups, we do not mess with rules at all
     * 
     * @see TemplateOptions#inboundPorts
     */
@@ -253,6 +282,7 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((customizationScript == null) ? 0 : customizationScript.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((ipAddressAllocationMode == null) ? 0 : ipAddressAllocationMode.hashCode());
       return result;
    }
@@ -271,6 +301,11 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
             return false;
       } else if (!customizationScript.equals(other.customizationScript))
          return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
+         return false;
       if (ipAddressAllocationMode != other.ipAddressAllocationMode)
          return false;
       return true;
@@ -278,10 +313,11 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
 
    @Override
    public String toString() {
-      return "[customizationScript=" + (customizationScript != null) + ", ipAddressAllocationMode="
-            + ipAddressAllocationMode + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
-            + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null)
-            + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
+      return "[customizationScript=" + (customizationScript != null) + ", description=" + description
+            + ", ipAddressAllocationMode=" + ipAddressAllocationMode + ", inboundPorts="
+            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+            + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

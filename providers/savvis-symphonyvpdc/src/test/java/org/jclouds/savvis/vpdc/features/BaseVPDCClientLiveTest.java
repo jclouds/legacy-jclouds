@@ -89,7 +89,7 @@ public class BaseVPDCClientLiveTest {
       context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
                new Log4JLoggingModule(), new JschSshClientModule()), overrides);
       restContext = context.getProviderSpecificContext();
-      taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 650, 10, TimeUnit.SECONDS);
+      taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 7200, 10, TimeUnit.SECONDS);
    }
 
    @AfterGroups(groups = "live")

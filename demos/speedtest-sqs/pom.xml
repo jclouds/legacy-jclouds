@@ -24,24 +24,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jclouds</groupId>
-		<artifactId>demos-project</artifactId>
+		<artifactId>jclouds-demos-project</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>jclouds-speedtest-sqs</artifactId>
+	<artifactId>jclouds-demo-speedtest-sqs</artifactId>
 	<name>Speed tests of SQS across regions</name>
 	<description>Creates a queue in all amazon regions and then tests performance against it</description>
-        <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-enterprise</artifactId>
-            <version>${project.version}</version>
-        </dependency> 
-</dependencies>
+
+  <dependencies>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jclouds-enterprise</artifactId>
+          <version>${project.version}</version>
+      </dependency> 
+  </dependencies>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -53,7 +53,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -77,7 +76,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-
 	</build>
-
 </project>

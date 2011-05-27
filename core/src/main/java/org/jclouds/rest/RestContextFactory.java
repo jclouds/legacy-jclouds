@@ -308,7 +308,7 @@ public class RestContextFactory {
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(
                String.format(
-                     "provider %s not configured or supported. consider one of the following, as the provider name may have changed:%n%s%nIf you are sure that provider name is correct, check that the maven dependency org.jclouds.provider/%s is loaded.",
+                     "The specified provider \"%s\" is either not configured or supported. Currently configured providers are:%n  %s%nCheck this list, as the provider name may have changed. If you are sure that provider name is correct, check that your project has a dependency on org.jclouds.provider/%s, or on org.jclouds/jclouds-all.",
                      providerName, Providers.getSupportedProviders(), providerName), e);
       } catch (Exception e) {
          propagate(e);

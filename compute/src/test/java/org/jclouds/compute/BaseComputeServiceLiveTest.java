@@ -30,6 +30,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
@@ -77,6 +78,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterTest;
@@ -180,8 +182,8 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA", ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()));
+         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA",
+                  ImmutableSet.<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -241,6 +243,11 @@ public abstract class BaseComputeServiceLiveTest {
                   overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
                      + response.getValue();
+            
+         // test single-node execution
+         ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
+                  .runAsRoot(false));
+         assert response.getOutput().trim().equals("hello") : get(nodes, 0).getId() + ": " + response;
 
          runScriptWithCreds(group, os, good);
 
@@ -294,8 +301,11 @@ public abstract class BaseComputeServiceLiveTest {
    private void refreshTemplate() {
       template = buildTemplate(client.templateBuilder());
 
-      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(buildScript(template.getImage().getOperatingSystem()));
+      // template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
+      // .runScript(buildScript(template.getImage().getOperatingSystem()));
+      template.getOptions().runScript(
+               Statements.newStatementList(AdminAccess.standard(),
+                        buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -579,10 +589,10 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListSizes() throws Exception {
       for (Hardware hardware : client.listHardwareProfiles()) {
-         assert hardware.getProviderId() != null;
-         assert getCores(hardware) > 0;
-         assert hardware.getVolumes().size() >= 0;
-         assert hardware.getRam() > 0;
+         assert hardware.getProviderId() != null : hardware;
+         assert getCores(hardware) > 0 : hardware;
+         assert hardware.getVolumes().size() >= 0 : hardware;
+         assert hardware.getRam() > 0 : hardware;
          assertEquals(hardware.getType(), ComputeType.HARDWARE);
       }
    }

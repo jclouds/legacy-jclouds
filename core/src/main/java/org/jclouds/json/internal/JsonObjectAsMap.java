@@ -27,7 +27,7 @@ import com.google.gson.JsonObject;
 
 /**
  * Exposes the JsonObject as a map so that we can use gauva apis on it.
- * 
+ * http://code.google.com/p/google-gson/issues/detail?id=325
  * @author Adrian Cole
  */
 public enum JsonObjectAsMap implements Function<JsonObject, Map<String, JsonElement>> {

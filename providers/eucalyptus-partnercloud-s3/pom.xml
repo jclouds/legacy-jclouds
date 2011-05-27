@@ -33,6 +33,7 @@
     <artifactId>eucalyptus-partnercloud-s3</artifactId>
     <name>jclouds Eucalyptus Partner Cloud provider</name>
     <description>Walrus (S3) implementation targeted to the Eucalyptus Partner Cloud</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusTestInitializer</test.initializer>
@@ -151,6 +152,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.epc.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

@@ -37,11 +37,13 @@ import org.jclouds.Constants;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
@@ -60,6 +62,7 @@ import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -89,13 +92,16 @@ public class EC2ComputeService extends BaseComputeService {
          @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
          @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
          @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+         RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
+         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
          Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
-            initScriptRunnerFactory, timeouts, executor);
+            initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials, timeouts,
+            executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -125,7 +131,8 @@ public class EC2ComputeService extends BaseComputeService {
          // when the keypair is unique per group
          keyPair.getKeyName().equals("jclouds#" + group)
                || keyPair.getKeyName().matches(String.format("jclouds#%s#%s", group, "[0-9a-f]+"))
-               // old keypair pattern too verbose as it has an unnecessary region qualifier
+               // old keypair pattern too verbose as it has an unnecessary
+               // region qualifier
                || keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+"))) {
             Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(ec2Client.getInstanceServices()
                   .describeInstancesInRegion(region)), usingKeyPairAndNotDead(keyPair)));
@@ -170,8 +177,8 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will clean implicit
-    * keypairs and security groups.
+    * like {@link BaseComputeService#destroyNodesMatching} except that this will
+    * clean implicit keypairs and security groups.
     */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {

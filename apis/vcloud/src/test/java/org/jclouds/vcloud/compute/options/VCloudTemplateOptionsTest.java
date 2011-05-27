@@ -21,6 +21,7 @@ package org.jclouds.vcloud.compute.options;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.authorizePublicKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.blockOnPort;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.customizationScript;
+import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.description;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.inboundPorts;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.installPrivateKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.ipAddressAllocationMode;
@@ -34,7 +35,8 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of VCloudTemplateOptions and VCloudTemplateOptions.Builder.*
+ * Tests possible uses of VCloudTemplateOptions and
+ * VCloudTemplateOptions.Builder.*
  * 
  * @author Adrian Cole
  */
@@ -80,6 +82,19 @@ public class VCloudTemplateOptionsTest {
    public void testcustomizationScriptStatic() {
       VCloudTemplateOptions options = customizationScript("mykeypair");
       assertEquals(options.getCustomizationScript(), "mykeypair");
+   }
+
+   @Test
+   public void testdescription() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      options.description("mykeypair");
+      assertEquals(options.getDescription(), "mykeypair");
+   }
+
+   @Test
+   public void testdescriptionStatic() {
+      VCloudTemplateOptions options = description("mykeypair");
+      assertEquals(options.getDescription(), "mykeypair");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

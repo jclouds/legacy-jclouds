@@ -76,23 +76,33 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/bootstrap.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-mkdir -p ~/.ssh
-cat >> ~/.ssh/authorized_keys <<'END_OF_FILE'
-ssh-rsa
+rm /etc/sudoers
+cat >> /etc/sudoers <<'END_OF_FILE'
+root ALL = (ALL) ALL
+%wheel ALL = (ALL) NOPASSWD:ALL
 END_OF_FILE
-chmod 600 ~/.ssh/authorized_keys
+chmod 0440 /etc/sudoers
+mkdir -p /home/users/defaultAdminUsername
+groupadd -f wheel
+useradd -s /bin/bash -g wheel -d /home/users/defaultAdminUsername -p 'crypt(randompassword)' defaultAdminUsername
+mkdir -p /home/users/defaultAdminUsername/.ssh
+cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<'END_OF_FILE'
+publicKey
+END_OF_FILE
+chmod 600 /home/users/defaultAdminUsername/.ssh/authorized_keys
+chown -R defaultAdminUsername /home/users/defaultAdminUsername
+exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
+PermitRootLogin no
+" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
+/etc/init.d/sshd reload||/etc/init.d/ssh reload
+awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
 (which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
 curl -X GET -s --retry 20  http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install |(bash)
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 rm -rf /var/cache/apt /usr/lib/vmware-tools
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
-mkdir -p ~/.ssh
-rm ~/.ssh/id_rsa
-cat >> ~/.ssh/id_rsa <<'END_OF_FILE'
------BEGIN RSA PRIVATE KEY-----
-END_OF_FILE
-chmod 600 ~/.ssh/id_rsa
 
 END_OF_SCRIPT
    

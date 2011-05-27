@@ -22,13 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.cloudstack.features.BaseCloudStackAsyncClientTest;
-import org.jclouds.cloudstack.features.FirewallClient;
-import org.jclouds.cloudstack.features.GuestOSClient;
-import org.jclouds.cloudstack.features.HypervisorClient;
-import org.jclouds.cloudstack.features.LoadBalancerClient;
-import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,7 +54,9 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert syncClient.getFirewallClient() != null;
       assert syncClient.getLoadBalancerClient() != null;
       assert syncClient.getGuestOSClient() != null;
-      assert syncClient.getHypervisorClient() != null;      
+      assert syncClient.getHypervisorClient() != null;
+      assert syncClient.getConfigurationClient() != null;
+      assert syncClient.getAccountClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
@@ -76,7 +72,9 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert asyncClient.getFirewallClient() != null;
       assert asyncClient.getLoadBalancerClient() != null;
       assert asyncClient.getGuestOSClient() != null;
-      assert asyncClient.getHypervisorClient() != null;    
+      assert asyncClient.getHypervisorClient() != null;
+      assert asyncClient.getConfigurationClient() != null;
+      assert asyncClient.getAccountClient() != null;
    }
 
    @Override

@@ -42,7 +42,7 @@ public class OsFamilyVersion64Bit {
 
    @Override
    public String toString() {
-      return "OsFamilyVersion64Bit [family=" + family + ", version=" + version + ", is64Bit=" + is64Bit + "]";
+      return "[family=" + family + ", version=" + version + ", is64Bit=" + is64Bit + "]";
    }
 
    @Override

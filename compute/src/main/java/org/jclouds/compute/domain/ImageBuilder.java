@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -73,6 +74,10 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    public ImageBuilder id(String id) {
       return ImageBuilder.class.cast(super.id(id));
    }
+   
+   public ImageBuilder tags(Set<String> tags) {
+      return ImageBuilder.class.cast(super.tags(tags));
+   }
 
    @Override
    public ImageBuilder ids(String id) {
@@ -106,13 +111,13 @@ public class ImageBuilder extends ComputeMetadataBuilder {
 
    @Override
    public Image build() {
-      return new ImageImpl(providerId, name, id, location, uri, userMetadata, operatingSystem, description, version,
+      return new ImageImpl(providerId, name, id, location, uri, userMetadata, tags, operatingSystem, description, version,
                adminPassword, defaultCredentials);
    }
 
    public static ImageBuilder fromImage(Image image) {
       return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId()).location(
-               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).version(
+               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).tags(image.getTags()).version(
                image.getVersion()).description(image.getDescription()).operatingSystem(image.getOperatingSystem())
                .adminPassword(image.getAdminPassword()).defaultCredentials(image.getDefaultCredentials());
    }

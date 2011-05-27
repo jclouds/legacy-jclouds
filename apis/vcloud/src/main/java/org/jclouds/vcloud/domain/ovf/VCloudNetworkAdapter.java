@@ -32,6 +32,14 @@ public class VCloudNetworkAdapter extends ResourceAllocationSettingData {
       return new Builder();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromVCloudNetworkAdapter(this);
+   }
+   
    public static class Builder extends ResourceAllocationSettingData.Builder {
       private String ipAddress;
       private boolean primaryNetworkConnection;
@@ -310,11 +318,6 @@ public class VCloudNetworkAdapter extends ResourceAllocationSettingData {
 
    public String getIpAddressingMode() {
       return ipAddressingMode;
-   }
-
-   @Override
-   public Builder toBuilder() {
-      return builder().fromVCloudNetworkAdapter(this);
    }
 
    @Override

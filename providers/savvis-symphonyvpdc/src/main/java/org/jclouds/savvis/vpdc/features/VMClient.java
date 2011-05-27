@@ -19,6 +19,7 @@
 package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -42,14 +43,12 @@ public interface VMClient {
     *           billing site Id, or null for default
     * @param vpdcId
     *           vpdc Id
-    * @param networkTierName
-    *           network tier name
     * @param spec
     *           how to
     * 
     * @return VM in progress
     */
-   Task addVMIntoVDC(String billingSiteId, String vpdcId, String networkTierName, String name, VMSpec spec);
+   Task addVMIntoVDC(String billingSiteId, String vpdcId, VMSpec spec);
 
    /**
     * 
@@ -57,7 +56,55 @@ public interface VMClient {
     *           href of the vpdc
     * @see #addVMIntoVDC
     */
-   Task addVMIntoVDC(URI vpdc, String networkTierName, String name, VMSpec spec);
+   Task addVMIntoVDC(URI vpdc, VMSpec spec);
+
+   /**
+    * Add/Deploy new VMs into VDC
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * @param vmSpecs
+    *           vm configurations
+    * @return VM's in progress
+    */
+   Set<Task> addMultipleVMsIntoVDC(String billingSiteId, String vpdcId, Iterable<VMSpec> vmSpecs);
+
+   /**
+    * Add/Deploy new VMs into VDC
+    * 
+    * @param vpdc
+    *           href of the vpdc
+    * @param vmSpecs
+    *           vm configurations
+    * @return VM's in progress
+    */
+   Set<Task> addMultipleVMsIntoVDC(URI vpdc, Iterable<VMSpec> vmSpecs);
+
+   /**
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * @param vAppUri
+    *           href of the vApp
+    * @return Task with vAppTemplate href
+    */
+   Task captureVApp(String billingSiteId, String vpdcId, URI vAppUri);
+
+   /**
+    * 
+    * @param vAppUri
+    *           href of the vApp
+    * @param newVAppName
+    *           name for the new vApp
+    * @param networkTierName
+    *           network tier name for vApp
+    * @return
+    */
+   Task cloneVApp(URI vAppUri, String newVAppName, String networkTierName);
 
    /**
     * Remove a VM
@@ -89,4 +136,22 @@ public interface VMClient {
     * @see #removeVMFromVDC
     */
    Task removeVM(URI vm);
+
+   /**
+    * Power off a VM
+    * 
+    * @param vm
+    *           href of the vm
+    * @return
+    */
+   Task powerOffVM(URI vm);
+
+   /**
+    * Power on a VM
+    * 
+    * @param vm
+    *           href of the vm
+    * @return
+    */
+   Task powerOnVM(URI vm);
 }

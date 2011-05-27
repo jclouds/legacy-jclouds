@@ -18,8 +18,10 @@
  */
 package org.jclouds.s3.config;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -32,8 +34,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
@@ -41,6 +45,7 @@ import org.jclouds.s3.handlers.ParseS3ErrorFromXmlContent;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -58,6 +63,21 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
 
    public S3RestClientModule(Class<S> sync, Class<A> async) {
       super(sync, async);
+   }
+
+   @Provides
+   @Bucket
+   @Singleton
+   protected Map<String, String> bucketToRegion() {
+      return Maps.newConcurrentMap();
+   }
+
+   @Provides
+   @Bucket
+   @Singleton
+   @Nullable
+   protected String defaultRegionForBucket(@Nullable @Region String defaultRegion) {
+      return defaultRegion;
    }
 
    @Override
@@ -94,7 +114,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    @TimeStamp
    @Singleton
    protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-            final DateService dateService) {
+         final DateService dateService) {
       return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();

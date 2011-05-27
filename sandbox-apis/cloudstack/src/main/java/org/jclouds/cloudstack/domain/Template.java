@@ -37,24 +37,16 @@ public class Template implements Comparable<Template> {
 
    public static class Builder {
       private long id;
-      @SerializedName("displaytext")
       private String displayText;
       private String domain;
-      @SerializedName("domainid")
       private long domainId;
       private String account;
-      @SerializedName("accountid")
       private long accountId;
-      @SerializedName("zonename")
       private String zone;
-      @SerializedName("zoneid")
       private long zoneId;
-      @SerializedName("ostypename")
       private String OSType;
-      @SerializedName("ostypeid")
       private long OSTypeId;
       private String name;
-      @SerializedName("templatetype")
       private Type type;
       private String status;
       private Format format;
@@ -62,24 +54,14 @@ public class Template implements Comparable<Template> {
       private Long size;
       private Date created;
       private Date removed;
-      @SerializedName("crossZones")
       private boolean crossZones;
-      @SerializedName("bootable")
       private boolean bootable;
-      @SerializedName("isextractable")
       private boolean extractable;
-      @SerializedName("isfeatured")
       private boolean featured;
-      @SerializedName("ispublic")
       private boolean isPublic;
-      @SerializedName("isready")
       private boolean ready;
-      @SerializedName("passwordenabled")
       private boolean passwordEnabled;
-      @Nullable
-      @SerializedName("jobid")
       private Long jobId;
-      @SerializedName("jobstatus")
       private String jobStatus;
 
       public Builder id(long id) {

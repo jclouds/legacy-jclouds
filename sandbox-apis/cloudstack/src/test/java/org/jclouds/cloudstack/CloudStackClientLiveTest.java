@@ -65,7 +65,7 @@
 // * 
 // * @author Adrian Cole
 // */
-//@Test(groups = "live", sequential = true, testName = "CloudStackClientLiveTest")
+//@Test(groups = "live", singleThreaded = true, testName = "CloudStackClientLiveTest")
 //public class CloudStackClientLiveTest extends ReadOnlyCloudStackClientLiveTest {
 //
 //   protected String prefix = System.getProperty("user.name") + ".test";

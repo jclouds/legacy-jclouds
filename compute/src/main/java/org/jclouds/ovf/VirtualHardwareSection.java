@@ -107,7 +107,7 @@ public class VirtualHardwareSection extends Section<VirtualHardwareSection> {
       }
 
       public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return items(in.getItems()).transports(in.getTransports()).system(
+         return fromSection(in).items(in.getItems()).transports(in.getTransports()).system(
                   in.getSystem()).info(in.getInfo());
       }
 

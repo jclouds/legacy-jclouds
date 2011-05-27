@@ -18,39 +18,15 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
-import static org.jclouds.scriptbuilder.domain.Statements.rm;
-
-import java.util.Collections;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-
 /**
- * 
+ * @see org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey
  * @author Adrian Cole
  */
-public class InstallRSAPrivateKey implements Statement {
-
-   private final String privateKey;
+@Deprecated
+public class InstallRSAPrivateKey extends org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey {
 
    public InstallRSAPrivateKey(String privateKey) {
-      this.privateKey = checkNotNull(privateKey, "privateKey");
+      super(privateKey);
    }
 
-   @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
-      return Collections.emptyList();
-   }
-
-   @Override
-   public String render(OsFamily family) {
-      checkNotNull(family, "family");
-      if (family == OsFamily.WINDOWS)
-         throw new UnsupportedOperationException("windows not yet implemented");
-      return new StatementList(ImmutableList.of(exec("{md} ~/.ssh"), rm("~/.ssh/id_rsa"), appendFile("~/.ssh/id_rsa", Splitter.on('\n')
-               .split(privateKey)), exec("chmod 600 ~/.ssh/id_rsa"))).render(family);
-   }
 }

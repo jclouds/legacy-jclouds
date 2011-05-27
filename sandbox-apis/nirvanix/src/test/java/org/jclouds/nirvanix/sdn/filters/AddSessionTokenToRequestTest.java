@@ -20,41 +20,37 @@ package org.jclouds.nirvanix.sdn.filters;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.POST;
 
-import org.jclouds.concurrent.MoreExecutors;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.nirvanix.sdn.SDNPropertiesBuilder;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.nirvanix.sdn.SDNAsyncClient;
+import org.jclouds.nirvanix.sdn.SDNClient;
 import org.jclouds.nirvanix.sdn.SessionToken;
+import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
+import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Provides;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
-@Test(groups = "unit", testName = "sdn.AddSessionTokenToRequestTest")
-public class AddSessionTokenToRequestTest {
-
-   private Injector injector;
-   private AddSessionTokenToRequest filter;
+@Test(groups = "unit", testName = "AddSessionTokenToRequestTest")
+public class AddSessionTokenToRequestTest extends RestClientTest<SDNAsyncClient> {
 
    private static interface TestService {
       @POST
@@ -65,15 +61,15 @@ public class AddSessionTokenToRequestTest {
    public Object[][] dataProvider() throws SecurityException, NoSuchMethodException {
 
       RestAnnotationProcessor<TestService> factory = injector.getInstance(Key
-            .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
-            }));
+               .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
+               }));
 
       Method method = TestService.class.getMethod("foo", URI.class);
       return new Object[][] { { factory.createRequest(method, new Object[] { URI.create("https://host:443") }) },
-            { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
-            { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
+               { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
+               { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
 
-            } };
+               } };
    }
 
    @Test(dataProvider = "dataProvider")
@@ -82,7 +78,7 @@ public class AddSessionTokenToRequestTest {
       String query = request.getEndpoint().getQuery();
       request = filter.filter(request);
       assertEquals(request.getEndpoint().getQuery(), query == null ? "sessionToken=" + token : query + "&sessionToken="
-            + token);
+               + token);
    }
 
    @Test
@@ -93,34 +89,44 @@ public class AddSessionTokenToRequestTest {
       assert token.equals(filter.getSessionToken());
    }
 
-   /**
-    * before class, as we need to ensure that the filter is threadsafe.
-    * 
-    */
+   @Override
+   protected void checkFilters(HttpRequest request) {
+   }
+
+   private AddSessionTokenToRequest filter;
+
    @BeforeClass
-   protected void createFilter() {
-      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
-            MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
-
-         protected void configure() {
-            bind(DateService.class);
-            Names.bindProperties(this.binder(),
-                  new SDNPropertiesBuilder(new Properties()).credentials("appkey/appname/username", "password").build());
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @SessionToken
-         @Provides
-         String authTokenProvider() {
-            return System.currentTimeMillis() + "";
-         }
-      });
+   @Override
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
       filter = injector.getInstance(AddSessionTokenToRequest.class);
    }
 
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<SDNAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<SDNAsyncClient>>() {
+      };
+   }
+
+   protected Module createModule() {
+      return new TestSDNRestClientModule();
+   }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   static class TestSDNRestClientModule extends SDNRestClientModule {
+      @Override
+      public void configure() {
+         bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPKEY)).toInstance("appKey");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_APPNAME)).toInstance("appname");
+         bind(String.class).annotatedWith(Names.named(SDNConstants.PROPERTY_SDN_USERNAME)).toInstance("username");
+      }
+
+   }
+
+   @Override
+   public RestContextSpec<SDNClient, SDNAsyncClient> createContextSpec() {
+      return new RestContextFactory().createContextSpec("sdn", "user", "password", new Properties());
+   }
 }

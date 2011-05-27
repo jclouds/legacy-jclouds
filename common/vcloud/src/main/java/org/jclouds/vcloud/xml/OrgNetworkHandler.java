@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.List;
@@ -271,11 +272,11 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          this.vmNicId = -1;
       } else if (qName.equalsIgnoreCase("ExternalPort")) {
          externalPort = Integer.parseInt(currentOrNull());
-      } else if (qName.equalsIgnoreCase("IxternalIP")) {
+      } else if (qName.equalsIgnoreCase("InternalIP")) {
          internalIP = currentOrNull();
       } else if (qName.equalsIgnoreCase("InternalPort")) {
          internalPort = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("NatProtocol")) {
+      } else if (equalsOrSuffix(qName, "Protocol")) {
          natProtocol = NatProtocol.valueOf(currentOrNull());
       } else if (qName.equals("PortForwardingRule")) {
          natRules.add(new PortForwardingRule(externalIP, externalPort, internalIP, internalPort, natProtocol));

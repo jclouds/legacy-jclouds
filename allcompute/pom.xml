@@ -31,6 +31,11 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>savvis-symphonyvpdc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>eucalyptus-partnercloud-ec2</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -42,6 +47,11 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-ec2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>nova</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

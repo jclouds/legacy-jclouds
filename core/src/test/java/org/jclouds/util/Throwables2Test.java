@@ -24,6 +24,8 @@ import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.jclouds.util.Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpCommand;
@@ -51,6 +53,11 @@ public class Throwables2Test {
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
    }
 
+   public void testGetFirstThrowableOfTypeSubclass() {
+      SocketException aex = createMock(SocketException.class);
+      assertEquals(getFirstThrowableOfType(aex, IOException.class), aex);
+   }
+   
    public void testGetFirstThrowableOfTypeOuter() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       assertEquals(getFirstThrowableOfType(aex, AuthorizationException.class), aex);

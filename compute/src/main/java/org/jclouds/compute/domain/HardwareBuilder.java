@@ -25,6 +25,7 @@ import static org.jclouds.compute.predicates.ImagePredicates.any;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
@@ -87,6 +88,11 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    public HardwareBuilder id(String id) {
       return HardwareBuilder.class.cast(super.id(id));
    }
+   
+   @Override
+   public HardwareBuilder tags(Set<String> tags) {
+      return HardwareBuilder.class.cast(super.tags(tags));
+   }
 
    @Override
    public HardwareBuilder ids(String id) {
@@ -120,14 +126,14 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
 
    @Override
    public Hardware build() {
-      return new HardwareImpl(providerId, name, id, location, uri, userMetadata, processors, ram, volumes,
+      return new HardwareImpl(providerId, name, id, location, uri, userMetadata, tags, processors, ram, volumes,
                supportsImage);
    }
 
    @SuppressWarnings("unchecked")
    public static HardwareBuilder fromHardware(Hardware in) {
       return new HardwareBuilder().id(in.getId()).providerId(in.getProviderId()).location(in.getLocation()).name(
-               in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).processors(
+               in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).tags(in.getTags()).processors(
                List.class.cast(in.getProcessors())).ram(in.getRam()).volumes(List.class.cast(in.getVolumes()))
                .supportsImage(in.supportsImage());
    }

@@ -34,7 +34,8 @@
     <artifactId>cloudstack</artifactId>
     <name>jclouds cloudstack core</name>
     <description>jclouds components to access cloudstack</description>
-    
+    <packaging>bundle</packaging>
+
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
         <repository>
@@ -148,4 +149,20 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.cloudstack.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -33,6 +33,7 @@
     <artifactId>bluelock-vcdirector</artifactId>
     <name>jclouds BlueLock vCloud Director provider</name>
     <description>vCloud implementation targeted to BlueLock</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.bluelock-vcdirector.endpoint>https://vcenterprise.bluelock.com/api</test.bluelock-vcdirector.endpoint>
@@ -143,6 +144,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.vcloud.bluelock.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

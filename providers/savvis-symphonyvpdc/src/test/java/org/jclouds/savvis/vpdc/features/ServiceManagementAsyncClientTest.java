@@ -51,7 +51,7 @@ public class ServiceManagementAsyncClientTest extends BaseVPDCAsyncClientTest<Se
       HttpRequest request = processor.createRequest(method, "11", "22", "33");
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -65,10 +65,10 @@ public class ServiceManagementAsyncClientTest extends BaseVPDCAsyncClientTest<Se
    public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ServiceManagementAsyncClient.class.getMethod("powerOnVM", URI.class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -85,7 +85,7 @@ public class ServiceManagementAsyncClientTest extends BaseVPDCAsyncClientTest<Se
       HttpRequest request = processor.createRequest(method, "11", "22", "33");
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -99,10 +99,10 @@ public class ServiceManagementAsyncClientTest extends BaseVPDCAsyncClientTest<Se
    public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ServiceManagementAsyncClient.class.getMethod("powerOffVM", URI.class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
+               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 

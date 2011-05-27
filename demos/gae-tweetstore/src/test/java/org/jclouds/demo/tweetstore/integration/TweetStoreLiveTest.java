@@ -48,6 +48,8 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -98,8 +100,10 @@ public class TweetStoreLiveTest {
          contexts.put(provider, factory.createContext(provider, wiring, props));
       }
 
-      Twitter client = new TwitterFactory().getInstance(props.getProperty("twitter.identity"),
-            props.getProperty("twitter.credential"));
+      Configuration conf = new ConfigurationBuilder()
+          .setUser(props.getProperty("twitter.identity"))
+          .setPassword(props.getProperty("twitter.credential")).build();
+      Twitter client = new TwitterFactory(conf).getInstance();
       StoreTweetsController controller = new StoreTweetsController(contexts, container, client);
 
       ResponseList<Status> statuses = client.getMentions();

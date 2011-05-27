@@ -20,58 +20,168 @@ package org.jclouds.byon;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class Node {
-   // public due to snakeyaml
-   public Node() {
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Node(String id, String name, String description, String hostname, String osArch, String osFamily,
-            String osDescription, String osVersion, String group, List<String> tags, String username,
-            String credential, URI credentialUrl, String sudo_password) {
+   public static class Builder {
+      private String id;
+      private String name;
+      private String description;
+      private String hostname;
+      private String locationId;
+      private String osArch;
+      private String osFamily;
+      private String osDescription;
+      private String osVersion;
+      private boolean os64Bit;
+      private String group;
+      private Set<String> tags = ImmutableSet.of();
+      private String username;
+      private String credential;
+      private URI credentialUrl;
+      private String sudoPassword;
+
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public Builder hostname(String hostname) {
+         this.hostname = hostname;
+         return this;
+      }
+
+      public Builder locationId(String locationId) {
+         this.locationId = locationId;
+         return this;
+      }
+
+      public Builder osArch(String osArch) {
+         this.osArch = osArch;
+         return this;
+      }
+
+      public Builder osFamily(String osFamily) {
+         this.osFamily = osFamily;
+         return this;
+      }
+
+      public Builder osDescription(String osDescription) {
+         this.osDescription = osDescription;
+         return this;
+      }
+
+      public Builder osVersion(String osVersion) {
+         this.osVersion = osVersion;
+         return this;
+      }
+
+      public Builder os64Bit(boolean os64Bit) {
+         this.os64Bit = os64Bit;
+         return this;
+      }
+
+      public Builder group(String group) {
+         this.group = group;
+         return this;
+      }
+
+      public Builder tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.copyOf(tags);
+         return this;
+      }
+
+      public Builder username(String username) {
+         this.username = username;
+         return this;
+      }
+
+      public Builder credential(String credential) {
+         this.credential = credential;
+         return this;
+      }
+
+      public Builder credentialUrl(URI credentialUrl) {
+         this.credentialUrl = credentialUrl;
+         return this;
+      }
+
+      public Builder sudoPassword(String sudoPassword) {
+         this.sudoPassword = sudoPassword;
+         return this;
+      }
+
+      public Node build() {
+         return new Node(id, name, description, hostname, locationId, osArch, osFamily, osDescription, osVersion,
+                  os64Bit, group, tags, username, credential, credentialUrl, sudoPassword);
+      }
+   }
+
+   public Node(String id, String name, String description, String hostname, String locationId, String osArch,
+            String osFamily, String osDescription, String osVersion, boolean os64Bit, String group,
+            Iterable<String> tags, String username, String credential, URI credentialUrl, String sudoPassword) {
       this.id = id;
       this.name = name;
       this.description = description;
       this.hostname = hostname;
-      this.os_arch = osArch;
-      this.os_family = osFamily;
-      this.os_description = osDescription;
-      this.os_version = osVersion;
+      this.locationId = locationId;
+      this.osArch = osArch;
+      this.osFamily = osFamily;
+      this.osDescription = osDescription;
+      this.osVersion = osVersion;
+      this.os64Bit = os64Bit;
       this.group = group;
-      this.tags = ImmutableList.copyOf(tags);
+      this.tags = ImmutableSet.copyOf(tags);
       this.username = username;
       this.credential = credential;
-      this.credential_url = credentialUrl != null ? credentialUrl.toASCIIString() : null;
-      this.sudo_password = sudo_password;
+      this.credentialUrl = credentialUrl;
+      this.sudoPassword = sudoPassword;
    }
 
-   // public due to snakeyaml
-   public String id;
-   public String name;
-   public String description;
-   public String hostname;
-   public String os_arch;
-   public String os_family;
-   public String os_description;
-   public String os_version;
-   public String group;
-   public List<String> tags;
-   public String username;
-   public String credential;
-   public String credential_url;
-   public String sudo_password;
+   private final String id;
+   private final String name;
+   private final String description;
+   private final String hostname;
+   private final String locationId;
+   private final String osArch;
+   private final String osFamily;
+   private final String osDescription;
+   private final String osVersion;
+   private final boolean os64Bit;
+   private final String group;
+   private final Set<String> tags;
+   private final String username;
+   private final String credential;
+   private final URI credentialUrl;
+   private final String sudoPassword;
 
    public String getId() {
       return id;
+   }
+
+   public String getLocationId() {
+      return locationId;
    }
 
    public String getName() {
@@ -91,19 +201,23 @@ public class Node {
    }
 
    public String getOsArch() {
-      return os_arch;
+      return osArch;
    }
 
    public String getOsFamily() {
-      return os_family;
+      return osFamily;
    }
 
    public String getOsDescription() {
-      return os_description;
+      return osDescription;
    }
 
    public String getOsVersion() {
-      return os_version;
+      return osVersion;
+   }
+
+   public boolean isOs64Bit() {
+      return os64Bit;
    }
 
    public Set<String> getTags() {
@@ -122,16 +236,16 @@ public class Node {
    }
 
    public URI getCredentialUrl() {
-      return credential_url != null ? URI.create(credential_url) : null;
+      return credentialUrl;
+   }
+
+   public String getSudoPassword() {
+      return sudoPassword;
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(id);
-   }
-
-   public String getSudoPassword() {
-      return sudo_password;
    }
 
    @Override
@@ -144,10 +258,11 @@ public class Node {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
-               "hostname", hostname).add("osArch", os_arch).add("osFamily", os_family).add("osDescription",
-               os_description).add("osVersion", os_version).add("group", group).add("tags", tags).add("username",
-               username).add("hasCredential", credential != null || credential_url != null).add("hasSudoPassword",
-               sudo_password != null).toString();
+               "locationId", locationId).add("hostname", hostname).add("osArch", osArch).add("osFamily", osFamily).add(
+               "osDescription", osDescription).add("osVersion", osVersion).add("os64Bit", os64Bit).add("group", group)
+               .add("tags", tags).add("username", username).add("hasCredential",
+                        credential != null || credentialUrl != null).add("hasSudoPassword", sudoPassword != null)
+               .toString();
    }
 
 }

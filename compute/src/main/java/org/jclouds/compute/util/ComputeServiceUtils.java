@@ -105,6 +105,8 @@ public class ComputeServiceUtils {
     * @return null if group cannot be parsed
     */
    public static String parseGroupFromName(String from) {
+      if (from == null)
+         return null;
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
       return matcher.find() ? matcher.group(1) : null;
    }

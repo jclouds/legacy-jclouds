@@ -33,6 +33,7 @@
     <artifactId>ec2</artifactId>
     <name>jcloud ec2 api</name>
     <description>jclouds components to access an implementation of EC2</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
@@ -142,6 +143,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.ec2.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

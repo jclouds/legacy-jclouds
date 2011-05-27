@@ -45,8 +45,9 @@ import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * 
@@ -85,6 +86,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       String id = idProvider.get() + "";
       builder.ids(id);
       builder.name(name);
+      builder.tags(template.getOptions().getTags());
       builder.group(group);
       builder.location(location.get());
       builder.imageId(template.getImage().getId());
@@ -110,18 +112,19 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    @Override
    public Iterable<Image> listImages() {
       Credentials defaultCredentials = new Credentials("root", null);
-      Set<Image> images = Sets.newLinkedHashSet();
+      // initializing as a List, as ImmutableSet does not allow you to put duplicates
+      Builder<Image> images = ImmutableList.<Image>builder();
       int id = 1;
       for (boolean is64Bit : new boolean[] { true, false })
          for (Entry<OsFamily, Map<String, String>> osVersions : this.osToVersionMap.entrySet()) {
-            for (String version : Sets.newLinkedHashSet(osVersions.getValue().values())) {
+            for (String version : ImmutableSet.copyOf(osVersions.getValue().values())) {
                String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
                images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
                         .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
                         .description(desc).defaultCredentials(defaultCredentials).build());
             }
          }
-      return images;
+      return images.build();
    }
 
    @Override

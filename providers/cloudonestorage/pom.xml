@@ -33,6 +33,7 @@
     <artifactId>cloudonestorage</artifactId>
     <name>jclouds CloudOne Storage as a Service provider</name>
     <description>Atmos implementation targeted to Peer1 CloudOne Storage as a Service</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.initializer>org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageTestInitializer</test.initializer>
@@ -139,6 +140,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.cloudonestorage.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

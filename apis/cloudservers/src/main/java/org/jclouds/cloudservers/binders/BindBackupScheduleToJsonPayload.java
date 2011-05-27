@@ -22,9 +22,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -37,17 +39,19 @@ import com.google.common.collect.ImmutableMap;
  */
 @Singleton
 public class BindBackupScheduleToJsonPayload extends BindToJsonPayload {
+   @Inject
+   public BindBackupScheduleToJsonPayload(Json jsonBinder) {
+      super(jsonBinder);
+   }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      throw new IllegalStateException(
-               "Replace Backup Schedule needs an BackupSchedule object, not a Map");
+      throw new IllegalStateException("Replace Backup Schedule needs an BackupSchedule object, not a Map");
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
-      checkArgument(toBind instanceof BackupSchedule,
-               "this binder is only valid for BackupSchedules!");
+      checkArgument(toBind instanceof BackupSchedule, "this binder is only valid for BackupSchedules!");
       return super.bindToRequest(request, ImmutableMap.of("backupSchedule", toBind));
    }
 }

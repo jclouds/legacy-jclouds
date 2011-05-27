@@ -36,6 +36,10 @@ public abstract class SettingData implements Comparable<SettingData> {
       return new Builder();
    }
 
+   public Builder toBuilder() {
+      return builder().fromSettingData(this);
+   }
+
    public static class Builder {
       protected String elementName;
       protected String instanceID;

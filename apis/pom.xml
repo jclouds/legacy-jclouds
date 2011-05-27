@@ -48,5 +48,6 @@
        <module>vcloudexpress</module>
        <module>elasticstack</module>
        <module>atmos</module>
+       <module>nova</module>
     </modules>
 </project>

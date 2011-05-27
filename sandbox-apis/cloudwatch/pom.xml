@@ -33,6 +33,7 @@
     <artifactId>cloudwatch</artifactId>
     <name>jcloud cloudwatch api</name>
     <description>jclouds components to access an implementation of CloudWatch</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.cloudwatch.endpoint>https://monitoring.us-east-1.amazonaws.com</test.cloudwatch.endpoint>
@@ -112,6 +113,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>    
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.cloudwatch.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

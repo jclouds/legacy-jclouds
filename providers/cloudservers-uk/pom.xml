@@ -33,6 +33,7 @@
     <artifactId>cloudservers-uk</artifactId>
     <name>jclouds CloudServers UK provider</name>
     <description>CloudServers implementation targeted to Rackspace UK</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.cloudservers-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudservers-uk.endpoint>
@@ -141,6 +142,21 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.rackspace.cloudservers.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 

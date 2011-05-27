@@ -49,36 +49,38 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCloudSession> {
-   static final Pattern pattern = Pattern.compile("vcloud-token=([^;]+);.*");
+   static final Pattern pattern = Pattern.compile("(vcloud-token=)?([^;]+)(;.*)?");
 
    private final ParseSax.Factory factory;
    private final Provider<OrgListHandler> orgHandlerProvider;
 
    @Inject
-   private ParseLoginResponseFromHeaders(Factory factory,
-            Provider<OrgListHandler> orgHandlerProvider) {
+   private ParseLoginResponseFromHeaders(Factory factory, Provider<OrgListHandler> orgHandlerProvider) {
       this.factory = factory;
       this.orgHandlerProvider = orgHandlerProvider;
    }
 
    /**
-    * parses the http response headers to create a new {@link VCloudSession} object.
+    * parses the http response headers to create a new {@link VCloudSession}
+    * object.
     */
    public VCloudSession apply(HttpResponse from) {
-      String cookieHeader = checkNotNull(from.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE),
-               HttpHeaders.SET_COOKIE);
+      String cookieHeader = from.getFirstHeaderOrNull("x-vcloud-authorization");
+      if (cookieHeader == null)
+         cookieHeader = from.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE);
+      checkNotNull(cookieHeader, "Header %s or %s must be present", "x-vcloud-authorization", HttpHeaders.SET_COOKIE);
 
       final Matcher matcher = pattern.matcher(cookieHeader);
       boolean matchFound = matcher.find();
       try {
          if (matchFound) {
             final Map<String, ReferenceType> org = factory.create(orgHandlerProvider.get()).parse(
-                     from.getPayload().getInput());
+                  from.getPayload().getInput());
 
             return new VCloudSession() {
                @VCloudToken
                public String getVCloudToken() {
-                  return matcher.group(1);
+                  return matcher.group(2);
                }
 
                @Org
@@ -91,6 +93,6 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
       } finally {
          releasePayload(from);
       }
-      throw new HttpResponseException("not found ", null, from);
+      throw new HttpResponseException("x-vcloud-authorization not found ", null, from);
    }
 }

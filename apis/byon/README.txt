@@ -65,6 +65,8 @@ Here are the properties:
   * description    - optional; long description of this node 
                                * note this is not yet in jclouds NodeMetadata
   * hostname       - name or ip address to contact the node on
+  * location_id    - optional; correlates to a ZONE-scoped Location
+                               * note that if present for one node, must be present for all
   * os_arch        - ex. x86 
   * os_family      - must conform to org.jclouds.compute.domain.OsFamily in lower-hyphen format
                      ex. rhel, ubuntu, centos, debian, amzn-linux
@@ -96,6 +98,7 @@ nodes:
       name: cluster-1
       description: accounting analytics cluster
       hostname: cluster-1.mydomain.com
+      location_id: virginia
       os_arch: x86
       os_family: rhel
       os_description: redhat with CDH

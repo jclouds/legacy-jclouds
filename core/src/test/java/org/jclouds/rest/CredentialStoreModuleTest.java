@@ -28,10 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.crypto.PemsTest;
 import org.jclouds.domain.Credentials;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.config.CredentialStoreModule;
-import org.jclouds.rest.config.CredentialStoreModule.CopyInputStreamInputSupplierMap;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -46,7 +46,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true)
+@Test(groups = "unit", singleThreaded = true)
 public class CredentialStoreModuleTest {
    Json json = createInjector().getInstance(Json.class);
 

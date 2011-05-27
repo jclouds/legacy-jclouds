@@ -66,7 +66,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
 
    public void testListDomainsInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SimpleDBAsyncClient.class.getMethod("listDomainsInRegion", String.class,
-            ListDomainsOptions[].class);
+               ListDomainsOptions[].class);
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
@@ -87,7 +87,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2009-04-15&Action=CreateDomain&DomainName=domainName",
-            "application/x-www-form-urlencoded", false);
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -105,8 +105,8 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2009-04-15&Action=PutAttributes&DomainName=domainName&ItemName=itemName"
-            + "&Attribute.1.Name=name" + "&Attribute.1.Value=fuzzy" + "&Attribute.1.Replace=true",
-            "application/x-www-form-urlencoded", false);
+               + "&Attribute.1.Name=name" + "&Attribute.1.Value=fuzzy" + "&Attribute.1.Replace=true",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -134,7 +134,11 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+      // TODO take this out, when the service is registered in jclouds-core/rest.properties
+      Properties restProperties = new Properties();
+      restProperties.setProperty(provider + ".contextbuilder", SimpleDBContextBuilder.class.getName());
+      restProperties.setProperty(provider + ".propertiesbuilder", SimpleDBPropertiesBuilder.class.getName());
+      return new RestContextFactory(restProperties).createContextSpec(provider, "foo", "bar", getProperties());
    }
 
 }

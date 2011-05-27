@@ -18,6 +18,7 @@
  */
 package org.jclouds.cim;
 
+
 /**
  * 
  * ManagedElement is an abstract class that provides a common superclass (or top of the inheritance
@@ -30,6 +31,17 @@ package org.jclouds.cim;
  * 
  */
 public abstract class ManagedElement extends SettingData {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromManagedElement(this);
+   }
 
    public static class Builder extends SettingData.Builder {
       protected String caption;

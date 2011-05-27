@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
 import org.jclouds.rimuhosting.miro.data.CreateOptions;
 import org.jclouds.rimuhosting.miro.data.NewServerData;
 import org.jclouds.rimuhosting.miro.domain.MetaData;
@@ -33,7 +36,11 @@ import org.jclouds.rimuhosting.miro.domain.MetaData;
  * @author Ivan Meredith
  */
 public class CreateServerOptions extends RimuHostingJsonBinder {
-
+   @Inject
+   public CreateServerOptions(Json jsonBinder) {
+      super(jsonBinder);
+   }
+   
    private String password;
    private List<MetaData> metaData = new ArrayList<MetaData>();
 

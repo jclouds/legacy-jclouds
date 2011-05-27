@@ -33,6 +33,7 @@
     <artifactId>trmk-ecloud</artifactId>
     <name>jclouds Terremark Enterprise Cloud provider</name>
     <description>jclouds Terremark Enterprise Cloud provider</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <test.trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</test.trmk-ecloud.endpoint>
@@ -151,6 +152,20 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.vcloud.terremark.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-

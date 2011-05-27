@@ -133,7 +133,7 @@ public class ScriptBuilder implements Statement {
                new Function<Statement, Iterable<String>>() {
                   @Override
                   public Iterable<String> apply(Statement from) {
-                     return from.functionDependecies(osFamily);
+                     return from.functionDependencies(osFamily);
                   }
                }));
       List<String> unresolvedFunctions = Lists.newArrayList(dependentFunctions);
@@ -144,7 +144,7 @@ public class ScriptBuilder implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
+   public Iterable<String> functionDependencies(OsFamily family) {
       return ImmutableSet.<String> of();
    }
 }

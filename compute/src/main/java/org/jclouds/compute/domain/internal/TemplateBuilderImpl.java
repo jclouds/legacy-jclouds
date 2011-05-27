@@ -557,10 +557,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    protected Hardware resolveSize(Ordering<Hardware> hardwareOrdering, final Iterable<? extends Image> images) {
-      Set<? extends Hardware> hardwaresl = hardwares.get();
+      Set<? extends Hardware> hardwarel = hardwares.get();
       Hardware hardware;
       try {
-         Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = filter(hardwaresl,
+         Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = filter(hardwarel,
                new Predicate<Hardware>() {
                   @Override
                   public boolean apply(final Hardware hardware) {
@@ -582,7 +582,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                });
          hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("hardwares don't support any images: " + toString() + "\n" + hardwaresl
+         throw new NoSuchElementException("hardware don't support any images: " + toString() + "\n" + hardwarel
                + "\n" + images);
       }
       logger.debug("<<   matched hardware(%s)", hardware);

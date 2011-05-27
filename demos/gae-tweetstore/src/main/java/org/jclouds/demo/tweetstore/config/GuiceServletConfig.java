@@ -18,7 +18,7 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
-import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.url;
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 
@@ -38,10 +38,13 @@ import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
-import com.google.appengine.api.labs.taskqueue.Queue;
-import com.google.appengine.api.labs.taskqueue.QueueFactory;
-import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions.Builder;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -77,8 +80,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
       try {
-         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
-                  .getProperty("twitter.credential"));
+         Configuration twitterConf = new ConfigurationBuilder()
+             .setUser(props.getProperty("twitter.identity"))
+             .setPassword(props.getProperty("twitter.credential")).build();
+         twitterClient = new TwitterFactory(twitterConf).getInstance();
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
@@ -96,7 +101,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       Queue queue = QueueFactory.getQueue("twitter");
       // submit a job to store tweets for each configured blobstore
       for (String name : providerTypeToBlobStoreMap.keySet()) {
-         queue.add(url("/store/do").header("context", name).method(Method.GET));
+          queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
       }
 
       super.contextInitialized(servletContextEvent);

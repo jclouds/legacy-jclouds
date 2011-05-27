@@ -30,7 +30,7 @@
     </parent>
     <artifactId>jclouds-drivers-project</artifactId>
     <packaging>pom</packaging>
-    <name>jclouds extensions project</name>
+    <name>jclouds drivers project</name>
     <modules>
         <module>gae</module>
         <module>apachehc</module>

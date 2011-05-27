@@ -69,7 +69,7 @@ public class CreateRunScript implements Statement {
                "echo title {title}>>{file}\r\n");
 
       @Override
-      public Iterable<String> functionDependecies(OsFamily family) {
+      public Iterable<String> functionDependencies(OsFamily family) {
          return Collections.emptyList();
       }
 
@@ -96,7 +96,7 @@ public class CreateRunScript implements Statement {
                "echo set {export}={value}>>{file}\r\n");
 
       @Override
-      public Iterable<String> functionDependecies(OsFamily family) {
+      public Iterable<String> functionDependencies(OsFamily family) {
          return Collections.emptyList();
       }
 
@@ -122,7 +122,7 @@ public class CreateRunScript implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies(OsFamily family) {
+   public Iterable<String> functionDependencies(OsFamily family) {
       return Collections.emptyList();
    }
 

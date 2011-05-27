@@ -29,8 +29,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.inject.Inject;
 
 /**
@@ -84,7 +84,7 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
       checkNotNull(response, "response");
       Set<IdName> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<Long, String> builder = ImmutableMap.<Long, String> builder();
+      Builder<Long, String> builder = ImmutableSortedMap.<Long, String> naturalOrder();
       for (IdName entry : toParse)
          builder.put(entry.id, entry.name);
       return builder.build();

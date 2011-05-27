@@ -21,8 +21,10 @@ package org.jclouds.cloudstack.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -91,7 +93,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    @SerializedName("domainid")
    private long domainId;
    @SerializedName("ingressrule")
-   private Set<IngressRule> ingressRules = ImmutableSet.of();
+   // so that tests and serialization come out expected
+   private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule> of();
 
    public SecurityGroup(long id, String account, String name, String description, String domain, long domainId,
          Set<IngressRule> ingressRules) {
@@ -101,7 +104,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       this.description = description;
       this.domain = domain;
       this.domainId = domainId;
-      this.ingressRules = ImmutableSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
+      this.ingressRules = ImmutableSortedSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
    }
 
    /**
@@ -173,13 +176,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
       result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((ingressRules == null) ? 0 : ingressRules.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
 
@@ -192,34 +190,9 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       if (getClass() != obj.getClass())
          return false;
       SecurityGroup other = (SecurityGroup) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
       if (domainId != other.domainId)
          return false;
       if (id != other.id)
-         return false;
-      if (ingressRules == null) {
-         if (other.ingressRules != null)
-            return false;
-      } else if (!ingressRules.equals(other.ingressRules))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
          return false;
       return true;
    }
