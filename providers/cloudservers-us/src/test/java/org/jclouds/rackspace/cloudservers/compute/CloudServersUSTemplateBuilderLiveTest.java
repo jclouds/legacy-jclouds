@@ -55,7 +55,8 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
                case CENTOS:
                   return input.version.matches("5.[023]") || !input.is64Bit;
                case WINDOWS:
-                  return input.version.equals("2008") || input.version.indexOf("2003") != -1
+                  return input.version.equals("2008") || input.version.equals("2008 R1")
+                           || input.version.indexOf("2003") != -1
                            || (input.version.equals("2008 R2") && !input.is64Bit);
                default:
                   return true;
