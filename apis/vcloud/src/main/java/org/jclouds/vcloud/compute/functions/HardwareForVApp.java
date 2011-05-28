@@ -26,8 +26,10 @@ import javax.inject.Inject;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
 
@@ -42,11 +44,11 @@ public class HardwareForVApp implements Function<VApp, Hardware> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final FindLocationForResource findLocationForResource;
+   private final Function<ReferenceType, Location> findLocationForResource;
    private final VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
    @Inject
-   protected HardwareForVApp(FindLocationForResource findLocationForResource,
+   protected HardwareForVApp(Function<ReferenceType, Location> findLocationForResource,
             VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");

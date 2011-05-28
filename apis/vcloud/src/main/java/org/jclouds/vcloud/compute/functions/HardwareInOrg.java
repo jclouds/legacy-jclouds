@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class HardwareInOrg implements Function<Org, Iterable<? extends Hardware>> {
 
-   private final AllCatalogItemsInOrg allCatalogItemsInOrg;
+   private final Function<Org, Iterable<? extends CatalogItem>> allCatalogItemsInOrg;
    private final Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> vAppTemplatesForCatalogItems;
    private final Provider<HardwareForVAppTemplate> sizeForVAppTemplateProvider;
 

@@ -31,13 +31,14 @@ import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.ReferenceType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class FindLocationForResource {
+public class FindLocationForResource implements Function<ReferenceType, Location> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -64,7 +65,7 @@ public class FindLocationForResource {
                return input;
          } while ((input = input.getParent()) != null);
       }
-      throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource, locations
-               .get()));
+      throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource,
+            locations.get()));
    }
 }
