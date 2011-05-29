@@ -34,14 +34,14 @@
 
     <properties>
         <!--
-            note you must set the property ${appengine.home} to a valid
+            note you must set the property ${appengine.sdk.root} to a valid
             extraction of appengine-java-sdk
         -->
-        <appengine.home>YOUR_APPENGINE_HOME</appengine.home>
         <appengine.applicationid>jclouds-tweetstore-spring</appengine.applicationid>
+        <appengine.sdk.version>1.4.2</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <jclouds.tweetstore.blobstores>cloudfiles,googlestorage,s3,azureblob</jclouds.tweetstore.blobstores>
+        <jclouds.tweetstore.blobstores>cloudfiles-us,aws-s3,azureblob</jclouds.tweetstore.blobstores>
         <jclouds.tweetstore.container>jclouds-tweetstore-spring</jclouds.tweetstore.container>
     </properties>
 
@@ -67,21 +67,19 @@
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-s3</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-atmos</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudfiles-us</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-azure</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>azureblob</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-rackspace</artifactId>
-            <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
@@ -102,11 +100,13 @@
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>2.2</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>displaytag</groupId>
             <artifactId>displaytag</artifactId>
             <version>1.2</version>
+            <scope>runtime</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -118,6 +118,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.5.6</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <artifactId>standard</artifactId>
@@ -129,35 +130,26 @@
             <artifactId>jstl</artifactId>
             <groupId>javax.servlet</groupId>
             <version>1.1.2</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_1.0_spec</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jsp_2.1_spec</artifactId>
-            <version>1.0.1</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- Google App Engine API -->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>${appengine.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-labs</artifactId>
-            <version>1.3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-tools-api</artifactId>
-            <version>1.3.5</version>
-            <scope>system</scope>
-            <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
+            <artifactId>appengine-tools-sdk</artifactId>
+            <version>${appengine.sdk.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -187,8 +179,8 @@
                         <configuration>
                             <systemProperties>
                                 <property>
-                                    <name>appengine.home</name>
-                                    <value>${appengine.home}</value>
+                                    <name>appengine.sdk.root</name>
+                                    <value>${appengine.sdk.root}</value>
                                 </property>
                                 <property>
                                     <name>devappserver.address</name>
@@ -203,15 +195,6 @@
                                     <value>${project.build.directory}/${project.artifactId}</value>
                                 </property>
                             </systemProperties>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${appengine.home}/lib/appengine-tools-api.jar</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <environmentVariables>
-                                <DEBUG>true</DEBUG>
-                                <SDK_BIN>${appengine.home}/bin</SDK_BIN>
-                                <SDK_LIB>${appengine.home}/lib</SDK_LIB>
-                                <SDK_CONFIG>${appengine.home}/config/sdk</SDK_CONFIG>
-                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>
@@ -252,32 +235,24 @@
                                             <value>${test.azureblob.credential}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles.identity</name>
-                                            <value>${test.cloudfiles.identity}</value>
+                                            <name>test.cloudfiles-us.identity</name>
+                                            <value>${test.cloudfiles-us.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles.credential</name>
-                                            <value>${test.cloudfiles.credential}</value>
+                                            <name>test.cloudfiles-us.credential</name>
+                                            <value>${test.cloudfiles-us.credential}</value>
                                         </property>
                                         <property>
-                                            <name>test.googlestorage.identity</name>
-                                            <value>${test.googlestorage.identity}</value>
+                                            <name>test.aws-s3.identity</name>
+                                            <value>${test.aws-s3.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.googlestorage.credential</name>
-                                            <value>${test.googlestorage.credential}</value>
+                                            <name>test.aws-s3.credential</name>
+                                            <value>${test.aws-s3.credential}</value>
                                         </property>
                                         <property>
-                                            <name>test.s3.identity</name>
-                                            <value>${test.s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.credential</name>
-                                            <value>${test.s3.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>appengine.home</name>
-                                            <value>${appengine.home}</value>
+                                            <name>appengine.sdk.root</name>
+                                            <value>${appengine.sdk.root}</value>
                                         </property>
                                         <property>
                                             <name>devappserver.address</name>
