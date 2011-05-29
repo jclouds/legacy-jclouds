@@ -63,26 +63,24 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class TweetStoreLiveTest {
-
    GoogleDevServer server;
    private URL url;
    private Map<String, BlobStoreContext> contexts;
    private String container;
-   private static final String blobs = System.getProperty("jclouds.tweetstore.blobstores",
-         "cloudfiles,googlestorage,s3,azureblob");
-   private static final Iterable<String> blobstores = Splitter.on(',').split(blobs);
+   private static final Iterable<String> blobstores = 
+       Splitter.on(',').split(System.getProperty("jclouds.tweetstore.blobstores", 
+               "cloudfiles-us,aws-s3,azureblob"));
    private static final Properties props = new Properties();
 
    @BeforeTest
    void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException,
          TwitterException {
-      container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
+      container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER), 
+              PROPERTY_TWEETSTORE_CONTAINER);
 
-      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER,
-            checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
-
+      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, container);
       props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
       // put all identity/credential pairs into the client
