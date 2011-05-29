@@ -36,7 +36,7 @@
       <bees.address>localhost</bees.address>
       <bees.port>8088</bees.port>
       <jclouds.tweetstore.blobstores>cloudfiles-us,aws-s3,azureblob</jclouds.tweetstore.blobstores>
-      <jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>
+      <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
     </properties>
 
     <dependencies>
