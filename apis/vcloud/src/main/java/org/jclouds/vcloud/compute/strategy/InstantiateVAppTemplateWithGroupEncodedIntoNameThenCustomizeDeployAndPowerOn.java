@@ -38,10 +38,10 @@ import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
-import org.jclouds.vcloud.domain.NetworkConnectionSection.Builder;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.NetworkConnectionSection.Builder;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -54,7 +54,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn implements
-      CreateNodeWithGroupEncodedIntoName {
+         CreateNodeWithGroupEncodedIntoName {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -65,7 +65,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
    @Inject
    protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(Predicate<URI> successTester,
-         VCloudClient client, GetNodeMetadataStrategy getNode) {
+            VCloudClient client, GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.successTester = successTester;
       this.getNode = getNode;
@@ -81,7 +81,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
       String customizationScript = VCloudTemplateOptions.class.cast(template.getOptions()).getCustomizationScript();
       IpAddressAllocationMode ipAddressAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions())
-            .getIpAddressAllocationMode();
+               .getIpAddressAllocationMode();
 
       options.description(VCloudTemplateOptions.class.cast(template.getOptions()).getDescription());
       options.customizeOnInstantiate(false);
@@ -96,12 +96,13 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
+      VApp vAppResponse = client.getVAppTemplateClient().createVAppInVDCByInstantiatingTemplate(name, VDC, templateId,
+               options);
       waitForTask(vAppResponse.getTasks().get(0), vAppResponse);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       // note customization is a serial concern at the moment
-      Vm vm = Iterables.get(client.getVApp(vAppResponse.getHref()).getChildren(), 0);
+      Vm vm = Iterables.get(client.getVAppClient().getVApp(vAppResponse.getHref()).getChildren(), 0);
       if (customizationScript != null) {
          logger.trace(">> updating customization vm(%s) ", vm.getName());
          waitForTask(updateVmWithCustomizationScript(vm, customizationScript), vAppResponse);
@@ -121,8 +122,8 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       waitForTask(updateMemoryMBOfVm(vm, memoryMB), vAppResponse);
       logger.trace("<< updated memoryMB vm(%s) ", vm.getName());
       logger.trace(">> deploying and powering on vApp(%s) ", vAppResponse.getName());
-      return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse,
-            client.deployAndPowerOnVAppOrVm(vAppResponse.getHref()));
+      return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, client.getVAppClient().deployAndPowerOnVApp(
+               vAppResponse.getHref()));
 
    }
 
@@ -140,34 +141,34 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       // returns a script that
       // loses newlines.
       guestConfiguration.setCustomizationScript(customizationScript);
-      return client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
+      return client.getVmClient().updateGuestCustomizationOfVm(guestConfiguration, vm.getHref());
    }
 
    public Task updateVmWithIpAddressAllocationMode(Vm vm, final IpAddressAllocationMode ipAddressAllocationMode) {
       NetworkConnectionSection net = vm.getNetworkConnectionSection();
       Builder builder = net.toBuilder();
       builder.connections(Iterables.transform(net.getConnections(),
-            new Function<NetworkConnection, NetworkConnection>() {
+               new Function<NetworkConnection, NetworkConnection>() {
 
-               @Override
-               public NetworkConnection apply(NetworkConnection arg0) {
-                  return arg0.toBuilder().connected(true).ipAddressAllocationMode(ipAddressAllocationMode).build();
-               }
+                  @Override
+                  public NetworkConnection apply(NetworkConnection arg0) {
+                     return arg0.toBuilder().connected(true).ipAddressAllocationMode(ipAddressAllocationMode).build();
+                  }
 
-            }));
-      return client.updateNetworkConnectionOfVm(vm.getHref(), builder.build());
+               }));
+      return client.getVmClient().updateNetworkConnectionOfVm(builder.build(), vm.getHref());
    }
 
    public Task updateCPUCountOfVm(Vm vm, int cpuCount) {
-      return client.updateCPUCountOfVm(vm.getHref(), cpuCount);
+      return client.getVmClient().updateCPUCountOfVm(cpuCount, vm.getHref());
    }
 
    public Task updateMemoryMBOfVm(Vm vm, int memoryInMB) {
-      return client.updateMemoryMBOfVm(vm.getHref(), memoryInMB);
+      return client.getVmClient().updateMemoryMBOfVm(memoryInMB, vm.getHref());
    }
 
    private NodeMetadata blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse,
-         Task task) {
+            Task task) {
       if (options.shouldBlock()) {
          waitForTask(task, vAppResponse);
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());

@@ -72,7 +72,7 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
          return null;
       }
 
-      Envelope ovf = client.getOvfEnvelopeForVAppTemplate(from.getHref());
+      Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
       if (ovf == null) {
          logger.warn("cannot parse hardware as no ovf envelope found for %s", from);
          return null;

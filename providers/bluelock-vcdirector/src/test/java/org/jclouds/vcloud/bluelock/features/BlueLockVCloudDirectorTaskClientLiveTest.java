@@ -16,9 +16,9 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.vcloud.bluelock.features;
 
-import org.jclouds.vcloud.VCloudGuestCustomizationLiveTest;
+import org.jclouds.vcloud.features.TaskClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -26,15 +26,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
-public class BlueLockVCloudDirectorGuestCustomizationLiveTest extends VCloudGuestCustomizationLiveTest {
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BlueLockVCloudDirectorTaskClientLiveTest")
+public class BlueLockVCloudDirectorTaskClientLiveTest extends TaskClientLiveTest {
 
-   public BlueLockVCloudDirectorGuestCustomizationLiveTest() {
+   public BlueLockVCloudDirectorTaskClientLiveTest() {
       provider = "bluelock-vcdirector";
-   }
-
-   @Override
-   protected void checkApiOutput(String apiOutput) {
-      checkApiOutput1_0_0(apiOutput);
    }
 }

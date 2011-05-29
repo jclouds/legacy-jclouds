@@ -32,12 +32,13 @@ import org.jclouds.vcloud.domain.Vm;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code VCloudClient}
+ * Tests behavior of deprecated {@code VCloudClient} features
  * 
  * @author Adrian Cole
  */
+@Deprecated
 @Test(groups = "live", singleThreaded = true)
-public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClient, VCloudAsyncClient> {
+public class DeprecatedVCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClient, VCloudAsyncClient> {
 
    @Test
    public void testListOrgs() throws Exception {

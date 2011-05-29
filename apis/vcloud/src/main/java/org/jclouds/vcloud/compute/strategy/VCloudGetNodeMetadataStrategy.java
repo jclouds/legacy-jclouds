@@ -49,7 +49,7 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    public NodeMetadata getNode(String in) {
       URI id = URI.create(in);
-      VApp from = client.getVApp(id);
+      VApp from = client.getVAppClient().getVApp(id);
       if (from == null)
          return null;
       return vAppToNodeMetadata.apply(from);

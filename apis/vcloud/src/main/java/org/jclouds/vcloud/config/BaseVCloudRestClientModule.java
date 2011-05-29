@@ -21,6 +21,7 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -58,6 +59,11 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
+   }
+
+   public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
+            Map<Class<?>, Class<?>> delegateMap) {
+      super(syncClientType, asyncClientType, delegateMap);      
    }
 
    @Override

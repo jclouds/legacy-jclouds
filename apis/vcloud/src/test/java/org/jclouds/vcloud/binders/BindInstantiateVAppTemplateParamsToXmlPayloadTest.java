@@ -42,6 +42,7 @@ import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 import org.jclouds.vcloud.endpoints.Network;
+import org.jclouds.vcloud.features.VAppTemplateClient;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -63,9 +64,12 @@ import com.google.inject.name.Names;
 public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
    Injector createInjector(URI vAppTemplate, VAppTemplate value) {
       final VCloudClient client = createMock(VCloudClient.class);
+      final VAppTemplateClient tclient = createMock(VAppTemplateClient.class);
 
-      expect(client.getVAppTemplate(vAppTemplate)).andReturn(value).anyTimes();
+      expect(client.getVAppTemplateClient()).andReturn(tclient).anyTimes();
+      expect(tclient.getVAppTemplate(vAppTemplate)).andReturn(value).anyTimes();
       replay(client);
+      replay(tclient);
 
       return Guice.createInjector(new AbstractModule() {
 

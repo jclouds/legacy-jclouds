@@ -21,21 +21,34 @@ package org.jclouds.vcloud;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ovf.Envelope;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
+import org.jclouds.vcloud.features.CatalogClient;
+import org.jclouds.vcloud.features.NetworkClient;
+import org.jclouds.vcloud.features.OrgClient;
+import org.jclouds.vcloud.features.TaskClient;
+import org.jclouds.vcloud.features.VAppClient;
+import org.jclouds.vcloud.features.VAppTemplateClient;
+import org.jclouds.vcloud.features.VDCClient;
+import org.jclouds.vcloud.features.VmClient;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -44,269 +57,336 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a
- *      href="http://communities.vmware.com/community/developer/forums/vcloudapi"
- *      />
+ * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient extends CommonVCloudClient {
+   /**
+    * Provides asynchronous access to VApp Template features.
+    * 
+    */
+   @Delegate
+   VAppTemplateClient getVAppTemplateClient();
 
    /**
-    * Get a Screen Thumbnail for a Virtual Machine
-    * 
-    * @param vm
-    *           to snapshot
+    * Provides synchronous access to VApp features.
     */
+   @Delegate
+   VAppClient getVAppClient();
+
+   /**
+    * Provides synchronous access to Vm features.
+    */
+   @Delegate
+   VmClient getVmClient();
+
+   /**
+    * Provides synchronous access to Catalog features.
+    */
+   @Delegate
+   CatalogClient getCatalogClient();
+
+   /**
+    * Provides synchronous access to Task features.
+    */
+   @Delegate
+   TaskClient getTaskClient();
+
+   /**
+    * Provides synchronous access to VDC features.
+    */
+   @Delegate
+   VDCClient getVDCClient();
+
+   /**
+    * Provides synchronous access to Network features.
+    */
+   @Delegate
+   NetworkClient getNetworkClient();
+
+   /**
+    * Provides synchronous access to Org features.
+    */
+   @Delegate
+   OrgClient getOrgClient();
+
+   /**
+    * @see VmClient#getThumbnail
+    */
+   @Deprecated
    InputStream getThumbnailOfVm(URI vm);
 
    /**
-    * The response to a login request includes a list of the organizations to
-    * which the authenticated user has access.
-    * 
-    * @return organizations indexed by name
+    * @see OrgClient#listOrgs
     */
+   @Deprecated
    Map<String, ReferenceType> listOrgs();
 
+   /**
+    * @see VAppTemplateClient#createVAppInVDCByInstantiatingTemplate
+    */
+   @Deprecated
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 
+   /**
+    * @see VAppClient#copyVAppToVDCAndName
+    */
+   @Deprecated
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
    /**
-    * The captureVApp request creates a vApp template from an instantiated vApp.
-    * <h4>Note</h4> Before it can be captured, a vApp must be undeployed
-    * 
-    * @param vDC
-    * @param toClone
-    * @param templateName
-    * @param options
-    * @return template in progress
+    * @see VAppClient#captureAsTemplateInVDC
     */
+   @Deprecated
    VAppTemplate captureVAppInVDC(URI vDC, URI toClone, String templateName, CaptureVAppOptions... options);
 
+   /**
+    * @see VAppTemplateClient#get
+    */
+   @Deprecated
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
+   /**
+    * @see VAppTemplateClient#getOvfEnvelope
+    */
+   @Deprecated
    Envelope getOvfEnvelopeForVAppTemplate(URI vAppTemplate);
 
    /**
-    * Modify the Guest Customization Section of a Virtual Machine
-    * 
-    * @param vm
-    *           uri to modify
-    * @param updated
-    *           guestCustomizationSection
-    * @return task in progress
+    * @see VmClient#updateGuestCustomization
     */
+   @Deprecated
    Task updateGuestCustomizationOfVm(URI vm, GuestCustomizationSection guestCustomizationSection);
 
    /**
-    * Modify the Network Connection Section of a Virtual Machine
-    * 
-    * @param vm
-    *           uri to modify
-    * @param updated
-    *           networkConnectionSection
-    * @return task in progress
+    * @see VmClient#updateNetworkConnection
     */
+   @Deprecated
    Task updateNetworkConnectionOfVm(URI vm, NetworkConnectionSection guestCustomizationSection);
 
    /**
-    * returns the vapp template corresponding to a catalog item in the catalog
-    * associated with the specified name. Note that the org and catalog
-    * parameters can be null to choose default.
-    * 
-    * @param orgName
-    *           organization name, or null for the default
-    * @param catalogName
-    *           catalog name, or null for the default
-    * @param itemName
-    *           item you wish to lookup
-    * 
-    * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that
-    *            isn't present
+    * @see VAppTemplateClient#findInOrgCatalogNamed
     */
+   @Deprecated
    VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
-         String itemName);
+            String itemName);
 
+   /**
+    * @see VAppClient#findInOrgVDCNamed
+    */
+   @Deprecated
    VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
 
+   /**
+    * @see VAppClient#get
+    */
+   @Deprecated
    VApp getVApp(URI vApp);
 
+   /**
+    * @see VmClient#get
+    */
+   @Deprecated
    Vm getVm(URI vm);
 
    /**
-    * update the cpuCount of an existing VM
     * 
-    * @param vm
-    *           to update
-    * @param cpuCount
-    *           count to change the primary cpu to
+    * @see VAppClient#deploy
+    * @see VmClient#deploy
     */
-   Task updateCPUCountOfVm(URI vm, int cpuCount);
-
-   /**
-    * update the memoryInMB of an existing VM
-    * 
-    * @param vm
-    *           to update
-    * @param memoryInMB
-    *           memory in MB to assign to the VM
-    */
-   Task updateMemoryMBOfVm(URI vm, int memoryInMB);
-
-   /**
-    * To deploy a vApp, the client makes a request to its action/deploy URL.
-    * Deploying a vApp automatically deploys all of the virtual machines it
-    * contains. To deploy a virtual machine, the client makes a request to its
-    * action/deploy URL.
-    * <p/>
-    * Deploying a Vm implicitly deploys the parent vApp if that vApp is not
-    * already deployed.
-    */
+   @Deprecated
    Task deployVAppOrVm(URI vAppOrVmId);
 
    /**
-    * like {@link #deployVAppOrVm(URI)}, except deploy transistions to power on
-    * state
     * 
+    * @see VAppClient#deployAndPowerOn
+    * @see VmClient#deployAndPowerOn
     */
+   @Deprecated
    Task deployAndPowerOnVAppOrVm(URI vAppOrVmId);
 
    /**
-    * Undeploying a vApp powers off or suspends any running virtual machines it
-    * contains, then frees the resources reserved for the vApp and sets the
-    * vApp’s deploy attribute to a value of false to indicate that it is not
-    * deployed.
-    * <p/>
-    * Undeploying a virtual machine powers off or suspends the virtual machine,
-    * then frees the resources reserved for it and sets the its deploy attribute
-    * to a value of false to indicate that it is not deployed. This operation
-    * has no effect on the containing vApp.
-    * <h4>NOTE</h4>
-    * Using this method will simply power off the vms. In order to save their
-    * state, use {@link #undeployAndSaveStateOfVAppOrVm}
     * 
+    * @see VAppClient#undeploy
+    * @see VmClient#undeploy
     */
+   @Deprecated
    Task undeployVAppOrVm(URI vAppOrVmId);
 
    /**
-    * like {@link #undeployVAppOrVm(URI)}, where the undeployed virtual machines
-    * are suspended and their suspend state saved
     * 
+    * @see VAppClient#undeployAndSaveState
+    * @see VmClient#undeployAndSaveState
     */
+   @Deprecated
    Task undeployAndSaveStateOfVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A powerOn request to a vApp URL powers on all of the virtual machines in
-    * the vApp, as specified in the vApp’s StartupSection field.
-    * <p/>
-    * A powerOn request to a virtual machine URL powers on the specified virtual
-    * machine and forces deployment of the parent vApp.
-    * <p/>
-    * <h4>NOTE</h4> A powerOn request to a vApp or virtual machine that is
-    * undeployed forces deployment.
+    * 
+    * @see VAppClient#powerOn
+    * @see VmClient#powerOn
     */
+   @Deprecated
    Task powerOnVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A powerOff request to a vApp URL powers off all of the virtual machines in
-    * the vApp, as specified in its StartupSection field.
-    * <p/>
-    * A powerOff request to a virtual machine URL powers off the specified
-    * virtual machine.
+    * 
+    * @see VAppClient#powerOff
+    * @see VmClient#powerOff
     */
+   @Deprecated
    Task powerOffVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A shutdown request to a vApp URL shuts down all of the virtual machines in
-    * the vApp, as specified in its StartupSection field.
-    * <p/>
-    * A shutdown request to a virtual machine URL shuts down the specified
-    * virtual machine.
-    * <p/>
-    * <h4>NOTE</h4Because this request sends a signal to the guest OS, the
-    * vCloud API cannot track the progress or verify the result of the requested
-    * operation. Hence, void is returned
+    * 
+    * @see VAppClient#shutdown
+    * @see VmClient#shutdown
     */
+   @Deprecated
    void shutdownVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A reset request to a vApp URL resets all of the virtual machines in the
-    * vApp, as specified in its StartupSection field.
-    * <p/>
-    * A reset request to a virtual machine URL resets the specified virtual
-    * machine.
+    * 
+    * @see VAppClient#reset
+    * @see VmClient#reset
     */
+   @Deprecated
    Task resetVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A reboot request to a vApp URL reboots all of the virtual machines in the
-    * vApp, as specified in its StartupSection field.
-    * <p/>
-    * A reboot request to a virtual machine URL reboots the specified virtual
-    * machine.
-    * <p/>
-    * <h4>NOTE</h4> Because this request sends a signal to the guest OS, the
-    * vCloud API cannot track the progress or verify the result of the requested
-    * operation. Hence, void is returned
+    * 
+    * @see VAppClient#reboot
+    * @see VmClient#reboot
     */
+   @Deprecated
    void rebootVAppOrVm(URI vAppOrVmId);
 
    /**
-    * A suspend request to a vApp URL suspends all of the virtual machines in
-    * the vApp, as specified in its StartupSection field.
-    * <p/>
-    * A suspend request to a virtual machine URL suspends the specified virtual
-    * machine.
+    * 
+    * @see VAppClient#suspend
+    * @see VmClient#suspend
     */
+   @Deprecated
    Task suspendVAppOrVm(URI vAppOrVmId);
 
    /**
-    * delete a vAppTemplate, vApp, or media image. You cannot delete an object
-    * if it is in use. Any object that is being copied or moved is in use. Other
-    * criteria that determine whether an object is in use depend on the object
-    * type.
-    * <ul>
-    * <li>A vApptemplate is in use if it is being instantiated. After
-    * instantiation is complete, the template is no longer in use.</li>
-    * <li>A vApp is in use if it is deployed.</li>
-    * <li>A media image is in use if it is inserted in a Vm.</li>
-    * </ul>
     * 
-    * @param id
-    *           href of the vAppTemplate, vApp, or media image
-    * @return task of the operation in progress
-    */
-   Task deleteVAppTemplateVAppOrMediaImage(URI id);
-
-   /**
-    * 
-    * @see deleteVAppTemplateVAppOrMediaImage
+    * @see VAppClient#delete
     */
    @Deprecated
    Task deleteVApp(URI vAppId);
 
    /**
-    * A catalog can contain references to vApp templates and media images that
-    * have been uploaded to any vDC in an organization. A vApp template or media
-    * image can be listed in at most one catalog.
     * 
-    * @param catalog
-    *           URI of the catalog to add the resourceEntity from
-    * @param name
-    *           name of the entry in the catalog
-    * @param description
-    *           description of the entry in the catalog
-    * @param entity
-    *           the reference to the item from the VDC
-    * @param properties
-    *           metadata to associate with this item
-    * @return the new catalog item
+    * @see CatalogClient#getCatalog
     */
-   CatalogItem addResourceEntitytoCatalog(URI catalog, String name, String description, URI entity,
-         Map<String, String> properties);
+   @Override
+   @Deprecated
+   Catalog getCatalog(URI catalogId);
 
-   CatalogItem addResourceEntitytoCatalog(URI catalog, String name, String description, URI entity);
+   /**
+    * 
+    * @see CatalogClient#getCatalogItem
+    */
+   @Override
+   @Deprecated
+   Catalog findCatalogInOrgNamed(@Nullable String orgName, @Nullable String catalogName);
+
+   /**
+    * 
+    * @see CatalogClient#getCatalogItem
+    */
+   @Override
+   @Deprecated
+   CatalogItem getCatalogItem(URI catalogItem);
+
+   /**
+    * 
+    * @see CatalogClient#findCatalogItemInOrgCatalogNamed
+    */
+   @Override
+   @Deprecated
+   CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
+
+   /**
+    * 
+    * @see TaskClient#getTasksList
+    */
+   @Override
+   @Deprecated
+   TasksList getTasksList(URI tasksListId);
+
+   /**
+    * 
+    * @see TaskClient#findTasksListInOrgNamed
+    */
+   @Override
+   @Deprecated
+   TasksList findTasksListInOrgNamed(String orgName);
+
+   /**
+    * 
+    * @see TaskClient#getTask
+    */
+   @Override
+   @Deprecated
+   Task getTask(URI taskId);
+
+   /**
+    * 
+    * @see TaskClient#cancelTask
+    */
+   @Override
+   @Deprecated
+   void cancelTask(URI taskId);
+
+   /**
+    * 
+    * @see VDCClient#getVDC
+    */
+   @Override
+   @Deprecated
+   VDC getVDC(URI vdc);
+
+   /**
+    * 
+    * @see VDCClient#findVDCInOrgNamed
+    */
+   @Override
+   @Deprecated
+   VDC findVDCInOrgNamed(String orgName, String vdcName);
+
+   /**
+    * 
+    * @see NetworkClient#findNetworkInOrgVDCNamed
+    */
+   @Override
+   @Deprecated
+   OrgNetwork findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
+
+   /**
+    * 
+    * @see NetworkClient#getNetwork
+    */
+   @Override
+   @Deprecated
+   OrgNetwork getNetwork(URI network);
+
+   /**
+    * 
+    * @see OrgClient#getOrg
+    */
+   @Override
+   @Deprecated
+   Org getOrg(URI orgId);
+
+   /**
+    * 
+    * @see OrgClient#findOrgNamed
+    */
+   @Override
+   @Deprecated
+   Org findOrgNamed(@Nullable String name);
 
 }

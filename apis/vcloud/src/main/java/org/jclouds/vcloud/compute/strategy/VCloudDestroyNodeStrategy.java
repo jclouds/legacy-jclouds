@@ -64,7 +64,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    @Override
    public NodeMetadata destroyNode(String id) {
       URI vappId = URI.create(checkNotNull(id, "node.id"));
-      VApp vApp = client.getVApp(vappId);
+      VApp vApp = client.getVAppClient().getVApp(vappId);
       if (vApp == null)
          return null;
       vApp = powerOffVAppIfDeployed(vApp);
@@ -80,7 +80,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
 
    void deleteVApp(URI vappId) {
       logger.debug(">> deleting vApp(%s)", vappId);
-      Task task = client.deleteVAppTemplateVAppOrMediaImage(vappId);
+      Task task = client.getVAppClient().deleteVApp(vappId);
       if (!successTester.apply(task.getHref())) {
          throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vappId, task));
       }
@@ -90,12 +90,12 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    VApp undeployVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(Status.RESOLVED) > 0) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.undeployVAppOrVm(vApp.getHref());
+         Task task = client.getVAppClient().undeployVApp(vApp.getHref());
          if (!successTester.apply(task.getHref())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
          }
-         vApp = client.getVApp(vApp.getHref());
+         vApp = client.getVAppClient().getVApp(vApp.getHref());
          logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;
@@ -104,12 +104,12 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    VApp powerOffVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(Status.OFF) > 0) {
          logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.powerOffVAppOrVm(vApp.getHref());
+         Task task = client.getVAppClient().powerOffVApp(vApp.getHref());
          if (!successTester.apply(task.getHref())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
          }
-         vApp = client.getVApp(vApp.getHref());
+         vApp = client.getVAppClient().getVApp(vApp.getHref());
          logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;

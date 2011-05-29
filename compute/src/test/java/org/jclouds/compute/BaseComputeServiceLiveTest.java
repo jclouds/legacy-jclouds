@@ -243,7 +243,7 @@ public abstract class BaseComputeServiceLiveTest {
                   overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
                      + response.getValue();
-            
+
          // test single-node execution
          ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
                   .runAsRoot(false));
@@ -561,6 +561,8 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
+   protected int nonBlockDuration = 30 * 1000;
+
    public void testOptionToNotBlock() throws Exception {
       String group = this.group + "block";
       try {
@@ -576,7 +578,8 @@ public abstract class BaseComputeServiceLiveTest {
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
-         assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
+         assert duration < nonBlockDuration : String.format("duration(%d) longer than expected(%d) seconds! ",
+                  nonBlockDuration, duration / 1000);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }

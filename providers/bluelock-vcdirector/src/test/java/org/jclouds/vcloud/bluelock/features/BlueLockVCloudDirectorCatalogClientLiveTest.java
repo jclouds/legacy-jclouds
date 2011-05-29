@@ -16,20 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.vcloud.bluelock.features;
 
-import org.jclouds.vcloud.VCloudClientLiveTest;
+import org.jclouds.vcloud.features.CatalogClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code BlueLockVCloudClient}
+ * 
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true)
-public class BlueLockVCloudDirectorClientLiveTest extends VCloudClientLiveTest {
-   public BlueLockVCloudDirectorClientLiveTest() {
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BlueLockVCloudDirectorCatalogClientLiveTest")
+public class BlueLockVCloudDirectorCatalogClientLiveTest extends CatalogClientLiveTest {
+
+   public BlueLockVCloudDirectorCatalogClientLiveTest() {
       provider = "bluelock-vcdirector";
    }
-
 }

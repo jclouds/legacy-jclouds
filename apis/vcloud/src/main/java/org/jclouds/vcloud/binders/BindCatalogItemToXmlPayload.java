@@ -26,8 +26,8 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -39,8 +39,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.vcloud.options.CatalogItemOptions;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -58,7 +58,7 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
 
    @Inject
    public BindCatalogItemToXmlPayload(BindToStringPayload stringBinder,
-         @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
+            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
@@ -67,19 +67,15 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
-            "this binder is only valid for GeneratedHttpRequests!");
+               "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.get("name"), "name");
-      String description = checkNotNull(postParams.get("description"), "description");
-      URI entity = URI.create(checkNotNull(postParams.get("entity"), "entity"));
+      URI entity = URI.create(checkNotNull(postParams.get("Entity"), "Entity"));
 
-      Map<String, String> properties = findMapInArgsOrNull(gRequest);
-      if (properties == null) {
-         properties = ImmutableMap.of();
-      }
+      CatalogItemOptions options = findOptionsInArgsOrNew(gRequest);
       try {
-         return stringBinder.bindToRequest(request, generateXml(name, description, entity, properties));
+         return stringBinder.bindToRequest(request, generateXml(name, entity, options));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -90,12 +86,13 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
 
    }
 
-   protected String generateXml(String templateName, String description, URI entity, Map<String, String> properties)
-         throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+   protected String generateXml(String templateName, URI entity, CatalogItemOptions options)
+            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(templateName);
-      rootBuilder.e("Description").t(description);
+      if (options.getDescription() != null)
+         rootBuilder.e("Description").t(options.getDescription());
       rootBuilder.e("Entity").a("href", entity.toASCIIString());
-      for (Entry<String, String> entry : properties.entrySet()) {
+      for (Entry<String, String> entry : options.getProperties().entrySet()) {
          rootBuilder.e("Property").a("key", entry.getKey()).t(entry.getValue());
       }
       Properties outputProperties = new Properties();
@@ -104,19 +101,22 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
    }
 
    protected XMLBuilder buildRoot(String name) throws ParserConfigurationException, FactoryConfigurationError {
-      XMLBuilder rootBuilder = XMLBuilder.create("CatalogItem").a("name", name).a("xmlns", ns)
-            .a("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation", ns + " " + schema);
+      XMLBuilder rootBuilder = XMLBuilder.create("CatalogItem").a("name", name).a("xmlns", ns).a("xmlns:xsi",
+               "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation", ns + " " + schema);
       return rootBuilder;
    }
 
-   @SuppressWarnings("unchecked")
-   protected Map<String, String> findMapInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected CatalogItemOptions findOptionsInArgsOrNew(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof Map) {
-            return (Map<String, String>) arg;
+         if (arg instanceof CatalogItemOptions) {
+            return CatalogItemOptions.class.cast(arg);
+         } else if (arg.getClass().isArray()) {
+            Object[] array = (Object[]) arg;
+            if (array.length > 0 && array[0] instanceof CatalogItemOptions)
+               return CatalogItemOptions.class.cast(array[0]);
          }
       }
-      return null;
+      return new CatalogItemOptions();
    }
 
    @Override
