@@ -37,7 +37,7 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <appengine.home>/path/to/appengine-java-sdk-1.3.5</appengine.home>
+        <appengine.sdk.root>/path/to/appengine-java-sdk-1.4.2</appengine.home>
         <appengine.applicationid>yourappid</appengine.applicationid>
       </properties>
     </profile>
@@ -48,20 +48,13 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <jclouds.aws.identity>YOUR_ACCESS_KEY_ID</jclouds.aws.identity>
-        <jclouds.aws.credential>YOUR_SECRET_KEY</jclouds.aws.credential>
-        <jclouds.rackspace.identity>YOUR_USER</jclouds.rackspace.identity>
-        <jclouds.rackspace.credential>YOUR_HEX_KEY</jclouds.rackspace.credential>
-        <jclouds.azure.storage.identity>YOUR_ACCOUNT</jclouds.azure.storage.identity>
-        <jclouds.azure.storage.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azure.storage.credential>
+        <jclouds.aws-s3.identity>YOUR_ACCESS_KEY_ID</jclouds.aws-s3.identity>
+        <jclouds.aws-s3.credential>YOUR_SECRET_KEY</jclouds.aws-s3.credential>
+        <jclouds.cloudfiles-us.identity>YOUR_USER</jclouds.cloudfiles-us.identity>
+        <jclouds.cloudfiles-us.credential>YOUR_HEX_KEY</jclouds.cloudfiles-us.credential>
+        <jclouds.azureblob.identity>YOUR_ACCOUNT</jclouds.azureblob.identity>
+        <jclouds.azureblob.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azureblob.credential>
         <jclouds.twitter.identity>YOUR_TWITTER_USERNAME</jclouds.twitter.identity>
         <jclouds.twitter.credential>YOUR_TWITTER_PASSWORD</jclouds.twitter.credential>        
       </properties>
     </profile>
-
-    <repositories>
-        <repository>
-            <id>jclouds</id>
-            <url>http://jclouds.googlecode.com/svn/trunk/repo</url>
-        </repository>
-    </repositories>
