@@ -51,7 +51,7 @@ public class AddTweetsControllerTest {
       for (String name : new String[] { "1", "2" }) {
          BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummy", "dummy");
          context.getAsyncBlobStore().createContainerInLocation(null, container).get();
-         Blob blob = context.getAsyncBlobStore().newBlob("1");
+         Blob blob = context.getAsyncBlobStore().blobBuilder("1").build();
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
          blob.setPayload("I love beans!");
          context.getAsyncBlobStore().putBlob(container, blob).get();
