@@ -18,12 +18,12 @@
  */
 package org.jclouds.samples.googleappengine.functest;
 
-import com.google.appengine.tools.KickStart;
-
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.File;
 import java.util.Properties;
+
+import com.google.appengine.tools.KickStart;
 
 /**
  * Basic functionality to start a local google app engine instance.
@@ -57,9 +57,9 @@ public class GoogleDevServer {
         Thread.sleep(30 * 1000);
     }
 
-    @SuppressWarnings("deprecation")
     public void stop() throws Exception {
-        server.stop();
+        // KickStart.main opens a process and calls process.waitFor(), which is interruptable
+        server.interrupt();
     }
 
 }
