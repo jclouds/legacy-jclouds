@@ -40,14 +40,14 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <jclouds.aws.accesskeyid>YOUR_ACCESS_KEY_ID</jclouds.aws.accesskeyid>
-        <jclouds.aws.secretaccesskey>YOUR_SECRET_KEY</jclouds.aws.secretaccesskey>
-        <jclouds.rackspace.user>YOUR_USER</jclouds.rackspace.user>
-        <jclouds.rackspace.key>YOUR_HEX_KEY</jclouds.rackspace.key>
-        <jclouds.azure.storage.account>YOUR_ACCOUNT</jclouds.azure.storage.account>
-        <jclouds.azure.storage.key>YOUR_BASE64_ENCODED_KEY</jclouds.azure.storage.key>
-        <jclouds.twitter.user>YOUR_TWITTER_USERNAME</jclouds.twitter.user>
-        <jclouds.twitter.password>YOUR_TWITTER_PASSWORD</jclouds.twitter.password>        
+        <jclouds.aws.identity>YOUR_ACCESS_KEY_ID</jclouds.aws.identity>
+        <jclouds.aws.credential>YOUR_SECRET_KEY</jclouds.aws.credential>
+        <jclouds.rackspace.identity>YOUR_USER</jclouds.rackspace.identity>
+        <jclouds.rackspace.credential>YOUR_HEX_KEY</jclouds.rackspace.credential>
+        <jclouds.azure.storage.identity>YOUR_ACCOUNT</jclouds.azure.storage.identity>
+        <jclouds.azure.storage.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azure.storage.credential>
+        <jclouds.twitter.identity>YOUR_TWITTER_USERNAME</jclouds.twitter.identity>
+        <jclouds.twitter.credential>YOUR_TWITTER_PASSWORD</jclouds.twitter.credential>        
       </properties>
     </profile>
 
