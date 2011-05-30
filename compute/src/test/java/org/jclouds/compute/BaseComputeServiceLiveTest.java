@@ -96,7 +96,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, sequential = true)
+@Test(groups = { "integration", "live" }, singleThreaded = true)
 public abstract class BaseComputeServiceLiveTest {
 
    protected String group;
@@ -579,7 +579,7 @@ public abstract class BaseComputeServiceLiveTest {
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
          assert duration < nonBlockDuration : String.format("duration(%d) longer than expected(%d) seconds! ",
-                  nonBlockDuration, duration / 1000);
+                  duration / 1000, nonBlockDuration);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
