@@ -18,8 +18,15 @@
  */
 package org.jclouds.vcloud.features;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -27,7 +34,14 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.options.CatalogItemOptions;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -98,4 +112,64 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
       }
    }
 
+   @Test
+   public void testCaptureVApp() throws Exception {
+      String group = prefix + "cap";
+      NodeMetadata node = null;
+      VAppTemplate vappTemplate = null;
+      CatalogItem item = null;
+      try {
+
+         node = getOnlyElement(client.createNodesInGroup(group, 1));
+
+         Predicate<URI> taskTester = new RetryablePredicate<URI>(new TaskSuccess(getVCloudApi()), 600, 5,
+                  TimeUnit.SECONDS);
+
+         // I have to powerOff first
+         Task task = getVCloudApi().getVAppClient().powerOffVApp(URI.create(node.getId()));
+
+         // wait up to ten minutes per above
+         assert taskTester.apply(task.getHref()) : node;
+
+         // having a problem where the api is returning an error telling us to stop!
+
+         // I have to undeploy first
+         task = getVCloudApi().getVAppClient().undeployVApp(URI.create(node.getId()));
+
+         // wait up to ten minutes per above
+         assert taskTester.apply(task.getHref()) : node;
+
+         // vdc is equiv to the node's location
+         // vapp uri is the same as the node's id
+         vappTemplate = getVCloudApi().getVAppTemplateClient().captureVAppAsTemplateInVDC(URI.create(node.getId()),
+                  group, URI.create(node.getLocation().getId()));
+
+         assertEquals(vappTemplate.getName(), group);
+
+         task = vappTemplate.getTasks().get(0);
+
+         // wait up to ten minutes per above
+         assert taskTester.apply(task.getHref()) : vappTemplate;
+
+         item = getVCloudApi().getCatalogClient().addVAppTemplateOrMediaImageToCatalogAndNameItem(
+                  vappTemplate.getHref(),
+                  getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).getHref(), "fooname",
+                  CatalogItemOptions.Builder.description("description").properties(ImmutableMap.of("foo", "bar")));
+         
+         assertEquals(item.getName(), "fooname");
+         assertEquals(item.getDescription(), "description");
+         assertEquals(item.getProperties(), ImmutableMap.of("foo", "bar"));
+         assertEquals(item.getEntity().getName(), vappTemplate.getName());
+         assertEquals(item.getEntity().getHref(), vappTemplate.getHref());
+         assertEquals(item.getEntity().getType(), vappTemplate.getType());
+
+      } finally {
+         if (item != null)
+            getVCloudApi().getCatalogClient().deleteCatalogItem(item.getHref());
+         if (vappTemplate != null)
+            getVCloudApi().getVAppTemplateClient().deleteVAppTemplate(vappTemplate.getHref());
+         if (node != null)
+            client.destroyNode(node.getId());
+      }
+   }
 }

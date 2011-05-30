@@ -39,7 +39,7 @@ public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeS
    public BlueLockVCloudDirectorComputeServiceLiveTest() {
       provider = "bluelock-vcdirector";
       // vcloud requires instantiate before deploy, which takes longer than 30 seconds
-      nonBlockDuration = 260;
+      nonBlockDuration = 300;
    }
 
    @Override

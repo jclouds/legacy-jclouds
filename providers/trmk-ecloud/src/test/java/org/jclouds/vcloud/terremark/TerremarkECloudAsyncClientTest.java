@@ -48,9 +48,9 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
-import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.config.CommonVCloudRestClientModule.OrgVDCSupplier;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
@@ -644,7 +644,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       }
 
       @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog write) {
          return URI.create("https://catalog");
       }
 

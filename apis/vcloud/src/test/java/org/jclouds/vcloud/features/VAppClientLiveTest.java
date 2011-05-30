@@ -18,26 +18,15 @@
  */
 package org.jclouds.vcloud.features;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.vcloud.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicate;
 
 /**
  * 
@@ -63,48 +52,4 @@ public class VAppClientLiveTest extends BaseVCloudClientLiveTest {
          }
       }
    }
-
-   @Test
-   public void testCaptureVApp() throws Exception {
-      String group = prefix + "cap";
-      NodeMetadata node = null;
-      VAppTemplate vappTemplate = null;
-      try {
-
-         node = getOnlyElement(client.createNodesInGroup(group, 1));
-
-         Predicate<URI> taskTester = new RetryablePredicate<URI>(new TaskSuccess(getVCloudApi()), 600, 5,
-                  TimeUnit.SECONDS);
-
-         // I have to powerOff first
-         Task task = getVCloudApi().getVAppClient().powerOffVApp(URI.create(node.getId()));
-
-         // wait up to ten minutes per above
-         assert taskTester.apply(task.getHref()) : node;
-
-         // having a problem where the api is returning an error telling us to stop!
-
-         // // I have to undeploy first
-         // task = vcloudApi.undeployVAppOrVm(URI.create(node.getId()));
-         //
-         // // wait up to ten minutes per above
-         // assert taskTester.apply(task.getHref()) : node;
-
-         // vdc is equiv to the node's location
-         // vapp uri is the same as the node's id
-         vappTemplate = getVCloudApi().getVAppTemplateClient().captureVAppAsTemplateInVDC(URI.create(node.getId()),
-                  group, URI.create(node.getLocation().getId()));
-
-         task = vappTemplate.getTasks().get(0);
-
-         // wait up to ten minutes per above
-         assert taskTester.apply(task.getHref()) : vappTemplate;
-
-         // TODO implement delete vAppTemplate
-      } finally {
-         if (node != null)
-            client.destroyNode(node.getId());
-      }
-   }
-
 }

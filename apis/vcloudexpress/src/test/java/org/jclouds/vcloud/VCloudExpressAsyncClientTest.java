@@ -679,9 +679,8 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog write) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog");
-
       }
 
       @Override
@@ -811,7 +810,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                               "template",
                               new ReferenceTypeImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                     .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))), ImmutableList
-                              .<Task> of(), true)));
+                              .<Task> of(), true, false)));
          }
       }
 

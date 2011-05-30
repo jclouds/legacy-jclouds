@@ -60,7 +60,7 @@ public class CatalogHandlerTest {
                .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/921222081"), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.org+xml", URI
                         .create("https://vcenterprise.bluelock.com/api/v1.0/org/9566014")), null, ImmutableMap
-               .<String, ReferenceType> of(), ImmutableList.<Task> of(), false));
+               .<String, ReferenceType> of(), ImmutableList.<Task> of(), false, false));
    }
 
    public void testTerremark() {

@@ -18,7 +18,13 @@
  */
 package org.jclouds.vcloud.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import org.jclouds.vcloud.BaseVCloudClientLiveTest;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.testng.annotations.Test;
 
 /**
@@ -26,6 +32,17 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class CatalogClientLiveTest extends BaseVCloudClientLiveTest {
+   @Test
+   public void testGetCatalog() throws Exception {
+      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      for (ReferenceType catalog : org.getCatalogs().values()) {
+         assertEquals(catalog.getType(), VCloudMediaType.CATALOG_XML);
+         assertNotNull(getVCloudApi().getCatalogClient().getCatalog(catalog.getHref()));
+      }
+   }
 
-
+   @Test
+   public void testFindCatalogIsWriteable() throws Exception {
+      assertEquals(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly(), false);
+   }
 }

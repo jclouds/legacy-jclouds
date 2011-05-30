@@ -109,7 +109,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
       }
 
       @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog writableCatalog) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog");
 
       }
@@ -255,7 +255,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
                               "template", new ReferenceTypeImpl("template",
                                        "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                                 .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))),
-                     ImmutableList.<Task> of(), true)));
+                     ImmutableList.<Task> of(), true, false)));
          }
       }
 

@@ -52,9 +52,10 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    private final boolean published;
+   private final boolean readOnly;
 
    public CatalogImpl(String name, String type, URI href, ReferenceType org, @Nullable String description,
-            Map<String, ReferenceType> contents, Iterable<Task> tasks, boolean published) {
+            Map<String, ReferenceType> contents, Iterable<Task> tasks, boolean published, boolean readOnly) {
       this.name = checkNotNull(name, "name");
       this.type = checkNotNull(type, "type");
       this.org = org;// TODO: once <1.0 is killed check not null
@@ -63,6 +64,7 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
       putAll(checkNotNull(contents, "contents"));
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.published = published;
+      this.readOnly = readOnly;
    }
 
    /**
@@ -118,6 +120,14 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
    @Override
    public boolean isPublished() {
       return published;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isReadOnly() {
+      return readOnly;
    }
 
    @Override

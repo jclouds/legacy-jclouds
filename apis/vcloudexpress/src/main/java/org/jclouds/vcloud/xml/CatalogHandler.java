@@ -60,11 +60,10 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private ReferenceType org;
 
    private boolean published = true;
-   private boolean readOnly = true;
 
    public Catalog getResult() {
       return new CatalogImpl(catalog.getName(), catalog.getType(), catalog.getHref(), org, description, contents,
-               tasks, published, readOnly);
+               tasks, published, false);
    }
 
    @Override
@@ -76,8 +75,6 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
          putReferenceType(contents, attributes);
       } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
          org = newReferenceType(attributes);
-      } else if (qName.equals("Link") && "add".equals(attributes.get("rel"))) {
-         readOnly = false;
       } else {
          taskHandler.startElement(uri, localName, qName, attrs);
       }

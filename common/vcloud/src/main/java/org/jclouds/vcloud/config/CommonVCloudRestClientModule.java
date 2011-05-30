@@ -21,6 +21,7 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
@@ -35,8 +36,9 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -195,9 +197,14 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @org.jclouds.vcloud.endpoints.Catalog
    @Singleton
-   protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+   protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog writableCatalog) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return get(org.getCatalogs().values(), 0).getHref();
+      try {
+         return find(org.getCatalogs().values(), writableCatalog).getHref();
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("no writable catalogs in org %s; catalogs %s", org, org
+                  .getCatalogs()));
+      }
    }
 
    @Provides
@@ -221,6 +228,21 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       VCloudSession session = sessionSupplier.get();
       return URI.create(Iterables.getLast(session.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*",
                "org"));
+   }
+
+   @Singleton
+   public static class WriteableCatalog implements Predicate<ReferenceType> {
+      private final CommonVCloudClient client;
+
+      @Inject
+      public WriteableCatalog(CommonVCloudClient client) {
+         this.client = client;
+      }
+
+      @Override
+      public boolean apply(ReferenceType arg0) {
+         return !client.getCatalog(arg0.getHref()).isReadOnly();
+      }
    }
 
    @Singleton
