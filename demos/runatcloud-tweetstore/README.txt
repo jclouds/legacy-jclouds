@@ -17,20 +17,16 @@
     ====================================================================
 ====
 
-This sample uses the Google App Engine for Java SDK located at 
-http://code.google.com/p/googleappengine/downloads/list
-
-Please unzip the above file and modify your maven settings.xml like below before
-attempting to run 'mvn -Plive install'
+Please modify your maven settings.xml like below before attempting to run 'mvn -Plive install'
 
     <profile>
-      <id>appengine</id>
+      <id>cloudbees</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <appengine.sdk.root>/path/to/appengine-java-sdk-1.4.2</appengine.home>
-        <appengine.applicationid>yourappid</appengine.applicationid>
+        <bees.appid>yourappid</bees.appid>
+        <bees.environment>yourenv</bees.environment>
       </properties>
     </profile>
 

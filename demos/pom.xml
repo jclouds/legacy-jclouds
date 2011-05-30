@@ -37,6 +37,7 @@
         <module>getpath</module>
         <module>googleappengine</module>
         <module>perftest</module>
+        <module>runatcloud-tweetstore</module>
         <module>speedtest-azurequeue</module>
         <module>speedtest-sqs</module>
         <module>simpledb</module>

@@ -37,7 +37,7 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <appengine.home>/path/to/appengine-java-sdk-1.3.5</appengine.home>
+        <appengine.sdk.root>/path/to/appengine-java-sdk-1.4.2</appengine.home>
         <appengine.applicationid>yourappid</appengine.applicationid>
       </properties>
     </profile>
@@ -48,20 +48,13 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <jclouds.aws.accesskeyid>YOUR_ACCESS_KEY_ID</jclouds.aws.accesskeyid>
-        <jclouds.aws.secretaccesskey>YOUR_SECRET_KEY</jclouds.aws.secretaccesskey>
-        <jclouds.rackspace.user>YOUR_USER</jclouds.rackspace.user>
-        <jclouds.rackspace.key>YOUR_HEX_KEY</jclouds.rackspace.key>
-        <jclouds.azure.storage.account>YOUR_ACCOUNT</jclouds.azure.storage.account>
-        <jclouds.azure.storage.key>YOUR_BASE64_ENCODED_KEY</jclouds.azure.storage.key>
-        <jclouds.twitter.user>YOUR_TWITTER_USERNAME</jclouds.twitter.user>
-        <jclouds.twitter.password>YOUR_TWITTER_PASSWORD</jclouds.twitter.password>        
+        <jclouds.aws-s3.identity>YOUR_ACCESS_KEY_ID</jclouds.aws-s3.identity>
+        <jclouds.aws-s3.credential>YOUR_SECRET_KEY</jclouds.aws-s3.credential>
+        <jclouds.cloudfiles-us.identity>YOUR_USER</jclouds.cloudfiles-us.identity>
+        <jclouds.cloudfiles-us.credential>YOUR_HEX_KEY</jclouds.cloudfiles-us.credential>
+        <jclouds.azureblob.identity>YOUR_ACCOUNT</jclouds.azureblob.identity>
+        <jclouds.azureblob.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azureblob.credential>
+        <jclouds.twitter.identity>YOUR_TWITTER_USERNAME</jclouds.twitter.identity>
+        <jclouds.twitter.credential>YOUR_TWITTER_PASSWORD</jclouds.twitter.credential>        
       </properties>
     </profile>
-
-    <repositories>
-        <repository>
-            <id>jclouds</id>
-            <url>http://jclouds.googlecode.com/svn/trunk/repo</url>
-        </repository>
-    </repositories>

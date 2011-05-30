@@ -109,8 +109,8 @@ public class StoreTweetsController extends HttpServlet {
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      if (request.getHeader("X-AppEngine-QueueName") != null
-            && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
+      if (request.getHeader("X-RUN@cloud-Submitter") != null
+            && request.getHeader("X-RUN@cloud-Submitter").equals("twitter")) {
          try {
             String contextName = checkNotNull(request.getHeader("context"), "missing header context");
             logger.info("retrieving tweets");

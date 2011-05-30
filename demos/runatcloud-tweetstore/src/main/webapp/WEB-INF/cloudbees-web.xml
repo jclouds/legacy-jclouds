@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<cloudbees-web-app xmlns="http://www.cloudbees.com/xml/webapp/1">     
+    <appid>${bees.appid}</appid>
+    <context-param>
+        <param-name>application.environment</param-name>
+        <param-value>${bees.environment}</param-value>
+    </context-param>
+</cloudbees-web-app>

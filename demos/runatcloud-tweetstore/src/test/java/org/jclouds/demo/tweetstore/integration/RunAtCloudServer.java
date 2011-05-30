@@ -16,50 +16,42 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.samples.googleappengine.functest;
+package org.jclouds.demo.tweetstore.integration;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import com.google.appengine.tools.KickStart;
+import javax.servlet.ServletException;
+
+import org.apache.commons.cli.ParseException;
 
 /**
  * Basic functionality to start a local google app engine instance.
  *
  * @author Adrian Cole
  */
-public class GoogleDevServer {
+public class RunAtCloudServer {
+    protected StaxSdkAppServer2 server;
 
-    Thread server;
-
-    public void writePropertiesAndStartServer(final String address,
-                                              final String port, final String warfile, Properties props)
-            throws IOException, InterruptedException {
+    public void writePropertiesAndStartServer(final String address, final String port, 
+            final String warfile, final String environments, 
+            final String serverBaseDirectory, Properties props) throws IOException, InterruptedException, ParseException, ServletException {
         String filename = String.format(
                 "%1$s/WEB-INF/jclouds.properties", warfile);
         System.err.println("file: " + filename);
         props.store(new FileOutputStream(filename), "test");
         assert new File(filename).exists();
-        this.server = new Thread(new Runnable() {
-            public void run() {
-                KickStart
-                        .main(new String[]{
-                                "com.google.appengine.tools.development.DevAppServerMain",
-                                "--disable_update_check", "-a", address, "-p",
-                                port, warfile});
-
-            }
-
-        });
+        server = StaxSdkAppServer2.createServer(new String[] { "-web", warfile, "-port", port, "-env", environments,
+                "-dir", serverBaseDirectory }, new String[0], Thread.currentThread().getContextClassLoader());
         server.start();
-        Thread.sleep(30 * 1000);
+        TimeUnit.SECONDS.sleep(30);
     }
 
     public void stop() throws Exception {
-        // KickStart.main opens a process and calls process.waitFor(), which is interruptable
-        server.interrupt();
+        server.stop();
     }
 
 }

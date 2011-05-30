@@ -65,7 +65,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true)
 public class TweetStoreLiveTest {
-   GoogleDevServer server;
+
+   RunAtCloudServer server;
    private URL url;
    private Map<String, BlobStoreContext> contexts;
    private String container;
@@ -77,8 +78,7 @@ public class TweetStoreLiveTest {
    @BeforeTest
    void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException,
          TwitterException {
-      container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER), 
-              PROPERTY_TWEETSTORE_CONTAINER);
+      container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER);
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, container);
       props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
@@ -141,12 +141,14 @@ public class TweetStoreLiveTest {
    }
 
    @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
-   @Parameters({ "warfile", "devappserver.address", "devappserver.port" })
-   public void startDevAppServer(final String warfile, final String address, final String port) throws Exception {
+   @Parameters({ "warfile", "bees.address", "bees.port", "bees.environment", "bees.basedir" })
+   public void startDevAppServer(final String warfile, final String address, final String port,
+           String environments, String serverBaseDirectory) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
 
-      server = new GoogleDevServer();
-      server.writePropertiesAndStartServer(address, port, warfile, props);
+      server = new RunAtCloudServer();
+      server.writePropertiesAndStartServer(address, port, warfile, environments, 
+              serverBaseDirectory, props);
    }
 
    private void addConfigurationForTwitter(Properties props) {

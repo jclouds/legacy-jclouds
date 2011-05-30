@@ -18,7 +18,7 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
-import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.url;
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 
@@ -53,10 +53,11 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import com.google.appengine.api.labs.taskqueue.Queue;
-import com.google.appengine.api.labs.taskqueue.QueueFactory;
-import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
-import com.google.appengine.repackaged.com.google.common.base.Splitter;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions.Builder;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
@@ -110,7 +111,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Queue queue = QueueFactory.getQueue("twitter");
       // submit a job to store tweets for each configured blobstore
       for (String name : providerTypeToBlobStoreMap.keySet()) {
-         queue.add(url("/store/do").header("context", name).method(Method.GET));
+         queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
       }
       logger.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
             container, providerTypeToBlobStoreMap.keySet());

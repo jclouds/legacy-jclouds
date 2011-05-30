@@ -43,7 +43,6 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions.Builder;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
