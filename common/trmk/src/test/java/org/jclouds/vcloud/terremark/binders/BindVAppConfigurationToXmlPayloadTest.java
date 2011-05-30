@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.changeNameTo;
 
 import java.io.IOException;
 import java.net.URI;
@@ -100,16 +101,52 @@ public class BindVAppConfigurationToXmlPayloadTest {
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
+                                 ResourceType.PROCESSOR).virtualQuantity(2l).build(),//
+                        ResourceAllocationSettingData.builder().instanceID("2").elementName("foo").resourceType(
+                                 ResourceType.MEMORY).virtualQuantity(1024l).build(), //
+                        ResourceAllocationSettingData.builder().instanceID("9").elementName("foo").addressOnParent("0")
+                                 .hostResource("1048576").resourceType(ResourceType.DISK_DRIVE)
+                                 .virtualQuantity(209152l).build(),//
+                        ResourceAllocationSettingData.builder().instanceID("9").elementName("foo").addressOnParent("1")
+                                 .hostResource("1048576").resourceType(ResourceType.DISK_DRIVE)
+                                 .virtualQuantity(209152l).build()//
+                        )
+
+      );
+
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml"))
+               .replace("eduardo", "MyAppServer6");
+
+      VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
+
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
+      request.setPayload(expected);
+      replay(request);
+
+      BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
+
+      Map<String, String> map = Maps.newHashMap();
+      binder.bindToRequest(request, map);
+      verify(request);
+   }
+
+   public void testChangeAll() throws IOException {
+      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("MyAppServer6", URI
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
+               ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
+                        ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
                                  ResourceType.PROCESSOR).virtualQuantity(2l).build(), ResourceAllocationSettingData
                                  .builder().instanceID("2").elementName("foo").resourceType(ResourceType.MEMORY)
                                  .virtualQuantity(1024l).build(), ResourceAllocationSettingData.builder().instanceID(
                                  "9").elementName("foo").addressOnParent("0").hostResource("1048576").resourceType(
                                  ResourceType.DISK_DRIVE).virtualQuantity(209152l).build()));
 
-      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml"))
-               .replace("eduardo", "MyAppServer6");
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVAppAll.xml"));
 
-      VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
+      VAppConfiguration config = changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1).addDisk(
+               25 * 1048576).addDisk(25 * 1048576);
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();

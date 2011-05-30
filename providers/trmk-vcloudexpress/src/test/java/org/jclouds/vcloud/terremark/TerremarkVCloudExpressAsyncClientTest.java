@@ -100,7 +100,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", sequential = true, testName = "TerremarkVCloudExpressAsyncClientTest")
+@Test(groups = "unit", singleThreaded = true, testName = "TerremarkVCloudExpressAsyncClientTest")
 public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<TerremarkVCloudExpressAsyncClient> {
 
    public void testCatalogItemURI() throws SecurityException, NoSuchMethodException, IOException {
