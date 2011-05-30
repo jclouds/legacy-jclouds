@@ -58,7 +58,7 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                   return !input.version.equals("") && !input.version.matches("5.[35]");
                case WINDOWS:
                   return !input.version.equals("") && (input.is64Bit && !input.version.matches("200[38]"))
-                           || (input.version.matches("200[38] [RS]P?2") && !input.is64Bit);
+                           || (input.version.matches("200[38] [RS]P?[12]") && !input.is64Bit);
                default:
                   return true;
             }
