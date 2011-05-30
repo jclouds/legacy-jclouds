@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -34,8 +33,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.testng.annotations.Test;
 
 /**
@@ -53,22 +50,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
    public void setServiceDefaults() {
       group = "vcx";
    }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getDescription(), "Miami Environment 1");
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
-   }
-
+   
    @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);

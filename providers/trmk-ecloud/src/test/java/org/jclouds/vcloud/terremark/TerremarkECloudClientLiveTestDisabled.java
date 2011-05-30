@@ -35,11 +35,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code TerremarkVCloudClient}
+ * Tests behavior of {@code TerremarkECloudClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTestDisabled")
 public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {

@@ -42,12 +42,12 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
+public class VCloudExpressCatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
 
    protected final TaskHandler taskHandler;
 
    @Inject
-   public CatalogHandler(TaskHandler taskHandler) {
+   public VCloudExpressCatalogHandler(TaskHandler taskHandler) {
       this.taskHandler = taskHandler;
    }
 

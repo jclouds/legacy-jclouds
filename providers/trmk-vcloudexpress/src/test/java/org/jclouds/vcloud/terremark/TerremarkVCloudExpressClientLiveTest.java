@@ -42,11 +42,11 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code TerremarkVCloudClient}
+ * Tests behavior of {@code TerremarkVCloudExpressClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true, testName = "TerremarkVCloudExpressClientLiveTest")
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
 
    KeyPair key;

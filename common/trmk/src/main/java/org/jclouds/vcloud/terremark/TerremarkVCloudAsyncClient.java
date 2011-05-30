@@ -92,7 +92,7 @@ import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkCatalogItemHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
-import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VCloudExpressCatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -152,7 +152,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     */
    @GET
    @Override
-   @XMLResponseParser(CatalogHandler.class)
+   @XMLResponseParser(VCloudExpressCatalogHandler.class)
    @Consumes(CATALOG_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);

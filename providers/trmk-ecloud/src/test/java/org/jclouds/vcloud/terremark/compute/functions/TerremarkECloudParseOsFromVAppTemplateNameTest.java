@@ -32,7 +32,7 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VCloudExpressCatalogHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -52,7 +52,7 @@ public class TerremarkECloudParseOsFromVAppTemplateNameTest {
       InputStream is = getClass().getResourceAsStream(resource);
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      return factory.create(injector.getInstance(CatalogHandler.class)).parse(is).keySet();
+      return factory.create(injector.getInstance(VCloudExpressCatalogHandler.class)).parse(is).keySet();
    }
 
    public void test() {
