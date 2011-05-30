@@ -23,6 +23,7 @@ import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCK
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Properties;
 
@@ -60,6 +61,20 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
 
    }
 
+   public void testBucketWithHostnameStyle() throws IOException, SecurityException, NoSuchMethodException {
+
+      HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus"));
+      BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
+
+      request = binder.bindToRequest(request, "testbucket.example.com");
+      assertEquals(request.getRequestLine(), "GET http://euc/services/Walrus/testbucket.example.com HTTP/1.1");
+
+      Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
+      request = processor.createRequest(method, "testbucket.example.com", "test.jpg");
+
+      assertRequestLineEquals(request, "DELETE http://euc/services/Walrus/testbucket.example.com/test.jpg HTTP/1.1");
+   }
+
    @Test(dataProvider = "objects")
    public void testObject(String key) throws InterruptedException {
 
@@ -80,6 +95,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
    @Override
    protected Properties getProperties() {
       Properties properties = super.getProperties();
+      properties.setProperty("s3.endpoint", "http://euc/services/Walrus");
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;
