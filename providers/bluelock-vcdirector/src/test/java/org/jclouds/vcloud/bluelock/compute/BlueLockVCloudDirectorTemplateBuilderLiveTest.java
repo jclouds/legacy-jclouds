@@ -37,10 +37,10 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class BlueLockVCloudDirectorTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+@Test(groups = "live", testName = "BluelockVCloudDirectorTemplateBuilderLiveTest")
+public class BluelockVCloudDirectorTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public BlueLockVCloudDirectorTemplateBuilderLiveTest() {
+   public BluelockVCloudDirectorTemplateBuilderLiveTest() {
       provider = "bluelock-vcdirector";
    }
 

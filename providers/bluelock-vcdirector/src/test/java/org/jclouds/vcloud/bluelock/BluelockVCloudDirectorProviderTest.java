@@ -18,31 +18,18 @@
  */
 package org.jclouds.vcloud.bluelock;
 
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.rest.Providers;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
+@Test(groups = "unit", testName = "BluelockVCloudDirectorProviderTest")
+public class BluelockVCloudDirectorProviderTest extends BaseProviderMetadataTest {
 
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcdirector") : providers;
-
+   public BluelockVCloudDirectorProviderTest() {
+      super(new BluelockVCloudDirectorProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
-
-   @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcdirector") : providers;
-   }
-
 }

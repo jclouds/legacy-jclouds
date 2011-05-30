@@ -34,9 +34,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
-public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
-   public BlueLockVCloudDirectorComputeServiceLiveTest() {
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BluelockVCloudDirectorComputeServiceLiveTest")
+public class BluelockVCloudDirectorComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+   public BluelockVCloudDirectorComputeServiceLiveTest() {
       provider = "bluelock-vcdirector";
       // vcloud requires instantiate before deploy, which takes longer than 30 seconds
       nonBlockDuration = 300;

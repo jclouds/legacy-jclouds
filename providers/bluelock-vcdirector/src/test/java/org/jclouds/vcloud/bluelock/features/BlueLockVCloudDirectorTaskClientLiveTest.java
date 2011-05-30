@@ -26,10 +26,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BlueLockVCloudDirectorTaskClientLiveTest")
-public class BlueLockVCloudDirectorTaskClientLiveTest extends TaskClientLiveTest {
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BluelockVCloudDirectorTaskClientLiveTest")
+public class BluelockVCloudDirectorTaskClientLiveTest extends TaskClientLiveTest {
 
-   public BlueLockVCloudDirectorTaskClientLiveTest() {
+   public BluelockVCloudDirectorTaskClientLiveTest() {
       provider = "bluelock-vcdirector";
    }
 }

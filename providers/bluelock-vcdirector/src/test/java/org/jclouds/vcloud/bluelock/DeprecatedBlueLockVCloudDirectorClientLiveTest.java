@@ -22,14 +22,13 @@ import org.jclouds.vcloud.DeprecatedVCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code BlueLockVCloudClient}
  * 
  * @author Adrian Cole
  */
 @Deprecated
-@Test(groups = "live", singleThreaded = true)
-public class DeprecatedBlueLockVCloudDirectorClientLiveTest extends DeprecatedVCloudClientLiveTest {
-   public DeprecatedBlueLockVCloudDirectorClientLiveTest() {
+@Test(groups = "live", singleThreaded = true, testName = "DeprecatedBluelockVCloudDirectorClientLiveTest")
+public class DeprecatedBluelockVCloudDirectorClientLiveTest extends DeprecatedVCloudClientLiveTest {
+   public DeprecatedBluelockVCloudDirectorClientLiveTest() {
       provider = "bluelock-vcdirector";
    }
 
