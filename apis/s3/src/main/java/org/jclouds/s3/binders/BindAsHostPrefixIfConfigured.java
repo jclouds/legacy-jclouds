@@ -28,15 +28,15 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.binders.BindAsHostPrefix;
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.util.Strings2;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -52,8 +52,8 @@ public class BindAsHostPrefixIfConfigured implements Binder {
 
    @Inject
    public BindAsHostPrefixIfConfigured(BindAsHostPrefix bindAsHostPrefix,
-         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, Provider<UriBuilder> uriBuilderProvider) {
+            @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, Provider<UriBuilder> uriBuilderProvider) {
       this.bindAsHostPrefix = bindAsHostPrefix;
       this.isVhostStyle = isVhostStyle;
       this.servicePath = servicePath;
@@ -69,14 +69,17 @@ public class BindAsHostPrefixIfConfigured implements Binder {
       } else {
          UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
          StringBuilder path = new StringBuilder(Strings2.urlEncode(request.getEndpoint().getPath(), S3AsyncClient.class
-               .getAnnotation(SkipEncoding.class).value()));
-         int indexToInsert = path.indexOf(servicePath);
-         indexToInsert = indexToInsert == -1 ? 0 : indexToInsert;
-         indexToInsert += servicePath.length();
+                  .getAnnotation(SkipEncoding.class).value()));
+         int indexToInsert = 0;
+         if (!servicePath.equals("/")) {
+            indexToInsert = path.indexOf(servicePath);
+            indexToInsert = indexToInsert == -1 ? 0 : indexToInsert;
+            indexToInsert += servicePath.length();
+         }
          path.insert(indexToInsert, "/" + payload.toString());
          builder.replacePath(path.toString());
-         return (R) request.toBuilder().endpoint(builder.buildFromEncodedMap(Maps.<String, Object> newLinkedHashMap()))
-               .build();
+         return (R) request.toBuilder().endpoint(builder.buildFromEncodedMap(ImmutableMap.<String, Object> of()))
+                  .build();
       }
    }
 }
