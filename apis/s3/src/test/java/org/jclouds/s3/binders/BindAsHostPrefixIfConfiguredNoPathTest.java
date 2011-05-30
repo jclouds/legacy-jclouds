@@ -39,13 +39,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindAsHostPrefixIfConfiguredNoPathTest")
-public class BindAsHostPrefixIfConfiguredNoPathTest extends BaseS3AsyncClientTest<S3AsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
+public class BindAsHostPrefixIfConfiguredNoPathTest extends BaseS3AsyncClientTest {
 
    public void testBucketWithHostnameStyle() throws IOException, SecurityException, NoSuchMethodException {
 

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.DataProvider;
