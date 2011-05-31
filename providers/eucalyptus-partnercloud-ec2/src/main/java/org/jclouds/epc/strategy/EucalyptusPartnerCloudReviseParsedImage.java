@@ -44,7 +44,7 @@ import org.jclouds.logging.Logger;
 @Singleton
 public class EucalyptusPartnerCloudReviseParsedImage implements ReviseParsedImage {
 
-   // centos-5.3-x86_64-xen/centos.5-3.x86-64.img.manifest.xml
+   // debian-6.0-x86_64/debian.6-0.x86-64.img.manifest.xml
    public static final Pattern PATTERN = Pattern.compile("^([^-]+)-([^-]+)-.*");
    public static final Pattern WINDOWS = Pattern.compile("^windows-([^/]+)/.*");
 

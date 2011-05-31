@@ -18,7 +18,7 @@
  */
 package org.jclouds.epc.config;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
@@ -39,7 +39,7 @@ public class EucalyptusPartnerCloudComputeServiceContextModule extends EC2Comput
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String virt = injector.getInstance(Key.get(String.class, Names
                .named("eucalyptus-partnercloud-ec2.virtualization-type")));
-      return template.osFamily(CENTOS).locationId(virt + "-cluster").osDescriptionMatches(virt);
+      return template.osFamily(UBUNTU).locationId(virt + "-cluster");
    }
 
    @Override

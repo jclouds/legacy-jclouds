@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,24 +47,25 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case RHEL:
-                  return !input.version.equals("") && !input.version.equals("5.4");
+                  return input.version.equals("") || input.version.equals("5.4");
+               case DEBIAN:
+                  return input.version.equals("") || input.version.equals("5.0");
                case UBUNTU:
-                  return !input.version.equals("") && !input.version.equals("10.04");
+                  return input.version.equals("") || input.version.equals("10.04");
                case CENTOS:
-                  return !input.version.equals("") && !input.version.matches("5.[35]");
+                  return input.version.equals("") || input.version.matches("5.[35]");
                case WINDOWS:
-                  return !input.version.equals("") && (input.is64Bit && !input.version.matches("200[38]"))
-                           || (input.version.matches("200[38] [RS]P?[12]") && !input.is64Bit);
+                  return input.version.equals("") || input.version.matches("200[38]");
                default:
-                  return true;
+                  return false;
             }
          }
-      };
+      });
    }
 
    @Test

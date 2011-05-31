@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -45,26 +46,26 @@ public class ElasticHostsPeer1LondonTemplateBuilderLiveTest extends BaseTemplate
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !(input.version.equals("") && input.is64Bit)
-                           && !(input.version.equals("10.04") && input.is64Bit);
+                  return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
+               case DEBIAN:
+                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
                case CENTOS:
-                  return !(input.version.equals("") && input.is64Bit)
-                           && !(input.version.equals("5.5") && input.is64Bit);
+                  return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
                case WINDOWS:
-                  return !(input.version.equals("") && input.is64Bit)
-                           && !((input.version.equals("2008 R2") && input.is64Bit) || (input.version.equals("2008") && input.is64Bit));
+                  return (input.version.equals("") || input.version.equals("2008 R2") || input.version.equals("2008"))
+                           && input.is64Bit;
                default:
-                  return true;
+                  return false;
             }
          }
 
-      };
+      });
    }
 
    @Test

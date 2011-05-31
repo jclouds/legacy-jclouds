@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,30 +47,29 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !input.version.equals("") && !(input.version.equals("10.04") || input.version.endsWith(".10"));
+                  return input.version.equals("") || input.version.startsWith("10") || input.version.equals("9.10");
+               case DEBIAN:
+                  return !input.version.equals("6.0");
                case RHEL:
-                  return !(input.version.equals("") && input.is64Bit);
+                  return input.version.equals("") && input.is64Bit;
                case CENTOS:
-                  return !input.version.equals("") && input.version.matches("5.[23]")
-                           || (input.version.equals("5.0") && !input.is64Bit);
+                  return input.version.equals("") || input.version.matches("5.[45]")
+                           || (input.version.equals("5.0") && input.is64Bit);
                case WINDOWS:
-                  return !input.version.equals("")
-                           && input.version.startsWith("2008")
-                           && !(input.version.startsWith("2008 R2") && input.is64Bit || input.version
-                                    .startsWith("2008 SP2")
-                                    && !input.is64Bit) || input.version.indexOf("2003") != -1;
+                  return input.version.equals("") || (input.version.equals("2008 SP2") && !input.is64Bit)
+                           || input.version.equals("") || (input.version.equals("2008 R2") && input.is64Bit);
                default:
-                  return true;
+                  return false;
             }
          }
 
-      };
+      });
    }
 
    @Test

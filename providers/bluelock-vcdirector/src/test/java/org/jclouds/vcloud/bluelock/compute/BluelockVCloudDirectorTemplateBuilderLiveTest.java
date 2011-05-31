@@ -52,7 +52,7 @@ public class BluelockVCloudDirectorTemplateBuilderLiveTest extends BaseTemplateB
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !input.version.equals("");
+                  return !input.version.equals("") || !input.is64Bit;
                default:
                   return true;
             }

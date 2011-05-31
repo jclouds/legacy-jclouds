@@ -39,6 +39,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -55,23 +56,25 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return false;
-               case CENTOS:
-                  return !(input.version.matches("5.[42]") || input.version.equals(""));
-               case WINDOWS:
-                  return !(input.version.matches("200[38]") || input.version.equals(""));
-               default:
                   return true;
+               case DEBIAN:
+                  return true;
+               case CENTOS:
+                  return input.version.matches("5.[42]") || input.version.equals("");
+               case WINDOWS:
+                  return input.version.matches("200[38]") || input.version.equals("");
+               default:
+                  return false;
             }
          }
 
-      };
+      });
    }
 
    @Test
