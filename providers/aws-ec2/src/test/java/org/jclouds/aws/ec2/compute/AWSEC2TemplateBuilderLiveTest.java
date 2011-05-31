@@ -81,7 +81,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderM1SMALLWithDescription() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-               .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+               .osVersionMatches("1[10].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");

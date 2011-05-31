@@ -41,6 +41,6 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).imageNameMatches(".*w/ None.*");
+      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").imageNameMatches(".*w/ None.*");
    }
 }

@@ -77,7 +77,7 @@ public class CloudSigmaComputeServiceContextModule
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("10.10").os64Bit(true).minRam(1024);
+      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).minRam(1024);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })

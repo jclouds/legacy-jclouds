@@ -75,7 +75,7 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 0.25d);

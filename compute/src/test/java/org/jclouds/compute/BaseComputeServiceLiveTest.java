@@ -614,14 +614,14 @@ public abstract class BaseComputeServiceLiveTest {
 
       assertEquals(defaultSize, smallest);
 
-      assert getCores(smallest) <= getCores(fastest) : String.format("%d ! <= %d", smallest, fastest);
-      assert getCores(biggest) <= getCores(fastest) : String.format("%d ! <= %d", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
 
-      assert biggest.getRam() >= fastest.getRam() : String.format("%d ! >= %d", biggest, fastest);
-      assert biggest.getRam() >= smallest.getRam() : String.format("%d ! >= %d", biggest, smallest);
+      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
 
-      assert getCores(fastest) >= getCores(biggest) : String.format("%d ! >= %d", fastest, biggest);
-      assert getCores(fastest) >= getCores(smallest) : String.format("%d ! >= %d", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {

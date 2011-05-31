@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -33,8 +32,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.Test;
 
@@ -52,22 +49,6 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
    @Override
    public void setServiceDefaults() {
       group = "te";
-   }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.5");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assert defaultTemplate.getLocation().getDescription() != null;// different per org
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -93,7 +74,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
          if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS
-               && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
+                  && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
             assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
          }
@@ -109,7 +90,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+                  .createContext(provider, identity, credential).getProviderSpecificContext();
          VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
