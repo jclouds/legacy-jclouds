@@ -225,7 +225,11 @@ Here's an example of creating and running a small linux node in the group webser
 
 (defn destroy-nodes-matching
   "Destroy all the nodes in the fn pred.
-  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false."
+  pred should be a fn of one argument that takes a ComputeMetadata and returns true or false.
+ 
+  ;; destroy all nodes
+  (destroy-nodes-matching compute (constantly true))
+  "
   ([#^ComputeService compute pred]
     (.destroyNodesMatching compute (to-predicate pred))))
 
