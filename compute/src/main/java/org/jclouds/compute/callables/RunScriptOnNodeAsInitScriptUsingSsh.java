@@ -32,13 +32,17 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -47,6 +51,7 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
+   public static final String PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP = "jclouds.compute.push-init-script-via-sftp";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -58,6 +63,14 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    protected final boolean runAsRoot;
 
    protected SshClient ssh;
+
+   /**
+    * true to use sftp, false to use ssh. If there's a problem with the sftp configuration, setting
+    * this to false will help.
+    */
+   @Inject(optional = true)
+   @Named(PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP)
+   private boolean pushInitViaSftp = true;
 
    @AssistedInject
    public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
@@ -104,7 +117,13 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
     * ssh client is initialized through this call.
     */
    protected ExecResponse doCall() {
-      ssh.put(name, init.render(OsFamily.UNIX));
+      if (pushInitViaSftp) {
+         ssh.put(name, init.render(OsFamily.UNIX));
+      } else {
+         ssh.exec("rm " + name);
+         ssh.exec(Statements.appendFile(name, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
+                  AppendFile.MARKER + "_" + name).render(OsFamily.UNIX));
+      }
       ssh.exec("chmod 755 " + name);
       runAction("init");
       return runAction("start");
