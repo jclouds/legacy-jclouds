@@ -32,15 +32,13 @@
     <packaging>pom</packaging>
     <name>jclouds demos project</name>
     <modules>
-        <module>gae-tweetstore</module>
-        <module>gae-tweetstore-spring</module>
         <module>getpath</module>
         <module>googleappengine</module>
         <module>perftest</module>
-        <module>runatcloud-tweetstore</module>
         <module>speedtest-azurequeue</module>
         <module>speedtest-sqs</module>
         <module>simpledb</module>
+        <module>tweetstore</module>
     </modules>
     <dependencies>
         <dependency>
