@@ -44,8 +44,8 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {
       this.provider = "trmk-ecloud";
-      this.itemName = "Ubuntu 8.04 LTS (x86)";
-      expectedOs = "Ubuntu Linux (32-bit)";
+      this.itemName = "Ubuntu Server 10.04 x64";
+      expectedOs = "Ubuntu Linux (64-bit)";
    }
 
    @Override
@@ -55,7 +55,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, new Credentials("ecloud", "$Ep455l0ud!2"));
+      return sshFactory.create(socket, new Credentials("ecloud", "TmrkCl0ud1s#1!"));
    }
 
    @Override

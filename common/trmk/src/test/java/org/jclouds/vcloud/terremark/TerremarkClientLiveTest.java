@@ -88,14 +88,16 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
    protected TerremarkVCloudClient tmClient;
    protected Factory sshFactory;
-   private String publicIp;
-   private InternetService is;
-   private Node node;
-   private VCloudExpressVApp vApp;
-   private RetryablePredicate<IPSocket> socketTester;
-   private RetryablePredicate<URI> successTester;
-   private VCloudExpressVApp clone;
-   private VDC vdc;
+   protected String publicIp;
+   protected InternetService is;
+   protected Node node;
+   protected VCloudExpressVApp vApp;
+   protected RetryablePredicate<IPSocket> socketTester;
+   protected RetryablePredicate<URI> successTester;
+   protected Injector injector;
+
+   protected VCloudExpressVApp clone;
+   protected VDC vdc;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
@@ -281,7 +283,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       loopAndCheckPass();
    }
 
-   private void loopAndCheckPass() throws IOException {
+   protected void loopAndCheckPass() throws IOException {
       for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
          try {
             doCheckPass(publicIp);
@@ -373,7 +375,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       loopAndCheckPass();
    }
 
-   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs,
+   protected void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs,
             int processorCount, long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
@@ -387,7 +389,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
                CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE)).getVirtualQuantity().longValue());
    }
 
-   private void doCheckPass(String address) throws IOException {
+   protected void doCheckPass(String address) throws IOException {
       IPSocket socket = new IPSocket(address, 22);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), socket);
@@ -466,7 +468,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       setupCredentials();
       Properties overrides = setupProperties();
 
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
+      injector = new RestContextFactory().createContextBuilder(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
                .buildInjector();
 
