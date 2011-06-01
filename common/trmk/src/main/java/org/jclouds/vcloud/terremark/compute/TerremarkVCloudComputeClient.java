@@ -18,15 +18,16 @@
  */
 package org.jclouds.vcloud.terremark.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -71,10 +72,10 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
-         Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-         InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+            @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
+            Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
+            InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
       super(client, successTester, vAppStatusToNodeState);
       this.client = client;
       this.credentialsProvider = credentialsProvider;
@@ -85,7 +86,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
    @Override
    public VCloudExpressVApp start(@Nullable URI VDC, URI templateId, String name,
-         InstantiateVAppTemplateOptions options, int... portsToOpen) {
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
       if (options.getDiskSizeKilobytes() != null) {
          logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
       }
@@ -95,7 +96,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       String password = null;
       VCloudExpressVAppTemplate template = client.getVAppTemplate(templateId);
       if (template.getDescription().indexOf("Windows") != -1
-            && options instanceof TerremarkInstantiateVAppTemplateOptions) {
+               && options instanceof TerremarkInstantiateVAppTemplateOptions) {
          password = passwordGenerator.get();
          TerremarkInstantiateVAppTemplateOptions.class.cast(options).getProperties().put("password", password);
       }
@@ -104,7 +105,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       VCloudExpressVApp vAppResponse = super.start(VDC, templateId, name, options, portsToOpen);
       if (password != null) {
          credentialStore.put("node#" + vAppResponse.getHref().toASCIIString(), new Credentials(
-               defaultCredentials.identity, password));
+                  defaultCredentials.identity, password));
       }
       if (portsToOpen.length > 0)
          createPublicAddressMappedToPorts(vAppResponse.getHref(), portsToOpen);
@@ -119,41 +120,37 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
          InternetService is = null;
          Protocol protocol;
          switch (port) {
-         case 22:
-            protocol = Protocol.TCP;
-            break;
-         case 80:
-         case 8080:
-            protocol = Protocol.HTTP;
-            break;
-         case 443:
-            protocol = Protocol.HTTPS;
-            break;
-         default:
-            protocol = Protocol.HTTP;
-            break;
+            case 22:
+               protocol = Protocol.TCP;
+               break;
+            case 80:
+            case 8080:
+               protocol = Protocol.HTTP;
+               break;
+            case 443:
+               protocol = Protocol.HTTPS;
+               break;
+            default:
+               protocol = Protocol.HTTP;
+               break;
          }
          if (ip == null) {
 
             Entry<InternetService, PublicIpAddress> entry = internetServiceAndPublicIpAddressSupplier
-                  .getNewInternetServiceAndIp(vApp, port, protocol);
+                     .getNewInternetServiceAndIp(vApp, port, protocol);
             is = entry.getKey();
             ip = entry.getValue();
 
          } else {
             logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress(), protocol, port);
-            is = client.addInternetServiceToExistingIp(
-                  ip.getId(),
-                  vApp.getName() + "-" + port,
-                  protocol,
-                  port,
-                  withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
-                        vApp.getName())));
+            is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                              vApp.getName())));
          }
-         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getName(), is.getPublicIpAddress().getAddress(),
-               is.getProtocol(), is.getPort());
+         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getName(), is.getPublicIpAddress().getAddress(), is
+                  .getProtocol(), is.getPort());
          logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress(), is.getPort(),
-               privateAddress, port);
+                  privateAddress, port);
          Node node = client.addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
          logger.debug("<< added Node(%s)", node.getName());
       }
@@ -161,19 +158,20 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VCloudExpressVApp vApp) {
+      checkNotNull(vApp.getVDC(), "VDC reference missing for vApp(%s)", vApp.getName());
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getHref())) {
          for (Node node : client.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());
                logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getName(), service.getPublicIpAddress()
-                     .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
+                        .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
                client.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getName());
                Set<Node> nodes = client.getNodes(service.getId());
                if (nodes.size() == 0) {
                   logger.debug(">> deleting InternetService(%s) %s:%d", service.getName(), service.getPublicIpAddress()
-                        .getAddress(), service.getPort());
+                           .getAddress(), service.getPort());
                   client.deleteInternetService(service.getId());
                   logger.debug("<< deleted InternetService(%s)", service.getName());
                   continue SERVICE;
