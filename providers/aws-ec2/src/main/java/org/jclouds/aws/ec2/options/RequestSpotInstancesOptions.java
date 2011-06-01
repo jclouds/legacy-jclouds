@@ -56,7 +56,7 @@ public class RequestSpotInstancesOptions extends BaseEC2RequestOptions {
     * time and remains active until it expires or is canceled.
     */
    public RequestSpotInstancesOptions validFrom(Date start) {
-      formParameters.put("ValidFrom", service.iso8601DateFormat(checkNotNull(start, "start")));
+      formParameters.put("ValidFrom", service.iso8601SecondsDateFormat(checkNotNull(start, "start")));
       return this;
    }
 
@@ -66,7 +66,7 @@ public class RequestSpotInstancesOptions extends BaseEC2RequestOptions {
     * persistent, it remains active until it is canceled or this date and time is reached.
     */
    public RequestSpotInstancesOptions validUntil(Date end) {
-      formParameters.put("ValidUntil", service.iso8601DateFormat(checkNotNull(end, "end")));
+      formParameters.put("ValidUntil", service.iso8601SecondsDateFormat(checkNotNull(end, "end")));
       return this;
    }
 

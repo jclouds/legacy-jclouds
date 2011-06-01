@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "AWSEC2ComputeServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "AWSEC2ComputeServiceLiveTest")
 public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public AWSEC2ComputeServiceLiveTest() {

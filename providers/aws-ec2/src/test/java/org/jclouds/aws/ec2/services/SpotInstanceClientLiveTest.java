@@ -62,7 +62,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class SpotInstanceClientLiveTest {
 
    private static final int SPOT_DELAY_SECONDS = 300;
@@ -141,8 +141,9 @@ public class SpotInstanceClientLiveTest {
             assertEquals(spot.getRegion(), region);
             assert in(ImmutableSet.of("Linux/UNIX", "SUSE Linux", "Windows")).apply(spot.getProductDescription()) : spot;
             assert in(
-                     ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small", "m1.xlarge",
-                              "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(spot.getInstanceType()) : spot;
+                     ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small",
+                              "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(
+                     spot.getInstanceType()) : spot;
 
          }
       }
@@ -163,7 +164,8 @@ public class SpotInstanceClientLiveTest {
                0.03f,
                1,
                LaunchSpecification.builder().imageId("ami-595a0a1c").instanceType(InstanceType.T1_MICRO).build(),
-               launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(new Date()).validUntil(
+               launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(
+                        new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1))).validUntil(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(SPOT_DELAY_SECONDS))));
       assertNotNull(requests);
 

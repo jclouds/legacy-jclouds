@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -159,12 +160,16 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String group = this.group + "e";
       int volumeSize = 8;
+      
+      final Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageDescriptionMatches(".*ebs.*").build();
 
       Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location arg0) {
-            return arg0.getScope() == LocationScope.ZONE;
+            return arg0.getScope() == LocationScope.ZONE
+                     && arg0.getParent().getId().equals(template.getLocation().getId());
          }
 
       });
@@ -173,9 +178,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       Volume volume = ebsClient.createVolumeInAvailabilityZone(zone.getId(), 4);
       Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
       ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
-
-      Template template = context.getComputeService().templateBuilder().locationId(volume.getRegion()).hardwareId(
-               InstanceType.M1_SMALL).imageDescriptionMatches(".*ebs.*").build();
 
       template.getOptions().as(EC2TemplateOptions.class)//
                // .unmapDeviceNamed("/dev/foo)
@@ -223,8 +225,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String group)
-            throws InterruptedException {
+   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient,
+            String group) throws InterruptedException {
       try {
          for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
             if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {
