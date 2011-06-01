@@ -56,8 +56,7 @@ public class BindNetworkConnectionSectionToXmlPayloadTest {
 
    public void testWithIpAllocationModeNONE() throws IOException {
 
-      @SuppressWarnings("rawtypes")
-      HttpRequest request = new HttpRequest.Builder().endpoint(URI.create("http://localhost/key")).method("GET")
+      HttpRequest request = HttpRequest.builder().endpoint(URI.create("http://localhost/key")).method("GET")
             .build();
 
       BindNetworkConnectionSectionToXmlPayload binder = injector

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+
+
+		Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+		====================================================================
+		Licensed under the Apache License, Version 2.0 (the "License"); you
+		may not use this file except in compliance with the License. You may
+		obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+		====================================================================
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-demos-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>jclouds-demo-runatcloud-tweetstore</artifactId>
+    <packaging>war</packaging>
+    <name>jclouds TweetStore for RUN@cloud</name>
+    <description>jclouds TweetStore for CloudBees' RUN@cloud using Guice for Dependency Injection</description>
+
+    <properties>
+      <bees.appid>tweetstore</bees.appid>
+      <bees.environment>run</bees.environment>
+      <bees.address>localhost</bees.address>
+      <bees.port>8088</bees.port>
+      <jclouds.tweetstore.blobstores>cloudfiles-us,aws-s3,azureblob</jclouds.tweetstore.blobstores>
+      <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>[2.1,)</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>    
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-s3</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudfiles-us</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>azureblob</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>displaytag</groupId>
+            <artifactId>displaytag</artifactId>
+            <version>1.2</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jstl</artifactId>
+            <groupId>javax.servlet</groupId>
+            <version>1.1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>standard</artifactId>
+            <groupId>taglibs</groupId>
+            <version>1.1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- RUN@cloud API -->
+        <dependency>
+            <groupId>net.stax</groupId>
+            <artifactId>stax-appserver</artifactId>
+            <version>1.0.20110131-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bees-plugins-snapshots</id>
+            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases> 
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+     
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>bees.address</name>
+                                    <value>${bees.address}</value>
+                                </property>
+                                <property>
+                                    <name>bees.port</name>
+                                    <value>${bees.port}</value>
+                                </property>
+                                <property>
+                                    <name>bees.environment</name>
+                                    <value>${bees.environment}</value>
+                                </property>
+                                <property>
+                                    <name>bees.basedir</name>
+                                    <value>${project.build.directory}/bees</value>
+                                </property>
+                                <property>
+                                    <name>warfile</name>
+                                    <value>${project.build.directory}/${project.artifactId}</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+           <plugin>
+               <groupId>com.cloudbees</groupId>
+               <artifactId>bees-maven-plugin</artifactId>
+               <version>1.0-SNAPSHOT</version>
+           </plugin>
+        </plugins>
+      </build>
+
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.twitter.identity</name>
+                                            <value>${test.twitter.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.twitter.credential</name>
+                                            <value>${test.twitter.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azureblob.identity</name>
+                                            <value>${test.azureblob.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azureblob.credential</name>
+                                            <value>${test.azureblob.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudfiles-us.identity</name>
+                                            <value>${test.cloudfiles-us.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudfiles-us.credential</name>
+                                            <value>${test.cloudfiles-us.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.aws-s3.identity</name>
+                                            <value>${test.aws-s3.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.aws-s3.credential</name>
+                                            <value>${test.aws-s3.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>bees.address</name>
+                                            <value>${bees.address}</value>
+                                        </property>
+                                        <property>
+                                            <name>bees.port</name>
+                                            <value>${bees.port}</value>
+                                        </property>
+                                        <property>
+                                            <name>bees.environment</name>
+                                            <value>${bees.environment}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.tweetstore.blobstores</name>
+                                            <value>${jclouds.tweetstore.blobstores}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.tweetstore.container</name>
+                                            <value>${jclouds.tweetstore.container}</value>
+                                        </property>
+                                        <property>
+                                            <name>bees.basedir</name>
+                                            <value>${project.build.directory}/bees</value>
+                                        </property>
+                                        <property>
+                                            <name>warfile</name>
+                                            <value>${project.build.directory}/${project.artifactId}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

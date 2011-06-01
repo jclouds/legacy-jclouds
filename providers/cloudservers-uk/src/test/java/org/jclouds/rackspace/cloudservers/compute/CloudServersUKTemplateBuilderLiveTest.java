@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -45,31 +46,33 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return input.version.equals("11.04") || input.version.equals("8.04") || !input.is64Bit;
+                  return !(input.version.equals("11.04") || input.version.equals("8.04")) && input.is64Bit;
+               case DEBIAN:
+                  return !(input.version.equals("6.0")) && input.is64Bit;
                case CENTOS:
-                  return input.version.matches("5.[023]") || !input.is64Bit;
+                  return (input.version.equals("") || input.version.matches("5.[45]")) && input.is64Bit;
                case WINDOWS:
-                  return input.version.equals("2008") || input.version.indexOf("2003") != -1
-                           || (input.version.equals("2008 R2") && !input.is64Bit);
+                  return input.version.equals("2008 SP2") || input.version.equals("")
+                           || (input.version.equals("2008 R2") && input.is64Bit);
                default:
-                  return true;
+                  return false;
             }
          }
 
-      };
+      });
    }
 
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), provider);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

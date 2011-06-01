@@ -21,6 +21,7 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
@@ -35,6 +36,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -64,6 +66,7 @@ import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudVersionsAsyncClient;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
@@ -74,6 +77,7 @@ import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
+import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
 import org.jclouds.vcloud.functions.AllCatalogsInOrg;
 import org.jclouds.vcloud.functions.AllVDCsInOrg;
 import org.jclouds.vcloud.functions.OrgsForLocations;
@@ -92,7 +96,6 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
-
 /**
  * Configures the VCloud authentication service connection, including logging and http transport.
  * 
@@ -107,10 +110,18 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       super(syncClientType, asyncClientType);
    }
 
+   public CommonVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
+            Map<Class<?>, Class<?>> delegateMap) {
+      super(syncClientType, asyncClientType, delegateMap);
+   }
+
    @Override
    protected void configure() {
       requestInjection(this);
       super.configure();
+      bind(new TypeLiteral<Function<ReferenceType, Location>>() {
+      }).to(new TypeLiteral<FindLocationForResource>() {
+      });
       bind(new TypeLiteral<Function<Org, Iterable<? extends Catalog>>>() {
       }).to(new TypeLiteral<AllCatalogsInOrg>() {
       });
@@ -125,6 +136,9 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       });
       bind(new TypeLiteral<Function<Catalog, Iterable<? extends CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInCatalog>() {
+      });
+      bind(new TypeLiteral<Function<Org, Iterable<? extends CatalogItem>>>() {
+      }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
       });
    }
 
@@ -145,8 +159,8 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Map<String, ? extends Org>> orgToVDCSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
-               new Supplier<Map<String, String>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException,
+               seconds, new Supplier<Map<String, String>>() {
                   @Override
                   public Map<String, String> get() {
                      Map<String, String> returnVal = newLinkedHashMap();
@@ -183,17 +197,22 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @org.jclouds.vcloud.endpoints.Catalog
    @Singleton
-   protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+   protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog writableCatalog) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return get(org.getCatalogs().values(), 0).getHref();
+      try {
+         return find(org.getCatalogs().values(), writableCatalog).getHref();
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("no writable catalogs in org %s; catalogs %s", org, org
+                  .getCatalogs()));
+      }
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Org>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final OrgMapSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Org>>(authException,
-               seconds, new Supplier<Map<String, ? extends Org>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Org>>(
+               authException, seconds, new Supplier<Map<String, ? extends Org>>() {
                   @Override
                   public Map<String, ? extends Org> get() {
                      return supplier.get();
@@ -209,6 +228,21 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       VCloudSession session = sessionSupplier.get();
       return URI.create(Iterables.getLast(session.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*",
                "org"));
+   }
+
+   @Singleton
+   public static class WriteableCatalog implements Predicate<ReferenceType> {
+      private final CommonVCloudClient client;
+
+      @Inject
+      public WriteableCatalog(CommonVCloudClient client) {
+         this.client = client;
+      }
+
+      @Override
+      public boolean apply(ReferenceType arg0) {
+         return !client.getCatalog(arg0.getHref()).isReadOnly();
+      }
    }
 
    @Singleton
@@ -286,8 +320,8 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final OrgNameToOrgSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
-               seconds, new Supplier<Map<String, ReferenceType>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(
+               authException, seconds, new Supplier<Map<String, ReferenceType>>() {
                   @Override
                   public Map<String, ReferenceType> get() {
                      return supplier.get();

@@ -57,7 +57,7 @@ public class VCloudLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeSt
    @Override
    public NodeMetadata rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.resetVAppOrVm(id);
+      Task task = client.getVAppClient().resetVApp(id);
       return returnWhenTaskCompletes(in, task);
    }
 
@@ -68,13 +68,13 @@ public class VCloudLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeSt
 
    @Override
    public NodeMetadata resumeNode(String in) {
-      Task task = client.powerOnVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      Task task = client.getVAppClient().powerOnVApp(URI.create(checkNotNull(in, "node.id")));
       return returnWhenTaskCompletes(in, task);
    }
 
    @Override
    public NodeMetadata suspendNode(String in) {
-      Task task = client.powerOffVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      Task task = client.getVAppClient().powerOffVApp(URI.create(checkNotNull(in, "node.id")));
       return returnWhenTaskCompletes(in, task);
    }
 }

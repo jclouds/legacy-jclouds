@@ -21,8 +21,10 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,6 +37,7 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
@@ -59,12 +62,34 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       super(syncClientType, asyncClientType);
    }
 
+   public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
+            Map<Class<?>, Class<?>> delegateMap) {
+      super(syncClientType, asyncClientType, delegateMap);
+   }
+
+   @Singleton
+   public static class VCloudWritableCatalog extends WriteableCatalog {
+      private final VCloudClient client;
+
+      @Inject
+      public VCloudWritableCatalog(VCloudClient client) {
+         super(client);
+         this.client = client;
+      }
+
+      @Override
+      public boolean apply(ReferenceType arg0) {
+         return !client.getCatalogClient().getCatalog(arg0.getHref()).isReadOnly();
+      }
+   }
+
    @Override
    protected void configure() {
       bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>>>() {
       }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
       });
       bind(ResourceAllocationSettingDataHandler.class).to(VCloudResourceAllocationSettingDataHandler.class);
+      bind(WriteableCatalog.class).to(VCloudWritableCatalog.class);
       super.configure();
    }
 

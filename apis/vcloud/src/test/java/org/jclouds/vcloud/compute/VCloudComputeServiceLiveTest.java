@@ -69,7 +69,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(
                setupRestProperties()).createContext(provider, identity, credential, ImmutableSet.<Module> of(),
                setupProperties()).getProviderSpecificContext();
-         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         VApp vApp = tmContext.getApi().getVAppClient().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

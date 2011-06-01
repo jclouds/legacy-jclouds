@@ -93,7 +93,7 @@ public class VAppTemplatesForCatalogItems implements
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
             return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(
-                     (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplate(
+                     (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplateClient().getVAppTemplate(
                               from.getEntity().getHref()), executor), returnNullOnAuthorizationException);
          }
 

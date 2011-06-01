@@ -54,8 +54,13 @@ public interface Catalog extends ReferenceType, Map<String, ReferenceType> {
     * 
     * @since vcloud api 1.0
     */
-   @Nullable
    boolean isPublished();
+
+   /**
+    * @return true, if the current user cannot modify the catalog
+    * @since vcloud api 1.0
+    */
+   boolean isReadOnly();
 
    /**
     * read‐only container for Task elements. Each element in the container represents a queued,

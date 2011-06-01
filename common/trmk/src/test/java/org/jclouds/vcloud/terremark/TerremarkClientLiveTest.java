@@ -379,8 +379,6 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
       assertEquals((int) find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.PROCESSOR))
                .getVirtualQuantity().longValue(), processorCount);
-      assertEquals((int) find(vApp.getResourceAllocations(),
-               CIMPredicates.resourceTypeIn(ResourceType.PARALLEL_SCSI_HBA)).getVirtualQuantity().longValue(), 1);
       assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.MEMORY))
                .getVirtualQuantity().longValue(), memory);
       assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE))

@@ -48,9 +48,9 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
-import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Catalog;
@@ -81,7 +81,7 @@ import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkCatalogItemHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
-import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VCloudExpressCatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.Test;
 
@@ -100,7 +100,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", sequential = true, testName = "TerremarkVCloudExpressAsyncClientTest")
+@Test(groups = "unit", singleThreaded = true, testName = "TerremarkVCloudExpressAsyncClientTest")
 public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<TerremarkVCloudExpressAsyncClient> {
 
    public void testCatalogItemURI() throws SecurityException, NoSuchMethodException, IOException {
@@ -163,7 +163,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressCatalogHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -661,9 +661,8 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
+      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog write) {
          return URI.create("https://catalog");
-
       }
 
       @Override

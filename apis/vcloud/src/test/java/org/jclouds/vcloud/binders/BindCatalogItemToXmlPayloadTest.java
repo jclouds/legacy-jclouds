@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.options.CatalogItemOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -61,14 +62,15 @@ public class BindCatalogItemToXmlPayloadTest {
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(ImmutableMap.of("foo", "bar"))).anyTimes();
+      expect(request.getArgs()).andReturn(
+               ImmutableList.<Object> of(CatalogItemOptions.Builder.description("mydescription").properties(
+                        ImmutableMap.of("foo", "bar")))).anyTimes();
       request.setPayload(expected);
       replay(request);
 
       BindCatalogItemToXmlPayload binder = injector.getInstance(BindCatalogItemToXmlPayload.class);
 
-      Map<String, String> map = ImmutableMap.of("name", "myname", "description", "mydescription", "entity",
-            "http://fooentity");
+      Map<String, String> map = ImmutableMap.of("name", "myname", "Entity", "http://fooentity");
 
       binder.bindToRequest(request, map);
       verify(request);

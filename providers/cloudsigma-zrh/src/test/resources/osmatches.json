@@ -1,5 +1,11 @@
 {
 
+    "Ubuntu 10.04.1 LTS Desktop Edition 32bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": false
+    },
+    
     "Ubuntu 10.04 Server Edition Linux 64bit with Plesk": {
         "family": "UBUNTU",
         "version": "10.04",
@@ -39,7 +45,7 @@
 
     "Fedora 14 Linux 64bit Preinstalled System": {
         "family": "FEDORA",
-        "version": "14",
+        "version": "",
         "is64Bit": true
     },
 
@@ -102,7 +108,7 @@
 
     "FreeBSD 8.1 Preinstalled Base System": {
         "family": "FREEBSD",
-        "version": "8.1",
+        "version": "",
         "is64Bit": true
     },
 
@@ -114,7 +120,7 @@
 
     "Fedora 13 Linux 64bit Preinstalled System": {
         "family": "FEDORA",
-        "version": "13",
+        "version": "",
         "is64Bit": true
     },
 
@@ -134,7 +140,12 @@
         "family": "DEBIAN",
         "version": "5.0",
         "is64Bit": true
-    }
+    },
 
+    "Debian 6.0 No X Minimal Linux 64bit Preinstalled System": {
+        "family": "DEBIAN",
+        "version": "6.0",
+        "is64Bit": true
+    }
 
 }

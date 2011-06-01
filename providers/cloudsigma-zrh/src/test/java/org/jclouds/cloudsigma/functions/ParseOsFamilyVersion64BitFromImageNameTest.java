@@ -28,8 +28,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.cloudsigma.compute.functions.ParseOsFamilyVersion64BitFromImageName;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
@@ -37,6 +40,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
+import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -65,7 +69,9 @@ public class ParseOsFamilyVersion64BitFromImageNameTest {
             })).toArray(new Object[][] {});
    }
 
-   ParseOsFamilyVersion64BitFromImageName parser = new ParseOsFamilyVersion64BitFromImageName();
+   ParseOsFamilyVersion64BitFromImageName parser = new ParseOsFamilyVersion64BitFromImageName(new BaseComputeServiceContextModule() {
+      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+            .getInstance(Json.class)));
 
    @Test(dataProvider = "data")
    public void test(String input, OsFamilyVersion64Bit expected) {

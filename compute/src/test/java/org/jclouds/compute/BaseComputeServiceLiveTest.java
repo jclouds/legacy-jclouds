@@ -96,7 +96,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, sequential = true)
+@Test(groups = { "integration", "live" }, singleThreaded = true)
 public abstract class BaseComputeServiceLiveTest {
 
    protected String group;
@@ -243,7 +243,7 @@ public abstract class BaseComputeServiceLiveTest {
                   overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
                      + response.getValue();
-            
+
          // test single-node execution
          ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
                   .runAsRoot(false));
@@ -561,6 +561,8 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
+   protected int nonBlockDuration = 30 * 1000;
+
    public void testOptionToNotBlock() throws Exception {
       String group = this.group + "block";
       try {
@@ -576,7 +578,8 @@ public abstract class BaseComputeServiceLiveTest {
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
-         assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
+         assert duration < nonBlockDuration : String.format("duration(%d) longer than expected(%d) seconds! ",
+                  duration / 1000, nonBlockDuration);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
@@ -611,14 +614,14 @@ public abstract class BaseComputeServiceLiveTest {
 
       assertEquals(defaultSize, smallest);
 
-      assert getCores(smallest) <= getCores(fastest) : String.format("%d ! <= %d", smallest, fastest);
-      assert getCores(biggest) <= getCores(fastest) : String.format("%d ! <= %d", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
 
-      assert biggest.getRam() >= fastest.getRam() : String.format("%d ! >= %d", biggest, fastest);
-      assert biggest.getRam() >= smallest.getRam() : String.format("%d ! >= %d", biggest, smallest);
+      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
 
-      assert getCores(fastest) >= getCores(biggest) : String.format("%d ! >= %d", fastest, biggest);
-      assert getCores(fastest) >= getCores(smallest) : String.format("%d ! >= %d", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {

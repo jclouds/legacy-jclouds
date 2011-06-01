@@ -140,7 +140,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    Set<? extends Vm> ifCustomizationScriptIsSetGetVmsInTemplate(String customizationScript, final URI template) {
       Set<? extends Vm> vms = Sets.newLinkedHashSet();
       if (customizationScript != null) {
-         VAppTemplate vAppTemplate = client.getVAppTemplate(template);
+         VAppTemplate vAppTemplate = client.getVAppTemplateClient().getVAppTemplate(template);
          checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
          vms = vAppTemplate.getChildren();
          checkArgument(vms.size() > 0, "no vms found in vAppTemplate %s", vAppTemplate);
@@ -189,7 +189,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       @Override
       public String apply(URI template) {
          String networkName;
-         VAppTemplate vAppTemplate = client.getVAppTemplate(template);
+         VAppTemplate vAppTemplate = client.getVAppTemplateClient().getVAppTemplate(template);
          checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
          Set<org.jclouds.ovf.Network> networks = vAppTemplate.getNetworkSection().getNetworks();
          checkArgument(networks.size() > 0, "no networks found in vAppTemplate %s", vAppTemplate);

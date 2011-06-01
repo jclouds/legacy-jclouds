@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudfiles.blobstore.integration;
 
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest;
 import org.testng.annotations.Test;
 
@@ -27,6 +28,12 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class CloudFilesBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
-
+   @Override
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
+               .getPayload().getContentMetadata().getContentDisposition();
+      assert blob.getMetadata().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob
+               .getMetadata().getContentMetadata().getContentDisposition();
+   }
 
 }

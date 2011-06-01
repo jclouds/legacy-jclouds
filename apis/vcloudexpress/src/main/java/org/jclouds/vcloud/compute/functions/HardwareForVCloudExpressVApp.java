@@ -29,7 +29,9 @@ import org.jclouds.cim.functions.HardwareBuilderFromResourceAllocations;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 
 import com.google.common.base.Function;
@@ -42,12 +44,12 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final FindLocationForResource findLocationForResource;
+   private final Function<ReferenceType, Location> findLocationForResource;
    private final HardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
    @Inject
-   protected HardwareForVCloudExpressVApp(FindLocationForResource findLocationForResource,
-            HardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
+   protected HardwareForVCloudExpressVApp(Function<ReferenceType, Location> findLocationForResource,
+         HardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");
    }
@@ -58,8 +60,8 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
       try {
          HardwareBuilder builder = rasdToHardwareBuilder.apply(from.getResourceAllocations());
          builder.location(findLocationForResource.apply(checkNotNull(from, "from").getVDC()));
-         builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
-                  ImagePredicates.idEquals(from.getHref().toASCIIString()));
+         builder.ids(from.getHref().toASCIIString()).name(from.getName())
+               .supportsImage(ImagePredicates.idEquals(from.getHref().toASCIIString()));
          return builder.build();
       } catch (NoSuchElementException e) {
          logger.debug("incomplete data to form vApp %s", from.getHref());

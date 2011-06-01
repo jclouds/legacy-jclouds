@@ -24,8 +24,9 @@ import javax.inject.Singleton;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
@@ -53,7 +54,7 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       if (drive.getName() == null)
          return null;
       String description = drive.getDescription() != null ? drive.getDescription() : drive.getName();
-      OperatingSystemBuilder builder = new OperatingSystemBuilder();
+      Builder builder = OperatingSystem.builder();
       OsFamilyVersion64Bit parsed = imageParser.apply(drive.getName());
       builder.name(drive.getName()).description(description).is64Bit(parsed.is64Bit).version(parsed.version).family(
                parsed.family);

@@ -43,6 +43,7 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.compute.config.CommonVCloudComputeServiceContextModule;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -76,6 +77,9 @@ public class VAppToNodeMetadataTest {
          protected void configure() {
             Properties props = new Properties();
             Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+            bind(new TypeLiteral<Function<ReferenceType, Location>>() {
+            }).to(new TypeLiteral<FindLocationForResource>() {
+            });
             bind(new TypeLiteral<Function<VApp, Hardware>>() {
             }).to(new TypeLiteral<HardwareForVApp>() {
             });
@@ -108,8 +112,8 @@ public class VAppToNodeMetadataTest {
    }
 
    public void testWhenVDCIsLocation() {
-      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description").scope(
-               LocationScope.PROVIDER).build();
+      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
+            .scope(LocationScope.PROVIDER).build();
       Injector injector = createInjectorWithLocation(location);
       InputStream is = getClass().getResourceAsStream("/vapp-pool.xml");
       Factory factory = injector.getInstance(ParseSax.Factory.class);
@@ -122,8 +126,8 @@ public class VAppToNodeMetadataTest {
    }
 
    public void testGracefulWhenNoIPs() {
-      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description").scope(
-               LocationScope.PROVIDER).build();
+      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
+            .scope(LocationScope.PROVIDER).build();
       Injector injector = createInjectorWithLocation(location);
       InputStream is = getClass().getResourceAsStream("/vapp-none.xml");
       Factory factory = injector.getInstance(ParseSax.Factory.class);
@@ -138,7 +142,7 @@ public class VAppToNodeMetadataTest {
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testGracefulWhenVDCIsNotLocation() {
       Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/11111").description("description")
-               .scope(LocationScope.PROVIDER).build();
+            .scope(LocationScope.PROVIDER).build();
       Injector injector = createInjectorWithLocation(location);
       InputStream is = getClass().getResourceAsStream("/vapp-pool.xml");
       Factory factory = injector.getInstance(ParseSax.Factory.class);

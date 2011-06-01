@@ -137,12 +137,13 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    private void addDiskItems(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
       for (ResourceAllocationSettingData disk : filter(vApp.getResourceAllocations(), CIMPredicates
                .resourceTypeIn(ResourceType.DISK_DRIVE))) {
-         if (!configuration.getDisksToDelete().contains(disk.getAddressOnParent()))
+         if (!configuration.getDisksToDelete().contains(new Integer(disk.getAddressOnParent()))) {
             addDiskWithQuantity(sectionBuilder, disk);
+         }
       }
       for (Long quantity : configuration.getDisks()) {
-         ResourceAllocationSettingData disk = ResourceAllocationSettingData.builder().instanceID("9")
-                  .elementName("n/a").resourceType(ResourceType.DISK_DRIVE).virtualQuantity(quantity).build();
+         ResourceAllocationSettingData disk = ResourceAllocationSettingData.builder().instanceID("9").addressOnParent(
+                  "-1").elementName("").resourceType(ResourceType.DISK_DRIVE).virtualQuantity(quantity).build();
          addDiskWithQuantity(sectionBuilder, disk);
       }
    }
