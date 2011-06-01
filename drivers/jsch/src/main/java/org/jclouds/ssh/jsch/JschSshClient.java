@@ -261,36 +261,53 @@ public class JschSshClient implements SshClient {
 
    public ExecResponse exec(String command) {
       checkConnected();
+
       ChannelExec executor = null;
-      try {
+      ByteArrayOutputStream error = null;
+
+      int j = 0;
+      do {
          try {
             executor = (ChannelExec) session.openChannel("exec");
-            executor.setPty(true);
          } catch (JSchException e) {
+            // unrecoverable fail because ssh session closed
             throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username, host, port), e);
          }
+
+         error = new ByteArrayOutputStream();
+         executor.setPty(true);
          executor.setCommand(command);
-         ByteArrayOutputStream error = new ByteArrayOutputStream();
          executor.setErrStream(error);
+
          try {
-            executor.connect();
-            String outputString = Strings2.toStringAndClose(executor.getInputStream());
-            String errorString = error.toString();
-            int errorStatus = executor.getExitStatus();
-            int i = 0;
-            while ((errorStatus = executor.getExitStatus()) == -1 && i < this.sshRetries)
-               backoffForAttempt(++i, String.format("%s@%s:%d: bad status: -1", username, host, port));
-            if (errorStatus == -1)
-               throw new SshException(String.format("%s@%s:%d: received exit status %d executing %s", username, host,
-                        port, executor.getExitStatus(), command));
-            return new ExecResponse(outputString, errorString, errorStatus);
-         } catch (Exception e) {
-            throw new SshException(String
-                     .format("%s@%s:%d: Error executing command: %s", username, host, port, command), e);
+             executor.connect();
+         } catch (JSchException e) {
+             executor.disconnect();
+             backoffForAttempt(++j, String.format("%s@%s:%d: Failed to connect ChannelExec", username, host, port));
          }
-      } finally {
-         if (executor != null)
-            executor.disconnect();
+      } while (j < this.sshRetries && !executor.isConnected());
+
+      if (!executor.isConnected())
+         throw new SshException(String.format("%s@%s:%d: Failed to connect ChannelExec executing %s",
+                  username, host, port, command));
+
+      try {
+         String outputString = Strings2.toStringAndClose(executor.getInputStream());
+         String errorString = error.toString();
+         int errorStatus = executor.getExitStatus();
+         int i = 0;
+         while ((errorStatus = executor.getExitStatus()) == -1 && i < this.sshRetries)
+            backoffForAttempt(++i, String.format("%s@%s:%d: bad status: -1", username, host, port));
+         if (errorStatus == -1)
+            throw new SshException(String.format("%s@%s:%d: received exit status %d executing %s", username, host,
+                     port, executor.getExitStatus(), command));
+         return new ExecResponse(outputString, errorString, errorStatus);
+      } catch (Exception e) {
+         throw new SshException(String
+                  .format("%s@%s:%d: Error executing command: %s", username, host, port, command), e);
+      }
+      finally {
+         executor.disconnect();
       }
    }
 
