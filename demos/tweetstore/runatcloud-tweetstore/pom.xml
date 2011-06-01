@@ -110,7 +110,6 @@
                 <artifactId>bees-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <configuration>
-                  <appid>${bees.appid}</appid>
                   <environment>${bees.environment}</environment>
                   <apikey>${bees.apikey}</apikey>
                   <secret>${bees.secret}</secret>
