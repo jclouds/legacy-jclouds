@@ -17,18 +17,16 @@
  * ====================================================================
  */
 package org.jclouds.date.internal;
+import static org.jclouds.date.internal.DateUtils.trimNanosToMillis;
+import static org.jclouds.date.internal.DateUtils.trimTZ;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
 
 import org.jclouds.date.DateService;
-import org.jclouds.logging.Logger;
 
 /**
  * 
@@ -39,8 +37,6 @@ import org.jclouds.logging.Logger;
  */
 public class SimpleDateFormatDateService implements DateService {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    /*
     * Use default Java Date/SimpleDateFormat classes for date manipulation, but be *very* careful to
     * guard against the lack of thread safety.
@@ -50,16 +46,16 @@ public class SimpleDateFormatDateService implements DateService {
             "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+   private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
+            Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat(
-            "EEE MMM dd HH:mm:ss '+0000' yyyy", Locale.US);
+   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss '+0000' yyyy",
+            Locale.US);
 
    static {
       iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
@@ -136,29 +132,6 @@ public class SimpleDateFormatDateService implements DateService {
             throw new RuntimeException(e);
          }
       }
-   }
-
-   public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern
-            .compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
-
-   public static final Pattern TZ_PATTERN = Pattern.compile(".*[+-][0-9][0-9]:?[0-9][0-9]");
-
-   private String trimNanosToMillis(String toParse) {
-      if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())
-         toParse = toParse.substring(0, toParse.length() - 3) + 'Z';
-      return toParse;
-   }
-
-   public static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
-
-   private String trimTZ(String toParse) {
-      if (TZ_PATTERN.matcher(toParse).matches()) {
-         logger.trace("trimming tz from %s", toParse);
-         toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
-      }
-      if (toParse.length() == 25 && SECOND_PATTERN.matcher(toParse).matches())
-         toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
-      return toParse;
    }
 
    public final Date iso8601SecondsDateParse(String toParse) {

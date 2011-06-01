@@ -18,9 +18,11 @@
  */
 package org.jclouds.date.joda;
 
+import static org.jclouds.date.internal.DateUtils.trimNanosToMillis;
+import static org.jclouds.date.internal.DateUtils.trimTZ;
+
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
@@ -39,19 +41,16 @@ import org.joda.time.format.DateTimeFormatter;
 public class JodaDateService implements DateService {
 
    private static final DateTimeFormatter rfc822DateFormatter = DateTimeFormat.forPattern(
-            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
-   private static final DateTimeFormatter cDateFormatter = DateTimeFormat.forPattern(
-            "EEE MMM dd HH:mm:ss '+0000' yyyy").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+   private static final DateTimeFormatter cDateFormatter = DateTimeFormat
+            .forPattern("EEE MMM dd HH:mm:ss '+0000' yyyy").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter iso8601SecondsDateFormatter = DateTimeFormat.forPattern(
             "yyyy-MM-dd'T'HH:mm:ss'Z'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter iso8601DateFormatter = DateTimeFormat.forPattern(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    public final Date fromSeconds(long seconds) {
       return new Date(seconds * 1000);
@@ -98,25 +97,9 @@ public class JodaDateService implements DateService {
    }
 
    public final Date iso8601DateParse(String toParse) {
+      toParse = trimTZ(toParse);
       toParse = trimNanosToMillis(toParse);
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
-   }
-
-   public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern
-            .compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
-
-   private String trimNanosToMillis(String toParse) {
-      if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())
-         toParse = toParse.substring(0, toParse.length() - 3) + 'Z';
-      return toParse;
-   }
-
-   public static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
-
-   private String trimTZ(String toParse) {
-      if (toParse.length() == 25 && SECOND_PATTERN.matcher(toParse).matches())
-         toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
-      return toParse;
    }
 
    public final Date iso8601SecondsDateParse(String toParse) {
