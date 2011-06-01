@@ -17,6 +17,8 @@
     ====================================================================
 ====
 
+A guide to generating Twitter consumer keys and access tokens is at http://tinyurl.com/2fhebgb
+
 Please modify your maven settings.xml like below before attempting to run 'mvn -Plive install'
 
     <profile>
@@ -25,8 +27,8 @@ Please modify your maven settings.xml like below before attempting to run 'mvn -
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <bees.appid>yourappid</bees.appid>
-        <bees.environment>yourenv</bees.environment>
+        <bees.apikey>yourapikey</bees.apikey>
+        <bees.secret>yoursecret</bees.secret>
       </properties>
     </profile>
 
@@ -36,13 +38,15 @@ Please modify your maven settings.xml like below before attempting to run 'mvn -
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <jclouds.aws-s3.identity>YOUR_ACCESS_KEY_ID</jclouds.aws-s3.identity>
-        <jclouds.aws-s3.credential>YOUR_SECRET_KEY</jclouds.aws-s3.credential>
-        <jclouds.cloudfiles-us.identity>YOUR_USER</jclouds.cloudfiles-us.identity>
-        <jclouds.cloudfiles-us.credential>YOUR_HEX_KEY</jclouds.cloudfiles-us.credential>
-        <jclouds.azureblob.identity>YOUR_ACCOUNT</jclouds.azureblob.identity>
-        <jclouds.azureblob.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azureblob.credential>
-        <jclouds.twitter.identity>YOUR_TWITTER_USERNAME</jclouds.twitter.identity>
-        <jclouds.twitter.credential>YOUR_TWITTER_PASSWORD</jclouds.twitter.credential>        
+        <test.aws-s3.identity>YOUR_ACCESS_KEY_ID</test.aws-s3.identity>
+        <test.aws-s3.credential>YOUR_SECRET_KEY</test.aws-s3.credential>
+        <test.cloudfiles-us.identity>YOUR_USER</test.cloudfiles-us.identity>
+        <test.cloudfiles-us.credential>YOUR_HEX_KEY</test.cloudfiles-us.credential>
+        <test.azureblob.identity>YOUR_ACCOUNT</test.azureblob.identity>
+        <test.azureblob.credential>YOUR_BASE64_ENCODED_KEY</test.azureblob.credential>
+        <test.twitter.runatcloud-tweetstore.consumer.identity>YOUR_TWITTER_CONSUMER_KEY</test.twitter.runatcloud-tweetstore.consumer.identity>
+        <test.twitter.runatcloud-tweetstore.consumer.credential>YOUR_TWITTER_CONSUMER_SECRET</test.twitter.runatcloud-tweetstore.consumer.credential>
+        <test.twitter.runatcloud-tweetstore.access.identity>YOUR_TWITTER_ACCESSTOKEN</test.twitter.runatcloud-tweetstore.access.identity>
+        <test.twitter.runatcloud-tweetstore.access.credential>YOUR_TWITTER_ACCESSTOKEN_SECRET</test.twitter.runatcloud-tweetstore.access.credential>
       </properties>
     </profile>

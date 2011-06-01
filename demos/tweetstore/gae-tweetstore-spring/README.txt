@@ -25,6 +25,8 @@ It should not be regarded as a sample of how to write a web application using Sp
 however! The original jclouds-demo-gae-tweetstore has been modified in as few places as
 possible; it has not been rewritten in the style of a Spring MVC application.
 
+A guide to generating Twitter consumer keys and access tokens is at http://tinyurl.com/2fhebgb
+
 This sample uses the Google App Engine for Java SDK located at 
 http://code.google.com/p/googleappengine/downloads/list
 
@@ -48,13 +50,15 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <jclouds.aws-s3.identity>YOUR_ACCESS_KEY_ID</jclouds.aws-s3.identity>
-        <jclouds.aws-s3.credential>YOUR_SECRET_KEY</jclouds.aws-s3.credential>
-        <jclouds.cloudfiles-us.identity>YOUR_USER</jclouds.cloudfiles-us.identity>
-        <jclouds.cloudfiles-us.credential>YOUR_HEX_KEY</jclouds.cloudfiles-us.credential>
-        <jclouds.azureblob.identity>YOUR_ACCOUNT</jclouds.azureblob.identity>
-        <jclouds.azureblob.credential>YOUR_BASE64_ENCODED_KEY</jclouds.azureblob.credential>
-        <jclouds.twitter.identity>YOUR_TWITTER_USERNAME</jclouds.twitter.identity>
-        <jclouds.twitter.credential>YOUR_TWITTER_PASSWORD</jclouds.twitter.credential>        
+        <test.aws-s3.identity>YOUR_ACCESS_KEY_ID</test.aws-s3.identity>
+        <test.aws-s3.credential>YOUR_SECRET_KEY</test.aws-s3.credential>
+        <test.cloudfiles-us.identity>YOUR_USER</test.cloudfiles-us.identity>
+        <test.cloudfiles-us.credential>YOUR_HEX_KEY</test.cloudfiles-us.credential>
+        <test.azureblob.identity>YOUR_ACCOUNT</test.azureblob.identity>
+        <test.azureblob.credential>YOUR_BASE64_ENCODED_KEY</test.azureblob.credential>
+        <test.twitter.gae-tweetstore-spring.consumer.identity>YOUR_TWITTER_CONSUMER_KEY</test.twitter.gae-tweetstore-spring.consumer.identity>
+        <test.twitter.gae-tweetstore-spring.consumer.credential>YOUR_TWITTER_CONSUMER_SECRET</test.twitter.gae-tweetstore-spring.consumer.credential>
+        <test.twitter.gae-tweetstore-spring.access.identity>YOUR_TWITTER_ACCESSTOKEN</test.twitter.gae-tweetstore-spring.access.identity>
+        <test.twitter.gae-tweetstore-spring.access.credential>YOUR_TWITTER_ACCESSTOKEN_SECRET</test.twitter.gae-tweetstore-spring.access.credential>
       </properties>
     </profile>
