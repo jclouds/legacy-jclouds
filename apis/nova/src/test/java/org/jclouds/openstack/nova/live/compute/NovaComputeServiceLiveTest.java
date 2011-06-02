@@ -129,7 +129,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   @Test(expectedExceptions = JSchException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 60000)
+   @Test(expectedExceptions = JSchException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 120000)
    void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
       NodeMetadata node = getDefaultNodeImmediately(group);
       String address = awaitForPublicAddressAssigned(node.getId());
@@ -242,7 +242,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       return templateBuilder.build();
    }
 
-   @Test(timeOut = 60000)
+   @Test(timeOut = 120000)
    public void testGetNodeMetadata() throws Exception {
       Set<NodeMetadata> nodes = Sets.newHashSet(getDefaultNodeImmediately(group));
       awaitForPublicAddressAssigned(nodes.iterator().next().getId());

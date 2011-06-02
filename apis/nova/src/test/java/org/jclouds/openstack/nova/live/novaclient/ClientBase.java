@@ -84,7 +84,7 @@ public class ClientBase {
       return createDefaultServer(defaultName);
    }
 
-   private Server createDefaultServer(String serverName) {
+   protected Server createDefaultServer(String serverName) {
       String imageRef = client.getImage(testImageId).getURI().toASCIIString();
       String flavorRef = client.getFlavor(1).getURI().toASCIIString();
 

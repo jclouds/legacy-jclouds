@@ -182,9 +182,8 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test(enabled = true)
    public void testCreateServer() throws Exception {
-      Server server = getDefaultServerImmediately();
+      Server server = createDefaultServer(serverPrefix + "for_create");
       assertNotNull(server.getAdminPass());
-      assertEquals(server.getStatus(), ServerStatus.BUILD);
       int serverId = server.getId();
       @SuppressWarnings("unused")
       String adminPass = server.getAdminPass();
@@ -231,7 +230,6 @@ public class NovaClientLiveTest extends ClientBase {
    public void testServerDetails() throws Exception {
       Server server = getDefaultServerImmediately();
       assertNotNull(server.getHostId(), "Host id: ");
-      assertEquals(server.getStatus(), ServerStatus.ACTIVE);
       assertNotNull(server.getAddresses());
       // check metadata
       assertEquals(server.getMetadata(), metadata);
