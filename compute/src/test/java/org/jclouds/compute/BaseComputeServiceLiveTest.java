@@ -561,7 +561,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   protected int nonBlockDuration = 30 * 1000;
+   protected int nonBlockDurationSeconds = 30;
 
    public void testOptionToNotBlock() throws Exception {
       String group = this.group + "block";
@@ -577,9 +577,9 @@ public abstract class BaseComputeServiceLiveTest {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
-         long duration = System.currentTimeMillis() - time;
-         assert duration < nonBlockDuration : String.format("duration(%d) longer than expected(%d) seconds! ",
-                  duration / 1000, nonBlockDuration);
+         long duration = (System.currentTimeMillis() - time) / 1000;
+         assert duration < nonBlockDurationSeconds : String.format("duration(%d) longer than expected(%d) seconds! ",
+                  duration, nonBlockDurationSeconds);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
