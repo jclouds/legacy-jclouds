@@ -60,6 +60,20 @@ public class OpenStackAuthAsyncClientTest extends RestClientTest<OpenStackAuthAs
 
    }
 
+   public void testAuthenticateStorage() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = OpenStackAuthAsyncClient.class.getMethod("authenticateStorage", String.class, String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "X-Storage-Pass: bar\nX-Storage-User: foo\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseAuthenticationResponseFromHeaders.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+   }
+
    @Override
    public RestContextSpec<OpenStackAuthClient, OpenStackAuthAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1.0", "", "identity", "credential",

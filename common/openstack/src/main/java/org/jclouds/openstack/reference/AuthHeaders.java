@@ -29,6 +29,8 @@ public interface AuthHeaders {
 
    public static final String AUTH_USER = "X-Auth-User";
    public static final String AUTH_KEY = "X-Auth-Key";
+   public static final String STORAGE_USER = "X-Storage-User";
+   public static final String STORAGE_PASS = "X-Storage-Pass";
    public static final String AUTH_TOKEN = "X-Auth-Token";
    public static final String URL_SUFFIX = "-Url";
 

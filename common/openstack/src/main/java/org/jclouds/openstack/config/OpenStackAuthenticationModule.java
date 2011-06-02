@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -69,25 +70,44 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       };
    }
 
+   @Singleton
+   public static class GetAuthenticationResponse implements Supplier<AuthenticationResponse> {
+      protected final OpenStackAuthAsyncClient client;
+      protected final String user;
+      protected final String key;
+
+      @Inject
+      public GetAuthenticationResponse(AsyncClientFactory factory, @Named(Constants.PROPERTY_IDENTITY) String user,
+               @Named(Constants.PROPERTY_CREDENTIAL) String key) {
+         this.client = factory.create(OpenStackAuthAsyncClient.class);
+         this.user = user;
+         this.key = key;
+      }
+
+      @Override
+      public AuthenticationResponse get() {
+         try {
+            Future<AuthenticationResponse> response = authenticate();
+            return response.get(30, TimeUnit.SECONDS);
+         } catch (Exception e) {
+            Throwables.propagate(e);
+            assert false : e;
+            return null;
+         }
+      }
+
+      protected Future<AuthenticationResponse> authenticate() {
+         return client.authenticate(user, key);
+      }
+
+   }
+
    @Provides
    @Singleton
-   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(final AsyncClientFactory factory,
-            @Named(Constants.PROPERTY_IDENTITY) final String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) final String key) {
+   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
+            final GetAuthenticationResponse getAuthenticationResponse) {
       return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
-               new Supplier<AuthenticationResponse>() {
-                  public AuthenticationResponse get() {
-                     try {
-                        Future<AuthenticationResponse> response = factory.create(OpenStackAuthAsyncClient.class)
-                                 .authenticate(user, key);
-                        return response.get(30, TimeUnit.SECONDS);
-                     } catch (Exception e) {
-                        Throwables.propagate(e);
-                        assert false : e;
-                        return null;
-                     }
-                  }
-               }), 23, TimeUnit.HOURS);
+               getAuthenticationResponse), 23, TimeUnit.HOURS);
    }
 
    @Provides
