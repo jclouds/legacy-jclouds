@@ -48,7 +48,7 @@ public class FirewallAsyncClientTest extends BaseVPDCAsyncClientTest<FirewallAsy
                "Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
 
       assertRequestLineEquals(request,
-               "PUT https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
+               "PUT https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/firewallService-default.xml")), "application/xml", false);
@@ -67,7 +67,7 @@ public class FirewallAsyncClientTest extends BaseVPDCAsyncClientTest<FirewallAsy
                "Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build());
 
       assertRequestLineEquals(request,
-               "DELETE https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService/ HTTP/1.1");
+               "DELETE https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/firewallService-default.xml")), "application/xml", false);
