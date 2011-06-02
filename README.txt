@@ -33,7 +33,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
                           cloudsigma-zrh, elasticstack(generic), bluelock-vcloud-vcenterprise,
-                          bluelock-vcloud-zone01,
+                          bluelock-vcloud-zone01, stratogen-vcloud-mycloud,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my
