@@ -206,5 +206,22 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.kindleit</groupId>
+                        <artifactId>maven-gae-plugin</artifactId>
+                        <version>0.8.4</version>
+                        <configuration>
+                            <serverId>google-appengine</serverId>
+                            <sdkDir>${appengine.sdk.root}</sdkDir>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
