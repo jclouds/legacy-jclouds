@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -79,6 +80,9 @@ public class BaseVPDCClientLiveTest {
          overrides.setProperty(provider + ".endpoint", endpoint);
       if (apiversion != null)
          overrides.setProperty(provider + ".apiversion", apiversion);
+      // TODO savvis uses untrusted certificates, remove these once savvis fixes the issue
+	   overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+	   overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       return overrides;
    }
 

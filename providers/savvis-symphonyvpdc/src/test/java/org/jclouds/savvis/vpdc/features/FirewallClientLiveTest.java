@@ -66,7 +66,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   FirewallRule firewallRule = FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
 	  	.destination(networkTierName).port("10000").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build();
 	   
-	   System.out.printf("adding firewall rule:%s %n", firewallRule.toString());
+	   System.out.printf("adding firewall rule:%s in vpdc %s %n", firewallRule.toString(), vpdcId);
 	   
 	   Task task = client.addFirewallRule(billingSiteId, vpdcId, firewallRule);
 	   
@@ -101,7 +101,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   FirewallRule firewallRule = FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
 	  	.destination(networkTierName).port("10000").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build();
 
-	   System.out.printf("deleting firewall rule:%s %n", firewallRule.toString());
+	   System.out.printf("deleting firewall rule:%s in vpdc %s %n", firewallRule.toString(), vpdcId);
 	   
 	   Task task = client.deleteFirewallRule(billingSiteId, vpdcId, firewallRule);
 	   
