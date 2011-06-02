@@ -101,6 +101,12 @@ public abstract class BaseTemplateBuilderLiveTest {
       assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
    }
 
+   public void testFromTemplate() {
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(context.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
+               defaultTemplate.toString());
+   }
+
    protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
