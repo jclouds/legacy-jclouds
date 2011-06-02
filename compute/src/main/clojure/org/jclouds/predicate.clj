@@ -18,11 +18,12 @@
 ;
 (ns org.jclouds.predicate)
 
-(defprotocol Predicate
-  "Protocol for making a com.google.common.base.Predicate."
+(defprotocol Coercions
+  "Protocol for coercing between predicate-like things, like
+  Clojure fns and com.google.common.base.Predicate."
   (to-predicate [p]))
 
-(extend-protocol Predicate
+(extend-protocol Coercions
   clojure.lang.IFn
   (to-predicate [p]
     (reify com.google.common.base.Predicate

@@ -159,8 +159,8 @@ public class ElasticStackClientLiveTest {
    @Test
    public void testGetDrive() throws Exception {
       for (String driveUUID : client.listDrives()) {
-         assert !"".equals(driveUUID);
-         assertNotNull(client.getDriveInfo(driveUUID));
+         assert !"".equals(driveUUID) : driveUUID;
+         assert client.getDriveInfo(driveUUID) != null : driveUUID;
       }
    }
 
