@@ -144,7 +144,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       }
    }
 
-   @Test(timeOut = 60000)
+   @Test(timeOut = 120000)
    public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException, RunScriptOnNodesException, URISyntaxException, IOException {
 
       NodeMetadata node = getDefaultNodeImmediately(group);
