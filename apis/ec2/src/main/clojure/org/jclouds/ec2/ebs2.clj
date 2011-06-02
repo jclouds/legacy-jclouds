@@ -139,7 +139,7 @@
    If provided, the description must be < 255 characters in length. Returns the
    org.jclouds.aws.ec2.domain.Snapshot object representing the created snapshot."
 
-  ([computess #^Volume volume] (create-snapshot computess volume nil))
+  ([compute #^Volume volume] (create-snapshot compute volume nil))
   ([compute #^Volume volume description] (create-snapshot compute (.getRegion volume) (.getId volume) description))
   ([compute region volume-id description]
     (.createSnapshotInRegion (ebs-service compute)
