@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.live.compute;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.testng.annotations.AfterTest;

@@ -20,7 +20,6 @@
 package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.collect.Iterables;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
