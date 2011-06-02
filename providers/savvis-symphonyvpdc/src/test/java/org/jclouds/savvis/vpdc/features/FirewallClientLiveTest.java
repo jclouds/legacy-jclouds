@@ -52,14 +52,9 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	              // the jclouds-wire.log
 	              @Override
 	              public boolean apply(Resource arg0) {
-	            	  if(restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
-                              arg0.getId()).getName().equals("Oracle")){
-                		 return true;
-                	 }
-                	 return false;
-	                 /*String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                 String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
 	                          arg0.getId()).getDescription();
-	                 return description.indexOf(email) != -1;*/
+	                 return description.indexOf(email) != -1;
 	              }
 	
 	           }).getId();
@@ -92,14 +87,9 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	                  // the jclouds-wire.log
 	                  @Override
 	                  public boolean apply(Resource arg0) {
-	                	  if(restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
-	                              arg0.getId()).getName().equals("Oracle")){
-	                		 return true;
-	                	 }
-	                	 return false;
-	                     /*String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                     String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
 	                              arg0.getId()).getDescription();
-	                     return description.indexOf(email) != -1;*/
+	                     return description.indexOf(email) != -1;
 	                  }
 
 	               }).getId();
