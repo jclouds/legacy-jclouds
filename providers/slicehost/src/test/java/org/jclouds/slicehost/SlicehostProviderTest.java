@@ -18,29 +18,18 @@
  */
 package org.jclouds.slicehost;
 
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.rest.Providers;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
+@Test(groups = "unit", testName = "SlicehostProviderTest")
+public class SlicehostProviderTest extends BaseProviderMetadataTest {
 
-   @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "slicehost") : providers;
-   }
-
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "slicehost") : providers;
+   public SlicehostProviderTest() {
+      super(new SlicehostProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }
