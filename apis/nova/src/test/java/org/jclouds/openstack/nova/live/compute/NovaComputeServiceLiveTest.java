@@ -394,6 +394,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
    @Test(timeOut = 60000)
    public void testListHardwareProfiles() throws Exception {
+      //TODO: failing, OpenStack returns a hardware with 0 CPU cores
       for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;

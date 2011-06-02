@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.live.compute;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.testng.annotations.AfterTest;
@@ -56,8 +57,9 @@ public class ServiceActionsLiveTest extends ComputeBase {
       //testGetNodeMetadata();
    }
 
-   @Test //Suspend is not supported by the provider yet
+   @Test
    public void testSuspendResume() throws Exception {
+      //TODO: failing, suspend is not supported by the nova provider yet
       getDefaultNodeImmediately(group);
       computeService.suspendNodesMatching(inGroup(group));
 

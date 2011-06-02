@@ -20,6 +20,7 @@
 package org.jclouds.openstack.nova.live.novaclient;
 
 import com.google.common.collect.Iterables;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
@@ -57,6 +58,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test
    public void testListServersDetail() throws Exception {
+      //TODO: failing, /v1.1/servers/{server id}/ips URL is not available (issue in the OpenStack)
       Set<Server> response = client.listServers(withDetails());
       assert null != response;
       long initialContainerCount = response.size();
@@ -65,6 +67,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test
    public void testListImages() throws Exception {
+      //TODO: failing, image name should not be null (issue in the OpenStack)
       Set<Image> response = client.listImages();
       assert null != response;
       long imageCount = response.size();
@@ -78,6 +81,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test
    public void testListImagesDetail() throws Exception {
+      //TODO: failing, image name should not be null (issue in the OpenStack)
       Set<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
@@ -276,6 +280,8 @@ public class NovaClientLiveTest extends ClientBase {
    public void testChangePassword() throws Exception {
       int serverId = getDefaultServerImmediately().getId();
       blockUntilServerActive(serverId);
+      blockUntilPublicAddress(serverId);
+      awaitForSshPort(Iterables.get(client.getServer(serverId).getAddresses().getPublicAddresses(), 0).getAddress(), new Credentials("root", keyPair.get("private")));
       client.changeAdminPass(serverId, "elmo");
       assertPassword(client.getServer(serverId), "elmo");
 
@@ -283,6 +289,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test(enabled = true, timeOut = 10 * 600 * 1000)
    public void testCreateImage() throws Exception {
+      //TODO: failing, create image from instance returns incorrect JSON
       Server server = getDefaultServerImmediately();
       Image image = getDefaultImageImmediately(server);
       blockUntilImageActive(image.getId());
@@ -293,6 +300,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000)
    public void testRebuildServer() throws Exception {
+      //TODO: failing, create image from instance returns incorrect JSON
       Server server = getDefaultServerImmediately();
       Image image = getDefaultImageImmediately(server);
       client.rebuildServer(server.getId(), new RebuildServerOptions().withImage(String.valueOf(image.getId())));
@@ -349,6 +357,7 @@ public class NovaClientLiveTest extends ClientBase {
 
    @Test(enabled = true, timeOut = 60000)
    void testDeleteImage() throws Exception {
+      //TODO: failing, create image from instance returns incorrect JSON
       Image image = getDefaultImageImmediately(getDefaultServerImmediately());
       client.deleteImage(image.getId());
       assert client.getImage(image.getId()) == null;

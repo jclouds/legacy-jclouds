@@ -23,6 +23,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import org.jclouds.domain.Credentials;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaClient;
@@ -32,12 +34,16 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
+import org.jclouds.ssh.jsch.JschSshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.jclouds.openstack.nova.live.PropertyHelper.*;
@@ -110,6 +116,21 @@ public class ClientBase {
       while (null != client.getServer(serverId)) {
          System.out.println("Await deleted server" + serverId);
          Thread.sleep(1000);
+      }
+   }
+
+   protected void awaitForSshPort(String address, Credentials credentials) throws URISyntaxException {
+      IPSocket socket = new IPSocket(address, 22);
+
+      JschSshClient ssh = new JschSshClient(
+            new BackoffLimitedRetryHandler(), socket, 10000, credentials.identity, null, credentials.credential.getBytes());
+      while (true) {
+         try {
+            System.out.println("ping: " + socket);
+            ssh.connect();
+            return;
+         } catch (SshException ignore) {
+         }
       }
    }
 }
