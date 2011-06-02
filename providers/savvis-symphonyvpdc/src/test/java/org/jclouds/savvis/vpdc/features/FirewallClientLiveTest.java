@@ -52,9 +52,14 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	              // the jclouds-wire.log
 	              @Override
 	              public boolean apply(Resource arg0) {
-	                 String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	            	  if(restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+                              arg0.getId()).getName().equals("Oracle")){
+                		 return true;
+                	 }
+                	 return false;
+	                 /*String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
 	                          arg0.getId()).getDescription();
-	                 return description.indexOf(email) != -1;
+	                 return description.indexOf(email) != -1;*/
 	              }
 	
 	           }).getId();
@@ -66,7 +71,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   FirewallRule firewallRule = FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
 	  	.destination(networkTierName).port("10000").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build();
 	   
-	   System.out.printf("adding firewall rule:%s %n", firewallRule.toString());
+	   System.out.printf("adding firewall rule:%s in vpdc %s %n", firewallRule.toString(), vpdcId);
 	   
 	   Task task = client.addFirewallRule(billingSiteId, vpdcId, firewallRule);
 	   
@@ -87,9 +92,14 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	                  // the jclouds-wire.log
 	                  @Override
 	                  public boolean apply(Resource arg0) {
-	                     String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                	  if(restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
+	                              arg0.getId()).getName().equals("Oracle")){
+	                		 return true;
+	                	 }
+	                	 return false;
+	                     /*String description = restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId,
 	                              arg0.getId()).getDescription();
-	                     return description.indexOf(email) != -1;
+	                     return description.indexOf(email) != -1;*/
 	                  }
 
 	               }).getId();
@@ -101,7 +111,7 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   FirewallRule firewallRule = FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
 	  	.destination(networkTierName).port("10000").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build();
 
-	   System.out.printf("deleting firewall rule:%s %n", firewallRule.toString());
+	   System.out.printf("deleting firewall rule:%s in vpdc %s %n", firewallRule.toString(), vpdcId);
 	   
 	   Task task = client.deleteFirewallRule(billingSiteId, vpdcId, firewallRule);
 	   

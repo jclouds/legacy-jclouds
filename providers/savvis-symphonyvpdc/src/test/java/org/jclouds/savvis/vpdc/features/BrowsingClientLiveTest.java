@@ -151,9 +151,13 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                String ip = Iterables.get(response.getNetworkConnectionSections(), 0).getIpAddress();
                assert HostSpecifier.isValid(ip) : response;
                if (InetAddresses2.isPrivateIPAddress(ip)) {
+            	   // get public ip
                   ip = Iterables.get(response.getNetworkConfigSections(), 0).getInternalToExternalNATRules().get(ip);
+                  // could be null
+                  if(ip != null){
+                	  assert HostSpecifier.isValid(ip) : response;
+                  }
                }
-               assert HostSpecifier.isValid(ip) : response;
             }
 
          }
