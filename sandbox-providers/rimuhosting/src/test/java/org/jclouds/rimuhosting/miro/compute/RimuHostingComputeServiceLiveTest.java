@@ -43,4 +43,8 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
       return new JschSshClientModule();
    }
 
+   @Override
+   public void testOptionToNotBlock() {
+      // start call is blocking anyway.
+   }
 }

@@ -31,6 +31,7 @@ import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPER
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -55,6 +56,7 @@ public class RimuHostingPropertiesBuilder extends PropertiesBuilder {
       long timeoutMillis = timeout.timeUnit().toMillis(timeout.duration());
       properties.setProperty(PROPERTY_SO_TIMEOUT, timeoutMillis + "");
       properties.setProperty(PROPERTY_CONNECTION_TIMEOUT, timeoutMillis + "");
+      properties.setProperty(ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
       return properties;
    }
 
