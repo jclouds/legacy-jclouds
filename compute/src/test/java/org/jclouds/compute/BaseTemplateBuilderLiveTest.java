@@ -33,6 +33,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -75,6 +76,29 @@ public abstract class BaseTemplateBuilderLiveTest {
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
+   }
+
+   public void testCompareSizes() throws Exception {
+      Hardware defaultSize = context.getComputeService().templateBuilder().build().getHardware();
+
+      Hardware smallest = context.getComputeService().templateBuilder().smallest().build().getHardware();
+      Hardware fastest = context.getComputeService().templateBuilder().fastest().build().getHardware();
+      Hardware biggest = context.getComputeService().templateBuilder().biggest().build().getHardware();
+
+      System.out.printf("smallest %s%n", smallest);
+      System.out.printf("fastest %s%n", fastest);
+      System.out.printf("biggest %s%n", biggest);
+
+      assertEquals(defaultSize, smallest);
+
+      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
+
+      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
+
+      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
    }
 
    protected Properties setupProperties() {
