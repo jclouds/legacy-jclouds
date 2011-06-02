@@ -161,9 +161,9 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
    }
 
    protected void checkVmOutput(String fooTxtContentsMadeByVMwareTools, String decodedVMwareToolsOutput) {
+      assertEquals(decodedVMwareToolsOutput, script);
       // note that vmwaretools throws in \r characters when executing scripts
       assertEquals(fooTxtContentsMadeByVMwareTools, iLoveAscii + "\r\n");
-      assertEquals(decodedVMwareToolsOutput, script);
    }
 
    protected IPSocket getSocket(NodeMetadata node) {

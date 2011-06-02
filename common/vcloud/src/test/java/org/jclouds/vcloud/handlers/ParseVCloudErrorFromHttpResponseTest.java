@@ -25,6 +25,7 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.testng.annotations.Test;
 
 /**
@@ -36,23 +37,32 @@ public class ParseVCloudErrorFromHttpResponseTest extends BaseHttpErrorHandlerTe
 
    @Test
    public void testGet404SetsResourceNotFoundException() {
-      assertCodeMakes("GET", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
-               404, "", "", ResourceNotFoundException.class);
+      assertCodeMakes("GET", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"), 404,
+               "", "", ResourceNotFoundException.class);
    }
 
    @Test
    public void testDelete404SetsHttpResponseException() {
-      assertCodeMakes("DELETE", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
+      assertCodeMakes("DELETE", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
                404, "", "", HttpResponseException.class);
    }
 
    @Test
+   public void testPOSTNotRunningSetsIllegalStateException() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-138351019/action/undeploy"),
+               400,
+               "HTTP/1.1 400 Bad Request",
+               VCloudMediaType.ERROR_XML,
+               "<Error xmlns=\"http://www.vmware.com/vcloud/v1\" minorErrorCode=\"BAD_REQUEST\" message=\"The requested operation could not be executed since vApp &quot;adriancolecap-78c&quot; is not running.\" majorErrorCode=\"400\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd\"></Error>\n",
+               IllegalStateException.class);
+   }
+
+   @Test
    public void test401SetsAuthorizationException() {
-      assertCodeMakes("GET", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
-               401, "", "", AuthorizationException.class);
+      assertCodeMakes("GET", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"), 401,
+               "", "", AuthorizationException.class);
    }
 
    @Override

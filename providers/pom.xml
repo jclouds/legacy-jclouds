@@ -54,11 +54,15 @@
         <module>cloudfiles-uk</module>
         <module>cloudloadbalancers-us</module>
         <module>bluelock-vcdirector</module>
+        <module>bluelock-vcloud-vcenterprise</module>
+        <module>bluelock-vcloud-zone01</module>
+        <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
         <module>trmk-vcloudexpress</module>
         <module>elastichosts-lon-p</module>
         <module>elastichosts-sat-p</module>
         <module>elastichosts-lon-b</module>
+        <module>rimuhosting</module>
         <module>openhosting-east1</module>
         <module>serverlove-z1-man</module>
         <module>skalicloud-sdg-my</module>

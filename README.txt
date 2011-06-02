@@ -32,7 +32,8 @@ our dev version is 1.0-SNAPSHOT
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
-                          cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
+                          cloudsigma-zrh, elasticstack(generic), bluelock-vcloud-vcenterprise,
+                          bluelock-vcloud-zone01, stratogen-vcloud-mycloud, rimuhosting,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my
@@ -54,7 +55,7 @@ our loadbalancer api supports: cloudloadbalancers-us
   * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova,
                           azurequeue, simpledb, cloudstack as well as a async-http-client
                           driver in the sandbox
 

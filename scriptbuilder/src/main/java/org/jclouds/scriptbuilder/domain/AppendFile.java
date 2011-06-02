@@ -39,13 +39,20 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class AppendFile implements Statement {
-   public final static String MARKER = "END_OF_FILE";
+   public static final String MARKER = "END_OF_FILE";
+
    final String path;
    final Iterable<String> lines;
+   final String marker;
 
-   public AppendFile(String path, Iterable<String> lines) {// TODO: convert so
+   public AppendFile(String path, Iterable<String> lines) {
+      this(path, lines, MARKER);
+   }
+
+   public AppendFile(String path, Iterable<String> lines, String marker) {
       this.path = checkNotNull(path, "path");
       this.lines = checkNotNull(lines, "lines");
+      this.marker = checkNotNull(marker, "marker");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");
    }
 
@@ -84,11 +91,11 @@ public class AppendFile implements Statement {
    }
 
    private void hereFile(String path, StringBuilder builder) {
-      builder.append("cat >> ").append(path).append(" <<'").append(MARKER).append("'\n");
+      builder.append("cat >> ").append(path).append(" <<'").append(marker).append("'\n");
       for (String line : lines) {
          builder.append(line).append("\n");
       }
-      builder.append(MARKER).append("\n");
+      builder.append(marker).append("\n");
    }
 
    private Statement appendToFile(String line, String path, OsFamily family) {

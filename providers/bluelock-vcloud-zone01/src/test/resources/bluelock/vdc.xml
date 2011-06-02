@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Vdc href="https://express3.bluelock.com/api/v0.8/vdc/133" name="jclouds"
+      xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 https://express3.bluelock.com/api/v0.8/schemas/vcloud/vdc.xsd"
+      xmlns="http://www.vmware.com/vcloud/v0.8"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Link rel="add" href="https://express3.bluelock.com/api/v0.8/vdc/133/vApps"
+      type="application/vnd.vmware.vcloud.vApp+xml" />
+   <Link rel="add" href="https://express3.bluelock.com/api/v0.8/vdc/133/vAppTemplates"
+      type="application/vnd.vmware.vcloud.vAppTemplate+xml" />
+   <Link rel="add" href="https://express3.bluelock.com/api/v0.8/vdc/133/media"
+      type="application/vnd.vmware.vcloud.media+xml" />
+   <Description>people in paradise</Description>
+      <ResourceEntities>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/447"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx8GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/448"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx16GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/449"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx1GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/347"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/345"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/346"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/387"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/388"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/334"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/335"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/336"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/337"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/338"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/339"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 1CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/341"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/342"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/450"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx2GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/451"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx4GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/452"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx512MBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/453"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 8CPUx8GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/348"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/349"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/350"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/351"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 4CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/352"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/353"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/354"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/355"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/356"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/344"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/358"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/359"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/360"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/361"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/362"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/363"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 1CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/364"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/365"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/366"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/367"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/368"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/369"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 2CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/370"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/371"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/372"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/373"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/375"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/376"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/377"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/378"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/379"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/380"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/381"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 8CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/382"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/383"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/384"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/385"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/386"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 1CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/389"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/390"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/392"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/393"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/394"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/395"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/396"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/397"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/398"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/399"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 4CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/400"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/401"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx1GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/402"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx2GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/403"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/404"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/405"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 8CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/406"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx16GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/407"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx1GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/409"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx4GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/410"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx512MBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/411"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx8GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/412"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx16GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/413"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx1GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/414"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx2GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/415"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx4GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/416"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx512MBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/343"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/417"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 2CPUx8GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/418"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx16GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/419"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx1GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/420"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx2GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/421"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx4GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/422"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx512MBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/423"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 4CPUx8GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/424"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx16GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/426"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx2GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/427"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx4GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/428"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx512MBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/429"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx8GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/430"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx16GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/431"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx1GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/442"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx16GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/435"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx8GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/436"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx16GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/437"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx1GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/438"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx2GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/439"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx4GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/440"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx512MBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/441"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 2CPUx8GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/432"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx2GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/433"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx4GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/434"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 1CPUx512MBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/340"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 2CPUx16GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/425"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 8CPUx1GBx30GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/443"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx1GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/444"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx2GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/445"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx4GBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/446"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008+SQLExpress 4CPUx512MBx40GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/357"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS5x64 8CPUx8GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/374"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="RedHat5x64 4CPUx512MBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/391"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Ubuntu904Serverx64 2CPUx4GBx20GB"/>
+         <ResourceEntity href="https://express3.bluelock.com/api/v0.8/vAppTemplate/408"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows2008stdx64 1CPUx2GBx30GB"/>
+      </ResourceEntities>
+      <AvailableNetworks>
+         <Network href="https://express3.bluelock.com/api/v0.8/network/1"
+            type="application/vnd.vmware.vcloud.network+xml" name="Pod03_Private"/>
+         <Network href="https://express3.bluelock.com/api/v0.8/network/4"
+            type="application/vnd.vmware.vcloud.network+xml" name="Internal Outbound Only"/>
+         <Network href="https://express3.bluelock.com/api/v0.8/network/2"
+            type="application/vnd.vmware.vcloud.network+xml" name="Pod03_Public"/>
+         <Network href="https://express3.bluelock.com/api/v0.8/network/3"
+            type="application/vnd.vmware.vcloud.network+xml" name="Internal In and Out"/>
+      </AvailableNetworks>
+</Vdc>

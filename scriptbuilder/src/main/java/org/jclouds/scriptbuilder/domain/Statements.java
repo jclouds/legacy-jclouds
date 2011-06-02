@@ -67,6 +67,10 @@ public class Statements {
       return new AppendFile(path, lines);
    }
 
+   public static Statement appendFile(String path, Iterable<String> lines, String marker) {
+      return new AppendFile(path, lines, marker);
+   }
+
    public static Statement createRunScript(String instanceName, Iterable<String> exports, String pwd,
             Iterable<Statement> statements) {// TODO: convert so
       // that

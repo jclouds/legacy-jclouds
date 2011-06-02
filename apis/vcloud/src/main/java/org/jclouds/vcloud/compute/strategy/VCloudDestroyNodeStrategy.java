@@ -67,50 +67,47 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
       VApp vApp = client.getVAppClient().getVApp(vappId);
       if (vApp == null)
          return null;
-      vApp = powerOffVAppIfDeployed(vApp);
+
+      waitForPendingTasksToComplete(vApp);
+
       vApp = undeployVAppIfDeployed(vApp);
-      deleteVApp(vappId);
+      deleteVApp(vApp);
       try {
          return getNode.getNode(id);
       } catch (AuthorizationException e) {
+         // vcloud bug will sometimes throw an exception getting the vapp right after deleting it.
          logger.trace("authorization error getting %s after deletion: %s", id, e.getMessage());
          return null;
       }
    }
 
-   void deleteVApp(URI vappId) {
-      logger.debug(">> deleting vApp(%s)", vappId);
-      Task task = client.getVAppClient().deleteVApp(vappId);
+   void waitForPendingTasksToComplete(VApp vApp) {
+      for (Task task : vApp.getTasks())
+         waitForTask(task, vApp);
+   }
+
+   public void waitForTask(Task task, VApp vAppResponse) {
       if (!successTester.apply(task.getHref())) {
-         throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vappId, task));
+         throw new RuntimeException(String.format("failed to %s %s: %s", task.getName(), vAppResponse.getName(), task));
       }
-      logger.debug("<< deleted vApp(%s)", vappId);
+   }
+
+   void deleteVApp(VApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getHref());
+      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()), vApp);
+      logger.debug("<< deleted vApp(%s)", vApp.getHref());
    }
 
    VApp undeployVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.RESOLVED) > 0) {
+      if (vApp.getStatus() != Status.OFF) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.getVAppClient().undeployVApp(vApp.getHref());
-         if (!successTester.apply(task.getHref())) {
-            // TODO timeout
-            throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
+         try {
+            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()), vApp);
+            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         } catch (IllegalStateException e) {
+            logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
-         vApp = client.getVAppClient().getVApp(vApp.getHref());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
-      }
-      return vApp;
-   }
-
-   VApp powerOffVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.OFF) > 0) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.getVAppClient().powerOffVApp(vApp.getHref());
-         if (!successTester.apply(task.getHref())) {
-            // TODO timeout
-            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
-         }
-         vApp = client.getVAppClient().getVApp(vApp.getHref());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;
    }

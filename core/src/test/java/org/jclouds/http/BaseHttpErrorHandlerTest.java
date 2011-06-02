@@ -59,15 +59,21 @@ public abstract class BaseHttpErrorHandlerTest {
 
    protected abstract Class<? extends HttpErrorHandler> getHandlerClass();
 
-   protected void assertCodeMakes(String method, URI uri, int statusCode, String message,
+   protected void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
+            Class<? extends Exception> expected) {
+      assertCodeMakes(method, uri, statusCode, message, null, content, expected);
+   }
+
+   protected void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
             String content, Class<? extends Exception> expected) {
 
-      HttpErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(
-               getHandlerClass());
+      HttpErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(getHandlerClass());
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newStringPayload(content));
+      if (contentType != null)
+         response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

@@ -509,6 +509,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public String toString() {
       return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", userData="
-            + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings + "]";
+            + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings.build() + "]";
    }
 }

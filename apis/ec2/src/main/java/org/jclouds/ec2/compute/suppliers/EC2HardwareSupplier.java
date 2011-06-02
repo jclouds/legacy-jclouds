@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.compute.suppliers;
 
-import static org.jclouds.compute.predicates.ImagePredicates.any;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_large;
@@ -43,7 +42,7 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
    @Override
    public Set<? extends Hardware> get() {
-      return ImmutableSet.<Hardware> of(m1_small().supportsImage(any()).build(), c1_medium().build(), c1_xlarge()
+      return ImmutableSet.<Hardware> of(m1_small().build(), c1_medium().build(), c1_xlarge()
                .build(), m1_large().build(), m1_xlarge().build());
    }
 }

@@ -50,6 +50,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rimuhosting</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>nova</artifactId>
             <version>${project.version}</version>
@@ -102,6 +107,21 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>bluelock-vcdirector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>bluelock-vcloud-vcenterprise</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>bluelock-vcloud-zone01</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>stratogen-vcloud-mycloud</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

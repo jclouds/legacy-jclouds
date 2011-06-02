@@ -104,7 +104,7 @@ public class RequestSpotInstancesOptionsTest {
       RequestSpotInstancesOptions options = new RequestSpotInstancesOptions();
       options.validFrom(test);
       assertEquals(options.buildFormParameters().get("ValidFrom"),
-            Collections.singletonList("1970-05-23T21:21:18.910Z"));
+            Collections.singletonList("1970-05-23T21:21:18Z"));
    }
 
    Date test = new Date(12345678910l);
@@ -113,7 +113,7 @@ public class RequestSpotInstancesOptionsTest {
    public void testFromStatic() {
       RequestSpotInstancesOptions options = validFrom(test);
       assertEquals(options.buildFormParameters().get("ValidFrom"),
-            Collections.singletonList("1970-05-23T21:21:18.910Z"));
+            Collections.singletonList("1970-05-23T21:21:18Z"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -126,14 +126,14 @@ public class RequestSpotInstancesOptionsTest {
       RequestSpotInstancesOptions options = new RequestSpotInstancesOptions();
       options.validUntil(test);
       assertEquals(options.buildFormParameters().get("ValidUntil"),
-            Collections.singletonList("1970-05-23T21:21:18.910Z"));
+            Collections.singletonList("1970-05-23T21:21:18Z"));
    }
 
    @Test
    public void testToStatic() {
       RequestSpotInstancesOptions options = validUntil(test);
       assertEquals(options.buildFormParameters().get("ValidUntil"),
-            Collections.singletonList("1970-05-23T21:21:18.910Z"));
+            Collections.singletonList("1970-05-23T21:21:18Z"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

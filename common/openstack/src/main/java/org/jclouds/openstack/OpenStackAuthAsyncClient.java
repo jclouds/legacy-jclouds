@@ -93,4 +93,10 @@ public interface OpenStackAuthAsyncClient {
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    ListenableFuture<AuthenticationResponse> authenticate(@HeaderParam(AuthHeaders.AUTH_USER) String user,
             @HeaderParam(AuthHeaders.AUTH_KEY) String key);
+   
+
+   @GET
+   @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
+   ListenableFuture<AuthenticationResponse> authenticateStorage(@HeaderParam(AuthHeaders.STORAGE_USER) String user,
+            @HeaderParam(AuthHeaders.STORAGE_PASS) String key);
 }

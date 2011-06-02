@@ -77,7 +77,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertNonPayloadHeadersEqual(request, "Host: ec2.eu-west-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2010-11-15&Action=RequestSpotInstances&InstanceCount=3&SpotPrice=0.01&ValidFrom=1970-05-23T21%3A21%3A18.910Z&ValidUntil=2009-02-13T23%3A31%3A31.011Z&AvailabilityZoneGroup=availabilityZoneGroup&LaunchGroup=launchGroup&LaunchSpecification.ImageId=ami-voo&LaunchSpecification.Placement.AvailabilityZone=eu-west-1a&LaunchSpecification.SecurityGroup.1=group1&LaunchSpecification.InstanceType=m1.small&LaunchSpecification.KernelId=kernelId",
+            "Version=2010-11-15&Action=RequestSpotInstances&InstanceCount=3&SpotPrice=0.01&ValidFrom=1970-05-23T21%3A21%3A18Z&ValidUntil=2009-02-13T23%3A31%3A31Z&AvailabilityZoneGroup=availabilityZoneGroup&LaunchGroup=launchGroup&LaunchSpecification.ImageId=ami-voo&LaunchSpecification.Placement.AvailabilityZone=eu-west-1a&LaunchSpecification.SecurityGroup.1=group1&LaunchSpecification.InstanceType=m1.small&LaunchSpecification.KernelId=kernelId",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

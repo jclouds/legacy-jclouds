@@ -88,8 +88,9 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
 
          switch (response.getStatusCode()) {
             case 400:
-               if (error != null && error.getMinorErrorCode() != null
-                        && error.getMinorErrorCode() == MinorCode.BUSY_ENTITY)
+               if (error != null
+                        && (error.getMinorErrorCode() != null && error.getMinorErrorCode() == MinorCode.BUSY_ENTITY)
+                        || (error.getMessage() != null && error.getMessage().indexOf("is not running") != -1))
                   exception = new IllegalStateException(message, exception);
                else
                   exception = new IllegalArgumentException(message, exception);

@@ -79,7 +79,8 @@ public class DateServiceTest extends PerformanceTest {
    }
 
    public DateServiceTest() {
-      // Constant time test values, each TestData item must contain matching times!
+      // Constant time test values, each TestData item must contain matching
+      // times!
       testData = new TestData[] {
             new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07-04:00", "2009-03-12T02:00:07Z",
                   "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
@@ -160,6 +161,12 @@ public class DateServiceTest extends PerformanceTest {
       long seconds = 1254008225;
       Date date = dateService.fromSeconds(seconds);
       assertEquals(dateService.rfc822DateFormat(date), "Sat, 26 Sep 2009 23:37:05 GMT");
+   }
+
+   @Test
+   void testTzWithExtraZ() throws ExecutionException, InterruptedException {
+      assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T06:14:13-04:00").getTime(), 1306390453000l);
+      assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T06:14:13-04:00Z").getTime(), 1306390453000l);
    }
 
    @Test

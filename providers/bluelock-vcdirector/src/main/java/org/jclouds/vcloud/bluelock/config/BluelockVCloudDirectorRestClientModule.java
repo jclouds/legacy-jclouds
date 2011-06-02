@@ -27,6 +27,7 @@ import org.jclouds.vcloud.config.VCloudRestClientModule;
  * 
  * @author Adrian Cole
  */
+@Deprecated
 @RequiresHttp
 @ConfiguresRestClient
 public class BluelockVCloudDirectorRestClientModule extends VCloudRestClientModule {

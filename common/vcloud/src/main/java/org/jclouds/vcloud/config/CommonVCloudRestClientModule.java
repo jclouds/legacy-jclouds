@@ -87,6 +87,7 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.inject.ConfigurationException;
@@ -451,12 +452,14 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
          if (networks.size() == 1)
             return Iterables.getLast(networks.values()).getHref();
+         String networkName = null;
          try {
-            String networkName = injector.getInstance(Key.get(String.class, Names
-                     .named(PROPERTY_VCLOUD_DEFAULT_NETWORK)));
-            ReferenceType network = networks.get(networkName);
-            checkState(network != null, String.format("network named %s not in %s", networkName, networks.keySet()));
+            networkName = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_VCLOUD_DEFAULT_NETWORK)));
+            ReferenceType network = networks.get(Iterables.find(networks.keySet(), Predicates
+                     .containsPattern(networkName)));
             return network.getHref();
+         } catch (NoSuchElementException e) {
+            throw new IllegalStateException(String.format("network matching [%s] not in %s", networkName, networks.keySet()));
          } catch (ConfigurationException e) {
             return findDefaultNetworkForVDC(vDC, networks, injector);
          }
