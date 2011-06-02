@@ -37,6 +37,7 @@
     </modules>
     
     <properties>
+        <remoteResourcesDirectory>target/maven-shared-archive-resources</remoteResourcesDirectory>
         <jclouds.tweetstore.blobstores>cloudfiles-us,aws-s3,azureblob</jclouds.tweetstore.blobstores>
     </properties>
 
@@ -117,6 +118,14 @@
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>      
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <!-- prevents the maven-war-plugin from including the resources in WEB-INF/classes -->
+                    <attached>false</attached>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
@@ -129,9 +138,70 @@
                             <targetPath>WEB-INF</targetPath>
                             <filtering>true</filtering>
                         </resource>
+                        <resource>
+                            <directory>${remoteResourcesDirectory}/META-INF</directory>
+                            <targetPath>META-INF</targetPath>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>      
+                        <artifactId>maven-remote-resources-plugin</artifactId>
+                        <version>1.2</version>
+                        <configuration>
+                            <!-- prevents the maven-war-plugin from including the resources in WEB-INF/classes -->
+                            <attached>false</attached>
+                        </configuration>
+                        <executions>             
+                            <execution>
+                                <id>include-jclouds-properties</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <configuration>
+                                    <resourceBundles>
+                                        <resourceBundle>org.jclouds:jclouds-properties:${project.version}</resourceBundle>
+                                    </resourceBundles>
+                                </configuration>
+                            </execution>          
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <!-- see http://jira.codehaus.org/browse/MWAR-248 -->
+                            <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/platform</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${remoteResourcesDirectory}/META-INF</directory>
+                                    <targetPath>META-INF</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>${remoteResourcesDirectory}</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>jclouds.properties</include>
+                                    </includes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

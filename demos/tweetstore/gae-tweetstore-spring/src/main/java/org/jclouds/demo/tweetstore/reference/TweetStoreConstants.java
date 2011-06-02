@@ -24,10 +24,11 @@ package org.jclouds.demo.tweetstore.reference;
  * @author Adrian Cole
  */
 public interface TweetStoreConstants {
-   public static final String PROPERTY_TWEETSTORE_CONTAINER = "jclouds.tweetstore.container";
-   /**
-    * Note that this has to conform to restrictions of all blobstores. for example, azure doesn't
-    * support periods.
-    */
-   public static final String SENDER_NAME = "sendername";
+    static final String PROPERTY_TWEETSTORE_BLOBSTORES = "jclouds.tweetstore.blobstores";
+    static final String PROPERTY_TWEETSTORE_CONTAINER = "jclouds.tweetstore.container";
+    /**
+     * Note that this has to conform to restrictions of all blobstores. for
+     * example, azure doesn't support periods.
+     */
+    static final String SENDER_NAME = "sendername";
 }
