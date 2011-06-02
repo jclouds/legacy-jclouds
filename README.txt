@@ -42,9 +42,8 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
            to all of these providers
 
 our blobstore api supports: aws-s3, cloudfiles-us, cloudfiles-uk, filesystem,
-                            azureblob, atmos (generic), synaptic-storage, scaleup-storage,
+                            azureblob, atmos (generic), synaptic-storage, 
                             cloudonestorage, walrus(generic), googlestorage, ninefold-storage,
-                            scality-rs2 (generic), hosteurope-storage, tiscali-storage,
                             eucalyptus-partnercloud-s3, swift (generic), transient (in-mem)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
@@ -55,7 +54,8 @@ our loadbalancer api supports: cloudloadbalancers-us
   * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova,
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova, scality ring,
+                          hosteurope-storage, tiscali-storage, scaleup-storage,
                           azurequeue, simpledb, cloudstack as well as a async-http-client
                           driver in the sandbox
 
