@@ -42,6 +42,7 @@ import org.jclouds.atmos.functions.AtmosObjectName;
 import org.jclouds.atmos.functions.ParseDirectoryListFromContentAndHeaders;
 import org.jclouds.atmos.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
+import org.jclouds.atmos.functions.ParseUserMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
@@ -164,7 +165,7 @@ public interface AtmosAsyncClient {
     * @see AtmosClient#getUserMetadata
     */
    @HEAD
-   @ResponseParser(ParseSystemMetadataFromHeaders.class)
+   @ResponseParser(ParseUserMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{path}")
    @QueryParams(keys = "metadata/user")
