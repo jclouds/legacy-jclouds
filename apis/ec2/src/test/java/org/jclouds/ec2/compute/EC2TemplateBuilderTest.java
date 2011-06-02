@@ -26,7 +26,7 @@ import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_large;
-import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small32;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_2xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
@@ -161,7 +161,7 @@ public class EC2TemplateBuilderTest {
                         .build()));
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),
-                        m1_small().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
+                        m1_small32().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
                         m2_4xlarge().build(), CC1_4XLARGE));
 
       return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,

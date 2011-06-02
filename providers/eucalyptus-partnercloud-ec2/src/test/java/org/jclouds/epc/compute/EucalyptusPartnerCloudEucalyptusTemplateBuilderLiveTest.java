@@ -24,10 +24,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.ec2.compute.util.EC2ComputeUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -68,16 +71,18 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends Bas
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("emi-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
+      assertEquals(defaultTemplate.getHardware().getId(), "m1.small");
       assertEquals(defaultTemplate.getLocation().getId(), "kvm-cluster");
-      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
-
+      assertEquals(defaultTemplate.getLocation().getScope(), LocationScope.ZONE);
+      assertEquals(AWSUtils.getRegionFromLocationOrNull(defaultTemplate.getLocation()), "Eucalyptus");
+      assertEquals(EC2ComputeUtils.getZoneFromLocationOrNull(defaultTemplate.getLocation()), "kvm-cluster");
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override
