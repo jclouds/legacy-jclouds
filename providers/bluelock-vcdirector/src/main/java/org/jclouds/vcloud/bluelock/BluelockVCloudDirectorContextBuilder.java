@@ -42,6 +42,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@Deprecated
 public class BluelockVCloudDirectorContextBuilder extends VCloudContextBuilder {
 
    public BluelockVCloudDirectorContextBuilder(Properties props) {

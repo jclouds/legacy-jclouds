@@ -27,10 +27,11 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Director.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Enterprise.
  * 
  * @author Adrian Cole
  */
+@Deprecated
 public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata {
 
    /**
@@ -54,7 +55,7 @@ public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public String getName() {
-      return "Bluelock vCloud Director";
+      return "Bluelock vCloud Enterprise";
    }
 
    /**

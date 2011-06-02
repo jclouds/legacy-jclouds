@@ -20,19 +20,22 @@
 (ns org.jclouds.compute2
   "A clojure binding to the jclouds ComputeService.
 
-  Current supported providers are:
-   [aws-ec2, eucualyptus-partnercloud-ec2, elastichosts-lon-b,
-    cloudservers-uk, cloudservers-us, byon, cloudsigma-zrh, stub,
-    trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus,
-    slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts,
-    openhosting-east1, serverlove-z1-man, skalicloud-sdg-my, deltacloud]
+ jclouds supports many compute providers including Amazon EC2 (aws-ec2),
+ Rackspace Cloud Servers (cloudservers-us), GoGrid (gogrid), and BlueLock
+ vCloud (bluelock-vcloud-zone01).  There are over a dozen to choose from.  
+
+ Current supported providers are available via the following dependency:
+  org.jclouds/jclouds-allcompute
+
+ You can inquire about which providers are loaded via the following:
+  (seq (org.jclouds.providers.Providers/allCompute))
 
 Here's an example of getting some compute configuration from rackspace:
 
   (use 'org.jclouds.compute2)
   (use 'clojure.pprint)
 
-  (def provider \"cloudservers\")
+  (def provider \"cloudservers-us\")
   (def provider-identity \"username\")
   (def provider-credential \"password\")
 
