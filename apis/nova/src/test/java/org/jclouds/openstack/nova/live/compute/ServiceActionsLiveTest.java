@@ -56,7 +56,7 @@ public class ServiceActionsLiveTest extends ComputeBase {
       //testGetNodeMetadata();
    }
 
-   @Test
+   @Test(enabled = false)
    public void testSuspendResume() throws Exception {
       //TODO: failing, suspend is not supported by the nova provider yet
       getDefaultNodeImmediately(group);

@@ -118,19 +118,4 @@ public class ClientBase {
          Thread.sleep(1000);
       }
    }
-
-   protected void awaitForSshPort(String address, Credentials credentials) throws URISyntaxException {
-      IPSocket socket = new IPSocket(address, 22);
-
-      JschSshClient ssh = new JschSshClient(
-            new BackoffLimitedRetryHandler(), socket, 10000, credentials.identity, null, credentials.credential.getBytes());
-      while (true) {
-         try {
-            System.out.println("ping: " + socket);
-            ssh.connect();
-            return;
-         } catch (SshException ignore) {
-         }
-      }
-   }
 }
