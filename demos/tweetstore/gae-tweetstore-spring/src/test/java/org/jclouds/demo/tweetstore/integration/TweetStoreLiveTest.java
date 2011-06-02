@@ -19,6 +19,7 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class TweetStoreLiveTest {
    private String container;
 
    private static final Iterable<String> blobstores = 
-       Splitter.on(',').split(System.getProperty("jclouds.tweetstore.blobstores", 
+       Splitter.on(',').split(System.getProperty(PROPERTY_TWEETSTORE_BLOBSTORES, 
                "cloudfiles-us,aws-s3,azureblob"));
    private static final Properties props = new Properties();
 
