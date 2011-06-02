@@ -18,10 +18,10 @@
  */
 package org.jclouds.vcloud.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +41,8 @@ import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.xml.OrgListHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 
 /**
  * This parses {@link VCloudSession} from HTTP headers.
@@ -49,7 +51,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCloudSession> {
-   static final Pattern pattern = Pattern.compile("vcloud-token=([^;]+);.*");
+   static final Pattern pattern = Pattern.compile("(vcloud-token)=?([^;]+)(;.*)?");
 
    private final ParseSax.Factory factory;
    private final Provider<OrgListHandler> orgHandlerProvider;
@@ -65,32 +67,42 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
     * parses the http response headers to create a new {@link VCloudSession} object.
     */
    public VCloudSession apply(HttpResponse from) {
-      String cookieHeader = checkNotNull(from.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE),
-               HttpHeaders.SET_COOKIE);
-
-      final Matcher matcher = pattern.matcher(cookieHeader);
-      boolean matchFound = matcher.find();
       try {
-         if (matchFound) {
-            final Map<String, ReferenceType> org = factory.create(orgHandlerProvider.get()).parse(
-                     from.getPayload().getInput());
+         final String token = parseTokenFromHeaders(from);
+         final Map<String, ReferenceType> org = factory.create(orgHandlerProvider.get()).parse(
+                  from.getPayload().getInput());
 
-            return new VCloudSession() {
-               @VCloudToken
-               public String getVCloudToken() {
-                  return matcher.group(1);
-               }
+         return new VCloudSession() {
+            @VCloudToken
+            public String getVCloudToken() {
+               return token;
+            }
 
-               @Org
-               public Map<String, ReferenceType> getOrgs() {
-                  return org;
-               }
-            };
-
-         }
+            @Org
+            public Map<String, ReferenceType> getOrgs() {
+               return org;
+            }
+         };
       } finally {
          releasePayload(from);
       }
-      throw new HttpResponseException("not found ", null, from);
+   }
+
+   public String parseTokenFromHeaders(HttpResponse from) {
+      String cookieHeader = from.getFirstHeaderOrNull("x-vcloud-authorization");
+      if (cookieHeader != null) {
+         Matcher matcher = pattern.matcher(cookieHeader);
+         return matcher.find() ? matcher.group(2) : cookieHeader;
+      } else {
+         try {
+            cookieHeader = Iterables.find(from.getHeaders().get(HttpHeaders.SET_COOKIE), Predicates.contains(pattern));
+            Matcher matcher = pattern.matcher(cookieHeader);
+            matcher.find();
+            return matcher.group(2);
+         } catch (NoSuchElementException e) {
+            throw new HttpResponseException(String.format("Header %s or %s must be present", "x-vcloud-authorization",
+                     HttpHeaders.SET_COOKIE), null, from);
+         }
+      }
    }
 }
