@@ -55,9 +55,8 @@ public class NovaClientLiveTest extends ClientBase {
       assertTrue(initialContainerCount >= 0);
    }
 
-   @Test(enabled = false)
+   @Test
    public void testListServersDetail() throws Exception {
-      //TODO: failing, /v1.1/servers/{server id}/ips URL is not available (issue in the OpenStack)
       Set<Server> response = client.listServers(withDetails());
       assert null != response;
       long initialContainerCount = response.size();
@@ -229,8 +228,9 @@ public class NovaClientLiveTest extends ClientBase {
       }
    }
 
-   @Test(enabled = true, timeOut = 300000)
+   @Test(enabled = false, timeOut = 300000)
    public void testServerDetails() throws Exception {
+      //TODO: failing, /v1.1/servers/{server id}/ips URL is not available (issue in the OpenStack)
       Server server = getDefaultServerImmediately();
       assertNotNull(server.getHostId(), "Host id: ");
       assertNotNull(server.getAddresses());
