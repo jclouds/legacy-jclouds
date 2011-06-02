@@ -16,20 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock.config;
+package org.jclouds.bluelock.vcloud.zone01.features;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.features.VDCClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * 
  * 
  * @author Adrian Cole
  */
-@Deprecated
-@RequiresHttp
-@ConfiguresRestClient
-public class BluelockVCloudDirectorRestClientModule extends VCloudRestClientModule {
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "BluelockVCloudZone01VDCClientLiveTest")
+public class BluelockVCloudZone01VDCClientLiveTest extends VDCClientLiveTest {
 
+   public BluelockVCloudZone01VDCClientLiveTest() {
+      provider = "bluelock-vcloud-zone01";
+   }
 }

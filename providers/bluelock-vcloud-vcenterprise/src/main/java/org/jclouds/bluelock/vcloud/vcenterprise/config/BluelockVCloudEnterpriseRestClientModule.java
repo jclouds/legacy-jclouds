@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock.config;
+package org.jclouds.bluelock.vcloud.vcenterprise.config;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -27,9 +27,8 @@ import org.jclouds.vcloud.config.VCloudRestClientModule;
  * 
  * @author Adrian Cole
  */
-@Deprecated
 @RequiresHttp
 @ConfiguresRestClient
-public class BluelockVCloudDirectorRestClientModule extends VCloudRestClientModule {
+public class BluelockVCloudEnterpriseRestClientModule extends VCloudRestClientModule {
 
 }

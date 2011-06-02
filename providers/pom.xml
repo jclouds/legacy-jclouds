@@ -54,6 +54,8 @@
         <module>cloudfiles-uk</module>
         <module>cloudloadbalancers-us</module>
         <module>bluelock-vcdirector</module>
+        <module>bluelock-vcloud-vcenterprise</module>
+        <module>bluelock-vcloud-zone01</module>
         <module>trmk-ecloud</module>
         <module>trmk-vcloudexpress</module>
         <module>elastichosts-lon-p</module>

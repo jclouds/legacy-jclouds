@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.bluelock.vcloud.vcenterprise;
 
 import java.util.List;
 import java.util.Properties;
@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.vcloud.bluelock.config.BluelockVCloudDirectorRestClientModule;
+import org.jclouds.bluelock.vcloud.vcenterprise.config.BluelockVCloudEnterpriseRestClientModule;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
 import com.google.inject.Injector;
@@ -42,10 +42,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Deprecated
-public class BluelockVCloudDirectorContextBuilder extends VCloudContextBuilder {
+public class BluelockVCloudEnterpriseContextBuilder extends VCloudContextBuilder {
 
-   public BluelockVCloudDirectorContextBuilder(Properties props) {
+   public BluelockVCloudEnterpriseContextBuilder(Properties props) {
       super(props);
    }
 
@@ -56,7 +55,7 @@ public class BluelockVCloudDirectorContextBuilder extends VCloudContextBuilder {
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new BluelockVCloudDirectorRestClientModule());
+      modules.add(new BluelockVCloudEnterpriseRestClientModule());
    }
 
 }

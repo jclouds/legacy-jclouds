@@ -16,20 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock.config;
+package org.jclouds.bluelock.vcloud.vcenterprise;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.testng.annotations.Test;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
-@Deprecated
-@RequiresHttp
-@ConfiguresRestClient
-public class BluelockVCloudDirectorRestClientModule extends VCloudRestClientModule {
+@Test(groups = "unit", testName = "BluelockVCloudEnterpriseProviderTest")
+public class BluelockVCloudEnterpriseProviderTest extends BaseProviderMetadataTest {
 
+   public BluelockVCloudEnterpriseProviderTest() {
+      super(new BluelockVCloudEnterpriseProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   }
 }

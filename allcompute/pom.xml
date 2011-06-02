@@ -106,6 +106,16 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>bluelock-vcloud-vcenterprise</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>bluelock-vcloud-zone01</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>gogrid</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.bluelock.vcloud.zone01;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,19 +27,18 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Enterprise.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Zone 1.
  * 
  * @author Adrian Cole
  */
-@Deprecated
-public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata {
+public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "bluelock-vcdirector";
+      return "bluelock-vcloud-zone01";
    }
 
    /**
@@ -55,7 +54,7 @@ public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public String getName() {
-      return "Bluelock vCloud Enterprise";
+      return "Bluelock vCloud Zone 1";
    }
 
    /**
@@ -87,7 +86,7 @@ public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://vcenterprise.bluelock.com/cloud/");
+      return URI.create("https://zone01.bluelock.com/cloud/");
    }
 
    /**
@@ -103,7 +102,7 @@ public class BluelockVCloudDirectorProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("bluelock-vcdirector");
+      return ImmutableSet.of("bluelock-vcloud-zone01");
    }
 
    /**

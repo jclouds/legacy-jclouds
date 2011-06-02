@@ -16,14 +16,13 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.bluelock.vcloud.vcenterprise;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 
@@ -32,11 +31,9 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
  * 
  * @author Adrian Cole
  */
-@Deprecated
-public class BluelockVCloudDirectorPropertiesBuilder extends VCloudPropertiesBuilder {
+public class BluelockVCloudEnterprisePropertiesBuilder extends VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
-      Logger.getAnonymousLogger().warning("this provider is deprecated: please use \"bluelock-vcloud-vcenterprise\"");
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-IN");
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcenterprise.bluelock.com/api");
@@ -44,7 +41,7 @@ public class BluelockVCloudDirectorPropertiesBuilder extends VCloudPropertiesBui
       return properties;
    }
 
-   public BluelockVCloudDirectorPropertiesBuilder(Properties properties) {
+   public BluelockVCloudEnterprisePropertiesBuilder(Properties properties) {
       super(properties);
    }
 }
