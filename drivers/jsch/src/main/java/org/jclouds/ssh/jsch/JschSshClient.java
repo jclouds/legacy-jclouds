@@ -282,6 +282,7 @@ public class JschSshClient implements SshClient {
          try {
              executor.connect();
          } catch (JSchException e) {
+             // performing a retry if connect has thrown an exception
              executor.disconnect();
              backoffForAttempt(++j, String.format("%s@%s:%d: Failed to connect ChannelExec", username, host, port));
          }
