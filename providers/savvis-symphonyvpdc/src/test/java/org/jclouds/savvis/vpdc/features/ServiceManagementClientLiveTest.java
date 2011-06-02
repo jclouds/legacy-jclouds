@@ -27,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
+import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
@@ -47,11 +48,13 @@ public class ServiceManagementClientLiveTest extends BaseVPDCClientLiveTest {
       super.setupClient();
       client = restContext.getApi().getServiceManagementClient();
    }
-
+   
+   // test for a single vm, as savvis response times are very slow. So if there are multiple vpdc's with numerous vm's,
+   // test execution will invariably take a long time
    public void testLifeCycle() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       for (Resource org1 : restContext.getApi().listOrgs()) {
          Org org = restContext.getApi().getBrowsingClient().getOrg(org1.getId());
-         for (Resource vdc : org.getVDCs()) {
+         VDC_LOOP : for (Resource vdc : org.getVDCs()) {
             VDC VDC = restContext.getApi().getBrowsingClient().getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vmHandle : Iterables.filter(VDC.getResourceEntities(), new Predicate<Resource>() {
 
@@ -61,18 +64,21 @@ public class ServiceManagementClientLiveTest extends BaseVPDCClientLiveTest {
                }
 
             })) {
-
-               assert taskTester.apply(client.powerOffVM(vmHandle.getHref()).getId());
+            	
+               Task powerOffTask = client.powerOffVM(vmHandle.getHref());
+               assert taskTester.apply(powerOffTask.getId());
 
                VM vm = restContext.getApi().getBrowsingClient().getVM(vmHandle.getHref(), withPowerState());
                assertEquals(vm.getStatus(), VM.Status.OFF);
-
-               assert taskTester.apply(client.powerOnVM(vmHandle.getHref()).getId());
+               
+               Task powerOnTask = client.powerOnVM(vmHandle.getHref());
+               assert taskTester.apply(powerOnTask.getId());
 
                vm = restContext.getApi().getBrowsingClient().getVM(vmHandle.getHref(), withPowerState());
 
                assertEquals(vm.getStatus(), VM.Status.ON);
-
+               
+               break VDC_LOOP;
             }
          }
       }
