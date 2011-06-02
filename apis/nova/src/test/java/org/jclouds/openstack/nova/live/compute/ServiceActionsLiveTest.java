@@ -56,7 +56,7 @@ public class ServiceActionsLiveTest extends ComputeBase {
       //testGetNodeMetadata();
    }
 
-   @Test
+   @Test //Suspend is not supported by the provider yet
    public void testSuspendResume() throws Exception {
       getDefaultNodeImmediately(group);
       computeService.suspendNodesMatching(inGroup(group));

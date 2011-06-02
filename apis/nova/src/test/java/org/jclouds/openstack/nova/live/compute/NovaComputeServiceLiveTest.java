@@ -159,7 +159,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       //TODO runJavaInstallationScriptWithCreds(group, os, new Credentials("root", keyPair.get("private")));
       //TODO no response? if os is null (ZYPPER)
 
-      checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
+      node = computeService.getNodeMetadata(node.getId());
+      checkNodes(Sets.newHashSet(node), group);
 
       @SuppressWarnings("unused")
       Credentials good = node.getCredentials();
