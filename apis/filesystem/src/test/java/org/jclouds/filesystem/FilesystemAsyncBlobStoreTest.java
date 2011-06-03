@@ -18,13 +18,7 @@
  */
 package org.jclouds.filesystem;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +46,7 @@ import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.CreationException;
@@ -73,7 +68,6 @@ public class FilesystemAsyncBlobStoreTest {
 
    static {
       System.setProperty(LOGGING_CONFIG_KEY, LOGGING_CONFIG_VALUE);
-
    }
 
    private BlobStoreContext context = null;
@@ -109,6 +103,12 @@ public class FilesystemAsyncBlobStoreTest {
       }
    }
 
+   @DataProvider
+   public Object[][] ignoreOnWindows() {
+       return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
+                                       : TestUtils.SINGLE_NO_ARG_INVOCATION);
+   }
+   
    /**
     * Checks if context parameters are managed in the correct way
     * 
@@ -390,6 +390,7 @@ public class FilesystemAsyncBlobStoreTest {
    /**
     * Test of removeBlob method, with only one blob with a complex path as key
     */
+   @Test(dataProvider = "ignoreOnWindows")
    public void testRemoveBlob_ComplexBlobKey() throws IOException {
       final String BLOB_KEY = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
       boolean result;
@@ -419,6 +420,7 @@ public class FilesystemAsyncBlobStoreTest {
     * Test of removeBlob method, with two blobs with a complex path as key and when first blob is
     * removed, not all of its key's path is removed, because it is shared with the second blob's key
     */
+   @Test(dataProvider = "ignoreOnWindows")
    public void testRemoveBlob_TwoComplexBlobKeys() throws IOException {
       final String BLOB_KEY1 = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
       final String BLOB_KEY2 = TestUtils.createRandomBlobKey("aa/bb/ee/ff/", null);
@@ -692,6 +694,7 @@ public class FilesystemAsyncBlobStoreTest {
       TestUtils.directoryExists(TARGET_CONTAINER_NAME2, false);
    }
 
+   @Test(dataProvider = "ignoreOnWindows")
    public void testInvalidContainerName() {
       try {
          blobStore.createContainerInLocation(null, "file/system");

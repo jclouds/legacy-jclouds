@@ -48,6 +48,7 @@ import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -92,6 +93,12 @@ public class FilesystemStorageStrategyImplTest {
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
 
+   @DataProvider
+   public Object[][] ignoreOnWindows() {
+       return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
+                                       : TestUtils.SINGLE_NO_ARG_INVOCATION);
+   }
+   
    public void testCreateDirectory() {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
       TestUtils.directoryExists(TARGET_CONTAINER_NAME, true);
@@ -114,10 +121,11 @@ public class FilesystemStorageStrategyImplTest {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
    }
 
+   @Test(dataProvider = "ignoreOnWindows")
    public void testCreateDirectory_WrongDirectoryName() {
       try {
          storageStrategy.createDirectory(CONTAINER_NAME, "$%&!'`\\/");
-         fail("No exception throwed");
+         fail("No exception thrown");
       } catch (Exception e) {
       }
    }
