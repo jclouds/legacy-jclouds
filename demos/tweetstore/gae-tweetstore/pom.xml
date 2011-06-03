@@ -195,6 +195,10 @@
         
         <profile>
             <id>deploy</id>
+            <properties>
+                <!-- classifier to choose the correct jclouds.properties file -->
+                <tweetstore.instance>gae-tweetstore</tweetstore.instance>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
