@@ -27,7 +27,7 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malasya.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malaysia.
  *
  * @author Adrian Cole
  */
@@ -54,7 +54,7 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "SkaliCloud Malasya";
+      return "SkaliCloud Malaysia";
    }
 
    /**
