@@ -21,11 +21,9 @@ package org.jclouds.savvis.vpdc.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
 import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.ExecResponse;
@@ -131,7 +129,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 //      conditionallyCheckSSH();
    }
 
-   @Test
+   @Test(dependsOnMethods="testCloneVApp")
    public void testZCreateMultipleVMs() throws Exception {
       billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
       vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
@@ -194,8 +192,8 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
          // fetch the task again, in savvis, task.getOwner is populated with vApp after task has finished
          task = restContext.getApi().getBrowsingClient().getTask(task.getId());
          
-         vm = restContext.getApi().getBrowsingClient().getVM(task.getOwner().getHref(), GetVMOptions.NONE);
-         assert vm.getHref() != null : vm;
+         VM newVM = restContext.getApi().getBrowsingClient().getVM(task.getOwner().getHref(), GetVMOptions.NONE);
+         assert newVM.getHref() != null : newVM;
       }
    }
    
@@ -242,7 +240,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       }
    }
 
-   @Test(dependsOnMethods="testPowerOnVM")
+   @Test(dependsOnMethods="testCreateVirtualMachine")
    public void testCloneVApp() throws Exception {
 	   billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
 	   vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
@@ -264,7 +262,11 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
                restContext.getApi().getBrowsingClient().getVDCInOrg(billingSiteId, vpdcId).getAvailableNetworks(), 0)
                .getId();
 	   
-       Task task = client.cloneVApp(vm.getHref(), "clonedvm", networkTierName);
+	   String clonedVMName = vm.getName() + "clone";
+	   
+	   System.out.printf("Cloning vm - name %s in vpdcId %s in network %s, newVM name is %s%n", vm.getName(), vpdcId, networkTierName, clonedVMName);
+	   
+       Task task = client.cloneVApp(vm.getHref(), clonedVMName, networkTierName);
        
        // make sure there's no error
        assert task.getId() != null && task.getError() == null : task;
@@ -273,8 +275,8 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
        // fetch the task again, in savvis, task.getOwner is populated with vApp after task has finished
        task = restContext.getApi().getBrowsingClient().getTask(task.getId());
        
-       vm = restContext.getApi().getBrowsingClient().getVM(task.getOwner().getHref(), GetVMOptions.NONE);
-       assert vm.getHref() != null : vm;
+       VM clonedVM = restContext.getApi().getBrowsingClient().getVM(task.getOwner().getHref(), GetVMOptions.NONE);
+       assert clonedVM.getHref() != null : clonedVM;
    }
 
    private void conditionallyCheckSSH() {
@@ -302,26 +304,6 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
          if (client != null)
             client.disconnect();
       }
-   }
-
-   @Test(dependsOnMethods="testCreateVirtualMachine")
-   public void testPowerOffVM() throws Exception {
-      Task task = client.powerOffVM(vm.getHref());
-      
-      // make sure there's no error
-      assert task.getId() != null && task.getError() == null : task;
-
-      assert this.taskTester.apply(task.getId());
-   }
-
-   @Test(dependsOnMethods="testPowerOffVM")
-   public void testPowerOnVM() throws Exception {
-      Task task = client.powerOnVM(vm.getHref());
-      
-      // make sure there's no error
-      assert task.getId() != null && task.getError() == null : task;
-
-      assert this.taskTester.apply(task.getId());
    }
 
    @AfterGroups(groups = "live")
