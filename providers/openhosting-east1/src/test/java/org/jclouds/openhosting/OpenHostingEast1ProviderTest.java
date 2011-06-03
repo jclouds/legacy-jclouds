@@ -16,22 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.openhosting;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The AWSS3ProviderTest tests the {@link org.jclouds.aws.s3.AWSS3ProviderMetadata} class.
+ * The OpenHostingEast1ProviderTest tests the {@link OpenHostingEast1ProviderMetadata} class.
  * 
- * @author Adrian Cole
+ * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-@Test(groups = "unit", testName = "AWSS3ProviderTest")
-public class AWSS3ProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "OpenHostingEast1ProviderTest")
+public class OpenHostingEast1ProviderTest extends BaseProviderMetadataTest {
 
-   public AWSS3ProviderTest() {
-      super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+   public OpenHostingEast1ProviderTest() {
+      super(new OpenHostingEast1ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 
 }

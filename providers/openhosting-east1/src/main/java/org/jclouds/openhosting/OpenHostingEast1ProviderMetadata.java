@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.epc;
+package org.jclouds.openhosting;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -26,19 +26,19 @@ import java.util.Set;
 import org.jclouds.providers.BaseProviderMetadata;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
- * Partner Cloud S3 provider.
- * 
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for OpenHosting's
+ * East1 provider.
+ *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
+public class OpenHostingEast1ProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "eucalyptus-partnercloud-s3";
+      return "openhosting-east1";
    }
 
    /**
@@ -46,7 +46,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getType() {
-      return BLOBSTORE_TYPE;
+      return COMPUTE_TYPE;
    }
 
    /**
@@ -54,7 +54,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getName() {
-      return "Eucalyptus Partner Cloud (S3)";
+      return "OpenHosting East1";
    }
 
    /**
@@ -62,7 +62,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getIdentityName() {
-      return "Username";
+      return "User UUID";
    }
 
    /**
@@ -70,7 +70,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getCredentialName() {
-      return "Password";
+      return "Secret API Key";
    }
 
    /**
@@ -78,7 +78,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://www.eucalyptus.com/partners");
+      return URI.create("https://east1.openhosting.com/");
    }
 
    /**
@@ -86,7 +86,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
+      return URI.create("https://east1.openhosting.com/accounts/login");
    }
 
    /**
@@ -94,15 +94,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://open.eucalyptus.com/wiki/IntroducingEucalyptus_v2.0");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3");
+      return URI.create("http://www.openhosting.com/support/api/");
    }
 
    /**
@@ -110,7 +102,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA");
+      return ImmutableSet.of("US-VA");
    }
 
 }

@@ -101,6 +101,14 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
     * {@inheritDoc}
     */
    @Override
+   public Set<String> getLinkedServices() {
+      return ImmutableSet.of("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Set<String> getIso3166Codes() {
       return ImmutableSet.of("US-CA");
    }
