@@ -21,6 +21,10 @@ package org.jclouds.demo.tweetstore.config;
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,11 +94,14 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       // shared across all blobstores and used to retrieve tweets
       try {
           twitter4j.conf.Configuration twitterConf = new ConfigurationBuilder()
-              .setUser(props.getProperty("twitter.identity"))
-              .setPassword(props.getProperty("twitter.credential")).build();
-      twitterClient = new TwitterFactory(twitterConf).getInstance();
+              .setOAuthConsumerKey(props.getProperty(PROPERTY_TWITTER_CONSUMER_KEY))
+              .setOAuthConsumerSecret(props.getProperty(PROPERTY_TWITTER_CONSUMER_SECRET))
+              .setOAuthAccessToken(props.getProperty(PROPERTY_TWITTER_ACCESSTOKEN))
+              .setOAuthAccessTokenSecret(props.getProperty(PROPERTY_TWITTER_ACCESSTOKEN_SECRET))
+              .build();
+          twitterClient = new TwitterFactory(twitterConf).getInstance();
       } catch (IllegalArgumentException e) {
-         throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
+          throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
       // common namespace for storing tweets
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER);
