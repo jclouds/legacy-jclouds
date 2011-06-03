@@ -131,7 +131,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 //      conditionallyCheckSSH();
    }
 
-   @Test
+   @Test(dependsOnMethods="testCloneVApp")
    public void testZCreateMultipleVMs() throws Exception {
       billingSiteId = restContext.getApi().getBrowsingClient().getOrg(null).getId();// default
       vpdcId = Iterables.find(restContext.getApi().getBrowsingClient().getOrg(billingSiteId).getVDCs(),
