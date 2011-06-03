@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.elastichosts;
+package org.jclouds.rimuhosting.miro;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
@@ -26,10 +26,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ElasticHostsPeer1LondonProviderTest")
-public class ElasticHostsPeer1LondonProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "RimuHostingProviderTest")
+public class RimuHostingProviderTest extends BaseProviderMetadataTest {
 
-   public ElasticHostsPeer1LondonProviderTest() {
-      super(new ElasticHostsPeer1LondonProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   public RimuHostingProviderTest() {
+      super(new RimuHostingProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }

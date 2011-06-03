@@ -27,18 +27,18 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London Peer 1.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London BlueSquare.
  *
  * @author Adrian Cole
  */
-public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadata {
+public class ElasticHostsBlueSquareLondonProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "elastichosts-lon-p";
+      return "elastichosts-lon-b";
    }
 
    /**
@@ -54,7 +54,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public String getName() {
-      return "ElasticHosts London Peer 1";
+      return "ElasticHosts London BlueSquare";
    }
 
    /**
@@ -78,7 +78,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public URI getHomepage() {
-      return URI.create("https://lon-p.elastichosts.com");
+      return URI.create("https://lon-b.elastichosts.com");
    }
 
    /**
@@ -86,7 +86,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://lon-p.elastichosts.com/accounts");
+      return URI.create("https://lon-b.elastichosts.com/accounts");
    }
    /**
     * {@inheritDoc}
@@ -101,7 +101,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-lon-p");
+      return ImmutableSet.of("elastichosts-lon-b");
    }
 
    /**

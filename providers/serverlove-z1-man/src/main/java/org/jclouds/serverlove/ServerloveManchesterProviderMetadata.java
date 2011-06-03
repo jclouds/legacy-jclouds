@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.elastichosts;
+package org.jclouds.serverlove;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,18 +27,18 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London Peer 1.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Serverlove Manchester.
  *
  * @author Adrian Cole
  */
-public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadata {
+public class ServerloveManchesterProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "elastichosts-lon-p";
+      return "serverlove-z1-man";
    }
 
    /**
@@ -54,7 +54,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public String getName() {
-      return "ElasticHosts London Peer 1";
+      return "Serverlove Manchester";
    }
 
    /**
@@ -78,7 +78,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public URI getHomepage() {
-      return URI.create("https://lon-p.elastichosts.com");
+      return URI.create("http://www.serverlove.com");
    }
 
    /**
@@ -86,14 +86,14 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://lon-p.elastichosts.com/accounts");
+      return URI.create("http://www.serverlove.com/login");
    }
    /**
     * {@inheritDoc}
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://www.elastichosts.com/cloud-hosting/api");
+      return URI.create("http://www.serverlove.com/cloud-server-faqs/api-questions");
    }
 
    /**
@@ -101,7 +101,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-lon-p");
+      return ImmutableSet.of("serverlove-z1-man");
    }
 
    /**
@@ -109,7 +109,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB-LND");
+      return ImmutableSet.of("GB-MAN");
    }
 
 }

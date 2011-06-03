@@ -26,10 +26,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ElasticHostsPeer1LondonProviderTest")
-public class ElasticHostsPeer1LondonProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "ElasticHostsBlueSquareLondonProviderTest")
+public class ElasticHostsBlueSquareLondonProviderTest extends BaseProviderMetadataTest {
 
-   public ElasticHostsPeer1LondonProviderTest() {
-      super(new ElasticHostsPeer1LondonProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   public ElasticHostsBlueSquareLondonProviderTest() {
+      super(new ElasticHostsBlueSquareLondonProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }
