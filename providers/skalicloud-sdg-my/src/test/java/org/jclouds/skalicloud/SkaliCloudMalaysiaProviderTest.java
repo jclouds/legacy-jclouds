@@ -27,9 +27,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "SkaliCloudMalaysiaProviderTest")
-public class SkaliCloudMalasyaProviderTest extends BaseProviderMetadataTest {
+public class SkaliCloudMalaysiaProviderTest extends BaseProviderMetadataTest {
 
-   public SkaliCloudMalasyaProviderTest() {
+   public SkaliCloudMalaysiaProviderTest() {
       super(new SkaliCloudMalaysiaProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }

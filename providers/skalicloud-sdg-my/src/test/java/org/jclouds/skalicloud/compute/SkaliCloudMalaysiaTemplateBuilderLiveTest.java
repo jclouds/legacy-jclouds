@@ -53,11 +53,12 @@ public class SkaliCloudMalaysiaTemplateBuilderLiveTest extends BaseTemplateBuild
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return input.version.equals("") || input.version.equals("10.10");
+                  return input.version.equals("") || input.version.matches("10.[01][04]");
                case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.equals("5.0"))
+                           || (input.version.equals("6.0") && input.is64Bit);
                case CENTOS:
-                  return input.version.equals("") || input.version.equals("5.5");
+                  return input.version.equals("") || input.version.matches("5.[56]");
                case WINDOWS:
                   return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
                default:
