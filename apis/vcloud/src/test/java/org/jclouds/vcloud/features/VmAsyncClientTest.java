@@ -31,8 +31,10 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.utils.TestUtils;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VmHandler;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
@@ -69,6 +71,7 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
       checkFilters(request);
    }
 
+   @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=402")
    public void testUpdateGuestConfiguration() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VmAsyncClient.class.getMethod("updateGuestCustomizationOfVm", GuestCustomizationSection.class,
                URI.class);
@@ -316,4 +319,10 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
       checkFilters(request);
    }
 
+   @DataProvider
+   public Object[][] ignoreOnWindows() {
+      return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
+                                      : TestUtils.SINGLE_NO_ARG_INVOCATION);
+   }
+   
 }

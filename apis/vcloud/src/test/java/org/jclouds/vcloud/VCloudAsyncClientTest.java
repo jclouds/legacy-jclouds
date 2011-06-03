@@ -42,6 +42,7 @@ import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.utils.TestUtils;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
@@ -54,6 +55,7 @@ import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.jclouds.vcloud.xml.VmHandler;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
@@ -115,6 +117,7 @@ public class VCloudAsyncClientTest extends BaseVCloudAsyncClientTest<VCloudAsync
       checkFilters(request);
    }
 
+   @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=402")
    public void testUpdateGuestConfiguration() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("updateGuestCustomizationOfVm", URI.class,
                GuestCustomizationSection.class);
@@ -812,4 +815,10 @@ public class VCloudAsyncClientTest extends BaseVCloudAsyncClientTest<VCloudAsync
       syncClient = injector.getInstance(VCloudClient.class);
    }
 
+   @DataProvider
+   public Object[][] ignoreOnWindows() {
+      return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
+                                      : TestUtils.SINGLE_NO_ARG_INVOCATION);
+   }
+   
 }
