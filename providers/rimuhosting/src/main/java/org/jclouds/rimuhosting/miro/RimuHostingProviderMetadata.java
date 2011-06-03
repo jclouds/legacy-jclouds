@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.skalicloud;
+package org.jclouds.rimuhosting.miro;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,18 +27,18 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malasya.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for RimuHosting.
  *
  * @author Adrian Cole
  */
-public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
+public class RimuHostingProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "skalicloud-sdg-my";
+      return "rimuhosting";
    }
 
    /**
@@ -54,7 +54,7 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "SkaliCloud Malasya";
+      return "RimuHosting";
    }
 
    /**
@@ -78,7 +78,7 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://www.skalicloud.com");
+      return URI.create("http://rimuhosting.com");
    }
 
    /**
@@ -86,14 +86,14 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("http://sdg-my.skalicloud.com");
+      return URI.create("https://rimuhosting.com/cp");
    }
    /**
     * {@inheritDoc}
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://www.skalicloud.com/cloud-api");
+      return URI.create("http://apidocs.rimuhosting.com");
    }
 
    /**
@@ -101,7 +101,7 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("skalicloud-sdg-my");
+      return ImmutableSet.of("rimuhosting");
    }
 
    /**
@@ -109,7 +109,7 @@ public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("MY-10");
+      return ImmutableSet.of("NZ-AUK", "US-TX", "AU-NSW", "GB-LND");
    }
 
 }
