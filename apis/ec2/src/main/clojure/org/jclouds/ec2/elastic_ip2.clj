@@ -27,10 +27,9 @@
   (:import org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain PublicIpInstanceIdPair)))
 
-(defn #^org.jclouds.ec2.services.ElasticIPAddressClient
+(defn ^org.jclouds.ec2.services.ElasticIPAddressClient
   eip-service
-  "Returns the synchronous ElasticIPAddressClient associated with
-   the specified compute service, or compute/*compute* as bound by with-compute-service."
+  "Returns an ElasticIPAddressClient for the given ComputeService"
   [compute]
   (-> compute
     .getContext .getProviderSpecificContext .getApi .getElasticIPAddressServices))
@@ -45,7 +44,7 @@
 
 (defn associate
   "Associates an elastic IP address with a node."
-  ([compute #^NodeMetadata node public-ip]
+  ([compute ^NodeMetadata node public-ip]
     (associate node public-ip (.getProviderId node)))
   ([compute region public-ip instance-id]
     (.associateAddressInRegion (eip-service compute)
@@ -62,7 +61,7 @@
    You may optionally specify which IP addresses you would like to query."
   ([compute] (addresses compute nil))
   ([compute region & public-ips]
-    (into {} (for [#^PublicIpInstanceIdPair pair (.describeAddressesInRegion (eip-service compute)
+    (into {} (for [^PublicIpInstanceIdPair pair (.describeAddressesInRegion (eip-service compute)
                                                    (ebs/get-region region)
                                                    (into-array String public-ips))]
                [(.getPublicIp pair) (merge {:region (.getRegion pair)}
@@ -77,8 +76,8 @@
 
 (defn release
   "Disclaims an elastic IP address from your account."
-  ([compute public-ip] (release compute nil public-ip))
-  ([compute region public-ip]
+  ([compute public-ip] (release compute public-ip nil))
+  ([compute public-ip region]
     (.releaseAddressInRegion (eip-service compute)
       (ebs/get-region region)
       public-ip)))

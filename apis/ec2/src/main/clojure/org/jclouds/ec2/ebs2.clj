@@ -37,7 +37,7 @@
   [v]
   (instance? Volume v))
 
-(defn #^org.jclouds.ec2.services.ElasticBlockStoreClient
+(defn ^org.jclouds.ec2.services.ElasticBlockStoreClient
   ebs-service
   ""
   [compute]
@@ -68,7 +68,7 @@
   "Returns a string volume ID taken from the given string, keyword, or Volume argument."
   [v]
   (cond
-    (instance? Volume v) (.getId #^Volume v)
+    (instance? Volume v) (.getId ^Volume v)
     (keyword? v) (name v)
     (string? v) v
     :else (throw (IllegalArgumentException.
@@ -77,7 +77,6 @@
 (defn volumes
   "Returns a set of org.jclouds.ec2.domain.Volume instances corresponding to the
    volumes in the specified region (defaulting to your account's default region)."
-
   [compute & [region & volume-ids]]
   (set
     (.describeVolumesInRegion (ebs-service compute)
@@ -86,6 +85,7 @@
         (if (get-region region)
           volume-ids
           (when region (cons region volume-ids))))))))
+
 (defn- as-string
   [v]
   (cond
@@ -95,6 +95,7 @@
 (defn- get-string
   [map key]
   (as-string (get map key)))
+
 (defn- as-int
   [v]
   (cond
@@ -138,9 +139,8 @@
   "Creates a snapshot of a volume in the specified region with an optional description.
    If provided, the description must be < 255 characters in length. Returns the
    org.jclouds.aws.ec2.domain.Snapshot object representing the created snapshot."
-
-  ([compute #^Volume volume] (create-snapshot compute volume nil))
-  ([compute #^Volume volume description] (create-snapshot compute (.getRegion volume) (.getId volume) description))
+  ([compute ^Volume volume] (create-snapshot compute volume nil))
+  ([compute ^Volume volume description] (create-snapshot compute (.getRegion volume) (.getId volume) description))
   ([compute region volume-id description]
     (.createSnapshotInRegion (ebs-service compute)
       (get-region region)
@@ -150,7 +150,7 @@
 
 (defn delete-snapshot
   "Deletes a snapshot in the specified region."
-  ([compute #^Snapshot snapshot] (delete-snapshot compute (.getRegion snapshot) (.getId snapshot)))
+  ([compute ^Snapshot snapshot] (delete-snapshot compute (.getRegion snapshot) (.getId snapshot)))
   ([compute region snapshot-id]
     (.deleteSnapshotInRegion (ebs-service compute)
       (get-region region)
@@ -160,7 +160,7 @@
   [v]
   (cond
     (instance? AvailabilityZoneInfo v) (.getZone v)
-    (instance? NodeMetadata v) (location #^NodeMetadata v)
+    (instance? NodeMetadata v) (location ^NodeMetadata v)
     (string? v) v
     (keyword? v) (name v)
     :else (throw (IllegalArgumentException.
@@ -168,7 +168,7 @@
 
 (defn attach-volume
   "Attaches a volume to an instance, returning the resulting org.jclouds.aws.ec2.domain.Attachment."
-  ([compute #^NodeMetadata node volume device]
+  ([compute ^NodeMetadata node volume device]
     (attach-volume compute node (.getProviderId node) (get-volume-id volume) device))
   ([compute region instance-id volume-id device]
     (apply #(.attachVolumeInRegion (ebs-service compute)
@@ -223,7 +223,6 @@
    Note also that if :device and :node are specified, and the attach operation fails,
    you will have \"leaked\" the newly-created volume
    (volume creation and attachment cannot be done atomically)."
-
   [compute & options]
   (when (-> options count odd?)
     (throw (IllegalArgumentException. "Must provide key-value pairs, e.g. :zone :us-east-1d :size 200")))
@@ -231,7 +230,7 @@
         snapshot (get-string options :snapshot)
         snapshot (if (snapshot? snapshot) (.getId snapshot) snapshot)
         size (-?> (get-string options :size) as-int)
-        #^NodeMetadata node (:node options)
+        ^NodeMetadata node (:node options)
         zone (or node (get-string options :zone))
         zone (if zone
       (get-zone zone)
@@ -249,7 +248,7 @@
 
 (defn delete-volume
   "Deletes a volume in the specified region."
-  ([compute #^Volume volume]
+  ([compute ^Volume volume]
     (delete-volume (.getRegion volume) (.getId volume)))
   ([compute region volume-id]
     (.deleteVolumeInRegion (ebs-service compute)
@@ -262,29 +261,29 @@
   (.getStatus k))
 
 (defn status-available?
-  [#^Volume v]
+  [^Volume v]
   (= Volume$Status/AVAILABLE (status v)))
 
 (defn status-creating?
-  [#^Volume v]
+  [^Volume v]
   (= Volume$Status/CREATING (status v)))
 
 (defn status-deleting?
-  [#^Volume v]
+  [^Volume v]
   (= Volume$Status/DELETING (status v)))
 
 (defn status-in-use?
-  [#^Volume v]
+  [^Volume v]
   (= Volume$Status/IN_USE (status v)))
 
 (defn status-completed?
-  [#^Snapshot s]
+  [^Snapshot s]
   (= Snapshot$Status/COMPLETED (status s)))
 
 (defn status-error?
-  [#^Snapshot s]
+  [^Snapshot s]
   (= Snapshot$Status/ERROR (status s)))
 
 (defn status-pending?
-  [#^Snapshot s]
+  [^Snapshot s]
   (= Snapshot$Status/PENDING (status s)))
