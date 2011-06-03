@@ -41,11 +41,6 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>googlestorage</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
             <artifactId>ninefold-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
