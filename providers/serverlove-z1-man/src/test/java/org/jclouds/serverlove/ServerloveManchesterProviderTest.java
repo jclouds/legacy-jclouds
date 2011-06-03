@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.elastichosts;
+package org.jclouds.serverlove;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
@@ -26,10 +26,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ElasticHostsPeer1LondonProviderTest")
-public class ElasticHostsPeer1LondonProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "ServerloveManchesterProviderTest")
+public class ServerloveManchesterProviderTest extends BaseProviderMetadataTest {
 
-   public ElasticHostsPeer1LondonProviderTest() {
-      super(new ElasticHostsPeer1LondonProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   public ServerloveManchesterProviderTest() {
+      super(new ServerloveManchesterProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }
