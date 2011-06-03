@@ -63,7 +63,7 @@ public class SynapticStorageProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "Email Username";
+      return "Subtenant ID";
    }
 
    /**
@@ -71,7 +71,7 @@ public class SynapticStorageProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getCredentialName() {
-      return "Password";
+      return "Shared Secret";
    }
 
    /**
