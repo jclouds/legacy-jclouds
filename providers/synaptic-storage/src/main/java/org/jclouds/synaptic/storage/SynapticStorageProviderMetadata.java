@@ -63,7 +63,7 @@ public class SynapticStorageProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "Subtenant ID";
+      return "Subtenant ID (UID)";
    }
 
    /**
