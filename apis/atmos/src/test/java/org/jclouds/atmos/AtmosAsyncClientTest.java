@@ -21,7 +21,6 @@ package org.jclouds.atmos;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
@@ -35,7 +34,9 @@ import org.jclouds.atmos.functions.ParseDirectoryListFromContentAndHeaders;
 import org.jclouds.atmos.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
+import org.jclouds.atmos.functions.ReturnTrueIfGroupACLIsOtherRead;
 import org.jclouds.atmos.options.ListOptions;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -49,6 +50,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -71,8 +73,7 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    private BlobToObject blobToObject;
 
    public void testListDirectories() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array.newInstance(ListOptions.class, 0)
-               .getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectories", ListOptions[].class);
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -87,8 +88,7 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    }
 
    public void testListDirectory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectory", String.class, Array.newInstance(
-               ListOptions.class, 0).getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectory", String.class, ListOptions[].class);
       HttpRequest request = processor.createRequest(method, "directory");
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
@@ -103,8 +103,7 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    }
 
    public void testListDirectoriesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array.newInstance(ListOptions.class, 0)
-               .getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectories", ListOptions[].class);
       HttpRequest request = processor.createRequest(method, new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -119,8 +118,7 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    }
 
    public void testListDirectoryOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectory", String.class, Array.newInstance(
-               ListOptions.class, 0).getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectory", String.class, ListOptions[].class);
       HttpRequest request = processor.createRequest(method, "directory", new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
@@ -135,7 +133,7 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    }
 
    public void testCreateDirectory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("createDirectory", String.class);
+      Method method = AtmosAsyncClient.class.getMethod("createDirectory", String.class, PutOptions[].class);
       HttpRequest request = processor.createRequest(method, "dir");
 
       assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
@@ -149,8 +147,25 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
       checkFilters(request);
    }
 
+   public void testCreateDirectoryOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AtmosAsyncClient.class.getMethod("createDirectory", String.class, PutOptions[].class);
+      HttpRequest request = processor.createRequest(method, "dir", PutOptions.Builder.publicRead());
+
+      assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
+               + ": */*\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
+      assertPayloadEquals(request, "", "application/octet-stream", false);
+
+      assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEndpointIfAlreadyExists.class);
+
+      checkFilters(request);
+   }
+
    public void testCreateFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class);
+      Method method = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class,
+               PutOptions[].class);
       HttpRequest request = processor.createRequest(method, "dir", blobToObject
                .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
@@ -165,13 +180,50 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
       checkFilters(request);
    }
 
+   public void testCreateFileOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class,
+               PutOptions[].class);
+      HttpRequest request = processor.createRequest(method, "dir", blobToObject
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB), PutOptions.Builder.publicRead());
+
+      assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
+               + ": */*\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
+      assertPayloadEquals(request, "hello", "text/plain", false);
+
+      assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
    public void testUpdateFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("updateFile", String.class, AtmosObject.class);
+      Method method = AtmosAsyncClient.class.getMethod("updateFile", String.class, AtmosObject.class,
+               PutOptions[].class);
       HttpRequest request = processor.createRequest(method, "dir", blobToObject
                .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, "hello", "text/plain", false);
+
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+
+      checkFilters(request);
+   }
+
+   public void testUpdateFileOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AtmosAsyncClient.class.getMethod("updateFile", String.class, AtmosObject.class,
+               PutOptions[].class);
+      HttpRequest request = processor.createRequest(method, "dir", blobToObject
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB), PutOptions.Builder.publicRead());
+
+      assertRequestLineEquals(request, "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
+               + ": */*\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -222,6 +274,21 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testIsPublic() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AtmosAsyncClient.class.getMethod("isPublic", String.class);
+      HttpRequest request = processor.createRequest(method, "dir/file");
+
+      assertRequestLineEquals(request, "HEAD https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ReturnTrueIfGroupACLIsOtherRead.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
 
       checkFilters(request);
    }

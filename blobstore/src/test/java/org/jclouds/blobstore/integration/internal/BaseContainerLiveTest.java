@@ -47,7 +47,9 @@ public class BaseContainerLiveTest extends BaseBlobStoreIntegrationTest {
 
          BlobMetadata metadata = context.getBlobStore().blobMetadata(containerName, "hello");
 
-         assertEquals(Strings2.toStringAndClose(metadata.getPublicUri().toURL().openStream()), TEST_STRING);
+         assert metadata.getPublicUri() != null : metadata;
+
+         assertEquals(Strings2.toStringAndClose(context.utils().http().get(metadata.getPublicUri())), TEST_STRING);
 
       } finally {
          // this container is now public, so we can't reuse it directly

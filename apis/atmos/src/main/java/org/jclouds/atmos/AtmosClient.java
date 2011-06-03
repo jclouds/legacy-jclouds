@@ -27,6 +27,7 @@ import org.jclouds.atmos.domain.DirectoryEntry;
 import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.atmos.options.ListOptions;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
@@ -52,13 +53,13 @@ public interface AtmosClient {
 
    BoundedSet<? extends DirectoryEntry> listDirectory(String directoryName, ListOptions... options);
 
-   URI createDirectory(String directoryName);
+   URI createDirectory(String directoryName, PutOptions... options);
 
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   URI createFile(String parent, AtmosObject object);
+   URI createFile(String parent, AtmosObject object, PutOptions... options);
 
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void updateFile(String parent, AtmosObject object);
+   void updateFile(String parent, AtmosObject object, PutOptions... options);
 
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    AtmosObject readFile(String path, GetOptions... options);
@@ -72,5 +73,7 @@ public interface AtmosClient {
    void deletePath(String path);
 
    boolean pathExists(String path);
+
+   boolean isPublic(String path);
 
 }

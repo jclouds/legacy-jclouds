@@ -21,12 +21,16 @@ package org.jclouds.atmos.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
+import java.net.URI;
+
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -36,16 +40,18 @@ import com.google.common.base.Function;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
-@Singleton
-public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, AtmosObject> {
+public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, AtmosObject>,
+         InvocationContext<ParseObjectFromHeadersAndHttpContent> {
 
    private final ParseSystemMetadataFromHeaders systemMetadataParser;
    private final ParseUserMetadataFromHeaders userMetadataParser;
    private final AtmosObject.Factory objectProvider;
+   private URI uri;
+   private String path;
 
    @Inject
    public ParseObjectFromHeadersAndHttpContent(ParseSystemMetadataFromHeaders systemMetadataParser,
-         ParseUserMetadataFromHeaders userMetadataParser, AtmosObject.Factory objectProvider) {
+            ParseUserMetadataFromHeaders userMetadataParser, AtmosObject.Factory objectProvider) {
       this.systemMetadataParser = checkNotNull(systemMetadataParser, "systemMetadataParser");
       this.userMetadataParser = checkNotNull(userMetadataParser, "userMetadataParser");
       this.objectProvider = checkNotNull(objectProvider, "objectProvider");
@@ -63,9 +69,22 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       checkNotNull(from, "http response");
       AtmosObject object = objectProvider.create(systemMetadataParser.apply(from), userMetadataParser.apply(from));
       object.getContentMetadata().setName(object.getSystemMetadata().getObjectName());
+      object.getContentMetadata().setPath(path);
+      object.getContentMetadata().setUri(uri);
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());
       object.getContentMetadata().setContentLength(attemptToParseSizeAndRangeFromHeaders(from));
       return object;
+   }
+
+   @Override
+   public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
+      this.uri = request.getEndpoint();
+      return setPath(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+   }
+
+   private ParseObjectFromHeadersAndHttpContent setPath(String path) {
+      this.path = path;
+      return this;
    }
 }

@@ -44,7 +44,9 @@ import org.jclouds.atmos.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmos.functions.ParseUserMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
+import org.jclouds.atmos.functions.ReturnTrueIfGroupACLIsOtherRead;
 import org.jclouds.atmos.options.ListOptions;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.options.GetOptions;
@@ -107,7 +109,7 @@ public interface AtmosAsyncClient {
    @ExceptionParser(ReturnEndpointIfAlreadyExists.class)
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @Consumes(MediaType.WILDCARD)
-   ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName);
+   ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName, PutOptions... options);
 
    /**
     * @see AtmosClient#createFile
@@ -117,7 +119,8 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object,
+            PutOptions... options);
 
    /**
     * @see AtmosClient#updateFile
@@ -128,7 +131,8 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Void> updateFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object,
+            PutOptions... options);
 
    /**
     * @see AtmosClient#readFile
@@ -190,12 +194,14 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> pathExists(@PathParam("path") String path);
 
-   // signature currently doesn't work
-   // @POST
-   // @QueryParams(keys = "acl")
-   // @Headers(keys = { "x-emc-useracl", "x-emc-groupacl" }, values = { "root=FULL_CONTROL",
-   // "other=READ" })
-   // @Consumes(MediaType.WILDCARD)
-   // void makePublic(@Endpoint URI url);
+   /**
+    * @see AtmosClient#isPublic
+    */
+   @HEAD
+   @ResponseParser(ReturnTrueIfGroupACLIsOtherRead.class)
+   @Path("/{path}")
+   @Consumes(MediaType.WILDCARD)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> isPublic(@PathParam("path") String path);
 
 }

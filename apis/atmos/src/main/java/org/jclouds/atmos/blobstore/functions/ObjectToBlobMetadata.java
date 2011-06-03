@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.domain.FileType;
+import org.jclouds.atmos.filters.ShareUrl;
 import org.jclouds.atmos.functions.AtmosObjectName;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
@@ -34,7 +35,9 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -43,13 +46,16 @@ import com.google.common.collect.Maps;
 @Singleton
 public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMetadata> {
    private final AtmosObjectName objectName;
-   private static final Set<String> systemMetadata = ImmutableSet.of("atime", "mtime", "ctime",
-            "itime", "type", "uid", "gid", "objectid", "objname", "size", "nlink", "policyname",
-            "content-md5");
+   private final ShareUrl shareUrl;
+
+   private static final Set<String> systemMetadata = ImmutableSet.of("atime", "mtime", "ctime", "itime", "type", "uid",
+            "gid", "objectid", "objname", "size", "nlink", "policyname", "content-md5");
 
    @Inject
-   protected ObjectToBlobMetadata(AtmosObjectName objectName) {
+   protected ObjectToBlobMetadata(AtmosObjectName objectName, ShareUrl shareUrl)
+            throws SecurityException, NoSuchMethodException {
       this.objectName = objectName;
+      this.shareUrl = shareUrl;
    }
 
    public MutableBlobMetadata apply(AtmosObject from) {
@@ -60,6 +66,10 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
       to.setLastModified(from.getSystemMetadata().getLastUserDataModification());
       HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setName(objectName.apply(from));
+      to.setUri(from.getContentMetadata().getUri());
+      to.setContainer(Iterables.get(Splitter.on('/').split(from.getContentMetadata().getPath()),0));
+      if (from.getAllHeaders().containsEntry("x-emc-groupacl", "other=READ"))
+         to.setPublicUri(shareUrl.apply(from.getContentMetadata().getPath()));
       if (from.getSystemMetadata().getType() == FileType.DIRECTORY) {
          to.setType(StorageType.FOLDER);
       } else {

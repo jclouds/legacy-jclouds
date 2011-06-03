@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmos.config;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -43,8 +44,8 @@ import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
 
 /**
- * Configures the EMC Atmos Online Storage authentication service connection,
- * including logging and http transport.
+ * Configures the EMC Atmos Online Storage authentication service connection, including logging and
+ * http transport.
  * 
  * @author Adrian Cole
  */
@@ -74,12 +75,18 @@ public class AtmosRestClientModule extends RestClientModule<AtmosClient, AtmosAs
    @Provides
    @TimeStamp
    Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-         final DateService dateService) {
+            final DateService dateService) {
       return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
          }
       }, seconds, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @TimeStamp
+   protected Long provideShareableUrlTimeout() {
+      return new Date().getTime() + TimeUnit.HOURS.toMillis(1);
    }
 
    @Override

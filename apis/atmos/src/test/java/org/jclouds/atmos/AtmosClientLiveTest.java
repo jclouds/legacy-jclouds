@@ -53,7 +53,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    public AtmosClient getApi() {

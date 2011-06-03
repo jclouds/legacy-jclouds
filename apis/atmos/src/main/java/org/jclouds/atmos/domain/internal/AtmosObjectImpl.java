@@ -55,7 +55,7 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       }
 
       public AtmosObject create(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
-            UserMetadata userMetadata) {
+               UserMetadata userMetadata) {
          return new AtmosObjectImpl(contentMetadata, systemMetadata, userMetadata);
       }
    }
@@ -75,7 +75,7 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    public AtmosObjectImpl(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
-         UserMetadata userMetadata) {
+            UserMetadata userMetadata) {
       this.contentMetadata = contentMetadata;
       this.systemMetadata = systemMetadata;
       this.userMetadata = userMetadata;
@@ -165,7 +165,7 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    @Override
    public void setPayload(Payload data) {
       this.payload = data;
-      this.contentMetadata = new DelegatingMutableContentMetadata(contentMetadata.getName(),
-            payload.getContentMetadata());
+      this.contentMetadata = new DelegatingMutableContentMetadata(contentMetadata.getUri(), contentMetadata.getName(),
+               contentMetadata.getPath(), payload.getContentMetadata());
    }
 }

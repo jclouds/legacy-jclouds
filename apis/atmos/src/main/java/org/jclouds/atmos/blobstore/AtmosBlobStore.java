@@ -19,7 +19,9 @@
 package org.jclouds.atmos.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.atmos.options.PutOptions.Builder.publicRead;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -67,6 +69,7 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final Crypto crypto;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
+   private final Map<String, Boolean> isPublic;
 
    @Inject
    AtmosBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
@@ -74,7 +77,8 @@ public class AtmosBlobStore extends BaseBlobStore {
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
-            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
+            Map<String, Boolean> isPublic) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -86,6 +90,7 @@ public class AtmosBlobStore extends BaseBlobStore {
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
       this.crypto = checkNotNull(crypto, "crypto");
       this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
+      this.isPublic = checkNotNull(isPublic, "isPublic");
    }
 
    /**
@@ -205,7 +210,14 @@ public class AtmosBlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(final String container, final Blob blob) {
-      return AtmosUtils.putBlob(sync, crypto, blob2Object, container, blob);
+      final org.jclouds.atmos.options.PutOptions options = new org.jclouds.atmos.options.PutOptions();
+      try {
+         if (isPublic.get(container + "/"))
+            options.publicRead();
+      } catch (NullPointerException e) {
+         // MapMaker
+      }
+      return AtmosUtils.putBlob(sync, crypto, blob2Object, container, blob, options);
    }
 
    /**
@@ -229,8 +241,10 @@ public class AtmosBlobStore extends BaseBlobStore {
 
    @Override
    public boolean createContainerInLocation(Location location, String container, CreateContainerOptions options) {
-      if (options.isPublicRead())
-         throw new UnsupportedOperationException("publicRead");
+      if (options.isPublicRead()) {
+         sync.createDirectory(container, publicRead());
+         return true;
+      }
       return createContainerInLocation(location, container);
    }
 }

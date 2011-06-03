@@ -36,7 +36,8 @@ public class BlobToContentMetadata implements Function<BlobMetadata, MutableCont
    public MutableContentMetadata apply(BlobMetadata base) {
       MutableBlobMetadataImpl to = new MutableBlobMetadataImpl();
       HttpUtils.copy(base.getContentMetadata(), to.getContentMetadata());
-      return new DelegatingMutableContentMetadata(base.getName(), to.getContentMetadata());
+      return new DelegatingMutableContentMetadata(base.getUri(), base.getName(), base.getUri() != null ? base.getUri()
+               .getPath() : null, to.getContentMetadata());
    }
 
 }

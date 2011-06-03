@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmos.domain.internal;
 
+import java.net.URI;
+
 import org.jclouds.atmos.domain.MutableContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
@@ -29,16 +31,21 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class DelegatingMutableContentMetadata implements MutableContentMetadata {
+   private URI uri;
    private String name;
+   private String path;
    private final org.jclouds.io.MutableContentMetadata delegate;
 
    public DelegatingMutableContentMetadata() {
-      this(null, new BaseMutableContentMetadata());
+      this(null, null, null, new BaseMutableContentMetadata());
    }
 
-   public DelegatingMutableContentMetadata(String name, org.jclouds.io.MutableContentMetadata delegate) {
+   public DelegatingMutableContentMetadata(URI uri, String name, String path,
+            org.jclouds.io.MutableContentMetadata delegate) {
+      this.uri = uri;
       this.name = name;
       this.delegate = delegate;
+      this.path = path;
    }
 
    @Override
@@ -90,15 +97,10 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
       if (getClass() != obj.getClass())
          return false;
       DelegatingMutableContentMetadata other = (DelegatingMutableContentMetadata) obj;
-      if (delegate == null) {
-         if (other.delegate != null)
+      if (uri == null) {
+         if (other.uri != null)
             return false;
-      } else if (!delegate.equals(other.delegate))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
+      } else if (!uri.equals(other.uri))
          return false;
       return true;
    }
@@ -107,14 +109,13 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((delegate == null) ? 0 : delegate.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      return "[name=" + name + ", delegate=" + delegate + "]";
+      return "[uri=" + uri + ", name=" + name + ", path=" + path + ", delegate=" + delegate + "]";
    }
 
    public org.jclouds.io.MutableContentMetadata getDelegate() {
@@ -160,6 +161,26 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    @Override
    public ContentMetadataBuilder toBuilder() {
       return delegate.toBuilder();
+   }
+
+   @Override
+   public URI getUri() {
+      return uri;
+   }
+
+   @Override
+   public void setUri(URI uri) {
+      this.uri = uri;
+   }
+
+   @Override
+   public String getPath() {
+      return path;
+   }
+
+   @Override
+   public void setPath(String path) {
+      this.path = path;
    }
 
 }

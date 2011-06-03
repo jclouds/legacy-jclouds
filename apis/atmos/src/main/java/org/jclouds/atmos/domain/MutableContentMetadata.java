@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmos.domain;
 
+import java.net.URI;
+
 import org.jclouds.atmos.domain.internal.DelegatingMutableContentMetadata;
 
 import com.google.inject.ImplementedBy;
@@ -34,4 +36,11 @@ public interface MutableContentMetadata extends org.jclouds.io.MutableContentMet
 
    public void setName(String name);
 
+   public URI getUri();
+
+   public void setUri(URI uri);
+
+   public String getPath();
+
+   public void setPath(String path);
 }

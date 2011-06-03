@@ -16,27 +16,24 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.atmos.blobstore.functions;
+package org.jclouds.atmos.functions;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.testng.annotations.Test;
+import javax.inject.Singleton;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import org.jclouds.http.HttpResponse;
+
+import com.google.common.base.Function;
 
 /**
- * Tests behavior of {@code ObjectToBlobMetadata}
- * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class ObjectToBlobMetadataTest {
+@Singleton
+public class ReturnTrueIfGroupACLIsOtherRead implements Function<HttpResponse, Boolean> {
 
-   public void testFromWhenTypeIsDirectory() {
-      Injector injector = Guice.createInjector();
-      injector.getInstance(ObjectToBlobMetadata.class);
-
-      assertEquals("", "");
+   public Boolean apply(HttpResponse from) {
+      checkNotNull(from, "http response");
+      return from.getHeaders().containsEntry("x-emc-groupacl", "other=READ");
    }
 }

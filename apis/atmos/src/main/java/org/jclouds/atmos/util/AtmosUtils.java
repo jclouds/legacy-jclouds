@@ -28,6 +28,7 @@ import org.jclouds.atmos.AtmosClient;
 import org.jclouds.atmos.blobstore.functions.BlobToObject;
 import org.jclouds.atmos.domain.AtmosError;
 import org.jclouds.atmos.filters.SignRequest;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.atmos.xml.ErrorHandler;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
@@ -56,8 +57,8 @@ public class AtmosUtils {
    @Inject
    Provider<ErrorHandler> errorHandlerProvider;
 
-   public AtmosError parseAtmosErrorFromContent(HttpCommand command, HttpResponse response,
-            InputStream content) throws HttpException {
+   public AtmosError parseAtmosErrorFromContent(HttpCommand command, HttpResponse response, InputStream content)
+            throws HttpException {
       AtmosError error = (AtmosError) factory.create(errorHandlerProvider.get()).parse(content);
       if (error.getCode() == 1032) {
          error.setStringSigned(signer.createStringToSign(command.getCurrentRequest()));
@@ -66,11 +67,11 @@ public class AtmosUtils {
 
    }
 
-   public static String putBlob(final AtmosClient sync, Crypto crypto, BlobToObject blob2Object,
-            String container, Blob blob) {
+   public static String putBlob(final AtmosClient sync, Crypto crypto, BlobToObject blob2Object, String container,
+            Blob blob, PutOptions options) {
       final String path = container + "/" + blob.getMetadata().getName();
       deleteAndEnsureGone(sync, path);
-      sync.createFile(container, blob2Object.apply(blob));
+      sync.createFile(container, blob2Object.apply(blob), options);
       return path;
    }
 

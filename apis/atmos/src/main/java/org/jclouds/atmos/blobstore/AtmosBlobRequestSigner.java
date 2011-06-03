@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.atmos.AtmosAsyncClient;
 import org.jclouds.atmos.blobstore.functions.BlobToObject;
 import org.jclouds.atmos.domain.AtmosObject;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -58,7 +59,7 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.getMethod = AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class);
       this.deleteMethod = AtmosAsyncClient.class.getMethod("deletePath", String.class);
-      this.createMethod = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class);
+      this.createMethod = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class, PutOptions[].class);
    }
 
    @Override
