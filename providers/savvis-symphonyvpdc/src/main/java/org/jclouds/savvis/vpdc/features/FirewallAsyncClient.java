@@ -55,7 +55,7 @@ public interface FirewallAsyncClient {
     */
    @PUT
    @XMLResponseParser(TaskHandler.class)
-   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService/")
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService")
    @MapBinder(BindFirewallRuleToXmlPayload.class)
    ListenableFuture<Task> addFirewallRule(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
@@ -66,7 +66,7 @@ public interface FirewallAsyncClient {
     */
    @DELETE
    @XMLResponseParser(TaskHandler.class)
-   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService/")
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService")
    @MapBinder(BindFirewallRuleToXmlPayload.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> deleteFirewallRule(

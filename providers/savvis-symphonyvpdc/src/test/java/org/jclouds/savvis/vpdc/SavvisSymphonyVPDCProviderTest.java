@@ -16,22 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.savvis.vpdc;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The AWSS3ProviderTest tests the {@link org.jclouds.aws.s3.AWSS3ProviderMetadata} class.
+ * The SavvisSymphonyVPDCProviderTest tests the org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderMetadata class.
  * 
- * @author Adrian Cole
+ * @author Kedar Dave
  */
-@Test(groups = "unit", testName = "AWSS3ProviderTest")
-public class AWSS3ProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "SavvisSymphonyVPDCProviderTest")
+public class SavvisSymphonyVPDCProviderTest extends BaseProviderMetadataTest {
 
-   public AWSS3ProviderTest() {
-      super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+   public SavvisSymphonyVPDCProviderTest() {
+      super(new SavvisSymphonyVPDCProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
-
 }

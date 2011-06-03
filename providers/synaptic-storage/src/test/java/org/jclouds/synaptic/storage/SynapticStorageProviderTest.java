@@ -16,22 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.synaptic.storage;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The AWSS3ProviderTest tests the {@link org.jclouds.aws.s3.AWSS3ProviderMetadata} class.
+ * The SynapticStorageProviderTest tests the {@link org.jclouds.synaptic.storage.SynapticStorageProviderMetadata} class.
  * 
- * @author Adrian Cole
+ * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-@Test(groups = "unit", testName = "AWSS3ProviderTest")
-public class AWSS3ProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "SynapticStorageProviderTest")
+public class SynapticStorageProviderTest extends BaseProviderMetadataTest {
 
-   public AWSS3ProviderTest() {
-      super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+   public SynapticStorageProviderTest() {
+      super(new SynapticStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
    }
 
 }

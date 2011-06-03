@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.epc;
+package org.jclouds.synaptic.storage;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -24,21 +24,22 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
- * Partner Cloud S3 provider.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for AT&T's
+ * Synaptic Storage provider.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
+public class SynapticStorageProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "eucalyptus-partnercloud-s3";
+      return "synaptic-storage";
    }
 
    /**
@@ -46,7 +47,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getType() {
-      return BLOBSTORE_TYPE;
+      return ProviderMetadata.BLOBSTORE_TYPE;
    }
 
    /**
@@ -54,7 +55,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getName() {
-      return "Eucalyptus Partner Cloud (S3)";
+      return "AT&T Synaptic Storage";
    }
 
    /**
@@ -62,7 +63,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getIdentityName() {
-      return "Username";
+      return "Subtenant ID (UID)";
    }
 
    /**
@@ -70,7 +71,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public String getCredentialName() {
-      return "Password";
+      return "Shared Secret";
    }
 
    /**
@@ -78,7 +79,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://www.eucalyptus.com/partners");
+      return URI.create("https://www.synaptic.att.com/");
    }
 
    /**
@@ -86,7 +87,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
+      return URI.create("https://www.synaptic.att.com/clouduser/login.htm");
    }
 
    /**
@@ -94,15 +95,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://open.eucalyptus.com/wiki/IntroducingEucalyptus_v2.0");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3");
+      return URI.create("https://www.synaptic.att.com/clouduser/emc_atmos_api.htm");
    }
 
    /**
@@ -110,7 +103,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA");
+      return ImmutableSet.of("US-VA", "US-TX");
    }
 
 }
