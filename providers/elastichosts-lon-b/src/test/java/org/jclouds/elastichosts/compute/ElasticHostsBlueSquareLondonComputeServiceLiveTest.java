@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ElasticHostsBlueSquareLondonComputeServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsBlueSquareLondonComputeServiceLiveTest")
 public class ElasticHostsBlueSquareLondonComputeServiceLiveTest extends ElasticStackComputeServiceLiveTest {
 
    public ElasticHostsBlueSquareLondonComputeServiceLiveTest() {
