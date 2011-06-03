@@ -14,6 +14,13 @@
       "size": "1"
   },
   {
+      "uuid": "6aa953cc-3395-4e8d-938e-65c74fd20334",
+      "description": "Debian Linux 6.0.1",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
+      "size": "1"
+  },
+  {
       "uuid": "aee5589a-88c3-43ef-bb0a-9cab6e64192d",
       "description": "Ubuntu Linux 10.04",
       "osFamily": "UBUNTU",

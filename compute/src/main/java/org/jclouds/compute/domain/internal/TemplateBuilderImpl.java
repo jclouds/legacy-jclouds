@@ -416,6 +416,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder fromTemplate(Template template) {
+      location = template.getLocation();
       fromHardware(template.getHardware());
       fromImage(template.getImage());
       options(template.getOptions());

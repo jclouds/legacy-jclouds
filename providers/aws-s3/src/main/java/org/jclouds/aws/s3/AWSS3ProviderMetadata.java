@@ -27,7 +27,7 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Amazon's Simple Storage Service
  * (S3) provider.
  * 
  * @author Adrian Cole

@@ -101,7 +101,7 @@ public class ParseServerFromJsonResponseTest {
       UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
       }));
 
-      return (Server) parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
    }
 
 }

@@ -39,10 +39,6 @@
         <module>azureblob</module>
         <module>aws-s3</module>
         <module>aws-ec2</module>
-        <module>googlestorage</module>
-        <module>scaleup-storage</module>
-        <module>tiscali-storage</module>
-        <module>hosteurope-storage</module>
         <module>synaptic-storage</module>
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
@@ -62,6 +58,7 @@
         <module>elastichosts-lon-p</module>
         <module>elastichosts-sat-p</module>
         <module>elastichosts-lon-b</module>
+        <module>rimuhosting</module>
         <module>openhosting-east1</module>
         <module>serverlove-z1-man</module>
         <module>skalicloud-sdg-my</module>

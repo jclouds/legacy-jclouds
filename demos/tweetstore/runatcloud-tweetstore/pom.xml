@@ -190,6 +190,10 @@
         
         <profile>
             <id>deploy</id>
+            <properties>
+                <!-- classifier to choose the correct jclouds.properties file -->
+                <tweetstore.instance>runatcloud-tweetstore</tweetstore.instance>
+            </properties>
             <pluginRepositories>
                 <pluginRepository>
                     <id>bees-plugins-snapshots</id>
