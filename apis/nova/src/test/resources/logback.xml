@@ -12,4 +12,7 @@
 	</root>
 	
 	<logger name="org.jclouds" level="debug" />
+    <logger name="jclouds.wire" level="debug" />
+    <logger name="jclouds.headers" level="debug" />
+    <logger name="jclouds.ssh" level="debug" />
 </configuration>
