@@ -23,7 +23,7 @@ import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The AWSS3ProviderTest tests the org.jclouds.providers.AWSS3Provider class.
+ * The AWSS3ProviderTest tests the {@link org.jclouds.aws.s3.AWSS3ProviderMetadata} class.
  * 
  * @author Adrian Cole
  */
@@ -33,4 +33,5 @@ public class AWSS3ProviderTest extends BaseProviderMetadataTest {
    public AWSS3ProviderTest() {
       super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
    }
+
 }

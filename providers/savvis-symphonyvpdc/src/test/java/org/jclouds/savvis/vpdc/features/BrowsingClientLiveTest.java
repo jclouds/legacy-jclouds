@@ -115,11 +115,13 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
       }
    }
 
+   // test for a single vm, as savvis response times are very slow. So if there are multiple vpdc's with numerous vm's,
+   // test execution will invariably take a long time
    @Test
    public void testVM() throws Exception {
       for (Resource org1 : restContext.getApi().listOrgs()) {
          Org org = client.getOrg(org1.getId());
-         for (Resource vdc : org.getVDCs()) {
+         VDC_LOOP : for (Resource vdc : org.getVDCs()) {
             VDC VDC = client.getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vApp : Iterables.filter(VDC.getResourceEntities(), new Predicate<Resource>() {
 
@@ -151,11 +153,15 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                String ip = Iterables.get(response.getNetworkConnectionSections(), 0).getIpAddress();
                assert HostSpecifier.isValid(ip) : response;
                if (InetAddresses2.isPrivateIPAddress(ip)) {
+            	   // get public ip
                   ip = Iterables.get(response.getNetworkConfigSections(), 0).getInternalToExternalNATRules().get(ip);
+                  // could be null
+                  if(ip != null){
+                	  assert HostSpecifier.isValid(ip) : response;
+                  }
                }
-               assert HostSpecifier.isValid(ip) : response;
+               break VDC_LOOP;
             }
-
          }
       }
    }

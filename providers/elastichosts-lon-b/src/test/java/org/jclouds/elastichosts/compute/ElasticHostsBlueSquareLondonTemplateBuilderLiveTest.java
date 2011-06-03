@@ -54,7 +54,7 @@ public class ElasticHostsBlueSquareLondonTemplateBuilderLiveTest extends BaseTem
                case UBUNTU:
                   return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
                case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.matches("[56].0")) && input.is64Bit;
                case CENTOS:
                   return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
                case WINDOWS:

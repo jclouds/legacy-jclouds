@@ -94,8 +94,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       if (lastModified == null) {
          // scaleup-storage uses the wrong case for the last modified header
          if ((lastModified = from.getFirstHeaderOrNull("Last-modified")) == null)
-            throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
-                     + from.getStatusLine());
+            throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from);
       }
 
       // Walrus

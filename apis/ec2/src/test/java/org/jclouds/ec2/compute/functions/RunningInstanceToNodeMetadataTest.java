@@ -18,7 +18,7 @@
  */
 package org.jclouds.ec2.compute.functions;
 
-import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small32;
 import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
@@ -129,7 +129,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    @Test
    public void testApplyWhereTagDoesntMatchAndImageHardwareAndLocationFound() throws UnknownHostException {
-      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small().build()), ImmutableSet
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small32().build()), ImmutableSet
                .of(provider), EC2ImageParserTest.convertImages("/amzn_images.xml"), ImmutableMap
                .<String, Credentials> of());
 
@@ -137,7 +137,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
                ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
-               "us-east-1/ami-82e4b5c7").hardware(m1_small().build()).operatingSystem(
+               "us-east-1/ami-82e4b5c7").hardware(m1_small32().build()).operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).version("").arch("paravirtual").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).id("us-east-1/i-0799056f")
                .providerId("i-0799056f").location(provider).build());
@@ -158,7 +158,7 @@ public class RunningInstanceToNodeMetadataTest {
       };
       Map<RegionAndName, Image> instanceToImage = new MapMaker().makeComputingMap(nullReturningFunction);
 
-      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small().build()), ImmutableSet
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small32().build()), ImmutableSet
                .of(provider), ImmutableMap.<String, Credentials> of(),
                EC2ComputeServiceDependenciesModule.instanceToNodeState, instanceToImage);
 
@@ -167,7 +167,7 @@ public class RunningInstanceToNodeMetadataTest {
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
                ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68")).imageId(
                "us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").hardware(
-               m1_small().build()).location(provider).build());
+               m1_small32().build()).location(provider).build());
    }
 
    protected RunningInstance firstInstanceFromResource(String resource) {

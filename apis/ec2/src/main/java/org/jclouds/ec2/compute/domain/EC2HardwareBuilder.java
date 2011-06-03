@@ -209,13 +209,23 @@ public class EC2HardwareBuilder extends HardwareBuilder {
    /**
     * @see InstanceType#M1_SMALL
     */
-   public static EC2HardwareBuilder m1_small() {
+   public static EC2HardwareBuilder m1_small32() {
       return new EC2HardwareBuilder(InstanceType.M1_SMALL).ram(1740).processors(
                ImmutableList.of(new Processor(1.0, 1.0))).volumes(
                ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
                         "/dev/sda2", false, false))).is64Bit(false);
    }
-
+   
+   /**
+    * @see InstanceType#M1_SMALL
+    */
+   public static EC2HardwareBuilder m1_small() {
+      return new EC2HardwareBuilder(InstanceType.M1_SMALL).ram(1740).processors(
+               ImmutableList.of(new Processor(1.0, 1.0))).volumes(
+               ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
+                        "/dev/sda2", false, false)));
+   }
+   
    /**
     * @see InstanceType#T1_MICRO
     */
