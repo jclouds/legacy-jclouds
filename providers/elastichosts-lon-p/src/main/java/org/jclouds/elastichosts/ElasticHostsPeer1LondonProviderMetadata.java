@@ -70,7 +70,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
     */
    @Override
    public String getCredentialName() {
-      return "Secret API key";
+      return "Secret API Key";
    }
 
    /**

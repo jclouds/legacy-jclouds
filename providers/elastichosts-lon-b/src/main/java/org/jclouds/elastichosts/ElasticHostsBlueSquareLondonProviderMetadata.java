@@ -70,7 +70,7 @@ public class ElasticHostsBlueSquareLondonProviderMetadata extends BaseProviderMe
     */
    @Override
    public String getCredentialName() {
-      return "Secret API key";
+      return "Secret API Key";
    }
 
    /**
