@@ -169,7 +169,7 @@
                                 <configuration>
                                     <resourceBundles>
                                         <!-- tweetstore.instance is set in child projects -->
-                                        <resourceBundle>${project.groupId}:jclouds-demos-tweetstore-jclouds-properties:${project.version}.${tweetstore.instance}</resourceBundle>
+                                        <resourceBundle>${project.groupId}:jclouds-demos-tweetstore-jclouds-properties:${project.version}-${tweetstore.instance}</resourceBundle>
                                     </resourceBundles>
                                 </configuration>
                             </execution>          
