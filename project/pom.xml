@@ -835,7 +835,7 @@ pageTracker._trackPageview();
                     <plugins>
                         <plugin>
                             <artifactId>maven-site-plugin</artifactId>
-                            <version>3.0-beta-4-SNAPSHOT</version>
+                            <version>3.0-beta-3</version>
                             <configuration>
                                 <reportPlugins>
                                     <plugin>
