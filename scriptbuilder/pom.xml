@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.0-beta-9d</version>
+        <version>1.0-beta-9e-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-scriptbuilder</artifactId>
