@@ -8,7 +8,8 @@ bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
 our current version is 1.0.0
-our dev version is 1.0-SNAPSHOT
+our next maintenance version is 1.0.1-SNAPSHOT
+our dev version is 1.1.0-SNAPSHOT
  
 check out our examples site! https://github.com/jclouds/jclouds-examples
 
