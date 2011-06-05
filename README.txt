@@ -26,7 +26,7 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.0-beta-9c
+our current version is 1.0.0
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
@@ -75,16 +75,15 @@ BlobStore Example (Java):
   blobStore.createContainerInLocation(null, "mycontainer");
   
   // add blob
-  blob = blobStore.newBlob("test");
-  blob.setPayload("testdata");
+  blob = blobStore.blobBuilder("test").payload("testdata").build();
   blobStore.putBlob("mycontainer", blob);
 
 BlobStore Example (Clojure):
-  (use 'org.jclouds.blobstore)
+  (use 'org.jclouds.blobstore2)
 
-  (with-blobstore ["azureblob" account encodedkey]
-    (create-container "mycontainer")
-    (upload-blob "mycontainer" "test" "testdata"))
+  (def *blobstore* (blobstore "azureblob" account encodedkey))
+  (create-container *blobstore* "mycontainer")
+  (put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
 
 Compute Example (Java):
   // init
@@ -98,31 +97,40 @@ Compute Example (Java):
  
   // define the requirements of your node
   template = client.templateBuilder().osFamily(UBUNTU).smallest().build();
+
+  // setup a boot user which is the same as your login
+  template.getOptions().runScript(AdminAccess.standard());
  
   // these nodes will be accessible via ssh when the call returns
   nodes = client.createNodesInGroup("mycluster", 2, template);
 
+  // you can now run ad-hoc commands on the nodes based on predicates
+  responses = client.runScriptOnNodesMatching(inGroup("mycluster"), "uptime",
+                  wrapInInitScript(false));
+
 Compute Example (Clojure):
-  (use 'org.jclouds.compute)
+  (use 'org.jclouds.compute2)
 
   ; create a compute service using ssh and log4j extensions
   (def compute 
-    (compute-service "trmk`-ecloud" "user" "password" :ssh :log4j))
+    (*compute* "trmk`-ecloud" "user" "password" :ssh :log4j))
 
-  ; use the default node template and launch a couple nodes
-  ; these will have your ~/.ssh/id_rsa.pub authorized when complete
-  (with-compute-service [compute]
-    (create-nodes "mycluster" 2))
+  ; launch a couple nodes with the default operating system, installing your user.
+  (create-nodes *compute* "mycluster" 2
+    (TemplateOptions$Builder/runScript (AdminAccess/standard)))
  
+  ; run a command on that group
+  (run-script-on-nodes-matching *compute* (in-group? "mycluster") "uptime" 
+    (RunScriptOptions$Builder/wrapInInitScript false))
+
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-9c.zip
+  * installation guide: http://code.google.com/p/jclouds/wiki/Installation
   * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
   * project page: http://code.google.com/p/jclouds/
-  * javadocs (1.0-beta-9c): http://jclouds.rimuhosting.com/apidocs/
-  * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
+  * javadocs: http://jclouds.rimuhosting.com/apidocs/
   * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
