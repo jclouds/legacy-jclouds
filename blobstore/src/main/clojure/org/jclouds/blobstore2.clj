@@ -341,7 +341,7 @@ Options can also be specified for extension modules
        (.build blob-builder))))
 
 (define-accessors StorageMetadata "blob" type id name
-  location-id uri last-modfied)
+  location-id uri last-modified)
 (define-accessors BlobMetadata "blob" content-type)
 
 (defn blob-etag [blob]

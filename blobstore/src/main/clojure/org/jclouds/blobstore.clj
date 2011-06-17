@@ -454,7 +454,7 @@ container, name, string -> etag"
   (download-blob container-name name (FileOutputStream. target) blobstore))
 
 (define-accessors StorageMetadata "blob" type id name
-  location-id uri last-modfied)
+  location-id uri last-modified)
 (define-accessors BlobMetadata "blob" content-type)
 
 (defn blob-etag [blob]
