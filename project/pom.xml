@@ -502,6 +502,7 @@ pageTracker._trackPageview();
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
                     <configuration>
+                        <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
                         <stagingRepositoryId>${project.distributionManagement.site.id}</stagingRepositoryId>
                         <stagingSiteURL>${project.distributionManagement.site.url}</stagingSiteURL>
                     </configuration>
