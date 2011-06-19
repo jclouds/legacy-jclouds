@@ -768,7 +768,6 @@ pageTracker._trackPageview();
                                     <report>rat-report</report>
                                     <report>source-repository</report>
                                     <report>surefire-report</report>
-                                    <report>maven-emma-plugin</report>
                                     <report>team-list</report>
                                 </reports>
                             </reportSet>
