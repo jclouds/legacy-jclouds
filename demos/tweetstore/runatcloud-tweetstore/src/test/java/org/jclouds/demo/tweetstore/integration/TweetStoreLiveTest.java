@@ -202,7 +202,7 @@ public class TweetStoreLiveTest {
       for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
-         connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
+         connection.addRequestProperty("X-RUN@cloud-Submitter", "twitter");
          connection.addRequestProperty("context", context);
          InputStream i = connection.getInputStream();
          String string = Strings2.toStringAndClose(i);
