@@ -150,7 +150,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>org.jclouds.aws.ec2.*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",org.jclouds.aws;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
