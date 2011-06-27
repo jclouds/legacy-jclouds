@@ -92,7 +92,10 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       String key = blob.getMetadata().getName();
       Payload payload = blob.getPayload();
       MultipartUploadSlicingAlgorithm algorithm = new MultipartUploadSlicingAlgorithm();
-      algorithm.calculateChunkSize(payload.getContentMetadata().getContentLength());
+      algorithm
+               .calculateChunkSize(checkNotNull(
+                        payload.getContentMetadata().getContentLength(),
+                        "contentLength required on all uploads to amazon s3; please invoke payload.getContentMetadata().setContentLength(length) first"));
       int parts = algorithm.getParts();
       long chunkSize = algorithm.getChunkSize();
       if (parts > 0) {
