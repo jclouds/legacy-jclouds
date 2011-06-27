@@ -178,7 +178,7 @@ public class RestAnnotationProcessor<T> {
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
       return new MapMaker().makeComputingMap(new Function<Method, Map<Integer, Set<Annotation>>>() {
-         public Map<Integer, Set<Annotation>> apply(final Method method) {
+         public Map<Integer, Set<Annotation>> apply(Method method) {
             return new MapMaker().makeComputingMap(new GetAnnotationsForMethodParameterIndex(method, annotation));
          }
       });
@@ -218,7 +218,7 @@ public class RestAnnotationProcessor<T> {
 
    static final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
             .makeComputingMap(new Function<Method, Set<Integer>>() {
-               public Set<Integer> apply(final Method method) {
+               public Set<Integer> apply(Method method) {
                   Builder<Integer> toReturn = ImmutableSet.<Integer> builder();
                   for (int index = 0; index < method.getParameterTypes().length; index++) {
                      Class<?> type = method.getParameterTypes()[index];
@@ -307,7 +307,7 @@ public class RestAnnotationProcessor<T> {
          int result = 1;
          result = prime * result + ((declaringPackage == null) ? 0 : declaringPackage.hashCode());
          result = prime * result + ((name == null) ? 0 : name.hashCode());
-         result = prime * result + parameterCount;
+         result = prime * result + parametersTypeHashCode;
          return result;
       }
 
@@ -330,19 +330,22 @@ public class RestAnnotationProcessor<T> {
                return false;
          } else if (!name.equals(other.name))
             return false;
-         if (parameterCount != other.parameterCount)
+         if (parametersTypeHashCode != other.parametersTypeHashCode)
             return false;
          return true;
       }
 
       private final String name;
-      private final int parameterCount;
+      private final int parametersTypeHashCode;
       private final Package declaringPackage;
 
       public MethodKey(Method method) {
          this.name = method.getName();
          this.declaringPackage = method.getDeclaringClass().getPackage();
-         this.parameterCount = method.getParameterTypes().length;
+         int parametersTypeHashCode = 0;
+         for (Class<?> param: method.getParameterTypes())
+            parametersTypeHashCode +=param.hashCode();
+         this.parametersTypeHashCode = parametersTypeHashCode;
       }
 
    }

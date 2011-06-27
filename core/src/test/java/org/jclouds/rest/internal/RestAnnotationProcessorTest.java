@@ -307,8 +307,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       Caller caller = child.getInstance(Caller.class);
-      expect(mock.submit(requestLineEquals("GET http://howdyboys/client/1/foo HTTP/1.1"), eq(function)))
-               .andReturn(Futures.<Void> immediateFuture(null)).atLeastOnce();
+      expect(mock.submit(requestLineEquals("GET http://howdyboys/client/1/foo HTTP/1.1"), eq(function))).andReturn(
+               Futures.<Void> immediateFuture(null)).atLeastOnce();
       replay(mock);
 
       caller.getCallee(URI.create("http://howdyboys")).onePath("foo");
@@ -834,13 +834,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Unwrap(depth = 2)
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<Long> testUnwrapDepth2Long();
-      
+
       @GET
       @Path("/")
       @Unwrap(depth = 2, edgeCollection = Set.class)
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<String> testUnwrapDepth2Set();
-      
+
       @GET
       @Path("/")
       @Unwrap(depth = 3, edgeCollection = Set.class)
@@ -854,8 +854,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       @ROWDY
-      @Path("/objects/{id}")
+      @Path("/strings/{id}")
       ListenableFuture<Boolean> rowdy(@PathParam("id") String path);
+
+      @ROWDY
+      @Path("/ints/{id}")
+      ListenableFuture<Boolean> rowdy(@PathParam("id") int path);
    }
 
    static class Wrapper {
@@ -866,7 +870,16 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestPut.class.getMethod("rowdy", String.class);
       HttpRequest request = factory(TestPut.class).createRequest(method, "data");
 
-      assertRequestLineEquals(request, "ROWDY http://localhost:9999/objects/data HTTP/1.1");
+      assertRequestLineEquals(request, "ROWDY http://localhost:9999/strings/data HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+   }
+
+   public void testAlternateHttpMethodSameArity() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("rowdy", int.class);
+      HttpRequest request = factory(TestPut.class).createRequest(method, "data");
+
+      assertRequestLineEquals(request, "ROWDY http://localhost:9999/ints/data HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
    }
@@ -1051,8 +1064,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok",
-               newStringPayload("{\"runit\":[\"0.7.0\"]}"))), "0.7.0");
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\"]}"))), "0.7.0");
 
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[]}"))), null);
    }
