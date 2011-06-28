@@ -95,10 +95,10 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilderCanUseImageIdAndhardwareId() {
+   public void testTemplateBuilderCanUseImageIdAndhardwareIdAndAZ() {
 
       Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").hardwareId(
-               InstanceType.M2_2XLARGE).build();
+               InstanceType.M2_2XLARGE).locationId("us-east-1a").build();
 
       System.out.println(template.getHardware());
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -107,7 +107,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(template.getImage().getVersion(), "4.4.10");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
-      assertEquals(template.getLocation().getId(), "us-east-1");
+      assertEquals(template.getLocation().getId(), "us-east-1a");
       assertEquals(getCores(template.getHardware()), 4.0d);
       assertEquals(template.getHardware().getId(), InstanceType.M2_2XLARGE);
       assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
