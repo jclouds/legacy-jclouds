@@ -108,6 +108,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getVersion(), "4.4.10");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1a");
+      assertEquals(template.getImage().getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 4.0d);
       assertEquals(template.getHardware().getId(), InstanceType.M2_2XLARGE);
       assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
