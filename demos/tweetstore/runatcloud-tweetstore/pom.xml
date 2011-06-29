@@ -107,6 +107,20 @@
             </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+        <!-- net.stax:stax-appserver is not in central -->
+        <repository>
+            <id>bees-snapshots</id>
+            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases> 
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>
@@ -209,7 +223,7 @@
             </properties>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>bees-plugins-snapshots</id>
+                    <id>bees-snapshots</id>
                     <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
                     <releases>
                         <enabled>false</enabled>
