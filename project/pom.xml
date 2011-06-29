@@ -751,9 +751,6 @@ pageTracker._trackPageview();
                     <plugin>
                         <artifactId>maven-jxr-plugin</artifactId>
                         <version>2.2</version>
-                        <configuration>
-                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -880,9 +877,6 @@ pageTracker._trackPageview();
                                     <plugin>
                                         <artifactId>maven-jxr-plugin</artifactId>
                                         <version>2.2</version>
-                                        <configuration>
-                                            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-                                        </configuration>
                                     </plugin>
                                     <plugin>
                                         <artifactId>maven-surefire-report-plugin</artifactId>
