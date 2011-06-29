@@ -44,6 +44,12 @@
             <artifactId>guice-servlet</artifactId>
             <version>3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudonestorage</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         
         <!-- RUN@cloud API -->
         <dependency>
