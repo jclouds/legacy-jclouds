@@ -38,19 +38,6 @@
         <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>bees-plugins-snapshots</id>
-            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
