@@ -19,6 +19,7 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.demo.tweetstore.controller.StoreTweetsController.AUTHORIZED_REQUEST_ORIGINATOR_HEADER;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
@@ -173,13 +174,13 @@ public class TweetStoreLiveTest {
     }
    
    @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
-   @Parameters({ "warfile", "bees.address", "bees.port", "bees.environment", "bees.basedir" })
+   @Parameters({ "warfile", "bees.address", "bees.port", "bees.basedir" })
    public void startDevAppServer(final String warfile, final String address, final String port,
-           String environments, String serverBaseDirectory) throws Exception {
+           String serverBaseDirectory) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
 
       server = new RunAtCloudServer();
-      server.writePropertiesAndStartServer(address, port, warfile, environments, 
+      server.writePropertiesAndStartServer(address, port, warfile, "itest", 
               serverBaseDirectory, props);
    }
 
@@ -202,7 +203,7 @@ public class TweetStoreLiveTest {
       for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
-         connection.addRequestProperty("X-RUN@cloud-Submitter", "twitter");
+         connection.addRequestProperty(AUTHORIZED_REQUEST_ORIGINATOR_HEADER, "twitter");
          connection.addRequestProperty("context", context);
          InputStream i = connection.getInputStream();
          String string = Strings2.toStringAndClose(i);

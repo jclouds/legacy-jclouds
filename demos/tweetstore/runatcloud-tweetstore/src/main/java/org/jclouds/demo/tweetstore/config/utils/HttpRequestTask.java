@@ -3,6 +3,7 @@ package org.jclouds.demo.tweetstore.config.utils;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.inject.name.Names.bindProperties;
 import static java.lang.String.format;
+import static org.jclouds.demo.tweetstore.controller.StoreTweetsController.AUTHORIZED_REQUEST_ORIGINATOR_HEADER;
 
 import java.util.Properties;
 
@@ -31,8 +32,6 @@ public class HttpRequestTask implements Runnable {
     }
     
     public static class Factory {
-        private static final String HTTP_REQUEST_ORIGINATOR_HEADER = "X-RUN@cloud-Originator";
-        
         protected final HttpCommandExecutorService httpClient;
         protected final String originator;
         
@@ -56,7 +55,7 @@ public class HttpRequestTask implements Runnable {
         public HttpRequestTask create(HttpRequest request) {
             HttpRequest requestWithSubmitter = request.toBuilder().headers(
                     copyOfWithEntry(request.getHeaders(), 
-                            HTTP_REQUEST_ORIGINATOR_HEADER, originator)).build();
+                            AUTHORIZED_REQUEST_ORIGINATOR_HEADER, originator)).build();
             return new HttpRequestTask(httpClient, requestWithSubmitter);
         }
         
