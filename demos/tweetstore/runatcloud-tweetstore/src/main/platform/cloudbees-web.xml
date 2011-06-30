@@ -1,8 +1,20 @@
 <?xml version="1.0"?>
 <cloudbees-web-app xmlns="http://www.cloudbees.com/xml/webapp/1">     
     <appid>${bees.appid}</appid>
-    <context-param>
-        <param-name>application.environment</param-name>
-        <param-value>${bees.environment}</param-value>
-    </context-param>
+
+    <environment name="itest">
+        <context-param>
+            <param-name>application.host</param-name>
+            <param-value>${test.bees.address}:${test.bees.port}</param-value>
+        </context-param>
+    </environment>
+    
+    <environment name="run">
+        <context-param>
+            <!-- this value could better be retrieved programmatically using the RUN@cloud API, see 
+              https://cloudbees.zendesk.com/entries/417046-cloudbees-api-for-run-cloud -->
+            <param-name>application.host</param-name>
+            <param-value>${bees.apptitle}.jclouds.cloudbees.net</param-value>
+        </context-param>
+    </environment>
 </cloudbees-web-app>

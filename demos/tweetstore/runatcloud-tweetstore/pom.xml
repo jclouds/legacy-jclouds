@@ -32,9 +32,10 @@
 
     <properties>
         <bees.appid>jclouds/tweetstore</bees.appid>
-        <bees.environment>run</bees.environment>
-        <bees.address>localhost</bees.address>
-        <bees.port>8088</bees.port>
+        <!-- first part of the live URL, used in cloudbees-web.xml -->
+        <bees.apptitle>tweetstore</bees.apptitle>
+        <test.bees.address>localhost</test.bees.address>
+        <test.bees.port>8088</test.bees.port>
         <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
     </properties>
 
@@ -75,15 +76,11 @@
                             <systemProperties>
                                 <property>
                                     <name>bees.address</name>
-                                    <value>${bees.address}</value>
+                                    <value>${test.bees.address}</value>
                                 </property>
                                 <property>
                                     <name>bees.port</name>
-                                    <value>${bees.port}</value>
-                                </property>
-                                <property>
-                                    <name>bees.environment</name>
-                                    <value>${bees.environment}</value>
+                                    <value>${test.bees.port}</value>
                                 </property>
                                 <property>
                                     <name>bees.basedir</name>
@@ -172,16 +169,20 @@
                                             <value>${test.aws-s3.credential}</value>
                                         </property>
                                         <property>
+                                            <name>test.cloudonestorage.identity</name>
+                                            <value>${test.cloudonestorage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.credential</name>
+                                            <value>${test.cloudonestorage.credential}</value>
+                                        </property>
+                                        <property>
                                             <name>bees.address</name>
-                                            <value>${bees.address}</value>
+                                            <value>${test.bees.address}</value>
                                         </property>
                                         <property>
                                             <name>bees.port</name>
-                                            <value>${bees.port}</value>
-                                        </property>
-                                        <property>
-                                            <name>bees.environment</name>
-                                            <value>${bees.environment}</value>
+                                            <value>${test.bees.port}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.tweetstore.blobstores</name>
@@ -233,7 +234,7 @@
                         <artifactId>bees-maven-plugin</artifactId>
                         <version>1.0-SNAPSHOT</version>
                         <configuration>
-                            <environment>${bees.environment}</environment>
+                            <environment>run</environment>
                             <apikey>${bees.apikey}</apikey>
                             <secret>${bees.secret}</secret>
                         </configuration>
