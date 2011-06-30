@@ -18,7 +18,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.demo.tweetstore.config.utils;
+package org.jclouds.demo.tweetstore.integration.utils;
 
 import java.lang.reflect.Field;
 

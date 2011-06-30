@@ -22,8 +22,8 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static java.util.Arrays.asList;
-import static org.jclouds.demo.tweetstore.config.utils.ObjectFields.set;
-import static org.jclouds.demo.tweetstore.config.utils.ObjectFields.valueOf;
+import static org.jclouds.demo.tweetstore.integration.utils.ObjectFields.set;
+import static org.jclouds.demo.tweetstore.integration.utils.ObjectFields.valueOf;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +107,13 @@ class StaxSdkAppServer2 {
         serverThread.interrupt();
         StaxReflect.getStaxAppQueryTimer(server).cancel();
         KillerCallback requestMonitorAssassin = new KillerCallback(StaxReflect.getRequestMonitorTimerCallback(server));
+        /*
+         * Hoping for the best here in terms of visibility - we're setting a variable in a
+         * different thread which isn't guaranteed to see the change. 
+         * But we can't set the callbackClient before serverThread starts (which would create
+         * a happens-before relationship) because the objects on which the callbackClient is 
+         * set have not been created yet at that point.
+         */
         set("callbackClient", StaxReflect.getRequestMonitorTimer(server), requestMonitorAssassin);
         requestMonitorAssassin.setToKill();
     }
