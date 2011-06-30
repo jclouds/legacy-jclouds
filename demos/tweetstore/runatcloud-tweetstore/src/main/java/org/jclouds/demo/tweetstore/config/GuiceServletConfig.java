@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
@@ -109,14 +110,19 @@ public class GuiceServletConfig extends GuiceServletContextListener {
         // submit a job to store tweets for each configured blobstore
         for (String name : providerTypeToBlobStoreMap.keySet()) {
             queue.add(taskFactory.create(HttpRequest.builder()
-                    .endpoint(URI.create("http://localhost:8080" + servletContextEvent.getServletContext().getContextPath() + "/store/do"))
-                    .headers(ImmutableMultimap.of("context", name, "X-RUN@cloud-QueueName", "twitter"))
+                    .endpoint(withUrl(servletContextEvent.getServletContext(), "/store/do"))
+                    .headers(ImmutableMultimap.of("context", name))
                     .method("GET").build()));
         }
 
         super.contextInitialized(servletContextEvent);
     }
 
+    private static URI withUrl(ServletContext servletContext, String url) {
+        return URI.create("http://" + servletContext.getInitParameter("application.host") 
+                          + servletContext.getContextPath() + url);
+    }
+    
     private Properties loadJCloudsProperties(
             ServletContextEvent servletContextEvent) {
         InputStream input = servletContextEvent.getServletContext()
