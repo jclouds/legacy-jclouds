@@ -18,14 +18,9 @@
  */
 package org.jclouds.greenhousedata.element.vcloud.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -45,18 +40,6 @@ public class GreenHouseDataElementVCloudComputeServiceLiveTest extends VCloudCom
    @Override
    public void setServiceDefaults() {
       group = "director";
-   }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assert OperatingSystemPredicates.supportsApt().apply(defaultTemplate.getImage().getOperatingSystem());
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getDescription(), "Ubuntu Linux (64-bit)");
-      assert defaultTemplate.getLocation().getId() != null : defaultTemplate.getLocation();
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-      System.out.println(defaultTemplate.getHardware());
    }
 
    @Override

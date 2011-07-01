@@ -36,7 +36,7 @@ public class GreenHouseDataElementVCloudPropertiesBuilder extends VCloudProperti
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-WY");
       properties.setProperty(PROPERTY_ENDPOINT, "https://mycloud.greenhousedata.com/api");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-Internal-Routed");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External");
       return properties;
    }
 

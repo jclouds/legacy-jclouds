@@ -50,7 +50,12 @@ public class GreenHouseDataElementVCloudTemplateBuilderLiveTest extends BaseTemp
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return true;
+            switch (input.family) {
+            case UBUNTU:
+               return !input.version.equals("") || !input.is64Bit;
+            default:
+               return true;
+            }
          }
 
       };
@@ -61,8 +66,8 @@ public class GreenHouseDataElementVCloudTemplateBuilderLiveTest extends BaseTemp
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.LINUX);
-      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override

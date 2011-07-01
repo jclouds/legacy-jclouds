@@ -18,9 +18,10 @@
  */
 package org.jclouds.greenhousedata.element.vcloud.config;
 
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
+import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 
 import com.google.inject.Injector;
 
@@ -31,9 +32,8 @@ import com.google.inject.Injector;
  */
 public class GreenHouseDataElementVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
-   //CentOS template matches Linux incorrectly
    @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.LINUX);
+   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+      return options.as(VCloudTemplateOptions.class).ipAddressAllocationMode(IpAddressAllocationMode.POOL);
    }
 }
