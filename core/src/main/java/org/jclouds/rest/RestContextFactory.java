@@ -304,7 +304,7 @@ public class RestContextFactory {
          contextBuilderClass = Providers.resolveContextBuilderClass(providerName, props);
          propertiesBuilderClass = Providers.resolvePropertiesBuilderClass(providerName, props);
          sync = (Class<S>) (syncClassName != null ? Class.forName(syncClassName) : null);
-         async = (Class<A>) (syncClassName != null ? Class.forName(asyncClassName) : null);
+         async = (Class<A>) (asyncClassName != null ? Class.forName(asyncClassName) : null);
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(
                String.format(
