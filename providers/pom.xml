@@ -63,5 +63,6 @@
         <module>serverlove-z1-man</module>
         <module>skalicloud-sdg-my</module>
         <module>savvis-symphonyvpdc</module>
+        <module>greenhousedata-element-vcloud</module>
     </modules>
 </project>
