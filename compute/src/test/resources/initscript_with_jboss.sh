@@ -58,23 +58,41 @@ case $1 in
 init)
    default || exit 1
    jboss || exit 1
-   mkdir -p ~/.ssh
-   cat >> ~/.ssh/authorized_keys <<'END_OF_FILE'
-ssh-rsa
+   rm /etc/sudoers
+   cat >> /etc/sudoers <<'END_OF_FILE'
+root ALL = (ALL) ALL
+%wheel ALL = (ALL) NOPASSWD:ALL
 END_OF_FILE
-   chmod 600 ~/.ssh/authorized_keys
+   chmod 0440 /etc/sudoers
+   mkdir -p /home/users/defaultAdminUsername
+   groupadd -f wheel
+   useradd -s /bin/bash -g wheel -d /home/users/defaultAdminUsername -p 'crypt(randompassword)' defaultAdminUsername
+   mkdir -p /home/users/defaultAdminUsername/.ssh
+   cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<'END_OF_FILE'
+publicKey
+END_OF_FILE
+   chmod 600 /home/users/defaultAdminUsername/.ssh/authorized_keys
+   chown -R defaultAdminUsername /home/users/defaultAdminUsername
+   exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
+   PermitRootLogin no
+   " 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
+   /etc/init.d/sshd reload||/etc/init.d/ssh reload
+   awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+   test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
+   grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
+   nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
    which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
    (which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
-   curl -X GET -s --retry 20  http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install |(bash)
-   echo nameserver 208.67.222.222 >> /etc/resolv.conf
+   curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://whirr.s3.amazonaws.com/0.3.0-incubating/sun/java/install |(bash)
    rm -rf /var/cache/apt /usr/lib/vmware-tools
    echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
    iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables-save
-   curl -X GET -s --retry 20  http://d37gkgjhl3prlk.cloudfront.net/jboss-6.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+   curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://d37gkgjhl3prlk.cloudfront.net/jboss-7.0.0.CR1.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
    mkdir -p /usr/local/jboss
    mv /usr/local/jboss-*/* /usr/local/jboss
+   (cd $JBOSS_HOME/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)
    chmod -R oug+r+w /usr/local/jboss
    mkdir -p $INSTANCE_HOME
    
@@ -96,7 +114,7 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -c jbossweb-standalone -b 0.0.0.0
+java  -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.boot.log.file=$JBOSS_HOME/standalone/log/boot.log -Dlogging.configuration=file:$JBOSS_HOME/standalone/configuration/logging.properties -jar $JBOSS_HOME/jboss-modules.jar -mp $JBOSS_HOME/modules -logmodule org.jboss.logmanager -jaxpmodule javax.xml.jaxp-provider org.jboss.as.standalone -Djboss.home.dir=$JBOSS_HOME
 END_OF_SCRIPT
    
    # add runscript footer

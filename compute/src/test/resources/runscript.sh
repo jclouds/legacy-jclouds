@@ -76,10 +76,11 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
+grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
+nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
 (which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
-curl -X GET -s --retry 20  http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install |(bash)
-echo nameserver 208.67.222.222 >> /etc/resolv.conf
+curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://whirr.s3.amazonaws.com/0.3.0-incubating/sun/java/install |(bash)
 rm -rf /var/cache/apt /usr/lib/vmware-tools
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
 
