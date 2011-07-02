@@ -46,7 +46,7 @@ public class PipeHttpResponseTo extends InterpretableStatement {
     *           request headers to send
     */
    public PipeHttpResponseTo(Statement toExec, String method, URI endpoint, Multimap<String, String> headers) {
-      super(String.format("curl -X %s -s --retry 20 %s %s |(%s)\n", method, Joiner.on(' ').join(
+      super(String.format("%s -X %s %s %s |(%s)\n", SaveHttpResponseTo.CURL, method, Joiner.on(' ').join(
                Iterables.transform(headers.entries(), new Function<Entry<String, String>, String>() {
 
                   @Override

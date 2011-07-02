@@ -44,7 +44,7 @@ public class PipeHttpResponseToTest {
    public void testPipeHttpResponseToBashUNIX() {
       assertEquals(
                bash.render(OsFamily.UNIX),
-               "curl -X GET -s --retry 20 -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(bash)\n");
+               "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(bash)\n");
       assertEquals(bash2.render(OsFamily.UNIX), bash.render(OsFamily.UNIX));
    }
 
@@ -59,15 +59,15 @@ public class PipeHttpResponseToTest {
             "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization",
             "AWS 0ASHDJAS82:JASHFDA="));
 
-   PipeHttpResponseTo untar2 = new PipeHttpResponseToTarxpzfIntoDirectory( "GET", URI
+   PipeHttpResponseTo untar2 = new PipeHttpResponseToTarxpzfIntoDirectory("GET", URI
             .create("https://adriancolehappy.s3.amazonaws.com/java/install"), ImmutableMultimap.of("Host",
             "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization",
-            "AWS 0ASHDJAS82:JASHFDA="),"{root}stage{fs}");
+            "AWS 0ASHDJAS82:JASHFDA="), "{root}stage{fs}");
 
    public void testPipeHttpResponseToUntarUNIX() {
       assertEquals(
                untar.render(OsFamily.UNIX),
-               "curl -X GET -s --retry 20 -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
+               "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
       assertEquals(untar.render(OsFamily.UNIX), untar2.render(OsFamily.UNIX));
 
    }
