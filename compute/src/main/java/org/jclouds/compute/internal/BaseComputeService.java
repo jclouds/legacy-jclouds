@@ -224,7 +224,7 @@ public class BaseComputeService implements ComputeService {
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
       if (template.getOptions().getRunScript() != null)
-         template.getOptions().runScript(initAdminAccess.apply(template.getOptions().getRunScript()));
+         initAdminAccess.visit(template.getOptions().getRunScript());
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
                customizationResponses);
@@ -550,7 +550,7 @@ public class BaseComputeService implements ComputeService {
       Map<NodeMetadata, Future<ExecResponse>> responses = newLinkedHashMap();
       Map<?, Exception> exceptions = ImmutableMap.<Object, Exception> of();
 
-      runScript = initAdminAccess.apply(runScript);
+      initAdminAccess.visit(runScript);
 
       Iterable<? extends RunScriptOnNode> scriptRunners = transformNodesIntoInitializedScriptRunners(
                nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter), runScript, options, badNodes);

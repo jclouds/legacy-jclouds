@@ -28,14 +28,17 @@ import javax.inject.Named;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.domain.AdminAccessVisitor;
 import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -52,15 +55,16 @@ import com.google.inject.assistedinject.AssistedInject;
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    public static final String PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP = "jclouds.compute.push-init-script-via-sftp";
+   public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    protected final Function<NodeMetadata, SshClient> sshFactory;
-   protected final NodeMetadata node;
-   protected final Statement init;
-   protected final String name;
+   protected NodeMetadata node;
+   protected final InitBuilder init;
    protected final boolean runAsRoot;
+   protected final String initFile;
 
    protected SshClient ssh;
 
@@ -71,6 +75,15 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    @Inject(optional = true)
    @Named(PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP)
    private boolean pushInitViaSftp = true;
+
+   /**
+    * determines the naming convention of init scripts.
+    * 
+    * ex. {@code /tmp/init-%s}
+    */
+   @Inject(optional = true)
+   @Named(PROPERTY_INIT_SCRIPT_PATTERN)
+   private String initScriptPattern = "/tmp/init-%s";
 
    @AssistedInject
    public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
@@ -84,9 +97,9 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
          else
             name = "jclouds-script-" + System.currentTimeMillis();
       }
-      this.name = checkNotNull(name, "name");
       this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
                : createInitScript(name, script);
+      this.initFile = String.format(initScriptPattern, name);
       this.runAsRoot = options.shouldRunAsRoot();
    }
 
@@ -113,20 +126,46 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       return this;
    }
 
+   public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
+      if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
+         ssh.disconnect();
+         logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
+         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(null).credentials(
+                  input.getAdminCredentials()).build());
+         ssh.connect();
+         setupLinkToInitFile();
+      }
+   }
+
    /**
     * ssh client is initialized through this call.
     */
    protected ExecResponse doCall() {
       if (pushInitViaSftp) {
-         ssh.put(name, init.render(OsFamily.UNIX));
+         ssh.put(initFile, init.render(OsFamily.UNIX));
       } else {
-         ssh.exec("rm " + name);
-         ssh.exec(Statements.appendFile(name, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
-                  AppendFile.MARKER + "_" + name).render(OsFamily.UNIX));
+         ssh.exec("rm " + initFile);
+         ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
+                  AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
       }
-      ssh.exec("chmod 755 " + name);
+
+      ssh.exec("chmod 755 " + initFile);
+      setupLinkToInitFile();
+
       runAction("init");
+      init.getInitStatement().accept(new AdminAccessVisitor() {
+
+         @Override
+         public void visit(AdminAccess input) {
+            refreshSshIfNewAdminCredentialsConfigured(input);
+         }
+
+      });
       return runAction("start");
+   }
+
+   protected void setupLinkToInitFile() {
+      ssh.exec(String.format("ln -fs %s %s", initFile, init.getInstanceName()));
    }
 
    protected ExecResponse runAction(String action) {
@@ -152,17 +191,17 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    public String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
-         command = "./" + name + " " + action;
+         command = "./" + init.getInstanceName() + " " + action;
       } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), name, action);
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
       } else {
-         command = "sudo ./" + name + " " + action;
+         command = "sudo ./" + init.getInstanceName() + " " + action;
       }
       return command;
    }
 
    protected String execScriptAsDefaultUser(String action) {
-      return "./" + name + " " + action;
+      return "./" + initFile + " " + action;
    }
 
    public NodeMetadata getNode() {
@@ -171,7 +210,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", name).add("runAsRoot", runAsRoot).toString();
+      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName()).add("runAsRoot",
+               runAsRoot).toString();
    }
 
    @Override

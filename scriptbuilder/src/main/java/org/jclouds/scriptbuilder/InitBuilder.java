@@ -30,6 +30,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 
 import java.util.Map;
 
+import org.jclouds.scriptbuilder.domain.CreateRunScript;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 
@@ -47,38 +48,40 @@ public class InitBuilder extends ScriptBuilder {
    private final String instanceName;
    private final String instanceHome;
    private final String logDir;
+   private final StatementList initStatement;
+   private final CreateRunScript createRunScript;
 
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
             Iterable<Statement> statements) {
-      this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement>of(), statements);
+      this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement> of(), statements);
    }
 
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
             Iterable<Statement> initStatements, Iterable<Statement> statements) {
+      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
+               instanceHome, "logDir", logDir);
+      this.initStatement = new StatementList(initStatements);
+      this.createRunScript = createRunScript(instanceName,// TODO: convert
+               // so
+               // that
+               // createRunScript
+               // can take from a
+               // variable
+               Iterables.concat(variables.keySet(), defaultVariables.keySet()), "{varl}INSTANCE_HOME{varr}", statements);
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.instanceHome = checkNotNull(instanceHome, "instanceHome");
       this.logDir = checkNotNull(logDir, "logDir");
-      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
-               instanceHome, "logDir", logDir);
+
       addEnvironmentVariableScope("default", defaultVariables)
                .addEnvironmentVariableScope(instanceName, variables)
                .addStatement(
                         switchArg(
                                  1,
-                                 new ImmutableMap.Builder<String,Statement>()
+                                 new ImmutableMap.Builder<String, Statement>()
                                           .put(
                                                    "init",
-                                                   newStatementList(call("default"), call(instanceName),
-                                                            new StatementList(initStatements), createRunScript(
-                                                                     instanceName,// TODO: convert
-                                                                     // so
-                                                                     // that
-                                                                     // createRunScript
-                                                                     // can take from a
-                                                                     // variable
-                                                                     Iterables.concat(variables.keySet(),
-                                                                              defaultVariables.keySet()),
-                                                                     "{varl}INSTANCE_HOME{varr}", statements)))
+                                                   newStatementList(call("default"), call(instanceName), initStatement,
+                                                            createRunScript))
                                           .put(
                                                    "status",
                                                    newStatementList(call("default"),
@@ -164,5 +167,13 @@ public class InitBuilder extends ScriptBuilder {
    @Override
    public String toString() {
       return "[instanceName=" + instanceName + ", instanceHome=" + instanceHome + ", logDir=" + logDir + "]";
+   }
+
+   public StatementList getInitStatement() {
+      return initStatement;
+   }
+
+   public CreateRunScript getCreateRunScript() {
+      return createRunScript;
    }
 }

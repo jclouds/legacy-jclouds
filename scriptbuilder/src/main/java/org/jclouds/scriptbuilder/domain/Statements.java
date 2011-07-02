@@ -71,7 +71,7 @@ public class Statements {
       return new AppendFile(path, lines, marker);
    }
 
-   public static Statement createRunScript(String instanceName, Iterable<String> exports, String pwd,
+   public static CreateRunScript createRunScript(String instanceName, Iterable<String> exports, String pwd,
             Iterable<Statement> statements) {// TODO: convert so
       // that
       // createRunScript

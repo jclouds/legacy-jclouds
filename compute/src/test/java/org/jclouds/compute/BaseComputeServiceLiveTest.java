@@ -502,7 +502,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       // note this is a dependency on the template resolution
       template.getOptions().runScript(
-               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+               RunScriptData.createScriptInstallAndStartJBoss(template.getImage()
                         .getOperatingSystem()));
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, template));

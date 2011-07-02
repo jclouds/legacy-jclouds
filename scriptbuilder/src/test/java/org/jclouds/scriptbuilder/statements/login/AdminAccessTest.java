@@ -38,7 +38,7 @@ public class AdminAccessTest {
    public void testStandardUNIX() throws IOException {
       TestConfiguration.INSTANCE.reset();
       try {
-         assertEquals(AdminAccess.standard().apply(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
+         assertEquals(AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
                CharStreams.toString(Resources.newReaderSupplier(Resources.getResource("test_adminaccess_standard.sh"),
                      Charsets.UTF_8)));
       } finally {
@@ -51,7 +51,7 @@ public class AdminAccessTest {
       try {
          assertEquals(
                AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
-                     .adminPublicKey("fooPublicKey").adminUsername("foo").build().apply(TestConfiguration.INSTANCE)
+                     .adminPublicKey("fooPublicKey").adminUsername("foo").build().init(TestConfiguration.INSTANCE)
                      .render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
                      Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8)));
       } finally {
@@ -65,7 +65,7 @@ public class AdminAccessTest {
          assertEquals(
                AdminAccess.builder().grantSudoToAdminUser(false).authorizeAdminPublicKey(true)
                      .installAdminPrivateKey(true).lockSsh(false).resetLoginPassword(false).build()
-                     .apply(TestConfiguration.INSTANCE).render(OsFamily.UNIX), CharStreams.toString(Resources
+                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), CharStreams.toString(Resources
                      .newReaderSupplier(Resources.getResource("test_adminaccess_plainuser.sh"), Charsets.UTF_8)));
       } finally {
          TestConfiguration.INSTANCE.reset();
@@ -74,6 +74,6 @@ public class AdminAccessTest {
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testCreateWheelWindowsNotSupported() {
-      AdminAccess.standard().apply(TestConfiguration.INSTANCE).render(OsFamily.WINDOWS);
+      AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.WINDOWS);
    }
 }

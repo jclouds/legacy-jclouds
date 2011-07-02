@@ -22,13 +22,19 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
@@ -76,6 +82,27 @@ public class CredentialsFromAdminAccessTest {
       replay(creds);
 
       assertEquals(CredentialsFromAdminAccess.INSTANCE.apply(Statements.newStatementList(statement)), creds);
+
+      verify(configuration);
+      verify(statement);
+      verify(creds);
+   }
+
+   public void testWhenAdminAccessInsideInitBuilder() {
+      AdminAccess.Configuration configuration = createMock(AdminAccess.Configuration.class);
+      AdminAccess statement = createMock(AdminAccess.class);
+      Credentials creds = createMock(Credentials.class);
+
+      expect(statement.getAdminCredentials()).andReturn(creds);
+
+      replay(configuration);
+      replay(statement);
+      replay(creds);
+      
+      InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
+      "/mnt/tmp"), ImmutableList.<Statement> of(statement));
+      
+      assertEquals(CredentialsFromAdminAccess.INSTANCE.apply(testInitBuilder), creds);
 
       verify(configuration);
       verify(statement);

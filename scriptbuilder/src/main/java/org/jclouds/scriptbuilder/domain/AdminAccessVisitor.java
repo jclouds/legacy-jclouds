@@ -16,28 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.scriptbuilder.functions;
+package org.jclouds.scriptbuilder.domain;
 
-import javax.inject.Inject;
-
-import org.jclouds.scriptbuilder.domain.AdminAccessVisitor;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
-import org.jclouds.scriptbuilder.statements.login.AdminAccess.Configuration;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class InitAdminAccess extends AdminAccessVisitor {
-   private final AdminAccess.Configuration adminAccessConfiguration;
-
-   @Inject
-   public InitAdminAccess(Configuration adminAccessConfiguration) {
-      this.adminAccessConfiguration = adminAccessConfiguration;
-   }
+public abstract class AdminAccessVisitor implements StatementVisitor {
+   public abstract void visit(AdminAccess input);
 
    @Override
-   public void visit(AdminAccess input) {
-      input.init(adminAccessConfiguration);
+   public void visit(Statement input) {
+      if (input == null)
+         return;
+      if (input instanceof AcceptsStatementVisitor) {
+         AcceptsStatementVisitor.class.cast(input).accept(this);
+      } else if (input instanceof AdminAccess) {
+         visit(AdminAccess.class.cast(input));
+      }
    }
 }

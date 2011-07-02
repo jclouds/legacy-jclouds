@@ -24,9 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jclouds.scriptbuilder.domain.AcceptsStatementVisitor;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.StatementVisitor;
 import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -41,7 +43,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class ScriptBuilder implements Statement {
+public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
 
    @VisibleForTesting
    List<Statement> statements = Lists.newArrayList();
@@ -146,5 +148,12 @@ public class ScriptBuilder implements Statement {
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
       return ImmutableSet.<String> of();
+   }
+   
+   @Override
+   public void accept(StatementVisitor visitor) {
+      for (Statement statement : statements) {
+         visitor.visit(statement);
+      }
    }
 }

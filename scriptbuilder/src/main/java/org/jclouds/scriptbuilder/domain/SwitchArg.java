@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Adrian Cole
  */
-public class SwitchArg implements Statement {
+public class SwitchArg implements Statement, AcceptsStatementVisitor {
 
    private static final String INDENT = "   ";
 
@@ -160,5 +160,12 @@ public class SwitchArg implements Statement {
       } else if (!valueToActions.equals(other.valueToActions))
          return false;
       return true;
+   }
+
+   @Override
+   public void accept(StatementVisitor visitor) {
+      for (Statement statement : valueToActions.values()) {
+         visitor.visit(statement);
+      }
    }
 }

@@ -24,10 +24,15 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.domain.Credentials;
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
@@ -36,13 +41,15 @@ import org.testng.annotations.Test;
 public class InitAdminAccessTest {
 
    public void testWhenNotAdminAccess() {
+      AdminAccess.Configuration configuration = createMock(AdminAccess.Configuration.class);
 
-      InitAdminAccess initAdminAccess = new InitAdminAccess(createMock(AdminAccess.Configuration.class));
-      Statement statement = Statements.exec("echo hello");
-      assertEquals(initAdminAccess.apply(statement), statement);
+      InitAdminAccess initAdminAccess = new InitAdminAccess(configuration);
+      replay(configuration);
 
-      Statement statementList = Statements.newStatementList(statement);
-      assertEquals(initAdminAccess.apply(statementList), statementList);
+      initAdminAccess.visit(Statements.exec("echo hello"));
+
+      initAdminAccess.visit(Statements.newStatementList(Statements.exec("echo hello")));
+      verify(configuration);
 
    }
 
@@ -51,14 +58,14 @@ public class InitAdminAccessTest {
       AdminAccess statement = createMock(AdminAccess.class);
       AdminAccess newStatement = createMock(AdminAccess.class);
 
-      expect(statement.apply(configuration)).andReturn(newStatement);
+      expect(statement.init(configuration)).andReturn(newStatement);
 
       replay(configuration);
       replay(statement);
       replay(newStatement);
       InitAdminAccess initAdminAccess = new InitAdminAccess(configuration);
 
-      assertEquals(initAdminAccess.apply(statement), newStatement);
+      initAdminAccess.visit(statement);
 
       verify(configuration);
       verify(statement);
@@ -70,15 +77,38 @@ public class InitAdminAccessTest {
       AdminAccess statement = createMock(AdminAccess.class);
       AdminAccess newStatement = createMock(AdminAccess.class);
 
-      expect(statement.apply(configuration)).andReturn(newStatement);
+      expect(statement.init(configuration)).andReturn(newStatement);
 
       replay(configuration);
       replay(statement);
       replay(newStatement);
       InitAdminAccess initAdminAccess = new InitAdminAccess(configuration);
 
-      assertEquals(initAdminAccess.apply(Statements.newStatementList(statement)),
-            Statements.newStatementList(newStatement));
+      initAdminAccess.visit(Statements.newStatementList(statement));
+
+      verify(configuration);
+      verify(statement);
+      verify(newStatement);
+   }
+   
+
+   public void testWhenAdminAccessInsideInitBuilder() {
+      AdminAccess.Configuration configuration = createMock(AdminAccess.Configuration.class);
+      AdminAccess statement = createMock(AdminAccess.class);
+      AdminAccess newStatement = createMock(AdminAccess.class);
+
+      expect(statement.init(configuration)).andReturn(newStatement);
+
+      replay(configuration);
+      replay(statement);
+      replay(newStatement);
+      
+      InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
+      "/mnt/tmp"), ImmutableList.<Statement> of(statement));
+      
+      InitAdminAccess initAdminAccess = new InitAdminAccess(configuration);
+
+      initAdminAccess.visit(testInitBuilder);
 
       verify(configuration);
       verify(statement);

@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList.Builder;
  * 
  * @author Adrian Cole
  */
-public class StatementList implements Statement {
+public class StatementList implements Statement, AcceptsStatementVisitor {
 
    public final List<Statement> statements;
 
@@ -84,7 +84,10 @@ public class StatementList implements Statement {
       return true;
    }
 
-   public List<Statement> getStatements() {
-      return statements;
+   @Override
+   public void accept(StatementVisitor visitor) {
+      for (Statement statement : statements) {
+         visitor.visit(statement);
+      }
    }
 }

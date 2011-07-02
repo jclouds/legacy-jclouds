@@ -53,13 +53,14 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends Ru
    @Override
    public ExecResponse doCall() {
       ExecResponse returnVal = super.doCall();
-      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + name + " status", ssh));
+      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + init.getInstanceName() + " status",
+               ssh));
       logger.debug("<< complete(%s)", complete);
       if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
-         logger.debug("<< stdout from %s as %s@%s\n%s", name, ssh.getUsername(), ssh.getHostAddress(), ssh.exec(
-                  "./" + name + " tail").getOutput());
-         logger.debug("<< stderr from %s as %s@%s\n%s", name, ssh.getUsername(), ssh.getHostAddress(), ssh.exec(
-                  "./" + name + " tailerr").getOutput());
+         logger.debug("<< stdout from %s as %s@%s\n%s", init.getInstanceName(), ssh.getUsername(),
+                  ssh.getHostAddress(), ssh.exec("./" + init.getInstanceName() + " tail").getOutput());
+         logger.debug("<< stderr from %s as %s@%s\n%s", init.getInstanceName(), ssh.getUsername(),
+                  ssh.getHostAddress(), ssh.exec("./" + init.getInstanceName() + " tailerr").getOutput());
       }
       return returnVal;
    }

@@ -18,18 +18,17 @@
  */
 package org.jclouds.scriptbuilder.functions;
 
-import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.scriptbuilder.domain.AcceptsStatementVisitor;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.scriptbuilder.domain.StatementVisitor;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -41,13 +40,21 @@ public enum CredentialsFromAdminAccess implements Function<Statement, Credential
    public Credentials apply(@Nullable Statement input) {
       if (input == null)
          return null;
-      if (input instanceof StatementList) {
-         try {
-            return apply(Iterables.find(StatementList.class.cast(input).getStatements(),
-                  Predicates.instanceOf(AdminAccess.class)));
-         } catch (NoSuchElementException e) {
-            return null;
-         }
+      if (input instanceof AcceptsStatementVisitor) {
+         final AtomicReference<Credentials> credsHolder = new AtomicReference<Credentials>();
+         AcceptsStatementVisitor.class.cast(input).accept(new StatementVisitor() {
+
+            @Override
+            public void visit(Statement in) {
+               if (credsHolder.get() == null) {
+                  Credentials creds = apply(in);
+                  if (creds != null)
+                     credsHolder.set(creds);
+               }
+            }
+
+         });
+         return credsHolder.get();
       } else if (input instanceof AdminAccess) {
          return AdminAccess.class.cast(input).getAdminCredentials();
       } else {

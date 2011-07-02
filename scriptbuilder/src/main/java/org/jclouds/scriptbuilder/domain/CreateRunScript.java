@@ -41,18 +41,17 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class CreateRunScript implements Statement {
+public class CreateRunScript extends StatementList {
    public final static String MARKER = "END_OF_SCRIPT";
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
-   final Iterable<Statement> statements;
 
    public CreateRunScript(String instanceName, Iterable<String> exports, String pwd, Iterable<Statement> statements) {
+      super(statements);
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.exports = checkNotNull(exports, "exports");
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
-      this.statements = checkNotNull(statements, "statements");
    }
 
    public static class AddTitleToFile implements Statement {
