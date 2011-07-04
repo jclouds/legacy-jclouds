@@ -81,9 +81,9 @@ END_OF_FILE
    test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
    grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
    nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-   which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
-   (which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
-   curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://whirr.s3.amazonaws.com/0.3.0-incubating/sun/java/install |(bash)
+   apt-get update -qq
+   which curl || apt-get install -f -y -qq --force-yes curl
+   apt-get install -f -y -qq --force-yes openjdk-6-jdk
    rm -rf /var/cache/apt /usr/lib/vmware-tools
    echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
    iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
@@ -114,7 +114,7 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-java  -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.boot.log.file=$JBOSS_HOME/standalone/log/boot.log -Dlogging.configuration=file:$JBOSS_HOME/standalone/configuration/logging.properties -jar $JBOSS_HOME/jboss-modules.jar -mp $JBOSS_HOME/modules -logmodule org.jboss.logmanager -jaxpmodule javax.xml.jaxp-provider org.jboss.as.standalone -Djboss.home.dir=$JBOSS_HOME
+java  -server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.boot.log.file=$JBOSS_HOME/standalone/log/boot.log -Dlogging.configuration=file:$JBOSS_HOME/standalone/configuration/logging.properties -jar $JBOSS_HOME/jboss-modules.jar -mp $JBOSS_HOME/modules -logmodule org.jboss.logmanager -jaxpmodule javax.xml.jaxp-provider org.jboss.as.standalone -Djboss.home.dir=$JBOSS_HOME
 END_OF_SCRIPT
    
    # add runscript footer

@@ -81,10 +81,9 @@ public class RunScriptData {
                         exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
                         exec("chmod -R oug+r+w " + jbossHome)),//
-               //TODO http://community.jboss.org/wiki/AS7StartupTimeShowdown
                ImmutableList
                         .<Statement> of(interpret(new StringBuilder().append("java ").append(' ')
-                                 .append("-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
+                                 .append("-server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
                                  .append("-Djboss.modules.system.pkgs=org.jboss.byteman").append(' ')
                                  .append("-Dorg.jboss.boot.log.file=$JBOSS_HOME/standalone/log/boot.log").append(' ')
                                  .append("-Dlogging.configuration=file:$JBOSS_HOME/standalone/configuration/logging.properties").append(' ')
@@ -97,7 +96,7 @@ public class RunScriptData {
                                  .toString())));
       return toReturn;
    }
-
+   
    public static Statement normalizeHostAndDNSConfig() {
       return newStatementList(//
                addHostnameToEtcHostsIfMissing(),//
@@ -124,27 +123,26 @@ public class RunScriptData {
 
    public static String aptInstall = "apt-get install -f -y -qq --force-yes";
 
-   public static String installAfterUpdatingIfNotPresent(String cmd) {
-      String aptInstallCmd = aptInstall + " " + cmd;
-      return String.format("which %s || (%s || (apt-get update && %s))", cmd, aptInstallCmd, aptInstallCmd);
-   }
 
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
-            exec(installAfterUpdatingIfNotPresent("curl")),//
-            installSunJDKFromWhirrIfNotPresent(),//
+            exec("apt-get update -qq"),
+            exec("which curl || " + aptInstall + " curl"),//
+            exec(aptInstall + " openjdk-6-jdk"),//
             exec("rm -rf /var/cache/apt /usr/lib/vmware-tools"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
 
+   public static String yumInstall = "yum --nogpgcheck -y install";
+
    public static final Statement YUM_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
-            exec("which curl || yum --nogpgcheck -y install curl"),//
-            installSunJDKFromWhirrIfNotPresent(),//
+            exec("which curl || " + yumInstall + " curl"),//
+            exec(yumInstall + " java-1.6.0-openjdk-devel"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || zypper install curl"),//
-            exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) || zypper install java-1.6.0-openjdk"),//
+            exec("zypper install java-1.6.0-openjdk"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
 }
