@@ -81,7 +81,8 @@ import com.google.inject.Module;
  * 
  * @author Oleksiy Yarmula
  */
-@Test(enabled = true, groups = "live")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(enabled = false, groups = "live", testName = "GoGridLiveTestDisabled")
 public class GoGridLiveTestDisabled {
 
    private GoGridClient client;

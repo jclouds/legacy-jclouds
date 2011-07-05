@@ -38,7 +38,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "live", singleThreaded = true, testName = "GoGridTemplateBuilderLiveTest")
 public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public GoGridTemplateBuilderLiveTest() {

@@ -35,6 +35,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * 
  * @author Oleksiy Yarmula
  */
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BindNamesToQueryParamsTest")
 public class BindNamesToQueryParamsTest {
 
    @Test

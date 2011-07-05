@@ -54,7 +54,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ServerToNodeMetadataTest")
 public class ServerToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
