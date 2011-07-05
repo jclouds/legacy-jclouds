@@ -24,7 +24,8 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GoGridComputeServiceContextModuleTest")
 public class GoGridComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {

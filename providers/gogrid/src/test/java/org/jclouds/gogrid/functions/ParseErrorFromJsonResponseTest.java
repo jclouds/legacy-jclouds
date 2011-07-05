@@ -35,6 +35,8 @@ import com.google.inject.Injector;
 /**
  * @author Oleksiy Yarmula
  */
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ParseErrorFromJsonResponseTest")
 public class ParseErrorFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new GsonModule() {

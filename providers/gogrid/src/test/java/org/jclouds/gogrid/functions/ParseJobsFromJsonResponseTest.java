@@ -51,7 +51,8 @@ import com.google.inject.Provides;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "unit")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ParseJobsFromJsonResponseTest")
 public class ParseJobsFromJsonResponseTest {
 
    @Test

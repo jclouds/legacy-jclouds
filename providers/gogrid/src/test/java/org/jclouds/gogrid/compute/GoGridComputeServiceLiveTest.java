@@ -25,7 +25,8 @@ import org.testng.annotations.Test;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "live", enabled = true, sequential = true)
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "live", singleThreaded = true, testName = "GoGridComputeServiceLiveTest")
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public GoGridComputeServiceLiveTest() {
       provider = "gogrid";
