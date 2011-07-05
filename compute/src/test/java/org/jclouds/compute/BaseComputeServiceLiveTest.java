@@ -29,6 +29,8 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
+import static java.lang.String.format;
+import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
@@ -49,11 +51,11 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -87,6 +89,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
@@ -202,7 +205,7 @@ public abstract class BaseComputeServiceLiveTest {
       long time = System.currentTimeMillis();
       client.listImages();
       long duration = System.currentTimeMillis() - time;
-      assert duration < 1000 : String.format("%dms to get images", duration);
+      assert duration < 1000 : format("%dms to get images", duration);
    }
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
@@ -298,14 +301,15 @@ public abstract class BaseComputeServiceLiveTest {
       checkOsMatchesTemplate(node2);
    }
 
-   private void refreshTemplate() {
-      template = buildTemplate(client.templateBuilder());
+   private Template refreshTemplate() {
+      return template = addRunScriptToTemplate(buildTemplate(client.templateBuilder()));
+   }
 
-      // template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-      // .runScript(buildScript(template.getImage().getOperatingSystem()));
+   protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
                Statements.newStatementList(AdminAccess.standard(),
                         buildScript(template.getImage().getOperatingSystem())));
+      return template;
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -331,14 +335,32 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
-      refreshTemplate();
-      TreeSet<NodeMetadata> nodes = newTreeSet(client.createNodesInGroup(group, 1, template));
-      checkNodes(nodes, group);
-      NodeMetadata node = nodes.first();
-      this.nodes.add(node);
+
+      Location existingLocation = Iterables.get(this.nodes, 0).getLocation();
+      boolean existingLocationIsAssignable = Iterables.any(client.listAssignableLocations(), Predicates
+               .equalTo(existingLocation));
+
+      if (existingLocationIsAssignable) {
+         getAnonymousLogger().info("creating another node based on existing nodes' location: " + existingLocation);
+         template = addRunScriptToTemplate(client.templateBuilder().fromTemplate(template).locationId(
+                  existingLocation.getId()).build());
+      } else {
+         refreshTemplate();
+         getAnonymousLogger().info(
+                  format("%s is not assignable; using template's location %s as  ", existingLocation, template
+                           .getLocation()));
+      }
+
+      Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
       assertEquals(nodes.size(), 1);
-      assertLocationSameOrChild(node.getLocation(), template.getLocation());
+      checkNodes(nodes, group);
+      NodeMetadata node = Iterables.getOnlyElement(nodes);
+      if (existingLocationIsAssignable)
+         assertEquals(node.getLocation(), existingLocation);
+      else
+         this.assertLocationSameOrChild(node.getLocation(), template.getLocation());
       checkOsMatchesTemplate(node);
+      this.nodes.add(node);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
@@ -409,7 +431,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
-      assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
+      assert metadataSet.size() == 0 : format("nodes left in set: [%s] which didn't match set: [%s]",
                metadataSet, nodes);
    }
 
@@ -432,7 +454,8 @@ public abstract class BaseComputeServiceLiveTest {
          public boolean apply(NodeMetadata input) {
             boolean returnVal = input.getState() == NodeState.SUSPENDED;
             if (!returnVal)
-               System.err.printf("warning: node %s in state %s%n", input.getId(), input.getState());
+               getAnonymousLogger().warning(
+                        format("node %s in state %s%n", input.getId(), input.getState()));
             return returnVal;
          }
 
@@ -532,7 +555,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
       for (Location location : client.listAssignableLocations()) {
-         System.err.printf("location %s%n", location);
+         getAnonymousLogger().warning("location " + location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
@@ -578,7 +601,7 @@ public abstract class BaseComputeServiceLiveTest {
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = (System.currentTimeMillis() - time) / 1000;
-         assert duration < nonBlockDurationSeconds : String.format("duration(%d) longer than expected(%d) seconds! ",
+         assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                   duration, nonBlockDurationSeconds);
       } finally {
          client.destroyNodesMatching(inGroup(group));
@@ -608,20 +631,20 @@ public abstract class BaseComputeServiceLiveTest {
       Hardware fastest = client.templateBuilder().fastest().build().getHardware();
       Hardware biggest = client.templateBuilder().biggest().build().getHardware();
 
-      System.out.printf("smallest %s%n", smallest);
-      System.out.printf("fastest %s%n", fastest);
-      System.out.printf("biggest %s%n", biggest);
+      getAnonymousLogger().info("smallest " + smallest);
+      getAnonymousLogger().info("fastest " + fastest);
+      getAnonymousLogger().info("biggest " + biggest);
 
       assertEquals(defaultSize, smallest);
 
-      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
-      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : format("%s ! <= %s", biggest, fastest);
 
-      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
-      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
+      assert biggest.getRam() >= fastest.getRam() : format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : format("%s ! >= %s", biggest, smallest);
 
-      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
-      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : format("%s ! >= %s", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {
