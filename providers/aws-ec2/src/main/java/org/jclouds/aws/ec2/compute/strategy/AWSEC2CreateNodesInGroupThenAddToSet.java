@@ -96,7 +96,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
          return Iterables.transform(client.getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice,
                   count, spec, options), spotConverter);
       } else {
-         return super.createNodesInRegionAndZone(zone, zone, count, template, instanceOptions);
+         return super.createNodesInRegionAndZone(region, zone, count, template, instanceOptions);
       }
 
    }
