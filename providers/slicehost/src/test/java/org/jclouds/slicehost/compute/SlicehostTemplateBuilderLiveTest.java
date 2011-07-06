@@ -55,7 +55,7 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
                case UBUNTU:
                   return input.version.equals("") || input.version.startsWith("10") || input.version.equals("9.10");
                case DEBIAN:
-                  return !input.version.equals("6.0");
+                  return !(input.version.equals("6.0") && !input.is64Bit);
                case RHEL:
                   return input.version.equals("") && input.is64Bit;
                case CENTOS:

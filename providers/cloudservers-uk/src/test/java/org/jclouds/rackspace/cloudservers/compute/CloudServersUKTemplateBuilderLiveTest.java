@@ -52,7 +52,7 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !(input.version.equals("11.04") || input.version.equals("8.04")) && input.is64Bit;
+                  return !(input.version.startsWith("11") || input.version.equals("8.04")) && input.is64Bit;
                case DEBIAN:
                   return input.is64Bit;
                case CENTOS:
