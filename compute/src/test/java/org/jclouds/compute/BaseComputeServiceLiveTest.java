@@ -55,7 +55,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;

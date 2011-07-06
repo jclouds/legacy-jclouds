@@ -52,8 +52,10 @@ public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.04"))
-                           || !(input.version.matches("^[89].*")) && input.is64Bit;
+                  return !input.version.equals("11.10")
+                           && ((input.version.equals("") || input.version.equals("10.04")) || !(input.version
+                                    .matches("^[89].*"))
+                                    && input.is64Bit);
                case DEBIAN:
                   return input.is64Bit;
                case CENTOS:
