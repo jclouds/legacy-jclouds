@@ -119,8 +119,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
     }
 
     private static URI withUrl(ServletContext servletContext, String url) {
-        return URI.create("http://" + servletContext.getInitParameter("application.host") 
-                          + servletContext.getContextPath() + url);
+        return URI.create("http://" + checkNotNull(servletContext.getInitParameter("application.host"), "application.host")
+                + servletContext.getContextPath() + url);
     }
     
     private Properties loadJCloudsProperties(
