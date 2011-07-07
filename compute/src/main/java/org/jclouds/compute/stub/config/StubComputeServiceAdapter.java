@@ -63,12 +63,14 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    private final String passwordPrefix;
    private final Supplier<Set<? extends Location>> locationSupplier;
    private final Map<OsFamily, Map<String, String>> osToVersionMap;
+   private final Map<String, Credentials> credentialStore;
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
             @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
             @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
+            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
+            Map<String, Credentials> credentialStore) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;
@@ -77,6 +79,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.passwordPrefix = passwordPrefix;
       this.locationSupplier = locationSupplier;
       this.osToVersionMap = osToVersionMap;
+      this.credentialStore = credentialStore;
    }
 
    @Override
@@ -140,7 +143,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public NodeMetadata getNode(String id) {
-      return nodes.get(id);
+      NodeMetadata node = nodes.get(id);
+      return node == null ? null : NodeMetadataBuilder.fromNodeMetadata(node).credentials(
+               credentialStore.get("node#" + node.getId())).build();
    }
 
    @Override

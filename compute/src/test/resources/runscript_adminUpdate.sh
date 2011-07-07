@@ -8,12 +8,12 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="runScriptWithCreds"
-export INSTANCE_HOME="/tmp/runScriptWithCreds"
-export LOG_DIR="/tmp/runScriptWithCreds"
+   export INSTANCE_NAME="adminUpdate"
+export INSTANCE_HOME="/tmp/adminUpdate"
+export LOG_DIR="/tmp/adminUpdate"
    return 0
 }
-function runScriptWithCreds {
+function adminUpdate {
       return 0
 }
 function findPid {
@@ -56,41 +56,56 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   runScriptWithCreds || exit 1
+   adminUpdate || exit 1
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/runScriptWithCreds.sh <<END_OF_SCRIPT
+   cat > $INSTANCE_HOME/adminUpdate.sh <<END_OF_SCRIPT
 #!/bin/bash
 set +u
 shopt -s xpg_echo
 shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;runScriptWithCreds\007"'
+PROMPT_COMMAND='echo -ne "\033]0;adminUpdate\007"'
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='runScriptWithCreds'
+export INSTANCE_NAME='adminUpdate'
 export INSTANCE_NAME='$INSTANCE_NAME'
 export INSTANCE_HOME='$INSTANCE_HOME'
 export LOG_DIR='$LOG_DIR'
 END_OF_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/adminUpdate.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
-nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-apt-get update -qq
-which curl || apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes openjdk-6-jdk
-echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
+rm /etc/sudoers
+cat >> /etc/sudoers <<'END_OF_FILE'
+root ALL = (ALL) ALL
+%wheel ALL = (ALL) NOPASSWD:ALL
+END_OF_FILE
+chmod 0440 /etc/sudoers
+mkdir -p /home/users/foo
+groupadd -f wheel
+useradd -s /bin/bash -g wheel -d /home/users/foo -p 'crypt(randompassword)' foo
+mkdir -p /home/users/foo/.ssh
+cat >> /home/users/foo/.ssh/authorized_keys <<'END_OF_FILE'
+publicKey
+END_OF_FILE
+chmod 600 /home/users/foo/.ssh/authorized_keys
+chown -R foo /home/users/foo
+exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
+PermitRootLogin no
+" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
+/etc/init.d/sshd reload||/etc/init.d/ssh reload
+awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 
 END_OF_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/adminUpdate.sh <<'END_OF_SCRIPT'
 exit 0
 END_OF_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/runScriptWithCreds.sh
+   chmod u+x $INSTANCE_HOME/adminUpdate.sh
    ;;
 status)
    default || exit 1

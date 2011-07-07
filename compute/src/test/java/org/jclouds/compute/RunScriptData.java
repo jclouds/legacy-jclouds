@@ -18,24 +18,28 @@
  */
 package org.jclouds.compute;
 
+import static java.lang.String.format;
 import static org.jclouds.compute.util.ComputeServiceUtils.execHttpResponse;
 import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
+import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 
+import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * 
@@ -56,31 +60,35 @@ public class RunScriptData {
          throw new IllegalArgumentException("don't know how to handle" + os.toString());
    }
 
-   public static Statement authorizePortInIpTables(int port) {
-      return Statements.newStatementList(// just in case iptables are being used, try to open 8080
-               exec("iptables -I INPUT 1 -p tcp --dport " + port + " -j ACCEPT"),//
-               // TODO gogrid rules only allow ports 22, 3389, 80 and 443.
-               // the above rule will be ignored, so we have to apply this
-               // directly
-               exec("iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport " + port + " -j ACCEPT"),//
-               exec("iptables-save"));
+   public static Statement authorizePortsInIpTables(int... ports) {
+      Builder<Statement> builder = ImmutableList.<Statement> builder();
+      for (int port : ports)
+         builder.add(exec("iptables -I INPUT 1 -p tcp --dport " + port + " -j ACCEPT"));
+      builder.add(exec("iptables-save"));
+      return new StatementList(builder.build());
    }
 
-   public static Statement createScriptInstallAndStartJBoss(OperatingSystem os) {
-      Map<String, String> envVariables = ImmutableMap.of("jbossHome", jbossHome);
-      Statement toReturn = new InitBuilder(
-               "jboss",
-               jbossHome,
-               jbossHome,
-               envVariables,
-               ImmutableList.<Statement> of(AdminAccess.standard(),//
+   public static StatementList installAdminUserJBossAndOpenPorts(OperatingSystem os) throws IOException {
+      return new StatementList(//
+                        AdminAccess.builder().adminUsername("web").build(),//
                         installJavaAndCurl(os),//
-                        authorizePortInIpTables(8080),
-                        extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",
+                        authorizePortsInIpTables(22, 8080),//
+                        extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",//
                                  "http://d37gkgjhl3prlk.cloudfront.net/jboss-7.0.0.CR1.tar.gz")), "/usr/local"),//
                         exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
-                        exec("chmod -R oug+r+w " + jbossHome)),//
+                        exec("chmod -R oug+r+w " + jbossHome),
+                        exec("chown -R web " + jbossHome));
+   }
+   
+   // NOTE do not name this the same as your login user, or the init process may kill you!
+   public static InitBuilder startJBoss(String configuration) {
+      return new InitBuilder(
+               "jboss",
+               jbossHome,
+               jbossHome,
+               ImmutableMap.of("jbossHome", jbossHome),
+               ImmutableList.<Statement>of(appendFile(jbossHome + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration))),
                ImmutableList
                         .<Statement> of(interpret(new StringBuilder().append("java ").append(' ')
                                  .append("-server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
@@ -92,9 +100,9 @@ public class RunScriptData {
                                  .append("-logmodule org.jboss.logmanager").append(' ')
                                  .append("-jaxpmodule javax.xml.jaxp-provider").append(' ')
                                  .append("org.jboss.as.standalone").append(' ')
-                                 .append("-Djboss.home.dir=$JBOSS_HOME")
+                                 .append("-Djboss.home.dir=$JBOSS_HOME").append(' ')
+                                 .append("--server-config=standalone-custom.xml")
                                  .toString())));
-      return toReturn;
    }
    
    public static Statement normalizeHostAndDNSConfig() {
@@ -118,7 +126,9 @@ public class RunScriptData {
 
    // TODO make this a cli option
    private static Statement changeStandaloneConfigToListenOnAllIPAddresses() {
-      return exec("(cd $JBOSS_HOME/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)");
+      return exec(format(
+                        "(cd %s/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)",
+                        jbossHome));
    }
 
    public static String aptInstall = "apt-get install -f -y -qq --force-yes";
@@ -129,8 +139,7 @@ public class RunScriptData {
             exec("apt-get update -qq"),
             exec("which curl || " + aptInstall + " curl"),//
             exec(aptInstall + " openjdk-6-jdk"),//
-            exec("rm -rf /var/cache/apt /usr/lib/vmware-tools"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
+            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> $HOME/.bashrc"));
 
    public static String yumInstall = "yum --nogpgcheck -y install";
 
@@ -138,11 +147,11 @@ public class RunScriptData {
             normalizeHostAndDNSConfig(),//
             exec("which curl || " + yumInstall + " curl"),//
             exec(yumInstall + " java-1.6.0-openjdk-devel"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
+            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || zypper install curl"),//
             exec("zypper install java-1.6.0-openjdk"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc"));
+            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 }

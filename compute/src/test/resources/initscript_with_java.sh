@@ -23,7 +23,7 @@ function findPid {
       return 1
    }
    local PATTERN="$1"; shift
-   local _FOUND=`ps auxwww|grep "$PATTERN"|grep -v " $0"|grep -v grep|awk '{print $2}'`
+   local _FOUND=`ps auxwww|grep "$PATTERN"|grep -v " $0"|grep -v grep|grep -v $$|awk '{print $2}'`
    [ -n "$_FOUND" ] && {
       export FOUND_PID=$_FOUND
       return 0
@@ -42,7 +42,7 @@ function forget {
    local LOG_DIR="$1"; shift
    mkdir -p $LOG_DIR
    findPid $INSTANCE_NAME
-   [ -n "$FOUND_PID" ] && {
+   [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
       echo $INSTANCE_NAME already running pid [$FOUND_PID]
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
@@ -102,8 +102,7 @@ nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.c
 apt-get update -qq
 which curl || apt-get install -f -y -qq --force-yes curl
 apt-get install -f -y -qq --force-yes openjdk-6-jdk
-rm -rf /var/cache/apt /usr/lib/vmware-tools
-echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
+echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
 
 END_OF_SCRIPT
    

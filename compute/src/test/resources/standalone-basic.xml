@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<server name="basic" xmlns="urn:jboss:domain:1.0">
+    <extensions>
+        <extension module="org.jboss.as.connector"/>
+        <extension module="org.jboss.as.deployment-scanner"/>
+        <extension module="org.jboss.as.ee"/>
+        <extension module="org.jboss.as.logging"/>
+        <extension module="org.jboss.as.naming"/>
+        <extension module="org.jboss.as.security"/>
+        <extension module="org.jboss.as.threads"/>
+        <extension module="org.jboss.as.transactions"/>
+        <extension module="org.jboss.as.web"/>
+        <!--
+        <extension module="org.jboss.as.weld"/>
+        -->
+    </extensions>
+    <profile>
+        <subsystem xmlns="urn:jboss:domain:logging:1.0">
+            <console-handler name="CONSOLE" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+            </console-handler>
+            <periodic-rotating-file-handler name="FILE" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="server.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+            </periodic-rotating-file-handler>
+            <logger category="com.arjuna">
+                <level name="WARN"/>
+            </logger>
+            <logger category="org.apache.tomcat.util.modeler">
+                <level name="WARN"/>
+            </logger>
+            <logger category="sun.rmi">
+                <level name="WARN"/>
+            </logger>
+            <root-logger>
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="CONSOLE"/>
+                    <handler name="FILE"/>
+                </handlers>
+            </root-logger>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.0">
+            <deployment-scanner name="default" path="deployments" scan-enabled="true" scan-interval="5000" relative-to="jboss.server.base.dir" deployment-timeout="60"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:ee:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:naming:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:resource-adapters:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:security:1.0">
+            <security-domains>
+                <security-domain name="other" cache-type="default">
+                    <authentication>
+                        <login-module code="UsersRoles" flag="required"/>
+                    </authentication>
+                </security-domain>
+            </security-domains>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:threads:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:transactions:1.0">
+            <core-environment>
+                <process-id>
+                    <uuid/>
+                </process-id>
+            </core-environment>
+            <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
+            <coordinator-environment default-timeout="300"/>
+            <object-store/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:web:1.0">
+            <connector name="http" protocol="HTTP/1.1" socket-binding="http" scheme="http"/>
+            <virtual-server name="localhost" enable-welcome-root="true">
+                <alias name="example.com"/>
+            </virtual-server>
+        </subsystem>
+        <!--
+        <subsystem xmlns="urn:jboss:domain:weld:1.0"/>
+        -->
+    </profile>
+    <interfaces>
+        <interface name="public">
+            <any-address/>
+        </interface>
+    </interfaces>
+    <socket-binding-group name="standard-sockets" default-interface="public">
+        <socket-binding name="http" port="8080"/>
+        <socket-binding name="https" port="8443"/>
+        <socket-binding name="jmx-connector-registry" port="1090"/>
+        <socket-binding name="jmx-connector-server" port="1091"/>
+        <socket-binding name="jndi" port="1099"/>
+        <socket-binding name="osgi-http" port="8090"/>
+        <socket-binding name="remoting" port="4447"/>
+        <socket-binding name="txn-recovery-environment" port="4712"/>
+        <socket-binding name="txn-status-manager" port="4713"/>
+    </socket-binding-group>
+</server>

@@ -17,7 +17,6 @@
  * ====================================================================
  */
 package org.jclouds.compute;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -30,11 +29,16 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
+import static org.jclouds.compute.RunScriptData.startJBoss;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
+import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.runAsRoot;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
@@ -55,6 +59,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -82,6 +88,7 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -89,6 +96,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
@@ -103,7 +111,8 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected String group;
 
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected Predicate<IPSocket> socketTester;
+   protected Predicate<IPSocket> preciseSocketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
@@ -116,6 +125,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
@@ -175,6 +185,12 @@ public abstract class BaseComputeServiceLiveTest {
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      // wait a maximum of 30 seconds for port 8080 to open.
+      long maxWait = TimeUnit.SECONDS.toMillis(30);
+      long interval = 50;
+      // get more precise than default socket tester
+      preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
+               TimeUnit.MILLISECONDS);
    }
 
    abstract protected Module getSshModule();
@@ -201,9 +217,9 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testImagesCache() throws Exception {
       client.listImages();
-      long time = System.currentTimeMillis();
+      long time = currentTimeMillis();
       client.listImages();
-      long duration = System.currentTimeMillis() - time;
+      long duration = currentTimeMillis() - time;
       assert duration < 1000 : format("%dms to get images", duration);
    }
 
@@ -255,6 +271,14 @@ public abstract class BaseComputeServiceLiveTest {
 
          checkNodes(nodes, group);
 
+         // test adding AdminAccess later changes the default boot user, in this case to foo
+         response = client.runScriptOnNode(get(nodes, 0).getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
+         
+         response = client.runScriptOnNode(get(nodes, 0).getId(), "echo $USER", wrapInInitScript(false)
+                  .runAsRoot(false));
+         
+         assert response.getOutput().trim().equals("foo") : get(nodes, 0).getId() + ": " + response;
+         
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
@@ -509,27 +533,114 @@ public abstract class BaseComputeServiceLiveTest {
       return filter(client.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
    }
 
+   static class ServiceStats {
+      long backgroundProcessSeconds;
+      long socketOpenMilliseconds;
+      long reportedStartupTimeMilliseconds;
+
+      @Override
+      public String toString() {
+         return String.format(
+                  "[backgroundProcessSeconds=%s, socketOpenMilliseconds=%s, reportedStartupTimeMilliseconds=%s]",
+                  backgroundProcessSeconds, socketOpenMilliseconds, reportedStartupTimeMilliseconds);
+      }
+   }
+
+   protected ServiceStats trackAvailabilityOfProcessOnNode(Supplier<ExecResponse> bgProcess, String processName,
+            NodeMetadata node, Pattern parseReported) {
+      ServiceStats stats = new ServiceStats();
+      long startSeconds = currentTimeMillis();
+
+      ExecResponse exec = bgProcess.get();
+      stats.backgroundProcessSeconds = (currentTimeMillis() - startSeconds) / 1000;
+
+      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
+      assert preciseSocketTester.apply(socket) : node;
+      stats.socketOpenMilliseconds = currentTimeMillis() - startSeconds;
+
+      exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
+               .wrapInInitScript(false));
+
+      Matcher matcher = parseReported.matcher(exec.getOutput());
+      if (matcher.find())
+         stats.reportedStartupTimeMilliseconds = new Long(matcher.group(1));
+
+      getAnonymousLogger().info(format("<< %s on node(%s) %s", bgProcess, node.getId(), stats));
+      return stats;
+   }
+
+   // started in 6462ms -
+   public static final Pattern JBOSS_PATTERN = Pattern.compile("started in ([0-9]+)ms -");
+
+   protected ServiceStats trackAvailabilityOfJBossProcessOnNode(Supplier<ExecResponse> startProcess, NodeMetadata node) {
+      return trackAvailabilityOfProcessOnNode(startProcess, "jboss", node, JBOSS_PATTERN);
+   }
+
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
       String group = this.group + "s";
+      final String configuration = Strings2.toStringAndClose(RunScriptData.class
+               .getResourceAsStream("/standalone-basic.xml"));
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
 
-      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
-               .build();
-
-      // note this is a dependency on the template resolution
-      template.getOptions().runScript(
-               RunScriptData.createScriptInstallAndStartJBoss(template.getImage()
-                        .getOperatingSystem()));
       try {
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, template));
+         long startSeconds = currentTimeMillis();
+         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080).blockOnPort(22,
+                  300)));
+         final String nodeId = node.getId();
+         long createSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
-         checkHttpGet(node);
+         getAnonymousLogger().info(
+                  format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
+
+         startSeconds = currentTimeMillis();
+
+         // note this is a dependency on the template resolution so we have the right process per
+         // operating system.  moreover, we wish this to run as root, so that it can change ip
+         // tables rules and setup our admin user
+         client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
+                  nameTask("configure-jboss"));
+
+         long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
+
+         getAnonymousLogger().info(format("<< configured node(%s) in %ss", nodeId, configureSeconds));
+
+         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+
+            @Override
+            public ExecResponse get() {
+               return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
+                        .nameTask("jboss"));
+            }
+
+            @Override
+            public String toString() {
+               return "initial start of jboss";
+            }
+
+         }, node);
+
+         client.runScriptOnNode(nodeId, "./jboss stop", runAsRoot(false).wrapInInitScript(false));
+
+         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+
+            @Override
+            public ExecResponse get() {
+               return client.runScriptOnNode(nodeId, "./jboss start", runAsRoot(false).wrapInInitScript(false));
+            }
+
+            @Override
+            public String toString() {
+               return "warm start of jboss";
+            }
+
+         }, node);
+
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
@@ -595,11 +706,11 @@ public abstract class BaseComputeServiceLiveTest {
       // no inbound ports
       TemplateOptions options = client.templateOptions().blockUntilRunning(false).inboundPorts();
       try {
-         long time = System.currentTimeMillis();
+         long time = currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
-         long duration = (System.currentTimeMillis() - time) / 1000;
+         long duration = (currentTimeMillis() - time) / 1000;
          assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                   duration, nonBlockDurationSeconds);
       } finally {

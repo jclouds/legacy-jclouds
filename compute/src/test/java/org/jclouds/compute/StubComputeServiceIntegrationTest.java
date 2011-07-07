@@ -81,15 +81,14 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    protected void buildSocketTester() {
       SocketOpen socketOpen = createMock(SocketOpen.class);
 
-      expect(socketOpen.apply(new IPSocket("144.175.1.1", 22))).andReturn(true);
-      expect(socketOpen.apply(new IPSocket("144.175.1.2", 22))).andReturn(true);
-      expect(socketOpen.apply(new IPSocket("144.175.1.3", 22))).andReturn(true);
-      expect(socketOpen.apply(new IPSocket("144.175.1.4", 22))).andReturn(true);
-      expect(socketOpen.apply(new IPSocket("144.175.1.5", 22))).andReturn(true);
+      expect(socketOpen.apply(new IPSocket("144.175.1.1", 22))).andReturn(true).times(5);
+      // restart of jboss
+      expect(socketOpen.apply(new IPSocket("144.175.1.1", 8080))).andReturn(true).times(2);
+
 
       replay(socketOpen);
 
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      preciseSocketTester = socketTester = new RetryablePredicate<IPSocket>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
    }
 
    @Override
@@ -136,18 +135,24 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client1 = createMock(SshClient.class);
             SshClient client1New = createMock(SshClient.class);
             SshClient client2 = createMock(SshClient.class);
+            SshClient client2New = createMock(SshClient.class);
+            SshClient client2Foo = createMock(SshClient.class);
             SshClient client3 = createMock(SshClient.class);
             SshClient client4 = createMock(SshClient.class);
             SshClient client5 = createMock(SshClient.class);
 
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
                      client1);
-            expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("defaultAdminUsername", "privateKey"))).andReturn(
-                     client1New);
+            expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("web", "privateKey"))).andReturn(
+                     client1New).times(5);
             runScriptAndService(client1, client1New);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
                      client2).times(4);
+            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
+                     client2New);
+            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("foo", "privateKey"))).andReturn(
+                     client2Foo);
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
                      new SshException("Auth fail"));
 
@@ -171,6 +176,24 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             }
             client2.disconnect();
 
+            client2New.connect();
+            try {
+               runScript(client2New, "adminUpdate",
+                        Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                                 .getResourceAsStream("/runscript_adminUpdate.sh")), 2);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+            client2New.disconnect();
+            
+            // check id 
+            client2Foo.connect();
+            expect(client2Foo.getUsername()).andReturn("foo").atLeastOnce();
+            expect(client2Foo.getHostAddress()).andReturn("foo").atLeastOnce();
+            expect(client2Foo.exec("echo $USER\n")).andReturn(new ExecResponse("foo\n", "", 0));
+            client2Foo.disconnect();
+
+            
             expect(factory.create(new IPSocket("144.175.1.3", 22), new Credentials("root", "password3"))).andReturn(
                      client3).times(2);
             expect(factory.create(new IPSocket("144.175.1.4", 22), new Credentials("root", "password4"))).andReturn(
@@ -207,6 +230,8 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             replay(client1);
             replay(client1New);
             replay(client2);
+            replay(client2New);
+            replay(client2Foo);
             replay(client3);
             replay(client4);
             replay(client5);
@@ -218,26 +243,50 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             try {
-               String scriptName = "jboss";
+               String scriptName = "configure-jboss";
                client.put("/tmp/init-" + scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
                         .getResourceAsStream("/initscript_with_jboss.sh")));
                expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
                expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
                expect(client.getUsername()).andReturn("root").atLeastOnce();
-               expect(client.getHostAddress()).andReturn(clientNew + "").atLeastOnce();
+               expect(client.getHostAddress()).andReturn("localhost").atLeastOnce();
                expect(client.exec("./" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(client.exec("./" + scriptName + " start")).andReturn(EXEC_GOOD);
+               expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_GOOD);
+               // next status says the script is done, since not found.
+               expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_BAD);
+               expect(client.exec("./" + scriptName + " tail")).andReturn(EXEC_GOOD);
+               expect(client.exec("./" + scriptName + " tailerr")).andReturn(EXEC_GOOD);
                // note we have to reconnect here, as we updated the login user.
                client.disconnect();
+
                clientNew.connect();
-               expect(clientNew.getUsername()).andReturn("defaultAdminUsername").atLeastOnce();
-               expect(clientNew.getHostAddress()).andReturn(clientNew + "").atLeastOnce();
+               scriptName = "jboss";
+               clientNew.put("/tmp/init-" + scriptName, Strings2
+                        .toStringAndClose(StubComputeServiceIntegrationTest.class
+                                 .getResourceAsStream("/runscript_jboss.sh")));
+               expect(clientNew.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
                expect(clientNew.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("sudo ./" + scriptName + " start")).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("sudo ./" + scriptName + " status")).andReturn(EXEC_GOOD);
-               // next status says the script is done, since not found.
-               expect(clientNew.exec("sudo ./" + scriptName + " status")).andReturn(EXEC_BAD);
-               expect(clientNew.exec("sudo ./" + scriptName + " tail")).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("sudo ./" + scriptName + " tailerr")).andReturn(EXEC_GOOD);
+               expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
+               expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
+               expect(clientNew.exec("./" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("./" + scriptName + " start")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               clientNew.connect();
+               expect(clientNew.exec("./" + scriptName + " tail\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               expect(clientNew.exec("./" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();
+               expect(clientNew.exec("./" + scriptName + " start\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();
+               expect(clientNew.exec("./" + scriptName + " tail\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
             } catch (IOException e) {
                Throwables.propagate(e);
             }
