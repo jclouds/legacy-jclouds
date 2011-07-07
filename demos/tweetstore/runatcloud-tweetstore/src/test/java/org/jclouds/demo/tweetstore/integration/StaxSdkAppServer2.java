@@ -22,8 +22,8 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static java.util.Arrays.asList;
-import static org.jclouds.demo.tweetstore.integration.utils.ObjectFields.set;
-import static org.jclouds.demo.tweetstore.integration.utils.ObjectFields.valueOf;
+import static org.jclouds.demo.tweetstore.integration.util.ObjectFields.set;
+import static org.jclouds.demo.tweetstore.integration.util.ObjectFields.valueOf;
 
 import java.io.File;
 import java.io.IOException;
