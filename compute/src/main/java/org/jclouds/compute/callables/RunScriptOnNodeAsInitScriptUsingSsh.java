@@ -201,7 +201,7 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    }
 
    protected String execScriptAsDefaultUser(String action) {
-      return "./" + initFile + " " + action;
+      return "./" + init.getInstanceName() + " " + action;
    }
 
    public NodeMetadata getNode() {
