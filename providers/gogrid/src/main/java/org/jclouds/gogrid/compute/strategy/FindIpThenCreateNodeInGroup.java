@@ -21,6 +21,7 @@ package org.jclouds.gogrid.compute.strategy;
 import static com.google.common.base.Preconditions.*;
 
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
@@ -52,16 +54,19 @@ public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIn
    private final GoGridClient client;
    private final Function<Hardware, String> sizeToRam;
    private final Function<Server, NodeMetadata> serverToNodeMetadata;
-   private RetryablePredicate<Server> serverLatestJobCompleted;
-   private RetryablePredicate<Server> serverLatestJobCompletedShort;
+   private final RetryablePredicate<Server> serverLatestJobCompleted;
+   private final RetryablePredicate<Server> serverLatestJobCompletedShort;
+   private final Map<String, Credentials> credentialStore;
+
  
    @Inject
-   protected FindIpThenCreateNodeInGroup(GoGridClient client,
+   protected FindIpThenCreateNodeInGroup(GoGridClient client, Map<String, Credentials> credentialStore,
             Function<Server, NodeMetadata> serverToNodeMetadata, Function<Hardware, String> sizeToRam,
             Timeouts timeouts) {
-      this.client = client;
-      this.serverToNodeMetadata = serverToNodeMetadata;
-      this.sizeToRam = sizeToRam;
+      this.client = checkNotNull(client, "client");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.serverToNodeMetadata = checkNotNull(serverToNodeMetadata, "serverToNodeMetadata");
+      this.sizeToRam = checkNotNull(sizeToRam, "sizeToRam");
       this.serverLatestJobCompleted = new RetryablePredicate<Server>(
                new ServerLatestJobCompleted(client.getJobServices()),
                timeouts.nodeRunning * 9l / 10l);
@@ -103,12 +108,12 @@ public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIn
          addedServer = Iterables.getOnlyElement(client.getServerServices().getServersByName(
                   addedServer.getName()));
       }
+      credentialStore.put("node#" + addedServer.getId(),client.getServerServices().getServerCredentialsList().get(addedServer.getName()));
       return serverToNodeMetadata.apply(addedServer);
    }
 
    private Server addServer(String name, Template template, Ip availableIp) {
-      Server addedServer;
-      addedServer = client.getServerServices().addServer(name,
+      Server addedServer = client.getServerServices().addServer(name,
                checkNotNull(template.getImage().getProviderId()),
                sizeToRam.apply(template.getHardware()), availableIp.getIp());
       return addedServer;
