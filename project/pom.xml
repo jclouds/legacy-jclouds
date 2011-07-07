@@ -792,6 +792,9 @@ pageTracker._trackPageview();
                         <groupId>org.sonatype.maven.plugin</groupId>
                         <artifactId>emma-maven-plugin</artifactId>
                         <version>1.3-SNAPSHOT</version>
+                        <configuration>
+                            <formats>html,xml</formats>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -873,6 +876,9 @@ pageTracker._trackPageview();
                                         <groupId>org.sonatype.maven.plugin</groupId>
                                         <artifactId>emma-maven-plugin</artifactId>
                                         <version>1.3-SNAPSHOT</version>
+                                        <configuration>
+                                            <formats>html,xml</formats>
+                                        </configuration>
                                     </plugin>
                                     <plugin>
                                         <artifactId>maven-jxr-plugin</artifactId>
