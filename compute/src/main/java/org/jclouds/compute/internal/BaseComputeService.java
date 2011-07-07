@@ -607,7 +607,11 @@ public class BaseComputeService implements ComputeService {
       if (node.getState() != NodeState.RUNNING)
          throw new IllegalStateException("node " + id
                   + " needs to be running before executing a script on it. current state: " + node.getState());
-      return runScriptOnNodeFactory.create(node, runScript, options).init().call();
+      initAdminAccess.visit(runScript);
+      node = updateNodeWithCredentialsIfPresent(node, options);
+      ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
+      persistNodeCredentials.ifAdminAccess(runScript).apply(node);
+      return response;
    }
 
    private Iterable<? extends RunScriptOnNode> transformNodesIntoInitializedScriptRunners(
@@ -626,6 +630,20 @@ public class BaseComputeService implements ComputeService {
       return templateOptionsProvider.get();
    }
 
+   protected NodeMetadata updateNodeWithCredentialsIfPresent(NodeMetadata node, RunScriptOptions options) {
+      checkNotNull(node, "node");
+      if (options.getOverridingCredentials() != null) {
+         Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
+                  : new Credentials.Builder<Credentials>();
+         if (options.getOverridingCredentials().identity != null)
+            builder.identity(options.getOverridingCredentials().identity);
+         if (options.getOverridingCredentials().credential != null)
+            builder.credential(options.getOverridingCredentials().credential);
+         node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
+      }
+      return node;
+   }
+   
    private final class TransformNodesIntoInitializedScriptRunners implements
             Function<NodeMetadata, Future<RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
@@ -641,18 +659,10 @@ public class BaseComputeService implements ComputeService {
 
       @Override
       public Future<RunScriptOnNode> apply(NodeMetadata node) {
-         checkNotNull(node, "node");
-         if (options.getOverridingCredentials() != null) {
-            Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
-                     : new Credentials.Builder<Credentials>();
-            if (options.getOverridingCredentials().identity != null)
-               builder.identity(options.getOverridingCredentials().identity);
-            if (options.getOverridingCredentials().credential != null)
-               builder.credential(options.getOverridingCredentials().credential);
-            node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
-         }
+         node = updateNodeWithCredentialsIfPresent(node, options);
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
+
    }
 
 }
