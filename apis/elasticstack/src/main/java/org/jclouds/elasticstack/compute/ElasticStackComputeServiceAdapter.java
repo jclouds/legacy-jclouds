@@ -107,8 +107,9 @@ public class ElasticStackComputeServiceAdapter implements
    public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
             Map<String, Credentials> credentialStore) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
+      
       logger.debug(">> creating boot drive bytes(%d)", bootSize);
-      DriveInfo drive = client.createDrive(new Drive.Builder().name(template.getImage().getName()).size(bootSize)
+      DriveInfo drive = client.createDrive(new Drive.Builder().name(template.getImage().getId()).size(bootSize)
                .build());
       logger.debug("<< drive(%s)", drive.getUuid());
 
@@ -120,12 +121,14 @@ public class ElasticStackComputeServiceAdapter implements
          client.destroyDrive(drive.getUuid());
          throw new IllegalStateException("could not image drive in time!");
       }
+      cache.put(drive.getUuid(), drive);
+
       Server toCreate = small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam()).cpu(
                (int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
 
       ServerInfo from = client.createAndStartServer(toCreate);
       // store the credentials so that later functions can use them
-      credentialStore.put(from.getUuid() + "", new Credentials(template.getImage().getDefaultCredentials().identity,
+      credentialStore.put("node#"+ from.getUuid(), new Credentials(template.getImage().getDefaultCredentials().identity,
                from.getVnc().getPassword()));
       return from;
    }
@@ -213,7 +216,6 @@ public class ElasticStackComputeServiceAdapter implements
    @Override
    public void resumeNode(String id) {
       client.startServer(id);
-
    }
 
    @Override

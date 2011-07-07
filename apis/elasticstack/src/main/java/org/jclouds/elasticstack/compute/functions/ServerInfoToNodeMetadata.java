@@ -106,7 +106,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.state(serverStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
       builder.privateAddresses(ImmutableSet.<String> of());
-      builder.credentials(credentialStore.get(from.getUuid()));
+      builder.credentials(credentialStore.get("node#"+ from.getUuid()));
       return builder.build();
    }
 

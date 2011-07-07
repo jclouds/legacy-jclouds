@@ -120,6 +120,8 @@ public class CloudSigmaComputeServiceAdapter implements
          client.destroyDrive(drive.getUuid());
          throw new IllegalStateException("could not image drive in time!");
       }
+      cache.put(drive.getUuid(), drive);
+
       Server toCreate = Servers.small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam())
                .cpu((int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
 
@@ -129,7 +131,7 @@ public class CloudSigmaComputeServiceAdapter implements
       logger.debug(">> starting server(%s)", from.getUuid());
       client.startServer(from.getUuid());
       // store the credentials so that later functions can use them
-      credentialStore.put(from.getUuid() + "", new Credentials("cloudsigma", "cloudsigma"));
+      credentialStore.put("node#"+ from.getUuid(), new Credentials("cloudsigma", "cloudsigma"));
       return from;
    }
 
