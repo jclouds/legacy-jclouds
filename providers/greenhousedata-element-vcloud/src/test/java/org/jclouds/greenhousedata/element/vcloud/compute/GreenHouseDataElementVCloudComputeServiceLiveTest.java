@@ -18,9 +18,6 @@
  */
 package org.jclouds.greenhousedata.element.vcloud.compute;
 
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -41,13 +38,5 @@ public class GreenHouseDataElementVCloudComputeServiceLiveTest extends VCloudCom
    public void setServiceDefaults() {
       group = "director";
    }
-
-   @Override
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      Template template = super.buildTemplate(templateBuilder);
-      Image image = template.getImage();
-      assert image.getDefaultCredentials().credential != null : image;
-      return template;
-   }
-
+   
 }
