@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-demos-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>jclouds-demo-googleappengine</artifactId>
     <packaging>war</packaging>
@@ -34,9 +34,9 @@
 
     <properties>
         <appengine.applicationid>jclouds-aws-demo</appengine.applicationid>
+        <appengine.sdk.version>1.4.2</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <jclouds.test.listener></jclouds.test.listener>
     </properties>
 
     <dependencies>
@@ -54,11 +54,13 @@
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-s3</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-ec2</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
@@ -74,6 +76,7 @@
             <groupId>displaytag</groupId>
             <artifactId>displaytag</artifactId>
             <version>1.2</version>
+            <scope>runtime</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -85,6 +88,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.5.6</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <artifactId>standard</artifactId>
@@ -96,39 +100,31 @@
             <artifactId>jstl</artifactId>
             <groupId>javax.servlet</groupId>
             <version>1.1.2</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_1.0_spec</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jsp_2.1_spec</artifactId>
-            <version>1.0.1</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
+        
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-sdk</artifactId>
-            <version>1.4.3</version>
-            <scope>system</scope>
-            <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
+            <version>${appengine.sdk.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
                 <configuration>
+                    <!-- see http://jira.codehaus.org/browse/MWAR-248 -->
+                    <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
                     <webResources>
                         <resource>
                             <directory>src/main/appengine</directory>
@@ -137,44 +133,6 @@
                         </resource>
                     </webResources>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>integration</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>devappserver.address</name>
-                                    <value>${devappserver.address}</value>
-                                </property>
-                                <property>
-                                    <name>devappserver.port</name>
-                                    <value>${devappserver.port}</value>
-                                </property>
-                                <property>
-                                    <name>warfile</name>
-                                    <value>${project.build.directory}/${project.artifactId}</value>
-                                </property>
-                            </systemProperties>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${env.APPENGINE_HOME}/lib/appengine-tools-api.jar</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <environmentVariables>
-                                <DEBUG>true</DEBUG>
-                                <SDK_BIN>${env.APPENGINE_HOME}/bin</SDK_BIN>
-                                <SDK_LIB>${env.APPENGINE_HOME}/lib</SDK_LIB>
-                                <SDK_CONFIG>${env.APPENGINE_HOME}/config/sdk</SDK_CONFIG>
-                            </environmentVariables>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -185,7 +143,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <executions>
                             <execution>
@@ -198,15 +155,17 @@
                                     <systemProperties>
                                         <property>
                                             <name>test.aws.identity</name>
-                                            <value>${test.aws.identity}</value>
+                                            <!-- same for EC2 -->
+                                            <value>${test.aws-s3.identity}</value>
                                         </property>
                                         <property>
                                             <name>test.aws.credential</name>
-                                            <value>${test.aws.credential}</value>
+                                            <!-- same for EC2 -->
+                                            <value>${test.aws-s3.credential}</value>
                                         </property>
                                         <property>
                                             <name>appengine.sdk.root</name>
-                                            <value>${env.APPENGINE_HOME}</value>
+                                            <value>${appengine.sdk.root}</value>
                                         </property>
                                         <property>
                                             <name>devappserver.address</name>
