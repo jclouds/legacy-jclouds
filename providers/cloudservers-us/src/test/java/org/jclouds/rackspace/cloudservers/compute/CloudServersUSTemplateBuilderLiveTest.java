@@ -52,7 +52,7 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !(input.version.startsWith("11") || input.version.equals("8.04")) && input.is64Bit;
+                  return !(input.version.startsWith("11.10") || input.version.equals("8.04")) && input.is64Bit;
                case DEBIAN:
                   return input.is64Bit;
                case CENTOS:
@@ -72,7 +72,7 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public void testTemplateBuilder() {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), provider);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
