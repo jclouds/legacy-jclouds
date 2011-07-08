@@ -72,7 +72,7 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public void testTemplateBuilder() {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), provider);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
