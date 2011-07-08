@@ -18,7 +18,11 @@
  */
 package org.jclouds.util;
 
+import static com.google.common.base.Functions.constant;
+import static com.google.common.base.Functions.identity;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -26,6 +30,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -54,4 +60,30 @@ public class Maps2Test {
       }), ImmutableMap.of("foo", "bar"));
    }
 
+   public void testFromKeysEmptyKeys() {
+       assertTrue(Maps2.fromKeys(ImmutableSet.of(), identity()).isEmpty(),
+               "Expected returned map to be empty");
+   }
+   
+   @Test(expectedExceptions = { NullPointerException.class })
+   public void testFromKeysNullKey() {
+       Maps2.fromKeys(newHashSet((Object) null), constant("const"));
+   }
+   
+   public void testFromKeys() {
+       // ImmutableMap doesn't support null values
+       Map<String, String> expected = Maps.newHashMap();
+       expected.put("foo", "foo");
+       expected.put("bar", "foo");
+       expected.put("baz", null);
+
+       assertEquals(Maps2.fromKeys(ImmutableSet.of("foo", "bar", "baz"),
+           new Function<String, String>() {
+                @Override
+                public String apply(String input) {
+                    return (input.equals("baz") ? null : "foo");
+                }
+            }), expected);
+   }
+   
 }
