@@ -18,9 +18,7 @@
  */
 package org.jclouds.ec2.compute.config;
 
-import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -56,7 +54,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
@@ -137,16 +134,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       // return new MapMaker().makeComputingMap(in);
       return newLinkedHashMap();
    }
-
-   @Provides
-   @Singleton
-   @Named(PROPERTY_EC2_AMI_OWNERS)
-   String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
-      if (amiOwners.trim().equals(""))
-         return new String[] {};
-      return toArray(Splitter.on(',').split(amiOwners), String.class);
-   }
-
+   
    @Provides
    @Singleton
    protected Map<RegionAndName, Image> provideImageMap(Function<RegionAndName, Image> regionAndIdToImage) {

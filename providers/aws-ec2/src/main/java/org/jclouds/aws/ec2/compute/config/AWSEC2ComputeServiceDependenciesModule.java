@@ -18,11 +18,10 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMIs;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -32,6 +31,7 @@ import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
 import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
@@ -62,10 +62,11 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -95,6 +96,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<AWSEC2Client, AWSEC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
+      install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
    }
 
    @Provides
@@ -121,11 +123,10 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    }
 
    @Provides
+   @ClusterCompute
    @Singleton
-   @Named(PROPERTY_EC2_CC_AMIs)
-   protected String[] ccAmis(@Named(PROPERTY_EC2_CC_AMIs) String ccAmis) {
-      if (ccAmis.trim().equals(""))
-         return new String[] {};
-      return toArray(Splitter.on(',').split(ccAmis), String.class);
+   protected Set<String> provideClusterComputeIds() {
+      return Sets.newLinkedHashSet();
    }
+
 }

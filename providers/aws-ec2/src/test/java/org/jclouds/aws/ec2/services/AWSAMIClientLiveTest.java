@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
+import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.addNewBlockDevice;
 import static org.jclouds.ec2.options.RegisterImageOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
@@ -34,8 +34,8 @@ import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;

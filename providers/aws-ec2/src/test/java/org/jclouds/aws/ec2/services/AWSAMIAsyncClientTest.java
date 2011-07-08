@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.executableBy;
+import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.filters;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -41,6 +41,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -115,16 +116,18 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
 
    public void testDescribeImagesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
-            Array.newInstance(DescribeImagesOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null,
-            executableBy("me").ownedBy("fred", "nancy").imageIds("1", "2"));
+               DescribeImagesOptions[].class);
+
+      HttpRequest request = processor.createRequest(method, null, filters(
+               ImmutableMap.of("state", "available", "image-type", "machine")).executableBy("me").ownedBy("fred",
+               "nancy").imageIds("1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-            request,
-            "Version=2010-11-15&Action=DescribeImages&ExecutableBy=me&Owner.1=fred&Owner.2=nancy&ImageId.1=1&ImageId.2=2",
-            "application/x-www-form-urlencoded", false);
+               request,
+               "Version=2010-11-15&Action=DescribeImages&Filter.1.Name=state&Filter.1.Value.1=available&Filter.2.Name=image-type&Filter.2.Value.1=machine&ExecutableBy=me&Owner.1=fred&Owner.2=nancy&ImageId.1=1&ImageId.2=2",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeImagesResponseHandler.class);

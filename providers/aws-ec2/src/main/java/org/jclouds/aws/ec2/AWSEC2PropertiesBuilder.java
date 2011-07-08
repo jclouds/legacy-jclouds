@@ -19,11 +19,15 @@
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMIs;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.jclouds.aws.domain.Region;
 
@@ -43,14 +47,22 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "7");
-      properties.setProperty("jclouds.ssh.retryable_messages",
-            "Auth fail,failed to send channel request,channel is not opened,invalid data,End of IO Stream Read,Connection reset,socket is not established,connection is closed by foreign host,socket is not established");
+      properties
+               .setProperty(
+                        "jclouds.ssh.retryable_messages",
+                        "Auth fail,failed to send channel request,channel is not opened,invalid data,End of IO Stream Read,Connection reset,socket is not established,connection is closed by foreign host,socket is not established");
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.putAll(Region.regionProperties());
+      properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // amazon, alestic, canonical, and rightscale
-      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "137112412989,063491364108,099720109477,411009282317");
+      properties.setProperty(PROPERTY_EC2_AMI_QUERY,
+               "owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine");
       // amis that work with the cluster instances
-      properties.setProperty(PROPERTY_EC2_CC_AMIs, "us-east-1/ami-321eed5b,us-east-1/ami-7ea24a17");
+      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1);
+      properties
+               .setProperty(
+                        PROPERTY_EC2_CC_AMI_QUERY,
+                        "virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs");
       return properties;
    }
 
@@ -60,6 +72,40 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
 
    public AWSEC2PropertiesBuilder(Properties properties) {
       super(properties);
+   }
+
+   @Override
+   public Properties build() {
+      Properties props = super.build();
+      warnAndReplaceIfUsingOldImageKey(props);
+      warnAndReplaceIfUsingOldCCImageKey(props);
+      return props;
+   }
+
+   protected void warnAndReplaceIfUsingOldImageKey(Properties props) {
+      if (props.containsKey(PROPERTY_EC2_AMI_OWNERS)) {
+         StringBuilder query = new StringBuilder();
+         String owners = properties.remove(PROPERTY_EC2_AMI_OWNERS).toString();
+         if (!"*".equals(owners) && !"".equals(owners))
+            query.append("owner-id=").append(owners).append(';');
+         if (!"".equals(owners))
+            query.append("state=available;image-type=machine");
+         props.setProperty(PROPERTY_EC2_AMI_QUERY, query.toString());
+         Logger.getAnonymousLogger().warning(
+                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
+                           PROPERTY_EC2_AMI_QUERY, query.toString()));
+      }
+   }
+
+   protected void warnAndReplaceIfUsingOldCCImageKey(Properties props) {
+      if (props.containsKey(PROPERTY_EC2_CC_AMIs)) {
+         String amis = properties.remove(PROPERTY_EC2_CC_AMIs).toString();
+         String value = "image-id=" + amis.replace("us-east-1/", "");
+         props.setProperty(PROPERTY_EC2_CC_AMI_QUERY, value);
+         Logger.getAnonymousLogger().warning(
+                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_CC_AMIs,
+                           PROPERTY_EC2_CC_AMI_QUERY, value));
+      }
    }
 
 }

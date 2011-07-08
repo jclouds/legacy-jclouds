@@ -18,14 +18,12 @@
  */
 package org.jclouds.ec2.compute.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static org.jclouds.compute.predicates.ImagePredicates.any;
 import static org.jclouds.compute.predicates.ImagePredicates.idIn;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -146,9 +144,8 @@ public class EC2HardwareBuilder extends HardwareBuilder {
       return this;
    }
 
-   public EC2HardwareBuilder supportsImageIds(String... ids) {
-      checkArgument(ids != null && ids.length > 0, "ids must be specified");
-      this.imageIds = idIn(Arrays.asList(ids));
+   public EC2HardwareBuilder supportsImageIds(Iterable<String> ids) {
+      this.imageIds = idIn(ids);
       return this;
    }
 

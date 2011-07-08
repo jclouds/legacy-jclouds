@@ -18,7 +18,9 @@
  */
 package org.jclouds.ec2.compute.config;
 
+import static com.google.common.collect.Iterables.toArray;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Map;
 
@@ -33,6 +35,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 
@@ -67,4 +70,14 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
                });
    }
 
+   @Provides
+   @Singleton
+   @Named(PROPERTY_EC2_AMI_OWNERS)
+   String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
+      if (amiOwners.trim().equals(""))
+         return new String[] {};
+      return toArray(Splitter.on(',').split(amiOwners), String.class);
+   }
+
 }
+

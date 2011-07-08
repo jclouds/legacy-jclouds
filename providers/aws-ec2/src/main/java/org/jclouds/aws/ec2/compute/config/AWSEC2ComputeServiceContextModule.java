@@ -18,7 +18,13 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
+
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadata;
@@ -31,8 +37,12 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.AWSRegionAndNameToImageSupplier;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
+import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
+import org.jclouds.ec2.compute.config.EC2BindComputeSuppliersByClass;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.predicates.InstancePresent;
@@ -43,29 +53,27 @@ import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
-import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AWSEC2ComputeServiceContextModule extends EC2ComputeServiceContextModule {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(AMZN_LINUX).os64Bit(true);
-   }
-
+public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContextModule {
    @Override
    protected void configure() {
       super.configure();
+      installDependencies();
+      install(new EC2BindComputeStrategiesByClass());
+      install(new EC2BindComputeSuppliersByClass());
       bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
       bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
                CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
-      bind(RegionAndNameToImageSupplier.class).to(AWSRegionAndNameToImageSupplier.class);
       bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
       bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
       bind(EC2ListNodesStrategy.class).to(AWSEC2ListNodesStrategy.class);
@@ -75,9 +83,25 @@ public class AWSEC2ComputeServiceContextModule extends EC2ComputeServiceContextM
       bind(RunningInstanceToNodeMetadata.class).to(AWSRunningInstanceToNodeMetadata.class);
    }
 
-   @Override
    protected void installDependencies() {
       install(new AWSEC2ComputeServiceDependenciesModule());
    }
 
+   @Provides
+   @Singleton
+   protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
+               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+                  @Override
+                  public Map<RegionAndName, ? extends Image> get() {
+                     return supplier.get();
+                  }
+               });
+   }
+
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(AMZN_LINUX).os64Bit(true);
+   }
 }

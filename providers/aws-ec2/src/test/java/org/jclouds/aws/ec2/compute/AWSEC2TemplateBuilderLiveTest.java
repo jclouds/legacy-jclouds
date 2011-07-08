@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -34,7 +35,6 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
@@ -81,7 +81,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderM1SMALLWithDescription() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-               .osVersionMatches("1[10].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+               .osVersionMatches("1[10].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
+               .build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
@@ -130,12 +131,24 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Test
    public void testFastestTemplateBuilder() throws IOException {
-
-      Template fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      Template fastestTemplate = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
+               .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1-beta");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+      assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
+      assertEquals(getCores(fastestTemplate.getHardware()), 8.0d);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
+
+      fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
       assertEquals(getCores(fastestTemplate.getHardware()), 8.0d);
@@ -164,7 +177,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
-         overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
          context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
                   .<Module> of(new Log4JLoggingModule()), overrides);

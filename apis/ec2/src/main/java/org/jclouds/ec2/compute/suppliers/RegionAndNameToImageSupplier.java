@@ -65,6 +65,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
@@ -103,8 +104,8 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
          Iterable<Entry<String, DescribeImagesOptions>> queries = getDescribeQueriesForOwnersInRegions(regions,
                   amiOwners);
 
-         Iterable<? extends Image> parsedImages = filter(transform(describer.apply(queries), parser), Predicates
-                  .notNull());
+         Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates
+                  .notNull()));
 
          images.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
@@ -129,8 +130,8 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
       return builder.build().entrySet();
    }
 
-   public static DescribeImagesOptions getOptionsForOwners(String[] amiOwners) {
-      final DescribeImagesOptions options;
+   public DescribeImagesOptions getOptionsForOwners(String... amiOwners) {
+      DescribeImagesOptions options;
       if (amiOwners.length == 1 && amiOwners[0].equals("*"))
          options = new DescribeImagesOptions();
       else

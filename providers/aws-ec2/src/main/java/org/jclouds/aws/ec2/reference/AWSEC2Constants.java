@@ -52,6 +52,18 @@ public interface AWSEC2Constants extends EC2Constants {
     * 
     * @see InstanceType.CC1_4XLARGE
     */
+   @Deprecated
    public static final String PROPERTY_EC2_CC_AMIs = "jclouds.ec2.cc-amis";
+   /**
+    * expression to find amis that work on the cluster instance type <br/>
+    * ex. {@code
+    * virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;
+    * state=available;image-type=machine;root-device-type=ebs}
+    * 
+    * @see InstanceType.CC1_4XLARGE
+    */
+   public static final String PROPERTY_EC2_CC_AMI_QUERY = "jclouds.ec2.cc-ami-query";
+   public static final String PROPERTY_EC2_CC_REGIONS = "jclouds.ec2.cc-regions";
+   public static final String PROPERTY_EC2_AMI_QUERY = "jclouds.ec2.ami-query";
 
 }
