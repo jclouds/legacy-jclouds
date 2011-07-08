@@ -19,7 +19,12 @@
 package org.jclouds.demo.tweetstore.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.ImmutableSet.copyOf;
+import static com.google.common.collect.Sets.filter;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET;
@@ -38,9 +43,10 @@ import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.config.util.HttpRequestTask;
-import org.jclouds.demo.tweetstore.config.util.TaskQueue;
 import org.jclouds.demo.tweetstore.config.util.HttpRequestTask.Factory;
+import org.jclouds.demo.tweetstore.config.util.TaskQueue;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.http.HttpRequest;
@@ -69,8 +75,6 @@ import com.google.inject.servlet.ServletModule;
  * @author Adrian Cole
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
-    public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
-
     private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
     private Twitter twitterClient;
     private String container;
@@ -100,7 +104,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
         // instantiate and store references to all blobstores by provider name
         providerTypeToBlobStoreMap = Maps.newHashMap();
-        for (String hint : Splitter.on(',').split(checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS))) {
+        for (String hint : getBlobstoreContexts(props)) {
             providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
         }
 
@@ -116,6 +120,16 @@ public class GuiceServletConfig extends GuiceServletContextListener {
         }
 
         super.contextInitialized(servletContextEvent);
+    }
+
+    private static Iterable<String> getBlobstoreContexts(Properties props) {
+        Set<String> contexts = new CredentialsCollector().apply(props).keySet();
+        String explicitContexts = props.getProperty(PROPERTY_TWEETSTORE_BLOBSTORES);
+        if (explicitContexts != null) {
+            contexts = filter(contexts, in(copyOf(Splitter.on(',').split(explicitContexts))));
+        }
+        checkState(!contexts.isEmpty(), "no credentials available for any requested  context");
+        return contexts;
     }
 
     private static URI withUrl(ServletContext servletContext, String url) {

@@ -40,7 +40,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
@@ -57,7 +56,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -86,7 +84,6 @@ public class TweetStoreLiveTest {
        container = getRequiredSystemProperty(PROPERTY_TWEETSTORE_CONTAINER);
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, container);
-      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
       // put all identity/credential pairs into the client
       addCredentialsForBlobStores(props);
