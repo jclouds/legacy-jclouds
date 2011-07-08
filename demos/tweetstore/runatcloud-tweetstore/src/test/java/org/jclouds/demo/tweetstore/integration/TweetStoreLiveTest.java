@@ -77,8 +77,7 @@ public class TweetStoreLiveTest {
    private Map<String, BlobStoreContext> contexts;
    private String container;
    private static final Iterable<String> blobstores = 
-       Splitter.on(',').split(System.getProperty(PROPERTY_TWEETSTORE_BLOBSTORES, 
-               "cloudfiles-us,aws-s3,azureblob"));
+       Splitter.on(',').split(getRequiredSystemProperty(PROPERTY_TWEETSTORE_BLOBSTORES)); 
    private static final Properties props = new Properties();
 
    @BeforeTest
