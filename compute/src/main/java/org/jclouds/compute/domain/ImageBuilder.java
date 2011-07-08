@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -75,7 +74,7 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       return ImageBuilder.class.cast(super.id(id));
    }
    
-   public ImageBuilder tags(Set<String> tags) {
+   public ImageBuilder tags(Iterable<String> tags) {
       return ImageBuilder.class.cast(super.tags(tags));
    }
 

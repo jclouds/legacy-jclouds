@@ -114,7 +114,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    }
 
    @Override
-   public NodeMetadataBuilder tags(Set<String> tags) {
+   public NodeMetadataBuilder tags(Iterable<String> tags) {
       return NodeMetadataBuilder.class.cast(super.tags(tags));
    }
 

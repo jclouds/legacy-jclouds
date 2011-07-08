@@ -48,7 +48,7 @@ public class ComputeMetadataBuilder extends ResourceMetadataBuilder<ComputeType>
       return this;
    }
 
-   public ComputeMetadataBuilder tags(Set<String> tags) {
+   public ComputeMetadataBuilder tags(Iterable<String> tags) {
       this.tags  = ImmutableSet.<String> copyOf(checkNotNull(tags, "tags"));
       return this;
    }

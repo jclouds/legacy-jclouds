@@ -25,7 +25,6 @@ import static org.jclouds.compute.predicates.ImagePredicates.any;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
@@ -90,7 +89,7 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    }
    
    @Override
-   public HardwareBuilder tags(Set<String> tags) {
+   public HardwareBuilder tags(Iterable<String> tags) {
       return HardwareBuilder.class.cast(super.tags(tags));
    }
 
