@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.VirtualizationType;
@@ -86,6 +87,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    private String deviceName;
    private String snapshotId;
    private VirtualizationType virtualizationType = VirtualizationType.PARAVIRTUAL;
+   private Hypervisor hypervisor = Hypervisor.XEN;
 
    private int volumeSize;
    private boolean deleteOnTermination = true;// correct default is true.
@@ -150,6 +152,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
          rootDeviceName = currentText.toString().trim();
       } else if (qName.equals("virtualizationType")) {
          virtualizationType = VirtualizationType.fromValue(currentText.toString().trim());
+      } else if (qName.equals("hypervisor")) {
+         hypervisor = Hypervisor.fromValue(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inBlockDeviceMapping) {
             ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize, deleteOnTermination));
@@ -164,7 +168,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
                         imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
+                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -185,6 +189,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.rootDeviceName = null;
             this.ebsBlockDevices = Maps.newHashMap();
             this.virtualizationType = VirtualizationType.PARAVIRTUAL;
+            this.hypervisor = Hypervisor.XEN;
          }
 
       }

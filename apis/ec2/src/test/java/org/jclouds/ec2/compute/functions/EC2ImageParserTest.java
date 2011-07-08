@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
@@ -59,14 +59,14 @@ public class EC2ImageParserTest {
       Set<org.jclouds.compute.domain.Image> result = convertImages("/amzn_images.xml");
 
       assertEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
+               new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).description("Amazon")
                .defaultCredentials(new Credentials("ec2-user", null)).id("us-east-1/ami-82e4b5c7").providerId(
                         "ami-82e4b5c7").location(defaultLocation).userMetadata(
                         ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).build());
 
       assertEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
+               new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true).build())
                .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new Credentials("ec2-user", null)).id(
                         "us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").location(defaultLocation).userMetadata(

@@ -66,11 +66,17 @@ public class Image implements Comparable<Image> {
       return virtualizationType;
    }
 
+   private final Hypervisor hypervisor;
+
+   public Hypervisor getHypervisor() {
+      return hypervisor;
+   }
+
    public Image(String region, Architecture architecture, @Nullable String name, @Nullable String description,
             String imageId, String imageLocation, String imageOwnerId, ImageState imageState, ImageType imageType,
             boolean isPublic, Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
             @Nullable String ramdiskId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType) {
+            Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType, Hypervisor hypervisor) {
       this.region = checkNotNull(region, "region");
       this.architecture = checkNotNull(architecture, "architecture");
       this.imageId = checkNotNull(imageId, "imageId");
@@ -89,6 +95,7 @@ public class Image implements Comparable<Image> {
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
       this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
       this.virtualizationType = checkNotNull(virtualizationType, "virtualizationType");
+      this.hypervisor = checkNotNull(hypervisor, "hypervisor");
    }
 
    /** The serialVersionUID */
@@ -353,6 +360,7 @@ public class Image implements Comparable<Image> {
       result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
       result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
       result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
+      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
       return result;
    }
 
@@ -452,6 +460,11 @@ public class Image implements Comparable<Image> {
             return false;
       } else if (!virtualizationType.equals(other.virtualizationType))
          return false;
+      if (hypervisor == null) {
+         if (other.hypervisor != null)
+            return false;
+      } else if (!hypervisor.equals(other.hypervisor))
+         return false;
       return true;
    }
 
@@ -463,7 +476,7 @@ public class Image implements Comparable<Image> {
                + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform + ", productCodes="
                + productCodes + ", ramdiskId=" + ramdiskId + ", region=" + region + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", virtualizationType=" + virtualizationType
-               + "]";
+               + ", hypervisor=" + hypervisor + "]";
    }
 
 }

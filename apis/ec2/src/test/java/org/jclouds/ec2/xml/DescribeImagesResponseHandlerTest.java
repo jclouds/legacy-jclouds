@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.VirtualizationType;
@@ -56,7 +57,7 @@ public class DescribeImagesResponseHandlerTest {
                "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE,
                ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
                RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL));
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images.xml");
 
@@ -68,7 +69,8 @@ public class DescribeImagesResponseHandlerTest {
                "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml", "771350841976",
                ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet("5771E9A6"), null, "windows",
                null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL));
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+
 
       Set<Image> result = parseImages("/describe_images_windows.xml");
 
@@ -81,7 +83,7 @@ public class DescribeImagesResponseHandlerTest {
                ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet(), null, "windows", null,
                RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
                         new EbsBlockDevice("snap-d01272b9", 30, true), "xvdf", new EbsBlockDevice("snap-d31272ba", 250,
-                                 false)), VirtualizationType.HVM));
+                                 false)), VirtualizationType.HVM, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images_ebs.xml");
 
