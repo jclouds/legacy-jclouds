@@ -60,44 +60,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>integration</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>bees.address</name>
-                                    <value>${test.bees.address}</value>
-                                </property>
-                                <property>
-                                    <name>bees.port</name>
-                                    <value>${test.bees.port}</value>
-                                </property>
-                                <property>
-                                    <name>bees.basedir</name>
-                                    <value>${project.build.directory}/bees</value>
-                                </property>
-                                <property>
-                                    <name>warfile</name>
-                                    <value>${project.build.directory}/${project.artifactId}</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    
+
     <repositories>
         <!-- net.stax:stax-appserver is not in central -->
         <repository>
