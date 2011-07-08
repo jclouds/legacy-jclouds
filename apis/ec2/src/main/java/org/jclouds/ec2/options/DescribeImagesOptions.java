@@ -66,6 +66,11 @@ public class DescribeImagesOptions extends BaseEC2RequestOptions {
       return this;
    }
 
+   public DescribeImagesOptions imageIds(Iterable<String> imageIds) {
+      indexFormValuesWithPrefix("ImageId", imageIds);
+      return this;
+   }
+
    public Set<String> getImageIds() {
       return getFormValuesWithKeysPrefixedBy("ImageId.");
    }
