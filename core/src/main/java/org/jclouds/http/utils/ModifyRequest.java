@@ -168,8 +168,9 @@ public class ModifyRequest {
       while (pairs.hasNext()) {
          Map.Entry<String, String> pair = pairs.next();
          formBuilder.append(Strings2.urlEncode(pair.getKey(), skips));
-         if (pair.getValue() != null && !pair.getValue().equals("")) {
+         if (pair.getValue() != null)
             formBuilder.append("=");
+         if (pair.getValue() != null && !pair.getValue().equals("")) {
             formBuilder.append(Strings2.urlEncode(pair.getValue(), skips));
          }
          if (pairs.hasNext())

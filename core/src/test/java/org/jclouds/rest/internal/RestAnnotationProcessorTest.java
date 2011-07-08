@@ -1865,6 +1865,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @QueryParams(keys = "acl")
       ListenableFuture<String> getQueryNull(@PathParam("id") String id);
 
+      @GET
+      @Path("/{id}")
+      @QueryParams(keys = "acl", values="")
+      ListenableFuture<String> getQueryEmpty(@PathParam("id") String id);
+
       @PUT
       @Path("/{id}")
       ListenableFuture<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
@@ -1944,6 +1949,16 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getEndpoint().getHost(), "localhost");
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getEndpoint().getQuery(), "acl");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+   }
+   
+   public void testCreateGetQueryEmpty() throws SecurityException, NoSuchMethodException {
+      Method method = TestRequest.class.getMethod("getQueryEmpty", String.class);
+      HttpRequest request = factory(TestRequest.class).createRequest(method, new Object[] { "1" });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/1");
+      assertEquals(request.getEndpoint().getQuery(), "acl=");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 0);
    }
