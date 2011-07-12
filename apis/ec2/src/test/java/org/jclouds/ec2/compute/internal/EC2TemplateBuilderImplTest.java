@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true)
+@Test(groups = "unit", singleThreaded = true)
 public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
 
    @Override

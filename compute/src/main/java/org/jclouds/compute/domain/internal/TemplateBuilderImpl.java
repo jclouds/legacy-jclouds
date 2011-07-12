@@ -21,11 +21,14 @@ package org.jclouds.compute.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
-
+import static java.lang.String.format;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -50,6 +53,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Lists2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
@@ -145,7 +149,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
       @Override
       public String toString() {
-         return "location(" + location + ")";
+         return location == null ? "anyLocation()" : "locationEqualsOrChildOf(" + location.getId() + ")";
       }
    };
 
@@ -500,7 +504,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder locationId(final String locationId) {
       Set<? extends Location> locations = this.locations.get();
       try {
-         this.location = Iterables.find(locations, new Predicate<Location>() {
+         this.location = find(locations, new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {
@@ -514,7 +518,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
          });
       } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("location id %s not found in: %s", locationId, locations));
+         throw new NoSuchElementException(format("location id %s not found in: %s", locationId, locations));
       }
       return this;
    }
@@ -528,6 +532,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       return this;
    }
 
+   private static final Function<Image, String> imageToId = new Function<Image, String>() {
+
+      @Override
+      public String apply(Image arg0) {
+         return arg0.getId();
+      }
+      
+   };
+   
    /**
     * {@inheritDoc}
     */
@@ -547,14 +560,26 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Set<? extends Image> images = getImages();
       Predicate<Image> imagePredicate = buildImagePredicate();
       Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
-      if (Iterables.size(supportedImages) == 0)
-         throw new NoSuchElementException(String.format(
-               "no image matched predicate %s images that didn't match below:\n%s", imagePredicate, images));
+      if (size(supportedImages) == 0) {
+         if (imagePredicate == idPredicate) {
+            throw new NoSuchElementException(format("%s not found", idPredicate));
+         } else {
+            throwNoSuchElementExceptionAfterLoggingImageIds(format("no image matched predicate: %s", imagePredicate),
+                     images);
+         }
+      }
       Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
       logger.debug("<<   matched image(%s)", image);
 
       return new TemplateImpl(image, hardware, location, options);
+   }
+
+   protected void throwNoSuchElementExceptionAfterLoggingImageIds(String message, Iterable<? extends Image> images) {
+      NoSuchElementException exception = new NoSuchElementException(message);
+      if (logger.isTraceEnabled())
+         logger.warn(exception, "image ids that didn't match: %s", transform(images, imageToId));
+      throw exception;
    }
 
    protected Hardware resolveSize(Ordering<Hardware> hardwareOrdering, final Iterable<? extends Image> images) {
@@ -583,8 +608,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                });
          hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("hardware don't support any images: " + toString() + "\n" + hardwarel
-               + "\n" + images);
+         String message = format("no hardware profiles support images matching params: %s", toString());
+         exception = new NoSuchElementException(message);
+         if (logger.isTraceEnabled())
+            logger.warn(exception, "hardware profiles %s\nimage ids %s", hardwarel, transform(images, imageToId));
+         throw exception;
       }
       logger.debug("<<   matched hardware(%s)", hardware);
       return hardware;
@@ -622,13 +650,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       try {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())
-            logger.trace("<<   matched images(%s)", matchingImages);
+            logger.trace("<<   matched images(%s)", transform(matchingImages, imageToId));
          List<? extends Image> maxImages = Lists2.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
          if (logger.isTraceEnabled())
-            logger.trace("<<   best images(%s)", maxImages);
+            logger.trace("<<   best images(%s)", transform(maxImages, imageToId));
          return maxImages.get(maxImages.size() - 1);
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + supportedImages);
+         throwNoSuchElementExceptionAfterLoggingImageIds(format("no image matched params: %s", toString()),
+                  supportedImages);
+         assert false;
+         return null;
       }
    }
 
@@ -651,7 +682,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
                @Override
                public String toString() {
-                  return "location(" + location + ")";
+                  return locationPredicate.toString();
                }
             });
 
@@ -668,19 +699,20 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             osPredicates.add(os64BitPredicate);
          if (osArch != null)
             osPredicates.add(osArchPredicate);
-         predicates.add(new Predicate<Image>() {
+         if (osPredicates.size() > 0)
+            predicates.add(new Predicate<Image>() {
 
-            @Override
-            public boolean apply(Image input) {
-               return Predicates.and(osPredicates).apply(input.getOperatingSystem());
-            }
+               @Override
+               public boolean apply(Image input) {
+                  return and(osPredicates).apply(input.getOperatingSystem());
+               }
 
-            @Override
-            public String toString() {
-               return Predicates.and(osPredicates).toString();
-            }
+               @Override
+               public String toString() {
+                  return and(osPredicates).toString();
+               }
 
-         });
+            });
          if (imageVersion != null)
             predicates.add(imageVersionPredicate);
          if (imageName != null)

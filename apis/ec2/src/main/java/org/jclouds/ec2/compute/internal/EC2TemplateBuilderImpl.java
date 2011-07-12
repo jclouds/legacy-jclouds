@@ -69,9 +69,9 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             try {
                return imageMap.get(key);
             } catch (NullPointerException nex) {
-               throw new NoSuchElementException(String.format("image %s/%s not found", key.getRegion(), key.getName()));
+               throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
             } catch (ComputationException nex) {
-               throw new NoSuchElementException(String.format("image %s/%s not found", key.getRegion(), key.getName()));
+               throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
             }
          }
          return null;

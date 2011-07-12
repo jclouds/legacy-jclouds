@@ -46,4 +46,5 @@ public class StubTemplateBuilderIntegrationTest extends BaseTemplateBuilderLiveT
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of();
    }
+   
 }
