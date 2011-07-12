@@ -21,6 +21,7 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.cim.ResourceAllocationSettingData;
@@ -41,6 +42,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    private final String name;
    private final URI href;
    private final ReferenceType vDC;
+   private final Set<ReferenceType> extendedInfo;
    private final Status status;
    private final Long size;
    private final ListMultimap<String, String> networkToAddresses;
@@ -55,6 +57,14 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
             VirtualSystemSettingData system, Set<ResourceAllocationSettingData> resourceAllocations) {
+       this(name, href, status, size, vDC, networkToAddresses, osType, operatingSystemDescription, system,
+               resourceAllocations, new HashSet<ReferenceType>());
+   }
+
+   public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
+            ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
+            VirtualSystemSettingData system, Set<ResourceAllocationSettingData> resourceAllocations,
+            Set<ReferenceType> extendedInfo) {
       this.name = checkNotNull(name, "name");
       this.href = checkNotNull(href, "href");
       this.status = checkNotNull(status, "status");
@@ -65,6 +75,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
       this.resourceAllocations = checkNotNull(resourceAllocations, "resourceAllocations");
+      this.extendedInfo = extendedInfo;
    }
 
    @Override
@@ -103,6 +114,11 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
+   public Set<ReferenceType> getExtendedInfo() {
+      return extendedInfo;
+   }
+
+   @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
@@ -116,6 +132,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((system == null) ? 0 : system.hashCode());
       result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
+      result = prime * result + ((extendedInfo == null) ? 0 : extendedInfo.hashCode());
       return result;
    }
 
@@ -178,6 +195,11 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
             return false;
       } else if (!vDC.equals(other.vDC))
          return false;
+      if (extendedInfo == null) {
+         if (other.extendedInfo != null)
+            return false;
+      } else if (!extendedInfo.equals(other.extendedInfo))
+         return false;
       return true;
    }
 
@@ -201,7 +223,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
       return "[href=" + href + ", name=" + name + ", networkToAddresses=" + networkToAddresses + ", osType=" + osType
                + ", operatingSystemDescription=" + operatingSystemDescription + ", resourceAllocationByType="
                + resourceAllocations + ", size=" + size + ", status=" + status + ", system=" + system + ", vDC=" + vDC
-               + "]";
+               + ", extendedInfo=" + extendedInfo + "]";
    }
 
    @Override

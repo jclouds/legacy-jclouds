@@ -38,6 +38,7 @@ import static org.jclouds.Constants.PROPERTY_PROXY_PORT;
 import static org.jclouds.Constants.PROPERTY_PROXY_SYSTEM;
 import static org.jclouds.Constants.PROPERTY_PROXY_USER;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_RETRY_DELAY_START;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
@@ -134,6 +135,14 @@ public class PropertiesBuilder {
     */
    public PropertiesBuilder withMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_MAX_RETRIES, Integer.toString(httpMaxRetries));
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_RETRY_DELAY_START
+    */
+   public PropertiesBuilder withRetriesDelayStart(long delayStart) {
+      properties.setProperty(PROPERTY_RETRY_DELAY_START, Long.toString(delayStart));
       return this;
    }
 

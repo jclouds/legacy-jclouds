@@ -86,6 +86,10 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
    @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
 
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_RETRY_DELAY_START)
+   private long delayStart = 50L;
+
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -115,7 +119,7 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
    }
 
    public void imposeBackoffExponentialDelay(int failureCount, String commandDescription) {
-      imposeBackoffExponentialDelay(50L, 2, failureCount, retryCountLimit, commandDescription);
+      imposeBackoffExponentialDelay(delayStart, 2, failureCount, retryCountLimit, commandDescription);
    }
 
    public void imposeBackoffExponentialDelay(long period, int pow, int failureCount, int max, String commandDescription) {

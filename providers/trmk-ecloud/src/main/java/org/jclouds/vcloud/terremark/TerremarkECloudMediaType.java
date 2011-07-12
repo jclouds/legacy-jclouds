@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * Resource Types used in Terremark eCloud
- * 
+ *
  * @see MediaType
  */
 public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
@@ -35,7 +35,7 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.publicIp+xml"
     */
    public final static MediaType PUBLICIP_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.publicIp+xml");
-  
+
    /**
     * "application/vnd.tmrk.ecloud.internetService+xml"
     */
@@ -66,15 +66,24 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.keysList+xml"
     */
    public final static MediaType KEYSLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.keysList+xml");
-   
-   
+
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
     */
    public final static String IPADDRESS_LIST_XML = "application/vnd.tmrk.ecloud.ipAddressList+xml";
-   
+
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
     */
    public final static MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.ipAddressList+xml");
+
+   /**
+    * "application/vnd.tmrk.ecloud.vApp+xml"
+    */
+   public final static String VAPPEXTINFO_XML = "application/vnd.tmrk.ecloud.vApp+xml";
+
+   /**
+    * "application/vnd.tmrk.ecloud.vApp+xml"
+    */
+   public final static MediaType VAPPEXTINFO_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.vApp+xml");
 }

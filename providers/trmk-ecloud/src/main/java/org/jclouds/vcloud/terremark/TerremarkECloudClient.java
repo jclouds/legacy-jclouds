@@ -29,6 +29,7 @@ import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
+import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -58,4 +59,11 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
    
    Set<IpAddress> getIpAddresses(URI network);
 
+   /**
+    * Returns extended information for the vApp.
+    *
+    * @param vApp The URI at which the vApp information is available.
+    * @return Extended vApp information like tags, long name, network adapter information.
+    */
+   VAppExtendedInfo getVAppExtendedInfo(URI href);
 }

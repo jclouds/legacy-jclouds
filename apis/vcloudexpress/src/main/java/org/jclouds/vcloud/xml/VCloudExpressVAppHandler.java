@@ -79,10 +79,11 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
    protected URI location;
    protected Long size;
    protected ReferenceType vDC;
+   protected Set<ReferenceType> extendedInfo = Sets.newLinkedHashSet();
 
    public VCloudExpressVApp getResult() {
       return new VCloudExpressVAppImpl(name, location, status, size, vDC, networkToAddresses, osType,
-               operatingSystemDescription, system, allocations);
+               operatingSystemDescription, system, allocations, extendedInfo);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
@@ -99,8 +100,12 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
          if (attributes.containsKey("size"))
             size = new Long(attributes.get("size"));
       } else if (qName.equals("Link")) { // type should never be missing
-         if (attributes.containsKey("type") && attributes.get("type").equals(VCloudExpressMediaType.VDC_XML)) {
-            vDC = newReferenceType(attributes);
+         if (attributes.containsKey("type")) {
+            if (attributes.get("type").equals(VCloudExpressMediaType.VDC_XML)) {
+               vDC = newReferenceType(attributes);
+            } else {
+               extendedInfo.add(newReferenceType(attributes));
+            }
          }
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;

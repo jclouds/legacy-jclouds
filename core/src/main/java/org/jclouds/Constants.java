@@ -130,6 +130,15 @@ public interface Constants {
     */
    public static final String PROPERTY_MAX_RETRIES = "jclouds.max-retries";
    /**
+    * Long property.
+    * <p/>
+    * Commands are retried, if the problem on the server side was a resolvable conflict. However,
+    * the maximum tries of a single command is bounded. If {@link #PROPERTY_MAX_RETRIES} is greater
+    * than zero, this property is used to determine the start delay. The delay is based on exponential
+    * backoff algorithm. Default value for this property is 50 milliseconds.
+    */
+   public static final String PROPERTY_RETRY_DELAY_START = "jclouds.retries-delay-start";
+   /**
     * Integer property.
     * <p/>
     * Commands are limited to only a certain amount of redirects.

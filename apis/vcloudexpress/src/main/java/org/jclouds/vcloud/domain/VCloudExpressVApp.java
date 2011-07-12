@@ -40,6 +40,8 @@ import com.google.inject.ImplementedBy;
 public interface VCloudExpressVApp extends ReferenceType {
    ReferenceType getVDC();
 
+   Set<ReferenceType> getExtendedInfo();
+
    Status getStatus();
 
    Long getSize();
