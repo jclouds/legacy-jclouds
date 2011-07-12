@@ -38,10 +38,10 @@ public class TerremarkECloudPropertiesBuilder extends TerremarkVCloudPropertiesB
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-FL,NL-NH");
-      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.7");
+      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.8");
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.enterprisecloud.terremark.com/api");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "eCloudExtensions");
-      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.7");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.8");
       // default for ubuntu
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
       // ubuntu image has a problem with sftp

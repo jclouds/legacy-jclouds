@@ -25,6 +25,7 @@ import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERV
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.IPADDRESS_LIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.KEYSLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.PUBLICIP_XML;
+import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.VAPPEXTINFO_XML;
 
 import java.net.URI;
 import java.util.Set;
@@ -55,6 +56,7 @@ import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
+import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
 import org.jclouds.vcloud.terremark.functions.OrgURIToKeysListEndpoint;
 import org.jclouds.vcloud.terremark.functions.VDCURIToInternetServicesEndpoint;
@@ -69,6 +71,7 @@ import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkNetworkHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler;
+import org.jclouds.vcloud.terremark.xml.VAppExtendedInfoHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -250,4 +253,13 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(IpAddressesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<IpAddress>> getIpAddresses(@EndpointParam URI network);
+
+   /**
+    * @see TerremarkVCloudExpressClient#getInternetService
+    */
+   @GET
+   @Consumes(VAPPEXTINFO_XML)
+   @XMLResponseParser(VAppExtendedInfoHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VAppExtendedInfo> getVAppExtendedInfo(@EndpointParam URI href);
 }
