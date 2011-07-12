@@ -549,7 +549,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
       if (Iterables.size(supportedImages) == 0)
          throw new NoSuchElementException(String.format(
-               "no image matched predicate %s images that didn't match below:\n%s", imagePredicate, images));
+               "no image matched predicate %s.", imagePredicate));
       Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
       logger.debug("<<   matched image(%s)", image);
