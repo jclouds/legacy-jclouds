@@ -49,14 +49,14 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class BindCloneVAppParamsToXmlPayload implements MapBinder {
+public class BindCloneVCloudExpressVAppParamsToXmlPayload implements MapBinder {
 
    protected final String ns;
    protected final String schema;
    private final BindToStringPayload stringBinder;
 
    @Inject
-   public BindCloneVAppParamsToXmlPayload(BindToStringPayload stringBinder,
+   public BindCloneVCloudExpressVAppParamsToXmlPayload(BindToStringPayload stringBinder,
          @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
       this.ns = ns;
       this.schema = schema;
@@ -93,7 +93,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       XMLBuilder rootBuilder = buildRoot(newName, options.isDeploy(), options.isPowerOn());
       if (options.getDescription() != null)
          rootBuilder.e("Description").text(options.getDescription());
-      rootBuilder.e("VApp").a("href", vApp).a("type", VCloudMediaType.VAPP_XML);
+      rootBuilder.e("VApp").a("xmlns", ns).a("href", vApp).a("type", VCloudMediaType.VAPP_XML);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);

@@ -27,7 +27,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindCloneVCloudExpressVAppParamsToXmlPayload;
 
 import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
@@ -38,7 +38,7 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class TerremarkBindCloneVAppParamsToXmlPayload extends BindCloneVAppParamsToXmlPayload {
+public class TerremarkBindCloneVAppParamsToXmlPayload extends BindCloneVCloudExpressVAppParamsToXmlPayload {
 
    @Inject
    public TerremarkBindCloneVAppParamsToXmlPayload(BindToStringPayload stringBinder,

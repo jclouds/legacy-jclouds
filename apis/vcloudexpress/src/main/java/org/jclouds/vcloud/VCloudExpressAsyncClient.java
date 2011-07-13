@@ -44,7 +44,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindCloneVCloudExpressVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
@@ -163,7 +163,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @Produces("application/vnd.vmware.vcloud.cloneVAppParams+xml")
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
-   @MapBinder(BindCloneVAppParamsToXmlPayload.class)
+   @MapBinder(BindCloneVCloudExpressVAppParamsToXmlPayload.class)
    ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @PayloadParam("vApp") URI toClone,
             @PayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);

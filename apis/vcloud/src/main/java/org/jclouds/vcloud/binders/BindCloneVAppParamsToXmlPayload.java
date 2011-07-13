@@ -42,7 +42,7 @@ public class BindCloneVAppParamsToXmlPayload extends BindCloneParamsToXmlPayload
    @Inject
    public BindCloneVAppParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
-      super(stringBinder, schema, schema);
+      super(stringBinder, ns, schema);
    }
 
    @Override
