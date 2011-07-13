@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -29,9 +28,9 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
-import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
@@ -48,13 +47,15 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
+public class BindCloneVCloudExpressVAppParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudExpressPropertiesBuilder(props).build(), "properties"));
+         props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v0.8");
+         props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+         Names.bindProperties(binder(), new PropertiesBuilder(props).build());
       }
    });
 
@@ -65,11 +66,11 @@ public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
                "The description of the new vApp");
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
-      BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
+      BindCloneVCloudExpressVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVCloudExpressVAppParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "new-linux-server");
@@ -83,11 +84,11 @@ public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
-      BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
+      BindCloneVCloudExpressVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVCloudExpressVAppParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "my-vapp");
