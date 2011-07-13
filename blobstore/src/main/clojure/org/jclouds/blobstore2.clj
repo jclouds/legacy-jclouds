@@ -223,7 +223,7 @@ Options can also be specified for extension modules
 
 (defn clear-container
   "Clear a container."
-  [^BlobStore container-name]
+  [^BlobStore blobstore container-name]
   (.clearContainer blobstore container-name))
 
 (defn delete-container
