@@ -1,0 +1,12 @@
+<Org href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/org/1910324" name="Cloud Conscious, LLC" xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1155" type="application/vnd.vmware.vcloud.vdc+xml" name="Cloud Conscious LLC - MIA"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1169" type="application/vnd.vmware.vcloud.vdc+xml" name="Cloud Conscious LLC - AMA"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1169/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Cloud Conscious LLC - AMA Catalog"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1155/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Cloud Conscious LLC - MIA Catalog"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1169/tasksList" type="application/vnd.vmware.vcloud.tasksList+xml" name="Cloud Conscious LLC - AMA Tasks List"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/vdc/1155/tasksList" type="application/vnd.vmware.vcloud.tasksList+xml" name="Cloud Conscious LLC - MIA Tasks List"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/keys" type="application/vnd.tmrk.ecloud.keysList+xml" name="Keys"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/deviceTags" type="application/vnd.tmrk.ecloud.tagsList+xml" name="Device Tags"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/vappCatalog" type="application/vnd.tmrk.ecloud.VAppCatalogList+xml" name="VApp Catalog"/>
+  <Link rel="down" href="https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/dataCenters" type="application/vnd.tmrk.ecloud.dataCentersList+xml" name="DataCenters"/>
+</Org>

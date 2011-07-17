@@ -18,10 +18,12 @@
  */
 package org.jclouds.vcloud.terremark.domain;
 
-import org.jclouds.vcloud.domain.ReferenceType;
+import java.util.Map;
+
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
-import org.jclouds.vcloud.terremark.endpoints.KeysList;
+import org.jclouds.vcloud.terremark.endpoints.Keys;
 
 import com.google.inject.ImplementedBy;
 
@@ -31,8 +33,26 @@ import com.google.inject.ImplementedBy;
 @org.jclouds.vcloud.endpoints.Org
 @ImplementedBy(TerremarkOrgImpl.class)
 public interface TerremarkOrg extends Org {
-
-   @KeysList
+   /**
+    * 
+    * @see #getKeys
+    */
+   @Deprecated
    ReferenceType getKeysList();
+
+   @Keys
+   ReferenceType getKeys();
+
+   /**
+    * there are multiple tasks lists in a terremark org
+    * 
+    * @see #getTasksLists
+    */
+   @Deprecated
+   ReferenceType getTasksList();
+
+   /**
+    */
+   Map<String, ReferenceType> getTasksLists();
 
 }

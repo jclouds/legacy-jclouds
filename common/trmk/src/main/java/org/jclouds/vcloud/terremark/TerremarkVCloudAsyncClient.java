@@ -57,9 +57,11 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
@@ -96,6 +98,7 @@ import org.jclouds.vcloud.xml.VCloudExpressCatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -106,6 +109,14 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   @Provides
+   @Org
+   Iterable<ReferenceType> listOrgs();
+   
    /**
     * @see VCloudExpressClient#getCatalogItemInOrg
     */

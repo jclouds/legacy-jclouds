@@ -21,6 +21,7 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -43,7 +44,6 @@ import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
-
 /**
  * Configures the VCloud authentication service connection, including logging
  * and http transport.
@@ -57,6 +57,11 @@ public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressC
 
    public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
+   }
+
+   public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
+         Map<Class<?>, Class<?>> delegateMap) {
+      super(syncClientType, asyncClientType, delegateMap);
    }
 
    @Override

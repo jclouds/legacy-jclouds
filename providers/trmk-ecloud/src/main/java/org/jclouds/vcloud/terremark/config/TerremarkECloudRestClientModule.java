@@ -29,6 +29,10 @@ import javax.inject.Singleton;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.terremark.ecloud.features.DataCenterOperationsAsyncClient;
+import org.jclouds.terremark.ecloud.features.DataCenterOperationsClient;
+import org.jclouds.terremark.ecloud.features.TagOperationsAsyncClient;
+import org.jclouds.terremark.ecloud.features.TagOperationsClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -40,6 +44,7 @@ import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -54,8 +59,13 @@ import com.google.inject.Provides;
 public class TerremarkECloudRestClientModule extends
          TerremarkRestClientModule<TerremarkECloudClient, TerremarkECloudAsyncClient> {
 
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+            .put(DataCenterOperationsClient.class, DataCenterOperationsAsyncClient.class)//
+            .put(TagOperationsClient.class, TagOperationsAsyncClient.class)//
+            .build();
+
    public TerremarkECloudRestClientModule() {
-      super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
+      super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class, DELEGATE_MAP);
    }
 
    @Provides

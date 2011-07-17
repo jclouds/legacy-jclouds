@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to Terremark SSH Keys List.
+ * Related to Terremark Data Centers List.
  * 
  * @author Adrian Cole
  * 
@@ -34,6 +34,6 @@ import javax.inject.Qualifier;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface KeysList {
+public @interface DataCenters {
 
 }

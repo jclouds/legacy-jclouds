@@ -24,44 +24,26 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgURIToKeysListEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final URI defaultOrg;
-
+public class OrgURIToKeysListEndpoint extends OrgURIToEndpoint implements Function<Object, URI> {
    @Inject
    public OrgURIToKeysListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-            @org.jclouds.vcloud.endpoints.Org URI defaultUri) {
-      this.orgMap = orgMap;
-      this.defaultOrg = defaultUri;
+         @org.jclouds.vcloud.endpoints.Org URI defaultUri) {
+      super(orgMap, defaultUri);
    }
 
-   public URI apply(Object from) {
-      Map<URI, ? extends Org> uriToOrg = Maps.uniqueIndex(orgMap.get().values(), new Function<Org, URI>() {
-
-         @Override
-         public URI apply(Org from) {
-            return from.getHref();
-         }
-
-      });
-      try {
-         return TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList().getHref();
-      } catch (NullPointerException e) {
-         throw new ResourceNotFoundException("org " + from + " not found in: " + uriToOrg, e);
-      }
+   public URI getUriFromOrg(TerremarkOrg org) {
+      return org.getKeys().getHref();
    }
 
 }

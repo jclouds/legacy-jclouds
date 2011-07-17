@@ -18,25 +18,22 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.net.URI;
 
-import javax.annotation.Resource;
-
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 /**
  * @author Adrian Cole
  */
 public class InternetServiceHandler extends HandlerWithResult<InternetService> {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
    private boolean inPublicIpAddress;
@@ -51,10 +48,9 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
    private boolean enabled;
    private Protocol protocol;
 
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
-   }
+   protected int depth = 0;
+
+   private int thisDepth;
 
    @Override
    public InternetService getResult() {
@@ -62,40 +58,48 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      if (qName.equals("PublicIpAddress")) {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) {
+      depth++;
+      if (equalsOrSuffix(qName, "InternetService")) {
+         thisDepth = depth;
+      } else if (equalsOrSuffix(qName, "PublicIpAddress")) {
          inPublicIpAddress = true;
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      String current = currentOrNull();
-      if (qName.equals("PublicIpAddress")) {
+      depth--;
+      if (equalsOrSuffix(qName, "PublicIpAddress")) {
+         inPublicIpAddress = false;
          publicIpAddress = new PublicIpAddress(address, addressLocation);
          address = null;
          addressLocation = null;
-         inPublicIpAddress = false;
-      } else if (current != null) {
-         if (qName.equals("Href")) {
-            if (inPublicIpAddress)
-               addressLocation = URI.create(current);
-            else
-               location = URI.create(current);
-         } else if (qName.equals("Name")) {
-            if (inPublicIpAddress)
-               address = current;
-            else
-               serviceName = current;
-         } else if (qName.equals("Port")) {
-            port = Integer.parseInt(current);
-         } else if (qName.equals("Protocol")) {
-            protocol = Protocol.valueOf(current);
-         } else if (qName.equals("Enabled")) {
-            enabled = Boolean.parseBoolean(current);
-         } else if (qName.equals("Timeout")) {
-            timeout = Integer.parseInt(current);
-         } else if (qName.equals("Description")) {
-            description = current;
+      } else {
+         String value = currentOrNull(currentText);
+         if (value != null && !value.equals("")) {
+            if (depth == thisDepth) {
+               if (equalsOrSuffix(qName, "Href")) {
+                  location = URI.create(value);
+               } else if (equalsOrSuffix(qName, "Name")) {
+                  serviceName = value;
+               } else if (equalsOrSuffix(qName, "Port")) {
+                  port = Integer.parseInt(value);
+               } else if (equalsOrSuffix(qName, "Protocol")) {
+                  protocol = Protocol.valueOf(value);
+               } else if (equalsOrSuffix(qName, "Enabled")) {
+                  enabled = Boolean.parseBoolean(value);
+               } else if (equalsOrSuffix(qName, "Timeout")) {
+                  timeout = Integer.parseInt(value);
+               } else if (equalsOrSuffix(qName, "Description")) {
+                  description = currentOrNull(currentText);
+               }
+            } else if (inPublicIpAddress) {
+               if (equalsOrSuffix(qName, "Href")) {
+                  addressLocation = URI.create(value);
+               } else if (equalsOrSuffix(qName, "Name")) {
+                  address = value;
+               }
+            }
          }
       }
       currentText = new StringBuilder();

@@ -45,9 +45,6 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
    private final ReferenceType publicIps;
    private final ReferenceType internetServices;
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
-
    public TerremarkVDCImpl(String name, String type, URI id, VDCStatus status, ReferenceType org,
             @Nullable String description, Iterable<Task> tasks, AllocationModel allocationModel,
             @Nullable Capacity storageCapacity, @Nullable Capacity cpuCapacity, @Nullable Capacity memoryCapacity,

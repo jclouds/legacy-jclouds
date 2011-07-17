@@ -54,7 +54,6 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? (as-compute-service (compute-context *compute*)))))
 
 (deftest nodes-test
-  (is (empty? (nodes)))
   (is (create-node "fred" (build-template
          *compute* {} )))
   (is (= 1 (count (nodes))))

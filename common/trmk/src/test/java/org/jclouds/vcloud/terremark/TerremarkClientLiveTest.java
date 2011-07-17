@@ -31,9 +31,9 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -48,8 +48,8 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.jclouds.vcloud.VCloudExpressMediaType;
@@ -99,7 +99,14 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    protected VCloudExpressVApp clone;
    protected VDC vdc;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
-
+   
+   @Test
+   public void testListOrgs() throws Exception {
+      for (ReferenceType org : tmClient.listOrgs()) {
+         assertNotNull(tmClient.getOrg(org.getHref()));
+      }
+   }
+   
    @Test
    public void testGetAllInternetServices() throws Exception {
       for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null)
