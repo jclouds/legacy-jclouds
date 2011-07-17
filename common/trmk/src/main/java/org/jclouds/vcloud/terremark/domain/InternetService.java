@@ -83,9 +83,8 @@ public class InternetService implements Comparable<InternetService> {
 
    @Override
    public String toString() {
-      return "InternetService [description=" + description + ", enabled=" + enabled + ", id=" + id + ", name="
-            + name + ", port=" + port + ", protocol=" + protocol + ", publicIpAddress=" + publicIpAddress
-            + ", timeout=" + timeout + "]";
+      return "[description=" + description + ", enabled=" + enabled + ", id=" + id + ", name=" + name + ", port="
+            + port + ", protocol=" + protocol + ", publicIpAddress=" + publicIpAddress + ", timeout=" + timeout + "]";
    }
 
    @Override

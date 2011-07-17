@@ -48,9 +48,9 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
-import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
+import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Catalog;
@@ -718,9 +718,10 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
                                     "vdc",
                                     new ReferenceTypeImpl("vdc", TerremarkVCloudExpressMediaType.VDC_XML, URI
                                           .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                              .<String, ReferenceType> of(), new ReferenceTypeImpl("tasksList",
-                              TerremarkVCloudExpressMediaType.TASKSLIST_XML, URI
-                                    .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")),
+                              .<String, ReferenceType> of(), ImmutableMap.<String, ReferenceType> of(
+                              "tasksList",
+                              new ReferenceTypeImpl("tasksList", TerremarkVCloudExpressMediaType.TASKSLIST_XML, URI
+                                    .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1"))),
                         new ReferenceTypeImpl("keysList", TerremarkVCloudExpressMediaType.KEYSLIST_XML, URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/keysList/1"))));
          }

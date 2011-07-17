@@ -17,12 +17,11 @@
  * ====================================================================
  */
 package org.jclouds.vcloud.terremark.config;
-
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.io.IOException;
 import java.util.Map;
- 
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,7 +37,7 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.endpoints.KeysList;
+import org.jclouds.vcloud.terremark.endpoints.Keys;
 import org.jclouds.vcloud.terremark.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 
 import com.google.common.base.Function;
@@ -53,6 +52,11 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
       super(syncClientType, asyncClientType);
    }
 
+   public TerremarkRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
+         Map<Class<?>, Class<?>> delegateMap) {
+      super(syncClientType, asyncClientType, delegateMap);
+   }
+   
    @Singleton
    @Provides
    @Named("CreateInternetService")
@@ -96,7 +100,7 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
 
             @Override
             public ReferenceType apply(ReferenceType from) {
-               return client.findOrgNamed(from.getName()).getKeysList();
+               return client.findOrgNamed(from.getName()).getKeys();
             }
 
          });
@@ -105,7 +109,7 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
 
    @Provides
    @Singleton
-   @KeysList
+   @Keys
    protected Supplier<Map<String, ReferenceType>> provideOrgToKeysListCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToKeysListSupplier supplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,

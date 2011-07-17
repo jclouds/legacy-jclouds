@@ -78,9 +78,11 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new ReferenceTypeImpl(
                "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"))));
-      assertEquals(result.getTasksList(), new ReferenceTypeImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/tasksList")));
-      assertEquals(result.getKeysList(), new ReferenceTypeImpl("Keys", "application/vnd.tmrk.vcloudExpress.keysList+xml",
+      assertEquals(result.getTasksLists(), ImmutableMap.of(
+            "Miami Environment 1 Tasks List",
+            new ReferenceTypeImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
+                  .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/tasksList"))));
+      assertEquals(result.getKeys(), new ReferenceTypeImpl("Keys", "application/vnd.tmrk.vcloudExpress.keysList+xml",
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys")));
 
    }

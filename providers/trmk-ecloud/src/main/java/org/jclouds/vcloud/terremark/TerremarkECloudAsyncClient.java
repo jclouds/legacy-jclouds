@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICESLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.IPADDRESS_LIST_XML;
@@ -38,6 +39,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
@@ -47,7 +49,12 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.terremark.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.terremark.ecloud.features.DataCenterOperationsAsyncClient;
+import org.jclouds.terremark.ecloud.features.TagOperationsAsyncClient;
+import org.jclouds.terremark.ecloud.xml.TerremarkECloudOrgHandler;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.terremark.binders.BindCreateKeyToXmlPayload;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -56,8 +63,9 @@ import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
-import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
+import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
 import org.jclouds.vcloud.terremark.functions.OrgURIToKeysListEndpoint;
 import org.jclouds.vcloud.terremark.functions.VDCURIToInternetServicesEndpoint;
 import org.jclouds.vcloud.terremark.functions.VDCURIToPublicIPsEndpoint;
@@ -84,7 +92,35 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
-
+   /**
+    * Provides asynchronous access to Data Center Operations.
+    * 
+    */
+   @Delegate
+   DataCenterOperationsAsyncClient getDataCenterOperationsClient();
+   
+   /**
+    * Provides asynchronous access to Tag Operations.
+    * 
+    */
+   @Delegate
+   TagOperationsAsyncClient getTagOperationsClient();
+  
+   @Override
+   @GET
+   @XMLResponseParser(TerremarkECloudOrgHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(ORG_XML)
+   ListenableFuture<? extends TerremarkECloudOrg> getOrg(@EndpointParam URI orgId);
+   
+   @Override
+   @GET
+   @XMLResponseParser(TerremarkECloudOrgHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(ORG_XML)
+   ListenableFuture<? extends TerremarkOrg> findOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
+   
    /**
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
@@ -152,7 +188,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
             @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
 
    /**
-    * @see TerremarkVCloudExpressClient#listKeyPairsInOrgNamed
+    * @see TerremarkVCloudExpressClient#listKeyPairsInOrg
     */
    @GET
    @Consumes(KEYSLIST_XML)
@@ -262,4 +298,5 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(VAppExtendedInfoHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VAppExtendedInfo> getVAppExtendedInfo(@EndpointParam URI href);
+   
 }

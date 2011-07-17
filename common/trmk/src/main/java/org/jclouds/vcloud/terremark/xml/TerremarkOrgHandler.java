@@ -18,13 +18,14 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.jclouds.util.SaxUtils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
+import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jclouds.util.SaxUtils;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
@@ -32,6 +33,8 @@ import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -42,24 +45,37 @@ public class TerremarkOrgHandler extends OrgHandler {
       super(taskHandler);
    }
 
-   private ReferenceType keysList;
+   protected ReferenceType keysList;
+   protected Map<String, ReferenceType> tasksLists = Maps.newLinkedHashMap();
 
    public TerremarkOrg getResult() {
       return new TerremarkOrgImpl(org.getName(), org.getType(), org.getHref(), description, catalogs, vdcs, networks,
-               tasksList, keysList);
+            tasksLists, keysList);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = cleanseAttributes(attrs);
-      super.startElement(uri, localName, qName, attrs);
-      if (qName.equals("Link")) {
-         if (attributes.containsKey("type")) {
-             String type = attributes.get("type");
-             if (type != null && type.endsWith("keysList+xml")) {
-                 keysList = newReferenceType(attributes);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
+      if (qName.endsWith("Org")) {
+         org = newReferenceType(attributes);
+      } else if (qName.endsWith("Link")) {
+         String type = attributes.get("type");
+         if (type != null) {
+            if (type.indexOf("vdc+xml") != -1) {
+               putReferenceType(vdcs, attributes);
+            } else if (type.indexOf("catalog+xml") != -1) {
+               putReferenceType(catalogs, attributes);
+            } else if (type.indexOf("tasksList+xml") != -1) {
+               putReferenceType(tasksLists, attributes);
+            } else if (type.indexOf("network+xml") != -1) {
+               putReferenceType(networks, attributes);
+            } else if (type != null && type.endsWith("keysList+xml")) {
+               keysList = newReferenceType(attributes);
             }
          }
+      } else {
+         taskHandler.startElement(uri, localName, qName, attrs);
       }
+
    }
 }

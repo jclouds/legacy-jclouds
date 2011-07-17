@@ -20,16 +20,15 @@ package org.jclouds.vcloud.terremark.xml;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
 import org.jclouds.vcloud.terremark.domain.NetworkAdapter;
 import org.jclouds.vcloud.terremark.domain.Subnet;
+import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

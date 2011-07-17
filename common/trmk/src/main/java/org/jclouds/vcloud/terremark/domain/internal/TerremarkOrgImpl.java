@@ -18,10 +18,10 @@
  */
 package org.jclouds.vcloud.terremark.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
@@ -29,6 +29,8 @@ import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * Locations of resources in a Terremark vCloud
@@ -39,16 +41,29 @@ import com.google.common.collect.ImmutableList;
 public class TerremarkOrgImpl extends OrgImpl implements TerremarkOrg {
 
    private final ReferenceType keysList;
+   private final ImmutableMap<String, ReferenceType> tasksLists;
 
    public TerremarkOrgImpl(String name, String type, URI id, String description, Map<String, ReferenceType> catalogs,
-            Map<String, ReferenceType> vdcs, Map<String, ReferenceType> networks, @Nullable ReferenceType tasksList,
-            ReferenceType keysList) {
-      super(name, type, id, name, description, catalogs, vdcs, networks, tasksList, ImmutableList.<Task> of());
-      this.keysList = keysList;
+         Map<String, ReferenceType> vdcs, Map<String, ReferenceType> networks, Map<String, ReferenceType> tasksLists,
+         ReferenceType keysList) {
+      super(name, type, id, name, description, catalogs, vdcs, networks, Iterables.get(tasksLists.values(), 0),
+            ImmutableList.<Task> of());
+      this.tasksLists = ImmutableMap.copyOf(checkNotNull(tasksLists, "tasksLists"));
+      this.keysList = checkNotNull(keysList, "keysList");
    }
 
    @Override
    public ReferenceType getKeysList() {
+      return keysList;
+   }
+
+   @Override
+   public Map<String, ReferenceType> getTasksLists() {
+      return tasksLists;
+   }
+
+   @Override
+   public ReferenceType getKeys() {
       return keysList;
    }
 

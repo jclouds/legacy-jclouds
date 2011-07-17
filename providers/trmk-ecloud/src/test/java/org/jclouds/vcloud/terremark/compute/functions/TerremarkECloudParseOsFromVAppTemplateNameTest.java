@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.functions.ParseSax;
@@ -66,100 +66,100 @@ public class TerremarkECloudParseOsFromVAppTemplateNameTest {
       assertEquals(Sets.newLinkedHashSet(Iterables.transform(names, function)), ImmutableSet.of(
 
       // CentOS 5 (x64)
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.0").description("CentOS 5 (x64)")
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.0").description("CentOS 5 (x64)")
                         .is64Bit(true).build(),
                // CentOS 5 (x86)
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.0").description("CentOS 5 (x86)")
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.0").description("CentOS 5 (x86)")
                         .is64Bit(false).build(),
                // CentOS 5.5 x32
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.5").description("CentOS 5.5 x32")
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.5").description("CentOS 5.5 x32")
                         .is64Bit(false).build(),
                // CentOS 5.5 x64
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.5").description("CentOS 5.5 x64")
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.5").description("CentOS 5.5 x64")
                         .is64Bit(true).build(),
                // Red Hat Enterprise Linux 5 (x64)
-               new OperatingSystemBuilder().family(OsFamily.RHEL).version("5.0").description(
+               new OperatingSystem.Builder().family(OsFamily.RHEL).version("5.0").description(
                         "Red Hat Enterprise Linux 5 (x64)").is64Bit(true).build(),
                // Red Hat Enterprise Linux 5 (x86)
-               new OperatingSystemBuilder().family(OsFamily.RHEL).version("5.0").description(
+               new OperatingSystem.Builder().family(OsFamily.RHEL).version("5.0").description(
                         "Red Hat Enterprise Linux 5 (x86)").is64Bit(false).build(),
                // Red Hat Enterprise Linux 5.5 x32
-               new OperatingSystemBuilder().family(OsFamily.RHEL).version("5.5").description(
+               new OperatingSystem.Builder().family(OsFamily.RHEL).version("5.5").description(
                         "Red Hat Enterprise Linux 5.5 x32").is64Bit(false).build(),
                // Red Hat Enterprise Linux 5.5 x64
-               new OperatingSystemBuilder().family(OsFamily.RHEL).version("5.5").description(
+               new OperatingSystem.Builder().family(OsFamily.RHEL).version("5.5").description(
                         "Red Hat Enterprise Linux 5.5 x64").is64Bit(true).build(),
                // Sun Solaris 10 (x64)
-               new OperatingSystemBuilder().family(OsFamily.SOLARIS).version("10").description("Sun Solaris 10 (x64)")
+               new OperatingSystem.Builder().family(OsFamily.SOLARIS).version("10").description("Sun Solaris 10 (x64)")
                         .is64Bit(true).build(),
                // Ubuntu 8.04 LTS (x64)
-               new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("8.04")
+               new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("8.04")
                         .description("Ubuntu 8.04 LTS (x64)").is64Bit(true).build(),
                // Ubuntu 8.04 LTS (x86)
-               new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("8.04")
+               new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("8.04")
                         .description("Ubuntu 8.04 LTS (x86)").is64Bit(false).build(),
                // Ubuntu Server 10.04 x32
-               new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.04").description(
+               new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("10.04").description(
                         "Ubuntu Server 10.04 x32").is64Bit(false).build(),
                // Ubuntu Server 10.04 x64
-               new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.04").description(
+               new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("10.04").description(
                         "Ubuntu Server 10.04 x64").is64Bit(true).build(),
                // -Windows 2003 Std. R2 SQL 2005 Std. (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows 2003 Std. R2 SQL 2005 Std. (x64)").is64Bit(true).build(),
                // -Windows 2003 Std. R2 SQL 2008 Std. (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows 2003 Std. R2 SQL 2008 Std. (x64)").is64Bit(true).build(),
                // -Windows 2008 R2 Std wSQL 2008 R2 Std (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008 R2").description(
                         "-Windows 2008 R2 Std wSQL 2008 R2 Std (x64)").is64Bit(true).build(),
                // -Windows 2008 R2 Std wSQL 2008 R2 Web (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008 R2").description(
                         "-Windows 2008 R2 Std wSQL 2008 R2 Web (x64)").is64Bit(true).build(),
                // -Windows 2008 Std wSQL 2008 Std (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows 2008 Std wSQL 2008 Std (x64)").is64Bit(true).build(),
                // -Windows 2008 Std wSQL 2008 Web (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows 2008 Std wSQL 2008 Web (x64)").is64Bit(true).build(),
                // -Windows Server 2003 R2 Enterprise Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows Server 2003 R2 Enterprise Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2003 R2 Enterprise Edition (x86)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows Server 2003 R2 Enterprise Edition (x86)").is64Bit(false).build(),
                // -Windows Server 2003 R2 Standard Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows Server 2003 R2 Standard Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2003 R2 Standard Edition (x86)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2003 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2003 R2").description(
                         "-Windows Server 2003 R2 Standard Edition (x86)").is64Bit(false).build(),
                // -Windows Server 2008 Enterprise Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Enterprise Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 Enterprise Edition (x86)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Enterprise Edition (x86)").is64Bit(false).build(),
                // -Windows Server 2008 R2 Enterprise Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008 R2").description(
                         "-Windows Server 2008 R2 Enterprise Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 R2 Standard Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008 R2").description(
                         "-Windows Server 2008 R2 Standard Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 R2 Web Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008 R2").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008 R2").description(
                         "-Windows Server 2008 R2 Web Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 Standard Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Standard Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 Standard Edition (x86)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Standard Edition (x86)").is64Bit(false).build(),
                // -Windows Server 2008 Web Edition (x64)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Web Edition (x64)").is64Bit(true).build(),
                // -Windows Server 2008 Web Edition (x86)
-               new OperatingSystemBuilder().family(OsFamily.WINDOWS).version("2008").description(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).version("2008").description(
                         "-Windows Server 2008 Web Edition (x86)").is64Bit(false).build()
 
       ));

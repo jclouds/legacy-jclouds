@@ -25,6 +25,10 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.terremark.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.terremark.ecloud.features.DataCenterOperationsClient;
+import org.jclouds.terremark.ecloud.features.TagOperationsClient;
 import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
@@ -35,11 +39,32 @@ import org.jclouds.vcloud.terremark.domain.VAppExtendedInfo;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
+ * @see <a href=
+ *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkECloudClient extends TerremarkVCloudClient {
+   /**
+    * Provides synchronous access to Data Center Operations.
+    * 
+    */
+   @Delegate
+   DataCenterOperationsClient getDataCenterOperationsClient();
+   
+   /**
+    * Provides synchronous access to Data Center Operations.
+    * 
+    */
+   @Delegate
+   TagOperationsClient getTagOperationsClient();
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   TerremarkECloudOrg getOrg(URI orgId);
 
    /**
     * Allocate a new public IP
@@ -56,14 +81,16 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
    TerremarkOrgNetwork getNetwork(URI network);
 
    TerremarkNetwork getTerremarkNetwork(URI network);
-   
+
    Set<IpAddress> getIpAddresses(URI network);
 
    /**
     * Returns extended information for the vApp.
-    *
-    * @param vApp The URI at which the vApp information is available.
-    * @return Extended vApp information like tags, long name, network adapter information.
+    * 
+    * @param vApp
+    *           The URI at which the vApp information is available.
+    * @return Extended vApp information like tags, long name, network adapter
+    *         information.
     */
    VAppExtendedInfo getVAppExtendedInfo(URI href);
 }

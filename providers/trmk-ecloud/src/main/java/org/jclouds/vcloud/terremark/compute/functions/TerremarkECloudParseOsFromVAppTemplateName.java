@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.vcloud.compute.functions.ParseOsFromVAppTemplateName;
@@ -50,7 +50,7 @@ public class TerremarkECloudParseOsFromVAppTemplateName extends ParseOsFromVAppT
    @Override
    public OperatingSystem apply(String from) {
       checkNotNull(from, "vapp template name");
-      OperatingSystemBuilder builder = new OperatingSystemBuilder();
+      Builder builder = new OperatingSystem.Builder();
       builder.description(from);
       if (from.equals("-Windows 2003 Std. R2 SQL 2005 Std. (x64)"))
          System.out.print(';');

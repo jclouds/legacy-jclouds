@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * Resource Types used in Terremark eCloud
- *
+ * 
  * @see MediaType
  */
 public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
@@ -66,6 +66,36 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.keysList+xml"
     */
    public final static MediaType KEYSLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.keysList+xml");
+   /**
+    * "application/vnd.tmrk.ecloud.tagsList+xml"
+    */
+   public final static String TAGSLISTLIST_XML = "application/vnd.tmrk.ecloud.tagsList+xml";
+
+   /**
+    * "application/vnd.tmrk.ecloud.tagsList+xml"
+    */
+   public final static MediaType TAGSLISTLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.tagsList+xml");
+   /**
+    * "application/vnd.tmrk.ecloud.VAppCatalogList+xml"
+    */
+   public final static String VAPPCATALOGLIST_XML = "application/vnd.tmrk.ecloud.VAppCatalogList+xml";
+
+   /**
+    * "application/vnd.tmrk.ecloud.VAppCatalogList+xml"
+    */
+   public final static MediaType VAPPCATALOGLIST_XML_TYPE = new MediaType("application",
+         "vnd.tmrk.ecloud.VAppCatalogList+xml");
+
+   /**
+    * "application/vnd.tmrk.ecloud.dataCentersList+xml"
+    */
+   public final static String DATACENTERSLIST_XML = "application/vnd.tmrk.ecloud.dataCentersList+xml";
+
+   /**
+    * "application/vnd.tmrk.ecloud.dataCentersList+xml"
+    */
+   public final static MediaType DATACENTERSLIST_XML_TYPE = new MediaType("application",
+         "vnd.tmrk.ecloud.dataCentersList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
@@ -75,7 +105,8 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
     */
-   public final static MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.ipAddressList+xml");
+   public final static MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application",
+         "vnd.tmrk.ecloud.ipAddressList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.vApp+xml"

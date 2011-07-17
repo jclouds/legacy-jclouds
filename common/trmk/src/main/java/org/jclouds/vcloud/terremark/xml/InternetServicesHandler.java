@@ -18,28 +18,26 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * @author Adrian Cole
  */
 public class InternetServicesHandler extends HandlerWithResult<Set<InternetService>> {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    private final InternetServiceHandler handler;
-   Set<InternetService> result = Sets.newLinkedHashSet();
+   private Builder<InternetService> builder = ImmutableSet.<InternetService> builder();
 
    @Inject
    public InternetServicesHandler(InternetServiceHandler handler) {
@@ -48,24 +46,44 @@ public class InternetServicesHandler extends HandlerWithResult<Set<InternetServi
 
    @Override
    public Set<InternetService> getResult() {
-      return result;
+      try {
+         return builder.build();
+      } finally {
+         builder = ImmutableSet.<InternetService> builder();
+      }
    }
 
+   int depth;
+   private boolean inInternetService;
+
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
-      handler.startElement(uri, localName, qName, attributes);
+   public void startElement(String uri, String localName, String qName, Attributes attrs) {
+      depth++;
+      if (depth == 2) {
+         if (equalsOrSuffix(qName, "InternetService")) {
+            inInternetService = true;
+         }
+      } else if (inInternetService) {
+         handler.startElement(uri, localName, qName, attrs);
+      }
    }
 
    public void endElement(String uri, String name, String qName) {
-      handler.endElement(uri, name, qName);
-      if (qName.equals("InternetService")) {
-         result.add(handler.getResult());
+      depth--;
+      if (depth == 1) {
+         if (equalsOrSuffix(qName, "InternetService")) {
+            inInternetService = false;
+            builder.add(handler.getResult());
+         }
+      } else if (inInternetService) {
+         handler.endElement(uri, name, qName);
       }
    }
 
    public void characters(char ch[], int start, int length) {
-      handler.characters(ch, start, length);
+      if (inInternetService) {
+         handler.characters(ch, start, length);
+      }
    }
 
 }
