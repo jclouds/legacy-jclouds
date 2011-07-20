@@ -18,6 +18,7 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 
 import java.util.concurrent.TimeoutException;
@@ -34,7 +35,7 @@ public class RetryOnTimeOutExceptionSupplier<T> implements Supplier<T> {
    private final Supplier<T> delegate;
 
    public RetryOnTimeOutExceptionSupplier(Supplier<T> delegate) {
-      this.delegate = delegate;
+      this.delegate =  checkNotNull(delegate, "delegate");
    }
 
    @Override
