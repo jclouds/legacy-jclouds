@@ -98,9 +98,6 @@ public class Image implements Comparable<Image> {
       this.hypervisor = checkNotNull(hypervisor, "hypervisor");
    }
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6965068835316857535L;
-
    public static enum ImageState {
       /**
        * the image is successfully registered and available for launching

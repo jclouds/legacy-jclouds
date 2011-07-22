@@ -120,6 +120,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       final Predicate<Template> hypervisorPredicate = new CorrectHypervisorForZone(client).apply(zoneId);
       final Predicate<Template> osTypePredicate = new OSCategoryIn(client).apply(acceptableCategories);
 
+      @SuppressWarnings("unchecked")
       Predicate<Template> templatePredicate = Predicates.<Template> and(TemplatePredicates.isReady(),
             hypervisorPredicate, osTypePredicate);
       Iterable<Template> templates = filter(
@@ -155,6 +156,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       return vm;
    }
 
+   @SuppressWarnings("unchecked")
    public void testCreateVirtualMachine() throws Exception {
       vm = createVirtualMachine(client, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null) {

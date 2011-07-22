@@ -56,7 +56,7 @@ public class RegionAndIdToImageTest {
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andReturn(image);
 
       replay(caller);
@@ -87,7 +87,7 @@ public class RegionAndIdToImageTest {
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andThrow(new ResourceNotFoundException());
 
       replay(caller);
@@ -118,7 +118,7 @@ public class RegionAndIdToImageTest {
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andThrow(new NoSuchElementException());
 
       replay(caller);

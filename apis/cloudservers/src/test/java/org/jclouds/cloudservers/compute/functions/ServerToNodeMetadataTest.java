@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
@@ -119,7 +119,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
                .imageId("2").operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                        new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
                                  .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
                                  .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
@@ -147,7 +147,7 @@ public class ServerToNodeMetadataTest {
                                  ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
                                  ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
                                           .bootDevice(true).build())).build()).operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                        new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
                                  .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
                                  .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())

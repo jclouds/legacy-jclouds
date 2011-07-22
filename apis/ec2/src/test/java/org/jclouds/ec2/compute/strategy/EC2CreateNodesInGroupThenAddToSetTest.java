@@ -121,7 +121,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
-            (Reservation) reservation);
+            Reservation.class.cast(reservation));
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
       Credentials creds = new Credentials("foo", "bar");

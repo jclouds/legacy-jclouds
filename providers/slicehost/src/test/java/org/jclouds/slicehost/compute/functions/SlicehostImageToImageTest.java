@@ -25,7 +25,7 @@ import java.net.UnknownHostException;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
@@ -49,7 +49,7 @@ public class SlicehostImageToImageTest {
    @Test
    public void test() throws UnknownHostException {
       assertEquals(convertImage(), new ImageBuilder().name("CentOS 5.2").operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(
                         true).build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null)).ids(
                "2").build());
    }
@@ -58,7 +58,7 @@ public class SlicehostImageToImageTest {
    public void test32() throws UnknownHostException {
       assertEquals(convertImage("/test_get_image32.xml"), new ImageBuilder().name("Ubuntu 10.10 (maverick) 32-bit")
                .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.10").description(
+                        new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("10.10").description(
                                  "Ubuntu 10.10 (maverick) 32-bit").build()).description(
                         "Ubuntu 10.10 (maverick) 32-bit").defaultCredentials(new Credentials("root", null)).ids("70")
                .build());

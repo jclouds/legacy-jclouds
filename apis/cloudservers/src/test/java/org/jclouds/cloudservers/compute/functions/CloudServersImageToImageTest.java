@@ -22,16 +22,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.jclouds.cloudservers.functions.ParseImageFromJsonResponseTest;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.functions.ParseImageFromJsonResponseTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -49,7 +49,7 @@ public class CloudServersImageToImageTest {
             new ImageBuilder()
                   .name("CentOS 5.2")
                   .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
+                        new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
                               .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
                   .ids("2").version("1286712000000").build());
    }

@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.domain.DriveInfo;
@@ -57,7 +57,7 @@ public class WellKnownImageToImage implements Function<DriveInfo, Image> {
                         .put("size", input.getSize() + "").build()).defaultCredentials(
                new Credentials(input.getLoginUser(), null)).location(locationSupplier.get()).name(
                input.getDescription()).description(drive.getName()).operatingSystem(
-               new OperatingSystemBuilder().family(input.getOsFamily()).version(input.getOsVersion()).name(
+               new OperatingSystem.Builder().family(input.getOsFamily()).version(input.getOsVersion()).name(
                         input.getDescription()).description(drive.getName()).is64Bit(input.is64bit()).build()).version(
                "").build();
    }

@@ -27,8 +27,6 @@ import java.net.URI;
  */
 public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8373435988423605652L;
    private String name;
    private boolean cdn_enabled;
    private long ttl;

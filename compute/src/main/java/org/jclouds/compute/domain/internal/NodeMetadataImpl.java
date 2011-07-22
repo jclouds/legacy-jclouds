@@ -61,12 +61,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final Hardware hardware;
    @Nullable
    private final OperatingSystem os;
-
+   @Nullable
+   private final String hostname;
+   
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
             Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
             @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
             Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
-            @Nullable Credentials credentials) {
+            @Nullable Credentials credentials, String hostname) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
       this.group = group;
       this.hardware = hardware;
@@ -78,6 +80,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
       this.adminPassword = adminPassword;
       this.credentials = credentials;
+      this.hostname = hostname;
    }
 
    /**
@@ -168,14 +171,22 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       return os;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getHostname() {
+      return hostname;
+   }
+   
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getTag() + ", name=" + getName()
-               + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-               + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
-               + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
-               + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";
+            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
+            + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", hostname="
+            + getHostname() + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
+            + ", hardware=" + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
+            + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";
    }
 
    @Override

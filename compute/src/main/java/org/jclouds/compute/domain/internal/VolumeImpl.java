@@ -28,8 +28,6 @@ import org.jclouds.compute.domain.Volume;
  * @author Adrian Cole
  */
 public class VolumeImpl implements Volume {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -3306004212804159093L;
 
    private final String id;
    private final Volume.Type type;

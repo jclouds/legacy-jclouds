@@ -26,12 +26,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.scriptbuilder.InitBuilder;
-import org.jclouds.scriptbuilder.domain.AuthorizeRSAPublicKey;
-import org.jclouds.scriptbuilder.domain.InstallRSAPrivateKey;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
+import org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -44,7 +45,7 @@ public class TemplateOptionsToStatement implements Function<TemplateOptions, Sta
    public Statement apply(TemplateOptions options) {
       List<Statement> bootstrap = newArrayList();
       if (options.getPublicKey() != null)
-         bootstrap.add(new AuthorizeRSAPublicKey(options.getPublicKey()));
+         bootstrap.add(new AuthorizeRSAPublicKeys(ImmutableSet.of(options.getPublicKey())));
       if (options.getRunScript() != null)
          bootstrap.add(options.getRunScript());
       if (options.getPrivateKey() != null)

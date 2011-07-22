@@ -25,8 +25,6 @@ package org.jclouds.openstack.swift.domain;
  * 
  */
 public class ContainerMetadata implements Comparable<ContainerMetadata> {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 2925863715029426128L;
    private String name;
    private long count;
    private long bytes;

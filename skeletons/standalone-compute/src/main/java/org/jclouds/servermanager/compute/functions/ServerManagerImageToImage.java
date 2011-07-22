@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -51,7 +51,7 @@ public class ServerManagerImageToImage implements Function<org.jclouds.serverman
       OsFamily family = null;
       try {
          family = OsFamily.fromValue(from.name);
-         builder.operatingSystem(new OperatingSystemBuilder().name(from.name).family(family).build());
+         builder.operatingSystem(new OperatingSystem.Builder().name(from.name).family(family).build());
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from);
       }

@@ -26,8 +26,6 @@ import java.util.Date;
  * @author Adrian Cole
  */
 public class BucketMetadata implements Comparable<BucketMetadata> {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6965068835316857535L;
    private final Date creationDate;
    private final CanonicalUser owner;
    private final String name;

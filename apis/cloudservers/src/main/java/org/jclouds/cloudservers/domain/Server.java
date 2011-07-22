@@ -31,16 +31,13 @@ import com.google.common.collect.Maps;
 public class Server {
    private int id;
    private String name;
-
    private Map<String, String> metadata = Maps.newHashMap();
-
    private Addresses addresses;
    private String adminPass;
    private Integer flavorId;
    private String hostId;
    private Integer imageId;
    private Integer sharedIpGroupId;
-
    private Integer progress;
    private ServerStatus status;
 
