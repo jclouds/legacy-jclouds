@@ -79,7 +79,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "CloudServersAsyncClientTest")
+@Test(groups = "unit", singleThreaded=true, testName = "CloudServersAsyncClientTest")
 public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}
