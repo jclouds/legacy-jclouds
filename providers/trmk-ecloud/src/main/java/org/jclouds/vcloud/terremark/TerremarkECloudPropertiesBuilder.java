@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
@@ -44,8 +43,6 @@ public class TerremarkECloudPropertiesBuilder extends TerremarkVCloudPropertiesB
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.8");
       // default for ubuntu
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
-      // ubuntu image has a problem with sftp
-      properties.setProperty(PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP, "false");
       return properties;
    }
 
