@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.TasksList;
 
 import com.google.common.base.Function;
@@ -40,18 +41,19 @@ import com.google.common.base.Supplier;
 @Singleton
 public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final URI defaultUri;
+   private final ReferenceType defaultTasksList;
 
    @Inject
-   public OrgNameToTasksListEndpoint(Supplier<Map<String, ? extends Org>> orgMap, @TasksList URI defaultUri) {
+   public OrgNameToTasksListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+         @TasksList ReferenceType defaultTasksList) {
       this.orgMap = orgMap;
-      this.defaultUri = defaultUri;
+      this.defaultTasksList = defaultTasksList;
    }
 
    public URI apply(Object from) {
       Object org = from;
       if (org == null)
-         return defaultUri;
+         return defaultTasksList.getHref();
       try {
          return checkNotNull(orgMap.get().get(org)).getTasksList().getHref();
       } catch (NullPointerException e) {

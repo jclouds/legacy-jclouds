@@ -18,6 +18,9 @@
  */
 package org.jclouds.terremark.ecloud;
 
+import java.util.Properties;
+
+import org.jclouds.vcloud.reference.VCloudConstants;
 import org.jclouds.vcloud.terremark.BaseTerremarkClientLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.testng.annotations.Test;
@@ -27,5 +30,11 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public class BaseTerremarkECloudClientLiveTest extends BaseTerremarkClientLiveTest<TerremarkECloudClient> {
-
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
+            ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
+      return props;
+   }
 }

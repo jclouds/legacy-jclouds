@@ -25,7 +25,20 @@ package org.jclouds.vcloud.reference;
  */
 public interface VCloudConstants {
    public static final String PROPERTY_VCLOUD_VERSION_SCHEMA = "jclouds.vcloud.version.schema";
-
+   /**
+    * name of the default org that your vApp will join, if an org isn't
+    * explicitly specified.
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_ORG = "jclouds.vcloud.defaults.org";
+   /**
+    * name of the default catalog to query, if it isn't explicitly specified.
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_CATALOG = "jclouds.vcloud.defaults.catalog";
+   /**
+    * name of the VDC that your vApp will join, if a vDC isn't explicitly
+    * specified.
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_VDC = "jclouds.vcloud.defaults.vdc";
    /**
     * name of the default network, in the default VDC that your vApp will join.
     */

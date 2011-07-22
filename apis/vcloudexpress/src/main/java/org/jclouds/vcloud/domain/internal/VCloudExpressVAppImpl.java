@@ -51,9 +51,6 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    private final Set<ResourceAllocationSettingData> resourceAllocations;
    private final Integer osType;
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
-
    public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
             VirtualSystemSettingData system, Set<ResourceAllocationSettingData> resourceAllocations) {

@@ -18,13 +18,13 @@
  */
 package org.jclouds.terremark.ecloud;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,164 +32,42 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.terremark.ecloud.domain.internal.TerremarkECloudOrgImpl;
-import org.jclouds.vcloud.CommonVCloudClient;
-import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
-import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
+import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.config.CommonVCloudRestClientModule.OrgVDCSupplier;
 import org.jclouds.vcloud.domain.AllocationModel;
-import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
+import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.TerremarkECloudMediaType;
-import org.jclouds.vcloud.terremark.TerremarkVCloudMediaType;
 import org.jclouds.vcloud.terremark.config.TerremarkECloudRestClientModule;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
 public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTest<T> {
-
-   @RequiresHttp
-   @ConfiguresRestClient
-   protected static class TerremarkVCloudRestClientModuleExtension extends TerremarkECloudRestClientModule {
-      @Override
-      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-            @Named(PROPERTY_API_VERSION) String version) {
-         return URI.create("https://vcloud/login");
-      }
-
-      @Override
-      protected void configure() {
-         super.configure();
-         bind(OrgNameToKeysListSupplier.class).to(TestOrgNameToKeysListSupplier.class);
-         bind(OrgMapSupplier.class).to(TestTerremarkOrgMapSupplier.class);
-         bind(OrgCatalogSupplier.class).to(TestOrgCatalogSupplier.class);
-         bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
-         bind(OrgVDCSupplier.class).to(TestTerremarkOrgVDCSupplier.class);
-      }
-
-      @Singleton
-      public static class TestOrgNameToKeysListSupplier extends OrgNameToKeysListSupplier {
-         @Inject
-         protected TestOrgNameToKeysListSupplier(Supplier<VCloudSession> sessionSupplier) {
-            super(sessionSupplier, null);
-         }
-
-         @Override
-         public Map<String, ReferenceType> get() {
-            return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<ReferenceType, ReferenceType>() {
-
-               @Override
-               public ReferenceType apply(ReferenceType from) {
-                  return new ReferenceTypeImpl(from.getName(), TerremarkECloudMediaType.KEYSLIST_XML, URI.create(from
-                        .getHref().toASCIIString() + "/keysList"));
-               }
-            });
-         }
-      }
-
-      @Singleton
-      public static class TestTerremarkOrgMapSupplier extends OrgMapSupplier {
-         @Inject
-         protected TestTerremarkOrgMapSupplier() {
-            super(null, null);
-         }
-
-         @Override
-         public Map<String, Org> get() {
-            return ImmutableMap.<String, Org> of(
-                  "org",
-                  new TerremarkECloudOrgImpl("org", null,
-                        URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), null, ImmutableMap
-                              .<String, ReferenceType> of(
-                                    "catalog",
-                                    new ReferenceTypeImpl("catalog", TerremarkECloudMediaType.CATALOG_XML, URI
-                                          .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))),
-                        ImmutableMap.<String, ReferenceType> of(
-                              "vdc",
-                              new ReferenceTypeImpl("vdc", TerremarkECloudMediaType.VDC_XML, URI
-                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                              .<String, ReferenceType> of(), ImmutableMap.<String, ReferenceType> of(
-                              "tasksList",
-                              new ReferenceTypeImpl("tasksList", TerremarkECloudMediaType.TASKSLIST_XML, URI
-                                    .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1"))),
-                        new ReferenceTypeImpl("keysList", TerremarkECloudMediaType.KEYSLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/keysList/1")), new ReferenceTypeImpl(
-                              "deviceTags", TerremarkECloudMediaType.TAGSLISTLIST_XML, URI
-                                    .create("https://vcloud.safesecureweb.com/api/v0.8/deviceTags/1")),
-                        new ReferenceTypeImpl("vappCatalog", TerremarkECloudMediaType.VAPPCATALOGLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/vappCatalog/1")),
-                        new ReferenceTypeImpl("dataCentersList", TerremarkECloudMediaType.DATACENTERSLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/datacentersList/1"))));
-         }
-      }
-
-      @Override
-      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
-         return URI.create("https://org");
-      }
-
-      @Override
-      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
-         return "org";
-      }
-
-      @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog write) {
-         return URI.create("https://catalog");
-      }
-
-      @Override
-      protected Org provideOrg(CommonVCloudClient discovery) {
-         return null;
-      }
-
-      @Override
-      protected Iterable<ReferenceType> provideOrgs(Supplier<VCloudSession> cache, String user) {
-         return null;
-      }
-
-      @Override
-      protected URI provideDefaultTasksList(Org org) {
-         return URI.create("https://taskslist");
-      }
-
-      @Override
-      protected URI provideDefaultVDC(Org org, @org.jclouds.vcloud.endpoints.VDC String defaultVDC) {
-         return URI.create("https://vdc/1");
-      }
-
-      @Override
-      protected String provideDefaultVDCName(
-            @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
-         return "vdc";
-      }
-
-      @Override
-      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
-         return URI.create("https://vcloud.safesecureweb.com/network/1990");
-      }
-   }
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -199,7 +77,7 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
 
    @Override
    protected Module createModule() {
-      return new TerremarkVCloudRestClientModuleExtension();
+      return new TerremarkECloudRestClientModuleExtension();
    }
 
    @Override
@@ -207,37 +85,187 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
       return new RestContextFactory().createContextSpec("trmk-ecloud", "identity", "credential", new Properties());
    }
 
-   @Singleton
-   public static class TestTerremarkOrgVDCSupplier extends OrgVDCSupplier {
-      @Inject
-      protected TestTerremarkOrgVDCSupplier() {
-         super(null, null);
+   protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", VCloudMediaType.ORG_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1"));
+
+   protected static final ReferenceTypeImpl CATALOG_REF = new ReferenceTypeImpl("catalog", VCloudMediaType.CATALOG_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"));
+
+   protected static final ReferenceTypeImpl TASKSLIST_REF = new ReferenceTypeImpl("tasksList",
+         VCloudMediaType.TASKSLIST_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1"));
+
+   protected static final ReferenceTypeImpl VDC_REF = new ReferenceTypeImpl("vdc", VCloudMediaType.VDC_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"));
+
+   protected static final ReferenceTypeImpl KEYSLIST_REF = new ReferenceTypeImpl("keysList",
+         TerremarkECloudMediaType.KEYSLIST_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/keysList/1"));
+   protected static final ReferenceTypeImpl TAGSLIST_REF = new ReferenceTypeImpl("deviceTags",
+         TerremarkECloudMediaType.TAGSLISTLIST_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/deviceTags/1"));
+   protected static final ReferenceTypeImpl VAPPCATALOGLIST_REF = new ReferenceTypeImpl("vappCatalog",
+         TerremarkECloudMediaType.VAPPCATALOGLIST_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/vappCatalog/1"));
+   protected static final ReferenceTypeImpl DATACENTERSLIST_REF = new ReferenceTypeImpl("dataCentersList",
+         TerremarkECloudMediaType.DATACENTERSLIST_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/datacentersList/1"));
+   protected static final ReferenceTypeImpl NETWORK_REF = new ReferenceTypeImpl("network", VCloudMediaType.NETWORK_XML,
+         URI.create("https://vcloud.safesecureweb.com/network/1990"));
+
+   protected static final ReferenceTypeImpl PUBLICIPS_REF = new ReferenceTypeImpl("publicIps",
+         TerremarkECloudMediaType.PUBLICIPSLIST_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/publicIps/1"));
+
+   protected static final ReferenceTypeImpl INTERNETSERVICES_REF = new ReferenceTypeImpl("internetServices",
+         TerremarkECloudMediaType.INTERNETSERVICESLIST_XML,
+         URI.create("https://vcloud.safesecureweb.com/api/v0.8/internetServices/1"));
+
+   protected static final Org ORG = new TerremarkECloudOrgImpl(ORG_REF.getName(), ORG_REF.getType(), ORG_REF.getHref(),
+         "org", ImmutableMap.<String, ReferenceType> of(CATALOG_REF.getName(), CATALOG_REF),
+         ImmutableMap.<String, ReferenceType> of(VDC_REF.getName(), VDC_REF), ImmutableMap.<String, ReferenceType> of(
+               NETWORK_REF.getName(), NETWORK_REF), ImmutableMap.<String, ReferenceType> of(TASKSLIST_REF.getName(),
+               TASKSLIST_REF), KEYSLIST_REF, TAGSLIST_REF, VAPPCATALOGLIST_REF, DATACENTERSLIST_REF);
+
+   protected static final VDC VDC = new TerremarkVDCImpl(VDC_REF.getName(), VDC_REF.getType(), VDC_REF.getHref(),
+         VDCStatus.READY, null, "description", ImmutableSet.<Task> of(), AllocationModel.ALLOCATION_POOL, null, null,
+         null, ImmutableMap.<String, ReferenceType> of(
+               "vapp",
+               new ReferenceTypeImpl("vapp", "application/vnd.vmware.vcloud.vApp+xml", URI
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")),
+               "network",
+               new ReferenceTypeImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))),
+         ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF), 0, 0, 0, false, CATALOG_REF,
+         PUBLICIPS_REF, INTERNETSERVICES_REF);
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   protected static class TerremarkECloudRestClientModuleExtension extends TerremarkECloudRestClientModule {
+
+      @Override
+      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService, String version) {
+         return URI.create("https://vcloud.safesecureweb.com/api/v0.8/login");
       }
 
       @Override
-      public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
-         return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of("org",
-
-         ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of(
-               "vdc",
-               new TerremarkVDCImpl("vdc", null, URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"),
-                     VDCStatus.READY, null, "description", ImmutableSet.<Task> of(), AllocationModel.UNRECOGNIZED,
-                     new Capacity("MB", 0, 0, 0, 0), new Capacity("MB", 0, 0, 0, 0), new Capacity("MB", 0, 0, 0, 0),
-                     ImmutableMap.<String, ReferenceType> of(
-                           "vapp",
-                           new ReferenceTypeImpl("vapp", "application/vnd.vmware.vcloud.vApp+xml", URI
-                                 .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")),
-                           "network",
-                           new ReferenceTypeImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
-                                 .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))), ImmutableMap
-                           .<String, ReferenceType> of(), 0, 0, 0, false, new ReferenceTypeImpl("catalog",
-                           TerremarkVCloudMediaType.CATALOG_XML, URI
-                                 .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1")),
-                     new ReferenceTypeImpl("publicIps", TerremarkVCloudMediaType.PUBLICIPSLIST_XML, URI
-                           .create("https://vcloud.safesecureweb.com/api/v0.8/publicIps/1")), new ReferenceTypeImpl(
-                           "internetServices", TerremarkVCloudMediaType.INTERNETSERVICESLIST_XML, URI
-                                 .create("https://vcloud.safesecureweb.com/api/v0.8/internetServices/1")))));
+      protected Org provideOrg(Supplier<Map<String, ? extends Org>> orgSupplier,
+            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
+         return ORG;
       }
-   }
 
+      @Override
+      protected void installDefaultVCloudEndpointsModule() {
+         install(new AbstractModule() {
+
+            @Override
+            protected void configure() {
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Org.class).toInstance(ORG_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Catalog.class).toInstance(
+                     CATALOG_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.TasksList.class).toInstance(
+                     TASKSLIST_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.VDC.class).toInstance(VDC_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Network.class).toInstance(
+                     NETWORK_REF);
+            }
+
+         });
+      }
+
+      @Override
+      protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            AtomicReference<AuthorizationException> authException, VCloudExpressLoginAsyncClient login) {
+         return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
+
+            @Override
+            public Map<String, ReferenceType> getOrgs() {
+               return ImmutableMap.<String, ReferenceType> of(ORG_REF.getName(), ORG_REF);
+            }
+
+            @Override
+            public String getVCloudToken() {
+               return "token";
+            }
+
+         });
+
+      }
+
+      @Override
+      protected void configure() {
+         super.configure();
+         bind(OrgMapSupplier.class).to(TestOrgMapSupplier.class);
+         bind(OrgCatalogSupplier.class).to(TestOrgCatalogSupplier.class);
+         bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
+      }
+
+      @Override
+      protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
+            OrgVDCSupplier supplier) {
+         return Suppliers.<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
+               .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of(ORG_REF.getName(),
+                     ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of(VDC.getName(), VDC)));
+      }
+
+      @Singleton
+      public static class TestOrgMapSupplier extends OrgMapSupplier {
+
+         @Inject
+         protected TestOrgMapSupplier() {
+            super(null, null);
+         }
+
+         @Override
+         public Map<String, Org> get() {
+            return ImmutableMap.<String, Org> of(ORG.getName(), ORG);
+         }
+      }
+
+      @Singleton
+      public static class TestOrgCatalogSupplier extends OrgCatalogSupplier {
+         @Inject
+         protected TestOrgCatalogSupplier() {
+            super(null, null);
+         }
+
+         @Override
+         public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
+            return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of(
+                  ORG_REF.getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of(
+                        CATALOG_REF.getName(),
+                        new CatalogImpl(CATALOG_REF.getName(), CATALOG_REF.getType(), CATALOG_REF.getHref(), null,
+                              "description", ImmutableMap.<String, ReferenceType> of(
+                                    "item",
+                                    new ReferenceTypeImpl("item", "application/vnd.vmware.vcloud.catalogItem+xml", URI
+                                          .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/1")),
+                                    "template",
+                                    new ReferenceTypeImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                                          URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))),
+                              ImmutableList.<Task> of(), true, false)));
+         }
+      }
+
+      @Singleton
+      public static class TestOrgCatalogItemSupplier extends OrgCatalogItemSupplier {
+         protected TestOrgCatalogItemSupplier() {
+            super(null, null);
+         }
+
+         @Override
+         public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
+            return ImmutableMap.<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> of(
+                  ORG_REF.getName(), ImmutableMap
+                        .<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
+                              .getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of(
+                              "template",
+                              new CatalogItemImpl("template", URI
+                                    .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"), "description",
+                                    new ReferenceTypeImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                                          URI.create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")),
+                                    ImmutableMap.<String, String> of()))));
+
+         }
+      }
+
+   }
 }

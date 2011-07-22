@@ -76,7 +76,7 @@ import org.jclouds.vcloud.terremark.xml.IpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairByNameHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
-import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
+import org.jclouds.vcloud.terremark.xml.PublicIpAddressHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkNetworkHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.terremark.xml.VAppExtendedInfoHandler;
@@ -137,8 +137,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     */
    @POST
    @Consumes(PUBLICIP_XML)
-   @XMLResponseParser(PublicIpAddressesHandler.class)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @XMLResponseParser(PublicIpAddressHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<PublicIpAddress> activatePublicIpInVDC(
             @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
 

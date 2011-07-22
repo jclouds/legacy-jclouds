@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
@@ -38,7 +39,7 @@ import com.google.common.base.Supplier;
 public class OrgURIToKeysListEndpoint extends OrgURIToEndpoint implements Function<Object, URI> {
    @Inject
    public OrgURIToKeysListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.vcloud.endpoints.Org URI defaultUri) {
+         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultUri) {
       super(orgMap, defaultUri);
    }
 

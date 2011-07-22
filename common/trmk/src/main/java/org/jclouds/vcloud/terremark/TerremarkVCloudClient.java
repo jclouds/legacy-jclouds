@@ -26,10 +26,8 @@ import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudExpressClient;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
@@ -43,8 +41,6 @@ import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 
-import com.google.inject.Provides;
-
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
@@ -54,13 +50,6 @@ import com.google.inject.Provides;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudExpressClient {
-   /**
-    * 
-    * @return a listing of all orgs that the current user has access to.
-    */
-   @Provides
-   @Org
-   Iterable<ReferenceType> listOrgs();
    
    /**
     * {@inheritDoc}

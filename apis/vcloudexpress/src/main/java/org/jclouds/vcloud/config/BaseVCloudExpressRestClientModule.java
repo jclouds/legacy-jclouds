@@ -23,20 +23,24 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
 import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.functions.VCloudExpressVAppTemplatesForCatalogItems;
 
 import com.google.common.base.Function;
@@ -58,7 +62,17 @@ public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressC
    public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
-
+   
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   @Provides
+   @Org
+   Map<String, ReferenceType> listOrgs(Supplier<VCloudSession> sessionSupplier) {
+      return sessionSupplier.get().getOrgs();
+   }
+   
    public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
          Map<Class<?>, Class<?>> delegateMap) {
       super(syncClientType, asyncClientType, delegateMap);
@@ -81,7 +95,7 @@ public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressC
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final VCloudExpressLoginAsyncClient login) {
+         AtomicReference<AuthorizationException> authException, final VCloudExpressLoginAsyncClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
             new Supplier<VCloudSession>() {
 

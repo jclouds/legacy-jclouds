@@ -28,25 +28,41 @@ import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
  * Tests behavior of {@code VCloudExpressClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public abstract class VCloudExpressClientLiveTest extends
-         CommonVCloudClientLiveTest<VCloudExpressClient, VCloudExpressAsyncClient> {
+      CommonVCloudClientLiveTest<VCloudExpressClient, VCloudExpressAsyncClient> {
 
+   @Override
+   protected Iterable<Org> listOrgs() {
+      return Iterables.transform(connection.listOrgs().values(), new Function<ReferenceType, Org>(){
+
+         @Override
+         public Org apply(ReferenceType arg0) {
+            return connection.getOrg(arg0.getHref());
+         }
+         
+      });
+   }
+   
    @Test
    public void testGetVAppTemplate() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getHref());
-         for (ReferenceType resource : response.values()) {
-            if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.getCatalogItem(resource.getHref());
-               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  assertNotNull(connection.getVAppTemplate(item.getEntity().getHref()));
+      for (Org org : orgs) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            Catalog response = connection.getCatalog(cat.getHref());
+            for (ReferenceType resource : response.values()) {
+               if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+                  CatalogItem item = connection.getCatalogItem(resource.getHref());
+                  if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+                     assertNotNull(connection.getVAppTemplate(item.getEntity().getHref()));
+                  }
                }
             }
          }
@@ -55,16 +71,17 @@ public abstract class VCloudExpressClientLiveTest extends
 
    @Test
    public void testGetVApp() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getHref());
-         for (ReferenceType item : response.getResourceEntities().values()) {
-            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-               try {
-                  VCloudExpressVApp app = connection.getVApp(item.getHref());
-                  assertNotNull(app);
-               } catch (RuntimeException e) {
+      for (Org org : listOrgs()) {
+         for (ReferenceType vdc : org.getVDCs().values()) {
+            VDC response = connection.getVDC(vdc.getHref());
+            for (ReferenceType item : response.getResourceEntities().values()) {
+               if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+                  try {
+                     VCloudExpressVApp app = connection.getVApp(item.getHref());
+                     assertNotNull(app);
+                  } catch (RuntimeException e) {
 
+                  }
                }
             }
          }
@@ -73,15 +90,16 @@ public abstract class VCloudExpressClientLiveTest extends
 
    @Test
    public void testFindVAppTemplate() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getHref());
-         for (ReferenceType resource : response.values()) {
-            if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.getCatalogItem(resource.getHref());
-               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(), item
+      for (Org org : listOrgs()) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            Catalog response = connection.getCatalog(cat.getHref());
+            for (ReferenceType resource : response.values()) {
+               if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+                  CatalogItem item = connection.getCatalogItem(resource.getHref());
+                  if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+                     assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(), item
                            .getEntity().getName()));
+                  }
                }
             }
          }

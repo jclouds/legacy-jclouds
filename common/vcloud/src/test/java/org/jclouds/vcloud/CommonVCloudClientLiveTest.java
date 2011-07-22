@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.Constants;
@@ -37,9 +38,12 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
+import org.jclouds.vcloud.reference.VCloudConstants;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -48,58 +52,127 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A extends CommonVCloudAsyncClient> {
 
    protected S connection;
    protected RestContext<S, A> context;
 
+   protected abstract Iterable<Org> listOrgs();
+
    @Test
    public void testOrg() throws Exception {
-      Org response = connection.findOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getName());
-      assert response.getCatalogs().size() >= 1;
-      assert response.getTasksList() != null;
-      assert response.getVDCs().size() >= 1;
-      assertEquals(connection.findOrgNamed(response.getName()), response);
+      for (Org org : orgs) {
+         assertNotNull(org);
+         assertNotNull(org.getName());
+         assert org.getCatalogs().size() >= 1;
+         assert org.getTasksList() != null;
+         assert org.getVDCs().size() >= 1;
+         assertEquals(connection.findOrgNamed(org.getName()), org);
+      }
+   }
+
+   @Test
+   public void testPropertiesCanOverrideDefaultOrg() throws Exception {
+      for (Org org : orgs) {
+         RestContext<S, A> newContext = null;
+         try {
+            newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
+                  VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())));
+            assertEquals(newContext.getApi().findOrgNamed(null), org);
+         } finally {
+            newContext.close();
+         }
+      }
+   }
+
+   public Properties overrideDefaults(Map<String, String> overrides) {
+      Properties properties = setupProperties();
+      properties.putAll(overrides);
+      return properties;
    }
 
    @Test
    public void testCatalog() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getHref());
-         assertNotNull(response);
-         assertNotNull(response.getName());
-         assertNotNull(response.getHref());
-         assertEquals(connection.findCatalogInOrgNamed(null, response.getName()), response);
+      for (Org org : orgs) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            Catalog response = connection.getCatalog(cat.getHref());
+            assertNotNull(response);
+            assertNotNull(response.getName());
+            assertNotNull(response.getHref());
+            assertEquals(connection.findCatalogInOrgNamed(org.getName(), response.getName()), response);
+         }
+      }
+   }
+
+   @Test
+   public void testPropertiesCanOverrideDefaultCatalog() throws Exception {
+      for (Org org : orgs) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            RestContext<S, A> newContext = null;
+            try {
+               newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())));
+               assertEquals(newContext.getApi().findCatalogInOrgNamed(null, null), connection.getCatalog(cat.getHref()));
+            } finally {
+               newContext.close();
+            }
+         }
       }
    }
 
    @Test
    public void testGetOrgNetwork() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType resource : org.getNetworks().values()) {
-         if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-            OrgNetwork item = connection.getNetwork(resource.getHref());
-            assertNotNull(item);
+      for (Org org : orgs) {
+         for (ReferenceType resource : org.getNetworks().values()) {
+            if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
+               OrgNetwork item = connection.getNetwork(resource.getHref());
+               assertNotNull(item);
+            }
          }
       }
    }
 
    @Test
    public void testGetVDCNetwork() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getHref());
-         for (ReferenceType resource : response.getAvailableNetworks().values()) {
-            if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-               try {
-                  OrgNetwork item = connection.getNetwork(resource.getHref());
-                  assertNotNull(item);
-               } catch (AuthorizationException e) {
+      for (Org org : orgs) {
+         for (ReferenceType vdc : org.getVDCs().values()) {
+            VDC response = connection.getVDC(vdc.getHref());
+            for (ReferenceType resource : response.getAvailableNetworks().values()) {
+               if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
+                  try {
+                     OrgNetwork net = connection.getNetwork(resource.getHref());
+                     assertNotNull(net);
+                     assertNotNull(net.getName());
+                     assertNotNull(net.getHref());
+                     assertEquals(
+                           connection.findNetworkInOrgVDCNamed(org.getName(), response.getName(), net.getName()), net);
+                  } catch (AuthorizationException e) {
 
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   @Test
+   public void testPropertiesCanOverrideDefaultNetwork() throws Exception {
+      for (Org org : orgs) {
+         for (ReferenceType vdc : org.getVDCs().values()) {
+            VDC response = connection.getVDC(vdc.getHref());
+            for (ReferenceType net : response.getAvailableNetworks().values()) {
+               RestContext<S, A> newContext = null;
+               try {
+                  newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())));
+                  assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, null),
+                        connection.getNetwork(net.getHref()));
+               } finally {
+                  newContext.close();
                }
             }
          }
@@ -108,13 +181,14 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
 
    @Test
    public void testGetCatalogItem() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getHref());
-         for (ReferenceType resource : response.values()) {
-            if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.getCatalogItem(resource.getHref());
-               verifyCatalogItem(item);
+      for (Org org : orgs) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            Catalog response = connection.getCatalog(cat.getHref());
+            for (ReferenceType resource : response.values()) {
+               if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+                  CatalogItem item = connection.getCatalogItem(resource.getHref());
+                  verifyCatalogItem(item);
+               }
             }
          }
       }
@@ -131,14 +205,15 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
 
    @Test
    public void testFindCatalogItem() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getHref());
-         for (ReferenceType resource : response.values()) {
-            if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
-                     resource.getName());
-               verifyCatalogItem(item);
+      for (Org org : orgs) {
+         for (ReferenceType cat : org.getCatalogs().values()) {
+            Catalog response = connection.getCatalog(cat.getHref());
+            for (ReferenceType resource : response.values()) {
+               if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+                  CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
+                        resource.getName());
+                  verifyCatalogItem(item);
+               }
             }
          }
       }
@@ -146,36 +221,58 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
 
    @Test
    public void testDefaultVDC() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getHref());
-         assertNotNull(response);
-         assertNotNull(response.getName());
-         assertNotNull(response.getHref());
-         assertNotNull(response.getResourceEntities());
-         assertNotNull(response.getAvailableNetworks());
-         assertEquals(connection.getVDC(response.getHref()), response);
+      for (Org org : orgs) {
+         for (ReferenceType vdc : org.getVDCs().values()) {
+            VDC response = connection.getVDC(vdc.getHref());
+            assertNotNull(response);
+            assertNotNull(response.getName());
+            assertNotNull(response.getHref());
+            assertNotNull(response.getResourceEntities());
+            assertNotNull(response.getAvailableNetworks());
+            assertEquals(connection.getVDC(response.getHref()), response);
+         }
+      }
+   }
+
+   @Test
+   public void testPropertiesCanOverrideDefaultVDC() throws Exception {
+      for (Org org : orgs) {
+         for (ReferenceType vdc : org.getVDCs().values()) {
+            RestContext<S, A> newContext = null;
+            try {
+               newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName())));
+               assertEquals(newContext.getApi().findVDCInOrgNamed(null, null), connection.getVDC(vdc.getHref()));
+            } finally {
+               newContext.close();
+            }
+         }
       }
    }
 
    @Test
    public void testDefaultTasksList() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getLocation());
-      assertNotNull(response.getTasks());
-      assertEquals(connection.getTasksList(response.getLocation()).getLocation(), response.getLocation());
+      for (Org org : orgs) {
+         org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(org.getName());
+         assertNotNull(response);
+         assertNotNull(response.getLocation());
+         assertNotNull(response.getTasks());
+         assertEquals(connection.getTasksList(response.getLocation()).getLocation(), response.getLocation());
+      }
    }
 
    @Test
    public void testGetTask() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getLocation());
-      assertNotNull(response.getTasks());
-      if (response.getTasks().size() > 0) {
-         Task task = response.getTasks().last();
-         assertEquals(connection.getTask(task.getHref()).getHref(), task.getHref());
+      for (Org org : orgs) {
+         org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(org.getName());
+         assertNotNull(response);
+         assertNotNull(response.getLocation());
+         assertNotNull(response.getTasks());
+         if (response.getTasks().size() > 0) {
+            Task task = response.getTasks().last();
+            assertEquals(connection.getTask(task.getHref()).getHref(), task.getHref());
+         }
       }
    }
 
@@ -184,6 +281,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   protected Iterable<Org> orgs;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -213,10 +311,19 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-
+      context = createContextWithProperties(setupProperties());
       connection = context.getApi();
+      orgs = listOrgs();
    }
+
+   public RestContext<S, A> createContextWithProperties(Properties overrides) {
+      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+   }
+
+   @AfterGroups(groups = { "live" })
+   public void teardownClient() {
+      context.close();
+   }
+
 }

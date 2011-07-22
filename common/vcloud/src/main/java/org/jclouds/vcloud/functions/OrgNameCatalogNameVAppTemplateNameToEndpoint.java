@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
 
@@ -42,13 +43,13 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap;
-   private final String defaultOrg;
-   private final String defaultCatalog;
+   private final ReferenceType defaultOrg;
+   private final ReferenceType defaultCatalog;
 
    @Inject
    public OrgNameCatalogNameVAppTemplateNameToEndpoint(
             Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap,
-            @Org String defaultOrg, @Catalog String defaultCatalog) {
+            @Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgCatalogItemMap = orgCatalogItemMap;
       this.defaultOrg = defaultOrg;
       this.defaultCatalog = defaultCatalog;
@@ -61,9 +62,9 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
       Object catalog = Iterables.get(orgCatalog, 1);
       Object catalogItem = Iterables.get(orgCatalog, 2);
       if (org == null)
-         org = defaultOrg;
+         org = defaultOrg.getName();
       if (catalog == null)
-         catalog = defaultCatalog;
+         catalog = defaultCatalog.getName();
       Map<String, Map<String, Map<String, ? extends CatalogItem>>> orgCatalogItemMap = this.orgCatalogItemMap.get();
 
       if (!orgCatalogItemMap.containsKey(org))

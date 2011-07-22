@@ -19,11 +19,11 @@
 package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.disabled;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -50,7 +50,7 @@ import org.jclouds.vcloud.terremark.xml.KeyPairHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
-import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
+import org.jclouds.vcloud.terremark.xml.PublicIpAddressHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.terremark.xml.VAppExtendedInfoHandler;
@@ -58,24 +58,30 @@ import org.jclouds.vcloud.xml.VCloudExpressCatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.TypeLiteral;
-
 
 /**
  * Tests behavior of {@code TerremarkECloudAsyncClient}
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", singleThreaded = true, testName = "TerremarkECloudAsyncClientTest")
 public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClientTest<TerremarkECloudAsyncClient> {
+
+   public void testListOrgs() {
+      assertEquals(injector.getInstance(TerremarkECloudAsyncClient.class).listOrgs().toString(),
+            ImmutableMap.of(ORG_REF.getName(), ORG_REF).toString());
+   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<TerremarkECloudAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<TerremarkECloudAsyncClient>>() {
       };
    }
-   
+
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkECloudAsyncClient.class.getMethod("getNetwork", URI.class);
       HttpRequest request = processor.createRequest(method,
@@ -219,8 +225,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, PublicIpAddressesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertSaxResponseParserClassEquals(method, PublicIpAddressHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
    }

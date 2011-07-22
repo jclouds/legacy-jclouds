@@ -37,7 +37,9 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
@@ -84,8 +86,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
          @Network
          @Provides
          @Singleton
-         URI provideNetwork() {
-            return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");
+         ReferenceType provideNetwork() {
+            return new ReferenceTypeImpl(null, null, URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990"));
          }
       });
    }

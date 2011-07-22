@@ -32,10 +32,7 @@ import org.jclouds.vcloud.domain.TasksList;
  */
 public class TasksListImpl implements TasksList {
    private final SortedSet<Task> tasks;
-
    private final URI id;
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
 
    public TasksListImpl(URI id, SortedSet<Task> tasks) {
       this.id = id;

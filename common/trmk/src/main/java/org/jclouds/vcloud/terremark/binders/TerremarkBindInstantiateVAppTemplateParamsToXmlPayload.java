@@ -23,10 +23,9 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
-import java.net.URI;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -37,6 +36,7 @@ import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -55,7 +55,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
    @Inject
    public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Nullable @Network URI network,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Nullable @Network ReferenceType network,
             @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       super(stringBinder, apiVersion, ns, schema, network, fenceMode);
    }

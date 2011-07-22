@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
@@ -36,9 +37,10 @@ import com.google.common.collect.Maps;
 public abstract class OrgURIToEndpoint implements Function<Object, URI> {
 
    protected final Supplier<Map<String, ? extends Org>> orgMap;
-   protected final URI defaultOrg;
+   protected final ReferenceType defaultOrg;
 
-   public OrgURIToEndpoint(Supplier<Map<String, ? extends Org>> orgMap, @org.jclouds.vcloud.endpoints.Org URI defaultUri) {
+   public OrgURIToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultUri;
    }
@@ -53,7 +55,7 @@ public abstract class OrgURIToEndpoint implements Function<Object, URI> {
 
       });
       try {
-         TerremarkOrg org = TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from));
+         TerremarkOrg org = TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg.getHref() : from));
          return getUriFromOrg(org);
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("org " + from + " not found in: " + uriToOrg, e);

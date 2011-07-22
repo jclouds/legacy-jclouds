@@ -33,8 +33,6 @@ import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
  */
 public class VCloudExpressVAppTemplateImpl extends ReferenceTypeImpl implements VCloudExpressVAppTemplate {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
    private final Status status;
 

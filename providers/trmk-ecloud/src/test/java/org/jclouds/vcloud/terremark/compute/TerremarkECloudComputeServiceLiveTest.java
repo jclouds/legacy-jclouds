@@ -20,6 +20,8 @@ package org.jclouds.vcloud.terremark.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Properties;
+
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -32,16 +34,27 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
+import org.jclouds.vcloud.reference.VCloudConstants;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.Test;
 
 /**
- * This test is disabled, as it doesn't work while there are too few public ip addresses.
+ * This test is disabled, as it doesn't work while there are too few public ip
+ * addresses.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true)
 public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
+            ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
+      return props;
+   }
+
    public TerremarkECloudComputeServiceLiveTest() {
       provider = "trmk-ecloud";
    }
@@ -60,13 +73,6 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
       return template;
    }
 
-   // currently, the wrong CIM OSType data is coming back.
-   @Override
-   protected void checkOsMatchesTemplate(NodeMetadata node) {
-      if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), null);
-   }
-
    @Override
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {
@@ -74,7 +80,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
          if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS
-                  && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
+               && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
             assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
          }
@@ -90,7 +96,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-                  .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
          VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

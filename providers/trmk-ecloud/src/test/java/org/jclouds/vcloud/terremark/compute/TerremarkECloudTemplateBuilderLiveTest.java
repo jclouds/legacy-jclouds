@@ -22,12 +22,14 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.vcloud.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -39,6 +41,13 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live")
 public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
+            ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
+      return props;
+   }
 
    public TerremarkECloudTemplateBuilderLiveTest() {
       provider = "trmk-ecloud";
@@ -51,20 +60,20 @@ public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderL
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case RHEL:
-                  return !input.version.equals("") && !input.version.matches("5.[50]");
-               case SOLARIS:
-                  return !input.is64Bit;
-               case CENTOS:
-                  return !input.version.equals("") && !input.version.matches("5.[50]");
-               case UBUNTU:
-                  return !input.version.equals("") && !input.version.equals("10.04") && !input.version.equals("8.04");
-               case WINDOWS:
-                  return !input.version.equals("") && !input.version.equals("2003 R2") //
-                           && !(input.version.equals("2008") && !input.is64Bit) //
-                           && !(input.version.matches("2008( R2)?") && input.is64Bit);
-               default:
-                  return true;
+            case RHEL:
+               return !input.version.equals("") && !input.version.matches("5.[50]");
+            case SOLARIS:
+               return !input.is64Bit;
+            case CENTOS:
+               return !input.version.equals("") && !input.version.matches("5.[50]");
+            case UBUNTU:
+               return !input.version.equals("") && !input.version.equals("10.04") && !input.version.equals("8.04");
+            case WINDOWS:
+               return !input.version.equals("") && !input.version.equals("2003 R2") //
+                     && !(input.version.equals("2008") && !input.is64Bit) //
+                     && !(input.version.matches("2008( R2)?") && input.is64Bit);
+            default:
+               return true;
             }
          }
       };

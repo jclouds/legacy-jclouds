@@ -22,7 +22,6 @@ import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTempl
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -51,16 +50,6 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
 
    KeyPair key;
 
-   @Test
-   public void testKeysList() throws Exception {
-      TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
-      TerremarkOrg org = vCloudExpressClient.findOrgNamed(null);
-      Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
-      assertNotNull(response);
-      System.err.println(response);
-      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getHref()));
-   }
-
    @Override
    protected void prepare() {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
@@ -74,13 +63,12 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
          key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
       }
       assertNotNull(key);
-      System.err.println(key);
       assertEquals(key.getName(), "livetest");
       assertNotNull(key.getPrivateKey());
       assertNotNull(key.getFingerPrint());
       assertEquals(key.isDefault(), false);
       assertEquals(key.getFingerPrint(), vCloudExpressClient.findKeyPairInOrg(org.getHref(), key.getName())
-               .getFingerPrint());
+            .getFingerPrint());
    }
 
    @AfterTest
@@ -103,7 +91,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
 
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
-      return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(TerremarkVCloudExpressClient.class
-               .cast(tmClient)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
+      return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(
+            TerremarkVCloudExpressClient.class.cast(tmClient)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 }

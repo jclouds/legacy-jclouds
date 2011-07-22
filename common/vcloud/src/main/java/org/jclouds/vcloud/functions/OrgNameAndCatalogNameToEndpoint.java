@@ -42,15 +42,15 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final String defaultOrg;
-   private final URI defaultUri;
+   private final ReferenceType defaultOrg;
+   private final ReferenceType defaultCatalog;
 
    @Inject
    public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.vcloud.endpoints.Org String defaultOrg, @Catalog URI defaultUri) {
+         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;
-      this.defaultUri = defaultUri;
+      this.defaultCatalog = defaultCatalog;
    }
 
    @SuppressWarnings("unchecked")
@@ -59,9 +59,9 @@ public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
       Object org = Iterables.get(orgCatalog, 0);
       Object catalog = Iterables.get(orgCatalog, 1);
       if (org == null && catalog == null)
-         return defaultUri;
+         return defaultCatalog.getHref();
       else if (org == null)
-         org = defaultOrg;
+         org = defaultOrg.getName();
 
       try {
          Map<String, ReferenceType> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();

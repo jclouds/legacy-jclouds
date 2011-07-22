@@ -38,8 +38,6 @@ import com.google.common.collect.Maps;
  */
 public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
    private final ReferenceType entity;
    private final Map<String, String> properties = Maps.newLinkedHashMap();

@@ -19,12 +19,14 @@
 package org.jclouds.vcloud;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
@@ -40,7 +42,12 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudExpressClient extends CommonVCloudClient {
-
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   Map<String, ReferenceType> listOrgs();
+   
    VCloudExpressVApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName,
          InstantiateVAppTemplateOptions... options);
 

@@ -34,6 +34,8 @@ import javax.inject.Singleton;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -66,8 +68,8 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
       @Network
       @Provides
       @Singleton
-      URI provideNetwork() {
-         return URI.create("https://vcloud.safesecureweb.com/network/1990");
+      ReferenceType provideNetwork() {
+         return new ReferenceTypeImpl(null, null, URI.create("https://vcloud.safesecureweb.com/network/1990"));
       }
    });
 

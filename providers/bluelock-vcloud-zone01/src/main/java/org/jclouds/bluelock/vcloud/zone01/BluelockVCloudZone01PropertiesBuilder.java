@@ -37,7 +37,7 @@ public class BluelockVCloudZone01PropertiesBuilder extends VCloudPropertiesBuild
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-IN");
       properties.setProperty(PROPERTY_ENDPOINT, "https://zone01.bluelock.com/api");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01-.*");
       return properties;
    }
 

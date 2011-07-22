@@ -18,14 +18,13 @@
  */
 package org.jclouds.vcloud;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -43,6 +43,7 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
@@ -57,7 +58,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 /**
@@ -88,67 +89,79 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
       return new RestContextFactory().createContextSpec("vcloud", "identity", "credential", overrides);
    }
 
+   protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", VCloudMediaType.ORG_XML,
+         URI.create("https://vcenterprise.bluelock.com/api/v1.0/org/1"));
+
+   protected static final ReferenceTypeImpl CATALOG_REF = new ReferenceTypeImpl("catalog", VCloudMediaType.CATALOG_XML,
+         URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"));
+
+   protected static final ReferenceTypeImpl TASKSLIST_REF = new ReferenceTypeImpl("tasksList",
+         VCloudMediaType.TASKSLIST_XML, URI.create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1"));
+
+   protected static final ReferenceTypeImpl VDC_REF = new ReferenceTypeImpl("vdc", VCloudMediaType.VDC_XML,
+         URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"));
+
+   protected static final ReferenceTypeImpl NETWORK_REF = new ReferenceTypeImpl("network", VCloudMediaType.NETWORK_XML,
+         URI.create("https://vcloud.safesecureweb.com/network/1990"));
+
+   protected static final Org ORG = new OrgImpl(ORG_REF.getName(), ORG_REF.getType(), ORG_REF.getHref(), "org", null,
+         ImmutableMap.<String, ReferenceType> of(CATALOG_REF.getName(), CATALOG_REF),
+         ImmutableMap.<String, ReferenceType> of(VDC_REF.getName(), VDC_REF), ImmutableMap.<String, ReferenceType> of(
+               NETWORK_REF.getName(), NETWORK_REF), TASKSLIST_REF, ImmutableList.<Task> of());
+
+   protected static final VDC VDC = new VDCImpl(VDC_REF.getName(), VDC_REF.getType(), VDC_REF.getHref(),
+         VDCStatus.READY, null, "description", ImmutableSet.<Task> of(), AllocationModel.ALLOCATION_POOL, null, null,
+         null, ImmutableMap.<String, ReferenceType> of(
+               "vapp",
+               new ReferenceTypeImpl("vapp", "application/vnd.vmware.vcloud.vApp+xml", URI
+                     .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/188849-1")),
+               "network",
+               new ReferenceTypeImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                     .create("https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2"))),
+         ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF), 0, 0, 0, false);
+
    @RequiresHttp
    @ConfiguresRestClient
    public static class VCloudRestClientModuleExtension extends VCloudRestClientModule {
+
       @Override
-      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-               @Named(PROPERTY_API_VERSION) String version) {
+      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService, String version) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/login");
       }
 
       @Override
-      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/org");
-
+      protected Org provideOrg(Supplier<Map<String, ? extends Org>> orgSupplier,
+            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
+         return ORG;
       }
 
       @Override
-      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
-         return "org";
-      }
+      protected void installDefaultVCloudEndpointsModule() {
+         install(new AbstractModule() {
 
-      @Override
-      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user, WriteableCatalog writableCatalog) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog");
+            @Override
+            protected void configure() {
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Org.class).toInstance(ORG_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Catalog.class).toInstance(
+                     CATALOG_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.TasksList.class).toInstance(
+                     TASKSLIST_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.VDC.class).toInstance(VDC_REF);
+               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Network.class).toInstance(
+                     NETWORK_REF);
+            }
 
-      }
-
-      @Override
-      protected Org provideOrg(CommonVCloudClient discovery) {
-         return null;
-      }
-
-      @Override
-      protected URI provideDefaultTasksList(Org org) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/taskslist");
-      }
-
-      @Override
-      protected URI provideDefaultVDC(Org org, @org.jclouds.vcloud.endpoints.VDC String defaultVDC) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1");
-      }
-
-      @Override
-      protected String provideDefaultVDCName(
-               @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
-         return "vdc";
-      }
-
-      @Override
-      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");
+         });
       }
 
       @Override
       protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-               final VCloudLoginAsyncClient login) {
+            AtomicReference<AuthorizationException> authException, final VCloudLoginAsyncClient login) {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override
             public Map<String, ReferenceType> getOrgs() {
-               return ImmutableMap.<String, ReferenceType> of("org", new ReferenceTypeImpl("org",
-                        VCloudMediaType.ORG_XML, URI.create("https://vcenterprise.bluelock.com/api/v1.0/org/1")));
+               return ImmutableMap.<String, ReferenceType> of(ORG_REF.getName(), ORG_REF);
             }
 
             @Override
@@ -168,51 +181,18 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
          bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
       }
 
+      @Override
       protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
-               @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgVDCSupplier supplier) {
-
-         return Suppliers
-                  .<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
-                           .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of(
-                                    "org",
-
-                                    ImmutableMap
-                                             .<String, org.jclouds.vcloud.domain.VDC> of(
-                                                      "vdc",
-                                                      new VDCImpl(
-                                                               "vdc",
-                                                               null,
-                                                               URI
-                                                                        .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"),
-                                                               VDCStatus.READY,
-                                                               null,
-                                                               "description",
-                                                               ImmutableSet.<Task> of(),
-                                                               AllocationModel.ALLOCATION_POOL,
-                                                               null,
-                                                               null,
-                                                               null,
-                                                               ImmutableMap
-                                                                        .<String, ReferenceType> of(
-                                                                                 "vapp",
-                                                                                 new ReferenceTypeImpl(
-                                                                                          "vapp",
-                                                                                          "application/vnd.vmware.vcloud.vApp+xml",
-                                                                                          URI
-                                                                                                   .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/188849-1")),
-                                                                                 "network",
-                                                                                 new ReferenceTypeImpl(
-                                                                                          "network",
-                                                                                          "application/vnd.vmware.vcloud.vAppTemplate+xml",
-                                                                                          URI
-                                                                                                   .create("https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2"))),
-                                                               ImmutableMap.<String, ReferenceType> of(), 0, 0, 0,
-                                                               false))));
-
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
+            OrgVDCSupplier supplier) {
+         return Suppliers.<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
+               .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of(ORG_REF.getName(),
+                     ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of(VDC.getName(), VDC)));
       }
 
       @Singleton
       public static class TestOrgMapSupplier extends OrgMapSupplier {
+
          @Inject
          protected TestOrgMapSupplier() {
             super(null, null);
@@ -220,19 +200,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
 
          @Override
          public Map<String, Org> get() {
-            return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
-                     .create("https://vcenterprise.bluelock.com/api/v1.0/org/1"), "org", "description", ImmutableMap
-                     .<String, ReferenceType> of("catalog", new ReferenceTypeImpl("catalog",
-                              VCloudMediaType.CATALOG_XML, URI
-                                       .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"))), ImmutableMap
-                     .<String, ReferenceType> of("vdc", new ReferenceTypeImpl("vdc", VCloudMediaType.VDC_XML, URI
-                              .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"))), ImmutableMap
-                     .<String, ReferenceType> of("network", new ReferenceTypeImpl("network",
-                              VCloudMediaType.NETWORK_XML, URI
-                                       .create("https://vcenterprise.bluelock.com/api/v1.0/network/1"))),
-                     new ReferenceTypeImpl("tasksList", VCloudMediaType.TASKSLIST_XML, URI
-                              .create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1")), ImmutableList
-                              .<Task> of()));
+            return ImmutableMap.<String, Org> of(ORG.getName(), ORG);
          }
       }
 
@@ -245,17 +213,18 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
 
          @Override
          public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
-            return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of("org",
-
-            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", "type",
-                     URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), null, "description",
-                     ImmutableMap.<String, ReferenceType> of("item", new ReferenceTypeImpl("item",
-                              "application/vnd.vmware.vcloud.catalogItem+xml", URI
-                                       .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1")),
-                              "template", new ReferenceTypeImpl("template",
-                                       "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
-                                                .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))),
-                     ImmutableList.<Task> of(), true, false)));
+            return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of(
+                  ORG_REF.getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of(
+                        CATALOG_REF.getName(),
+                        new CatalogImpl(CATALOG_REF.getName(), CATALOG_REF.getType(), CATALOG_REF.getHref(), null,
+                              "description", ImmutableMap.<String, ReferenceType> of(
+                                    "item",
+                                    new ReferenceTypeImpl("item", "application/vnd.vmware.vcloud.catalogItem+xml", URI
+                                          .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1")),
+                                    "template",
+                                    new ReferenceTypeImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                                          URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))),
+                              ImmutableList.<Task> of(), true, false)));
          }
       }
 
@@ -267,33 +236,18 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
 
          @Override
          public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
-            return ImmutableMap
-                     .<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> of(
-                              "org",
-                              ImmutableMap
-                                       .<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>> of(
-                                                "catalog",
-                                                ImmutableMap
-                                                         .<String, org.jclouds.vcloud.domain.CatalogItem> of(
-                                                                  "template",
-                                                                  new CatalogItemImpl(
-                                                                           "template",
-                                                                           URI
-                                                                                    .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"),
-                                                                           "description",
-                                                                           new ReferenceTypeImpl(
-                                                                                    "template",
-                                                                                    "application/vnd.vmware.vcloud.vAppTemplate+xml",
-                                                                                    URI
-                                                                                             .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2")),
-                                                                           ImmutableMap.<String, String> of()))));
+            return ImmutableMap.<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> of(
+                  ORG_REF.getName(), ImmutableMap
+                        .<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
+                              .getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of(
+                              "template",
+                              new CatalogItemImpl("template", URI
+                                    .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"), "description",
+                                    new ReferenceTypeImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                                          URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2")),
+                                    ImmutableMap.<String, String> of()))));
 
          }
-      }
-
-      @Override
-      protected Iterable<ReferenceType> provideOrgs(Supplier<VCloudSession> cache, String user) {
-         return null;
       }
 
    }

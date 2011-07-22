@@ -25,6 +25,7 @@ import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
 import java.net.URI;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
@@ -47,10 +48,12 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVCloudExpressVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
@@ -65,6 +68,7 @@ import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppTemplateHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -75,7 +79,14 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
-
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   @Provides
+   @Org
+   Map<String, ReferenceType> listOrgs();
+   
    /**
     * @see CommonVCloudClient#getCatalog
     */

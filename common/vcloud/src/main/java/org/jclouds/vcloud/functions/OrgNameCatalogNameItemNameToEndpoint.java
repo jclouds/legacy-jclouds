@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
 
@@ -41,13 +42,13 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap;
-   private final String defaultOrg;
-   private final String defaultCatalog;
+   private final ReferenceType defaultOrg;
+   private final ReferenceType defaultCatalog;
 
    @Inject
    public OrgNameCatalogNameItemNameToEndpoint(
          Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap,
-         @Org String defaultOrg, @Catalog String defaultCatalog) {
+         @Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgCatalogMap = orgCatalogMap;
       this.defaultOrg = defaultOrg;
       this.defaultCatalog = defaultCatalog;
@@ -60,9 +61,9 @@ public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, UR
       Object catalog = Iterables.get(orgCatalog, 1);
       Object catalogItem = Iterables.get(orgCatalog, 2);
       if (org == null)
-         org = defaultOrg;
+         org = defaultOrg.getName();
       if (catalog == null)
-         catalog = defaultCatalog;
+         catalog = defaultCatalog.getName();
       try {
          Map<String, ? extends org.jclouds.vcloud.domain.Catalog> catalogs = checkNotNull(orgCatalogMap.get().get(org));
          return catalogs.get(catalog).get(catalogItem).getHref();

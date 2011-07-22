@@ -40,8 +40,6 @@ import com.google.common.collect.Sets;
  */
 public class VCloudExpressNetworkImpl extends ReferenceTypeImpl implements VCloudExpressNetwork {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
    protected final String description;
    protected final Set<String> dnsServers = Sets.newHashSet();
    protected final String gateway;

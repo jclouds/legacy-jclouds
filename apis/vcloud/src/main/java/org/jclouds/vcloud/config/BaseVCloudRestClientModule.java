@@ -23,21 +23,21 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
@@ -49,38 +49,23 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient> extends
-         CommonVCloudRestClientModule<S, A> {
+      CommonVCloudRestClientModule<S, A> {
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-            Map<Class<?>, Class<?>> delegateMap) {
+         Map<Class<?>, Class<?>> delegateMap) {
       super(syncClientType, asyncClientType, delegateMap);
-   }
-
-   @Singleton
-   public static class VCloudWritableCatalog extends WriteableCatalog {
-      private final VCloudClient client;
-
-      @Inject
-      public VCloudWritableCatalog(VCloudClient client) {
-         super(client);
-         this.client = client;
-      }
-
-      @Override
-      public boolean apply(ReferenceType arg0) {
-         return !client.getCatalogClient().getCatalog(arg0.getHref()).isReadOnly();
-      }
    }
 
    @Override
@@ -89,7 +74,6 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
       });
       bind(ResourceAllocationSettingDataHandler.class).to(VCloudResourceAllocationSettingDataHandler.class);
-      bind(WriteableCatalog.class).to(VCloudWritableCatalog.class);
       super.configure();
    }
 
@@ -102,21 +86,21 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final VCloudLoginAsyncClient login) {
+         AtomicReference<AuthorizationException> authException, final VCloudLoginAsyncClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-               new Supplier<VCloudSession>() {
+            new Supplier<VCloudSession>() {
 
-                  @Override
-                  public VCloudSession get() {
-                     try {
-                        return login.login().get(10, TimeUnit.SECONDS);
-                     } catch (Exception e) {
-                        propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+               @Override
+               public VCloudSession get() {
+                  try {
+                     return login.login().get(10, TimeUnit.SECONDS);
+                  } catch (Exception e) {
+                     propagate(e);
+                     assert false : e;
+                     return null;
                   }
+               }
 
-               });
+            });
    }
 }

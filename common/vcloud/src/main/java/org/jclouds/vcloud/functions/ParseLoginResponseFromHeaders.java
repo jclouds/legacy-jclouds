@@ -17,7 +17,7 @@
  * ====================================================================
  */
 package org.jclouds.vcloud.functions;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.util.Map;
@@ -69,7 +69,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
       try {
          final String token = parseTokenFromHeaders(from);
          final Map<String, ReferenceType> org = factory.create(orgHandlerProvider.get()).parse(
-                  from.getPayload().getInput());
+               checkNotNull(from.getPayload().getInput(), "no payload in http response to login request %s", from));
 
          return new VCloudSession() {
             @VCloudToken

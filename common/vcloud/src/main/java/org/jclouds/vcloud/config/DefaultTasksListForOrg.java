@@ -16,18 +16,18 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.functions;
+package org.jclouds.vcloud.config;
 
-import java.net.URI;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.endpoints.VDC;
-import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -37,24 +37,19 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class VDCURIToPublicIPsEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap;
-   private final ReferenceType defaultVDC;
+public class DefaultTasksListForOrg implements Function<ReferenceType, ReferenceType> {
+   private final Supplier<Map<String, ? extends Org>> nameToOrg;
 
    @Inject
-   public VDCURIToPublicIPsEndpoint(Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap,
-         @VDC ReferenceType defaultVDC) {
-      this.orgVDCMap = orgVDCMap;
-      this.defaultVDC = defaultVDC;
+   public DefaultTasksListForOrg(Supplier<Map<String, ? extends Org>> nameToOrg) {
+      this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
    }
 
-   public URI apply(Object from) {
-      try {
-         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC.getHref() : from)).getPublicIps()
-               .getHref();
-      } catch (NullPointerException e) {
-         throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
-      }
+   @Override
+   public ReferenceType apply(ReferenceType defaultOrg) {
+      org.jclouds.vcloud.domain.Org org = nameToOrg.get().get(defaultOrg.getName());
+      checkState(org != null, "could not retrieve Org at %s", defaultOrg);
+      return org.getTasksList();
    }
 
 }

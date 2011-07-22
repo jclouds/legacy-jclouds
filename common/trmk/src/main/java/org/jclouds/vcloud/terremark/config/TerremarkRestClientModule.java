@@ -17,10 +17,12 @@
  * ====================================================================
  */
 package org.jclouds.vcloud.terremark.config;
+
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +32,7 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
@@ -46,7 +49,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 
 public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-         extends BaseVCloudExpressRestClientModule<S, A> {
+      extends BaseVCloudExpressRestClientModule<S, A> {
 
    public TerremarkRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -56,31 +59,26 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
          Map<Class<?>, Class<?>> delegateMap) {
       super(syncClientType, asyncClientType, delegateMap);
    }
-   
+
    @Singleton
    @Provides
    @Named("CreateInternetService")
    String provideCreateInternetService() throws IOException {
-      return Strings2.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService.xml"));
+      return Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateInternetService.xml"));
    }
 
    @Singleton
    @Provides
    @Named("CreateNodeService")
    String provideCreateNodeService() throws IOException {
-      return Strings2.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateNodeService.xml"));
+      return Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateNodeService.xml"));
    }
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseTerremarkVCloudErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseTerremarkVCloudErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseTerremarkVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseTerremarkVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseTerremarkVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseTerremarkVCloudErrorFromHttpResponse.class);
    }
 
    @Singleton
@@ -111,14 +109,10 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
    @Singleton
    @Keys
    protected Supplier<Map<String, ReferenceType>> provideOrgToKeysListCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToKeysListSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
-               seconds, new Supplier<Map<String, ReferenceType>>() {
-                  @Override
-                  public Map<String, ReferenceType> get() {
-                     return supplier.get();
-                  }
-               });
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
+         OrgNameToKeysListSupplier supplier) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(
+            authException, seconds, supplier);
    }
 
    @Singleton

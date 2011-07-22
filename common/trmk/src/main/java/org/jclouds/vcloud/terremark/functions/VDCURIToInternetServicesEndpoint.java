@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
@@ -38,19 +39,19 @@ import com.google.common.base.Supplier;
 @Singleton
 public class VDCURIToInternetServicesEndpoint implements Function<Object, URI> {
    private final Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap;
-   private final URI defaultVDC;
+   private final ReferenceType defaultVDC;
 
    @Inject
    public VDCURIToInternetServicesEndpoint(Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap,
-         @VDC URI defaultVDC) {
+         @VDC ReferenceType defaultVDC) {
       this.orgVDCMap = orgVDCMap;
       this.defaultVDC = defaultVDC;
    }
 
    public URI apply(Object from) {
       try {
-         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC : from)).getInternetServices()
-               .getHref();
+         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC.getHref() : from))
+               .getInternetServices().getHref();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
       }

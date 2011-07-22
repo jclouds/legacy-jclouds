@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 public class TagOperationsClientLiveTest extends BaseTerremarkECloudClientLiveTest {
    @Test
    public void testListTagsInOrg() throws Exception {
-      for (ReferenceType response : getApi().listOrgs()) {
+      for (ReferenceType response : getApi().listOrgs().values()) {
          TerremarkECloudOrg org = getApi().getOrg(response.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());

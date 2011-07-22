@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VDC;
 
@@ -41,13 +42,13 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameVDCNameResourceEntityNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap;
-   private final String defaultOrg;
-   private final String defaultVDC;
+   private final ReferenceType defaultOrg;
+   private final ReferenceType defaultVDC;
 
    @Inject
    public OrgNameVDCNameResourceEntityNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap, @Org String defaultOrg,
-         @VDC String defaultVDC) {
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap, @Org ReferenceType defaultOrg,
+         @VDC ReferenceType defaultVDC) {
       this.orgVDCMap = orgVDCMap;
       this.defaultOrg = defaultOrg;
       this.defaultVDC = defaultVDC;
@@ -60,9 +61,9 @@ public class OrgNameVDCNameResourceEntityNameToEndpoint implements Function<Obje
       Object vDC = Iterables.get(orgVDC, 1);
       Object entityName = Iterables.get(orgVDC, 2);
       if (org == null)
-         org = defaultOrg;
+         org = defaultOrg.getName();
       if (vDC == null)
-         vDC = defaultVDC;
+         vDC = defaultVDC.getName();
       try {
          Map<String, ? extends org.jclouds.vcloud.domain.VDC> vDCs = checkNotNull(orgVDCMap.get().get(org));
          return vDCs.get(vDC).getResourceEntities().get(entityName).getHref();

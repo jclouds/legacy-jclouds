@@ -21,11 +21,13 @@ package org.jclouds.vcloud.terremark;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
+import org.jclouds.vcloud.reference.VCloudConstants;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -41,6 +43,14 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTest")
 public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
+            ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
+      return props;
+   }
+
    @BeforeClass
    void setProvider() {
       this.provider = "trmk-ecloud";
@@ -61,7 +71,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
       return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(tmClient))
-               .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
+            .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 
 }

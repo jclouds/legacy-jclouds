@@ -44,6 +44,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.network.FenceMode;
@@ -70,7 +71,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    protected final String ns;
    protected final String schema;
    protected final BindToStringPayload stringBinder;
-   protected final URI defaultNetwork;
+   protected final ReferenceType defaultNetwork;
    protected final FenceMode defaultFenceMode;
    protected final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
    protected final VCloudClient client;
@@ -78,7 +79,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    @Inject
    public BindInstantiateVAppTemplateParamsToXmlPayload(DefaultNetworkNameInTemplate defaultNetworkNameInTemplate,
          BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
+         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network ReferenceType network,
          @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode, VCloudClient client) {
       this.defaultNetworkNameInTemplate = defaultNetworkNameInTemplate;
       this.ns = ns;
@@ -104,8 +105,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
       Set<? extends NetworkConfig> networkConfig = null;
 
-      NetworkConfigDecorator networknetworkConfigDecorator = new NetworkConfigDecorator(template, defaultNetwork,
-            defaultFenceMode, defaultNetworkNameInTemplate);
+      NetworkConfigDecorator networknetworkConfigDecorator = new NetworkConfigDecorator(template,
+            defaultNetwork.getHref(), defaultFenceMode, defaultNetworkNameInTemplate);
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
 

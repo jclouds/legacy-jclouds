@@ -61,7 +61,7 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
    @Override
    public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VCloudExpressVApp vApp, int port,
             Protocol protocol) {
-      logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
+      logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getHref(), protocol, port);
       InternetService is = null;
       PublicIpAddress ip = null;
       try {

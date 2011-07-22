@@ -60,13 +60,6 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
       return template;
    }
 
-   // currently, the wrong CIM OSType data is coming back.
-   @Override
-   protected void checkOsMatchesTemplate(NodeMetadata node) {
-      if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), null);
-   }
-
    @Override
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {

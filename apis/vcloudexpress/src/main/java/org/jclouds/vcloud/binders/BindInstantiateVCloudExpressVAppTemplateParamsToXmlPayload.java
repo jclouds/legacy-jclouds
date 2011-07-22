@@ -44,6 +44,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -67,14 +68,14 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
    private final BindToStringPayload stringBinder;
    protected final Map<ResourceType, String> virtualHardwareToInstanceId = ImmutableMap.of(ResourceType.PROCESSOR, "1",
             ResourceType.MEMORY, "2", ResourceType.DISK_DRIVE, "9");
-   private final URI defaultNetwork;
+   private final ReferenceType defaultNetwork;
    private final String defaultFenceMode;
    private final String apiVersion;
 
    @Inject
    public BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network ReferenceType network,
             @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       this.ns = ns;
       this.apiVersion = apiVersion;
@@ -96,7 +97,7 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
       SortedMap<ResourceType, String> virtualHardwareQuantity = Maps.newTreeMap();
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
-      String network = (defaultNetwork != null) ? defaultNetwork.toASCIIString() : null;
+      String network = (defaultNetwork != null) ? defaultNetwork.getHref().toASCIIString() : null;
       String fenceMode = defaultFenceMode;
       String networkName = name;
       if (options != null) {

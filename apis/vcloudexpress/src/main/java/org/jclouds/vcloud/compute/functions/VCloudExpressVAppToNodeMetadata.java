@@ -34,6 +34,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.Status;
@@ -57,9 +59,9 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
 
    @Inject
    protected VCloudExpressVAppToNodeMetadata(VCloudExpressComputeClient computeClient,
-            Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
-            HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images) {
+         Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
+         HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+         FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images) {
       this.images = checkNotNull(images, "images");
       this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
@@ -76,8 +78,19 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.name(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(parseGroupFromName(from.getName()));
-      builder.operatingSystem(from.getOsType() != null ? new CIMOperatingSystem(OSType
-               .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null);
+      if (from.getOsType() != null && OSType.fromValue(from.getOsType()) != OSType.UNRECOGNIZED) {
+         builder.operatingSystem(new CIMOperatingSystem(OSType.fromValue(from.getOsType()), "", null, from
+               .getOperatingSystemDescription()));
+      } else if (from.getOperatingSystemDescription() != null) {
+         OperatingSystem.Builder osBuilder = new OperatingSystem.Builder();
+         if (from.getOsType() != null)
+            osBuilder.name(from.getOsType() + "");
+         osBuilder.family(ComputeServiceUtils.parseOsFamilyOrUnrecognized(from.getOperatingSystemDescription()));
+         osBuilder.version("");
+         osBuilder.is64Bit(from.getOperatingSystemDescription().indexOf("64") != -1);
+         osBuilder.description(from.getOperatingSystemDescription());
+         builder.operatingSystem(osBuilder.build());
+      }
       builder.hardware(hardwareForVCloudExpressVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));
