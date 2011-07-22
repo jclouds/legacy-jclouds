@@ -40,6 +40,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -54,7 +55,6 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
-   public static final String PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP = "jclouds.compute.push-init-script-via-sftp";
    public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -67,14 +67,6 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    protected final String initFile;
 
    protected SshClient ssh;
-
-   /**
-    * true to use sftp, false to use ssh. If there's a problem with the sftp configuration, setting
-    * this to false will help.
-    */
-   @Inject(optional = true)
-   @Named(PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP)
-   private boolean pushInitViaSftp = true;
 
    /**
     * determines the naming convention of init scripts.
@@ -141,9 +133,11 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
     * ssh client is initialized through this call.
     */
    protected ExecResponse doCall() {
-      if (pushInitViaSftp) {
+      try {
          ssh.put(initFile, init.render(OsFamily.UNIX));
-      } else {
+      } catch (SshException e) {
+         // If there's a problem with the sftp configuration, we can try via ssh exec
+         logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
          ssh.exec("rm " + initFile);
          ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
                   AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
