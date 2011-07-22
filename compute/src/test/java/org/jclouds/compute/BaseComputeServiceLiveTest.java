@@ -51,11 +51,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -243,11 +243,12 @@ public abstract class BaseComputeServiceLiveTest {
       TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
       try {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
-         Credentials good = nodes.iterator().next().getCredentials();
+         NodeMetadata node = get(nodes, 0);
+         Credentials good = node.getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
-
-         OperatingSystem os = get(nodes, 0).getOperatingSystem();
+         
+         OperatingSystem os = node.getOperatingSystem();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
                      good.identity, "romeo"));
@@ -257,31 +258,35 @@ public abstract class BaseComputeServiceLiveTest {
          }
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-                  runningInGroup(group), Statements.exec("echo hello"),
-                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
-            assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-                     + response.getValue();
+                  runningInGroup(group), Statements.exec("hostname"),
+                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet()){
+            checkResponseEqualsHostname(response.getValue(), response.getKey());
+         }
 
          // test single-node execution
-         ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
+         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false)
                   .runAsRoot(false));
-         assert response.getOutput().trim().equals("hello") : get(nodes, 0).getId() + ": " + response;
+         checkResponseEqualsHostname(response, node);
 
          runScriptWithCreds(group, os, good);
 
          checkNodes(nodes, group);
 
          // test adding AdminAccess later changes the default boot user, in this case to foo
-         response = client.runScriptOnNode(get(nodes, 0).getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
+         response = client.runScriptOnNode(node.getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
          
-         response = client.runScriptOnNode(get(nodes, 0).getId(), "echo $USER", wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false)
                   .runAsRoot(false));
          
-         assert response.getOutput().trim().equals("foo") : get(nodes, 0).getId() + ": " + response;
+         assert response.getOutput().trim().equals("foo") : node.getId() + ": " + response;
          
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
+   }
+
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      assert execResponse.getOutput().trim().equals(node1.getHostname()) : node1 + ": " + execResponse;
    }
 
    @Test(enabled = true, dependsOnMethods = { "testImagesCache" })

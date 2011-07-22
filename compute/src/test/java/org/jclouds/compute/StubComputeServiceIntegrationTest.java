@@ -158,12 +158,12 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             // run script without backgrounding (via predicate)
             client2.connect();
-            expect(client2.exec("echo hello\n")).andReturn(new ExecResponse("hello\n", "", 0));
+            expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
             client2.disconnect();
 
             // run script without backgrounding (via id)
             client2.connect();
-            expect(client2.exec("echo hello\n")).andReturn(new ExecResponse("hello\n", "", 0));
+            expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
             client2.disconnect();
 
             client2.connect();

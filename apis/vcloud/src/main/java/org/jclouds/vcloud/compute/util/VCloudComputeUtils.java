@@ -57,6 +57,16 @@ public class VCloudComputeUtils {
       return CIMOperatingSystem.toComputeOs(vm.getOperatingSystemSection());
    }
 
+   public static String getVirtualSystemIdentifierOfFirstVMIn(VApp vApp) {
+      return vApp.getChildren().size() > 0 ? getVirtualSystemIdentifierOf(Iterables.get(vApp.getChildren(), 0)) : null;
+   }
+
+   public static String getVirtualSystemIdentifierOf(Vm vm) {
+      if (vm.getVirtualHardwareSection() != null && vm.getVirtualHardwareSection().getSystem() != null)
+         return vm.getVirtualHardwareSection().getSystem().getVirtualSystemIdentifier();
+      return null;
+   }
+
    public static Credentials getCredentialsFrom(VApp vApp) {
       return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
    }
@@ -83,8 +93,10 @@ public class VCloudComputeUtils {
       Builder<String> ips = ImmutableSet.<String> builder();
       Vm vm = Iterables.get(vApp.getChildren(), 0);
       // TODO: figure out how to differentiate public from private ip addresses
-      // assumption is that we'll do this from the network object, which may have
-      // enough data to tell whether or not it is a public network without string
+      // assumption is that we'll do this from the network object, which may
+      // have
+      // enough data to tell whether or not it is a public network without
+      // string
       // parsing. At worst, we could have properties set per cloud provider to
       // declare the networks which are public, then check against these in
       // networkconnection.getNetwork

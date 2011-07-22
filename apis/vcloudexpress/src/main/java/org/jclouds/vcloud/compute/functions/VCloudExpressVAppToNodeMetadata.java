@@ -76,6 +76,8 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
+      //terremark
+      builder.hostname(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(parseGroupFromName(from.getName()));
       if (from.getOsType() != null && OSType.fromValue(from.getOsType()) != OSType.UNRECOGNIZED) {

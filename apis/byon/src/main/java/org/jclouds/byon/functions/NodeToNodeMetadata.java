@@ -79,6 +79,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId());
       builder.name(from.getName());
+      builder.hostname(from.getHostname());
       builder.location(findLocationWithId(from.getLocationId()));
       builder.group(from.getGroup());
       builder.tags(from.getTags());

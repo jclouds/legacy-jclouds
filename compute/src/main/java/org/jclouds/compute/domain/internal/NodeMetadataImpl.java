@@ -197,6 +197,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((group == null) ? 0 : group.hashCode());
+      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
@@ -225,6 +226,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.publicAddresses != null)
             return false;
       } else if (!publicAddresses.equals(other.publicAddresses))
+         return false;
+      if (hostname == null) {
+         if (other.hostname != null)
+            return false;
+      } else if (!hostname.equals(other.hostname))
          return false;
       if (group == null) {
          if (other.group != null)

@@ -19,6 +19,8 @@
 package org.jclouds.elasticstack.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
@@ -39,5 +41,12 @@ public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTe
    @Override
    public void testOptionToNotBlock() {
       // start call is blocking anyway.
+   }
+
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      assert execResponse.getOutput().trim().equals("ubuntu");// hostname is not
+                                                              // predicatble
+                                                              // based on node
+                                                              // metadata
    }
 }

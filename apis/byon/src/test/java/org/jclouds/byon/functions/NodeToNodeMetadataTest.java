@@ -73,12 +73,17 @@ public class NodeToNodeMetadataTest {
    }
 
    public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location) {
-      return new NodeMetadataBuilder().ids("cluster-" + id).group("hadoop").name("cluster-" + id).location(location)
-               .state(NodeState.RUNNING).operatingSystem(
-                        OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86")
-                                 .version("5.3").build()).publicAddresses(
-                        ImmutableSet.of("cluster-" + id + ".mydomain.com")).credentials(
-                        new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
+      return new NodeMetadataBuilder()
+            .ids("cluster-" + id)
+            .group("hadoop")
+            .name("cluster-" + id)
+            .hostname("cluster-" + id + ".mydomain.com")
+            .location(location)
+            .state(NodeState.RUNNING)
+            .operatingSystem(
+                  OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
+                        .build()).publicAddresses(ImmutableSet.of("cluster-" + id + ".mydomain.com"))
+            .credentials(new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
    }
 
    @Test

@@ -24,6 +24,7 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getIpsFromVApp;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getVirtualSystemIdentifierOfFirstVMIn;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 
 import java.util.Map;
@@ -72,6 +73,8 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
+      // not guaranteed to be correct, but good chance
+      builder.hostname(getVirtualSystemIdentifierOfFirstVMIn(from));
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(parseGroupFromName(from.getName()));
       builder.operatingSystem(toComputeOs(from, null));

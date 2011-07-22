@@ -108,6 +108,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
       builder.name(from.getName());
+      builder.hostname(from.getName());
       builder.location(new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId()).description(
                from.getHostId()).parent(location.get()).build());
       builder.userMetadata(from.getMetadata());

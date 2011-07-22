@@ -102,6 +102,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
       builder.name(from.getName());
+      builder.hostname(from.getName());
       builder.location(location.get());
       builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageId() + "");

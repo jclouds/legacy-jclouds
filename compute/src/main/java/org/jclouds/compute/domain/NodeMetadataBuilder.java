@@ -53,6 +53,8 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Hardware hardware;
    @Nullable
    private OperatingSystem os;
+   @Nullable
+   private String hostname;
 
    public NodeMetadataBuilder() {
       super(ComputeType.NODE);
@@ -108,6 +110,11 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
+   public NodeMetadataBuilder hostname(String hostname) {
+      this.hostname = hostname;
+      return this;
+   }
+
    @Override
    public NodeMetadataBuilder id(String id) {
       return NodeMetadataBuilder.class.cast(super.id(id));
@@ -151,7 +158,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tags, group, hardware, imageId,
-               os, state, loginPort, publicAddresses, privateAddresses, adminPassword, credentials);
+               os, state, loginPort, publicAddresses, privateAddresses, adminPassword, credentials, hostname);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
@@ -160,7 +167,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
                node.getGroup()).hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(
                node.getOperatingSystem()).state(node.getState()).loginPort(node.getLoginPort()).publicAddresses(
                node.getPublicAddresses()).privateAddresses(node.getPrivateAddresses()).adminPassword(
-               node.getAdminPassword()).credentials(node.getCredentials());
+               node.getAdminPassword()).credentials(node.getCredentials()).hostname(node.getHostname());
    }
 
 }

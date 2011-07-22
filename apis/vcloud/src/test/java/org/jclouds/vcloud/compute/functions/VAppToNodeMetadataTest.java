@@ -121,6 +121,7 @@ public class VAppToNodeMetadataTest {
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
       assertEquals(node.getLocation(), location);
+      assertEquals(node.getHostname(), "my-app");
       assertEquals(node.getPrivateAddresses(), ImmutableSet.of("172.16.7.230"));
       assertEquals(node.getPublicAddresses(), ImmutableSet.of());
    }
@@ -135,6 +136,7 @@ public class VAppToNodeMetadataTest {
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
       assertEquals(node.getLocation(), location);
+      assertEquals(node.getHostname(), "Centos-5.5_x64");
       assertEquals(node.getPrivateAddresses(), ImmutableSet.of());
       assertEquals(node.getPublicAddresses(), ImmutableSet.of());
    }
@@ -149,6 +151,7 @@ public class VAppToNodeMetadataTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
+      assertEquals(node.getHostname(), "");
       assertEquals(node.getLocation(), location);
    }
 }

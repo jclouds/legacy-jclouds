@@ -91,6 +91,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       builder.id(instance.getRegion() + "/" + instance.getId());
       String group = getGroupForInstance(instance);
       builder.group(group);
+      // standard convention from aws-ec2, which might not be re-used outside.
+      if (instance.getPrivateDnsName() != null)
+         builder.hostname(instance.getPrivateDnsName().replaceAll("\\..*", ""));
       addCredentialsForInstance(builder, instance);
       builder.state(instanceToNodeState.get(instance.getInstanceState()));
       builder.publicAddresses(NullSafeCollections.nullSafeSet(instance.getIpAddress()));

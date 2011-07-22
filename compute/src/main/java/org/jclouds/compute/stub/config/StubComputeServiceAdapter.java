@@ -89,6 +89,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       String id = idProvider.get() + "";
       builder.ids(id);
       builder.name(name);
+      // using a predictable name so tests will pass
+      builder.hostname(group);
       builder.tags(template.getOptions().getTags());
       builder.group(group);
       builder.location(location.get());
