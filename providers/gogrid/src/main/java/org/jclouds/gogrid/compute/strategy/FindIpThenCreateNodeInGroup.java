@@ -24,6 +24,7 @@ import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -40,6 +41,7 @@ import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
+import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -51,6 +53,9 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIntoName {
+   @Resource
+   protected Logger logger = Logger.NULL;
+   
    private final GoGridClient client;
    private final Function<Hardware, String> sizeToRam;
    private final Function<Server, NodeMetadata> serverToNodeMetadata;
@@ -108,7 +113,11 @@ public class FindIpThenCreateNodeInGroup implements CreateNodeWithGroupEncodedIn
          addedServer = Iterables.getOnlyElement(client.getServerServices().getServersByName(
                   addedServer.getName()));
       }
-      credentialStore.put("node#" + addedServer.getId(),client.getServerServices().getServerCredentialsList().get(addedServer.getName()));
+      Credentials credentials = client.getServerServices().getServerCredentialsList().get(addedServer.getName());
+      if (credentials != null)
+         credentialStore.put("node#" + addedServer.getId(), credentials);
+      else
+         logger.warn("couldn't get credentials for server %s", addedServer.getName());
       return serverToNodeMetadata.apply(addedServer);
    }
 
