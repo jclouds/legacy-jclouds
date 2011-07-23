@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Task status="running" startTime="2010-08-23T02:09:52.443-04:00"
-    operation="Creating Virtual Application vApp_acole_2(607806320)"
-    expiryTime="2010-11-21T02:09:52.443-05:00" endTime="9999-12-31T23:59:59.999-05:00"
-    type="application/vnd.vmware.vcloud.task+xml"
-    href="https://vcenterprise.bluelock.com/api/v1.0/task/3cc08ir8oczbze3n1a3">
-    <Owner type="application/vnd.vmware.vcloud.vApp+xml" name="vApp_acole_2"
-        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320" />
-</Task>

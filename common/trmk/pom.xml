@@ -88,7 +88,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.vcloud.terremark.*;version="${project.version}",org.jclouds.vcloud.*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.trmk.vcloud_0_8.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>
