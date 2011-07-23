@@ -247,26 +247,27 @@ public abstract class BaseComputeServiceLiveTest {
          Credentials good = node.getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
-         
-         OperatingSystem os = node.getOperatingSystem();
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
-                     good.identity, "romeo"));
-            assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (RunScriptOnNodesException e) {
-            assert getRootCause(e).getMessage().contains("Auth fail") : e;
-         }
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
                   runningInGroup(group), Statements.exec("hostname"),
                   overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet()){
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
-
+         
          // test single-node execution
          ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false)
                   .runAsRoot(false));
          checkResponseEqualsHostname(response, node);
+         OperatingSystem os = node.getOperatingSystem();
+         
+         // test bad password
+         try {
+            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
+                     good.identity, "romeo"));
+            assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+         } catch (RunScriptOnNodesException e) {
+            assert getRootCause(e).getMessage().contains("Auth fail") : e;
+         }
 
          runScriptWithCreds(group, os, good);
 
