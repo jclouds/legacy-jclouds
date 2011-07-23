@@ -55,13 +55,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>vcloud-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>

@@ -44,15 +44,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>vcloud-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>vcloud-common</artifactId>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
