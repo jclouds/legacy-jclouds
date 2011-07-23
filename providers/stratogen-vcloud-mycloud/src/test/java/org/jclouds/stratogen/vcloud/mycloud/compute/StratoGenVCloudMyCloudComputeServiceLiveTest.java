@@ -21,7 +21,9 @@ package org.jclouds.stratogen.vcloud.mycloud.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -38,7 +40,8 @@ import org.testng.annotations.Test;
 public class StratoGenVCloudMyCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    public StratoGenVCloudMyCloudComputeServiceLiveTest() {
       provider = "stratogen-vcloud-mycloud";
-      // vcloud requires instantiate before deploy, which takes longer than 30 seconds
+      // vcloud requires instantiate before deploy, which takes longer than 30
+      // seconds
       nonBlockDurationSeconds = 300;
    }
 
@@ -67,4 +70,8 @@ public class StratoGenVCloudMyCloudComputeServiceLiveTest extends VCloudComputeS
       return template;
    }
 
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("(none)");
+   }
 }
