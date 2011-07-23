@@ -48,6 +48,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.testng.annotations.AfterMethod;
@@ -179,9 +180,9 @@ public class FilesystemAsyncBlobStoreTest {
       checkForContainerContent(CONTAINER_NAME, null);
 
       // creates blobs in first container
-      Set<String> blobsExpected = TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] {
-            "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg", "4rrr.jpg",
-            "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc" + File.separator + "wert.kpg" });
+      Set<String> blobsExpected = TestUtils.createBlobsInContainer(CONTAINER_NAME, "bbb" + File.separator + "ccc"
+            + File.separator + "ddd" + File.separator + "1234.jpg", "4rrr.jpg", "rrr" + File.separator + "sss"
+            + File.separator + "788.jpg", "xdc" + File.separator + "wert.kpg");
 
       checkForContainerContent(CONTAINER_NAME, blobsExpected);
    }
@@ -214,17 +215,17 @@ public class FilesystemAsyncBlobStoreTest {
 
       // creates blobs in first container
 
-      Set<String> blobNamesCreatedInContainer1 = TestUtils.createBlobsInContainer(CONTAINER_NAME,
-            new String[] { "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
-                  TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg",
-                  "xdc" + File.separator + "wert.kpg" });
+      Set<String> blobNamesCreatedInContainer1 = TestUtils.createBlobsInContainer(CONTAINER_NAME, "bbb"
+            + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
+            TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc"
+                  + File.separator + "wert.kpg");
 
       // creates blobs in second container
       blobStore.createContainerInLocation(null, CONTAINER_NAME2);
-      Set<String> blobNamesCreatedInContainer2 = TestUtils.createBlobsInContainer(CONTAINER_NAME2, new String[] {
-            "asd" + File.separator + "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator
-                  + "1234.jpg", TestUtils.createRandomBlobKey(),
-            "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc" + File.separator + "wert.kpg" });
+      Set<String> blobNamesCreatedInContainer2 = TestUtils.createBlobsInContainer(CONTAINER_NAME2, "asd"
+            + File.separator + "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
+            TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc"
+                  + File.separator + "wert.kpg");
 
       // test blobs in first container
       checkForContainerContent(CONTAINER_NAME, blobNamesCreatedInContainer1);
@@ -238,9 +239,9 @@ public class FilesystemAsyncBlobStoreTest {
       checkForContainerContent(CONTAINER_NAME, null);
 
       // creates blobs in first container
-      Set<String> blobsExpected = TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] {
-            "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg", "4rrr.jpg",
-            "rrr" + File.separator + "sss" + File.separator + "788.jpg", "rrr" + File.separator + "wert.kpg" });
+      Set<String> blobsExpected = TestUtils.createBlobsInContainer(CONTAINER_NAME, "bbb" + File.separator + "ccc"
+            + File.separator + "ddd" + File.separator + "1234.jpg", "4rrr.jpg", "rrr" + File.separator + "sss"
+            + File.separator + "788.jpg", "rrr" + File.separator + "wert.kpg");
 
       // remove not expected values
       blobsExpected.remove("bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg");
@@ -257,8 +258,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Integration test, because clearContainer is not redefined in {@link FilesystemAsyncBlobStore}
-    * class
+    * Integration test, because clearContainer is not redefined in
+    * {@link FilesystemAsyncBlobStore} class
     */
    public void testClearContainer_NoOptions() throws IOException {
       final String CONTAINER_NAME2 = "containerToClear";
@@ -268,17 +269,17 @@ public class FilesystemAsyncBlobStoreTest {
       blobStore.createContainerInLocation(null, CONTAINER_NAME2);
 
       // creates blobs in first container
-      Set<String> blobNamesCreatedInContainer1 = TestUtils.createBlobsInContainer(CONTAINER_NAME,
-            new String[] { "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
-                  TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg",
-                  "xdc" + File.separator + "wert.kpg" });
+      Set<String> blobNamesCreatedInContainer1 = TestUtils.createBlobsInContainer(CONTAINER_NAME, "bbb"
+            + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
+            TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc"
+                  + File.separator + "wert.kpg");
 
       // creates blobs in second container
       blobStore.createContainerInLocation(null, CONTAINER_NAME2);
-      Set<String> blobNamesCreatedInContainer2 = TestUtils.createBlobsInContainer(CONTAINER_NAME2, new String[] {
-            "asd" + File.separator + "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator
-                  + "1234.jpg", TestUtils.createRandomBlobKey(),
-            "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc" + File.separator + "wert.kpg" });
+      Set<String> blobNamesCreatedInContainer2 = TestUtils.createBlobsInContainer(CONTAINER_NAME2, "asd"
+            + File.separator + "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
+            TestUtils.createRandomBlobKey(), "rrr" + File.separator + "sss" + File.separator + "788.jpg", "xdc"
+                  + File.separator + "wert.kpg");
 
       // test blobs in containers
       checkForContainerContent(CONTAINER_NAME, blobNamesCreatedInContainer1);
@@ -294,8 +295,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Integration test, because countBlobs is not redefined in {@link FilesystemAsyncBlobStore}
-    * class
+    * Integration test, because countBlobs is not redefined in
+    * {@link FilesystemAsyncBlobStore} class
     */
    public void testCountBlobs_NotExistingContainer() {
       try {
@@ -306,8 +307,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Integration test, because countBlobs is not redefined in {@link FilesystemAsyncBlobStore}
-    * class
+    * Integration test, because countBlobs is not redefined in
+    * {@link FilesystemAsyncBlobStore} class
     */
    public void testCountBlobs_NoOptionsEmptyContainer() {
       blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -319,8 +320,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Integration test, because countBlobs is not redefined in {@link FilesystemAsyncBlobStore}
-    * class
+    * Integration test, because countBlobs is not redefined in
+    * {@link FilesystemAsyncBlobStore} class
     */
    public void testCountBlobs_NoOptions() {
       blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -342,7 +343,7 @@ public class FilesystemAsyncBlobStoreTest {
       assertFalse(result, "Blob exists");
 
       // create the blob
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { BLOB_KEY });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, BLOB_KEY);
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY);
       assertTrue(result, "Blob exists");
 
@@ -366,7 +367,7 @@ public class FilesystemAsyncBlobStoreTest {
       assertFalse(result, "Blob2 exists");
 
       // create the blob
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { BLOB_KEY1, BLOB_KEY2 });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, BLOB_KEY1, BLOB_KEY2);
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY1);
       assertTrue(result, "Blob " + BLOB_KEY1 + " doesn't exist");
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY2);
@@ -401,7 +402,7 @@ public class FilesystemAsyncBlobStoreTest {
       TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + BLOB_KEY, false);
 
       // create the blob
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { BLOB_KEY });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, BLOB_KEY);
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY);
       assertTrue(result, "Blob doesn't exist");
 
@@ -416,8 +417,9 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Test of removeBlob method, with two blobs with a complex path as key and when first blob is
-    * removed, not all of its key's path is removed, because it is shared with the second blob's key
+    * Test of removeBlob method, with two blobs with a complex path as key and
+    * when first blob is removed, not all of its key's path is removed, because
+    * it is shared with the second blob's key
     */
    public void testRemoveBlob_TwoComplexBlobKeys() throws IOException {
       final String BLOB_KEY1 = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
@@ -433,7 +435,7 @@ public class FilesystemAsyncBlobStoreTest {
       assertFalse(result, "Blob2 exists");
 
       // create the blobs
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { BLOB_KEY1, BLOB_KEY2 });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, BLOB_KEY1, BLOB_KEY2);
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY1);
       assertTrue(result, "Blob " + BLOB_KEY1 + " doesn't exist");
       result = blobStore.blobExists(CONTAINER_NAME, BLOB_KEY2);
@@ -476,7 +478,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Test of createContainerInLocation method, of class FilesystemAsyncBlobStore.
+    * Test of createContainerInLocation method, of class
+    * FilesystemAsyncBlobStore.
     */
    public void testCreateContainerInLocation() throws IOException {
       final String CONTAINER_NAME2 = "funambol-test-2";
@@ -505,8 +508,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Test of putBlob method, of class FilesystemAsyncBlobStore. with a simple filename - no path in
-    * the filename, eg filename.jpg
+    * Test of putBlob method, of class FilesystemAsyncBlobStore. with a simple
+    * filename - no path in the filename, eg filename.jpg
     */
    public void testPutBlobSimpleName() {
       blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -515,7 +518,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Test of putBlob method with a complex key, with path in the filename, eg picture/filename.jpg
+    * Test of putBlob method with a complex key, with path in the filename, eg
+    * picture/filename.jpg
     */
    public void testPutBlobComplexName1() {
       blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -526,7 +530,8 @@ public class FilesystemAsyncBlobStoreTest {
    }
 
    /**
-    * Test of putBlob method with a complex key, with path in the filename, eg picture/filename.jpg
+    * Test of putBlob method with a complex key, with path in the filename, eg
+    * picture/filename.jpg
     */
    public void testPutBlobComplexName2() {
       blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -589,7 +594,7 @@ public class FilesystemAsyncBlobStoreTest {
       assertNull(resultBlob, "Blob exists");
 
       // create blob
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { blobKey });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, blobKey);
 
       resultBlob = blobStore.getBlob(CONTAINER_NAME, blobKey, options);
 
@@ -608,7 +613,7 @@ public class FilesystemAsyncBlobStoreTest {
    public void testBlobMetadata_withDefaultMetadata() throws IOException {
       String BLOB_KEY = TestUtils.createRandomBlobKey(null, null);
       // create the blob
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] { BLOB_KEY });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, BLOB_KEY);
 
       BlobMetadata metadata = blobStore.blobMetadata(CONTAINER_NAME, BLOB_KEY);
       assertNotNull(metadata, "Metadata null");
@@ -616,7 +621,8 @@ public class FilesystemAsyncBlobStoreTest {
       assertEquals(metadata.getName(), BLOB_KEY, "Wrong blob name");
       assertEquals(metadata.getType(), StorageType.BLOB, "Wrong blob type");
       assertEquals(metadata.getContentMetadata().getContentType(), "application/unknown", "Wrong blob content-type");
-      assertEquals(metadata.getContentMetadata().getContentMD5(), null, "Wrong blob MD5");
+      assertEquals(CryptoStreams.hex(metadata.getContentMetadata().getContentMD5()), metadata.getETag(),
+            "Wrong blob MD5");
       assertEquals(metadata.getLocation(), null, "Wrong blob location");
       assertEquals(metadata.getProviderId(), null, "Wrong blob provider id");
       assertEquals(metadata.getUri(), null, "Wrong blob URI");
@@ -625,8 +631,6 @@ public class FilesystemAsyncBlobStoreTest {
       // metadata.getLastModified()
       File file = new File(TARGET_CONTAINER_NAME + File.separator + BLOB_KEY);
       assertEquals(metadata.getContentMetadata().getContentLength(), new Long(file.length()), "Wrong blob size");
-      // don't know how to calculate ETAG
-      // assertEquals(metadata.getETag(), "105cf4e6c052d65352dabd20028ff102", "Wrong blob ETag");
    }
 
    public void testDeleteContainer_NotExistingContainer() {
@@ -667,15 +671,13 @@ public class FilesystemAsyncBlobStoreTest {
       TestUtils.directoryExists(TARGET_CONTAINER_NAME2, true);
 
       // create blobs inside container
-      TestUtils.createBlobsInContainer(CONTAINER_NAME, new String[] {
-            TestUtils.createRandomBlobKey("testutils-", null), TestUtils.createRandomBlobKey("testutils-", null),
-            TestUtils.createRandomBlobKey("ab123s" + File.separator + "testutils-", null), });
-      TestUtils.createBlobsInContainer(
-            CONTAINER_NAME,
-            new String[] { TestUtils.createRandomBlobKey("testutils-", null),
-                  TestUtils.createRandomBlobKey("testutils-", null),
-                  TestUtils.createRandomBlobKey("asda123s" + File.separator + "testutils-", null),
-                  TestUtils.createRandomBlobKey("123-_3s" + File.separator + "testutils-", null), });
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, TestUtils.createRandomBlobKey("testutils-", null),
+            TestUtils.createRandomBlobKey("testutils-", null),
+            TestUtils.createRandomBlobKey("ab123s" + File.separator + "testutils-", null));
+      TestUtils.createBlobsInContainer(CONTAINER_NAME, TestUtils.createRandomBlobKey("testutils-", null),
+            TestUtils.createRandomBlobKey("testutils-", null),
+            TestUtils.createRandomBlobKey("asda123s" + File.separator + "testutils-", null),
+            TestUtils.createRandomBlobKey("123-_3s" + File.separator + "testutils-", null));
 
       // delete first container
       blobStore.deleteContainer(CONTAINER_NAME);

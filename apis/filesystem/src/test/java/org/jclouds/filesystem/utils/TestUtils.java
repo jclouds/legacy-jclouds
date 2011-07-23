@@ -76,7 +76,7 @@ public class TestUtils {
      * @return a Set with all blobs created
      * @throws IOException
      */
-    public static Set<String> createBlobsInContainer(String containerName, String[] blobNames) throws IOException {
+   public static Set<String> createBlobsInContainer(String containerName, String... blobNames) throws IOException {
         Set<String> blobNamesCreatedInContainer = new HashSet<String>();
         for (String blobName : blobNames) {
             createBlobAsFile(containerName, blobName, getImageForBlobPayload());

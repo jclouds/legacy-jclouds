@@ -24,13 +24,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.io.FileUtils;
@@ -47,8 +47,8 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Throwables;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 /**
  * 
@@ -57,8 +57,6 @@ import com.google.inject.name.Named;
 public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy {
 
    private static final String BACK_SLASH = "\\";
-   /** The buffer size used to copy an InputStream to an OutputStream */
-   private static final int COPY_BUFFER_SIZE = 1024;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -126,9 +124,8 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
          File containerFile = openFolder(container);
          File[] children = containerFile.listFiles();
          if (null != children) {
-            for (File child : children) {
+            for (File child : children)
                FileUtils.forceDelete(child);
-            }
          }
       } catch (IOException e) {
          logger.error(e, "An error occurred while clearing container %s", container);
@@ -201,41 +198,26 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
    public void writePayloadOnFile(String container, String blobKey, Payload payload) throws IOException {
       filesystemContainerNameValidator.validate(container);
       filesystemBlobKeyValidator.validate(blobKey);
-      File outputFile = null;
-      OutputStream output = null;
-      InputStream input = null;
+      File outputFile = getFileForBlobKey(container, blobKey);
+      if (payload.getRawContent().equals(outputFile)){
+         // we shouldn't re-copy the same contents
+         return;
+      }
+      FileOutputStream output = null;
       try {
-         outputFile = getFileForBlobKey(container, blobKey);
-         File parentDirectory = outputFile.getParentFile();
-         if (!parentDirectory.exists()) {
-            if (!parentDirectory.mkdirs()) {
-               throw new IOException("An error occurred creating directory [" + parentDirectory.getName() + "].");
-            }
-         }
-         output = new FileOutputStream(outputFile);
-         input = payload.getInput();
-         copy(input, output);
-
+         Files.createParentDirs(outputFile);
+         if (payload.getRawContent() instanceof File)
+            Files.copy(File.class.cast(payload.getRawContent()), outputFile);
+         else
+            payload.writeTo(new FileOutputStream(outputFile));
       } catch (IOException ex) {
          if (outputFile != null) {
             outputFile.delete();
          }
          throw ex;
       } finally {
-         if (input != null) {
-            try {
-               input.close();
-            } catch (IOException ex) {
-               // Does nothing
-            }
-         }
-         if (output != null) {
-            try {
-               output.close();
-            } catch (IOException ex) {
-               // Does nothing
-            }
-         }
+         Closeables.closeQuietly(output);
+         payload.release();
       }
    }
 
@@ -492,33 +474,6 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       File directoryToCreate = new File(directoryFullName);
       boolean result = directoryToCreate.mkdirs();
       return result;
-   }
-
-   /**
-    * Copy from an InputStream to an OutputStream.
-    * 
-    * @param input
-    *           The InputStream
-    * @param output
-    *           The OutputStream
-    * @return the number of bytes copied
-    * @throws IOException
-    *            if an error occurs
-    */
-   private long copy(InputStream input, OutputStream output) throws IOException {
-      byte[] buffer = new byte[COPY_BUFFER_SIZE];
-      long count = 0;
-      while (true) {
-         int read = input.read(buffer);
-         if (read < 0) {
-            break;
-         }
-         count += read;
-
-         output.write(buffer, 0, read);
-      }
-      output.flush();
-      return count;
    }
 
 }

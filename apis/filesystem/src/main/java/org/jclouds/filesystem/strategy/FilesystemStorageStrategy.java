@@ -152,7 +152,7 @@ public interface FilesystemStorageStrategy {
      * @param container
      * @param key
      */
-    void removeBlob(final String container, final String key);
+    void removeBlob(String container, String key);
 
     /**
      * Write a {@link Blob} {@link Payload} into a file
