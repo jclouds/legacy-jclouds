@@ -169,7 +169,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
                         VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                         VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
                         VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())));
-                  assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, null),
+                  assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, net.getName()),
                         connection.getNetwork(net.getHref()));
                } finally {
                   newContext.close();
