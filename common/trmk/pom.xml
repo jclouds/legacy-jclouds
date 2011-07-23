@@ -37,11 +37,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>vcloudexpress</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.common</groupId>
             <artifactId>vcloud-common</artifactId>
             <version>${project.version}</version>
@@ -63,13 +58,6 @@
         <dependency>
             <groupId>org.jclouds.common</groupId>
             <artifactId>vcloud-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>vcloudexpress</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -102,7 +90,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.vcloud.terremark.*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.vcloud.terremark.*;version="${project.version}",org.jclouds.vcloud.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>
