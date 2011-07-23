@@ -52,7 +52,7 @@ import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToTasksListEndpoint;
-import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
@@ -141,9 +141,9 @@ public interface CommonVCloudAsyncClient {
    @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+            @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
+            @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String networkName);
 
    /**
     * @see CommonVCloudClient#getNetwork
