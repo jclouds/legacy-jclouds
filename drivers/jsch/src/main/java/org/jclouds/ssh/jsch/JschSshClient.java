@@ -417,7 +417,7 @@ public class JschSshClient implements SshClient {
          executor = acquire(execConnection(command));
          try {
             String outputString = Strings2.toStringAndClose(executor.getInputStream());
-            String errorString = executor.getErrStream().toString();
+            String errorString = Strings2.toStringAndClose(executor.getErrStream());
             int errorStatus = executor.getExitStatus();
             int i = 0;
             String message = String.format("bad status -1 %s", toString());
