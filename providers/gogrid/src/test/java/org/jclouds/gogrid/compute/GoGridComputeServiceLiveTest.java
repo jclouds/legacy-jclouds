@@ -19,6 +19,8 @@
 package org.jclouds.gogrid.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
@@ -37,4 +39,8 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return new JschSshClientModule();
    }
 
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not completely predictable based on node metadata
+      assert execResponse.getOutput().trim().startsWith(node1.getName());
+   }
 }

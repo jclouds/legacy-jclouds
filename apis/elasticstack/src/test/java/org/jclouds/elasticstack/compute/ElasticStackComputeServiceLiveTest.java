@@ -44,9 +44,7 @@ public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTe
    }
 
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
-      assert execResponse.getOutput().trim().equals("ubuntu");// hostname is not
-                                                              // predicatble
-                                                              // based on node
-                                                              // metadata
+      // hostname is not predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("ubuntu");
    }
 }
