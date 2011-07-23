@@ -185,8 +185,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      // wait a maximum of 30 seconds for port 8080 to open.
-      long maxWait = TimeUnit.SECONDS.toMillis(30);
+      // wait a maximum of 60 seconds for port 8080 to open.
+      long maxWait = TimeUnit.SECONDS.toMillis(60);
       long interval = 50;
       // get more precise than default socket tester
       preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
@@ -560,7 +560,7 @@ public abstract class BaseComputeServiceLiveTest {
       stats.backgroundProcessSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
-      assert preciseSocketTester.apply(socket) : node;
+      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket, node);
       stats.socketOpenMilliseconds = currentTimeMillis() - startSeconds;
 
       exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
