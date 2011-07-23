@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -31,45 +29,28 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VDC;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameVDCNameResourceEntityNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap;
-   private final ReferenceType defaultOrg;
-   private final ReferenceType defaultVDC;
-
+public class OrgNameVDCNameResourceEntityNameToEndpoint extends OrgNameVDCNameResourceNameToEndpoint {
    @Inject
    public OrgNameVDCNameResourceEntityNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap, @Org ReferenceType defaultOrg,
-         @VDC ReferenceType defaultVDC) {
-      this.orgVDCMap = orgVDCMap;
-      this.defaultOrg = defaultOrg;
-      this.defaultVDC = defaultVDC;
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
+         @Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
+      super(orgVDCMap, defaultOrg, defaultVDC);
    }
 
-   @SuppressWarnings("unchecked")
-   public URI apply(Object from) {
-      Iterable<Object> orgVDC = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgVDC, 0);
-      Object vDC = Iterables.get(orgVDC, 1);
-      Object entityName = Iterables.get(orgVDC, 2);
-      if (org == null)
-         org = defaultOrg.getName();
-      if (vDC == null)
-         vDC = defaultVDC.getName();
-      try {
-         Map<String, ? extends org.jclouds.vcloud.domain.VDC> vDCs = checkNotNull(orgVDCMap.get().get(org));
-         return vDCs.get(vDC).getResourceEntities().get(entityName).getHref();
-      } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + vDC + "/" + entityName + " not found in " + orgVDCMap.get());
-      }
+   protected URI getEndpointOfResourceInVDC(Object org, Object vDC, Object resource,
+         org.jclouds.vcloud.domain.VDC vDCObject) {
+      ReferenceType resourceEntity = vDCObject.getResourceEntities().get(resource);
+      if (resourceEntity == null)
+         throw new NoSuchElementException("entity " + resource + " in vdc " + vDC + ", org " + org + " not found in "
+               + vDCObject.getResourceEntities().keySet());
+      return resourceEntity.getHref();
    }
 
 }
