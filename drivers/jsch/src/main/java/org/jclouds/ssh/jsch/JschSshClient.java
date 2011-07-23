@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.getCausalChain;
-import static com.google.common.base.Throwables.getRootCause;
 import static com.google.common.collect.Iterables.any;
 
 import java.io.IOException;
@@ -53,7 +52,6 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 import com.jcraft.jsch.ChannelExec;
@@ -244,7 +242,7 @@ public class JschSshClient implements SshClient {
 
    public void throwChannelNotOpenExceptionOrPropagate(String channel, JSchException e) throws JSchException {
       if (e.getMessage().indexOf("channel is not opened") != -1)
-         throw new ChannelNotOpenException(String.format("(%s) channel %s is not open", toString() , channel), e);
+         throw new ChannelNotOpenException(String.format("(%s) channel %s is not open", toString(), channel), e);
    }
 
    class GetConnection implements Connection<Payload> {
@@ -296,8 +294,9 @@ public class JschSshClient implements SshClient {
       @Override
       public Void create() throws Exception {
          sftp = acquire(sftpConnection);
+         InputStream is = checkNotNull(contents.getInput(), "inputstream for path %s", path);
          try {
-            sftp.put(checkNotNull(contents.getInput(), "inputstream for path %s", path), path);
+            sftp.put(is, path);
          } finally {
             Closeables.closeQuietly(contents);
             clear();
@@ -318,18 +317,27 @@ public class JschSshClient implements SshClient {
 
    @VisibleForTesting
    boolean shouldRetry(Exception from) {
-      final String rootMessage = getRootCause(from).getMessage();
-      if (rootMessage == null)
-         return false;
       return any(getCausalChain(from), retryPredicate)
-            || Iterables.any(Splitter.on(",").split(retryableMessages), new Predicate<String>() {
+            || any(Splitter.on(",").split(retryableMessages), causalChainHasMessageContaining(from));
+   }
+
+   @VisibleForTesting
+   Predicate<String> causalChainHasMessageContaining(final Exception from) {
+      return new Predicate<String>() {
+
+         @Override
+         public boolean apply(final String input) {
+            return any(getCausalChain(from), new Predicate<Throwable>() {
 
                @Override
-               public boolean apply(String input) {
-                  return rootMessage.indexOf(input) != -1;
+               public boolean apply(Throwable arg0) {
+                  return arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1;
                }
 
             });
+         }
+
+      };
    }
 
    private void backoffForAttempt(int retryAttempt, String message) {

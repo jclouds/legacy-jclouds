@@ -32,7 +32,9 @@ import org.testng.annotations.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 
 /**
  * 
@@ -64,6 +66,8 @@ public class JschSshClientTest {
 
       assert ssh.shouldRetry(new JSchException("io error", new IOException("socket closed")));
       assert ssh.shouldRetry(new JSchException("connect error", new ConnectException("problem")));
+      assert ssh.shouldRetry(new IOException("channel %s is not open", new NullPointerException()));
+      assert ssh.shouldRetry(new IOException("channel %s is not open", new NullPointerException(null)));
 
    }
 
@@ -71,5 +75,21 @@ public class JschSshClientTest {
       assert ssh.shouldRetry(new JSchException("Session.connect: java.io.IOException: End of IO Stream Read"));
       assert ssh.shouldRetry(new JSchException("Session.connect: invalid data"));
       assert ssh.shouldRetry(new JSchException("Session.connect: java.net.SocketException: Connection reset"));
+   }
+
+   public void testDoNotRetryOnGeneralSftpError() {
+      // http://sourceforge.net/mailarchive/forum.php?thread_name=CAARMrHVhASeku48xoAgWEb-nEpUuYkMA03PoA5TvvFdk%3DjGKMA%40mail.gmail.com&forum_name=jsch-users
+      assert !ssh.shouldRetry(new SftpException(ChannelSftp.SSH_FX_FAILURE, new NullPointerException().toString()));
+   }
+   
+   public void testCausalChainHasMessageContaining() {
+      assert ssh.causalChainHasMessageContaining(
+            new JSchException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(
+            " End of IO Stream Read");
+      assert ssh.causalChainHasMessageContaining(new JSchException("Session.connect: invalid data")).apply(
+            " invalid data");
+      assert ssh.causalChainHasMessageContaining(
+            new JSchException("Session.connect: java.net.SocketException: Connection reset")).apply("java.net.Socket");
+      assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
 }
