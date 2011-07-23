@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Vdc href="https://vcloud.safesecureweb.com/api/v0.8/vdc/188849"
+    name="vDC Name" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/vdc.xsd"
+    xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Link rel="add"
+        href="https://vcloud.safesecureweb.com/api/v0.8/vdc/188849/vApps"
+        type="application/vnd.vmware.vcloud.vApp+xml" />
+    <Link rel="add"
+        href="https://vcloud.safesecureweb.com/api/v0.8/vdc/188849/vAppTemplates"
+        type="application/vnd.vmware.vcloud.catalogItem+xml" />
+    <Link rel="add"
+        href="https://vcloud.safesecureweb.com/api/v0.8/vdc/188849/media"
+        type="application/vnd.vmware.vcloud.media+xml" />
+    <Description>vDC Name</Description>
+    <StorageCapacity>
+        <Units>bytes * 10^9</Units>
+        <Allocated>0</Allocated>
+        <Used>40960</Used>
+    </StorageCapacity>
+    <ComputeCapacity>
+        <Cpu>
+            <Units>hz * 10^6</Units>
+            <Allocated>0</Allocated>
+            <Used>2400</Used>
+        </Cpu>
+        <Memory>
+            <Units>bytes * 10^9</Units>
+            <Allocated>0</Allocated>
+            <Used>2</Used>
+        </Memory>
+        <InstantiatedVmsQuota>
+            <Limit>0</Limit>
+            <Used>2</Used>
+        </InstantiatedVmsQuota>
+        <DeployedVmsQuota>
+            <Limit>0</Limit>
+            <Used>2</Used>
+        </DeployedVmsQuota>
+    </ComputeCapacity>
+    <ResourceEntities>
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/1"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Plesk (Linux) 64-bit Template" />
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows 2008 Datacenter 64 Bit Template" />
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Cent OS 64 Bit Template" />
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/4"
+            type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="cPanel (Linux) 64 Bit Template" />
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1"
+            type="application/vnd.vmware.vcloud.vApp+xml" name="188849-1" />
+        <ResourceEntity
+            href="https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-2"
+            type="application/vnd.vmware.vcloud.vApp+xml" name="188849-2" />
+    </ResourceEntities>
+</Vdc>

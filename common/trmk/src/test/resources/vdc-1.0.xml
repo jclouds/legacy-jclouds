@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Vdc xmlns="http://www.vmware.com/vcloud/v1" status="1" name="Jclouds-Commit-compG1xstorA01" type="application/vnd.vmware.vcloud.vdc+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://
+vcenterprise.bluelock.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml" href="https://vcenterprise.bluelock.com/api/v1.0/org/9566014"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/uploadVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.media+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/media"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/instantiateVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneVAppParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/cloneVApp"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/cloneVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneMediaParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/cloneMedia"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.captureVAppParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/captureVApp"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.composeVAppParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/composeVApp"/>
+    <Link rel="move" type="application/vnd.vmware.vcloud.moveMediaParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/moveMedia"/>
+    <Link rel="move" type="application/vnd.vmware.vcloud.moveVAppParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/moveVApp"/>
+    <Link rel="move" type="application/vnd.vmware.vcloud.moveVAppTemplateParams+xml" href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439/action/moveVAppTemplate"/>
+    <AllocationModel>AllocationPool</AllocationModel>
+    <StorageCapacity>
+        <Units>MB</Units>
+        <Allocated>1024000</Allocated>
+        <Limit>1024000</Limit>
+        <Used>0</Used>
+        <Overhead>0</Overhead>
+    </StorageCapacity>
+    <ComputeCapacity>
+        <Cpu>
+            <Units>MHz</Units>
+            <Allocated>20000</Allocated>
+            <Limit>20000</Limit>
+            <Used>0</Used>
+            <Overhead>0</Overhead>
+        </Cpu>
+        <Memory>
+            <Units>MB</Units>
+            <Allocated>30720</Allocated>
+            <Limit>30720</Limit>
+            <Used>0</Used>
+            <Overhead>0</Overhead>
+        </Memory>
+    </ComputeCapacity>
+    <ResourceEntities/>
+    <AvailableNetworks>
+        <Network type="application/vnd.vmware.vcloud.network+xml" name="isolation01" href="https://vcenterprise.bluelock.com/api/v1.0/network/990419644"/>
+        <Network type="application/vnd.vmware.vcloud.network+xml" name="internet01" href="https://vcenterprise.bluelock.com/api/v1.0/network/758634723"/>
+    </AvailableNetworks>
+    <NicQuota>0</NicQuota>
+    <NetworkQuota>100</NetworkQuota>
+    <VmQuota>50</VmQuota>
+    <IsEnabled>true</IsEnabled>
+</Vdc>

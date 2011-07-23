@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CatalogItem
+ href="https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"
+ name="Windows 2008 Datacenter 64 Bit"
+ xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 catalogItem.xsd"
+ xmlns="http://www.vmware.com/vcloud/v0.8"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Description>Windows 2008 Datacenter 64 Bit</Description>
+  <Entity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2"
+        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+        name="Windows 2008 Datacenter 64 Bit" />
+  <Property key="Foo">Bar</Property>
+  <Property key="Hello">World</Property>
+</CatalogItem>

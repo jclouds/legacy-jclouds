@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task href="https://vcloud.safesecureweb.com/api/v0.8/task/97806" xmlns="http://www.vmware.com/vcloud/v0.8"
+    xmlns:common="http://www.vmware.com/vcloud/common"
+    xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/task
+        https://vcloud.safesecureweb.com/ns/vcloud/task-1.0.xsd
+        http://www.vmware.com/vcloud/common
+        https://vcloud.safesecureweb.com/ns/vcloud/common-1.0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        status="success" startTime="2010-01-14T20:04:51Z" endTime="2010-01-14T20:05:02Z" expiryTime="2010-01-15T20:05:02Z">
+
+    <Owner href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96" type="application/vnd.vmware.vcloud.vApp+xml" name="188849-96" />
+</Task>

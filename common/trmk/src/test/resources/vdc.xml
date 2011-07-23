@@ -1,0 +1,36 @@
+<Vdc href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32" type="application/vnd.vmware.vcloud.vdc+xml" name="Miami Environment 1" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Miami Environment 1"/>
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps" type="application/xml" name="Public IPs"/>
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/internetServices" type="application/xml" name="Internet Services"/>
+  <Description/>
+  <StorageCapacity>
+    <Units>bytes * 10^9</Units>
+    <Allocated>100</Allocated>
+    <Used>8</Used>
+  </StorageCapacity>
+  <ComputeCapacity>
+    <Cpu>
+      <Units>hz * 10^6</Units>
+      <Allocated>5000</Allocated>
+    </Cpu>
+    <Memory>
+      <Units>bytes * 2^20</Units>
+      <Allocated>10240</Allocated>
+    </Memory>
+    <InstantiatedVmsQuota>
+      <Limit>-1</Limit>
+      <Used>-1</Used>
+    </InstantiatedVmsQuota>
+    <DeployedVmsQuota>
+      <Limit>-1</Limit>
+      <Used>-1</Used>
+    </DeployedVmsQuota>
+  </ComputeCapacity>
+  <ResourceEntities>
+    <ResourceEntity href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15124" type="application/vnd.vmware.vcloud.vApp+xml" name="adriantest"/>
+    <ResourceEntity href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15120" type="application/vnd.vmware.vcloud.vApp+xml" name="centos-53"/>
+  </ResourceEntities>
+  <AvailableNetworks>
+    <Network href="https://services.vcloudexpress.terremark.com/api/v0.8/network/1708" type="application/vnd.vmware.vcloud.network+xml" name="10.114.34.128/26"/>
+  </AvailableNetworks>
+</Vdc>

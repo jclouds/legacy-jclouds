@@ -1,0 +1,12 @@
+<Org href="https://vcloud.safesecureweb.com/api/v0.8/org/188849"
+    name="Customer 188849" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/organization.xsd"
+    xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Link rel="down" href="https://vcloud.safesecureweb.com/api/v0.8/catalog/1"
+        type="application/vnd.vmware.vcloud.catalog+xml" name="HMS Shared Catalog" />
+    <Link rel="down"
+        href="https://vcloud.safesecureweb.com/api/v0.8/vdc/188849"
+        type="application/vnd.vmware.vcloud.vdc+xml" name="188849 Virtual DataCenter" />
+    <Link rel="down"
+        href="https://vcloud.safesecureweb.com/api/v0.8/tasksList/188849"
+        type="application/vnd.vmware.vcloud.tasksList+xml" name="188849 Task List" />
+</Org>
