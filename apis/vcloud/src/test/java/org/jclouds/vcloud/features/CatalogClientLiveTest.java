@@ -21,10 +21,10 @@ package org.jclouds.vcloud.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.vcloud.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

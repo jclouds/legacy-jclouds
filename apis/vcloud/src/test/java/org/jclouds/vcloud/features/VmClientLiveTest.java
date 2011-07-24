@@ -29,7 +29,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.vcloud.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -38,6 +37,7 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;

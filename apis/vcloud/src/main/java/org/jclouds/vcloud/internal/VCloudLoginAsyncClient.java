@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud;
+package org.jclouds.vcloud.internal;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -25,6 +25,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 

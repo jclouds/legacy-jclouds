@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.features;
 
-import org.jclouds.vcloud.BaseVCloudClientLiveTest;
+import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

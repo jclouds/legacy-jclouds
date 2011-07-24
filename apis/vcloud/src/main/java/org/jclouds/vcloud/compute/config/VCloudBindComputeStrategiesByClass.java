@@ -18,22 +18,31 @@
  */
 package org.jclouds.vcloud.compute.config;
 
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.vcloud.compute.strategy.InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudLifeCycleStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 /**
  * @author Adrian Cole
  */
-public class VCloudBindComputeStrategiesByClass extends CommonVCloudBindComputeStrategiesByClass {
+public class VCloudBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
+
+   @Override
+   protected Class<? extends CreateNodesInGroupThenAddToSet> defineRunNodesAndAddToSetStrategy() {
+      return CreateNodesWithGroupEncodedIntoNameThenAddToSet.class;
+   }
+
    @Override
    protected Class<? extends CreateNodeWithGroupEncodedIntoName> defineAddNodeWithTagStrategy() {
       return InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn.class;

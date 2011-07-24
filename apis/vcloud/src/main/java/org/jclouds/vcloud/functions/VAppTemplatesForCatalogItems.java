@@ -36,7 +36,6 @@ import org.jclouds.concurrent.ExceptionParsingListenableFuture;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -54,7 +53,7 @@ public class VAppTemplatesForCatalogItems implements
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final CommonVCloudAsyncClient aclient;
+   private final VCloudAsyncClient aclient;
    private final ExecutorService executor;
    private final ReturnNullOnAuthorizationException returnNullOnAuthorizationException;
 
@@ -70,7 +69,7 @@ public class VAppTemplatesForCatalogItems implements
    }
 
    @Inject
-   VAppTemplatesForCatalogItems(CommonVCloudAsyncClient aclient,
+   VAppTemplatesForCatalogItems(VCloudAsyncClient aclient,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             ReturnNullOnAuthorizationException returnNullOnAuthorizationException) {
       this.aclient = aclient;

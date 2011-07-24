@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.CommonVCloudAsyncClient;
+import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -42,11 +42,11 @@ import com.google.common.base.Function;
 public class OrgsForNames implements Function<Iterable<String>, Iterable<? extends Org>> {
    @Resource
    public Logger logger = Logger.NULL;
-   private final CommonVCloudAsyncClient aclient;
+   private final VCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   OrgsForNames(CommonVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForNames(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

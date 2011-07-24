@@ -42,7 +42,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
-import org.jclouds.vcloud.compute.config.CommonVCloudComputeServiceContextModule;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
@@ -105,7 +105,7 @@ public class VAppToNodeMetadataTest {
          @Singleton
          @Provides
          protected Map<Status, NodeState> provideVAppStatusToNodeState() {
-            return CommonVCloudComputeServiceContextModule.VAPPSTATUS_TO_NODESTATE;
+            return VCloudComputeServiceContextModule.VAPPSTATUS_TO_NODESTATE;
          }
 
       });

@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud;
+package org.jclouds.vcloud.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,6 +35,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.VCloudClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;

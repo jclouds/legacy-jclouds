@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -40,20 +40,20 @@ import com.google.inject.Inject;
 @Singleton
 public class TaskSuccess implements Predicate<URI> {
 
-   private final CommonVCloudClient client;
+   private final VCloudClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(CommonVCloudClient client) {
+   public TaskSuccess(VCloudClient client) {
       this.client = client;
    }
 
    public boolean apply(URI taskId) {
       logger.trace("looking for status on task %s", taskId);
 
-      Task task = client.getTask(taskId);
+      Task task = client.getTaskClient().getTask(taskId);
       // perhaps task isn't available, yet
       if (task == null)
          return false;
