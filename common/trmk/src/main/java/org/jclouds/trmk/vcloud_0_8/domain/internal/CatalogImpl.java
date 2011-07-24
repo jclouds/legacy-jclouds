@@ -22,17 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.Task;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Locations of resources in vCloud
@@ -47,24 +42,16 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
    private final String name;
    private final String type;
    private final URI href;
-   private final ReferenceType org;
    @Nullable
    private final String description;
-   private final List<Task> tasks = Lists.newArrayList();
-   private final boolean published;
-   private final boolean readOnly;
 
-   public CatalogImpl(String name, String type, URI href, ReferenceType org, @Nullable String description,
-            Map<String, ReferenceType> contents, Iterable<Task> tasks, boolean published, boolean readOnly) {
+   public CatalogImpl(String name, String type, URI href, @Nullable String description,
+         Map<String, ReferenceType> contents) {
       this.name = checkNotNull(name, "name");
       this.type = checkNotNull(type, "type");
-      this.org = org;// TODO: once <1.0 is killed check not null
       this.description = description;
       this.href = checkNotNull(href, "href");
       putAll(checkNotNull(contents, "contents"));
-      Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
-      this.published = published;
-      this.readOnly = readOnly;
    }
 
    /**
@@ -86,14 +73,6 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
    /**
     * {@inheritDoc}
     */
-   @Override
-   public ReferenceType getOrg() {
-      return org;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public String getDescription() {
       return description;
    }
@@ -106,30 +85,6 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
       return type;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public List<Task> getTasks() {
-      return tasks;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isPublished() {
-      return published;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isReadOnly() {
-      return readOnly;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -137,8 +92,6 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((href == null) ? 0 : href.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((org == null) ? 0 : org.hashCode());
-      result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
    }
@@ -166,16 +119,6 @@ public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
-         return false;
-      if (org == null) {
-         if (other.org != null)
-            return false;
-      } else if (!org.equals(other.org))
-         return false;
-      if (tasks == null) {
-         if (other.tasks != null)
-            return false;
-      } else if (!tasks.equals(other.tasks))
          return false;
       if (type == null) {
          if (other.type != null)

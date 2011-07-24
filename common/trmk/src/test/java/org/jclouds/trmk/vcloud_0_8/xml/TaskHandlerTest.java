@@ -25,14 +25,13 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.TaskStatus;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudError.MinorCode;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ErrorImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.TaskImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.TaskHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -62,7 +61,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
       Task expects = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"), null,
             TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"),
             dateService.iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new ReferenceTypeImpl("Server1",
-                  VCloudMediaType.VAPP_XML,
+                  TerremarkVCloudMediaType.VAPP_XML,
                   URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null
 
       );
@@ -89,7 +88,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
       Task expects = new TaskImpl(URI.create("http://10.150.4.49/api/v0.8/task/23"), null, TaskStatus.ERROR,
             dateService.iso8601SecondsDateParse("2009-12-07T19:05:02Z"),
             dateService.iso8601SecondsDateParse("2009-12-10T14:40:32Z"), null, new ReferenceTypeImpl("testapp1",
-                  VCloudMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")), new ErrorImpl(
+                  TerremarkVCloudMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")), new ErrorImpl(
                   "Error processing job", 500, MinorCode.UNRECOGNIZED,
                   " Error in runDailySummaries date used:2009-12-09 19:40:30.577326+00:00", null));
       assertEquals(result, expects);

@@ -25,13 +25,12 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.TaskStatus;
 import org.jclouds.trmk.vcloud_0_8.domain.TasksList;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.TaskImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.TasksListHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -64,12 +63,12 @@ public class TasksListHandlerTest extends BaseHandlerTest {
       Task task1 = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3300"),
                null, TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:30:19.587Z"), dateService
                         .iso8601DateParse("2009-08-24T21:30:32.63Z"), null, new ReferenceTypeImpl("Server1",
-                        VCloudMediaType.VAPP_XML, URI
+                              TerremarkVCloudMediaType.VAPP_XML, URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       Task task2 = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
                null, TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"), dateService
                         .iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new ReferenceTypeImpl("Server1",
-                        VCloudMediaType.VAPP_XML, URI
+                              TerremarkVCloudMediaType.VAPP_XML, URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       assertEquals(result.getTasks(), ImmutableSortedSet.of(task1, task2));
    }

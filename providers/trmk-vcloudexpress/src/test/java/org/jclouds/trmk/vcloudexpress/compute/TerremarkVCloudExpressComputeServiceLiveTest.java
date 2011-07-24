@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.testng.annotations.Test;
 
 /**
@@ -50,7 +50,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
    public void setServiceDefaults() {
       group = "vcx";
    }
-   
+
    @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
@@ -81,8 +81,8 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-                  .createContext(provider, identity, credential).getProviderSpecificContext();
-         VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+               .createContext(provider, identity, credential).getProviderSpecificContext();
+         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

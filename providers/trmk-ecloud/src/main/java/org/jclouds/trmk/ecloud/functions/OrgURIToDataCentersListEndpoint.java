@@ -24,10 +24,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.trmk.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.trmk.ecloud.domain.ECloudOrg;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgURIToEndpoint;
 
 import com.google.common.base.Function;
@@ -45,8 +44,8 @@ public class OrgURIToDataCentersListEndpoint extends OrgURIToEndpoint implements
       super(orgMap, defaultUri);
    }
 
-   public URI getUriFromOrg(TerremarkOrg org) {
-      return TerremarkECloudOrg.class.cast(org).getDataCenters().getHref();
+   public URI getUriFromOrg(Org org) {
+      return ECloudOrg.class.cast(org).getDataCenters().getHref();
    }
 
 }

@@ -35,11 +35,11 @@ import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.VCloudExpressVAppHandler;
+import org.jclouds.trmk.vcloud_0_8.xml.VAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -79,8 +79,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/launched_vapp.xml");
 
-      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(
-               injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
+      VApp result = (VApp) factory.create(
+               injector.getInstance(VAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), Status.UNRESOLVED);
@@ -96,8 +96,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/get_vapp.xml");
 
-      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(
-               injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
+      VApp result = (VApp) factory.create(
+               injector.getInstance(VAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "centos-53");
       assertEquals(result.getStatus(), Status.OFF);
@@ -106,7 +106,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getOperatingSystemDescription(), "Red Hat Enterprise Linux 5 (64-bit)");
 
       assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"));
-      assertEquals(result.getVDC(), new ReferenceTypeImpl(null, VCloudExpressMediaType.VDC_XML, URI
+      assertEquals(result.getVDC(), new ReferenceTypeImpl(null, TerremarkVCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
       VirtualSystemSettingData system = VirtualSystemSettingData.builder().instanceID("0").elementName(
@@ -143,7 +143,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp2disks() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/get_vapp2disks.xml");
 
-      VCloudExpressVApp vApp = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
+      VApp vApp = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       assertEquals(vApp.getName(), "eduardo");
       assertEquals(vApp.getStatus(), Status.OFF);
@@ -152,7 +152,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(vApp.getOperatingSystemDescription(), "Ubuntu Linux (32-bit)");
 
       assertEquals(vApp.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639"));
-      assertEquals(vApp.getVDC(), new ReferenceTypeImpl(null, VCloudExpressMediaType.VDC_XML, URI
+      assertEquals(vApp.getVDC(), new ReferenceTypeImpl(null, TerremarkVCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
       VirtualSystemSettingData system = VirtualSystemSettingData.builder().instanceID("0").elementName(
                "Virtual Hardware Family").virtualSystemIdentifier("eduardo").virtualSystemType("vmx-07").build();

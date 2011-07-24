@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressContextBuilder;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudContextBuilder;
 import org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceContextModule;
 import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressRestClientModule;
 
@@ -31,22 +31,26 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link TerremarkVCloudComputeServiceContext} or {@link Injector} instances based on the
- * most commonly requested arguments.
+ * Creates {@link TerremarkVCloudComputeServiceContext} or {@link Injector}
+ * instances based on the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole
  * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkVCloudExpressContextBuilder extends VCloudExpressContextBuilder {
+public class TerremarkVCloudExpressContextBuilder extends
+      TerremarkVCloudContextBuilder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
 
    public TerremarkVCloudExpressContextBuilder(Properties props) {
-      super(props);
+      super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class, props);
    }
 
    @Override

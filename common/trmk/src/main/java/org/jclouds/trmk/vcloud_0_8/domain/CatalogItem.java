@@ -36,4 +36,7 @@ public interface CatalogItem extends ReferenceType {
 
    Map<String, String> getProperties();
 
+   ReferenceType getComputeOptions();
+
+   ReferenceType getCustomizationOptions();
 }

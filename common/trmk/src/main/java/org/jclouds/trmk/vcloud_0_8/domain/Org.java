@@ -18,21 +18,23 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.trmk.vcloud_0_8.domain.internal.OrgImpl;
+import org.jclouds.trmk.vcloud_0_8.endpoints.Keys;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * A vCloud organization is a high-level abstraction that provides a unit of administration for
- * objects and resources. As viewed by a user, an organization (represented by an Org element) can
- * contain Catalog, Network, and vDC elements. If there are any queued, running, or recently
- * completed tasks owned by a member of the organization, it also contains a TasksList element. As
- * viewed by an administrator, an organization also contains users, groups, and other information
+ * A vCloud organization is a high-level abstraction that provides a unit of
+ * administration for objects and resources. As viewed by a user, an
+ * organization (represented by an Org element) can contain Catalog, Network,
+ * and vDC elements. If there are any queued, running, or recently completed
+ * tasks owned by a member of the organization, it also contains a TasksList
+ * element. As viewed by an administrator, an organization also contains users,
+ * groups, and other information
  * 
  * @author Adrian Cole
  */
@@ -47,14 +49,6 @@ public interface Org extends ReferenceType {
    String getDescription();
 
    /**
-    * full name of the organization
-    * 
-    * @since vcloud api 1.0
-    */
-   @Nullable
-   String getFullName();
-
-   /**
     * @since vcloud api 0.8
     */
    Map<String, ReferenceType> getCatalogs();
@@ -65,25 +59,15 @@ public interface Org extends ReferenceType {
    Map<String, ReferenceType> getVDCs();
 
    /**
-    * If there are any queued, running, or recently completed tasks owned by a member of the
-    * organization, it also contains a TasksList.
+    * If there are any queued, running, or recently completed tasks owned by a
+    * member of the organization, it also contains a TasksList.
     * 
-    * @since vcloud api 0.8
-    */
-   @Nullable
-   ReferenceType getTasksList();
-
-   /**
-    * @since vcloud api 1.0
-    */
-   Map<String, ReferenceType> getNetworks();
-
-   /**
-    * read‐only container for Task elements. Each element in the container represents a queued,
-    * running, or failed task owned by this object.
+    * there are multiple tasks lists in a terremark org
     * 
-    * @since vcloud api 1.0
     */
-   List<Task> getTasks();
+   Map<String, ReferenceType> getTasksLists();
+
+   @Keys
+   ReferenceType getKeys();
 
 }

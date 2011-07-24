@@ -23,12 +23,12 @@ import java.util.Map.Entry;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 
 /**
  * @author Adrian Cole
  */
 public interface InternetServiceAndPublicIpAddressSupplier {
-   Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VCloudExpressVApp vApp, int port,
+   Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port,
             Protocol protocol);
 }

@@ -23,9 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
@@ -41,18 +39,22 @@ public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
    protected final String description;
    protected final ReferenceType entity;
    protected final Map<String, String> properties = Maps.newLinkedHashMap();
-
-   public CatalogItemImpl(String name, URI id, @Nullable String description, ReferenceType entity,
-         Map<String, String> properties) {
-      super(name, VCloudMediaType.CATALOGITEM_XML, id);
+   private final ReferenceType computeOptions;
+   private final ReferenceType customizationOptions;
+   
+   public CatalogItemImpl(String name, URI id, String description, ReferenceType computeOptions,
+         ReferenceType customizationOptions, ReferenceType entity, Map<String, String> properties)  {
+      super(name, TerremarkVCloudMediaType.CATALOGITEM_XML, id);
       this.description = description;
       this.entity = checkNotNull(entity, "entity");
       this.properties.putAll(checkNotNull(properties, "properties"));
+      this.computeOptions = computeOptions;
+      this.customizationOptions = customizationOptions;
    }
 
    @Override
    public String getType() {
-      return VCloudMediaType.CATALOGITEM_XML;
+      return TerremarkVCloudMediaType.CATALOGITEM_XML;
    }
 
    public ReferenceType getEntity() {
@@ -69,9 +71,20 @@ public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
    }
 
    @Override
+   public ReferenceType getComputeOptions() {
+      return computeOptions;
+   }
+
+   @Override
+   public ReferenceType getCustomizationOptions() {
+      return customizationOptions;
+   }
+
+   @Override
    public String toString() {
       return "[id=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + getDescription()
-            + ", entity=" + entity + ", properties=" + properties + "]";
+            + ", entity=" + entity + ", computeOptions=" + computeOptions + ", customizationOptions="
+            + customizationOptions + ", properties=" + properties + "]";
    }
 
    @Override
@@ -81,6 +94,8 @@ public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((entity == null) ? 0 : entity.hashCode());
       result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+      result = prime * result + ((computeOptions == null) ? 0 : computeOptions.hashCode());
+      result = prime * result + ((customizationOptions == null) ? 0 : customizationOptions.hashCode());
       return result;
    }
 
@@ -107,6 +122,16 @@ public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
          if (other.properties != null)
             return false;
       } else if (!properties.equals(other.properties))
+         return false;
+      if (computeOptions == null) {
+         if (other.computeOptions != null)
+            return false;
+      } else if (!computeOptions.equals(other.computeOptions))
+         return false;
+      if (customizationOptions == null) {
+         if (other.customizationOptions != null)
+            return false;
+      } else if (!customizationOptions.equals(other.customizationOptions))
          return false;
       return true;
    }

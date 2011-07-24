@@ -31,8 +31,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.CommonVCloudAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
@@ -48,11 +48,11 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final CommonVCloudAsyncClient aclient;
+   private final TerremarkVCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogItemsInCatalog(CommonVCloudAsyncClient aclient,
+   AllCatalogItemsInCatalog(TerremarkVCloudAsyncClient aclient,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
@@ -65,7 +65,7 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
 
          @Override
          public boolean apply(ReferenceType input) {
-            return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
+            return input.getType().equals(TerremarkVCloudMediaType.CATALOGITEM_XML);
          }
 
       }), new Function<ReferenceType, Future<CatalogItem>>() {

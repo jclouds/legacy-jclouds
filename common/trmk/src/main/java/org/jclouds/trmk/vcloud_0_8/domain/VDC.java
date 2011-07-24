@@ -18,88 +18,28 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VDCImpl;
+import org.jclouds.trmk.vcloud_0_8.endpoints.Catalog;
+import org.jclouds.trmk.vcloud_0_8.endpoints.InternetServices;
+import org.jclouds.trmk.vcloud_0_8.endpoints.PublicIPs;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * A vDC is a deployment environment for vApps. A Vdc element provides a user view of a vDC.
+ * A vDC is a deployment environment for vApps. A Vdc element provides a user
+ * view of a vDC.
  * 
  * @author Adrian Cole
  */
 @org.jclouds.trmk.vcloud_0_8.endpoints.VDC
 @ImplementedBy(VDCImpl.class)
 public interface VDC extends ReferenceType {
-   /**
-    * Reference to the org containing this vDC.
-    * 
-    * @since vcloud api 1.0
-    * @return org, or null if this is a version before 1.0 where the org isn't present
-    */
-   ReferenceType getOrg();
-
-   /**
-    * The creation status of the vDC
-    * 
-    * @since vcloud api 1.0
-    */
-   VDCStatus getStatus();
-
-   /**
-    * optional description
-    * 
-    * @since vcloud api 0.8
-    */
    @Nullable
    String getDescription();
-
-   /**
-    * read‐only container for Task elements. Each element in the container represents a queued,
-    * running, or failed task owned by this object.
-    * 
-    * @since vcloud api 1.0
-    */
-   List<Task> getTasks();
-
-   /**
-    * defines how resources are allocated by the vDC. The value of this element is set by the
-    * administrator who created the vDC. It is read‐only to users.
-    * 
-    * @since vcloud api 1.0
-    */
-   AllocationModel getAllocationModel();
-
-   /**
-    * defines the storage capacity available in the vDC
-    * 
-    * @since vcloud api 0.8
-    * @return null if the provider doesn't support storage capacity
-    */
-   @Nullable
-   Capacity getStorageCapacity();
-
-   /**
-    * reports CPU resource consumption in a vDC
-    * 
-    * @since vcloud api 0.8
-    * @return null if the provider doesn't support cpu capacity
-    */
-   @Nullable
-   Capacity getCpuCapacity();
-
-   /**
-    * reports memory resource consumption in a vDC
-    * 
-    * @since vcloud api 0.8
-    * @return null if the provider doesn't support memory capacity
-    */
-   @Nullable
-   Capacity getMemoryCapacity();
 
    /**
     * container for ResourceEntity elements
@@ -109,41 +49,20 @@ public interface VDC extends ReferenceType {
    Map<String, ReferenceType> getResourceEntities();
 
    /**
-    * container for OrgNetwork elements that represent organization networks contained by the vDC
+    * container for OrgNetwork elements that represent organization networks
+    * contained by the vDC
     * 
     * @since vcloud api 0.8
     */
    Map<String, ReferenceType> getAvailableNetworks();
 
-   /**
-    * maximum number of virtual NICs allowed in this vDC. Defaults to 0, which specifies an
-    * unlimited number.
-    * 
-    * @since vcloud api 1.0
-    */
-   int getNicQuota();
+   @Catalog
+   ReferenceType getCatalog();
 
-   /**
-    * maximum number of OrgNetwork objects that can be deployed in this vDC. Defaults to 0, which
-    * specifies an unlimited number.
-    * 
-    * @since vcloud api 1.0
-    */
-   int getNetworkQuota();
+   @PublicIPs
+   ReferenceType getPublicIps();
 
-   /**
-    * maximum number of virtual machines that can be deployed in this vDC. Defaults to 0, which
-    * specifies an unlimited number.
-    * 
-    * @since vcloud api 0.8
-    */
-   int getVmQuota();
-
-   /**
-    * true if this vDC is enabled
-    * 
-    * @since vcloud api 1.0
-    */
-   boolean isEnabled();
+   @InternetServices
+   ReferenceType getInternetServices();
 
 }

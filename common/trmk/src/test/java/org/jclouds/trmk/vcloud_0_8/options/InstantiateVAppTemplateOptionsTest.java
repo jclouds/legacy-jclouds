@@ -20,17 +20,18 @@ package org.jclouds.trmk.vcloud_0_8.options;
 
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.customizeOnInstantiate;
-import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.disk;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.inGroup;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.inRow;
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.memory;
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.withPassword;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.trmk.vcloud_0_8.domain.network.FenceMode;
-import org.jclouds.trmk.vcloud_0_8.domain.network.NetworkConfig;
-import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
+import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
+import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.NetworkConfig;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -46,37 +47,6 @@ import com.google.inject.Injector;
 public class InstantiateVAppTemplateOptionsTest {
 
    Injector injector = Guice.createInjector(new SaxParserModule());
-
-   @Test
-   public void testAddNetworkConfig() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.addNetworkConfig(new NetworkConfig("default", URI.create("http://localhost"), FenceMode.BRIDGED));
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
-   }
-
-   @Test
-   public void testAddNetworkConfigStatic() {
-      InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("default", URI
-               .create("http://localhost"), FenceMode.BRIDGED));
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
-      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
-   }
-
-   @Test
-   public void testCpuCount() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.processorCount(3);
-      assertEquals(options.getCpuCount(), "3");
-   }
-
-   @Test
-   public void testCpuCountStatic() {
-      InstantiateVAppTemplateOptions options = processorCount(3);
-      assertEquals(options.getCpuCount(), "3");
-   }
 
    @Test
    public void testCustomizeOnInstantiate() {
@@ -105,20 +75,83 @@ public class InstantiateVAppTemplateOptionsTest {
    }
 
    @Test
-   public void testDisk() {
+   public void testInGroup() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.disk(512);
-      assertEquals(options.getDiskSizeKilobytes(), "512");
+      options.inGroup("group1");
+      assertEquals(options.getProperties().get("group"), "group1");
    }
 
    @Test
-   public void testDiskStatic() {
-      InstantiateVAppTemplateOptions options = disk(512);
-      assertEquals(options.getDiskSizeKilobytes(), "512");
+   public void testInGroupStatic() {
+      InstantiateVAppTemplateOptions options = inGroup("group1");
+      assertEquals(options.getProperties().get("group"), "group1");
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testDiskStaticWrong() {
-      disk(0);
+   @Test
+   public void testInRow() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.inRow("row1");
+      assertEquals(options.getProperties().get("row"), "row1");
+   }
+
+   @Test
+   public void testInRowStatic() {
+      InstantiateVAppTemplateOptions options = inRow("row1");
+      assertEquals(options.getProperties().get("row"), "row1");
+   }
+
+   @Test
+   public void testWithPassword() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.withPassword("password1");
+      assertEquals(options.getProperties().get("password"), "password1");
+   }
+
+   @Test
+   public void testWithPasswordStatic() {
+      InstantiateVAppTemplateOptions options = withPassword("password1");
+      assertEquals(options.getProperties().get("password"), "password1");
+   }
+
+   @Test
+   public void testAddNetworkConfig() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.addNetworkConfig(new NetworkConfig("default", URI.create("http://localhost"), FenceMode.ALLOW_IN_OUT));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.ALLOW_IN_OUT);
+   }
+
+   @Test
+   public void testAddNetworkConfigStatic() {
+      InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("default",
+            URI.create("http://localhost"), FenceMode.ALLOW_IN_OUT));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.ALLOW_IN_OUT);
+   }
+
+   @Test
+   public void testCpuCount() {
+      assertEquals(processorCount(3).getCpuCount(), "3");
+   }
+
+   @Test
+   public void testCpuCountStatic() {
+      InstantiateVAppTemplateOptions options = processorCount(3);
+      assertEquals(options.getCpuCount(), "3");
+   }
+
+   @Test
+   public void testMegabytes() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
+   }
+
+   @Test
+   public void testMegabytesStatic() {
+      InstantiateVAppTemplateOptions options = memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 }

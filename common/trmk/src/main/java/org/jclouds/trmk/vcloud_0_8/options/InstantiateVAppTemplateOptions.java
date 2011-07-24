@@ -21,10 +21,16 @@ package org.jclouds.trmk.vcloud_0_8.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.trmk.vcloud_0_8.domain.network.NetworkConfig;
+import javax.annotation.Nullable;
 
+import org.jclouds.ovf.NetworkSection;
+import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
+
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -33,16 +39,166 @@ import com.google.common.collect.Sets;
  * 
  */
 public class InstantiateVAppTemplateOptions {
+   public static class NetworkConfig {
+      @Nullable
+      private final String networkName;
+      private final URI parentNetwork;
+      @Nullable
+      private final FenceMode fenceMode;
+
+      /**
+       * 
+       * Create a new NetworkConfig.
+       * 
+       * @param networkName
+       *           a valid {@networkConfig
+       *           org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection
+       *           network in the vapp template}, or null to have us choose
+       *           default
+       * @param parentNetwork
+       *           a valid {@networkConfig
+       *           org.jclouds.vcloud.domain.Org#getNetworks in the Org}
+       * @param fenceMode
+       *           how to manage the relationship between the two networks
+       */
+      public NetworkConfig(String networkName, URI parentNetwork, FenceMode fenceMode) {
+         this.networkName = networkName;
+         this.parentNetwork = checkNotNull(parentNetwork, "parentNetwork");
+         this.fenceMode = fenceMode;
+      }
+
+      public NetworkConfig(URI parentNetwork) {
+         this(null, parentNetwork, null);
+      }
+
+      /**
+       * A name for the network. If the
+       * {@link org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection}
+       * includes a {@link NetworkSection.Network} network element, the name you
+       * specify for the vApp network must match the name specified in that
+       * element's name attribute.
+       * 
+       * @return
+       */
+      public String getNetworkName() {
+         return networkName;
+      }
+
+      /**
+       * 
+       * @return A reference to the organization network to which this network
+       *         connects.
+       */
+      public URI getParentNetwork() {
+         return parentNetwork;
+      }
+
+      /**
+       * A value of bridged indicates that this vApp network is connected
+       * directly to the organization network.
+       */
+      public FenceMode getFenceMode() {
+         return fenceMode;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((fenceMode == null) ? 0 : fenceMode.hashCode());
+         result = prime * result + ((parentNetwork == null) ? 0 : parentNetwork.hashCode());
+         result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         NetworkConfig other = (NetworkConfig) obj;
+         if (fenceMode == null) {
+            if (other.fenceMode != null)
+               return false;
+         } else if (!fenceMode.equals(other.fenceMode))
+            return false;
+         if (parentNetwork == null) {
+            if (other.parentNetwork != null)
+               return false;
+         } else if (!parentNetwork.equals(other.parentNetwork))
+            return false;
+         if (networkName == null) {
+            if (other.networkName != null)
+               return false;
+         } else if (!networkName.equals(other.networkName))
+            return false;
+         return true;
+      }
+
+      @Override
+      public String toString() {
+         return "[networkName=" + networkName + ", parentNetwork=" + parentNetwork + ", fenceMode=" + fenceMode + "]";
+      }
+   }
+
    private Set<NetworkConfig> networkConfig = Sets.newLinkedHashSet();
 
    private Boolean customizeOnInstantiate;
    private String cpuCount;
    private String memorySizeMegabytes;
-   private String diskSizeKilobytes;
 
    private boolean block = true;
    private boolean deploy = true;
    private boolean powerOn = true;
+
+   private final Map<String, String> properties = Maps.newLinkedHashMap();
+
+   public InstantiateVAppTemplateOptions sshKeyFingerprint(String sshKeyFingerprint) {
+      productProperty("sshKeyFingerprint", sshKeyFingerprint);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions primaryDNS(String primaryDNS) {
+      productProperty("primaryDNS", primaryDNS);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions secondaryDNS(String secondaryDNS) {
+      productProperty("secondaryDNS", secondaryDNS);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions withPassword(String password) {
+      productProperty("password", password);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions inGroup(String group) {
+      productProperty("group", group);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions inRow(String row) {
+      productProperty("row", row);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+      this.properties.putAll(properties);
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions productProperty(String key, String value) {
+      this.properties.put(key, value);
+      return this;
+   }
+
+   public Map<String, String> getProperties() {
+      return properties;
+   }
 
    public boolean shouldBlock() {
       return block;
@@ -101,24 +257,21 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   public InstantiateVAppTemplateOptions disk(long kilobytes) {
-      checkArgument(kilobytes >= 1, "diskSizeKilobytes must be positive");
-      this.diskSizeKilobytes = kilobytes + "";
-      return this;
-   }
-
    /**
-    * {@networkConfig VAppTemplate}s have internal networks that can be connected in order to access
-    * the internet or other external networks.
+    * {@networkConfig VAppTemplate}s have internal networks that can be
+    * connected in order to access the internet or other external networks.
     * 
-    * <h4>default behaviour if you don't use this option</h4> By default, we connect the first
-    * internal {@networkConfig
-    * org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection network in the vapp template}to a
-    * default chosen from the org or specified via {@networkConfig
-    * org.jclouds.vcloud.reference.VCloudConstants#PROPERTY_VCLOUD_DEFAULT_NETWORK} using the
-    * {@networkConfig org.jclouds.vcloud.domain.FenceMode#BRIDGED} or an override
-    * set by the property {@networkConfig
-    * org.jclouds.vcloud.reference.VCloudConstants#PROPERTY_VCLOUD_DEFAULT_FENCEMODE}.
+    * <h4>default behaviour if you don't use this option</h4> By default, we
+    * connect the first internal {@networkConfig
+    * org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection network in the
+    * vapp template}to a default chosen from the org or specified via
+    * {@networkConfig
+    * org.jclouds.vcloud.reference.VCloudConstants#
+    * PROPERTY_VCLOUD_DEFAULT_NETWORK} using the {@networkConfig
+    *  org.jclouds.vcloud.domain.FenceMode#BRIDGED} or an
+    * override set by the property {@networkConfig
+    * org.jclouds.vcloud.reference.VCloudConstants#
+    * PROPERTY_VCLOUD_DEFAULT_FENCEMODE}.
     */
    public InstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
       this.networkConfig.add(checkNotNull(networkConfig, "networkConfig"));
@@ -139,10 +292,6 @@ public class InstantiateVAppTemplateOptions {
 
    public String getMemorySizeMegabytes() {
       return memorySizeMegabytes;
-   }
-
-   public String getDiskSizeKilobytes() {
-      return diskSizeKilobytes;
    }
 
    public static class Builder {
@@ -196,14 +345,6 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
-       * @see InstantiateVAppTemplateOptions#disk(int)
-       */
-      public static InstantiateVAppTemplateOptions disk(long kilobytes) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.disk(kilobytes);
-      }
-
-      /**
        * @see InstantiateVAppTemplateOptions#addNetworkConfig
        */
       public static InstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
@@ -211,14 +352,78 @@ public class InstantiateVAppTemplateOptions {
          return options.addNetworkConfig(networkConfig);
       }
 
+      /**
+       * @see InstantiateVAppTemplateOptions#withPassword(String)
+       */
+      public static InstantiateVAppTemplateOptions withPassword(String password) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.withPassword(password);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#inGroup(String)
+       */
+      public static InstantiateVAppTemplateOptions inGroup(String group) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.inGroup(group);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#inRow(String)
+       */
+      public static InstantiateVAppTemplateOptions inRow(String row) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.inRow(row);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#sshKeyFingerprint(String)
+       */
+      public static InstantiateVAppTemplateOptions sshKeyFingerprint(String sshKeyFingerprint) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.sshKeyFingerprint(sshKeyFingerprint);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#primaryDNS(String)
+       */
+      public static InstantiateVAppTemplateOptions primaryDNS(String primaryDNS) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.primaryDNS(primaryDNS);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#secondaryDNS(String)
+       */
+      public static InstantiateVAppTemplateOptions secondaryDNS(String secondaryDNS) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.secondaryDNS(secondaryDNS);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#productProperty(String, String)
+       */
+      public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return (InstantiateVAppTemplateOptions) options.productProperty(key, value);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#productProperties(Map<String ,
+       *      String>)
+       */
+      public static InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return (InstantiateVAppTemplateOptions) options.productProperties(properties);
+      }
+
    }
 
    @Override
    public String toString() {
-      return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes
-               + ", diskSizeKilobytes=" + diskSizeKilobytes + ", networkConfig=" + networkConfig
-               + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy=" + (deploy) + ", powerOn="
-               + (powerOn) + "]";
+      return "[cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes + ", networkConfig="
+            + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy=" + (deploy)
+            + ", powerOn=" + (powerOn) + "]";
    }
 
    @Override
@@ -229,7 +434,6 @@ public class InstantiateVAppTemplateOptions {
       result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
       result = prime * result + ((customizeOnInstantiate == null) ? 0 : customizeOnInstantiate.hashCode());
       result = prime * result + (deploy ? 1231 : 1237);
-      result = prime * result + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
       result = prime * result + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
       result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
       result = prime * result + (powerOn ? 1231 : 1237);
@@ -258,11 +462,6 @@ public class InstantiateVAppTemplateOptions {
       } else if (!customizeOnInstantiate.equals(other.customizeOnInstantiate))
          return false;
       if (deploy != other.deploy)
-         return false;
-      if (diskSizeKilobytes == null) {
-         if (other.diskSizeKilobytes != null)
-            return false;
-      } else if (!diskSizeKilobytes.equals(other.diskSizeKilobytes))
          return false;
       if (memorySizeMegabytes == null) {
          if (other.memorySizeMegabytes != null)

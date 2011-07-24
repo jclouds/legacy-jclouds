@@ -26,7 +26,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -43,7 +42,7 @@ public class OrgURIToKeysListEndpoint extends OrgURIToEndpoint implements Functi
       super(orgMap, defaultUri);
    }
 
-   public URI getUriFromOrg(TerremarkOrg org) {
+   public URI getUriFromOrg(Org org) {
       return org.getKeys().getHref();
    }
 

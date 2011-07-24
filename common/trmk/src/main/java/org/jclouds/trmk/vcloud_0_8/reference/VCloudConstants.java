@@ -35,6 +35,10 @@ public interface VCloudConstants {
     */
    public static final String PROPERTY_VCLOUD_DEFAULT_CATALOG = "jclouds.vcloud.defaults.catalog";
    /**
+    * name of the default taskslist to query, if it isn't explicitly specified.
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_TASKSLIST = "jclouds.vcloud.defaults.taskslist";
+   /**
     * name of the VDC that your vApp will join, if a vDC isn't explicitly
     * specified.
     */

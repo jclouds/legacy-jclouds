@@ -29,7 +29,7 @@ import com.google.inject.ImplementedBy;
 /**
  * Whenever the result of a request cannot be returned immediately, the server creates a Task
  * object. Tasks owned by an object such as a vApp or vDC are contained in the Tasks element of the
- * object’s XML representation. This element is read‐only.
+ * object's XML representation. This element is read-only.
  */
 @ImplementedBy(TaskImpl.class)
 public interface Task extends ReferenceType {

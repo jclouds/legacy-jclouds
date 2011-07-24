@@ -33,8 +33,8 @@ import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeClient;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.TemplateToInstantiateOptions;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
-import org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Function;
 
@@ -45,12 +45,12 @@ import com.google.common.base.Function;
 public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEncodedIntoName {
    protected final TerremarkVCloudComputeClient computeClient;
    protected final TemplateToInstantiateOptions getOptions;
-   protected final Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata;
+   protected final Function<VApp, NodeMetadata> vAppToNodeMetadata;
    private final Map<String, Credentials> credentialStore;
 
    @Inject
    protected StartVAppWithGroupEncodedIntoName(TerremarkVCloudComputeClient computeClient,
-            Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions,
+            Function<VApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions,
             Map<String, Credentials> credentialStore) {
       this.computeClient = computeClient;
       this.vAppToNodeMetadata = vAppToNodeMetadata;
@@ -60,8 +60,8 @@ public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEnc
 
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
-      TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-      VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
+      InstantiateVAppTemplateOptions options = getOptions.apply(template);
+      VApp vApp = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());
       NodeMetadata node = vAppToNodeMetadata.apply(vApp);
       NodeMetadataBuilder builder = NodeMetadataBuilder.fromNodeMetadata(node);

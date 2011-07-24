@@ -26,7 +26,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkVDC;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VDC;
 
 import com.google.common.base.Function;
@@ -50,8 +49,7 @@ public class VDCURIToPublicIPsEndpoint implements Function<Object, URI> {
 
    public URI apply(Object from) {
       try {
-         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC.getHref() : from)).getPublicIps()
-               .getHref();
+         return orgVDCMap.get().get(from == null ? defaultVDC.getHref() : from).getPublicIps().getHref();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
       }

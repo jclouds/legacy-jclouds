@@ -24,9 +24,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVAppTemplate;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.domain.VDC;
-import org.jclouds.trmk.vcloud_0_8.functions.VCloudExpressVAppTemplatesForResourceEntities;
+import org.jclouds.trmk.vcloud_0_8.functions.VAppTemplatesForResourceEntities;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -36,11 +36,11 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ImagesInVCloudExpressVDC implements Function<VDC, Iterable<? extends Image>> {
-   private final VCloudExpressVAppTemplatesForResourceEntities vAppTemplatesForResourceEntities;
+   private final VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities;
    private final ImageForVCloudExpressVAppTemplate imageForVAppTemplateProvider;
 
    @Inject
-   public ImagesInVCloudExpressVDC(VCloudExpressVAppTemplatesForResourceEntities vAppTemplatesForResourceEntities,
+   public ImagesInVCloudExpressVDC(VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities,
             ImageForVCloudExpressVAppTemplate imageForVAppTemplateProvider) {
       this.vAppTemplatesForResourceEntities = checkNotNull(vAppTemplatesForResourceEntities, "vAppTemplatesForResourceEntities");
       this.imageForVAppTemplateProvider = checkNotNull(imageForVAppTemplateProvider, "imageForVAppTemplateProvider");
@@ -48,7 +48,7 @@ public class ImagesInVCloudExpressVDC implements Function<VDC, Iterable<? extend
 
    @Override
    public Iterable<? extends Image> apply(VDC from) {
-      Iterable<? extends VCloudExpressVAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(checkNotNull(from, "vdc")
+      Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(checkNotNull(from, "vdc")
                .getResourceEntities().values());
       return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.withParent(from));
    }

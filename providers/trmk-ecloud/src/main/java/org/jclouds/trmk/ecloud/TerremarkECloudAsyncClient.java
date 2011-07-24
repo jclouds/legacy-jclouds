@@ -25,8 +25,8 @@ import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.IPADDRESS_LIST_XM
 import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.KEYSLIST_XML;
 import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.PUBLICIP_XML;
 import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.VAPPEXTINFO_XML;
-import static org.jclouds.trmk.vcloud_0_8.VCloudMediaType.NETWORK_XML;
-import static org.jclouds.trmk.vcloud_0_8.VCloudMediaType.ORG_XML;
+import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.NETWORK_XML;
+import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.ORG_XML;
 
 import java.net.URI;
 import java.util.Set;
@@ -49,23 +49,23 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.trmk.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.trmk.ecloud.domain.ECloudOrg;
 import org.jclouds.trmk.ecloud.features.DataCenterOperationsAsyncClient;
 import org.jclouds.trmk.ecloud.features.TagOperationsAsyncClient;
-import org.jclouds.trmk.ecloud.xml.TerremarkECloudOrgHandler;
+import org.jclouds.trmk.ecloud.xml.ECloudOrgHandler;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.binders.BindCreateKeyToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
+import org.jclouds.trmk.vcloud_0_8.domain.Network;
+import org.jclouds.trmk.vcloud_0_8.domain.NetworkExtendedInfo;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkNetwork;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrgNetwork;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppExtendedInfo;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameToEndpoint;
+import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgURIToKeysListEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToInternetServicesEndpoint;
@@ -77,9 +77,9 @@ import org.jclouds.trmk.vcloud_0_8.xml.IpAddressesHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.KeyPairByNameHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.KeyPairHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.KeyPairsHandler;
+import org.jclouds.trmk.vcloud_0_8.xml.NetworkExtendedInfoHandler;
+import org.jclouds.trmk.vcloud_0_8.xml.NetworkHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.PublicIpAddressHandler;
-import org.jclouds.trmk.vcloud_0_8.xml.TerremarkNetworkHandler;
-import org.jclouds.trmk.vcloud_0_8.xml.TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.VAppExtendedInfoHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -88,7 +88,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to eCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
+ * @see <a href=
+ *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -99,29 +101,29 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     */
    @Delegate
    DataCenterOperationsAsyncClient getDataCenterOperationsClient();
-   
+
    /**
     * Provides asynchronous access to Tag Operations.
     * 
     */
    @Delegate
    TagOperationsAsyncClient getTagOperationsClient();
-  
+
    @Override
    @GET
-   @XMLResponseParser(TerremarkECloudOrgHandler.class)
+   @XMLResponseParser(ECloudOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends TerremarkECloudOrg> getOrg(@EndpointParam URI orgId);
-   
+   ListenableFuture<? extends ECloudOrg> getOrg(@EndpointParam URI orgId);
+
    @Override
    @GET
-   @XMLResponseParser(TerremarkECloudOrgHandler.class)
+   @XMLResponseParser(ECloudOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends TerremarkOrg> findOrgNamed(
-            @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
-   
+   ListenableFuture<? extends ECloudOrg> findOrgNamed(
+         @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
+
    /**
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
@@ -131,7 +133,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
    ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(
-            @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
+         @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
@@ -141,7 +143,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(PublicIpAddressHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<PublicIpAddress> activatePublicIpInVDC(
-            @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
+         @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
@@ -154,8 +156,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @MapBinder(AddInternetServiceOptions.class)
    @Override
    ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@EndpointParam URI existingIpId,
-            @PayloadParam("name") String serviceName, @PayloadParam("protocol") Protocol protocol,
-            @PayloadParam("port") int port, AddInternetServiceOptions... options);
+         @PayloadParam("name") String serviceName, @PayloadParam("protocol") Protocol protocol,
+         @PayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
@@ -186,7 +188,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Consumes(KEYSLIST_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> findKeyPairInOrg(
-            @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
+         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
 
    /**
     * @see TerremarkVCloudExpressClient#listKeyPairsInOrg
@@ -196,7 +198,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairsInOrg(
-            @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
+         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
 
    /**
     * @see TerremarkECloudClient#listKeyPairs
@@ -216,8 +218,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(KeyPairHandler.class)
    @MapBinder(BindCreateKeyToXmlPayload.class)
    ListenableFuture<? extends KeyPair> generateKeyPairInOrg(
-            @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @PayloadParam("name") String name,
-            @PayloadParam("isDefault") boolean makeDefault);
+         @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @PayloadParam("name") String name,
+         @PayloadParam("isDefault") boolean makeDefault);
 
    /**
     * @see TerremarkECloudClient#getKeyPair
@@ -256,12 +258,12 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Override
    @GET
    @Consumes(NETWORK_XML)
-   @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
+   @XMLResponseParser(NetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends TerremarkOrgNetwork> findNetworkInOrgVDCNamed(
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+   ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(
+         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
+         @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
 
    /**
     * @see TerremarkECloudClient#getNetwork
@@ -269,19 +271,19 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Override
    @GET
    @Consumes(NETWORK_XML)
-   @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
+   @XMLResponseParser(NetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends TerremarkOrgNetwork> getNetwork(@EndpointParam URI network);
+   ListenableFuture<? extends Network> getNetwork(@EndpointParam URI network);
 
    /**
-    * @see TerremarkECloudClient#getTerremarkNetwork
+    * @see TerremarkECloudClient#getNetworkExtendedInfo
     */
    @GET
-   @XMLResponseParser(TerremarkNetworkHandler.class)
+   @XMLResponseParser(NetworkExtendedInfoHandler.class)
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends TerremarkNetwork> getTerremarkNetwork(@EndpointParam URI network);
-   
+   ListenableFuture<? extends NetworkExtendedInfo> getNetworkExtendedInfo(@EndpointParam URI network);
+
    /**
     * @see TerremarkECloudClient#getIpAddresses
     */
@@ -299,5 +301,5 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(VAppExtendedInfoHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VAppExtendedInfo> getVAppExtendedInfo(@EndpointParam URI href);
-   
+
 }

@@ -18,7 +18,7 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import static org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -31,8 +31,8 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkClientLiveTest;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
-import org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,7 +60,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    }
 
    @Override
-   protected TerremarkInstantiateVAppTemplateOptions createInstantiateOptions() {
+   protected InstantiateVAppTemplateOptions createInstantiateOptions() {
       return processorCount(1).memory(512);
    }
 
@@ -70,7 +70,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    }
 
    @Override
-   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
+   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
       return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(tmClient))
             .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }

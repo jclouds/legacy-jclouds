@@ -26,14 +26,14 @@ import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.trmk.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.trmk.ecloud.domain.ECloudOrg;
 import org.jclouds.trmk.ecloud.features.DataCenterOperationsClient;
 import org.jclouds.trmk.ecloud.features.TagOperationsClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress;
+import org.jclouds.trmk.vcloud_0_8.domain.Network;
+import org.jclouds.trmk.vcloud_0_8.domain.NetworkExtendedInfo;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkNetwork;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrgNetwork;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppExtendedInfo;
 
 /**
@@ -53,19 +53,19 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
     */
    @Delegate
    DataCenterOperationsClient getDataCenterOperationsClient();
-   
+
    /**
     * Provides synchronous access to Data Center Operations.
     * 
     */
    @Delegate
    TagOperationsClient getTagOperationsClient();
-   
+
    /**
     * {@inheritDoc}
     */
    @Override
-   TerremarkECloudOrg getOrg(URI orgId);
+   ECloudOrg getOrg(URI orgId);
 
    /**
     * Allocate a new public IP
@@ -77,11 +77,11 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
     */
    PublicIpAddress activatePublicIpInVDC(URI vDCId);
 
-   TerremarkOrgNetwork findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String vdc, String networkName);
+   Network findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String vdc, String networkName);
 
-   TerremarkOrgNetwork getNetwork(URI network);
+   Network getNetwork(URI network);
 
-   TerremarkNetwork getTerremarkNetwork(URI network);
+   NetworkExtendedInfo getNetworkExtendedInfo(URI network);
 
    Set<IpAddress> getIpAddresses(URI network);
 

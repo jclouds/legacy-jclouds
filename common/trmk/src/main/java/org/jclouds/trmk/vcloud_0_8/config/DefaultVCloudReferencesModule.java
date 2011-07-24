@@ -23,12 +23,9 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
@@ -89,7 +86,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    @org.jclouds.trmk.vcloud_0_8.endpoints.Catalog
    protected Predicate<ReferenceType> provideDefaultCatalogSelector(Injector i) {
-      return i.getInstance(WriteableCatalog.class);
+      return Predicates.alwaysTrue();
    }
 
    @Provides
@@ -112,35 +109,6 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
                      }
 
                   }, supplier);
-   }
-
-   @Singleton
-   public static class WriteableCatalog implements Predicate<ReferenceType> {
-
-      @Resource
-      protected Logger logger = Logger.NULL;
-
-      private final Supplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> catalogsByIdSupplier;
-
-      @Inject
-      public WriteableCatalog(Supplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> catalogsByIdSupplier) {
-         this.catalogsByIdSupplier = catalogsByIdSupplier;
-      }
-
-      @Override
-      public boolean apply(ReferenceType arg0) {
-         // TODO: this is inefficient, calculating the index each time, but
-         // shouldn't be added to constructor as the supplier is an expensive
-         // call
-         Map<URI, ? extends Catalog> index = catalogsByIdSupplier.get();
-         Catalog catalog = index.get(arg0.getHref());
-         if (catalog == null) {
-            if (logger.isTraceEnabled())
-               logger.trace("didn't find catalog %s", arg0);
-            return false;
-         } else
-            return !catalog.isReadOnly();
-      }
    }
 
    @Provides

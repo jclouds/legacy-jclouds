@@ -21,21 +21,16 @@ package org.jclouds.trmk.vcloud_0_8.xml;
 import static org.jclouds.trmk.vcloud_0_8.util.Utils.newReferenceType;
 import static org.jclouds.trmk.vcloud_0_8.util.Utils.putReferenceType;
 
-import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.OrgImpl;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -43,28 +38,19 @@ import com.google.common.collect.Maps;
  */
 public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
 
-   protected final TaskHandler taskHandler;
-
-   @Inject
-   public OrgHandler(TaskHandler taskHandler) {
-      this.taskHandler = taskHandler;
-   }
-
    private StringBuilder currentText = new StringBuilder();
 
    protected ReferenceType org;
    protected Map<String, ReferenceType> vdcs = Maps.newLinkedHashMap();
-   protected ReferenceType tasksList;
    protected Map<String, ReferenceType> catalogs = Maps.newLinkedHashMap();
-   protected Map<String, ReferenceType> networks = Maps.newLinkedHashMap();
-   protected List<Task> tasks = Lists.newArrayList();
+   protected Map<String, ReferenceType> tasksLists = Maps.newLinkedHashMap();
+   protected ReferenceType keys;
 
    protected String description;
-   protected String fullName;
 
    public Org getResult() {
-      return new OrgImpl(org.getName(), org.getType(), org.getHref(), fullName != null ? fullName : org.getName(),
-               description, catalogs, vdcs, networks, tasksList, tasks);
+      return new OrgImpl(org.getName(), org.getType(), org.getHref(),
+               description, catalogs, vdcs, tasksLists, keys);
    }
 
    @Override
@@ -80,25 +66,17 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
             } else if (type.indexOf("catalog+xml") != -1) {
                putReferenceType(catalogs, attributes);
             } else if (type.indexOf("tasksList+xml") != -1) {
-               tasksList = newReferenceType(attributes);
-            } else if (type.indexOf("network+xml") != -1) {
-               putReferenceType(networks, attributes);
+               putReferenceType(tasksLists, attributes);
+            } else if (type != null && type.endsWith("keysList+xml")) {
+               keys = newReferenceType(attributes);
             }
          }
-      } else {
-         taskHandler.startElement(uri, localName, qName, attrs);
       }
-
    }
 
    public void endElement(String uri, String name, String qName) {
-      taskHandler.endElement(uri, name, qName);
-      if (qName.endsWith("Task")) {
-         this.tasks.add(taskHandler.getResult());
-      } else if (qName.endsWith("Description")) {
+      if (qName.endsWith("Description")) {
          description = currentOrNull();
-      } else if (qName.endsWith("FullName")) {
-         fullName = currentOrNull();
       }
       currentText = new StringBuilder();
    }

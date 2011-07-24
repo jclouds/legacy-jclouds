@@ -19,66 +19,197 @@
 package org.jclouds.trmk.vcloud_0_8;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
+import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
+import org.jclouds.trmk.vcloud_0_8.domain.Network;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
+import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
+import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkCatalogItem;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkVDC;
+import org.jclouds.trmk.vcloud_0_8.domain.TasksList;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
+import org.jclouds.trmk.vcloud_0_8.domain.VDC;
 import org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions;
 import org.jclouds.trmk.vcloud_0_8.options.AddNodeOptions;
+import org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions;
+import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href=
+ *      "https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-public interface TerremarkVCloudClient extends VCloudExpressClient {
-   
+public interface TerremarkVCloudClient {
+   Catalog getCatalog(URI catalogId);
+
    /**
-    * {@inheritDoc}
+    * returns the catalog in the organization associated with the specified
+    * name. Note that both parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @throws NoSuchElementException
+    *            if you specified an org or catalog name that isn't present
     */
-   @Override
-   TerremarkCatalogItem getCatalogItem(URI catalogItem);
+   Catalog findCatalogInOrgNamed(@Nullable String orgName, @Nullable String catalogName);
+
+   CatalogItem getCatalogItem(URI catalogItem);
+
+   /**
+    * returns the catalog item in the catalog associated with the specified
+    * name. Note that the org and catalog parameters can be null to choose
+    * default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @param itemName
+    *           item you wish to lookup
+    * 
+    * @throws NoSuchElementException
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
+    */
+   CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
+
+   Network findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
+
+   Network getNetwork(URI network);
+
+   /**
+    * returns the VDC in the organization associated with the specified name.
+    * Note that both parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param vdcName
+    *           catalog name, or null for the default
+    * @throws NoSuchElementException
+    *            if you specified an org or vdc name that isn't present
+    */
+   VDC findVDCInOrgNamed(String orgName, String vdcName);
+
+   TasksList getTasksList(URI tasksListId);
+
+   TasksList findTasksListInOrgNamed(String orgName, String tasksListName);
+
+   /**
+    * Whenever the result of a request cannot be returned immediately, the
+    * server creates a Task object and includes it in the response, as a member
+    * of the Tasks container in the response body. Each Task has an href value,
+    * which is a URL that the client can use to retrieve the Task element alone,
+    * without the rest of the response in which it was contained. All
+    * information about the task is included in the Task element when it is
+    * returned in the response's Tasks container, so a client does not need to
+    * make an additional request to the Task URL unless it wants to follow the
+    * progress of a task that was incomplete.
+    */
+   Task getTask(URI taskId);
+
+   void cancelTask(URI taskId);
+
+   /**
+    * 
+    * @return a listing of all orgs that the current user has access to.
+    */
+   Map<String, ReferenceType> listOrgs();
+
+   VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
+
+   Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
+
+   VAppTemplate getVAppTemplate(URI vAppTemplate);
+
+   /**
+    * returns the vapp template corresponding to a catalog item in the catalog
+    * associated with the specified name. Note that the org and catalog
+    * parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @param itemName
+    *           item you wish to lookup
+    * 
+    * @throws NoSuchElementException
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
+    */
+   VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
+         String itemName);
+
+   VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
+
+   VApp getVApp(URI vApp);
+
+   Task deployVApp(URI vAppId);
+
+   /**
+    * 
+    */
+   Task undeployVApp(URI vAppId);
+
+   /**
+    * This call powers on the vApp, as specified in the vApp's ovf:Startup
+    * element.
+    */
+   Task powerOnVApp(URI vAppId);
+
+   /**
+    * This call powers off the vApp, as specified in the vApp's ovf:Startup
+    * element.
+    */
+   Task powerOffVApp(URI vAppId);
+
+   /**
+    * This call shuts down the vApp.
+    */
+   void shutdownVApp(URI vAppId);
+
+   /**
+    * This call resets the vApp.
+    */
+   Task resetVApp(URI vAppId);
+
+   /**
+    * This call suspends the vApp.
+    */
+   Task suspendVApp(URI vAppId);
+
+   Task deleteVApp(URI vAppId);
 
    /**
     * {@inheritDoc}
     */
-   @Override
-   TerremarkVDC getVDC(URI catalogItem);
+   VDC getVDC(URI catalogItem);
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   TerremarkCatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
+   Org getOrg(URI orgId);
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   TerremarkOrg getOrg(URI orgId);
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   TerremarkOrg findOrgNamed(String orgName);
+   Org findOrgNamed(String orgName);
 
    CustomizationParameters getCustomizationOptions(URI customizationOptions);
 
@@ -90,8 +221,9 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    void deletePublicIp(URI ipId);
 
    /**
-    * This call adds an internet service to a known, existing public IP. This call is identical to
-    * Add Internet Service except you specify the public IP in the request.
+    * This call adds an internet service to a known, existing public IP. This
+    * call is identical to Add Internet Service except you specify the public IP
+    * in the request.
     * 
     */
    InternetService addInternetServiceToExistingIp(URI existingIpId, String serviceName, Protocol protocol, int port,
@@ -113,9 +245,10 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    /**
     * This call adds a node to an existing internet service.
     * <p/>
-    * Every vDC is assigned a network of 60 IP addresses that can be used as nodes. Each node can
-    * associated with multiple internet service. You can get a list of the available IP addresses by
-    * calling Get IP Addresses for a Network.
+    * Every vDC is assigned a network of 60 IP addresses that can be used as
+    * nodes. Each node can associated with multiple internet service. You can
+    * get a list of the available IP addresses by calling Get IP Addresses for a
+    * Network.
     * 
     * @param internetServiceId
     * @param ipAddress
@@ -135,8 +268,9 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    Set<Node> getNodes(URI internetServiceId);
 
    /**
-    * This call configures the settings of an existing vApp by passing the new configuration. The
-    * existing vApp must be in a powered off state (status = 2).
+    * This call configures the settings of an existing vApp by passing the new
+    * configuration. The existing vApp must be in a powered off state (status =
+    * 2).
     * <p/>
     * You can change the following items for a vApp.
     * <ol>
@@ -145,16 +279,17 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
     * <li>Add a virtual disk</li>
     * <li>Delete a virtual disk</li>
     * </ol>
-    * You can make more than one change in a single request. For example, you can increase the
-    * number of virtual CPUs and the amount of virtual memory in the same request.
+    * You can make more than one change in a single request. For example, you
+    * can increase the number of virtual CPUs and the amount of virtual memory
+    * in the same request.
     * 
-    * @param VCloudExpressVApp
+    * @param VApp
     *           vApp to change in power state off
     * @param configuration
     *           (s) to change
     * @return task of configuration change
     */
-   Task configureVApp(VCloudExpressVApp vApp, VAppConfiguration configuration);
+   Task configureVApp(VApp vApp, VAppConfiguration configuration);
 
    /**
     */

@@ -20,8 +20,7 @@ package org.jclouds.trmk.ecloud;
 
 import java.util.Properties;
 
-import org.jclouds.trmk.ecloud.TerremarkECloudClient;
-import org.jclouds.trmk.vcloud_0_8.BaseTerremarkClientLiveTest;
+import org.jclouds.trmk.vcloud_0_8.internal.BaseTerremarkClientLiveTest;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 

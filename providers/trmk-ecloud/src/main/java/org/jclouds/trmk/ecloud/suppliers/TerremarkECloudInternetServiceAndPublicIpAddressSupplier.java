@@ -21,8 +21,8 @@ package org.jclouds.trmk.ecloud.suppliers;
 import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ import org.jclouds.trmk.ecloud.TerremarkECloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.suppliers.InternetServiceAndPublicIpAddressSupplier;
 
 import com.google.common.collect.ImmutableMap;
@@ -60,7 +60,7 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
    }
 
    @Override
-   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VCloudExpressVApp vApp, int port,
+   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port,
             Protocol protocol) {
       logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getHref(), protocol, port);
       InternetService is = null;

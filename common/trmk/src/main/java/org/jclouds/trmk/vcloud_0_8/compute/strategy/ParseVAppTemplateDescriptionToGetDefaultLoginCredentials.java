@@ -32,7 +32,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVAppTemplate;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 /**
  * @author Adrian Cole
@@ -51,9 +51,9 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       checkNotNull(resourceToAuthenticate);
-      checkArgument(resourceToAuthenticate instanceof VCloudExpressVAppTemplate,
+      checkArgument(resourceToAuthenticate instanceof VAppTemplate,
                "Resource must be an VAppTemplate (for Terremark)");
-      VCloudExpressVAppTemplate template = (VCloudExpressVAppTemplate) resourceToAuthenticate;
+      VAppTemplate template = (VAppTemplate) resourceToAuthenticate;
       String search = template.getDescription() != null ? template.getDescription() : template.getName();
       if (search.indexOf("Windows") >= 0) {
          return new Credentials("Administrator", null);

@@ -18,7 +18,7 @@
  */
 package org.jclouds.trmk.vcloudexpress;
 
-import static org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -34,9 +34,9 @@ import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
-import org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.trmk.vcloud_0_8.domain.Org;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloudexpress.suppliers.TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
@@ -55,7 +55,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    protected void prepare() {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
 
-      TerremarkOrg org = vCloudExpressClient.findOrgNamed(null);
+      Org org = vCloudExpressClient.findOrgNamed(null);
       try {
          key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
       } catch (IllegalStateException e) {
@@ -86,12 +86,12 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    }
 
    @Override
-   protected TerremarkInstantiateVAppTemplateOptions createInstantiateOptions() {
+   protected InstantiateVAppTemplateOptions createInstantiateOptions() {
       return processorCount(1).memory(512).sshKeyFingerprint(key.getFingerPrint());
    }
 
    @Override
-   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VCloudExpressVApp vApp) {
+   protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
       return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(
             TerremarkVCloudExpressClient.class.cast(tmClient)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }

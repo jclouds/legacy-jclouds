@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudClientLiveTest;
-import org.jclouds.trmk.ecloud.domain.TerremarkECloudOrg;
+import org.jclouds.trmk.ecloud.domain.ECloudOrg;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.testng.annotations.Test;
 
@@ -34,7 +34,7 @@ public class TagOperationsClientLiveTest extends BaseTerremarkECloudClientLiveTe
    @Test
    public void testListTagsInOrg() throws Exception {
       for (ReferenceType response : getApi().listOrgs().values()) {
-         TerremarkECloudOrg org = getApi().getOrg(response.getHref());
+         ECloudOrg org = getApi().getOrg(response.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());
          assertNotNull(response.getHref());

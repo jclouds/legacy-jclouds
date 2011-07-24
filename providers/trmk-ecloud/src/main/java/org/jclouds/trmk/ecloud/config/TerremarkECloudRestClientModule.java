@@ -35,13 +35,11 @@ import org.jclouds.trmk.ecloud.features.TagOperationsAsyncClient;
 import org.jclouds.trmk.ecloud.features.TagOperationsClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressClient;
 import org.jclouds.trmk.vcloud_0_8.config.DefaultVCloudReferencesModule;
-import org.jclouds.trmk.vcloud_0_8.config.TerremarkRestClientModule;
+import org.jclouds.trmk.vcloud_0_8.config.TerremarkVCloudRestClientModule;
+import org.jclouds.trmk.vcloud_0_8.domain.Network;
+import org.jclouds.trmk.vcloud_0_8.domain.NetworkExtendedInfo;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkNetwork;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrgNetwork;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -57,7 +55,7 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class TerremarkECloudRestClientModule extends
-      TerremarkRestClientModule<TerremarkECloudClient, TerremarkECloudAsyncClient> {
+      TerremarkVCloudRestClientModule<TerremarkECloudClient, TerremarkECloudAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(DataCenterOperationsClient.class, DataCenterOperationsAsyncClient.class)//
@@ -66,18 +64,6 @@ public class TerremarkECloudRestClientModule extends
 
    public TerremarkECloudRestClientModule() {
       super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class, DELEGATE_MAP);
-   }
-
-   @Provides
-   @Singleton
-   protected VCloudExpressAsyncClient provideVCloudAsyncClient(TerremarkECloudAsyncClient in) {
-      return in;
-   }
-
-   @Provides
-   @Singleton
-   protected VCloudExpressClient provideVCloudClient(TerremarkECloudClient in) {
-      return in;
    }
 
    @Provides
@@ -117,12 +103,12 @@ public class TerremarkECloudRestClientModule extends
          // when
          // launching a
          // server.
-         TerremarkOrgNetwork orgNetwork = client.getNetwork(arg0.getHref());
-         TerremarkNetwork terremarkNetwork = client.getTerremarkNetwork(checkNotNull(
+         Network orgNetwork = client.getNetwork(arg0.getHref());
+         NetworkExtendedInfo terremarkNetwork = client.getNetworkExtendedInfo(checkNotNull(
                checkNotNull(orgNetwork, "network at: " + arg0).getNetworkExtension(), "network extension for: " + arg0)
                .getHref());
          return checkNotNull(terremarkNetwork, "terremark network extension at: " + orgNetwork.getNetworkExtension())
-               .getNetworkType() == TerremarkNetwork.Type.DMZ;
+               .getNetworkType() == NetworkExtendedInfo.Type.DMZ;
       }
    }
 

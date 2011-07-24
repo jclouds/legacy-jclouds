@@ -37,7 +37,7 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.trmk.vcloud_0_8.binders.BindVAppConfigurationToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
-import org.jclouds.trmk.vcloud_0_8.domain.internal.VCloudExpressVAppImpl;
+import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppImpl;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -69,7 +69,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
    });
 
    public void testChangeName() throws IOException {
-      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("MyAppServer6", URI
+      VAppImpl vApp = new VAppImpl("MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
@@ -98,7 +98,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
    }
 
    public void testRemoveDisk() throws IOException {
-      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("MyAppServer6", URI
+      VAppImpl vApp = new VAppImpl("MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
@@ -134,7 +134,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
    }
 
    public void testChangeAll() throws IOException {
-      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("MyAppServer6", URI
+      VAppImpl vApp = new VAppImpl("MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
@@ -163,7 +163,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
    }
 
    public void testChangeCPUCountTo4() throws IOException {
-      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("eduardo", URI
+      VAppImpl vApp = new VAppImpl("eduardo", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(
@@ -190,7 +190,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
    }
 
    public void testChangeMemoryTo1536() throws IOException {
-      VCloudExpressVAppImpl vApp = new VCloudExpressVAppImpl("MyAppServer6", URI
+      VAppImpl vApp = new VAppImpl("MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l, null,
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         ResourceAllocationSettingData.builder().instanceID("1").elementName("foo").resourceType(

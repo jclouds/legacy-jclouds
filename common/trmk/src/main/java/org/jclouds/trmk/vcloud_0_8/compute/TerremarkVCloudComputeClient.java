@@ -25,21 +25,23 @@ import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Buil
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
@@ -48,10 +50,9 @@ import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.TaskStatus;
 import org.jclouds.trmk.vcloud_0_8.domain.TasksList;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVAppTemplate;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
-import org.jclouds.trmk.vcloud_0_8.options.TerremarkInstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.suppliers.InternetServiceAndPublicIpAddressSupplier;
 
 import com.google.common.base.Predicate;
@@ -62,50 +63,106 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl {
+public class TerremarkVCloudComputeClient {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
    protected final TerremarkVCloudClient client;
    protected final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    protected final Provider<String> passwordGenerator;
    protected final Map<String, Credentials> credentialStore;
    protected final InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier;
+   protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final Predicate<URI> taskTester;
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
-            Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-            InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
-      super(client, successTester, vAppStatusToNodeState);
+         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+         @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
+         Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
+         InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
       this.client = client;
       this.credentialsProvider = credentialsProvider;
       this.passwordGenerator = passwordGenerator;
       this.credentialStore = credentialStore;
       this.internetServiceAndPublicIpAddressSupplier = internetServiceAndPublicIpAddressSupplier;
+      this.vAppStatusToNodeState = vAppStatusToNodeState;
+      this.taskTester = successTester;
    }
 
-   @Override
-   public VCloudExpressVApp start(@Nullable URI VDC, URI templateId, String name,
-            InstantiateVAppTemplateOptions options, int... portsToOpen) {
-      if (options.getDiskSizeKilobytes() != null) {
-         logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
-      }
+   protected Status getStatus(VApp vApp) {
+      return vApp.getStatus();
+   }
+
+   /**
+    * Runs through all commands necessary to startup a vApp, opening at least
+    * one ip address to the public network. These are the steps:
+    * <p/>
+    * instantiate -> deploy -> powerOn
+    * <p/>
+    * This command blocks until the vApp is in state {@code VAppStatus#ON}
+    * 
+    * @param VDC
+    *           id of the virtual datacenter {@code VCloudClient#getDefaultVDC}
+    * @param templateId
+    *           id of the vAppTemplate you wish to instantiate
+    * @param name
+    *           name of the vApp
+    * @param cores
+    *           amount of virtual cpu cores
+    * @param megs
+    *           amount of ram in megabytes
+    * @param options
+    *           options for instantiating the vApp; null is ok
+    * @param portsToOpen
+    *           opens the following ports on the public ip address
+    * @return map contains at least the following properties
+    *         <ol>
+    *         <li>id - vApp id</li> <li>username - console login user</li> <li>
+    *         password - console login password</li>
+    *         </ol>
+    */
+   public VApp start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
+         int... portsToOpen) {
       // we only get IP addresses after "deploy"
       if (portsToOpen.length > 0 && !options.shouldBlock())
          throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
       String password = null;
-      VCloudExpressVAppTemplate template = client.getVAppTemplate(templateId);
-      if (template.getDescription().indexOf("Windows") != -1
-               && options instanceof TerremarkInstantiateVAppTemplateOptions) {
+      VAppTemplate template = client.getVAppTemplate(templateId);
+      if (template.getDescription().indexOf("Windows") != -1) {
          password = passwordGenerator.get();
-         TerremarkInstantiateVAppTemplateOptions.class.cast(options).getProperties().put("password", password);
+         options.getProperties().put("password", password);
       }
       Credentials defaultCredentials = credentialsProvider.execute(template);
+      checkNotNull(options, "options");
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VCloudExpressVApp vAppResponse = super.start(VDC, templateId, name, options, portsToOpen);
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
+      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
+      if (options.shouldDeploy()) {
+         logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
+
+         Task task = client.deployVApp(vAppResponse.getHref());
+         if (options.shouldBlock()) {
+            if (!taskTester.apply(task.getHref())) {
+               throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
+            }
+            logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
+            if (options.shouldPowerOn()) {
+               logger.debug(">> powering vApp(%s)", vAppResponse.getName());
+               task = client.powerOnVApp(vAppResponse.getHref());
+               if (!taskTester.apply(task.getHref())) {
+                  throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(),
+                        task));
+               }
+               logger.debug("<< on vApp(%s)", vAppResponse.getName());
+            }
+         }
+      }
       if (password != null) {
          credentialStore.put("node#" + vAppResponse.getHref().toASCIIString(), new Credentials(
-                  defaultCredentials.identity, password));
+               defaultCredentials.identity, password));
       }
       if (portsToOpen.length > 0)
          createPublicAddressMappedToPorts(vAppResponse.getHref(), portsToOpen);
@@ -113,51 +170,55 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    public String createPublicAddressMappedToPorts(URI vAppId, int... ports) {
-      VCloudExpressVApp vApp = client.getVApp(vAppId);
+      VApp vApp = client.getVApp(vAppId);
       PublicIpAddress ip = null;
       String privateAddress = getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
          InternetService is = null;
          Protocol protocol;
          switch (port) {
-            case 22:
-               protocol = Protocol.TCP;
-               break;
-            case 80:
-            case 8080:
-               protocol = Protocol.HTTP;
-               break;
-            case 443:
-               protocol = Protocol.HTTPS;
-               break;
-            default:
-               protocol = Protocol.HTTP;
-               break;
+         case 22:
+            protocol = Protocol.TCP;
+            break;
+         case 80:
+         case 8080:
+            protocol = Protocol.HTTP;
+            break;
+         case 443:
+            protocol = Protocol.HTTPS;
+            break;
+         default:
+            protocol = Protocol.HTTP;
+            break;
          }
          if (ip == null) {
 
             Entry<InternetService, PublicIpAddress> entry = internetServiceAndPublicIpAddressSupplier
-                     .getNewInternetServiceAndIp(vApp, port, protocol);
+                  .getNewInternetServiceAndIp(vApp, port, protocol);
             is = entry.getKey();
             ip = entry.getValue();
 
          } else {
             logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress(), protocol, port);
-            is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
-                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
-                              vApp.getName())));
+            is = client.addInternetServiceToExistingIp(
+                  ip.getId(),
+                  vApp.getName() + "-" + port,
+                  protocol,
+                  port,
+                  withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                        vApp.getName())));
          }
-         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getName(), is.getPublicIpAddress().getAddress(), is
-                  .getProtocol(), is.getPort());
+         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getName(), is.getPublicIpAddress().getAddress(),
+               is.getProtocol(), is.getPort());
          logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress(), is.getPort(),
-                  privateAddress, port);
+               privateAddress, port);
          Node node = client.addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
          logger.debug("<< added Node(%s)", node.getName());
       }
       return ip != null ? ip.getAddress() : null;
    }
 
-   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VCloudExpressVApp vApp) {
+   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VApp vApp) {
       checkNotNull(vApp.getVDC(), "VDC reference missing for vApp(%s)", vApp.getName());
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getHref())) {
@@ -165,13 +226,13 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());
                logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getName(), service.getPublicIpAddress()
-                        .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
+                     .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
                client.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getName());
                Set<Node> nodes = client.getNodes(service.getId());
                if (nodes.size() == 0) {
                   logger.debug(">> deleting InternetService(%s) %s:%d", service.getName(), service.getPublicIpAddress()
-                           .getAddress(), service.getPort());
+                        .getAddress(), service.getPort());
                   client.deleteInternetService(service.getId());
                   logger.debug("<< deleted InternetService(%s)", service.getName());
                   continue SERVICE;
@@ -199,13 +260,21 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    /**
-    * deletes the internet service and nodes associated with the vapp. Deletes the IP address, if
-    * there are no others using it. Finally, it powers off and deletes the vapp. Note that we do not
-    * call undeploy, as terremark does not support the command.
+    * Destroys dependent resources, powers off and deletes the vApp, blocking
+    * until the following state transition is complete:
+    * <p/>
+    * current -> {@code VAppStatus#OFF} -> deleted
+    * <p/>
+    * * deletes the internet service and nodes associated with the vapp. Deletes
+    * the IP address, if there are no others using it. Finally, it powers off
+    * and deletes the vapp. Note that we do not call undeploy, as terremark does
+    * not support the command.
+    * 
+    * @param vAppId
+    *           vApp to stop
     */
-   @Override
    public void stop(URI id) {
-      VCloudExpressVApp vApp = client.getVApp(id);
+      VApp vApp = client.getVApp(id);
       Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
       deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
       if (vApp.getStatus() != Status.OFF) {
@@ -224,19 +293,18 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       logger.debug("<< deleted vApp(%s))", vApp.getName());
    }
 
-   private void powerOffAndWait(VCloudExpressVApp vApp) {
+   private void powerOffAndWait(VApp vApp) {
       logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
       Task task = client.powerOffVApp(vApp.getHref());
       if (!taskTester.apply(task.getHref()))
          throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
    }
 
-   void blockOnLastTask(VCloudExpressVApp vApp) {
-      TasksList list = client.findTasksListInOrgNamed(null);
+   void blockOnLastTask(VApp vApp) {
+      TasksList list = client.findTasksListInOrgNamed(null, null);
       try {
          Task lastTask = getLast(filter(list.getTasks(), new Predicate<Task>() {
 
-            @Override
             public boolean apply(Task input) {
                return input.getStatus() == TaskStatus.QUEUED || input.getStatus() == TaskStatus.RUNNING;
             }
@@ -250,11 +318,12 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    /**
+    * returns a set of addresses that are only visible to the private network.
+    * 
     * @returns empty set if the node is not found
     */
-   @Override
    public Set<String> getPrivateAddresses(URI id) {
-      VCloudExpressVApp vApp = client.getVApp(id);
+      VApp vApp = client.getVApp(id);
       if (vApp != null)
          return Sets.newHashSet(vApp.getNetworkToAddresses().values());
       else
@@ -262,11 +331,12 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    /**
+    * returns a set of addresses that are publically visible
+    * 
     * @returns empty set if the node is not found
     */
-   @Override
    public Set<String> getPublicAddresses(URI id) {
-      VCloudExpressVApp vApp = client.getVApp(id);
+      VApp vApp = client.getVApp(id);
       if (vApp != null) {
          Set<String> ipAddresses = Sets.newHashSet();
          for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getHref())) {
@@ -280,5 +350,48 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       } else {
          return ImmutableSet.<String> of();
       }
+   }
+
+   /**
+    * reboots the vApp, blocking until the following state transition is
+    * complete:
+    * <p/>
+    * current -> {@code VAppStatus#OFF} -> {@code VAppStatus#ON}
+    * 
+    * @param vAppId
+    *           vApp to reboot
+    */
+   public void reset(URI id) {
+      VApp vApp = refreshVApp(id);
+      logger.debug(">> resetting vApp(%s)", vApp.getName());
+      Task task = reset(vApp);
+      if (!taskTester.apply(task.getHref())) {
+         throw new RuntimeException(String.format("failed to %s %s: %s", "resetVApp", vApp.getName(), task));
+      }
+      logger.debug("<< on vApp(%s)", vApp.getName());
+   }
+
+   protected void deleteVApp(VApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getName());
+      Task task = client.deleteVApp(vApp.getHref());
+      if (task != null)
+         if (!taskTester.apply(task.getHref()))
+            throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vApp.getName(), task));
+   }
+
+   protected VApp refreshVApp(URI id) {
+      return client.getVApp(id);
+   }
+
+   protected Task powerOff(VApp vApp) {
+      return client.powerOffVApp(vApp.getHref());
+   }
+
+   protected Task reset(VApp vApp) {
+      return client.resetVApp(vApp.getHref());
+   }
+
+   protected Task undeploy(VApp vApp) {
+      return client.undeployVApp(vApp.getHref());
    }
 }

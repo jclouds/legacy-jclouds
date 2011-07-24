@@ -32,14 +32,14 @@ import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 
 import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp, Hardware> {
+public class HardwareForVCloudExpressVApp implements Function<VApp, Hardware> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -55,7 +55,7 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
    }
 
    @Override
-   public Hardware apply(VCloudExpressVApp from) {
+   public Hardware apply(VApp from) {
       checkNotNull(from, "VApp");
       try {
          HardwareBuilder builder = rasdToHardwareBuilder.apply(from.getResourceAllocations());

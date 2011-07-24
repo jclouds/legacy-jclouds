@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.CommonVCloudAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
@@ -44,11 +44,11 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jcloud
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final CommonVCloudAsyncClient aclient;
+   private final TerremarkVCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   AllVDCsInOrg(CommonVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllVDCsInOrg(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

@@ -24,23 +24,22 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.VCloudExpressClient;
-import org.jclouds.trmk.vcloud_0_8.config.TerremarkRestClientModule;
+import org.jclouds.trmk.vcloud_0_8.config.TerremarkVCloudRestClientModule;
 import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClient;
 import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
 
 import com.google.inject.Provides;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public class TerremarkVCloudExpressRestClientModule extends
-         TerremarkRestClientModule<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
+      TerremarkVCloudRestClientModule<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
 
    public TerremarkVCloudExpressRestClientModule() {
       super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
@@ -48,25 +47,14 @@ public class TerremarkVCloudExpressRestClientModule extends
 
    @Provides
    @Singleton
-   protected VCloudExpressAsyncClient provideVCloudAsyncClient(TerremarkVCloudExpressAsyncClient in) {
+   protected TerremarkVCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudExpressAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected VCloudExpressClient provideVCloudClient(TerremarkVCloudExpressClient in) {
+   protected TerremarkVCloudClient provideVCloudClient(TerremarkVCloudExpressClient in) {
       return in;
    }
 
-   @Provides
-   @Singleton
-   protected TerremarkVCloudAsyncClient provideTerremarkAsyncClient(TerremarkVCloudExpressAsyncClient in) {
-      return in;
-   }
-
-   @Provides
-   @Singleton
-   protected TerremarkVCloudClient provideTerremarkClient(TerremarkVCloudExpressClient in) {
-      return in;
-   }
 }

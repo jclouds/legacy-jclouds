@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Catalog xmlns="http://www.vmware.com/vcloud/v1" name="Jclouds-private" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcenterprise.bluelock.com/api/v1.0/catalog/921222081" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd">
-    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml" href="https://vcenterprise.bluelock.com/api/v1.0/org/9566014"/>
-    <Link rel="add" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcenterprise.bluelock.com/api/v1.0/catalog/921222081/catalogItems"/>
-    <CatalogItems/>
-    <IsPublished>false</IsPublished>
-</Catalog>

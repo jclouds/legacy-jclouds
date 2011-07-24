@@ -19,6 +19,7 @@
 package org.jclouds.trmk.vcloud_0_8.compute.config;
 
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,25 +27,38 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.config.BindComputeStrategiesByClass;
-import org.jclouds.compute.config.BindComputeSuppliersByClass;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
-import org.jclouds.trmk.vcloud_0_8.compute.VCloudExpressComputeClient;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
+import org.jclouds.trmk.vcloud_0_8.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
-import org.jclouds.trmk.vcloud_0_8.compute.functions.TerremarkVCloudExpressVAppToNodeMetadata;
+import org.jclouds.trmk.vcloud_0_8.compute.functions.ParseOsFromVAppTemplateName;
+import org.jclouds.trmk.vcloud_0_8.compute.functions.VAppToNodeMetadata;
 import org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.Org;
+import org.jclouds.trmk.vcloud_0_8.domain.Status;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -53,7 +67,52 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
+public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
+
+   @VisibleForTesting
+   public static final Map<Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeState> builder()
+         .put(Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING)
+         .put(Status.RESOLVED, NodeState.PENDING).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+         .put(Status.DEPLOYED, NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED)
+         .put(Status.UNRESOLVED, NodeState.PENDING).build();
+
+   @Singleton
+   @Provides
+   protected Map<Status, NodeState> provideVAppStatusToNodeState() {
+      return VAPPSTATUS_TO_NODESTATE;
+   }
+
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(new TypeLiteral<Function<NodeMetadata, OrgAndName>>() {
+      }).to(new TypeLiteral<NodeMetadataToOrgAndName>() {
+      });
+      bind(TemplateOptions.class).to(TerremarkVCloudTemplateOptions.class);
+      bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
+      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
+            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+      bind(SecureRandom.class).toInstance(new SecureRandom());
+      install(new TerremarkBindComputeStrategiesByClass());
+      install(new TerremarkBindComputeSuppliersByClass());
+      bindVAppConverter();
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
+      }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
+      });
+      bind(new TypeLiteral<Function<String, OperatingSystem>>() {
+      }).to(ParseOsFromVAppTemplateName.class);
+   }
+
+   protected void bindVAppConverter() {
+      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
+      }).to(VAppToNodeMetadata.class);
+   }
 
    @Provides
    @Singleton
@@ -65,36 +124,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
          }
       };
 
-   }
-
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(new TypeLiteral<Function<NodeMetadata, OrgAndName>>() {
-      }).to(new TypeLiteral<NodeMetadataToOrgAndName>() {
-      });
-      bind(TemplateOptions.class).to(TerremarkVCloudTemplateOptions.class);
-      bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
-      bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
-      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
-      bind(SecureRandom.class).toInstance(new SecureRandom());
-   }
-
-   @Override
-   protected void bindVAppConverter() {
-      bind(new TypeLiteral<Function<VCloudExpressVApp, NodeMetadata>>() {
-      }).to(TerremarkVCloudExpressVAppToNodeMetadata.class);
-   }
-
-   @Override
-   public BindComputeStrategiesByClass defineComputeStrategyModule() {
-      return new TerremarkBindComputeStrategiesByClass();
-   }
-
-   @Override
-   public BindComputeSuppliersByClass defineComputeSupplierModule() {
-      return new TerremarkBindComputeSuppliersByClass();
    }
 
    @Provides

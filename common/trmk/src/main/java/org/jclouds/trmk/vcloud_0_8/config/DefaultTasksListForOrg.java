@@ -20,16 +20,21 @@ package org.jclouds.trmk.vcloud_0_8.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_TASKSLIST;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
+import org.jclouds.trmk.vcloud_0_8.endpoints.TasksList;
+import org.jclouds.trmk.vcloud_0_8.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 /**
@@ -38,10 +43,15 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class DefaultTasksListForOrg implements Function<ReferenceType, ReferenceType> {
+   private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
    private final Supplier<Map<String, ? extends Org>> nameToOrg;
 
    @Inject
-   public DefaultTasksListForOrg(Supplier<Map<String, ? extends Org>> nameToOrg) {
+   public DefaultTasksListForOrg(ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
+         @TasksList Predicate<ReferenceType> defaultSelector, Supplier<Map<String, ? extends Org>> nameToOrg) {
+      this.selector = new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(checkNotNull(
+            valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_TASKSLIST,
+            checkNotNull(defaultSelector, "defaultSelector"));
       this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
    }
 
@@ -49,7 +59,7 @@ public class DefaultTasksListForOrg implements Function<ReferenceType, Reference
    public ReferenceType apply(ReferenceType defaultOrg) {
       org.jclouds.trmk.vcloud_0_8.domain.Org org = nameToOrg.get().get(defaultOrg.getName());
       checkState(org != null, "could not retrieve Org at %s", defaultOrg);
-      return org.getTasksList();
+      return selector.apply(org.getTasksLists().values());
    }
 
 }

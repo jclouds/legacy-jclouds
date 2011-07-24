@@ -25,7 +25,7 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.TaskStatus;
@@ -51,7 +51,7 @@ public class TaskImpl extends ReferenceTypeImpl implements Task {
 
    public TaskImpl(URI id, String operation, TaskStatus status, Date startTime, @Nullable Date endTime,
             @Nullable Date expiryTime, ReferenceType owner, VCloudError error) {
-      super(null, VCloudMediaType.TASK_XML, id);
+      super(null, TerremarkVCloudMediaType.TASK_XML, id);
       this.operation = operation;
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;

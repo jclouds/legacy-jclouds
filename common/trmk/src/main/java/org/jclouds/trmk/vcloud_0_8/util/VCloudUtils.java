@@ -28,7 +28,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudError;
 import org.jclouds.trmk.vcloud_0_8.xml.ErrorHandler;
 
@@ -54,7 +54,7 @@ public class VCloudUtils {
       // HEAD has no content
       if (response.getPayload() == null)
          return null;
-      if (VCloudMediaType.ERROR_XML.equals(response.getPayload().getContentMetadata().getContentType())) {
+      if (TerremarkVCloudMediaType.ERROR_XML.equals(response.getPayload().getContentMetadata().getContentType())) {
          try {
             return (VCloudError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
          } catch (RuntimeException e) {

@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
@@ -97,7 +97,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(provider, identity, credential).getProviderSpecificContext();
-         VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

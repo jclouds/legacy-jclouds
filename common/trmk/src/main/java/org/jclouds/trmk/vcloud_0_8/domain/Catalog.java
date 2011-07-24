@@ -18,7 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -33,13 +32,6 @@ import com.google.inject.ImplementedBy;
 @org.jclouds.trmk.vcloud_0_8.endpoints.Catalog
 @ImplementedBy(CatalogImpl.class)
 public interface Catalog extends ReferenceType, Map<String, ReferenceType> {
-   /**
-    * Reference to the org containing this vDC.
-    * 
-    * @since vcloud api 1.0
-    * @return org, or null if this is a version before 1.0 where the org isn't present
-    */
-   ReferenceType getOrg();
 
    /**
     * optional description
@@ -49,24 +41,4 @@ public interface Catalog extends ReferenceType, Map<String, ReferenceType> {
    @Nullable
    String getDescription();
 
-   /**
-    * read‐only element, true if the catalog is published
-    * 
-    * @since vcloud api 1.0
-    */
-   boolean isPublished();
-
-   /**
-    * @return true, if the current user cannot modify the catalog
-    * @since vcloud api 1.0
-    */
-   boolean isReadOnly();
-
-   /**
-    * read‐only container for Task elements. Each element in the container represents a queued,
-    * running, or failed task owned by this object.
-    * 
-    * @since vcloud api 1.0
-    */
-   List<Task> getTasks();
 }

@@ -28,14 +28,14 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVAppTemplate;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpressVAppTemplate, Image> {
+public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate, Image> {
    private final FindLocationForResource findLocationForResource;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    private final Function<String, OperatingSystem> osParser;
@@ -56,7 +56,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
    }
 
    @Override
-   public Image apply(VCloudExpressVAppTemplate from) {
+   public Image apply(VAppTemplate from) {
       ImageBuilder builder = new ImageBuilder();
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());

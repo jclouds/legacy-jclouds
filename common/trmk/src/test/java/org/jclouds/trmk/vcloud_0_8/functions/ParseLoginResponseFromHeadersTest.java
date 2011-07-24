@@ -26,7 +26,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.io.Payloads;
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
@@ -64,7 +64,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+               TerremarkVCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
@@ -79,7 +79,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0=");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+               TerremarkVCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
@@ -94,7 +94,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "37ce2715-9aba-4f48-8e45-2db8a8da702d");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+               TerremarkVCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
@@ -110,7 +110,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "37ce2715-9aba-4f48-8e45-2db8a8da702d");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+               TerremarkVCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
@@ -147,7 +147,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48=");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
-               VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+               TerremarkVCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 }

@@ -45,9 +45,12 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
    protected String description;
    protected String key;
    protected SortedMap<String, String> properties = Maps.newTreeMap();
+   private ReferenceType customizationOptions;
+   private ReferenceType computeOptions;
 
    public CatalogItem getResult() {
-      return new CatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description, entity, properties);
+      return new CatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description, computeOptions,
+            customizationOptions, entity, properties);
    }
 
    @Override
@@ -59,6 +62,14 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
          entity = newReferenceType(attributes);
       } else if (qName.equals("Property")) {
          key = attributes.get("key");
+      } else if (qName.equals("Link")) {
+         if (attributes.containsKey("name")) {
+            if (attributes.get("name").equals("Customization Options")) {
+               customizationOptions = newReferenceType(attributes);
+            } else if (attributes.get("name").equals("Compute Options")) {
+               computeOptions = newReferenceType(attributes);
+            }
+         }
       }
    }
 

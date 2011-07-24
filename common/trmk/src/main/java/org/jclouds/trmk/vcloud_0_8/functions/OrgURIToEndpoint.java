@@ -24,7 +24,6 @@ import java.util.Map;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -55,13 +54,13 @@ public abstract class OrgURIToEndpoint implements Function<Object, URI> {
 
       });
       try {
-         TerremarkOrg org = TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg.getHref() : from));
+         Org org = uriToOrg.get(from == null ? defaultOrg.getHref() : from);
          return getUriFromOrg(org);
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("org " + from + " not found in: " + uriToOrg, e);
       }
    }
 
-   protected abstract URI getUriFromOrg(TerremarkOrg org);
+   protected abstract URI getUriFromOrg(Org org);
 
 }

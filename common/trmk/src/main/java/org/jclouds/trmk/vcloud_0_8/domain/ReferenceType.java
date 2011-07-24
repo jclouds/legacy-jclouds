@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.domain;
 
 import java.net.URI;
 
-import org.jclouds.trmk.vcloud_0_8.VCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 
 import com.google.inject.ImplementedBy;

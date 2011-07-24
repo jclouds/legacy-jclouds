@@ -33,7 +33,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudExpressVApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.suppliers.InternetServiceAndPublicIpAddressSupplier;
 import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
 
@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier implements
-         InternetServiceAndPublicIpAddressSupplier {
+      InternetServiceAndPublicIpAddressSupplier {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -58,12 +58,15 @@ public class TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier imp
    }
 
    @Override
-   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VCloudExpressVApp vApp, int port,
-            Protocol protocol) {
+   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port, Protocol protocol) {
       logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
-      InternetService is = client.addInternetServiceToVDC(vApp.getVDC().getHref(), vApp.getName() + "-" + port,
-               protocol, port, withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp
-                        .getName(), vApp.getName())));
+      InternetService is = client.addInternetServiceToVDC(
+            vApp.getVDC().getHref(),
+            vApp.getName() + "-" + port,
+            protocol,
+            port,
+            withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                  vApp.getName())));
       PublicIpAddress ip = is.getPublicIpAddress();
       Map<InternetService, PublicIpAddress> result = ImmutableMap.<InternetService, PublicIpAddress> of(is, ip);
       Entry<InternetService, PublicIpAddress> entry = Iterables.getOnlyElement(result.entrySet());

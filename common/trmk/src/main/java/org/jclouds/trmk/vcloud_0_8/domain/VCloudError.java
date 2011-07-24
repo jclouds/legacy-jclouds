@@ -70,7 +70,7 @@ public interface VCloudError {
       METHOD_NOT_ALLOWED,
       /**
        * One or more references (href attribute values) supplied in the request could not be
-       * resolved to an object, or the Content‐type of the request was incorrect.
+       * resolved to an object, or the Content-type of the request was incorrect.
        */
       RESOURCE_NOT_FOUND,
       /**
