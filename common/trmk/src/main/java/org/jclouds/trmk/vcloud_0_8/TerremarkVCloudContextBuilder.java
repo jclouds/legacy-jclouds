@@ -21,18 +21,14 @@ package org.jclouds.trmk.vcloud_0_8;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.trmk.vcloud_0_8.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.trmk.vcloud_0_8.config.TerremarkVCloudRestClientModule;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link VCloudComputeServiceContext} or {@link Injector} instances
@@ -65,13 +61,5 @@ public class TerremarkVCloudContextBuilder<S extends TerremarkVCloudClient, A ex
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new TerremarkVCloudRestClientModule<S, A>(syncClientType, asyncClientType));
-   }
-
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      // need the generic type information
-      return (ComputeServiceContext) this.buildInjector().getInstance(
-            Key.get(new TypeLiteral<ComputeServiceContextImpl<S, A>>() {
-            }));
    }
 }

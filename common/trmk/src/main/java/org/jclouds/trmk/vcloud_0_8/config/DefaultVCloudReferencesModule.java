@@ -75,6 +75,13 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    }
 
    @Provides
+   @Singleton
+   @org.jclouds.trmk.vcloud_0_8.endpoints.TasksList
+   protected Predicate<ReferenceType> provideDefaultTasksListSelector(Injector i) {
+      return Predicates.alwaysTrue();
+   }
+
+   @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.Catalog
    @Singleton
    protected ReferenceType provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,

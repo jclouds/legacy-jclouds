@@ -202,12 +202,13 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
    @Singleton
    public static class OrgCatalogSupplier implements
          Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>>> {
-      protected final Supplier<Map<String, ? extends Org>> orgSupplier;
-      protected final Function<Org, Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> allCatalogsInOrg;
+      protected final Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier;
+      protected final Function<org.jclouds.trmk.vcloud_0_8.domain.Org, Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> allCatalogsInOrg;
 
       @Inject
-      protected OrgCatalogSupplier(Supplier<Map<String, ? extends Org>> orgSupplier,
-            Function<Org, Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> allCatalogsInOrg) {
+      protected OrgCatalogSupplier(
+            Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier,
+            Function<org.jclouds.trmk.vcloud_0_8.domain.Org, Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>> allCatalogsInOrg) {
          this.orgSupplier = orgSupplier;
          this.allCatalogsInOrg = allCatalogsInOrg;
       }
