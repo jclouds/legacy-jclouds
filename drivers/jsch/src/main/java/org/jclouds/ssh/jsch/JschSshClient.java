@@ -417,7 +417,6 @@ public class JschSshClient implements SshClient {
          executor = acquire(execConnection(command));
          try {
             String outputString = Strings2.toStringAndClose(executor.getInputStream());
-            String errorString = Strings2.toStringAndClose(executor.getErrStream());
             int errorStatus = executor.getExitStatus();
             int i = 0;
             String message = String.format("bad status -1 %s", toString());
@@ -427,6 +426,12 @@ public class JschSshClient implements SshClient {
             }
             if (errorStatus == -1)
                throw new SshException(message);
+            // be careful as this can hang reading
+            // com.jcraft.jsch.Channel$MyPipedInputStream when there's a slow
+            // network connection
+            // String errorString =
+            // Strings2.toStringAndClose(executor.getErrStream());
+            String errorString = "";
             return new ExecResponse(outputString, errorString, errorStatus);
          } finally {
             if (executor != null)
