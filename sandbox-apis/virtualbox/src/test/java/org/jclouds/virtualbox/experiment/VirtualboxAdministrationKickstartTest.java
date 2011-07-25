@@ -183,6 +183,8 @@ public class VirtualboxAdministrationKickstartTest {
 				.getProperty("test." + provider + ".distroIsoUrl",
 						"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
 
+		installVboxOse = System.getProperty("test." + provider + ".installvboxose", "sudo -S apt-get --yes install virtualbox-ose");
+
 		originalDisk = workingDir
 				+ File.separator
 				+ "VDI"
