@@ -570,7 +570,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
       Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
-      logger.debug("<<   matched image(%s)", image);
+      logger.debug("<<   matched image(%s)", image.getId());
 
       return new TemplateImpl(image, hardware, location, options);
    }
@@ -614,7 +614,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.warn(exception, "hardware profiles %s\nimage ids %s", hardwarel, transform(images, imageToId));
          throw exception;
       }
-      logger.debug("<<   matched hardware(%s)", hardware);
+      logger.debug("<<   matched hardware(%s)", hardware.getId());
       return hardware;
    }
 

@@ -137,7 +137,10 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
          ssh.put(initFile, init.render(OsFamily.UNIX));
       } catch (SshException e) {
          // If there's a problem with the sftp configuration, we can try via ssh exec
-         logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         if (logger.isTraceEnabled())
+            logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         else
+            logger.warn("<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
          ssh.disconnect();
          ssh.connect();
          ssh.exec("rm " + initFile);
@@ -206,8 +209,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName()).add("runAsRoot",
-               runAsRoot).toString();
+      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
+            .add("runAsRoot", runAsRoot).toString();
    }
 
    @Override
