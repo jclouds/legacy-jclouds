@@ -31,7 +31,7 @@ import org.jclouds.byon.functions.NodesFromYamlTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.domain.Location;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -64,7 +64,7 @@ public class BYONComputeServiceTest {
          Properties props = new Properties();
          props.setProperty("byon.endpoint", endpoint);
          context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet
-                  .<Module> of(new JschSshClientModule()), props);
+                  .<Module> of(new SshjSshClientModule()), props);
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
@@ -92,7 +92,7 @@ public class BYONComputeServiceTest {
          Properties props = new Properties();
          props.setProperty("byon.endpoint", endpoint);
          context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet
-                  .<Module> of(new JschSshClientModule()), props);
+                  .<Module> of(new SshjSshClientModule()), props);
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 

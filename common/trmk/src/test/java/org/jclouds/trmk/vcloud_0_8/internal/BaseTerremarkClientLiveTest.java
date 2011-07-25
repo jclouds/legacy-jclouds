@@ -34,7 +34,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient.Factory;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
@@ -105,8 +105,8 @@ public abstract class BaseTerremarkClientLiveTest <T extends TerremarkVCloudClie
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    @AfterGroups(groups = { "live" })

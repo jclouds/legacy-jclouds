@@ -19,8 +19,10 @@
 package org.jclouds.cloudsigma.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -32,8 +34,8 @@ public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
 }

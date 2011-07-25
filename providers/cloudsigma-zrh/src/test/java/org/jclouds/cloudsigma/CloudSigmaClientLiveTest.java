@@ -55,7 +55,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -411,7 +411,7 @@ public class CloudSigmaClientLiveTest {
    }
 
    protected void doConnectViaSsh(Server server, Credentials creds) throws IOException {
-      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
+      SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class)
             .create(new IPSocket(server.getVnc().getIp(), 22), creds);
       try {
          ssh.connect();

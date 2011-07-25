@@ -30,9 +30,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.compute.suppliers.VAppTemplatesInOrgs;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInOrg;
 import org.testng.annotations.AfterGroups;
@@ -88,7 +87,7 @@ public class VAppTemplatesInOrgsLiveTest {
       Properties overrides = setupProperties();
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()),overrides).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()),overrides).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
       allCatalogItemsInOrg = injector.getInstance(AllCatalogItemsInOrg.class);

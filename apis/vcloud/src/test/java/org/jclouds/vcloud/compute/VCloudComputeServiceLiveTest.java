@@ -26,7 +26,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VApp;
@@ -48,8 +48,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    public void testAssignability() throws Exception {

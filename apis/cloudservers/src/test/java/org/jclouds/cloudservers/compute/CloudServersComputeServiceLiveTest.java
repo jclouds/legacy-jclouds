@@ -29,8 +29,10 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
  * 
@@ -45,8 +47,8 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    public void testAssignability() throws Exception {

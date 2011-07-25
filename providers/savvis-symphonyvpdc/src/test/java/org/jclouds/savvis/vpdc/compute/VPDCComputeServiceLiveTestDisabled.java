@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -38,7 +38,7 @@ public class VPDCComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTe
 
 	@Override
 	protected Module getSshModule() {
-		return new JschSshClientModule();
+		return new SshjSshClientModule();
 	}
 
 }

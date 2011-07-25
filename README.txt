@@ -77,7 +77,7 @@ Compute Example (Java):
                   accesskeyid,
                   secretaccesskey,
                   ImmutableSet.of(new Log4JLoggingModule(),
-                                  new JschSshClientModule()));
+                                  new SshjSshClientModule()));
   client = context.getComputeService();
  
   // define the requirements of your node
@@ -96,9 +96,9 @@ Compute Example (Java):
 Compute Example (Clojure):
   (use 'org.jclouds.compute2)
 
-  ; create a compute service using ssh and log4j extensions
+  ; create a compute service using sshj and log4j extensions
   (def compute 
-    (*compute* "trmk`-ecloud" "user" "password" :ssh :log4j))
+    (*compute* "trmk`-ecloud" "user" "password" :sshj :log4j))
 
   ; launch a couple nodes with the default operating system, installing your user.
   (create-nodes *compute* "mycluster" 2

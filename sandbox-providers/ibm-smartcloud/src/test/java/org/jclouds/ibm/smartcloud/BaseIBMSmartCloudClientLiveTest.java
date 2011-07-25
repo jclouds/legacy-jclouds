@@ -30,7 +30,7 @@ import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -82,7 +82,7 @@ public abstract class BaseIBMSmartCloudClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule(),
-               new JschSshClientModule()), overrides);
+               new SshjSshClientModule()), overrides);
 
       connection = context.getApi();
       keyPair = ComputeTestUtils.setupKeyPair();

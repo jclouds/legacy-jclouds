@@ -30,12 +30,10 @@ import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClient;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -123,7 +121,7 @@ public class InternetServiceLiveTest {
       Properties overrides = setupProperties();
 
       context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides)
                .getProviderSpecificContext();
 
       tmClient = context.getApi();

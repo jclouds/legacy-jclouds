@@ -52,7 +52,7 @@ webserver:
   ;; create a compute service using ssh and log4j extensions
   (def compute
     (compute-service
-      provider provider-identity provider-credential :ssh :log4j))
+      provider provider-identity provider-credential :sshj :log4j))
 
   (create-node \"webserver\" compute)
 

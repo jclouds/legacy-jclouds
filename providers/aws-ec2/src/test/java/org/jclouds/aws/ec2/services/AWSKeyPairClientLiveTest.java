@@ -52,7 +52,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -104,7 +104,7 @@ public class AWSKeyPairClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       context = computeContext.getProviderSpecificContext();
       client = context.getApi().getKeyPairServices();
    }

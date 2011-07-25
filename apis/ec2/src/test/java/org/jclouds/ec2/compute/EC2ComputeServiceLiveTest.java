@@ -47,7 +47,7 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -69,7 +69,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Override
    protected Module getSshModule() {
-      return new JschSshClientModule();
+      return new SshjSshClientModule();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")

@@ -37,14 +37,14 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.ibm.smartcloud.domain.Address;
 import org.jclouds.ibm.smartcloud.domain.Image;
 import org.jclouds.ibm.smartcloud.domain.Instance;
+import org.jclouds.ibm.smartcloud.domain.Instance.Software;
 import org.jclouds.ibm.smartcloud.domain.InstanceType;
 import org.jclouds.ibm.smartcloud.domain.Key;
 import org.jclouds.ibm.smartcloud.domain.Location;
 import org.jclouds.ibm.smartcloud.domain.Offering;
 import org.jclouds.ibm.smartcloud.domain.StorageOffering;
-import org.jclouds.ibm.smartcloud.domain.Volume;
-import org.jclouds.ibm.smartcloud.domain.Instance.Software;
 import org.jclouds.ibm.smartcloud.domain.StorageOffering.Format;
+import org.jclouds.ibm.smartcloud.domain.Volume;
 import org.jclouds.ibm.smartcloud.predicates.AddressFree;
 import org.jclouds.ibm.smartcloud.predicates.InstanceActive;
 import org.jclouds.ibm.smartcloud.predicates.InstanceActiveOrFailed;
@@ -55,7 +55,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.sshj.SshjSshClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -498,7 +498,7 @@ public class IBMSmartCloudClientLiveTest extends BaseIBMSmartCloudClientLiveTest
 
       socketOpen.apply(socket);
 
-      SshClient ssh = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000, credentials.identity, null,
+      SshClient ssh = new SshjSshClient(new BackoffLimitedRetryHandler(), socket, 60000, credentials.identity, null,
                credentials.credential.getBytes());
       try {
          ssh.connect();

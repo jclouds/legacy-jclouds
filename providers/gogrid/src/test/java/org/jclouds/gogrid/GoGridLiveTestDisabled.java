@@ -62,7 +62,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.sshj.SshjSshClient;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -379,7 +379,7 @@ public class GoGridLiveTestDisabled {
 
       socketOpen.apply(socket);
 
-      SshClient sshClient = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000,
+      SshClient sshClient = new SshjSshClient(new BackoffLimitedRetryHandler(), socket, 60000,
                instanceCredentials.identity, instanceCredentials.credential, null);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();

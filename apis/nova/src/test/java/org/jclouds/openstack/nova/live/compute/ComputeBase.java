@@ -55,12 +55,13 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.JschSshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.SshjSshClient;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
+import com.google.inject.Module;
 
 /**
  * @author Victor Galkin
@@ -91,8 +92,8 @@ public class ComputeBase {
       return new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
    }
 
-   private JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   private Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    protected TemplateBuilder getDefaultTemplateBuilder() {
@@ -150,7 +151,7 @@ public class ComputeBase {
    protected void awaitForSshPort(String address, Credentials credentials) throws URISyntaxException {
       IPSocket socket = new IPSocket(address, 22);
 
-      JschSshClient ssh = new JschSshClient(
+      SshjSshClient ssh = new SshjSshClient(
             new BackoffLimitedRetryHandler(), socket, 10000, credentials.identity, null, credentials.credential.getBytes());
       while (true) {
          try {

@@ -33,6 +33,8 @@
       :slf4j 'org.jclouds.logging.slf4j.config.SLF4JLoggingModule
       :lognull 'org.jclouds.logging.config.NullLoggingModule
       :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
+      :jsch 'org.jclouds.ssh.jsch.config.JschSshClientModule
+      :sshj 'org.jclouds.sshj.config.SshjSshClientModule
       :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule
       :apachehc 'org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule
       :ning 'org.jclouds.http.ning.config.NingHttpCommandExecutorServiceModule

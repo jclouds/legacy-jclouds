@@ -34,7 +34,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient.Factory;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
@@ -104,8 +104,8 @@ public abstract class BaseVCloudClientLiveTest {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    @AfterGroups(groups = { "live" })

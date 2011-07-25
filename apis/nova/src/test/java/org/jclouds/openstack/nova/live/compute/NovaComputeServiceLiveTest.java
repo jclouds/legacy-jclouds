@@ -18,16 +18,52 @@
  */
 package org.jclouds.openstack.nova.live.compute;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.inject.Module;
-import com.jcraft.jsch.JSchException;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
-import org.jclouds.compute.domain.*;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -40,25 +76,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.uniqueIndex;
-import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
-import static org.jclouds.compute.predicates.NodePredicates.*;
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-import static org.testng.Assert.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.google.inject.Module;
 
 /**
  * Generally disabled, as it incurs higher fees.
@@ -129,7 +150,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   @Test(expectedExceptions = JSchException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 120000)
+   @Test(expectedExceptions = AuthorizationException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 120000)
    void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
       NodeMetadata node = getDefaultNodeImmediately(group);
       String address = awaitForPublicAddressAssigned(node.getId());

@@ -24,8 +24,8 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -33,7 +33,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class BYONComputeServiceLiveTest {
       contextProperties.setProperty("byon.nodes", nodes.toString());
 
       context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(
-               new JschSshClientModule(), new Log4JLoggingModule()), contextProperties);
+               new SshjSshClientModule(), new Log4JLoggingModule()), contextProperties);
    }
 
    public void testCanRunCommandAsCurrentUser() throws Exception {

@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-jsch</artifactId>
+            <artifactId>jclouds-sshj</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

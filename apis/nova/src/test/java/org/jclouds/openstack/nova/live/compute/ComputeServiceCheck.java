@@ -18,7 +18,14 @@
  */
 package org.jclouds.openstack.nova.live.compute;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -27,18 +34,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
-import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Not intended to be run with maven and does not performs a cleanup after tests
@@ -54,7 +55,7 @@ public class ComputeServiceCheck {
       contextFactory = new ComputeServiceContextFactory();
       Properties properties = setupOverrides(setupProperties(this.getClass()));
       context = contextFactory.createContext("nova",
-            ImmutableSet.of(new JschSshClientModule(), new SLF4JLoggingModule()), properties);
+            ImmutableSet.of(new SshjSshClientModule(), new SLF4JLoggingModule()), properties);
    }
 
    @Test

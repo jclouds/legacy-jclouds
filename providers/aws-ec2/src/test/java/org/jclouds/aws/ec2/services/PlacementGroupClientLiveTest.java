@@ -51,7 +51,7 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
@@ -108,7 +108,7 @@ public class PlacementGroupClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       keyPair = setupKeyPair();
 
       client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());

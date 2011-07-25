@@ -34,7 +34,7 @@ import org.jclouds.savvis.vpdc.VPDCAsyncClient;
 import org.jclouds.savvis.vpdc.VPDCClient;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.savvis.vpdc.reference.VPDCConstants;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -91,7 +91,7 @@ public class BaseVPDCClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       restContext = context.getProviderSpecificContext();
       taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 7200, 10, TimeUnit.SECONDS);
    }

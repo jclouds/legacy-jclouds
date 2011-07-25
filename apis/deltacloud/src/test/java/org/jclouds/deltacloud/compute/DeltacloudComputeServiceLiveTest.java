@@ -29,8 +29,10 @@ import org.jclouds.deltacloud.DeltacloudAsyncClient;
 import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
  * 
@@ -44,8 +46,8 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    public void testAssignability() throws Exception {

@@ -19,7 +19,7 @@
 package org.jclouds.slicehost.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 /**
@@ -35,8 +35,8 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected SshjSshClientModule getSshModule() {
+      return new SshjSshClientModule();
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

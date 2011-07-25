@@ -44,7 +44,7 @@ import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -96,7 +96,7 @@ public class SlicehostClientLiveTest {
       Properties overrides = setupProperties();
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides).buildInjector();
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).buildInjector();
 
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);

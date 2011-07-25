@@ -34,7 +34,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -134,7 +134,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    }
 
    protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
-      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class).create(
+      SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class).create(
                new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
       try {
          ssh.connect();

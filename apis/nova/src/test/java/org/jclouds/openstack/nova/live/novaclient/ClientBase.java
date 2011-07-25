@@ -37,7 +37,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.base.Predicate;
@@ -65,7 +65,7 @@ public class ClientBase {
       Properties properties = setupOverrides(setupProperties(this.getClass()));
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), properties)
+            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new SshjSshClientModule()), properties)
             .buildInjector();
 
       client = injector.getInstance(NovaClient.class);

@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.testng.annotations.Test;
@@ -93,8 +93,8 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected SshjSshClientModule getSshModule() {
+      return new SshjSshClientModule();
    }
 
 }

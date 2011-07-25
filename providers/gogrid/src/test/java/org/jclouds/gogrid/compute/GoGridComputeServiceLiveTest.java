@@ -21,8 +21,10 @@ package org.jclouds.gogrid.compute;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
  * @author Oleksiy Yarmula
@@ -35,8 +37,8 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
