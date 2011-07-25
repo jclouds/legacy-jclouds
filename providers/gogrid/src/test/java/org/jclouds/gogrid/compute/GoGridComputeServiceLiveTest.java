@@ -43,6 +43,6 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
       // hostname is not completely predictable based on node metadata
-      assert execResponse.getOutput().trim().startsWith(node1.getName());
+      assert execResponse.getOutput().trim().startsWith(node1.getName()) : execResponse + ": " + node1;
    }
 }
