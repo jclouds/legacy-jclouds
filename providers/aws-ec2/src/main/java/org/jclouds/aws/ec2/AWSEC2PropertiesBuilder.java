@@ -46,11 +46,8 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       properties.setProperty(PROPERTY_TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
-      properties.setProperty("jclouds.ssh.max_retries", "7");
-      properties
-               .setProperty(
-                        "jclouds.ssh.retryable_messages",
-                        "Auth fail,failed to send channel request,channel is not opened,invalid data,End of IO Stream Read,Connection reset,socket is not established,connection is closed by foreign host,socket is not established");
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.putAll(Region.regionProperties());
       properties.remove(PROPERTY_EC2_AMI_OWNERS);

@@ -43,11 +43,11 @@ import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess.Configuration;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -154,7 +154,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("foo", "privateKey"))).andReturn(
                      client2Foo);
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
-                     new SshException("Auth fail"));
+                     new AuthorizationException("Auth fail", null));
 
             // run script without backgrounding (via predicate)
             client2.connect();

@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
@@ -62,16 +63,28 @@ public class JschSshClientTest {
       return new JschSshClientModule();
    }
 
-   public void testExceptionClassesRetry() {
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testPropateConvertsAuthException() {
+      ssh.propagate(new JSchException("Auth fail"), "");
+   }
 
+   public void testExceptionClassesRetry() {
       assert ssh.shouldRetry(new JSchException("io error", new IOException("socket closed")));
       assert ssh.shouldRetry(new JSchException("connect error", new ConnectException("problem")));
       assert ssh.shouldRetry(new IOException("channel %s is not open", new NullPointerException()));
       assert ssh.shouldRetry(new IOException("channel %s is not open", new NullPointerException(null)));
+   }
 
+   public void testOnlyRetryAuthWhenSet() throws UnknownHostException {
+      JschSshClient ssh1 = createClient();
+      assert !ssh1.shouldRetry(new AuthorizationException("problem", null));
+      ssh1.retryAuth = true;
+      assert ssh1.shouldRetry(new AuthorizationException("problem", null));
    }
 
    public void testExceptionMessagesRetry() {
+      assert !ssh.shouldRetry(new NullPointerException(""));
+      assert !ssh.shouldRetry(new NullPointerException((String) null));
       assert ssh.shouldRetry(new JSchException("Session.connect: java.io.IOException: End of IO Stream Read"));
       assert ssh.shouldRetry(new JSchException("Session.connect: invalid data"));
       assert ssh.shouldRetry(new JSchException("Session.connect: java.net.SocketException: Connection reset"));
@@ -81,7 +94,7 @@ public class JschSshClientTest {
       // http://sourceforge.net/mailarchive/forum.php?thread_name=CAARMrHVhASeku48xoAgWEb-nEpUuYkMA03PoA5TvvFdk%3DjGKMA%40mail.gmail.com&forum_name=jsch-users
       assert !ssh.shouldRetry(new SftpException(ChannelSftp.SSH_FX_FAILURE, new NullPointerException().toString()));
    }
-   
+
    public void testCausalChainHasMessageContaining() {
       assert ssh.causalChainHasMessageContaining(
             new JSchException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(

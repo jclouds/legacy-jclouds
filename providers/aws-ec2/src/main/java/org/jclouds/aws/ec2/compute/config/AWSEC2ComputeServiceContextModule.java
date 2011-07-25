@@ -72,7 +72,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       install(new EC2BindComputeSuppliersByClass());
       bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
       bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
-               CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
+            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
       bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
       bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
@@ -90,14 +90,14 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Provides
    @Singleton
    protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
-                  @Override
-                  public Map<RegionAndName, ? extends Image> get() {
-                     return supplier.get();
-                  }
-               });
+            authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+               @Override
+               public Map<RegionAndName, ? extends Image> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Override

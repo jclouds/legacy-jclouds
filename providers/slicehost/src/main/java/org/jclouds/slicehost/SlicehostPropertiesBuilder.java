@@ -38,7 +38,7 @@ public class SlicehostPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX,US-MO");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.slicehost.com");
       properties.setProperty(PROPERTY_API_VERSION, "1.4.1.1");
-      properties.setProperty("jclouds.ssh.max_retries", "8");
+      properties.setProperty("jclouds.ssh.max-retries", "8");
       return properties;
    }
 

@@ -20,7 +20,6 @@ package org.jclouds.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Throwables.getRootCause;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -266,7 +265,8 @@ public abstract class BaseComputeServiceLiveTest {
                      good.identity, "romeo"));
             assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
-            assert getRootCause(e).getMessage().contains("Auth fail") : e;
+            assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
+                  .getNodeErrors().values() + "not authexception!";
          }
 
          runScriptWithCreds(group, os, good);
@@ -401,12 +401,8 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
-      try {
-         return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-                  .nameTask("runScriptWithCreds"));
-      } catch (SshException e) {
-         throw e;
-      }
+      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
+            .nameTask("runScriptWithCreds"));
    }
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {

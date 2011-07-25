@@ -44,13 +44,14 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.ChannelNotOpenException;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
@@ -90,18 +91,23 @@ public class JschSshClient implements SshClient {
    private final String password;
 
    @Inject(optional = true)
-   @Named("jclouds.ssh.max_retries")
+   @Named("jclouds.ssh.max-retries")
    @VisibleForTesting
    int sshRetries = 5;
 
    @Inject(optional = true)
-   @Named("jclouds.ssh.retryable_messages")
+   @Named("jclouds.ssh.retry-auth")
+   @VisibleForTesting
+   boolean retryAuth;
+
+   @Inject(optional = true)
+   @Named("jclouds.ssh.retryable-messages")
    @VisibleForTesting
    String retryableMessages = "failed to send channel request,channel is not opened,invalid data,End of IO Stream Read,Connection reset,connection is closed by foreign host,socket is not established";
 
    @Inject(optional = true)
-   @Named("jclouds.ssh.retry_predicate")
-   private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectException.class), instanceOf(IOException.class));
+   @Named("jclouds.ssh.retry-predicate")
+   Predicate<Throwable> retryPredicate = or(instanceOf(ConnectException.class), instanceOf(IOException.class));
 
    @Resource
    @Named("jclouds.ssh")
@@ -166,7 +172,7 @@ public class JschSshClient implements SshClient {
          java.util.Properties config = new java.util.Properties();
          config.put("StrictHostKeyChecking", "no");
          session.setConfig(config);
-         session.connect();
+         session.connect(timeout);
          return session;
       }
 
@@ -178,7 +184,6 @@ public class JschSshClient implements SshClient {
 
    protected <T, C extends Connection<T>> T acquire(C connection) {
       connection.clear();
-      Exception e = null;
       String errorMessage = String.format("(%s) error acquiring %s", toString(), connection);
       for (int i = 0; i < sshRetries; i++) {
          try {
@@ -187,22 +192,18 @@ public class JschSshClient implements SshClient {
             logger.debug("<< (%s) acquired %s", toString(), returnVal);
             return returnVal;
          } catch (Exception from) {
-            e = from;
             connection.clear();
 
-            if (i == sshRetries)
+            if (i + 1 == sshRetries) {
                throw propagate(from, errorMessage);
-
-            if (shouldRetry(from)) {
-               logger.warn("<< " + errorMessage + ": " + from.getMessage());
+            } else if (shouldRetry(from)) {
+               logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
                continue;
             }
-            throw propagate(from, errorMessage);
          }
       }
-      if (e != null)
-         throw propagate(e, errorMessage);
+      assert false : "should not reach here";
       return null;
    }
 
@@ -226,11 +227,7 @@ public class JschSshClient implements SshClient {
          checkConnected();
          String channel = "sftp";
          sftp = (ChannelSftp) session.openChannel(channel);
-         try {
-            sftp.connect();
-         } catch (JSchException e) {
-            throwChannelNotOpenExceptionOrPropagate(channel, e);
-         }
+         sftp.connect();
          return sftp;
       }
 
@@ -239,11 +236,6 @@ public class JschSshClient implements SshClient {
          return "ChannelSftp(" + JschSshClient.this.toString() + ")";
       }
    };
-
-   public void throwChannelNotOpenExceptionOrPropagate(String channel, JSchException e) throws JSchException {
-      if (e.getMessage().indexOf("channel is not opened") != -1)
-         throw new ChannelNotOpenException(String.format("(%s) channel %s is not open", toString(), channel), e);
-   }
 
    class GetConnection implements Connection<Payload> {
       private final String path;
@@ -299,7 +291,6 @@ public class JschSshClient implements SshClient {
             sftp.put(is, path);
          } finally {
             Closeables.closeQuietly(contents);
-            clear();
          }
          return null;
       }
@@ -317,8 +308,13 @@ public class JschSshClient implements SshClient {
 
    @VisibleForTesting
    boolean shouldRetry(Exception from) {
-      return any(getCausalChain(from), retryPredicate)
-            || any(Splitter.on(",").split(retryableMessages), causalChainHasMessageContaining(from));
+      Predicate<Throwable> predicate = retryAuth ?  Predicates.<Throwable>or(retryPredicate, instanceOf(AuthorizationException.class))
+            : retryPredicate;
+      if (any(getCausalChain(from), predicate))
+         return true;
+      if (!retryableMessages.equals(""))
+         return any(Splitter.on(",").split(retryableMessages), causalChainHasMessageContaining(from));
+      return false;
    }
 
    @VisibleForTesting
@@ -344,9 +340,10 @@ public class JschSshClient implements SshClient {
       backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries, message);
    }
 
-   private SshException propagate(Exception e, String message) {
+   SshException propagate(Exception e, String message) {
       message += ": " + e.getMessage();
-      logger.error(e, "<< " + message);
+      if (e.getMessage() != null && e.getMessage().indexOf("Auth fail") != -1)
+         throw new AuthorizationException("(" + toString() + ") " + message, e);
       throw e instanceof SshException ? SshException.class.cast(e) : new SshException(
             "(" + toString() + ") " + message, e);
    }
@@ -382,11 +379,7 @@ public class JschSshClient implements SshClient {
             executor.setCommand(command);
             ByteArrayOutputStream error = new ByteArrayOutputStream();
             executor.setErrStream(error);
-            try {
-               executor.connect();
-            } catch (JSchException e) {
-               throwChannelNotOpenExceptionOrPropagate("exec", e);
-            }
+            executor.connect();
             return executor;
          }
 
@@ -414,8 +407,8 @@ public class JschSshClient implements SshClient {
 
       @Override
       public ExecResponse create() throws Exception {
-         executor = acquire(execConnection(command));
          try {
+            executor = acquire(execConnection(command));
             String outputString = Strings2.toStringAndClose(executor.getInputStream());
             int errorStatus = executor.getExitStatus();
             int i = 0;
@@ -434,8 +427,7 @@ public class JschSshClient implements SshClient {
             String errorString = "";
             return new ExecResponse(outputString, errorString, errorStatus);
          } finally {
-            if (executor != null)
-               executor.disconnect();
+            clear();
          }
       }
 

@@ -138,6 +138,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       } catch (SshException e) {
          // If there's a problem with the sftp configuration, we can try via ssh exec
          logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         ssh.disconnect();
+         ssh.connect();
          ssh.exec("rm " + initFile);
          ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
                   AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
