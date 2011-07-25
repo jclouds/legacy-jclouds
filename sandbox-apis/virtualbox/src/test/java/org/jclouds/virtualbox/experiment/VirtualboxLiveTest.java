@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecResponse;
@@ -19,7 +18,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +36,6 @@ import org.virtualbox_4_0.SessionState;
 import org.virtualbox_4_0.StorageBus;
 import org.virtualbox_4_0.VirtualBoxManager;
 import org.virtualbox_4_0.jaxws.MediumState;
-import org.virtualbox_4_0.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Guice;
@@ -117,7 +115,7 @@ public class VirtualboxLiveTest {
 		endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
 		apiversion = System.getProperty("test." + provider + ".apiversion");
 		
-		injector = Guice.createInjector(new JschSshClientModule(),
+		injector = Guice.createInjector(new SshjSshClientModule(),
 				new Log4JLoggingModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(

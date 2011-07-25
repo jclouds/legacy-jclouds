@@ -2,11 +2,9 @@ package org.jclouds.virtualbox.experiment;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -21,7 +19,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
@@ -198,7 +196,7 @@ public class VirtualboxAdministrationTest {
 		hostUsername = System.getProperty("test." + provider + ".hostusername", "toor");
 		hostPassword = System.getProperty("test." + provider + ".hostpassword", "password");
 
-		injector = Guice.createInjector(new JschSshClientModule(),
+		injector = Guice.createInjector(new SshjSshClientModule(),
 				new Log4JLoggingModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(

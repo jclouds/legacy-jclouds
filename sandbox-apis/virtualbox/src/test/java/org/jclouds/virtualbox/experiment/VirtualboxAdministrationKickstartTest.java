@@ -1,12 +1,12 @@
 package org.jclouds.virtualbox.experiment;
 
 import static com.google.common.base.Throwables.propagate;
-import static com.google.common.io.ByteStreams.copy;
-import static com.google.common.io.Closeables.closeQuietly;
 import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,26 +18,26 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.log.Log;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
 import org.jclouds.virtualbox.experiment.settings.KeyboardScancodes;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 import org.virtualbox_4_0.AccessMode;
 import org.virtualbox_4_0.DeviceType;
@@ -49,27 +49,16 @@ import org.virtualbox_4_0.IStorageController;
 import org.virtualbox_4_0.LockType;
 import org.virtualbox_4_0.MachineState;
 import org.virtualbox_4_0.NATProtocol;
-import org.virtualbox_4_0.NetworkAdapterType;
 import org.virtualbox_4_0.SessionState;
 import org.virtualbox_4_0.StorageBus;
 import org.virtualbox_4_0.VirtualBoxManager;
 import org.virtualbox_4_0.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.log.Log;
 
 
 @Test(groups = "live", testName = "virtualbox.VirtualboxAdministrationKickstartTest")
@@ -92,8 +81,6 @@ public class VirtualboxAdministrationKickstartTest {
 	protected String osTypeId; // Guest OS Type ID.
 	protected String vmId; // Machine UUID (optional).
 	protected boolean forceOverwrite; 
-	protected String osUsername;
-	protected String osPassword;
 	protected String diskFormat;
 
 	protected String workingDir;
@@ -121,6 +108,11 @@ public class VirtualboxAdministrationKickstartTest {
 	protected Server server = null;
 	private InetSocketAddress testPort;
 	private String vboxManageCommand;
+	private String sshHost;
+	private String sshPort;
+	private String sshUser;
+	private String sshPass;
+	private String sshKeyFile;
 
 	
 	protected void setupCredentials() {
@@ -134,14 +126,17 @@ public class VirtualboxAdministrationKickstartTest {
 	}
 
 	protected void setupConfigurationProperties() {
+		
+		   sshHost = System.getProperty("test.ssh.host", "localhost");
+		   sshPort = System.getProperty("test.ssh.port", "22");
+		   sshUser = System.getProperty("test.ssh.username", "root");
+		   sshPass = System.getProperty("test.ssh.password", "password");
+		   sshKeyFile = System.getProperty("test.ssh.keyfile");
+
 
 		admin_pwd = System.getProperty("test." + provider + ".admin_pwd",
 				"password");
-		// OS
-		osUsername = System.getProperty("test." + provider + ".osusername",
-				"toor");
-		osPassword = System.getProperty("test." + provider + ".ospassword",
-				"password");
+
 		controllerIDE = System.getProperty("test." + provider
 				+ ".controllerIde", "IDE Controller");
 		controllerSATA = System.getProperty("test." + provider
@@ -247,7 +242,7 @@ public class VirtualboxAdministrationKickstartTest {
 		hostPassword = System.getProperty("test." + provider + ".hostpassword",
 				"password");
 
-		injector = Guice.createInjector(new JschSshClientModule(),
+		injector = Guice.createInjector(new SshjSshClientModule(),
 				new Log4JLoggingModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(
@@ -293,7 +288,7 @@ public class VirtualboxAdministrationKickstartTest {
 			client.connect();
 			client.exec("echo " + hostPassword + " | " + installVboxOse);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("It is impossible to install virtualbox with this command " + installVboxOse);
 		} finally {
 			if (client != null)
 				client.disconnect();
@@ -313,12 +308,9 @@ public class VirtualboxAdministrationKickstartTest {
 			InterruptedException {
 		// Disable login credential: $
 		// rt.exec("VBoxManage setproperty websrvauthlibrary null");
-		IPSocket socket = new IPSocket("127.0.0.1", 22);
-		socketTester.apply(socket);
-		SshClient client = sshFactory.create(socket, new Credentials(hostUsername, hostPassword));
+		SshClient client = setupSshClient();
 		try {
-			client.connect();
-			ExecResponse response = client.exec("start " + command);
+			ExecResponse response = client.exec(command);
 			System.out.println(response.getOutput());
 		} catch (Exception e) {
 			propagate(e);
@@ -326,6 +318,22 @@ public class VirtualboxAdministrationKickstartTest {
 			if (client != null)
 				client.disconnect();
 		}
+	}
+
+	
+	private SshClient setupSshClient() throws FileNotFoundException, IOException {
+		 int port = Integer.parseInt(sshPort);
+		Injector i = Guice.createInjector(new SshjSshClientModule());
+        SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
+        SshClient connection;
+        if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
+           connection = factory.create(new IPSocket(sshHost, port),
+                 new Credentials(sshUser, Strings2.toStringAndClose(new FileInputStream(sshKeyFile))));
+        } else {
+           connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
+        }
+        connection.connect();
+        return connection;
 	}
 
 	@BeforeMethod
@@ -501,16 +509,13 @@ public class VirtualboxAdministrationKickstartTest {
 	}
 	
 	@Test(dependsOnMethods = "testStartVirtualMachine")
-	public void testConfigureGuestAdditions() {
+	public void testConfigureGuestAdditions() throws FileNotFoundException, IOException {
 		
 		// configure GA
-		IPSocket socket = new IPSocket("127.0.0.1", 2222);
-		socketTester.apply(socket);
-		SshClient client = sshFactory.create(socket, new Credentials(osUsername, osPassword));
+		SshClient client = setupSshClient();
 		try {
-			client.connect();
 			//Configure your system for building kernel modules by running 
-			ExecResponse exec = client.exec("echo " + osPassword + " | " + "sudo -S m-a prepare -i");
+			ExecResponse exec = client.exec("echo " + sshPass + " | " + "sudo -S m-a prepare -i");
 			System.out.println(exec);
 		} finally {
 			if (client != null) {
@@ -518,16 +523,11 @@ public class VirtualboxAdministrationKickstartTest {
 			}
 		}
 
-
-		socketTester.apply(socket);
-		client = sshFactory.create(socket, new Credentials(osUsername,
-				osPassword));
 		try {
-			client.connect();
 			ExecResponse exec = client
-					.exec("echo " + osPassword + " | " + "sudo -S  mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
+					.exec("echo " + sshPass + " | " + "sudo -S  mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
 			System.out.println(exec);
-			exec = client.exec("echo " + osPassword + " | " + "sudo -S  sh /mnt/VBoxLinuxAdditions.run");
+			exec = client.exec("echo " + sshPass + " | " + "sudo -S  sh /mnt/VBoxLinuxAdditions.run");
 			System.out.println(exec);
 		} finally {
 			if (client != null)
