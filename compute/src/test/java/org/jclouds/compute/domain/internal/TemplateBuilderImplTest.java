@@ -139,6 +139,7 @@ public class TemplateBuilderImplTest {
       expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
+      expect(image.getId()).andReturn("1");
 
       expect(os.getArch()).andReturn("X86_32").atLeastOnce();
       expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
