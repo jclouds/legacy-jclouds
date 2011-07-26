@@ -30,6 +30,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
@@ -60,7 +61,6 @@ import com.google.common.io.InputSupplier;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-
 @Test(groups = "live", testName = "virtualbox.VirtualboxAdministrationKickstartTest")
 public class VirtualboxAdministrationKickstartTest {
 
@@ -80,7 +80,7 @@ public class VirtualboxAdministrationKickstartTest {
 	protected String settingsFile; // Fully qualified path where the settings
 	protected String osTypeId; // Guest OS Type ID.
 	protected String vmId; // Machine UUID (optional).
-	protected boolean forceOverwrite; 
+	protected boolean forceOverwrite;
 	protected String diskFormat;
 
 	protected String workingDir;
@@ -104,7 +104,6 @@ public class VirtualboxAdministrationKickstartTest {
 	private String preseedUrl;
 
 	protected Server server = null;
-	private InetSocketAddress testPort;
 	private String vboxManageCommand;
 	private String sshHost;
 	private String sshPort;
@@ -112,63 +111,41 @@ public class VirtualboxAdministrationKickstartTest {
 	private String sshPass;
 	private String sshKeyFile;
 
-	
 	protected void setupCredentials() {
-		identity = System.getProperty("test." + provider + ".identity",
-				"administrator");
-		credential = System.getProperty("test." + provider + ".credential",
-				"12345");
-		endpoint = System.getProperty("test." + provider + ".endpoint",
-				"http://localhost:18083/");
+		identity = System.getProperty("test." + provider + ".identity", "administrator");
+		credential = System.getProperty("test." + provider + ".credential",	"12345");
+		endpoint = System.getProperty("test." + provider + ".endpoint",	"http://localhost:18083/");
 		apiversion = System.getProperty("test." + provider + ".apiversion");
 	}
 
 	protected void setupConfigurationProperties() {
-		
-		   sshHost = System.getProperty("test.ssh.host", "localhost");
-		   sshPort = System.getProperty("test.ssh.port", "22");
-		   sshUser = System.getProperty("test.ssh.username", "toor");
-		   sshPass = System.getProperty("test.ssh.password", "password");
-		   sshKeyFile = System.getProperty("test.ssh.keyfile");
 
+		sshHost = System.getProperty("test.ssh.host", "localhost");
+		sshPort = System.getProperty("test.ssh.port", "22");
+		sshUser = System.getProperty("test.ssh.username", "toor");
+		sshPass = System.getProperty("test.ssh.password", "password");
+		sshKeyFile = System.getProperty("test.ssh.keyfile");
 
-		admin_pwd = System.getProperty("test." + provider + ".admin_pwd",
-				"password");
+		admin_pwd = System.getProperty("test." + provider + ".admin_pwd", "password");
 
-		controllerIDE = System.getProperty("test." + provider
-				+ ".controllerIde", "IDE Controller");
-		controllerSATA = System.getProperty("test." + provider
-				+ ".controllerSata", "SATA Controller");
-		// Create disk If the @a format attribute is empty or null then the
-		// default storage format specified by
-		// ISystemProperties#defaultHardDiskFormat
+		controllerIDE = System.getProperty("test." + provider + ".controllerIde", "IDE Controller");
+		controllerSATA = System.getProperty("test." + provider + ".controllerSata", "SATA Controller");
 		diskFormat = System.getProperty("test." + provider + ".diskformat", "");
 
 		// VBOX
-		settingsFile = null; // Fully qualified path where the settings file
-		osTypeId = System.getProperty("test." + provider + ".osTypeId", ""); // Guest
-																				// OS
-																				// Type
-																				// ID.
-		vmId = System.getProperty("test." + provider + ".vmId", null); // Machine
-																		// UUID
-																		// (optional).
-		forceOverwrite = true; // If true, an existing machine settings file
-								// will be overwritten.
-		vmName = System.getProperty("test." + provider + ".vmname",
-				"jclouds-virtualbox-kickstart-admin");
+		settingsFile = null; 
+		osTypeId = System.getProperty("test." + provider + ".osTypeId", ""); 
+		vmId = System.getProperty("test." + provider + ".vmId", null); 
+		forceOverwrite = true; 
+		vmName = System.getProperty("test." + provider + ".vmname", "jclouds-virtualbox-kickstart-admin");
 
 		workingDir = System.getProperty("user.home")
-				+ File.separator
-				+ System.getProperty("test." + provider + ".workingDir",
-						"jclouds-virtualbox-test");
-		if (new File(workingDir).mkdir());
-		vdiName = System.getProperty("test." + provider + ".vdiName",
-				"centos-5.2-x86.7z");
-		gaIsoName = System.getProperty("test." + provider + ".gaIsoName",
-				"VBoxGuestAdditions_4.0.2-update-69551.iso");
-		gaIsoUrl = System.getProperty("test." + provider + ".gaIsoUrl",
-						"http://download.virtualbox.org/virtualbox/4.0.2/VBoxGuestAdditions_4.0.2-update-69551.iso");
+				+ File.separator + System.getProperty("test." + provider + ".workingDir", "jclouds-virtualbox-test");
+		if (new File(workingDir).mkdir())
+			;
+		vdiName = System.getProperty("test." + provider + ".vdiName", "centos-5.2-x86.7z");
+		gaIsoName = System.getProperty("test." + provider + ".gaIsoName", "VBoxGuestAdditions_4.0.2-update-69551.iso");
+		gaIsoUrl = System.getProperty("test." + provider + ".gaIsoUrl",	"http://download.virtualbox.org/virtualbox/4.0.2/VBoxGuestAdditions_4.0.2-update-69551.iso");
 
 		distroIsoName = System.getProperty("test." + provider
 				+ ".distroIsoName", "ubuntu-11.04-server-i386.iso");
@@ -176,48 +153,37 @@ public class VirtualboxAdministrationKickstartTest {
 				.getProperty("test." + provider + ".distroIsoUrl",
 						"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
 
-		installVboxOse = System.getProperty("test." + provider + ".installvboxose", "sudo -S apt-get --yes install virtualbox-ose");
+		installVboxOse = System.getProperty("test." + provider
+				+ ".installvboxose",
+				"sudo -S apt-get --yes install virtualbox-ose");
 
-		originalDisk = workingDir
-				+ File.separator
-				+ "VDI"
-				+ File.separator
-				+ System.getProperty("test." + provider + ".originalDisk",
+		originalDisk = workingDir + File.separator + "VDI" + File.separator + System.getProperty("test." + provider + ".originalDisk",
 						"centos-5.2-x86.vdi");
-		clonedDisk = workingDir
-				+ File.separator
-				+ System.getProperty("test." + provider + ".clonedDisk",
+		clonedDisk = workingDir + File.separator + System.getProperty("test." + provider + ".clonedDisk",
 						"template.vdi");
-		guestAdditionsDvd = workingDir
-				+ File.separator
-				+ System.getProperty("test." + provider + ".guestAdditionsDvd",
+		guestAdditionsDvd = workingDir + File.separator + System.getProperty("test." + provider + ".guestAdditionsDvd",
 						"VBoxGuestAdditions_4.0.2-update-69551.iso");
 
-		distroDvd = workingDir
-				+ File.separator
-				+ System.getProperty("test." + provider + ".distroDvd",
+		distroDvd = workingDir + File.separator	+ System.getProperty("test." + provider + ".distroDvd",
 						distroIsoName);
+		preseedUrl = System.getProperty("test." + provider + ".preseedurl",
+				"http://dl.dropbox.com/u/693111/preseed.cfg");
 
-		preseedUrl = System
-				.getProperty(
-						"test." + provider + ".preseedurl", "http://dl.dropbox.com/u/693111/preseed.cfg");
-		keyboardSequence = System
-				.getProperty(
-						"test." + provider + ".keyboardSequence",
+		keyboardSequence = System.getProperty("test." + provider + ".keyboardSequence",
 						"<Esc> <Esc> <Enter> "
 								+ "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
-								//+ "/install/vmlinuz noapic preseed/url=" + preseedUrl + " "
 								+ "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
-								+ "hostname=" + vmName	+ " "
+								+ "hostname="
+								+ vmName
+								+ " "
 								+ "fb=false debconf/frontend=noninteractive "
 								+ "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
 								+ "initrd=/install/initrd.gz -- <Enter>");
 
 		vboxwebsrvStartCommand = System.getProperty("test." + provider
 				+ ".vboxwebsrvStartCommand", "/usr/bin/vboxwebsrv");
-		vboxManageCommand = System
-				.getProperty(
-						"test." + provider + ".vboxmanage", "VBoxManage");
+		vboxManageCommand = System.getProperty("test." + provider
+				+ ".vboxmanage", "VBoxManage");
 		if (!new File(distroDvd).exists()) {
 			try {
 				downloadFile(distroIsoUrl, workingDir, distroIsoName, null);
@@ -241,7 +207,9 @@ public class VirtualboxAdministrationKickstartTest {
 				new Log4JLoggingModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(
-				new InetSocketAddressConnect(), 3600, 1, TimeUnit.SECONDS);
+				injector.getInstance(SocketOpen.class), 130, 10,
+				TimeUnit.SECONDS);
+
 		injector.injectMembers(socketTester);
 
 		setupCredentials();
@@ -250,8 +218,8 @@ public class VirtualboxAdministrationKickstartTest {
 		installVbox();
 		// startup vbox web server
 		startupVboxWebServer(vboxwebsrvStartCommand);
-		
-		// configure jetty HTTP server
+
+		// configure and startup jetty HTTP server
 		try {
 			configureJettyServer();
 		} catch (Exception e) {
@@ -264,17 +232,18 @@ public class VirtualboxAdministrationKickstartTest {
 
 		ResourceHandler resource_handler = new ResourceHandler();
 		resource_handler.setDirectoriesListed(true);
-		resource_handler.setWelcomeFiles(new String[]{ "index.html" });
+		resource_handler.setWelcomeFiles(new String[] { "index.html" });
 
 		resource_handler.setResourceBase(".");
 		Log.info("serving " + resource_handler.getBaseResource());
 
 		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
+		handlers.setHandlers(new Handler[] { resource_handler,
+				new DefaultHandler() });
 		server.setHandler(handlers);
-		
-		//server.start();
-		//server.join();
+
+		// server.start();
+		// server.join();
 	}
 
 	private void installVbox() throws IOException, InterruptedException {
@@ -282,12 +251,13 @@ public class VirtualboxAdministrationKickstartTest {
 		try {
 			client.exec("echo " + sshPass + " | " + installVboxOse);
 		} catch (Exception e) {
-			System.out.println("It is impossible to install virtualbox with this command " + installVboxOse);
+			System.out
+					.println("It is impossible to install virtualbox with this command "
+							+ installVboxOse);
 		} finally {
 			if (client != null)
 				client.disconnect();
 		}
-
 	}
 
 	/**
@@ -311,22 +281,6 @@ public class VirtualboxAdministrationKickstartTest {
 			if (client != null)
 				client.disconnect();
 		}
-	}
-
-	
-	private SshClient setupSshClient() throws FileNotFoundException, IOException {
-		 int port = Integer.parseInt(sshPort);
-		Injector i = Guice.createInjector(new SshjSshClientModule());
-        SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-        SshClient connection;
-        if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-           connection = factory.create(new IPSocket(sshHost, port),
-                 new Credentials(sshUser, Strings2.toStringAndClose(new FileInputStream(sshKeyFile))));
-        } else {
-           connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
-        }
-        connection.connect();
-        return connection;
 	}
 
 	@BeforeMethod
@@ -363,34 +317,6 @@ public class VirtualboxAdministrationKickstartTest {
 	}
 
 	@Test(dependsOnMethods = "testChangeRAM")
-	public void testCreateIDEController() {
-		ISession session = manager.getSessionObject();
-		IMachine machine = manager.getVBox().findMachine(vmName);
-		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
-		mutable.addStorageController(controllerIDE, StorageBus.IDE);
-		mutable.saveSettings();
-		session.unlockMachine();
-		assertEquals(manager.getVBox().findMachine(vmName)
-				.getStorageControllers().size(), 1);
-	}
-
-	@Test(dependsOnMethods = "testCreateIDEController")
-	public void testAttachIsoDvd() {
-		IMedium distroHD = manager.getVBox().openMedium(distroDvd,
-				DeviceType.DVD, AccessMode.ReadOnly);
-
-		ISession session = manager.getSessionObject();
-		IMachine machine = manager.getVBox().findMachine(vmName);
-		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
-		mutable.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroHD);
-		mutable.saveSettings(); // write settings to xml
-		session.unlockMachine();
-		assertEquals(distroHD.getId().equals(""), false);
-	}
-
-	@Test(dependsOnMethods = "testAttachIsoDvd")
 	public void testCreateScsiController() {
 		ISession session = manager.getSessionObject();
 		IMachine machine = manager.getVBox().findMachine(vmName);
@@ -405,23 +331,15 @@ public class VirtualboxAdministrationKickstartTest {
 
 	@Test(dependsOnMethods = "testCreateScsiController")
 	public void testCreateAndAttachHardDisk() {
-		/*
-		 * IMedium IVirtualBox::createHardDisk(String format, String location)
-		 * If the format attribute is empty or null then the default
-		 * storage format speciï¬�ed by ISystemProperties::defaultHardDiskFormat will be used for creating
-		 * a storage unit of the medium.
-		 */
-		/*
-		IMedium hd = manager.getVBox().createHardDisk(null, workingDir + File.separator +  "disk.vdi");
-		IProgress progress = hd.createBaseStorage(new Long(8*1024), new Long(MediumVariant.STANDARD.ordinal()));
-		*/
 		IMedium hd = null;
-		if(!new File(clonedDisk).exists()) {
+		if (!new File(clonedDisk).exists()) {
 			hd = manager.getVBox().createHardDisk(diskFormat, clonedDisk);
-			long size = 120*1024*1024;
-			hd.createBaseStorage(new Long(size), new Long(MediumVariant.FIXED.ordinal()));
+			long size = 2 * 1024 * 1024 * 1024 - 1;
+			hd.createBaseStorage(new Long(size), new Long(
+					MediumVariant.VMDK_SPLIT_2_G.ordinal()));
 		} else
-			hd = manager.getVBox().openMedium(clonedDisk, DeviceType.HardDisk, AccessMode.ReadWrite);
+			hd = manager.getVBox().openMedium(clonedDisk, DeviceType.HardDisk,
+					AccessMode.ReadWrite);
 		ISession session = manager.getSessionObject();
 		IMachine machine = manager.getVBox().findMachine(vmName);
 		machine.lockMachine(session, LockType.Write);
@@ -432,59 +350,52 @@ public class VirtualboxAdministrationKickstartTest {
 		assertEquals(hd.getId().equals(""), false);
 	}
 
-	
-	  @Test(dependsOnMethods = "testCreateAndAttachHardDisk") 
-	  public void testConfigureNIC() { 
-		  ISession session = manager.getSessionObject();
-	  IMachine machine = manager.getVBox().findMachine(vmName);
-	  machine.lockMachine(session, LockType.Write); 
-	  IMachine mutable =  session.getMachine(); 
+	@Test(dependsOnMethods = "testCreateAndAttachHardDisk")
+	public void testConfigureNIC() {
+		ISession session = manager.getSessionObject();
+		IMachine machine = manager.getVBox().findMachine(vmName);
+		machine.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
 
-	  
 		// network BRIDGED to access HTTP server
 		String hostInterface = null;
-	    String command = vboxManageCommand + " list bridgedifs";
-	    try {
+		String command = vboxManageCommand + " list bridgedifs";
+		try {
 			Process child = Runtime.getRuntime().exec(command);
-				        BufferedReader bufferedReader = new BufferedReader(
-	                new InputStreamReader(child.getInputStream()));
-				        String line = "";
-				        boolean found = false;
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(child.getInputStream()));
+			String line = "";
+			boolean found = false;
 
-			while ( (line = bufferedReader.readLine()) != null && !found){
+			while ((line = bufferedReader.readLine()) != null && !found) {
 
-				if(line.split(":")[0].contains("Name") ){
+				if (line.split(":")[0].contains("Name")) {
 					hostInterface = line.split(":")[1];
 				}
-				if( line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up") ){
+				if (line.split(":")[0].contains("Status")
+						&& line.split(":")[1].contains("Up")) {
 					System.out.println("bridge: " + hostInterface.trim());
 					found = true;
 				}
 			}
-			
-			// Bridged
-			/*
-			mutable.getNetworkAdapter(new Long(0)).attachToBridgedInterface();
-			mutable.getNetworkAdapter(new Long(0)).setHostInterface(hostInterface.trim());							
-			mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
-			*/
-			
-			// NAT			 
+
+			// NAT
 			mutable.getNetworkAdapter(new Long(0)).attachToNAT();
 			mutable.getNetworkAdapter(new Long(0)).setNATNetwork("");
-			machine.getNetworkAdapter(new Long(0)).getNatDriver().addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1", 2222, "", 22);
+			machine.getNetworkAdapter(new Long(0))
+					.getNatDriver()
+					.addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1",
+							2222, "", 22);
 			mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
-			
-			mutable.saveSettings(); 
+
+			mutable.saveSettings();
 			session.unlockMachine();
 
-			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		}
-	 }
-	  
+	}
+
 	@Test(dependsOnMethods = "testConfigureNIC")
 	public void testStartVirtualMachine() {
 		IMachine machine = manager.getVBox().findMachine(vmName);
@@ -494,20 +405,26 @@ public class VirtualboxAdministrationKickstartTest {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		}
 
 		sendKeyboardSequence(keyboardSequence);
 	}
-	
+
 	@Test(dependsOnMethods = "testStartVirtualMachine")
-	public void testConfigureGuestAdditions() throws FileNotFoundException, IOException {
-		
+	public void testConfigureGuestAdditions() throws FileNotFoundException,
+			IOException {
+		IPSocket socket = new IPSocket(sshHost, 2222);
+
+		System.out.printf("%d: %s awaiting ssh service to start%n",
+				System.currentTimeMillis(), socket);
+		assert socketTester.apply(socket);
+		System.out.printf("%d: %s ssh service started%n",
+				System.currentTimeMillis(), socket);
 		// configure GA
 		SshClient client = setupSshClient();
 		try {
-			//Configure your system for building kernel modules by running 
+			// Configure your system for building kernel modules by running
 			ExecResponse exec = client.exec("echo " + sshPass + " | " + "sudo -S m-a prepare -i");
 			System.out.println(exec);
 		} finally {
@@ -517,8 +434,8 @@ public class VirtualboxAdministrationKickstartTest {
 		}
 
 		try {
-			ExecResponse exec = client
-					.exec("echo " + sshPass + " | " + "sudo -S  mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
+			ExecResponse exec = client.exec("echo "	+ sshPass + " | "
+							+ "sudo -S  mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
 			System.out.println(exec);
 			exec = client.exec("echo " + sshPass + " | " + "sudo -S  sh /mnt/VBoxLinuxAdditions.run");
 			System.out.println(exec);
@@ -547,8 +464,7 @@ public class VirtualboxAdministrationKickstartTest {
 
 			while (!machine.getSessionState().equals(SessionState.Unlocked)) {
 				try {
-					System.out
-							.println("waiting for unlocking session - session state: "
+					System.out.println("waiting for unlocking session - session state: "
 									+ machine.getSessionState());
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -559,7 +475,6 @@ public class VirtualboxAdministrationKickstartTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Test(dependsOnMethods = "testStopVirtualMachine")
@@ -640,7 +555,7 @@ public class VirtualboxAdministrationKickstartTest {
 		}
 		return iso;
 	}
-	
+
 	private void sendKeyboardSequence(String keyboardSequence) {
 		String[] sequenceSplited = keyboardSequence.split(" ");
 		SshClient client = null;
@@ -649,8 +564,15 @@ public class VirtualboxAdministrationKickstartTest {
 			for (String word : sequenceSplited) {
 				String converted = stringToKeycode(word);
 				for (String string : converted.split("  ")) {
-					ExecResponse response = client.exec(vboxManageCommand + " controlvm " + vmName + " keyboardputscancode " + string);
+
+					ExecResponse response = client.exec(vboxManageCommand
+							+ " controlvm " + vmName + " keyboardputscancode "
+							+ string);
 					System.out.println(response.getOutput());
+					if (converted
+							.contains(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+									.get("<Return>")))
+						Thread.sleep(180);
 				}
 			}
 		} catch (Exception e) {
@@ -664,26 +586,29 @@ public class VirtualboxAdministrationKickstartTest {
 	private String stringToKeycode(String s) {
 
 		StringBuilder keycodes = new StringBuilder();
-		for (String specialButton : KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.keySet()) {
-			if(s.startsWith(specialButton)) {
-				keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(specialButton));
+		for (String specialButton : KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+				.keySet()) {
+			if (s.startsWith(specialButton)) {
+				keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+						.get(specialButton));
 				return keycodes.toString();
 			}
 		}
-        
-		int i = 0, j = 0;
-        while(i < s.length()) {
-        	String digit = s.substring(i, i+1);
-        	String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP.get(digit);
-        	keycodes.append(hex + "  ");
-        	i++;
-        }
-        keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>") + " ");
 
-        return keycodes.toString();
+		int i = 0;
+		while (i < s.length()) {
+			String digit = s.substring(i, i + 1);
+			String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP
+					.get(digit);
+			keycodes.append(hex + "  ");
+			i++;
 		}
+		keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+				.get("<Spacebar>") + " ");
 
-	
+		return keycodes.toString();
+	}
+
 	/**
 	 * 
 	 * @param machine
@@ -693,5 +618,25 @@ public class VirtualboxAdministrationKickstartTest {
 		IProgress prog = machine.launchVMProcess(session, "gui", "");
 		prog.waitForCompletion(-1);
 		session.unlockMachine();
+	}
+
+	private SshClient setupSshClient() throws FileNotFoundException,
+			IOException {
+		int port = Integer.parseInt(sshPort);
+		Injector i = Guice.createInjector(new SshjSshClientModule());
+		SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
+		SshClient connection;
+		if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
+			connection = factory
+					.create(new IPSocket(sshHost, port),
+							new Credentials(sshUser, Strings2
+									.toStringAndClose(new FileInputStream(
+											sshKeyFile))));
+		} else {
+			connection = factory.create(new IPSocket(sshHost, port),
+					new Credentials(sshUser, sshPass));
+		}
+		connection.connect();
+		return connection;
 	}
 }
