@@ -92,8 +92,6 @@ public class VirtualboxAdministrationKickstartTest {
 	private String vboxwebsrvStartCommand;
 
 	private String gaIsoName;
-	private String hostUsername;
-	private String hostPassword;
 	private String installVboxOse;
 	private String distroIsoUrl;
 	private String distroIsoName;
@@ -129,7 +127,7 @@ public class VirtualboxAdministrationKickstartTest {
 		
 		   sshHost = System.getProperty("test.ssh.host", "localhost");
 		   sshPort = System.getProperty("test.ssh.port", "22");
-		   sshUser = System.getProperty("test.ssh.username", "root");
+		   sshUser = System.getProperty("test.ssh.username", "toor");
 		   sshPass = System.getProperty("test.ssh.password", "password");
 		   sshKeyFile = System.getProperty("test.ssh.keyfile");
 
@@ -207,8 +205,8 @@ public class VirtualboxAdministrationKickstartTest {
 				.getProperty(
 						"test." + provider + ".keyboardSequence",
 						"<Esc> <Esc> <Enter> "
-								//+ "/install/vmlinuz noapic preseed/url=http://192.168.1.12/src/test/resources/preseed.cfg "
-								+ "/install/vmlinuz noapic preseed/url=" + preseedUrl + " "
+								+ "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
+								//+ "/install/vmlinuz noapic preseed/url=" + preseedUrl + " "
 								+ "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
 								+ "hostname=" + vmName	+ " "
 								+ "fb=false debconf/frontend=noninteractive "
@@ -216,7 +214,7 @@ public class VirtualboxAdministrationKickstartTest {
 								+ "initrd=/install/initrd.gz -- <Enter>");
 
 		vboxwebsrvStartCommand = System.getProperty("test." + provider
-				+ ".vboxwebsrvStartCommand", "/usr/bin/vboxwebsrv.exe");
+				+ ".vboxwebsrvStartCommand", "/usr/bin/vboxwebsrv");
 		vboxManageCommand = System
 				.getProperty(
 						"test." + provider + ".vboxmanage", "VBoxManage");
@@ -238,9 +236,6 @@ public class VirtualboxAdministrationKickstartTest {
 
 	@BeforeGroups(groups = "live")
 	protected void setupClient() throws IOException, InterruptedException {
-		hostUsername = System.getProperty("test." + provider + ".hostusername", "toor");
-		hostPassword = System.getProperty("test." + provider + ".hostpassword",
-				"password");
 
 		injector = Guice.createInjector(new SshjSshClientModule(),
 				new Log4JLoggingModule());
@@ -277,16 +272,15 @@ public class VirtualboxAdministrationKickstartTest {
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
 		server.setHandler(handlers);
+		
+		//server.start();
+		//server.join();
 	}
 
 	private void installVbox() throws IOException, InterruptedException {
-		IPSocket socket = new IPSocket("127.0.0.1", 22);
-		socketTester.apply(socket);
-		SshClient client = sshFactory.create(socket, new Credentials(
-				hostUsername, hostPassword));
+		SshClient client = setupSshClient();
 		try {
-			client.connect();
-			client.exec("echo " + hostPassword + " | " + installVboxOse);
+			client.exec("echo " + sshPass + " | " + installVboxOse);
 		} catch (Exception e) {
 			System.out.println("It is impossible to install virtualbox with this command " + installVboxOse);
 		} finally {
@@ -310,8 +304,7 @@ public class VirtualboxAdministrationKickstartTest {
 		// rt.exec("VBoxManage setproperty websrvauthlibrary null");
 		SshClient client = setupSshClient();
 		try {
-			ExecResponse response = client.exec(command);
-			System.out.println(response.getOutput());
+			ExecResponse response = client.exec(command + " -t 0 -b");
 		} catch (Exception e) {
 			propagate(e);
 		} finally {
@@ -599,12 +592,8 @@ public class VirtualboxAdministrationKickstartTest {
 	@AfterClass
 	void stopVboxWebServer() throws IOException {
 		// stop vbox web server
-		IPSocket socket = new IPSocket("127.0.0.1", 22);
-		socketTester.apply(socket);
-		SshClient client = sshFactory.create(socket, new Credentials(
-				hostUsername, hostPassword));
+		SshClient client = setupSshClient();
 		try {
-			client.connect();
 			ExecResponse exec = client.exec("pidof vboxwebsrv | xargs kill");
 			System.out.println(exec.getOutput());
 
@@ -654,42 +643,22 @@ public class VirtualboxAdministrationKickstartTest {
 	
 	private void sendKeyboardSequence(String keyboardSequence) {
 		String[] sequenceSplited = keyboardSequence.split(" ");
-		/*
-		for (String word : sequenceSplited) {
-			
-			String converted = stringToKeycode(word);
-			for (String string : converted.split("  ")) {
-				try {
-					Thread.sleep(100);
-					Runtime.getRuntime().exec(vboxManageCommand + " controlvm " + vmName + " keyboardputscancode " + string);
-					Thread.sleep(50);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}	
-		}
-		*/
-		
-		for (String word : sequenceSplited) {
-				IPSocket socket = new IPSocket("127.0.0.1", 22);
-			socketTester.apply(socket);
-			SshClient client = sshFactory.create(socket, new Credentials(hostUsername, hostPassword));
-			try {
-				client.connect();
+		SshClient client = null;
+		try {
+			client = setupSshClient();
+			for (String word : sequenceSplited) {
 				String converted = stringToKeycode(word);
 				for (String string : converted.split("  ")) {
 					ExecResponse response = client.exec(vboxManageCommand + " controlvm " + vmName + " keyboardputscancode " + string);
 					System.out.println(response.getOutput());
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (client != null)
-					client.disconnect();
-			}	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (client != null)
+				client.disconnect();
 		}
-	
 	}
 
 	private String stringToKeycode(String s) {

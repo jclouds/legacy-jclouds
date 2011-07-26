@@ -9,7 +9,7 @@ import org.eclipse.jetty.util.log.Log;
 
 public class FileServer {
 	public static void main(String[] args) throws Exception {
-		Server server = new Server(args.length == 0?80:Integer.parseInt(args[0]));
+		Server server = new Server(args.length == 0?8080:Integer.parseInt(args[0]));
 
 		ResourceHandler resource_handler = new ResourceHandler();
 		resource_handler.setDirectoriesListed(true);
