@@ -1,20 +1,18 @@
 package org.jclouds.virtualbox.experiment;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.blockOnPort;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URL;
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
@@ -23,43 +21,39 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.log.Log;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.util.Strings2;
 import org.jclouds.virtualbox.experiment.settings.KeyboardScancodes;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.virtualbox_4_0.AccessMode;
-import org.virtualbox_4_0.DeviceType;
-import org.virtualbox_4_0.IMachine;
-import org.virtualbox_4_0.IMedium;
-import org.virtualbox_4_0.IProgress;
-import org.virtualbox_4_0.ISession;
-import org.virtualbox_4_0.IStorageController;
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.MachineState;
-import org.virtualbox_4_0.NATProtocol;
-import org.virtualbox_4_0.SessionState;
-import org.virtualbox_4_0.StorageBus;
-import org.virtualbox_4_0.VirtualBoxManager;
-import org.virtualbox_4_0.jaxws.MediumVariant;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.IStorageController;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 @Test(groups = "live", testName = "virtualbox.VirtualboxAdministrationKickstartTest")
 public class VirtualboxAdministrationKickstartTest {
@@ -67,15 +61,13 @@ public class VirtualboxAdministrationKickstartTest {
 	protected String provider = "virtualbox";
 	protected String identity;
 	protected String credential;
-	protected String endpoint;
-	protected String apiversion;
+	protected URI endpoint;
+	protected String apiVersion;
 	protected String vmName;
 
 	VirtualBoxManager manager = VirtualBoxManager.createInstance("");
 
-	protected Injector injector;
 	protected Predicate<IPSocket> socketTester;
-	protected SshClient.Factory sshFactory;
 
 	protected String settingsFile; // Fully qualified path where the settings
 	protected String osTypeId; // Guest OS Type ID.
@@ -88,45 +80,38 @@ public class VirtualboxAdministrationKickstartTest {
 	protected String clonedDisk;
 
 	protected String guestAdditionsDvd;
-	private String gaIsoUrl;
-	private String vboxwebsrvStartCommand;
+	private URI gaIsoUrl;
 
 	private String gaIsoName;
-	private String installVboxOse;
-	private String distroIsoUrl;
+	private URI distroIsoUrl;
 	private String distroIsoName;
-	private String distroDvd;
 	private String controllerIDE;
 	private String controllerSATA;
 	private String keyboardSequence;
-	private String admin_pwd;
 	private String vdiName;
 	private String preseedUrl;
 
 	protected Server server = null;
-	private String vboxManageCommand;
-	private String sshHost;
-	private String sshPort;
-	private String sshUser;
-	private String sshPass;
-	private String sshKeyFile;
+   private ComputeServiceContext context;
+   private String hostId = "host";
+   private String guestId = "guest";
+   private String majorVersion;
+   private String minorVersion;
+   
+   protected void setupCredentials() {
+      identity = System.getProperty("test." + provider + ".identity", "administrator");
+      credential = System.getProperty("test." + provider + ".credential", "12345");
+      endpoint = URI.create(System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/"));
+      apiVersion = System.getProperty("test." + provider + ".apiversion", "4.1.0r73009");
+      majorVersion = Iterables.get(Splitter.on('r').split(apiVersion),0);
+      minorVersion = Iterables.get(Splitter.on('r').split(apiVersion),1);
+   }
 
-	protected void setupCredentials() {
-		identity = System.getProperty("test." + provider + ".identity", "administrator");
-		credential = System.getProperty("test." + provider + ".credential",	"12345");
-		endpoint = System.getProperty("test." + provider + ".endpoint",	"http://localhost:18083/");
-		apiversion = System.getProperty("test." + provider + ".apiversion");
-	}
-
+   protected Logger logger() {
+      return context.utils().loggerFactory().getLogger("jclouds.compute");
+   }
+   
 	protected void setupConfigurationProperties() {
-
-		sshHost = System.getProperty("test.ssh.host", "localhost");
-		sshPort = System.getProperty("test.ssh.port", "22");
-		sshUser = System.getProperty("test.ssh.username", "toor");
-		sshPass = System.getProperty("test.ssh.password", "password");
-		sshKeyFile = System.getProperty("test.ssh.keyfile");
-
-		admin_pwd = System.getProperty("test." + provider + ".admin_pwd", "password");
 
 		controllerIDE = System.getProperty("test." + provider + ".controllerIde", "IDE Controller");
 		controllerSATA = System.getProperty("test." + provider + ".controllerSata", "SATA Controller");
@@ -144,28 +129,22 @@ public class VirtualboxAdministrationKickstartTest {
 		if (new File(workingDir).mkdir())
 			;
 		vdiName = System.getProperty("test." + provider + ".vdiName", "centos-5.2-x86.7z");
-		gaIsoName = System.getProperty("test." + provider + ".gaIsoName", "VBoxGuestAdditions_4.0.2-update-69551.iso");
-		gaIsoUrl = System.getProperty("test." + provider + ".gaIsoUrl",	"http://download.virtualbox.org/virtualbox/4.0.2/VBoxGuestAdditions_4.0.2-update-69551.iso");
+		gaIsoName = System.getProperty("test." + provider + ".gaIsoName", "VBoxGuestAdditions_"+majorVersion+"-update-"+minorVersion+".iso");
+		gaIsoUrl = URI.create(System.getProperty("test." + provider + ".gaIsoUrl",	"http://download.virtualbox.org/virtualbox/"+majorVersion+"/VBoxGuestAdditions_"+majorVersion+"-update-"+minorVersion+".iso"));
 
 		distroIsoName = System.getProperty("test." + provider
 				+ ".distroIsoName", "ubuntu-11.04-server-i386.iso");
-		distroIsoUrl = System
+		distroIsoUrl = URI.create(System
 				.getProperty("test." + provider + ".distroIsoUrl",
-						"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
-
-		installVboxOse = System.getProperty("test." + provider
-				+ ".installvboxose",
-				"sudo -S apt-get --yes install virtualbox-ose");
+						"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso"));
 
 		originalDisk = workingDir + File.separator + "VDI" + File.separator + System.getProperty("test." + provider + ".originalDisk",
 						"centos-5.2-x86.vdi");
 		clonedDisk = workingDir + File.separator + System.getProperty("test." + provider + ".clonedDisk",
 						"template.vdi");
 		guestAdditionsDvd = workingDir + File.separator + System.getProperty("test." + provider + ".guestAdditionsDvd",
-						"VBoxGuestAdditions_4.0.2-update-69551.iso");
+						"VBoxGuestAdditions_"+majorVersion+"-update-"+minorVersion+".iso");
 
-		distroDvd = workingDir + File.separator	+ System.getProperty("test." + provider + ".distroDvd",
-						distroIsoName);
 		preseedUrl = System.getProperty("test." + provider + ".preseedurl",
 				"http://dl.dropbox.com/u/693111/preseed.cfg");
 
@@ -180,51 +159,23 @@ public class VirtualboxAdministrationKickstartTest {
 								+ "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
 								+ "initrd=/install/initrd.gz -- <Enter>");
 
-		vboxwebsrvStartCommand = System.getProperty("test." + provider
-				+ ".vboxwebsrvStartCommand", "/usr/bin/vboxwebsrv");
-		vboxManageCommand = System.getProperty("test." + provider
-				+ ".vboxmanage", "VBoxManage");
-		if (!new File(distroDvd).exists()) {
-			try {
-				downloadFile(distroIsoUrl, workingDir, distroIsoName, null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		if (!new File(guestAdditionsDvd).exists()) {
-			try {
-				downloadFile(gaIsoUrl, workingDir, gaIsoName, null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@BeforeGroups(groups = "live")
-	protected void setupClient() throws IOException, InterruptedException {
-
-		injector = Guice.createInjector(new SshjSshClientModule(),
-				new Log4JLoggingModule());
-		sshFactory = injector.getInstance(SshClient.Factory.class);
-		socketTester = new RetryablePredicate<IPSocket>(
-				injector.getInstance(SocketOpen.class), 130, 10,
+	protected void setupClient() throws Exception {
+	   context = TestUtils.computeServiceForLocalhost();
+		socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 130, 10,
 				TimeUnit.SECONDS);
-
-		injector.injectMembers(socketTester);
-
 		setupCredentials();
 		setupConfigurationProperties();
-
+      downloadFileUnlessPresent(distroIsoUrl, workingDir, distroIsoName);
+      downloadFileUnlessPresent(gaIsoUrl, workingDir, gaIsoName);
 		installVbox();
-		// startup vbox web server
-		startupVboxWebServer(vboxwebsrvStartCommand);
+		checkVboxVersionExpected();
+		if (!new InetSocketAddressConnect().apply(new IPSocket(endpoint.getHost(), endpoint.getPort())))
+		   startupVboxWebServer();
 
-		// configure and startup jetty HTTP server
-		try {
-			configureJettyServer();
-		} catch (Exception e) {
-			propagate(e);
-		}
+		configureJettyServer();
 	}
 
 	private void configureJettyServer() throws Exception {
@@ -235,57 +186,59 @@ public class VirtualboxAdministrationKickstartTest {
 		resource_handler.setWelcomeFiles(new String[] { "index.html" });
 
 		resource_handler.setResourceBase(".");
-		Log.info("serving " + resource_handler.getBaseResource());
+		logger().info("serving " + resource_handler.getBaseResource());
 
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resource_handler,
 				new DefaultHandler() });
 		server.setHandler(handlers);
 
-		// server.start();
-		// server.join();
+		server.start();
 	}
 
-	private void installVbox() throws IOException, InterruptedException {
-		SshClient client = setupSshClient();
-		try {
-			client.exec("echo " + sshPass + " | " + installVboxOse);
-		} catch (Exception e) {
-			System.out
-					.println("It is impossible to install virtualbox with this command "
-							+ installVboxOse);
-		} finally {
-			if (client != null)
-				client.disconnect();
-		}
-	}
+   void installVbox() throws IOException, InterruptedException {
+      if (runScriptOnNode(hostId, "VBoxManage -version").getExitCode() != 0) {
+         logger().debug("installing virtualbox");
+         if (isOSX(hostId))
+            ;// TODO
+         else
+            runScriptOnNode(hostId, "apt-get --yes install virtualbox-ose");
+         // TODO other platforms
+      }
+   }
 
-	/**
-	 * 
-	 * @param command
-	 *            absolute path to command. For ubuntu 10.04:
-	 *            /usr/bin/vboxwebsrv
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	private void startupVboxWebServer(String command) throws IOException,
-			InterruptedException {
-		// Disable login credential: $
-		// rt.exec("VBoxManage setproperty websrvauthlibrary null");
-		SshClient client = setupSshClient();
-		try {
-			ExecResponse response = client.exec(command + " -t 0 -b");
-		} catch (Exception e) {
-			propagate(e);
-		} finally {
-			if (client != null)
-				client.disconnect();
-		}
-	}
+   void checkVboxVersionExpected() throws IOException, InterruptedException {
+      logger().debug("checking virtualbox version");
+      assertEquals(runScriptOnNode(hostId, "VBoxManage -version").getOutput().trim(), apiVersion);
+   }
+   
+	   /**
+    * 
+    * @param command
+    *           absolute path to command. For ubuntu 10.04: /usr/bin/vboxwebsrv
+    * @throws IOException
+    * @throws InterruptedException
+    */
+   void startupVboxWebServer() {
+      logger().debug("disabling password access");
+      runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null");
+      logger().debug("starting vboxwebsrv");
+      String vboxwebsrv = "vboxwebsrv -t 5 -v";
+      if (isOSX(hostId))
+         vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/&&" + vboxwebsrv;
+      // allow jclouds to background the process, this is why we don't specify
+      // -b; logs will go corresponding to task name in this case under /tmp/vboxwebsrv
+      runScriptOnNode(hostId, vboxwebsrv,
+            blockOnPort(endpoint.getPort(), 10).blockOnComplete(false).nameTask("vboxwebsrv"));
+   }
+
+   protected boolean isOSX(String id) {
+      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals("Mac OS X");
+   }
 
 	@BeforeMethod
 	protected void setupManager() {
-		manager.connect(endpoint, identity, credential);
+		manager.connect(endpoint.toASCIIString(), identity, credential);
 	}
 
 	@AfterMethod
@@ -339,7 +292,7 @@ public class VirtualboxAdministrationKickstartTest {
 					MediumVariant.VMDK_SPLIT_2_G.ordinal()));
 		} else
 			hd = manager.getVBox().openMedium(clonedDisk, DeviceType.HardDisk,
-					AccessMode.ReadWrite);
+					AccessMode.ReadWrite, forceOverwrite);
 		ISession session = manager.getSessionObject();
 		IMachine machine = manager.getVBox().findMachine(vmName);
 		machine.lockMachine(session, LockType.Write);
@@ -359,7 +312,7 @@ public class VirtualboxAdministrationKickstartTest {
 
 		// network BRIDGED to access HTTP server
 		String hostInterface = null;
-		String command = vboxManageCommand + " list bridgedifs";
+		String command = "VBoxManage list bridgedifs";
 		try {
 			Process child = Runtime.getRuntime().exec(command);
 			BufferedReader bufferedReader = new BufferedReader(
@@ -380,7 +333,7 @@ public class VirtualboxAdministrationKickstartTest {
 			}
 
 			// NAT
-			mutable.getNetworkAdapter(new Long(0)).attachToNAT();
+//			mutable.getNetworkAdapter(new Long(0)).attachToNAT(); TODO: this no longer exists!
 			mutable.getNetworkAdapter(new Long(0)).setNATNetwork("");
 			machine.getNetworkAdapter(new Long(0))
 					.getNatDriver()
@@ -397,7 +350,7 @@ public class VirtualboxAdministrationKickstartTest {
 	}
 
 	@Test(dependsOnMethods = "testConfigureNIC")
-	public void testStartVirtualMachine() {
+	public void testStartVirtualMachine() throws InterruptedException {
 		IMachine machine = manager.getVBox().findMachine(vmName);
 		ISession session = manager.getSessionObject();
 		launchVMProcess(machine, session);
@@ -412,37 +365,11 @@ public class VirtualboxAdministrationKickstartTest {
 	}
 
 	@Test(dependsOnMethods = "testStartVirtualMachine")
-	public void testConfigureGuestAdditions() throws FileNotFoundException,
-			IOException {
-		IPSocket socket = new IPSocket(sshHost, 2222);
-
-		System.out.printf("%d: %s awaiting ssh service to start%n",
-				System.currentTimeMillis(), socket);
-		assert socketTester.apply(socket);
-		System.out.printf("%d: %s ssh service started%n",
-				System.currentTimeMillis(), socket);
-		// configure GA
-		SshClient client = setupSshClient();
-		try {
-			// Configure your system for building kernel modules by running
-			ExecResponse exec = client.exec("echo " + sshPass + " | " + "sudo -S m-a prepare -i");
-			System.out.println(exec);
-		} finally {
-			if (client != null) {
-				client.disconnect();
-			}
-		}
-
-		try {
-			ExecResponse exec = client.exec("echo "	+ sshPass + " | "
-							+ "sudo -S  mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
-			System.out.println(exec);
-			exec = client.exec("echo " + sshPass + " | " + "sudo -S  sh /mnt/VBoxLinuxAdditions.run");
-			System.out.println(exec);
-		} finally {
-			if (client != null)
-				client.disconnect();
-		}
+	public void testConfigureGuestAdditions() {
+	   // Configure your system for building kernel modules by running
+	   runScriptOnNode(guestId, "m-a prepare -i");
+	   runScriptOnNode(guestId, "mount -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt");
+	   runScriptOnNode(guestId, "/mnt/VBoxLinuxAdditions.run");
 	}
 
 	@Test(dependsOnMethods = "testConfigureGuestAdditions")
@@ -506,81 +433,51 @@ public class VirtualboxAdministrationKickstartTest {
 
 	@AfterClass
 	void stopVboxWebServer() throws IOException {
-		// stop vbox web server
-		SshClient client = setupSshClient();
-		try {
-			ExecResponse exec = client.exec("pidof vboxwebsrv | xargs kill");
-			System.out.println(exec.getOutput());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (client != null)
-				client.disconnect();
-		}
+      runScriptOnNode(guestId, "pidof vboxwebsrv | xargs kill");
 	}
 
-	/**
-	 * 
-	 * @param workingDir
-	 * @param vdiUrl
-	 * @param proxy
-	 *            Proxy proxy , new Proxy(Proxy.Type.HTTP, new
-	 *            InetSocketAddress("localhost", 5865));
-	 * @return
-	 * @throws Exception
-	 */
-	private File downloadFile(String sourceURL, String destinationDir,
-			String vboxGuestAdditionsName, Proxy proxy) throws Exception {
+   protected ExecResponse runScriptOnNode(String nodeId, String command, RunScriptOptions options) {
+      ExecResponse toReturn = context.getComputeService().runScriptOnNode(nodeId, command, options);
+      assert toReturn.getExitCode() == 0: toReturn;
+      return toReturn;
+   }
+   
+   protected ExecResponse runScriptOnNode(String nodeId, String command) {
+      return runScriptOnNode(nodeId, command, wrapInInitScript(false));
+   }
 
-		String absolutePathName = destinationDir + File.separator
-				+ vboxGuestAdditionsName;
-		File iso = new File(absolutePathName);
+	private File downloadFileUnlessPresent(URI sourceURL, String destinationDir,
+			String filename) throws Exception {
 
-		final URL isoURL = new URL(sourceURL);
-		final HttpURLConnection uc = (HttpURLConnection) isoURL
-				.openConnection(); // isoURL.openConnection(proxy);
-		uc.connect();
+	   File iso = new File(destinationDir, filename);
+		
 		if (!iso.exists()) {
-			System.out.println("Start download " + sourceURL + " to "
-					+ absolutePathName);
-			Files.copy(new InputSupplier<InputStream>() {
-
-				@Override
-				public InputStream getInput() throws IOException {
-					return uc.getInputStream();
-				}
-
-			}, iso);
+			InputStream is = context.utils().http().get(sourceURL);
+			checkNotNull(is, "%s not found", sourceURL);
+			try {
+			   ByteStreams.copy(is, new FileOutputStream(iso));
+			} finally {
+			   Closeables.closeQuietly(is);
+			}
 		}
 		return iso;
 	}
 
-	private void sendKeyboardSequence(String keyboardSequence) {
+	private void sendKeyboardSequence(String keyboardSequence) throws InterruptedException {
 		String[] sequenceSplited = keyboardSequence.split(" ");
-		SshClient client = null;
-		try {
-			client = setupSshClient();
 			for (String word : sequenceSplited) {
 				String converted = stringToKeycode(word);
 				for (String string : converted.split("  ")) {
 
-					ExecResponse response = client.exec(vboxManageCommand
-							+ " controlvm " + vmName + " keyboardputscancode "
+					runScriptOnNode(hostId , "VBoxManage controlvm " + vmName + " keyboardputscancode "
 							+ string);
-					System.out.println(response.getOutput());
 					if (converted
 							.contains(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
 									.get("<Return>")))
 						Thread.sleep(180);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (client != null)
-				client.disconnect();
-		}
+
 	}
 
 	private String stringToKeycode(String s) {
@@ -618,25 +515,5 @@ public class VirtualboxAdministrationKickstartTest {
 		IProgress prog = machine.launchVMProcess(session, "gui", "");
 		prog.waitForCompletion(-1);
 		session.unlockMachine();
-	}
-
-	private SshClient setupSshClient() throws FileNotFoundException,
-			IOException {
-		int port = Integer.parseInt(sshPort);
-		Injector i = Guice.createInjector(new SshjSshClientModule());
-		SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-		SshClient connection;
-		if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-			connection = factory
-					.create(new IPSocket(sshHost, port),
-							new Credentials(sshUser, Strings2
-									.toStringAndClose(new FileInputStream(
-											sshKeyFile))));
-		} else {
-			connection = factory.create(new IPSocket(sshHost, port),
-					new Credentials(sshUser, sshPass));
-		}
-		connection.connect();
-		return connection;
 	}
 }

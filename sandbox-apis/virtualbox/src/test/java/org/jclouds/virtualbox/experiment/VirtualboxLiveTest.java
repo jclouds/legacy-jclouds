@@ -13,7 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -23,19 +24,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.virtualbox_4_0.AccessMode;
-import org.virtualbox_4_0.DeviceType;
-import org.virtualbox_4_0.IMachine;
-import org.virtualbox_4_0.IMedium;
-import org.virtualbox_4_0.IProgress;
-import org.virtualbox_4_0.ISession;
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.MachineState;
-import org.virtualbox_4_0.MediumType;
-import org.virtualbox_4_0.SessionState;
-import org.virtualbox_4_0.StorageBus;
-import org.virtualbox_4_0.VirtualBoxManager;
-import org.virtualbox_4_0.jaxws.MediumState;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.MediumType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MediumState;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Guice;
@@ -115,8 +116,8 @@ public class VirtualboxLiveTest {
 		endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
 		apiversion = System.getProperty("test." + provider + ".apiversion");
 		
-		injector = Guice.createInjector(new SshjSshClientModule(),
-				new Log4JLoggingModule());
+      injector = Guice.createInjector(new SshjSshClientModule(),
+            new SLF4JLoggingModule(), new BouncyCastleCryptoModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(
 				new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
@@ -184,8 +185,9 @@ public class VirtualboxLiveTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mutable.getNetworkAdapter(new Long(0)).attachToBridgedInterface();
-		mutable.getNetworkAdapter(new Long(0)).setHostInterface(hostInterface.trim());		
+//	   TODO: lookup translations for 4.1 for the below 
+//		mutable.getNetworkAdapter(new Long(0)).attachToBridgedInterface();
+//		mutable.getNetworkAdapter(new Long(0)).setHostInterface(hostInterface.trim());		
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 
 		mutable.saveSettings(); 
@@ -204,7 +206,7 @@ public class VirtualboxLiveTest {
 		clonedDiskPath = workingDir + File.separator + instanceClonedDisk;
 
 		// use template disk in multiattach mode 
-		IMedium clonedHd = manager.getVBox().openMedium(originalDiskPath, DeviceType.HardDisk, AccessMode.ReadOnly);
+		IMedium clonedHd = manager.getVBox().openMedium(originalDiskPath, DeviceType.HardDisk, AccessMode.ReadOnly, forceOverwrite);
 		
 		System.out.println("cloned HD state: " + clonedHd.getState());
 		/* 

@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -25,20 +26,20 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.virtualbox_4_0.AccessMode;
-import org.virtualbox_4_0.DeviceType;
-import org.virtualbox_4_0.IMachine;
-import org.virtualbox_4_0.IMedium;
-import org.virtualbox_4_0.IProgress;
-import org.virtualbox_4_0.ISession;
-import org.virtualbox_4_0.IStorageController;
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.MachineState;
-import org.virtualbox_4_0.NATProtocol;
-import org.virtualbox_4_0.SessionState;
-import org.virtualbox_4_0.StorageBus;
-import org.virtualbox_4_0.VirtualBoxManager;
-import org.virtualbox_4_0.jaxws.MediumVariant;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.IStorageController;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
 import com.google.common.io.Files;
@@ -196,8 +197,8 @@ public class VirtualboxAdministrationTest {
 		hostUsername = System.getProperty("test." + provider + ".hostusername", "toor");
 		hostPassword = System.getProperty("test." + provider + ".hostpassword", "password");
 
-		injector = Guice.createInjector(new SshjSshClientModule(),
-				new Log4JLoggingModule());
+      injector = Guice.createInjector(new SshjSshClientModule(),
+            new SLF4JLoggingModule(), new BouncyCastleCryptoModule());
 		sshFactory = injector.getInstance(SshClient.Factory.class);
 		socketTester = new RetryablePredicate<IPSocket>(
 				new InetSocketAddressConnect(), 3600, 1, TimeUnit.SECONDS);
@@ -304,7 +305,7 @@ public class VirtualboxAdministrationTest {
 	@Test(dependsOnMethods = "testCreateDiskController")
 	public void testCloneAndAttachHardDisk() {
 		IMedium hd = manager.getVBox().openMedium(originalDisk,
-				DeviceType.HardDisk, AccessMode.ReadOnly);
+				DeviceType.HardDisk, AccessMode.ReadOnly, forceOverwrite);
 		IMedium clonedHd = null;
 		if(!new File(clonedDisk).exists()) {
 		clonedHd = manager.getVBox().createHardDisk(diskFormat, clonedDisk);
@@ -312,7 +313,7 @@ public class VirtualboxAdministrationTest {
 			cloning.waitForCompletion(-1);
 		} else
 			clonedHd = manager.getVBox().openMedium(clonedDisk,
-					DeviceType.HardDisk, AccessMode.ReadOnly);
+					DeviceType.HardDisk, AccessMode.ReadOnly, forceOverwrite);
 		
 		ISession session = manager.getSessionObject();
 		IMachine machine = manager.getVBox().findMachine(vmName);
@@ -334,7 +335,7 @@ public class VirtualboxAdministrationTest {
 		/*
 		 * NAT
 		 */
-		mutable.getNetworkAdapter(new Long(0)).attachToNAT();
+//		mutable.getNetworkAdapter(new Long(0)).attachToNAT(); not in 4.1
 		mutable.getNetworkAdapter(new Long(0)).setNATNetwork("");
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 		mutable.saveSettings(); 
@@ -355,7 +356,7 @@ public class VirtualboxAdministrationTest {
 		IMachine machine = manager.getVBox().findMachine(vmName);
 
 		IMedium guestAdditionsDVD = manager.getVBox().openMedium(guestAdditionsDvdName,
-				DeviceType.DVD, AccessMode.ReadOnly);
+				DeviceType.DVD, AccessMode.ReadOnly, forceOverwrite);
 		for (IStorageController storageController : machine
 				.getStorageControllers()) {
 			// for DVD we choose IDE
