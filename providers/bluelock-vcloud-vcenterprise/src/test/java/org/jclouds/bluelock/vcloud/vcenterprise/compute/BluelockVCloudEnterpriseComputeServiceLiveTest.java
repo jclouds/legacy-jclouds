@@ -21,7 +21,9 @@ package org.jclouds.bluelock.vcloud.vcenterprise.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -66,5 +68,9 @@ public class BluelockVCloudEnterpriseComputeServiceLiveTest extends VCloudComput
       assert image.getDefaultCredentials().credential != null : image;
       return template;
    }
-
+   
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not completely predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("Ubuntu1004") : execResponse + ": " + node1;
+   }
 }
