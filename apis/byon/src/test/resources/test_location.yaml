@@ -29,6 +29,7 @@ nodes:
       os_family: rhel
       os_description: redhat
       os_version: 5.3
+      login_port: 2022
       group: hadoop
       tags:
           - vanilla

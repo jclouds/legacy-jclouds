@@ -72,6 +72,7 @@ Here are the properties:
                      ex. rhel, ubuntu, centos, debian, amzn-linux
   * os_description - long description of the os ex. Ubuntu with lamp stack 
   * os_version     - normalized to numbers when possible. ex. for centos: 5.3, ubuntu: 10.10 
+  * login_port     - optional; alternate port for ssh access
   * group          - primary group of the machine. ex. hadoop 
   * tags           - optional; list of arbitrary tags. 
                                * note this list is not yet in jclouds NodeMetadata 

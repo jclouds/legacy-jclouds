@@ -41,15 +41,15 @@ public class NodesFromYamlTest {
             .toString();
 
    public static final Node TEST1 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
-            "cluster-1.mydomain.com", null, "x86", "rhel", "redhat", "5.3", false, "hadoop", ImmutableList.of("vanilla"),
+            "cluster-1.mydomain.com", null, "x86", "rhel", "redhat", "5.3", false, 22, "hadoop", ImmutableList.of("vanilla"),
             "myUser", key, null, "happy bear");
 
    public static final Node TEST2 = new Node("cluster-1", "cluster-1", "accounting analytics cluster",
-            "cluster-1.mydomain.com", "virginia", "x86", "rhel", "redhat", "5.3", false, "hadoop",
+            "cluster-1.mydomain.com", "virginia", "x86", "rhel", "redhat", "5.3", false, 22, "hadoop",
             ImmutableList.of("vanilla"), "myUser", key, null, "happy bear");
 
    public static final Node TEST3 = new Node("cluster-2", "cluster-2", "accounting analytics cluster",
-            "cluster-2.mydomain.com", "maryland", "x86", "rhel", "redhat", "5.3", false, "hadoop",
+            "cluster-2.mydomain.com", "maryland", "x86", "rhel", "redhat", "5.3", false, 2022, "hadoop",
             ImmutableList.of("vanilla"), "myUser", key, null, "happy bear");
 
    @Test
