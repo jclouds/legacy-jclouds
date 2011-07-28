@@ -39,6 +39,15 @@ public class UtilsTest {
                "hello world");
    }
 
+   public void testWriteFunctionFromResourceAddsNewlineUNIX() {
+      assertEquals(Utils.writeFunctionFromResource("nonewline", OsFamily.UNIX), "foo\n");
+   }
+   
+
+   public void testWriteFunctionFromResourceAddsNewlineWINDOWS() {
+      assertEquals(Utils.writeFunctionFromResource("nonewline", OsFamily.WINDOWS), "foo\r\n");
+   }
+   
    public void testWriteVariableExportersUNIX() {
       assertEquals(Utils.writeVariableExporters(ImmutableMap.of("mavenOpts",
                "-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError"), OsFamily.UNIX),

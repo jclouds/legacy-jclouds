@@ -133,8 +133,10 @@ public class Utils {
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
       try {
-         return CharStreams.toString(Resources.newReaderSupplier(Resources.getResource(Utils.class, String
+         String toReturn = CharStreams.toString(Resources.newReaderSupplier(Resources.getResource(Utils.class, String
                   .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+         String lf = ShellToken.LF.to(family);
+         return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
       } catch (IOException e) {
          throw new FunctionNotFoundException(function, family, e);
       }
