@@ -18,14 +18,21 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * @author James Murty
  * @author Adrian Cole
  */
 @Test(groups = { "live" })
 public class SwiftContainerLiveTest extends BaseContainerLiveTest {
+
+   @Test(expectedExceptions=UnsupportedOperationException.class)
+   public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
+      super.testPublicAccess();
+   }
 
 }

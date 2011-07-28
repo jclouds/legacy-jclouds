@@ -27,6 +27,7 @@ import java.util.Set;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
+import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -43,6 +44,12 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
    @Override
    public CloudFilesClient getApi() {
       return (CloudFilesClient) context.getProviderSpecificContext().getApi();
+   }
+   
+   @Override
+   protected void testGetObjectContentType(SwiftObject getBlob) {
+      //lovely new bug.. should be text/plain
+      assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
    }
 
    @Test

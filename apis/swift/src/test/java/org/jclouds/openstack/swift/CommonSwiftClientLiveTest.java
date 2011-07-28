@@ -224,7 +224,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
-         assert getBlob.getInfo().getContentType().startsWith("text/plain") : getBlob.getInfo().getContentType();
+         testGetObjectContentType(getBlob);
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
          assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
@@ -270,6 +270,11 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   protected void testGetObjectContentType(SwiftObject getBlob) {
+      assert getBlob.getPayload().getContentMetadata().getContentType().startsWith("text/plain") : getBlob.getPayload()
+            .getContentMetadata().getContentType();
    }
 
    private SwiftObject newSwiftObject(String data, String key) throws IOException {
