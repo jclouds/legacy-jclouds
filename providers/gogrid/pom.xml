@@ -92,6 +92,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <threadCount>1</threadCount>
                                     <systemProperties>
                                         <property>
                                             <name>test.gogrid.endpoint</name>

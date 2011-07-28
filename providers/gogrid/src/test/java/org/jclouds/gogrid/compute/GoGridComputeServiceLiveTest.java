@@ -18,18 +18,33 @@
  */
 package org.jclouds.gogrid.compute;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
  * @author Oleksiy Yarmula
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "live", singleThreaded = true, testName = "GoGridComputeServiceLiveTest")
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public GoGridComputeServiceLiveTest() {
@@ -42,7 +57,34 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
-      // hostname is not completely predictable based on node metadata
-      assert execResponse.getOutput().trim().startsWith(node1.getName()) : execResponse + ": " + node1;
+      // hostname is not predictable based on node metadata
+   }
+
+   public void testResizeRam() throws Exception {
+      String group = this.group + "ram";
+      RestContext<GoGridClient, GoGridAsyncClient> providerContext = client.getContext().getProviderSpecificContext();
+      try {
+         client.destroyNodesMatching(inGroup(group));
+      } catch (Exception e) {
+
+      }
+      RetryablePredicate<Server> serverLatestJobCompleted = new RetryablePredicate<Server>(
+            new ServerLatestJobCompleted(providerContext.getApi().getJobServices()), 800, 20, TimeUnit.SECONDS);
+
+      String ram = Iterables.get(providerContext.getApi().getServerServices().getRamSizes(), 1).getName();
+      try {
+         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1));
+
+         Server updatedServer = providerContext.getApi().getServerServices().editServerRam(new Long(node.getId()), ram);
+         assertNotNull(updatedServer);
+         assert serverLatestJobCompleted.apply(updatedServer);
+
+         assertEquals(
+               Iterables.getLast(providerContext.getApi().getServerServices().getServersById(new Long(node.getId())))
+                     .getRam().getName(), ram);
+
+      } finally {
+         client.destroyNodesMatching(inGroup(group));
+      }
    }
 }

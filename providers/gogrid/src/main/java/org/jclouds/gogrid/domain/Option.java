@@ -88,4 +88,9 @@ public class Option implements Comparable<Option> {
     public int compareTo(Option o) {
         return Longs.compare(id, o.id);
     }
+
+   @Override
+   public String toString() {
+      return "[id=" + id + ", name=" + name + ", description=" + description + "]";
+   }
 }

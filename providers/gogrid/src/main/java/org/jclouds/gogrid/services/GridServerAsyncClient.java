@@ -36,7 +36,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.domain.Option;
@@ -70,7 +69,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Oleksiy Yarmula
  */
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
+@QueryParams(keys = VERSION, values = "1.6")
 public interface GridServerAsyncClient {
 
    /**
@@ -164,6 +163,15 @@ public interface GridServerAsyncClient {
    @Path("/common/lookup/list")
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.ram")
    ListenableFuture<Set<Option>> getRamSizes();
+   
+   /**
+    * @see GridServerClient#getTypes
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.type")
+   ListenableFuture<Set<Option>> getTypes();
 
    /**
     * @see GridServerClient#getDatacenters
@@ -173,4 +181,32 @@ public interface GridServerAsyncClient {
    @Path("/common/lookup/list")
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.datacenter")
    ListenableFuture<Set<Option>> getDatacenters();
+   
+
+   /**
+    * @see GridServerClient#editServerDescription
+    */
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/edit")
+   ListenableFuture<Server> editServerDescription(@QueryParam("id") long id,
+            @QueryParam("description") String newDescription);
+
+   /**
+    * @see GridServerClient#editServerRam
+    */
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/edit")
+   ListenableFuture<Server> editServerRam(@QueryParam("id") long id,
+            @QueryParam("server.ram") String ram);
+   
+   /**
+    * @see GridServerClient#editServerType
+    */
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/edit")
+   ListenableFuture<Server> editServerType(@QueryParam("id") long id,
+            @QueryParam("server.type") String newType);
 }

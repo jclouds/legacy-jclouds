@@ -139,7 +139,40 @@ public interface GridServerClient {
     * @return server before the command is executed
     */
    Server deleteByName(String name);
-
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param newDescription
+    *           description to replace the current one
+    * @return edited server
+    */
+   Server editServerDescription(long id, String newDescription);
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param idOrNameOfType
+    *           type to replace the current one
+    * @return edited server
+    */
+   Server editServerType(long id, String idOrNameOfType);
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param idOrNameOfRam
+    *           ram to replace the current one
+    * @return edited server
+    */
+   Server editServerRam(long id, String idOrNameOfRam);
+   
    /**
     * Retrieves the list of supported RAM configurations. The objects will have
     * RAM ID, name and description. In most cases, id or name will be used for
@@ -153,6 +186,14 @@ public interface GridServerClient {
     */
    Set<Option> getRamSizes();
 
+   /**
+    * Retrieves the list of supported server types, for example Web/App Server and Database Server. In most cases, id
+    * or name will be used for {@link #editServerType}.
+    * 
+    * @return supported server types
+    */
+   Set<Option> getTypes();
+   
    /**
     * Retrieves the list of supported Datacenters to launch servers into. The
     * objects will have datacenter ID, name and description. In most cases, id
