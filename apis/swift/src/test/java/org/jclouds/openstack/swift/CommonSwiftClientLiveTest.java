@@ -203,7 +203,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          assertEquals(metadata.getName(), object.getInfo().getName());
 
          assertEquals(metadata.getBytes(), new Long(data.length()));
-         assertEquals(metadata.getContentType(), "text/plain; charset=UTF-8");
+         assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
 
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(metadata.getHash()));
          assertEquals(metadata.getHash(), CryptoStreams.hex(newEtag));
@@ -224,7 +224,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
-         assertEquals(getBlob.getInfo().getContentType(), "text/plain; charset=UTF-8");
+         assert getBlob.getInfo().getContentType().startsWith("text/plain") : getBlob.getInfo().getContentType();
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
          assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
