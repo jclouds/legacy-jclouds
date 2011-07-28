@@ -610,7 +610,10 @@ public abstract class BaseComputeServiceLiveTest {
 
          long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
-         getAnonymousLogger().info(format("<< configured node(%s) in %ss", nodeId, configureSeconds));
+         getAnonymousLogger().info(
+               format("<< configured node(%s) with %s in %ss", nodeId,
+                     client.runScriptOnNode(nodeId, "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
+                     configureSeconds));
 
          trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
 

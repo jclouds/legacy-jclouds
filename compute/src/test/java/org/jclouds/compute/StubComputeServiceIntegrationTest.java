@@ -144,7 +144,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
                      client1);
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("web", "privateKey"))).andReturn(
-                     client1New).times(5);
+                     client1New).times(6);
             runScriptAndService(client1, client1New);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
@@ -260,6 +260,10 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                // note we have to reconnect here, as we updated the login user.
                client.disconnect();
 
+               clientNew.connect();
+               expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
                clientNew.connect();
                scriptName = "jboss";
                clientNew.put("/tmp/init-" + scriptName, Strings2

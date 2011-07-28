@@ -19,7 +19,6 @@
 package org.jclouds.compute;
 
 import static java.lang.String.format;
-import static org.jclouds.compute.util.ComputeServiceUtils.execHttpResponse;
 import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
@@ -38,8 +37,8 @@ import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -74,7 +73,7 @@ public class RunScriptData {
                         installJavaAndCurl(os),//
                         authorizePortsInIpTables(22, 8080),//
                         extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",//
-                                 "http://d37gkgjhl3prlk.cloudfront.net/jboss-7.0.0.CR1.tar.gz")), "/usr/local"),//
+                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.0.Final/jboss-as-web-7.0.0.Final.tar.gz")), "/usr/local"),//
                         exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
                         exec("chmod -R oug+r+w " + jbossHome),
@@ -119,11 +118,6 @@ public class RunScriptData {
       return exec("nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf");
    }
 
-   public static Statement installSunJDKFromWhirrIfNotPresent() {
-      return newStatementList(exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
-               execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.3.0-incubating/sun/java/install")));
-   }
-
    // TODO make this a cli option
    private static Statement changeStandaloneConfigToListenOnAllIPAddresses() {
       return exec(format(
@@ -138,7 +132,7 @@ public class RunScriptData {
             normalizeHostAndDNSConfig(),//
             exec("apt-get update -qq"),
             exec("which curl || " + aptInstall + " curl"),//
-            exec(aptInstall + " openjdk-6-jdk"),//
+            exec(aptInstall + " openjdk-7-jdk" + "||" + aptInstall + " openjdk-6-jdk"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> $HOME/.bashrc"));
 
    public static String yumInstall = "yum --nogpgcheck -y install";
@@ -146,12 +140,12 @@ public class RunScriptData {
    public static final Statement YUM_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || " + yumInstall + " curl"),//
-            exec(yumInstall + " java-1.6.0-openjdk-devel"),//
+            exec(yumInstall + " java-1.7.0-openjdk-devel" + "||" + yumInstall + " java-1.6.0-openjdk-devel"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || zypper install curl"),//
-            exec("zypper install java-1.6.0-openjdk"),//
+            exec("zypper install java-1.7.0-openjdk" + "||" + "zypper install java-1.6.0-openjdk"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 }
