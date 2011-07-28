@@ -94,6 +94,7 @@ public interface ElasticStackClient {
     * @param uuid
     *           what to start
     */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    void startServer(String uuid);
 
    /**
@@ -156,6 +157,7 @@ public interface ElasticStackClient {
     *           required parameters: name, size
     * @return newly created drive
     */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    DriveInfo createDrive(Drive createDrive);
 
    /**
@@ -183,6 +185,7 @@ public interface ElasticStackClient {
     * @param server
     * @return newly created server
     */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    ServerInfo createAndStartServer(Server server);
 
    /**

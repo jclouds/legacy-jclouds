@@ -52,9 +52,9 @@ public class ElasticHostsPeer1SanAntonioTemplateBuilderLiveTest extends BaseTemp
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.startsWith("10.")) && input.is64Bit;
                case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.matches("[56].0")) && input.is64Bit;
                case CENTOS:
                   return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
                case WINDOWS:
@@ -72,7 +72,7 @@ public class ElasticHostsPeer1SanAntonioTemplateBuilderLiveTest extends BaseTemp
    public void testTemplateBuilder() {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "elastichosts-sat-p");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
