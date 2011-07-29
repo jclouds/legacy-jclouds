@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.Closeables.closeQuietly;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
@@ -33,6 +34,7 @@ import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -71,7 +73,14 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
       }
       if (from.getStatusCode() >= 300)
          return convertStreamToStringAndParse(from);
-      return parse(from.getPayload().getInput());
+      InputStream is = from.getPayload().getInput();
+      try {
+         return parse(new InputSource(is));
+      } catch (RuntimeException e) {
+         return addDetailsAndPropagate(from, e);
+      } finally {
+         closeQuietly(is);
+      }
    }
 
    private T convertStreamToStringAndParse(HttpResponse from) {
@@ -102,15 +111,19 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
 
    public T parse(InputSource from) {
       try {
-         checkNotNull(from, "xml inputsource");
-         from.setEncoding("UTF-8");
-         parser.setContentHandler(getHandler());
-         // This method should accept documents with a BOM (Byte-order mark)
-         parser.parse(from);
-         return getHandler().getResult();
+         return doParse(from);
       } catch (Exception e) {
          return addDetailsAndPropagate(null, e);
       }
+   }
+
+   protected T doParse(InputSource from) throws IOException, SAXException {
+      checkNotNull(from, "xml inputsource");
+      from.setEncoding("UTF-8");
+      parser.setContentHandler(getHandler());
+      // This method should accept documents with a BOM (Byte-order mark)
+      parser.parse(from);
+      return getHandler().getResult();
    }
 
    public T addDetailsAndPropagate(HttpResponse response, Exception e) {
