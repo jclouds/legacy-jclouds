@@ -102,4 +102,10 @@ public class BlockDevice {
       return deleteOnTermination;
    }
 
+   @Override
+   public String toString() {
+      return "[volumeId=" + volumeId + ", attachmentStatus=" + attachmentStatus + ", attachTime="
+            + attachTime + ", deleteOnTermination=" + deleteOnTermination + "]";
+   }
+
 }

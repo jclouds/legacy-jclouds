@@ -81,7 +81,29 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
       return this;
    }
 
+   public AWSRunInstancesOptions withSecurityGroupId(String securityGroup) {
+      return withSecurityGroupIds(securityGroup);
+   }
+
+   public AWSRunInstancesOptions withSecurityGroupIds(Iterable<String> securityGroupIds) {
+      launchSpecificationBuilder.securityGroupIds(securityGroupIds);
+      indexFormValuesWithPrefix("SecurityGroupId", securityGroupIds);
+      return this;
+   }
+
+   public AWSRunInstancesOptions withSecurityGroupIds(String... securityGroupIds) {
+      return withSecurityGroupIds(ImmutableSet.copyOf(securityGroupIds));
+   }
+   
    public static class Builder extends RunInstancesOptions.Builder {
+
+      /**
+       * @see AWSRunInstancesOptions#withSecurityGroupId(String)
+       */
+      public static AWSRunInstancesOptions withSecurityGroupId(String securityGroup) {
+         AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+         return options.withSecurityGroupId(securityGroup);
+      }
 
       /**
        * @see AWSRunInstancesOptions#inPlacementGroup(String)
@@ -191,19 +213,19 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
 
    @Override
    public AWSRunInstancesOptions withSecurityGroup(String securityGroup) {
-      launchSpecificationBuilder.groupId(securityGroup);
+      launchSpecificationBuilder.securityGroupName(securityGroup);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroup(securityGroup));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(Iterable<String> securityGroups) {
-      launchSpecificationBuilder.groupIds(securityGroups);
+      launchSpecificationBuilder.securityGroupNames(securityGroups);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(String... securityGroups) {
-      launchSpecificationBuilder.groupIds(ImmutableSet.copyOf(securityGroups));
+      launchSpecificationBuilder.securityGroupNames(ImmutableSet.copyOf(securityGroups));
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 

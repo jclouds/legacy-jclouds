@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.CaseFormat;
 
 /**
@@ -36,6 +38,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    public static class Builder {
       private String region;
       private String availabilityZoneGroup;
+      private String launchedAvailabilityZone;
       private Date createTime;
       private String faultCode;
       private String faultMessage;
@@ -53,6 +56,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       public Builder clear() {
          this.region = null;
          this.availabilityZoneGroup = null;
+         this.launchedAvailabilityZone = null;
          this.createTime = null;
          this.faultCode = null;
          this.faultMessage = null;
@@ -76,6 +80,11 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
 
       public Builder availabilityZoneGroup(String availabilityZoneGroup) {
          this.availabilityZoneGroup = availabilityZoneGroup;
+         return this;
+      }
+
+      public Builder launchedAvailabilityZone(String launchedAvailabilityZone) {
+         this.launchedAvailabilityZone = launchedAvailabilityZone;
          return this;
       }
 
@@ -145,8 +154,9 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       }
 
       public SpotInstanceRequest build() {
-         return new SpotInstanceRequest(region, availabilityZoneGroup, createTime, faultCode, faultMessage, instanceId,
-               launchGroup, launchSpecification, productDescription, id, spotPrice, state, type, validFrom, validUntil);
+         return new SpotInstanceRequest(region, availabilityZoneGroup, launchedAvailabilityZone, createTime, faultCode,
+               faultMessage, instanceId, launchGroup, launchSpecification, productDescription, id, spotPrice, state,
+               type, validFrom, validUntil);
       }
    }
 
@@ -194,6 +204,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
 
    private final String region;
    private final String availabilityZoneGroup;
+   private final String launchedAvailabilityZone;
    private final Date createTime;
    private final String faultCode;
    private final String faultMessage;
@@ -208,11 +219,13 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    private final Date validFrom;
    private final Date validUntil;
 
-   public SpotInstanceRequest(String region, String availabilityZoneGroup, Date createTime, String faultCode,
-         String faultMessage, String instanceId, String launchGroup, LaunchSpecification launchSpecification,
-         String productDescription, String id, float spotPrice, State state, Type type, Date validFrom, Date validUntil) {
+   public SpotInstanceRequest(String region, String availabilityZoneGroup, @Nullable String launchedAvailabilityZone,
+         Date createTime, String faultCode, String faultMessage, String instanceId, String launchGroup,
+         LaunchSpecification launchSpecification, String productDescription, String id, float spotPrice, State state,
+         Type type, Date validFrom, Date validUntil) {
       this.region = checkNotNull(region, "region");
       this.availabilityZoneGroup = availabilityZoneGroup;
+      this.launchedAvailabilityZone = launchedAvailabilityZone;
       this.createTime = createTime;
       this.faultCode = faultCode;
       this.faultMessage = faultMessage;
@@ -237,6 +250,10 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
 
    public String getAvailabilityZoneGroup() {
       return availabilityZoneGroup;
+   }
+
+   public String getLaunchedAvailabilityZone() {
+      return launchedAvailabilityZone;
    }
 
    public Date getCreateTime() {
@@ -303,9 +320,11 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((launchGroup == null) ? 0 : launchGroup.hashCode());
       result = prime * result + ((launchSpecification == null) ? 0 : launchSpecification.hashCode());
+      result = prime * result + ((launchedAvailabilityZone == null) ? 0 : launchedAvailabilityZone.hashCode());
       result = prime * result + ((productDescription == null) ? 0 : productDescription.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + Float.floatToIntBits(spotPrice);
+      result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((validFrom == null) ? 0 : validFrom.hashCode());
       result = prime * result + ((validUntil == null) ? 0 : validUntil.hashCode());
@@ -361,6 +380,11 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
             return false;
       } else if (!launchSpecification.equals(other.launchSpecification))
          return false;
+      if (launchedAvailabilityZone == null) {
+         if (other.launchedAvailabilityZone != null)
+            return false;
+      } else if (!launchedAvailabilityZone.equals(other.launchedAvailabilityZone))
+         return false;
       if (productDescription == null) {
          if (other.productDescription != null)
             return false;
@@ -372,6 +396,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       } else if (!region.equals(other.region))
          return false;
       if (Float.floatToIntBits(spotPrice) != Float.floatToIntBits(other.spotPrice))
+         return false;
+      if (state != other.state)
          return false;
       if (type != other.type)
          return false;
@@ -390,11 +416,12 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
 
    @Override
    public String toString() {
-      return "[region=" + region + ", id=" + id + ", spotPrice=" + spotPrice + ", state=" + state
-            + ", availabilityZoneGroup=" + availabilityZoneGroup + ", createTime=" + createTime + ", faultCode="
-            + faultCode + ", type=" + type + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup
-            + ", launchSpecification=" + launchSpecification + ", productDescription=" + productDescription
-            + ", validFrom=" + validFrom + ", validUntil=" + validUntil + "]";
+      return "[region=" + region + ", availabilityZoneGroup=" + availabilityZoneGroup + ", launchedAvailabilityZone="
+            + launchedAvailabilityZone + ", createTime=" + createTime + ", faultCode=" + faultCode + ", faultMessage="
+            + faultMessage + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup + ", launchSpecification="
+            + launchSpecification + ", productDescription=" + productDescription + ", id=" + id + ", spotPrice="
+            + spotPrice + ", state=" + state + ", type=" + type + ", validFrom=" + validFrom + ", validUntil="
+            + validUntil + "]";
    }
 
    @Override

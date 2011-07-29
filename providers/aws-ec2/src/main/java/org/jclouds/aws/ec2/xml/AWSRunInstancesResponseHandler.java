@@ -20,10 +20,10 @@ package org.jclouds.aws.ec2.xml;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.RunningInstance.Builder;
 import org.jclouds.location.Region;
 
 import com.google.inject.Provider;
@@ -39,7 +39,8 @@ import com.google.inject.Provider;
 public class AWSRunInstancesResponseHandler extends BaseAWSReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   AWSRunInstancesResponseHandler(DateService dateService, @Region String defaultRegion, Provider<Builder> builderProvider) {
+   AWSRunInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+         Provider<AWSRunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
    }
 
@@ -48,4 +49,7 @@ public class AWSRunInstancesResponseHandler extends BaseAWSReservationHandler<Re
       return newReservation();
    }
 
+   protected boolean endOfInstanceItem() {
+      return itemDepth == 1 && inInstancesSet;
+   }
 }

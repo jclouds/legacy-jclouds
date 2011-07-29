@@ -45,7 +45,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "SpotInstancesHandlerTest")
 public class SpotInstancesHandlerTest extends BaseEC2HandlerTest {
 
@@ -66,23 +67,27 @@ public class SpotInstancesHandlerTest extends BaseEC2HandlerTest {
       dateService = injector.getInstance(DateService.class);
       assert dateService != null;
    }
+
    public void testDescribe() {
 
       InputStream is = getClass().getResourceAsStream("/describe_spot_instance_requests.xml");
-      SpotInstancesHandler handler = injector
-            .getInstance(SpotInstancesHandler.class);
+      SpotInstancesHandler handler = injector.getInstance(SpotInstancesHandler.class);
       addDefaultRegionToHandler(handler);
       Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
       assertEquals(result.size(), 18);
    }
-   public void testRequest() {
 
+   public void testRequest() {
       InputStream is = getClass().getResourceAsStream("/request_spot_instances.xml");
-      SpotInstancesHandler handler = injector
-            .getInstance(SpotInstancesHandler.class);
+      SpotInstancesHandler handler = injector.getInstance(SpotInstancesHandler.class);
       addDefaultRegionToHandler(handler);
       Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
       assertEquals(result.size(), 3);
+   }
+
+   public void testParseNoNPE() {
+      factory.create(injector.getInstance(SpotInstancesHandler.class)).parse(
+            getClass().getResourceAsStream("/describe_spot_instances_1.xml"));
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

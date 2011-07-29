@@ -580,7 +580,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
                + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
                + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
                + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
-               + keyName + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
+               + keyName + ", groupIds=" + groupIds  + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices + "]";
    }
 

@@ -75,7 +75,6 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
-
       super(client, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, instancePresent,
                runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
       this.client = checkNotNull(client, "client");

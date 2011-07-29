@@ -43,6 +43,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
@@ -57,7 +58,7 @@ import com.google.inject.Module;
 @Test(groups = "live", singleThreaded = true)
 public class SecurityGroupClientLiveTest {
 
-   private SecurityGroupClient client;
+   protected SecurityGroupClient client;
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    protected String provider = "ec2";
@@ -69,10 +70,9 @@ public class SecurityGroupClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -81,8 +81,10 @@ public class SecurityGroupClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -91,21 +93,21 @@ public class SecurityGroupClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getSecurityGroupServices();
    }
 
    @Test
    void testDescribe() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1, Region.AP_NORTHEAST_1)) {
+            Region.AP_SOUTHEAST_1, Region.AP_NORTHEAST_1)) {
          SortedSet<SecurityGroup> allResults = ImmutableSortedSet.<SecurityGroup> copyOf(client
-                  .describeSecurityGroupsInRegion(region));
+               .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             SecurityGroup group = allResults.last();
             SortedSet<SecurityGroup> result = ImmutableSortedSet.<SecurityGroup> copyOf(client
-                     .describeSecurityGroupsInRegion(region, group.getName()));
+                  .describeSecurityGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             SecurityGroup compare = result.last();
             assertEquals(compare, group);
@@ -127,7 +129,7 @@ public class SecurityGroupClientLiveTest {
       }
    }
 
-   private void cleanupAndSleep(String groupName) {
+   protected void cleanupAndSleep(String groupName) {
       try {
          client.deleteSecurityGroupInRegion(null, groupName);
          Thread.sleep(2000);
@@ -179,7 +181,7 @@ public class SecurityGroupClientLiveTest {
 
    @Test
    void testAuthorizeSecurityGroupIngressSourceGroup() {
-      String group1Name = PREFIX + "ingress1";
+      final String group1Name = PREFIX + "ingress1";
       String group2Name = PREFIX + "ingress2";
       cleanupAndSleep(group2Name);
       cleanupAndSleep(group1Name);
@@ -192,19 +194,19 @@ public class SecurityGroupClientLiveTest {
          Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
          assertNotNull(oneResult);
          assertEquals(oneResult.size(), 1);
-         SecurityGroup group = oneResult.iterator().next();
+         final SecurityGroup group = oneResult.iterator().next();
          assertEquals(group.getName(), group1Name);
          final UserIdGroupPair to = new UserIdGroupPair(group.getOwnerId(), group1Name);
          client.authorizeSecurityGroupIngressInRegion(null, group2Name, to);
          assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
             @Override
             public boolean apply(IpPermission arg0) {
-               return arg0.getGroups().equals(ImmutableSet.of(to));
+               return arg0.getUserIdGroupPairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name));
             }
          }));
 
          client.revokeSecurityGroupIngressInRegion(null, group2Name,
-                  new UserIdGroupPair(group.getOwnerId(), group1Name));
+               new UserIdGroupPair(group.getOwnerId(), group1Name));
          assertEventually(new GroupHasNoPermissions(client, group2Name));
       } finally {
          client.deleteSecurityGroupInRegion(null, group2Name);
@@ -212,20 +214,20 @@ public class SecurityGroupClientLiveTest {
       }
    }
 
-   private final class TCPPort80AllIPs implements Predicate<IpPermission> {
+   public final class TCPPort80AllIPs implements Predicate<IpPermission> {
       @Override
       public boolean apply(IpPermission arg0) {
          return arg0.getIpProtocol() == IpProtocol.TCP && arg0.getFromPort() == 80 && arg0.getToPort() == 80
-                  && arg0.getIpRanges().equals(ImmutableSet.of("0.0.0.0/0"));
+               && arg0.getIpRanges().equals(ImmutableSet.of("0.0.0.0/0"));
       }
    }
 
-   private static final class GroupHasPermission implements Runnable {
+   public static final class GroupHasPermission implements Runnable {
       private final SecurityGroupClient client;
       private final String group;
       private final Predicate<IpPermission> permission;
 
-      private GroupHasPermission(SecurityGroupClient client, String group, Predicate<IpPermission> permission) {
+      public GroupHasPermission(SecurityGroupClient client, String group, Predicate<IpPermission> permission) {
          this.client = client;
          this.group = group;
          this.permission = permission;
@@ -235,18 +237,18 @@ public class SecurityGroupClientLiveTest {
          try {
             Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group);
             assert Iterables.all(Iterables.getOnlyElement(oneResult).getIpPermissions(), permission) : permission
-                     + ": " + oneResult;
+                  + ": " + oneResult;
          } catch (Exception e) {
             throw new AssertionError(e);
          }
       }
    }
 
-   private static final class GroupHasNoPermissions implements Runnable {
+   public static final class GroupHasNoPermissions implements Runnable {
       private final SecurityGroupClient client;
       private final String group;
 
-      private GroupHasNoPermissions(SecurityGroupClient client, String group) {
+      public GroupHasNoPermissions(SecurityGroupClient client, String group) {
          this.client = client;
          this.group = group;
       }
@@ -264,9 +266,9 @@ public class SecurityGroupClientLiveTest {
       }
    }
 
-   private void ensureGroupsExist(String group1Name, String group2Name) {
+   protected void ensureGroupsExist(String group1Name, String group2Name) {
       SortedSet<SecurityGroup> twoResults = ImmutableSortedSet.copyOf(client.describeSecurityGroupsInRegion(null,
-               group1Name, group2Name));
+            group1Name, group2Name));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       Iterator<SecurityGroup> iterator = twoResults.iterator();
@@ -282,8 +284,9 @@ public class SecurityGroupClientLiveTest {
    private static final int INCONSISTENCY_WINDOW = 5000;
 
    /**
-    * Due to eventual consistency, container commands may not return correctly immediately. Hence,
-    * we will try up to the inconsistency window to see if the assertion completes.
+    * Due to eventual consistency, container commands may not return correctly
+    * immediately. Hence, we will try up to the inconsistency window to see if
+    * the assertion completes.
     */
    protected static void assertEventually(Runnable assertion) {
       long start = System.currentTimeMillis();
@@ -293,7 +296,7 @@ public class SecurityGroupClientLiveTest {
             assertion.run();
             if (i > 0)
                System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                        assertion.getClass().getSimpleName());
+                     assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;

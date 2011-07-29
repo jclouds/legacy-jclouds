@@ -164,10 +164,21 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       }
 
    };
-
+   
+   @Override
+   protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
+      return options instanceof AWSEC2TemplateOptions
+            && AWSEC2TemplateOptions.class.cast(options).getGroupIds().size() > 0
+            || super.userSpecifiedTheirOwnGroups(options);
+   }
+   
    @Override
    protected void addSecurityGroups(String region, String group, Template template, RunInstancesOptions instanceOptions) {
-      String subnetId = AWSEC2TemplateOptions.class.cast(template.getOptions()).getSubnetId();
+      AWSEC2TemplateOptions awsTemplateOptions = AWSEC2TemplateOptions.class.cast(template.getOptions());
+      AWSRunInstancesOptions awsInstanceOptions = AWSRunInstancesOptions.class.cast(instanceOptions);
+      if (awsTemplateOptions.getGroupIds().size() > 0)
+         awsInstanceOptions.withSecurityGroupIds(awsTemplateOptions.getGroupIds());
+      String subnetId = awsTemplateOptions.getSubnetId();
       if (subnetId != null) {
          AWSRunInstancesOptions.class.cast(instanceOptions).withSubnetId(subnetId);
       } else {

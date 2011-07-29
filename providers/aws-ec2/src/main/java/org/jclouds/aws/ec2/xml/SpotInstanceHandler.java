@@ -85,6 +85,8 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
          builder.id(currentOrNull());
       } else if (qName.equals("instanceId")) {
          builder.instanceId(currentOrNull());
+      } else if (qName.equals("launchedAvailabilityZone")) {
+         builder.launchedAvailabilityZone(currentOrNull());
       } else if (qName.equals("availabilityZoneGroup")) {
          builder.availabilityZoneGroup(currentOrNull());
       } else if (qName.equals("launchGroup")) {

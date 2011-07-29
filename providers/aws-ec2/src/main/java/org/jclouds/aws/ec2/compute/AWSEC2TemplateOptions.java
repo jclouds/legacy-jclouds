@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -34,6 +35,9 @@ import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on the "ec2" provider.
@@ -73,6 +77,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
             eTo.noPlacementGroup();
          if (getPlacementGroup() != null)
             eTo.placementGroup(getPlacementGroup());
+         if (getGroupIds().size() > 0)
+            eTo.securityGroupIds(getGroupIds());
          if (getSpotPrice() != null)
             eTo.spotPrice(getSpotPrice());
          if (getSpotOptions() != null)
@@ -86,6 +92,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    private String subnetId;
    private Float spotPrice;
    private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
+   private Set<String> groupIds = ImmutableSet.of();
 
    public static final AWSEC2TemplateOptions NONE = new AWSEC2TemplateOptions();
 
@@ -145,7 +152,51 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       return this;
    }
 
+   /**
+    * 
+    * @see AWSEC2TemplateOptions#securityGroupIds(Iterable<String>)
+    */
+   public AWSEC2TemplateOptions securityGroupIds(String... groupIds) {
+      return securityGroupIds(ImmutableSet.copyOf(groupIds));
+   }
+
+   /**
+    * Specifies the security group ids to be used for nodes with this template
+    */
+   public AWSEC2TemplateOptions securityGroupIds(Iterable<String> groupIds) {
+      checkArgument(Iterables.size(groupIds) > 0, "you must specify at least one security group");
+      for (String groupId : groupIds)
+         Preconditions2.checkNotEmpty(groupId, "all security groups must be non-empty");
+      this.groupIds = ImmutableSet.copyOf(groupIds);
+      return this;
+   }
+
+   public Set<String> getGroupIds() {
+      return groupIds;
+   }
+
+   public void setGroupIds(Set<String> groupIds) {
+      this.groupIds = groupIds;
+   }
+
    public static class Builder {
+
+      /**
+       * @see AWSEC2TemplateOptions#securityGroupIds(Iterable<String>)
+       */
+      public static AWSEC2TemplateOptions securityGroupIds(String... groupNames) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return AWSEC2TemplateOptions.class.cast(options.securityGroupIds(groupNames));
+      }
+
+      /**
+       * @see AWSEC2TemplateOptions#securityGroupIds(Iterable<String>)
+       */
+      public static AWSEC2TemplateOptions securityGroupIds(Iterable<String> groupNames) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return AWSEC2TemplateOptions.class.cast(options.securityGroupIds(groupNames));
+      }
+      
       /**
        * @see EC2TemplateOptions#blockDeviceMappings
        */
@@ -629,7 +680,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    @Override
    public String toString() {
 
-      return "[groupIds=" + getGroupIds() + ", keyPair=" + getKeyPair() + ", noKeyPair="
+      return "[groupIds=" + getGroups() + ", keyPair=" + getKeyPair() + ", noKeyPair="
                + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
                + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
                + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + ", spotPrice="

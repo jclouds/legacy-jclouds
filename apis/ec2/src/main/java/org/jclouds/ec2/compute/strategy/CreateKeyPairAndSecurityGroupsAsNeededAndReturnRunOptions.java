@@ -150,12 +150,11 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
-
-         if (options instanceof EC2TemplateOptions && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
+      
+         if (userSpecifiedTheirOwnGroups(options)) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
                   false);
-            groups.addAll(EC2TemplateOptions.class.cast(options).getGroupIds());
-
+            groups.addAll(EC2TemplateOptions.class.cast(options).getGroups());
          } else {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup,
                   options.getInboundPorts(), true);
@@ -167,6 +166,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          }
       }
       return groups.build();
+   }
+
+   protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
+      return options instanceof EC2TemplateOptions && EC2TemplateOptions.class.cast(options).getGroups().size() > 0;
    }
 
    // allows us to mock this method

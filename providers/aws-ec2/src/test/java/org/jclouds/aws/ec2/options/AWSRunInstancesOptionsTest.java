@@ -25,6 +25,7 @@ import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKer
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKeyName;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withRamdisk;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSecurityGroup;
+import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSecurityGroupId;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSubnetId;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withUserData;
 import static org.testng.Assert.assertEquals;
@@ -97,6 +98,31 @@ public class AWSRunInstancesOptionsTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithSecurityGroupNPE() {
       withSecurityGroup(null);
+   }
+   
+
+   @Test
+   public void testWithSecurityGroupId() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      options.withSecurityGroupId("test");
+      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), Collections.singletonList("test"));
+   }
+
+   @Test
+   public void testNullWithSecurityGroupId() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      assertEquals(options.buildFormParameters().get("SecurityGroupId"), Collections.EMPTY_LIST);
+   }
+
+   @Test
+   public void testWithSecurityGroupIdStatic() {
+      AWSRunInstancesOptions options = withSecurityGroupId("test");
+      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), Collections.singletonList("test"));
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testWithSecurityGroupIdNPE() {
+      withSecurityGroupId(null);
    }
 
    @Test

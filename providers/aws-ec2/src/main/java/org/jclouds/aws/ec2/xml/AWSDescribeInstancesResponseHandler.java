@@ -22,10 +22,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.RunningInstance.Builder;
 import org.jclouds.location.Region;
 
 import com.google.common.collect.Sets;
@@ -40,12 +40,12 @@ import com.google.inject.Provider;
  * @see <a href="http: />
  */
 public class AWSDescribeInstancesResponseHandler extends
-         BaseAWSReservationHandler<Set<Reservation<? extends RunningInstance>>> {
+      BaseAWSReservationHandler<Set<Reservation<? extends RunningInstance>>> {
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
    AWSDescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
-            Provider<Builder> builderProvider) {
+         Provider<AWSRunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
    }
 
@@ -66,5 +66,8 @@ public class AWSDescribeInstancesResponseHandler extends
          super.inItem();
       }
    }
-
+   
+   protected boolean endOfInstanceItem() {
+      return itemDepth == 2 && inInstancesSet;
+   }
 }

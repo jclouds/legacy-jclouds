@@ -46,7 +46,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "SpotInstanceHandlerTest")
 public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
 
@@ -80,11 +81,36 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .type(SpotInstanceRequest.Type.ONE_TIME)
             .state(SpotInstanceRequest.State.OPEN)
             .launchSpecification(
-                  LaunchSpecification.builder().imageId("ami-595a0a1c").groupId("default").instanceType("m1.large")
-                        .mapNewVolumeToDevice("/dev/sda1", 1, true)
+                  LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
+                        .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
                         .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
                         .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
+            .productDescription("Linux/UNIX").build();
+      SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
+      addDefaultRegionToHandler(handler);
+      SpotInstanceRequest result = factory.create(handler).parse(is);
+      assertEquals(result.toString(), expected.toString());
+   }
+
+   public void testApplyInputStream1() {
+
+      InputStream is = getClass().getResourceAsStream("/describe_spot_instance.xml");
+
+      SpotInstanceRequest expected = SpotInstanceRequest
+            .builder()
+            .region("us-east-1")
+            .id("sir-1ede0012")
+            .instanceId("i-ef308e8e")
+            .spotPrice(0.300000f)
+            .type(SpotInstanceRequest.Type.ONE_TIME)
+            .state(SpotInstanceRequest.State.ACTIVE)
+            .launchedAvailabilityZone("us-east-1b")
+            .launchSpecification(
+                  LaunchSpecification.builder().imageId("ami-8e1fece7")
+                        .securityGroupIdToName("sg-83e1c4eb", "jclouds#adriancole-ec2unssh#us-east-1").instanceType("t1.micro")
+                        .monitoringEnabled(false).keyName("jclouds#adriancole-ec2unssh").build())
+            .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-07-29T05:27:39.000Z"))
             .productDescription("Linux/UNIX").build();
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
       addDefaultRegionToHandler(handler);

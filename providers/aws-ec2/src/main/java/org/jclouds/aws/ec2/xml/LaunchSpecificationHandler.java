@@ -62,6 +62,8 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
 
    private boolean inBlockDeviceMapping;
 
+   private String groupId;
+
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = true;
@@ -96,7 +98,10 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
          if (deleteOnTermination != null)
             blockDeviceMappingBuilder.deleteOnTermination(Boolean.parseBoolean(deleteOnTermination));
       } else if (qName.equals("groupId")) {
-         builder.groupId(currentOrNull());
+         groupId = currentOrNull();
+      } else if (qName.equals("groupName")) {
+         builder.securityGroupIdToName(groupId, currentOrNull());
+         groupId = null;
       } else if (qName.equals("imageId")) {
          builder.imageId(currentOrNull());
       } else if (qName.equals("instanceType")) {

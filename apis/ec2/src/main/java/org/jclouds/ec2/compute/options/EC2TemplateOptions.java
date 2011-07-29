@@ -71,8 +71,8 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       super.copyTo(to);
       if (to instanceof EC2TemplateOptions) {
          EC2TemplateOptions eTo = EC2TemplateOptions.class.cast(to);
-         if (getGroupIds().size() > 0)
-            eTo.securityGroups(getGroupIds());
+         if (getGroups().size() > 0)
+            eTo.securityGroups(getGroups());
          if (getKeyPair() != null)
             eTo.keyPair(getKeyPair());
          if (getBlockDeviceMappings().size() > 0)
@@ -84,7 +84,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       }
    }
 
-   private Set<String> groupIds = ImmutableSet.of();
+   private Set<String> groupNames = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
    private byte[] userData;
@@ -96,18 +96,18 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     * 
     * @see EC2TemplateOptions#securityGroups(Iterable<String>)
     */
-   public EC2TemplateOptions securityGroups(String... groupIds) {
-      return securityGroups(ImmutableSet.copyOf(groupIds));
+   public EC2TemplateOptions securityGroups(String... groupNames) {
+      return securityGroups(ImmutableSet.copyOf(groupNames));
    }
 
    /**
     * Specifies the security groups to be used for nodes with this template
     */
-   public EC2TemplateOptions securityGroups(Iterable<String> groupIds) {
-      checkArgument(Iterables.size(groupIds) > 0, "you must specify at least one security group");
-      for (String groupId : groupIds)
+   public EC2TemplateOptions securityGroups(Iterable<String> groupNames) {
+      checkArgument(Iterables.size(groupNames) > 0, "you must specify at least one security group");
+      for (String groupId : groupNames)
          Preconditions2.checkNotEmpty(groupId, "all security groups must be non-empty");
-      this.groupIds = ImmutableSet.copyOf(groupIds);
+      this.groupNames = ImmutableSet.copyOf(groupNames);
       return this;
    }
 
@@ -213,17 +213,17 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       /**
        * @see EC2TemplateOptions#securityGroups(Iterable<String>)
        */
-      public static EC2TemplateOptions securityGroups(String... groupIds) {
+      public static EC2TemplateOptions securityGroups(String... groupNames) {
          EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.securityGroups(groupIds));
+         return EC2TemplateOptions.class.cast(options.securityGroups(groupNames));
       }
 
       /**
        * @see EC2TemplateOptions#securityGroups(Iterable<String>)
        */
-      public static EC2TemplateOptions securityGroups(Iterable<String> groupIds) {
+      public static EC2TemplateOptions securityGroups(Iterable<String> groupNames) {
          EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.securityGroups(groupIds));
+         return EC2TemplateOptions.class.cast(options.securityGroups(groupNames));
       }
 
       /**
@@ -427,11 +427,11 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    /**
-    * @return groupIds the user specified to run instances with, or zero length set to create an
+    * @return groupNames the user specified to run instances with, or zero length set to create an
     *         implicit group
     */
-   public Set<String> getGroupIds() {
-      return groupIds;
+   public Set<String> getGroups() {
+      return groupNames;
    }
 
    /**
@@ -468,7 +468,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
-      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
+      result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
       result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
       result = prime * result + (noKeyPair ? 1231 : 1237);
       result = prime * result + Arrays.hashCode(userData);
@@ -489,10 +489,10 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
             return false;
       } else if (!blockDeviceMappings.equals(other.blockDeviceMappings))
          return false;
-      if (groupIds == null) {
-         if (other.groupIds != null)
+      if (groupNames == null) {
+         if (other.groupNames != null)
             return false;
-      } else if (!groupIds.equals(other.groupIds))
+      } else if (!groupNames.equals(other.groupNames))
          return false;
       if (keyPair == null) {
          if (other.keyPair != null)
@@ -508,7 +508,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
 
    @Override
    public String toString() {
-      return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", userData="
+      return "[groupNames=" + groupNames + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", userData="
             + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings.build() + "]";
    }
 }

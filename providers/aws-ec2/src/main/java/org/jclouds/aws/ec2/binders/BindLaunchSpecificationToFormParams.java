@@ -61,8 +61,10 @@ public class BindLaunchSpecificationToFormParams implements Binder, Function<Lau
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       if (launchSpec.getBlockDeviceMappings().size() > 0)
          options.withBlockDeviceMappings(launchSpec.getBlockDeviceMappings());
-      if (launchSpec.getGroupIds().size() > 0)
-         options.withSecurityGroups(launchSpec.getGroupIds());
+      if (launchSpec.getSecurityGroupNames().size() > 0)
+         options.withSecurityGroups(launchSpec.getSecurityGroupNames());
+      if (launchSpec.getSecurityGroupIds().size() > 0)
+         options.withSecurityGroupIds(launchSpec.getSecurityGroupIds());
       options.asType(checkNotNull(launchSpec.getInstanceType(), "instanceType"));
       if (launchSpec.getKernelId() != null)
          options.withKernelId(launchSpec.getKernelId());

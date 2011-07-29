@@ -144,7 +144,7 @@ public class AMIClientLiveTest {
                         .put("root-device-type", "ebs")//
                         .build()).ownedBy("137112412989", "099720109477"));
       assertNotNull(twoResults);
-      assertEquals(twoResults.size(), 28);
+      assertEquals(twoResults.size(), 26);
    }
 
    @Test(enabled = false)

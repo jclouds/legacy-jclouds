@@ -286,7 +286,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
 
       // setup expectations
-      expect(options.getGroupIds()).andReturn(groupIds).atLeastOnce();
+      expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
                ports, shouldAuthorizeSelf);
@@ -322,7 +322,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
 
       // setup expectations
-      expect(options.getGroupIds()).andReturn(groupIds).atLeastOnce();
+      expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
                ports, shouldAuthorizeSelf);
@@ -358,7 +358,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
 
       // setup expectations
-      expect(options.getGroupIds()).andReturn(groupIds).atLeastOnce();
+      expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
                ports, shouldAuthorizeSelf);
@@ -392,7 +392,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
 
       // setup expectations
-      expect(options.getGroupIds()).andReturn(groupIds).atLeastOnce();
+      expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
                ports, shouldAuthorizeSelf); // note
       // this

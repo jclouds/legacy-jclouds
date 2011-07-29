@@ -62,14 +62,14 @@ public class EC2TemplateOptionsTest {
    public void testsecurityGroupsIterable() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.securityGroups(ImmutableSet.of("group1", "group2"));
-      assertEquals(options.getGroupIds(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
 
    }
 
    @Test
    public void testsecurityGroupsIterableStatic() {
       EC2TemplateOptions options = securityGroups(ImmutableSet.of("group1", "group2"));
-      assertEquals(options.getGroupIds(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -82,7 +82,7 @@ public class EC2TemplateOptionsTest {
    public void testsecurityGroupsVarArgs() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.securityGroups("group1", "group2");
-      assertEquals(options.getGroupIds(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
 
    }
 
@@ -95,13 +95,13 @@ public class EC2TemplateOptionsTest {
    @Test
    public void testDefaultGroupsVarArgsEmpty() {
       EC2TemplateOptions options = new EC2TemplateOptions();
-      assertEquals(options.getGroupIds(), ImmutableSet.of());
+      assertEquals(options.getGroups(), ImmutableSet.of());
    }
 
    @Test
    public void testsecurityGroupsVarArgsStatic() {
       EC2TemplateOptions options = securityGroups("group1", "group2");
-      assertEquals(options.getGroupIds(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

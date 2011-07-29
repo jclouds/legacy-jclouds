@@ -22,23 +22,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 /**
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-SecurityGroupItemType.html"
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-SecurityGroupItemType.html"
  *      />
  * @author Adrian Cole
  */
 public class SecurityGroup implements Comparable<SecurityGroup> {
 
    private final String region;
+   private final String id;
    private final String name;
    private final String ownerId;
    private final String description;
-   private final Set<IpPermission> ipPermissions;
+   private final Set<IpPermissionImpl> ipPermissions;
 
-   public SecurityGroup(String region, String name, String ownerId, String description,
-            Set<IpPermission> ipPermissions) {
+   public SecurityGroup(String region, String id, String name, String ownerId, String description,
+         Set<IpPermissionImpl> ipPermissions) {
       this.region = checkNotNull(region, "region");
+      this.id = id;
       this.name = name;
       this.ownerId = ownerId;
       this.description = description;
@@ -46,9 +51,10 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * Security groups are not copied across Regions. Instances within the Region cannot communicate
-    * with instances outside the Region using group-based firewall rules. Traffic from instances in
-    * another Region is seen as WAN bandwidth.
+    * Security groups are not copied across Regions. Instances within the Region
+    * cannot communicate with instances outside the Region using group-based
+    * firewall rules. Traffic from instances in another Region is seen as WAN
+    * bandwidth.
     */
    public String getRegion() {
       return region;
@@ -59,6 +65,14 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
     */
    public int compareTo(SecurityGroup o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
+   }
+
+   /**
+    * id of the security group. Not in all EC2 impls
+    */
+   @Nullable
+   public String getId() {
+      return id;
    }
 
    /**
@@ -85,7 +99,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * Set of IP permissions associated with the security group.
     */
-   public Set<IpPermission> getIpPermissions() {
+   public Set<IpPermissionImpl> getIpPermissions() {
       return ipPermissions;
    }
 
@@ -94,6 +108,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((ipPermissions == null) ? 0 : ipPermissions.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
@@ -114,6 +129,11 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          if (other.description != null)
             return false;
       } else if (!description.equals(other.description))
+         return false;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (ipPermissions == null) {
          if (other.ipPermissions != null)
@@ -140,7 +160,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
 
    @Override
    public String toString() {
-      return "SecurityGroup [description=" + description + ", ipPermissions=" + ipPermissions
-               + ", name=" + name + ", ownerId=" + ownerId + ", region=" + region + "]";
+      return "[region=" + region + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId + ", description="
+            + description + ", ipPermissions=" + ipPermissions + "]";
    }
 }

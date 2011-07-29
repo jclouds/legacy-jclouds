@@ -56,4 +56,13 @@ public class BindLaunchSpecificationToFormParamsTest {
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.UserData",
             Base64.encodeBytes("hello".getBytes())));
    }
+
+   @Test
+   public void testApplyWithSecurityId() throws UnknownHostException {
+      LaunchSpecification spec = LaunchSpecification.builder().instanceType(InstanceType.T1_MICRO).imageId("ami-123")
+            .securityGroupId("sid-foo").build();
+
+      assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
+            "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.SecurityGroupId.1", "sid-foo"));
+   }
 }

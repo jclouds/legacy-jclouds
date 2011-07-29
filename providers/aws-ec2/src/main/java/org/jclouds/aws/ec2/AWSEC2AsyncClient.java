@@ -40,6 +40,7 @@ package org.jclouds.aws.ec2;
 import org.jclouds.aws.ec2.services.AWSAMIAsyncClient;
 import org.jclouds.aws.ec2.services.AWSInstanceAsyncClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairAsyncClient;
+import org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.aws.ec2.services.SpotInstanceAsyncClient;
@@ -52,7 +53,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface AWSEC2AsyncClient extends EC2AsyncClient {
-   public final static String VERSION = "2010-11-15";
+   public final static String VERSION = "2011-05-15";
 
    /**
     * {@inheritDoc}
@@ -67,6 +68,13 @@ public interface AWSEC2AsyncClient extends EC2AsyncClient {
    @Delegate
    @Override
    AWSAMIAsyncClient getAMIServices();
+
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   AWSSecurityGroupAsyncClient getSecurityGroupServices();
 
    /**
     * Provides asynchronous access to PlacementGroup services.

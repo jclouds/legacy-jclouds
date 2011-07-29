@@ -18,13 +18,20 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
+import java.util.Set;
 
-import org.jclouds.Constants;
+import org.jclouds.ec2.domain.IpPermission;
+import org.jclouds.ec2.domain.IpProtocol;
+import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupClientLiveTest;
+import org.jclouds.ec2.util.IpPermissions;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -36,27 +43,45 @@ public class AWSSecurityGroupClientLiveTest extends SecurityGroupClientLiveTest 
       provider = "aws-ec2";
    }
 
-   @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint", null);
-      apiversion = System.getProperty("test." + provider + ".apiversion", null);
-   }
+   @Test
+   void testAuthorizeSecurityGroupIngressIpPermission() throws InterruptedException {
+      final String group1Name = PREFIX + "ingress11";
+      String group2Name = PREFIX + "ingress12";
+      cleanupAndSleep(group2Name);
+      cleanupAndSleep(group1Name);
+      try {
+         String group1Id = AWSSecurityGroupClient.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+               group1Name, group1Name);
+         String group2Id = AWSSecurityGroupClient.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+               group2Name, group2Name);
+         Thread.sleep(100);// eventual consistent
+         ensureGroupsExist(group1Name, group2Name);
+         AWSSecurityGroupClient.class.cast(client).authorizeSecurityGroupIngressInRegion(null, group1Id,
+               IpPermissions.permit(IpProtocol.TCP).port(80));
+         assertEventually(new GroupHasPermission(client, group1Name, new TCPPort80AllIPs()));
+         Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
+         assertNotNull(oneResult);
+         assertEquals(oneResult.size(), 1);
+         final SecurityGroup group = oneResult.iterator().next();
+         assertEquals(group.getName(), group1Name);
+         IpPermissions group2CanHttpGroup1 = IpPermissions.permit(IpProtocol.TCP).fromPort(80)
+               .originatingFromSecurityGroupId(group1Id);
+         AWSSecurityGroupClient.class.cast(client).authorizeSecurityGroupIngressInRegion(null, group2Id,
+               group2CanHttpGroup1);
+         assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
+            @Override
+            public boolean apply(IpPermission arg0) {
+               return arg0.getUserIdGroupPairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name))
+                     && arg0.getFromPort() == 80 && arg0.getToPort() == 80 && arg0.getIpProtocol() == IpProtocol.TCP;
+            }
+         }));
 
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
+         AWSSecurityGroupClient.class.cast(client).revokeSecurityGroupIngressInRegion(null, group2Id,
+               group2CanHttpGroup1);
+         assertEventually(new GroupHasNoPermissions(client, group2Name));
+      } finally {
+         client.deleteSecurityGroupInRegion(null, group2Name);
+         client.deleteSecurityGroupInRegion(null, group1Name);
+      }
    }
-
 }

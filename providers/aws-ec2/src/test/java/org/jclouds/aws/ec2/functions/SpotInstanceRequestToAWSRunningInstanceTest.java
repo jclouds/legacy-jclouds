@@ -43,7 +43,7 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
       SpotInstanceRequest input = SpotInstanceRequest.builder().region("us-east-1").id("sir-228e6406")
                .spotPrice(0.001f).type(SpotInstanceRequest.Type.ONE_TIME).state(SpotInstanceRequest.State.OPEN)
                .launchSpecification(
-                        LaunchSpecification.builder().imageId("ami-595a0a1c").groupId("default").instanceType(
+                        LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupName("default").instanceType(
                                  "m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true).mapEBSSnapshotToDevice(
                                  "/dev/sda2", "snap-1ea27576", 1, true).mapEphemeralDeviceToDevice("/dev/sda3", "vre1")
                                  .monitoringEnabled(false).build()).createTime(

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.aws.ec2.services.AWSAMIClient;
 import org.jclouds.aws.ec2.services.AWSInstanceClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairClient;
+import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.aws.ec2.services.SpotInstanceClient;
@@ -45,6 +46,13 @@ public interface AWSEC2Client extends EC2Client {
    @Override
    AWSInstanceClient getInstanceServices();
 
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   AWSSecurityGroupClient getSecurityGroupServices();
+   
    /**
     * {@inheritDoc}
     */

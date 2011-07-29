@@ -49,7 +49,7 @@ public class SpotInstanceRequestToAWSRunningInstance implements Function<SpotIns
       builder.availabilityZone(spec.getAvailabilityZone());
       // TODO convert
       // builder.devices(spec.getBlockDeviceMappings());
-      builder.groupIds(spec.getGroupIds());
+      builder.groupIds(spec.getSecurityGroupNames());
       builder.imageId(spec.getImageId());
       builder.instanceType(spec.getInstanceType());
       builder.kernelId(spec.getKernelId());

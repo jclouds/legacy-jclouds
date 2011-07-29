@@ -22,8 +22,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
+import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
+import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -35,7 +37,7 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.util.IpPermissions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -57,7 +59,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Override
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
@@ -72,7 +74,6 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       // Date before = new Date();
 
-      options.as(AWSEC2TemplateOptions.class).securityGroups(group);
       options.as(AWSEC2TemplateOptions.class).keyPair(group);
       options.as(AWSEC2TemplateOptions.class).enableMonitoring();
       options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
@@ -83,8 +84,12 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         securityGroupClient.createSecurityGroupInRegion(null, group, group);
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, group, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(null, group, group);
+         
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, groupId,
+               IpPermissions.permit(IpProtocol.TCP).port(22));
+
+         options.as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, group);

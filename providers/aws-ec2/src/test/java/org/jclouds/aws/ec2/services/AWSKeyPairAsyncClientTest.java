@@ -48,7 +48,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-11-15&Action=CreateKeyPair&KeyName=mykey",
+      assertPayloadEquals(request, "Version=2011-05-15&Action=CreateKeyPair&KeyName=mykey",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -65,7 +65,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-11-15&Action=ImportKeyPair&PublicKeyMaterial=c3NoLXJzYSBBQQ%3D%3D&KeyName=mykey",
+      assertPayloadEquals(request, "Version=2011-05-15&Action=ImportKeyPair&PublicKeyMaterial=c3NoLXJzYSBBQQ%3D%3D&KeyName=mykey",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -81,7 +81,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-11-15&Action=DeleteKeyPair&KeyName=mykey",
+      assertPayloadEquals(request, "Version=2011-05-15&Action=DeleteKeyPair&KeyName=mykey",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -98,7 +98,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-11-15&Action=DescribeKeyPairs", "application/x-www-form-urlencoded",
+      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeKeyPairs", "application/x-www-form-urlencoded",
             false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -115,7 +115,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-11-15&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2",
+      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
