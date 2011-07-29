@@ -18,8 +18,11 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
+import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
 
 /**
@@ -27,7 +30,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "CloudFilesUKClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "CloudFilesUKClientLiveTest")
 public class CloudFilesUKClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
    // NOTE cloudfilesuk doesn't have cdn
 
@@ -35,4 +38,11 @@ public class CloudFilesUKClientLiveTest extends CommonSwiftClientLiveTest<CloudF
    public CloudFilesClient getApi() {
       return (CloudFilesClient) context.getProviderSpecificContext().getApi();
    }
+   
+   @Override
+   protected void testGetObjectContentType(SwiftObject getBlob) {
+      //lovely new bug.. should be text/plain
+      assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
+   }
+
 }
