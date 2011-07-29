@@ -119,6 +119,8 @@ public class FutureIterables {
       final Map<T, Exception> errorMap = Maps.newHashMap();
       for (final java.util.Map.Entry<T, ? extends Future<?>> future : responses.entrySet()) {
          Futures.makeListenable(future.getValue(), exec).addListener(new Runnable() {
+
+            @Override
             public void run() {
                try {
                   future.getValue().get();
@@ -129,6 +131,11 @@ public class FutureIterables {
                   errorMap.put(future.getKey(), e);
                }
                doneSignal.countDown();
+            }
+            
+            @Override
+            public String toString() {
+               return "callGetOnFuture(" + future.getKey() + "," + future.getValue() + ")";
             }
          }, exec);
       }
@@ -167,6 +174,11 @@ public class FutureIterables {
                Throwables.propagate(e);
             }
             return null;
+         }
+         
+         @Override
+         public String toString() {
+            return "callGetOnFuture()";
          }
       });
    }
