@@ -95,10 +95,10 @@ public class BaseCloudLoadBalancersClientLiveTest {
       client = context.getApi();
 
       injector = Guice.createInjector(new Log4JLoggingModule());
-      loadBalancerActive = new RetryablePredicate<LoadBalancer>(new LoadBalancerActive(client), 30, 1, 1,
+      loadBalancerActive = new RetryablePredicate<LoadBalancer>(new LoadBalancerActive(client), 60, 1, 1,
                TimeUnit.SECONDS);
       injector.injectMembers(loadBalancerActive);
-      loadBalancerDeleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerDeleted(client), 30, 1, 1,
+      loadBalancerDeleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerDeleted(client), 60, 1, 1,
                TimeUnit.SECONDS);
       injector.injectMembers(loadBalancerDeleted);
    }
