@@ -85,7 +85,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                .build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-      assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
