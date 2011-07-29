@@ -64,7 +64,7 @@ public class AWSSecurityGroupClientLiveTest extends SecurityGroupClientLiveTest 
          assertEquals(oneResult.size(), 1);
          final SecurityGroup group = oneResult.iterator().next();
          assertEquals(group.getName(), group1Name);
-         IpPermissions group2CanHttpGroup1 = IpPermissions.permit(IpProtocol.TCP).fromPort(80)
+         IpPermissions group2CanHttpGroup1 = IpPermissions.permit(IpProtocol.TCP).port(80)
                .originatingFromSecurityGroupId(group1Id);
          AWSSecurityGroupClient.class.cast(client).authorizeSecurityGroupIngressInRegion(null, group2Id,
                group2CanHttpGroup1);
