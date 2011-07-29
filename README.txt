@@ -21,7 +21,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
-                          greenhousedata-element-vcloud, go2cloud-jhb1
+                          greenhousedata-element-vcloud
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
