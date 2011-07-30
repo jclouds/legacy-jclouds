@@ -50,7 +50,7 @@ import com.google.inject.Module;
  * @author Victor Galkin
  */
 public class ClientBase {
-   protected int testImageId = 95;
+   protected int testImageId;
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
    @SuppressWarnings("unused")
@@ -76,6 +76,8 @@ public class ClientBase {
       injector.injectMembers(socketOpen); // add logger
 
       keyPair = setupKeyPair(properties);
+
+      testImageId = Integer.valueOf(properties.getProperty("test.nova.image.id"));
    }
 
    protected Server getDefaultServerImmediately() {

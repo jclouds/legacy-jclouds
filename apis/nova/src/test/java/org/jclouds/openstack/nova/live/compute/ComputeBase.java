@@ -75,6 +75,7 @@ public class ComputeBase {
 
    protected Map<String, String> keyPair;
    protected Properties overrides;
+   protected String testImageId;
 
    @BeforeTest
    public void before() throws InterruptedException, ExecutionException, TimeoutException, IOException {
@@ -82,6 +83,7 @@ public class ComputeBase {
       setupOverrides(properties);
       overrides = properties;
       keyPair = setupKeyPair(properties);
+      testImageId = properties.getProperty("test.nova.image.id");
       initializeContextAndComputeService(properties);
 
    }
@@ -97,7 +99,7 @@ public class ComputeBase {
    }
 
    protected TemplateBuilder getDefaultTemplateBuilder() {
-      return computeService.templateBuilder().imageId("95").options(getDefaultTemplateOptions());
+      return computeService.templateBuilder().imageId(testImageId).options(getDefaultTemplateOptions());
    }
 
    private TemplateOptions getDefaultTemplateOptions() {
