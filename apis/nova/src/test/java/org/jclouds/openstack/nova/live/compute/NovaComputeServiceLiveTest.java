@@ -49,6 +49,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import net.schmizz.sshj.userauth.UserAuthException;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -150,8 +151,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   @Test(expectedExceptions = AuthorizationException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 240000)
-   void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
+   @Test(expectedExceptions = UserAuthException.class, timeOut = 240000)
+   void testScriptExecutionWithWrongCredentials() throws Throwable {
       NodeMetadata node = getDefaultNodeImmediately(group);
       String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
