@@ -38,8 +38,8 @@ public class PropertyHelper {
 
    public static Map<String, String> setupKeyPair(Properties properties) throws IOException {
       return ImmutableMap.of(
-            "private", Resources.toString(Resources.getResource(properties.getProperty("test.ssh.keyfile.private")), Charsets.UTF_8),
-            "public", Resources.toString(Resources.getResource(properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
+            "private", Resources.toString(Resources.getResource(PropertyHelper.class, properties.getProperty("test.ssh.keyfile.private")), Charsets.UTF_8),
+            "public", Resources.toString(Resources.getResource(PropertyHelper.class, properties.getProperty("test.ssh.keyfile.public")), Charsets.UTF_8));
    }
 
    public static Properties setupProperties(Class<?> clazz) throws IOException {
