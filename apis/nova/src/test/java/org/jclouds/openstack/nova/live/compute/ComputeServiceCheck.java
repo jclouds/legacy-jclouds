@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableSet;
 public class ComputeServiceCheck {
    private ComputeServiceContextFactory contextFactory;
    private ComputeServiceContext context;
+   private String testImageId;
 
    @BeforeTest
    public void setupClient() throws IOException {
@@ -56,6 +57,7 @@ public class ComputeServiceCheck {
       Properties properties = setupOverrides(setupProperties(this.getClass()));
       context = contextFactory.createContext("nova",
             ImmutableSet.of(new SshjSshClientModule(), new SLF4JLoggingModule()), properties);
+      testImageId = properties.getProperty("test.nova.image.id");
    }
 
    @Test
@@ -73,7 +75,7 @@ public class ComputeServiceCheck {
       ComputeService cs = context.getComputeService();
 
       TemplateOptions options = new TemplateOptions().blockUntilRunning(false);
-      Template template = cs.templateBuilder().imageId("95").hardwareId("2").options(options).build();
+      Template template = cs.templateBuilder().imageId(testImageId).hardwareId("2").options(options).build();
       Set<? extends NodeMetadata> metedata = cs.createNodesInGroup("test", 1, template);
       System.out.println(metedata);
    }
