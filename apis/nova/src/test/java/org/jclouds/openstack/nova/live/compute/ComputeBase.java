@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -75,6 +76,7 @@ public class ComputeBase {
 
    protected Map<String, String> keyPair;
    protected Properties overrides;
+   protected String testImageId;
 
    @BeforeTest
    public void before() throws InterruptedException, ExecutionException, TimeoutException, IOException {
@@ -82,6 +84,7 @@ public class ComputeBase {
       setupOverrides(properties);
       overrides = properties;
       keyPair = setupKeyPair(properties);
+      testImageId = properties.getProperty("test.nova.image.id");
       initializeContextAndComputeService(properties);
 
    }
@@ -97,7 +100,7 @@ public class ComputeBase {
    }
 
    protected TemplateBuilder getDefaultTemplateBuilder() {
-      return computeService.templateBuilder().imageId("95").options(getDefaultTemplateOptions());
+      return computeService.templateBuilder().imageId(testImageId).options(getDefaultTemplateOptions());
    }
 
    private TemplateOptions getDefaultTemplateOptions() {
@@ -133,13 +136,14 @@ public class ComputeBase {
       computeService = context.getComputeService();
    }
 
-   protected String awaitForPublicAddressAssigned(String nodeId) throws InterruptedException {
+   protected String awaitForStartup(String nodeId) throws InterruptedException {
       while (true) {
-         Set<String> addresses = computeService.getNodeMetadata(nodeId).getPublicAddresses();
+         NodeMetadata metadata = computeService.getNodeMetadata(nodeId);
+         Set<String> addresses = metadata.getPublicAddresses();
          System.out.println(addresses);
-         System.out.println(computeService.getNodeMetadata(nodeId).getState());
-         if (addresses != null)
-            if (!addresses.isEmpty()) return addresses.iterator().next();
+         System.out.println(metadata.getState());
+         if (metadata.getState() == NodeState.RUNNING && addresses != null && !addresses.isEmpty())
+            return addresses.iterator().next();
          Thread.sleep(1000);
       }
    }

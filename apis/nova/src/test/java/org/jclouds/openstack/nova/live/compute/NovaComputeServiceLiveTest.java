@@ -49,6 +49,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import net.schmizz.sshj.userauth.UserAuthException;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -150,10 +151,10 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   @Test(expectedExceptions = AuthorizationException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 120000)
-   void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
+   @Test(expectedExceptions = UserAuthException.class, timeOut = 240000)
+   void testScriptExecutionWithWrongCredentials() throws Throwable {
       NodeMetadata node = getDefaultNodeImmediately(group);
-      String address = awaitForPublicAddressAssigned(node.getId());
+      String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       OperatingSystem os = node.getOperatingSystem();
       try {
@@ -165,11 +166,11 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       }
    }
 
-   @Test(timeOut = 120000)
+   @Test(timeOut = 240000)
    public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException, RunScriptOnNodesException, URISyntaxException, IOException {
 
       NodeMetadata node = getDefaultNodeImmediately(group);
-      String address = awaitForPublicAddressAssigned(node.getId());
+      String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
             runningInGroup(group), Statements.exec("echo hello"),
@@ -267,7 +268,6 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
    @Test(timeOut = 120000)
    public void testGetNodeMetadata() throws Exception {
       Set<NodeMetadata> nodes = Sets.newHashSet(getDefaultNodeImmediately(group));
-      awaitForPublicAddressAssigned(nodes.iterator().next().getId());
       Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
             .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
             new Function<NodeMetadata, String>() {
@@ -279,6 +279,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
             }));
       for (NodeMetadata node : nodes) {
+         awaitForStartup(node.getId());
          metadataMap.remove(node.getId());
          NodeMetadata nodeMetadata = computeService.getNodeMetadata(node.getId());
          assertEquals(parseGroupFromName(nodeMetadata.getName()), group);
