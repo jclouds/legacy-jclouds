@@ -61,7 +61,7 @@ public class KeyToStoredTweetStatus implements Function<String, StoredTweetStatu
          from = blob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME);
          tweet = toStringAndClose(blob.getPayload().getInput());
       } catch (Exception e) {
-         logger.error(e, "Error listing container %s//%s/$s", service, container, id);
+         logger.error(e, "Error listing container %s//%s/%s", service, container, id);
          status = (e.getMessage());
          tweet = "";
          from = "";
