@@ -129,6 +129,22 @@
                                             <value>${appengine.sdk.root}</value>
                                         </property>
                                         <property>
+                                            <name>test.cloudonestorage.identity</name>
+                                            <value>${test.cloudonestorage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.credential</name>
+                                            <value>${test.cloudonestorage.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.identity</name>
+                                            <value>${test.ninefold-storage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.credential</name>
+                                            <value>${test.ninefold-storage.credential}</value>
+                                        </property>
+                                        <property>
                                             <name>devappserver.address</name>
                                             <value>${devappserver.address}</value>
                                         </property>

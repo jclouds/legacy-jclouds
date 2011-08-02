@@ -38,7 +38,7 @@
     
     <properties>
         <remoteResourcesDirectory>target/maven-shared-archive-resources</remoteResourcesDirectory>
-        <jclouds.tweetstore.blobstores>cloudfiles-us,aws-s3,azureblob</jclouds.tweetstore.blobstores>
+        <jclouds.tweetstore.blobstores>cloudonestorage,ninefold-storage</jclouds.tweetstore.blobstores>
     </properties>
 
     <dependencies>
@@ -74,6 +74,18 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>azureblob</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudonestorage</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>ninefold-storage</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>

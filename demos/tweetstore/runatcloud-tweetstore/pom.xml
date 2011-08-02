@@ -45,12 +45,6 @@
             <artifactId>guice-servlet</artifactId>
             <version>3.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>cloudonestorage</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
         
         <!-- RUN@cloud API -->
         <dependency>
@@ -138,6 +132,14 @@
                                         <property>
                                             <name>test.cloudonestorage.credential</name>
                                             <value>${test.cloudonestorage.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.identity</name>
+                                            <value>${test.ninefold-storage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.credential</name>
+                                            <value>${test.ninefold-storage.credential}</value>
                                         </property>
                                         <property>
                                             <name>bees.address</name>
