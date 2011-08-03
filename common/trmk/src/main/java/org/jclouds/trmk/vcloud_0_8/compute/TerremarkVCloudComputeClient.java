@@ -275,6 +275,8 @@ public class TerremarkVCloudComputeClient {
     */
    public void stop(URI id) {
       VApp vApp = client.getVApp(id);
+      if (vApp == null)
+         return;
       Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
       deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
       if (vApp.getStatus() != Status.OFF) {

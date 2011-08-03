@@ -50,11 +50,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -249,7 +249,7 @@ public abstract class BaseComputeServiceLiveTest {
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
                   runningInGroup(group), Statements.exec("hostname"),
-                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet()){
+                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()){
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
          
@@ -261,12 +261,15 @@ public abstract class BaseComputeServiceLiveTest {
          
          // test bad password
          try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
-                     good.identity, "romeo"));
+            Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
+                     runningInGroup(group), "echo $USER", wrapInInitScript(false).runAsRoot(false)
+                              .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
             assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+         } catch (AssertionError e) {
+            throw e;
          } catch (RunScriptOnNodesException e) {
             assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
-                  .getNodeErrors().values() + "not authexception!";
+                     + " not authexception!";
          }
 
          runScriptWithCreds(group, os, good);

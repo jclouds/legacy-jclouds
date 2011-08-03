@@ -20,14 +20,12 @@ package org.jclouds.vcloud.features;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -61,10 +59,11 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  try {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref()));
-                  } catch (AuthorizationException e) {
-
+                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref());
+                  if (template != null){
+                     assertEquals(template.getName(),item.getEntity().getName());
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }
@@ -79,14 +78,10 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
          Catalog response = getVCloudApi().getCatalogClient().getCatalog(cat.getHref());
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               try {
-                  CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
-                  if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(
-                              item.getEntity().getHref()));
-                  }
-               } catch (AuthorizationException e) {
-
+               CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
+               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+                  getVCloudApi().getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(item.getEntity().getHref());
+                  // null can be no longer available or auth exception
                }
             }
          }
@@ -102,11 +97,12 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  try {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
-                              org.getName(), response.getName(), item.getEntity().getName()));
-                  } catch (AuthorizationException e) {
-
+                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
+                           org.getName(), response.getName(), item.getEntity().getName());
+                  if (template != null) {
+                     assertEquals(template.getName(), item.getEntity().getName());
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }

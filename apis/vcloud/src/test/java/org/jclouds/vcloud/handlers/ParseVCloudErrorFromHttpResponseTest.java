@@ -42,6 +42,18 @@ public class ParseVCloudErrorFromHttpResponseTest extends BaseHttpErrorHandlerTe
    }
 
    @Test
+   public void testGet403NoAcessToEntitySetsResourceNotFoundException() {
+      assertCodeMakes(
+               "GET",
+               URI.create("https://zone01.bluelock.com/api/v1.0/vApp/vapp-1535788985"),
+               403,
+               "HTTP/1.1 403",
+               VCloudMediaType.ERROR_XML,
+               "<Error xmlns=\"http://www.vmware.com/vcloud/v1\" minorErrorCode=\"ACCESS_TO_RESOURCE_IS_FORBIDDEN\" message=\"No access to entity &quot;(com.vmware.vcloud.entity.vapp:1535788985)&quot;.\" majorErrorCode=\"403\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd\"></Error>\n",
+               ResourceNotFoundException.class);
+   }
+
+   @Test
    public void testDelete404SetsHttpResponseException() {
       assertCodeMakes("DELETE", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
                404, "", "", HttpResponseException.class);
@@ -55,7 +67,7 @@ public class ParseVCloudErrorFromHttpResponseTest extends BaseHttpErrorHandlerTe
                400,
                "HTTP/1.1 400 Bad Request",
                VCloudMediaType.ERROR_XML,
-               "<Error xmlns=\"http://www.vmware.com/vcloud/v1\" minorErrorCode=\"BAD_REQUEST\" message=\"The requested operation could not be executed since vApp &quot;adriancolecap-78c&quot; is not running.\" majorErrorCode=\"400\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd\"></Error>\n",
+               "<Error xmlns=\"http://www.vmware.com/vcloud/v1\" minorErrorCode=\"BAD_REQUEST\" message=\"The requested operation could not be executed since vApp &quot;adriancolecap-78c&quot; is not running&quot;\" majorErrorCode=\"400\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd\"></Error>\n",
                IllegalStateException.class);
    }
 

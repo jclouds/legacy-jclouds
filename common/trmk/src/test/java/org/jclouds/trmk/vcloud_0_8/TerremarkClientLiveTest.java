@@ -89,12 +89,12 @@ import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+@Test(groups =  "live" , singleThreaded = true)
 public abstract class TerremarkClientLiveTest {
 
    protected String expectedOs = "Ubuntu Linux (64-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
 
-   protected TerremarkVCloudClient tmClient;
    protected Factory sshFactory;
    protected String publicIp;
    protected InternetService is;
@@ -111,7 +111,7 @@ public abstract class TerremarkClientLiveTest {
    @Test
    public void testKeysList() throws Exception {
       for (Org org : orgs) {
-         TerremarkVCloudClient vCloudExpressClient = TerremarkVCloudClient.class.cast(tmClient);
+         TerremarkVCloudClient vCloudExpressClient = TerremarkVCloudClient.class.cast(connection);
          Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(org.getHref());
          assertNotNull(response);
       }
@@ -121,8 +121,8 @@ public abstract class TerremarkClientLiveTest {
    public void testGetAllInternetServices() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            for (InternetService service : tmClient.getAllInternetServicesInVDC(vdc.getHref())) {
-               assertNotNull(tmClient.getNodes(service.getId()));
+            for (InternetService service : connection.getAllInternetServicesInVDC(vdc.getHref())) {
+               assertNotNull(connection.getNodes(service.getId()));
             }
          }
       }
@@ -132,11 +132,11 @@ public abstract class TerremarkClientLiveTest {
    public void testCreateInternetServiceMonitorDisabled() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            Set<PublicIpAddress> publicIpAddresses = tmClient.getPublicIpsAssociatedWithVDC(vdc.getHref());
+            Set<PublicIpAddress> publicIpAddresses = connection.getPublicIpsAssociatedWithVDC(vdc.getHref());
             PublicIpAddress publicIp = publicIpAddresses.iterator().next();
-            InternetService service = tmClient.addInternetServiceToExistingIp(publicIp.getId(), PREFIX
+            InternetService service = connection.addInternetServiceToExistingIp(publicIp.getId(), PREFIX
                   + "-no-monitoring", Protocol.TCP, 1234, AddInternetServiceOptions.Builder.monitorDisabled());
-            tmClient.deleteInternetService(service.getId());
+            connection.deleteInternetService(service.getId());
          }
       }
    }
@@ -145,9 +145,9 @@ public abstract class TerremarkClientLiveTest {
    public void testGetPublicIpsAssociatedWithVDC() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(vdc.getHref())) {
-               assertNotNull(tmClient.getInternetServicesOnPublicIp(ip.getId()));
-               assertNotNull(tmClient.getPublicIp(ip.getId()));
+            for (PublicIpAddress ip : connection.getPublicIpsAssociatedWithVDC(vdc.getHref())) {
+               assertNotNull(connection.getInternetServicesOnPublicIp(ip.getId()));
+               assertNotNull(connection.getPublicIp(ip.getId()));
             }
          }
       }
@@ -160,9 +160,9 @@ public abstract class TerremarkClientLiveTest {
             Catalog response = connection.getCatalog(catalog.getHref());
             for (ReferenceType resource : response.values()) {
                if (resource.getType().equals(TerremarkVCloudMediaType.CATALOGITEM_XML)) {
-                  CatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(org.getName(), catalog.getName(),
+                  CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), catalog.getName(),
                         resource.getName());
-                  assert tmClient.getCustomizationOptions(item.getCustomizationOptions().getHref()) != null;
+                  assert connection.getCustomizationOptions(item.getCustomizationOptions().getHref()) != null;
                }
             }
          }
@@ -185,28 +185,28 @@ public abstract class TerremarkClientLiveTest {
       // String expectedOs = "Red Hat Enterprise Linux 5 (64-bit)";
 
       // lookup the datacenter you are deploying into
-      vdc = tmClient.findVDCInOrgNamed(null, null);
+      vdc = connection.findVDCInOrgNamed(null, null);
 
       // create an options object to collect the configuration we want.
       InstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions();
 
-      CatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, itemName);
+      CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(null, null, itemName);
 
       assert item != null;
 
       // if this template supports setting the root password, let's add it to
       // our options
-      CustomizationParameters customizationOptions = tmClient.getCustomizationOptions(item.getCustomizationOptions()
+      CustomizationParameters customizationOptions = connection.getCustomizationOptions(item.getCustomizationOptions()
             .getHref());
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
-      VAppTemplate vAppTemplate = tmClient.getVAppTemplate(item.getEntity().getHref());
+      VAppTemplate vAppTemplate = connection.getVAppTemplate(item.getEntity().getHref());
 
       assert vAppTemplate != null;
 
       // instantiate, noting vApp returned has minimal details
-      vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getHref(), vAppTemplate.getHref(), serverName,
+      vApp = connection.instantiateVAppTemplateInVDC(vdc.getHref(), vAppTemplate.getHref(), serverName,
             instantiateOptions);
 
       assertEquals(vApp.getStatus(), Status.RESOLVED);
@@ -214,27 +214,27 @@ public abstract class TerremarkClientLiveTest {
       // in terremark, this should be a no-op, as it should simply return the
       // above task, which is
       // already deploying
-      Task deployTask = tmClient.deployVApp(vApp.getHref());
+      Task deployTask = connection.deployVApp(vApp.getHref());
 
       // check to see the result of calling deploy twice
-      deployTask = tmClient.deployVApp(vApp.getHref());
+      deployTask = connection.deployVApp(vApp.getHref());
       assertEquals(deployTask.getHref(), deployTask.getHref());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
 
       assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       try {// per docs, this is not supported
-         tmClient.cancelTask(deployTask.getHref());
+         connection.cancelTask(deployTask.getHref());
       } catch (UnsupportedOperationException e) {
       }
 
       assert successTester.apply(deployTask.getHref());
       System.out.printf("%d: done deploying vApp%n", System.currentTimeMillis());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
 
-      ReferenceType vAppResource = tmClient.findVDCInOrgNamed(null, null).getResourceEntities().get(serverName);
+      ReferenceType vAppResource = connection.findVDCInOrgNamed(null, null).getResourceEntities().get(serverName);
       assertEquals(vAppResource.getHref(), vApp.getHref());
 
       int processorCount = 1;
@@ -242,10 +242,10 @@ public abstract class TerremarkClientLiveTest {
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
       assertEquals(vApp.getStatus(), Status.OFF);
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOnVApp(vApp.getHref()).getHref());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
       assertEquals(vApp.getStatus(), Status.ON);
    }
 
@@ -266,7 +266,7 @@ public abstract class TerremarkClientLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testInstantiateAndPowerOn")
    public void testCloneVApp() throws IOException {
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
       StringBuffer name = new StringBuffer();
@@ -277,19 +277,19 @@ public abstract class TerremarkClientLiveTest {
       CloneVAppOptions options = deploy().powerOn().withDescription("The description of " + newName);
 
       System.out.printf("%d: cloning vApp%n", System.currentTimeMillis());
-      Task task = tmClient.cloneVAppInVDC(vdc.getHref(), vApp.getHref(), newName, options);
+      Task task = connection.cloneVAppInVDC(vdc.getHref(), vApp.getHref(), newName, options);
 
       // wait for the task to complete
       assert successTester.apply(task.getHref());
       System.out.printf("%d: done cloning vApp%n", System.currentTimeMillis());
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOnVApp(vApp.getHref()).getHref());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
       // refresh task to get the new vApp location
-      task = tmClient.getTask(task.getHref());
+      task = connection.getTask(task.getHref());
 
-      clone = tmClient.getVApp(task.getOwner().getHref());
+      clone = connection.getVApp(task.getOwner().getHref());
       assertEquals(clone.getStatus(), Status.ON);
 
       assertEquals(clone.getName(), newName);
@@ -298,7 +298,7 @@ public abstract class TerremarkClientLiveTest {
 
    @Test(enabled = true, dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
    public void testPublicIp() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()), vApp.getName()
+      node = connection.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()), vApp.getName()
             + "-SSH", 22);
       loopAndCheckPass();
    }
@@ -320,53 +320,53 @@ public abstract class TerremarkClientLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testPublicIp")
    public void testConfigureNode() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      tmClient.configureNode(node.getId(), node.getName(), node.isEnabled(), "holy cow");
+      connection.configureNode(node.getId(), node.getName(), node.isEnabled(), "holy cow");
    }
 
    @Test(enabled = true, dependsOnMethods = "testPublicIp")
    public void testLifeCycle() throws InterruptedException, ExecutionException, TimeoutException, IOException {
 
       try {// per docs, this is not supported
-         tmClient.undeployVApp(vApp.getHref());
+         connection.undeployVApp(vApp.getHref());
          assert false;
       } catch (UnsupportedOperationException e) {
       }
 
       try {// per docs, this is not supported
-         tmClient.suspendVApp(vApp.getHref());
+         connection.suspendVApp(vApp.getHref());
          assert false;
       } catch (UnsupportedOperationException e) {
       }
 
-      assert successTester.apply(tmClient.resetVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.resetVApp(vApp.getHref()).getHref());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
 
       assertEquals(vApp.getStatus(), Status.ON);
 
       // TODO we need to determine whether shutdown is supported before invoking
       // it.
-      // tmClient.shutdownVApp(vApp.getId());
-      // vApp = tmClient.getVApp(vApp.getId());
+      // connection.shutdownVApp(vApp.getId());
+      // vApp = connection.getVApp(vApp.getId());
       // assertEquals(vApp.getStatus(), VAppStatus.ON);
 
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
       assertEquals(vApp.getStatus(), Status.OFF);
    }
 
    @Test(enabled = true, dependsOnMethods = "testLifeCycle")
    public void testConfigure() throws InterruptedException, ExecutionException, TimeoutException, IOException {
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
 
-      Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1)
+      Task task = connection.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1)
             .addDisk(25 * 1048576).addDisk(25 * 1048576));
 
       assert successTester.apply(task.getHref());
 
-      vApp = tmClient.getVApp(vApp.getHref());
+      vApp = connection.getVApp(vApp.getHref());
       assertEquals(vApp.getName(), "eduardo");
       assertEquals(find(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.PROCESSOR))
             .getVirtualQuantity().longValue(), 1);
@@ -375,23 +375,23 @@ public abstract class TerremarkClientLiveTest {
       assertEquals(size(filter(vApp.getResourceAllocations(), CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE))),
             3);
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOnVApp(vApp.getHref()).getHref());
 
       loopAndCheckPass();
 
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
 
       // extract the disks on the vApp sorted by addressOnParent
       List<ResourceAllocationSettingData> disks = Lists.newArrayList(filter(vApp.getResourceAllocations(),
             CIMPredicates.resourceTypeIn(ResourceType.DISK_DRIVE)));
 
       // delete the second disk
-      task = tmClient.configureVApp(vApp,
+      task = connection.configureVApp(vApp,
             deleteDiskWithAddressOnParent(Integer.parseInt(disks.get(1).getAddressOnParent())));
 
       assert successTester.apply(task.getHref());
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getHref()).getHref());
+      assert successTester.apply(connection.powerOnVApp(vApp.getHref()).getHref());
       loopAndCheckPass();
    }
 
@@ -435,24 +435,24 @@ public abstract class TerremarkClientLiveTest {
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (node != null)
-         tmClient.deleteNode(node.getId());
+         connection.deleteNode(node.getId());
       if (is != null)
-         tmClient.deleteInternetService(is.getId());
+         connection.deleteInternetService(is.getId());
       if (vApp != null) {
          try {
-            successTester.apply(tmClient.powerOffVApp(vApp.getHref()).getHref());
+            successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
          } catch (Exception e) {
 
          }
-         tmClient.deleteVApp(vApp.getHref());
+         connection.deleteVApp(vApp.getHref());
       }
       if (clone != null) {
          try {
-            successTester.apply(tmClient.powerOffVApp(clone.getHref()).getHref());
+            successTester.apply(connection.powerOffVApp(clone.getHref()).getHref());
          } catch (Exception e) {
 
          }
-         tmClient.deleteVApp(clone.getHref());
+         connection.deleteVApp(clone.getHref());
       }
 
    }
@@ -472,7 +472,7 @@ public abstract class TerremarkClientLiveTest {
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).buildInjector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make
+      socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
       // it
       // longer
       // then

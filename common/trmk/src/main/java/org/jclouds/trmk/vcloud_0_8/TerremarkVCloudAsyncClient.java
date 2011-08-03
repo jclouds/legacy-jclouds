@@ -86,6 +86,7 @@ import org.jclouds.trmk.vcloud_0_8.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameToEndpoint;
+import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseTaskFromLocationHeader;
 import org.jclouds.trmk.vcloud_0_8.functions.ReturnVoidOnDeleteDefaultIp;
@@ -100,6 +101,7 @@ import org.jclouds.trmk.vcloud_0_8.xml.CatalogItemHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.CustomizationParametersHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.InternetServiceHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.InternetServicesHandler;
+import org.jclouds.trmk.vcloud_0_8.xml.NetworkHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.NodeHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.NodesHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.OrgHandler;
@@ -109,7 +111,6 @@ import org.jclouds.trmk.vcloud_0_8.xml.TasksListHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.VAppHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.VAppTemplateHandler;
 import org.jclouds.trmk.vcloud_0_8.xml.VDCHandler;
-import org.jclouds.trmk.vcloud_0_8.xml.NetworkHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
@@ -231,9 +232,9 @@ public interface TerremarkVCloudAsyncClient {
    @XMLResponseParser(NetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(
-         @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-         @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
+         @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String networkName);
 
    /**
     * @see VCloudClient#getNetwork

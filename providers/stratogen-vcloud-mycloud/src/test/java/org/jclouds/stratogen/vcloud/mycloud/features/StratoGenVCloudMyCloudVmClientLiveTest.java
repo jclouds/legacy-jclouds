@@ -18,6 +18,7 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud.features;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.vcloud.features.VmClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -33,7 +34,14 @@ public class StratoGenVCloudMyCloudVmClientLiveTest extends VmClientLiveTest {
       provider = "stratogen-vcloud-mycloud";
    }
 
+   @Override
    protected void checkApiOutput(String apiOutput) {
-      checkApiOutput1_0_1(apiOutput);
+      checkApiOutput1_0_0(apiOutput);
+   }
+   
+   @Override
+   protected void checkCustomizationOccurred(ExecResponse exec) {
+      // for some reason
+      assert exec.getOutput().equals("") : exec;
    }
 }

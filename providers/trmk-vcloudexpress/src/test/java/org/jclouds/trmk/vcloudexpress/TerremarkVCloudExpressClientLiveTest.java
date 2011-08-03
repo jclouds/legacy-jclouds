@@ -53,7 +53,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
 
    @Override
    protected void prepare() {
-      TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
+      TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(connection);
 
       Org org = vCloudExpressClient.findOrgNamed(null);
       try {
@@ -75,7 +75,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    @AfterTest
    void cleanup1() throws InterruptedException, ExecutionException, TimeoutException {
       if (key != null) {
-         TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
+         TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(connection);
          vCloudExpressClient.deleteKeyPair(key.getId());
       }
    }
@@ -93,6 +93,6 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
       return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(
-            TerremarkVCloudExpressClient.class.cast(tmClient)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
+            TerremarkVCloudExpressClient.class.cast(connection)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 }

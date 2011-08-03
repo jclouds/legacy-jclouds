@@ -89,15 +89,20 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
          switch (response.getStatusCode()) {
             case 400:
                if (error != null
-                        && (error.getMinorErrorCode() != null && error.getMinorErrorCode() == MinorCode.BUSY_ENTITY)
-                        || (error.getMessage() != null && error.getMessage().indexOf("is not running") != -1))
+                        && ((error.getMinorErrorCode() != null && error.getMinorErrorCode() == MinorCode.BUSY_ENTITY)
+                        || (error.getMessage() != null && error.getMessage().indexOf("is not running") != -1)))
                   exception = new IllegalStateException(message, exception);
                else
                   exception = new IllegalArgumentException(message, exception);
                break;
             case 401:
             case 403:
-               exception = new AuthorizationException(exception.getMessage(), exception);
+               if (error != null
+                        && ((error.getMinorErrorCode() != null && error.getMinorErrorCode() == MinorCode.ACCESS_TO_RESOURCE_IS_FORBIDDEN)
+                        || (error.getMessage() != null && error.getMessage().indexOf("No access to entity") != -1)))
+                  exception = new ResourceNotFoundException(message, exception);
+               else
+                  exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
                if (!command.getCurrentRequest().getMethod().equals("DELETE")) {

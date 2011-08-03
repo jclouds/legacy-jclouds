@@ -96,10 +96,10 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
-         System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(provider, identity, credential).getProviderSpecificContext();
-         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(allData.getLocation().getParent().getDescription(),
+                  allData.getLocation().getDescription(), allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

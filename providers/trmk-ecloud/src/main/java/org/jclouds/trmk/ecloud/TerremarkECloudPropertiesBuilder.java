@@ -23,7 +23,6 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
 import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
-import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.util.Properties;
 
@@ -43,8 +42,6 @@ public class TerremarkECloudPropertiesBuilder extends TerremarkVCloudPropertiesB
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.enterprisecloud.terremark.com/api");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "eCloudExtensions");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.8");
-      // default for ubuntu
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
       return properties;
    }
 

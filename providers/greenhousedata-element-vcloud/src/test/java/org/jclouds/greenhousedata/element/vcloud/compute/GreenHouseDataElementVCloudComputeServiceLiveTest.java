@@ -18,6 +18,8 @@
  */
 package org.jclouds.greenhousedata.element.vcloud.compute;
 
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -38,5 +40,9 @@ public class GreenHouseDataElementVCloudComputeServiceLiveTest extends VCloudCom
    public void setServiceDefaults() {
       group = "director";
    }
-   
+
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("(none)");
+   }
 }

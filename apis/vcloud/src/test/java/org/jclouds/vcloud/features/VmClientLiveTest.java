@@ -125,10 +125,8 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
          try {
             ssh.connect();
             ExecResponse vmTools = ssh.exec(PARSE_VMTOOLSD);
-            System.out.println(vmTools);
-            String fooTxt = ssh.exec("cat /root/foo.txt").getOutput();
-            String decodedVmToolsOutput = new String(base64(vmTools.getOutput().trim()));
-            checkVmOutput(fooTxt, decodedVmToolsOutput);
+            checkApiOutput(new String(base64(vmTools.getOutput().trim())));
+            checkCustomizationOccurred(ssh.exec("cat /root/foo.txt"));
          } finally {
             if (ssh != null)
                ssh.disconnect();
@@ -139,13 +137,18 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
       }
    }
 
+   protected void checkCustomizationOccurred(ExecResponse exec) {
+      // note that vmwaretools throws in \r characters when executing scripts
+      assert exec.getOutput().equals(iLoveAscii + "\r\n") : exec;
+   }
+
    protected void checkApiOutput(String apiOutput) {
       checkApiOutput1_0_1(apiOutput);
    }
 
    // make sure the script has a lot of screwy characters, knowing our parser
    // throws-out \r
-   String iLoveAscii = "I '\"love\"' {asc|!}*&";
+   protected String iLoveAscii = "I '\"love\"' {asc|!}*&";
 
    String script = "cat > /root/foo.txt<<EOF\n" + iLoveAscii + "\nEOF\n";
 
@@ -158,12 +161,6 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
    protected void checkApiOutput1_0_0(String apiOutput) {
       // in 1.0.0, vcloud director seems to remove all newlines
       assertEquals(apiOutput, script.replace("\n", ""));
-   }
-
-   protected void checkVmOutput(String fooTxtContentsMadeByVMwareTools, String decodedVMwareToolsOutput) {
-      assertEquals(decodedVMwareToolsOutput, script);
-      // note that vmwaretools throws in \r characters when executing scripts
-      assertEquals(fooTxtContentsMadeByVMwareTools, iLoveAscii + "\r\n");
    }
 
    protected IPSocket getSocket(NodeMetadata node) {

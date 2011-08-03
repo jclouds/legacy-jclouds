@@ -50,7 +50,7 @@ public class TerremarkVCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "15");
       // with ssh key injection comes another reboot. allowing more time
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 420l * 1000l + "");
       return properties;
    }
 

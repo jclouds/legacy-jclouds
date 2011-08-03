@@ -59,7 +59,7 @@ public class TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier imp
 
    @Override
    public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port, Protocol protocol) {
-      logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
+      logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getHref(), protocol, port);
       InternetService is = client.addInternetServiceToVDC(
             vApp.getVDC().getHref(),
             vApp.getName() + "-" + port,

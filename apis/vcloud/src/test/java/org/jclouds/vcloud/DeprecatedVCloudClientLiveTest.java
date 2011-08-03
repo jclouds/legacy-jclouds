@@ -24,6 +24,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -37,6 +38,7 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
@@ -81,7 +83,7 @@ public class DeprecatedVCloudClientLiveTest  {
          RestContext<VCloudClient, VCloudAsyncClient> newContext = null;
          try {
             newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                  VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())));
+                  VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, Pattern.quote(org.getName()))));
             assertEquals(newContext.getApi().findOrgNamed(null), org);
          } finally {
             newContext.close();
@@ -115,8 +117,8 @@ public class DeprecatedVCloudClientLiveTest  {
             RestContext<VCloudClient, VCloudAsyncClient> newContext = null;
             try {
                newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())));
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, Pattern.quote(org.getName()),
+                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, Pattern.quote(cat.getName()))));
                assertEquals(newContext.getApi().findCatalogInOrgNamed(null, null), connection.getCatalog(cat.getHref()));
             } finally {
                newContext.close();
@@ -169,9 +171,9 @@ public class DeprecatedVCloudClientLiveTest  {
                RestContext<VCloudClient, VCloudAsyncClient> newContext = null;
                try {
                   newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())));
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, Pattern.quote(org.getName()),
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, Pattern.quote(vdc.getName()),
+                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, Pattern.quote(net.getName()))));
                   assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, net.getName()),
                         connection.getNetwork(net.getHref()));
                } finally {
@@ -360,10 +362,11 @@ public class DeprecatedVCloudClientLiveTest  {
                if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                   CatalogItem item = connection.getCatalogItem(resource.getHref());
                   if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                     try {
-                        assertNotNull(connection.getVAppTemplate(item.getEntity().getHref()));
-                     } catch (AuthorizationException e) {
-
+                     VAppTemplate template = connection.getVAppTemplate(item.getEntity().getHref());
+                     if (template != null){
+                        assertEquals(template.getName(),item.getEntity().getName());
+                     } else {
+                        // null can be no longer available or auth exception
                      }
                   }
                }
@@ -400,12 +403,8 @@ public class DeprecatedVCloudClientLiveTest  {
             VDC response = connection.getVDC(vdc.getHref());
             for (ReferenceType item : response.getResourceEntities().values()) {
                if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-                  try {
-                     VApp app = connection.getVApp(item.getHref());
-                     assertNotNull(app);
-                  } catch (RuntimeException e) {
-
-                  }
+                  connection.getVApp(item.getHref());
+                  // null can be no longer available or auth exception
                }
             }
          }
@@ -419,14 +418,13 @@ public class DeprecatedVCloudClientLiveTest  {
             VDC response = connection.getVDC(vdc.getHref());
             for (ReferenceType item : response.getResourceEntities().values()) {
                if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-                  try {
-                     VApp app = connection.getVApp(item.getHref());
-                     assertNotNull(app);
+                  VApp app = connection.getVApp(item.getHref());
+                  if (app != null) {
                      for (Vm vm : app.getChildren()) {
                         assert connection.getThumbnailOfVm(vm.getHref()) != null;
                      }
-                  } catch (RuntimeException e) {
-
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }
@@ -441,12 +439,14 @@ public class DeprecatedVCloudClientLiveTest  {
             VDC response = connection.getVDC(vdc.getHref());
             for (ReferenceType item : response.getResourceEntities().values()) {
                if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-                  try {
-                     VApp app = connection.getVApp(item.getHref());
-                     assertNotNull(app);
-                     assert app.getChildren().size() > 0;
-                  } catch (RuntimeException e) {
-
+                  VApp app = connection.getVApp(item.getHref());
+                  if (app != null) {
+                     for (Vm vmRef : app.getChildren()) {
+                        Vm vm = connection.getVm(vmRef.getHref());
+                        assertEquals(vm.getName(), vmRef.getName());
+                     }
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }
@@ -463,11 +463,12 @@ public class DeprecatedVCloudClientLiveTest  {
                if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                   CatalogItem item = connection.getCatalogItem(resource.getHref());
                   if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                     try {
-                        assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(),
-                              item.getEntity().getName()));
-                     } catch (AuthorizationException e) {
-
+                     VAppTemplate template = connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(),
+                              item.getEntity().getName());
+                     if (template != null){
+                        assertEquals(template.getName(),item.getEntity().getName());
+                     } else {
+                        // null can be no longer available or auth exception
                      }
                   }
                }

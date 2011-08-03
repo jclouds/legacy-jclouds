@@ -71,7 +71,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
 
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
-      return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(tmClient))
+      return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(connection))
             .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 
