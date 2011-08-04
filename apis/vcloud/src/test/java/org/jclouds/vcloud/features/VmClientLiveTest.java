@@ -20,6 +20,7 @@ package org.jclouds.vcloud.features;
 
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -28,7 +29,6 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -104,6 +104,7 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
       try {
 
          TemplateOptions options = client.templateOptions();
+         options.blockOnPort(22, 180);
          options.as(VCloudTemplateOptions.class).customizationScript(script);
          options.as(VCloudTemplateOptions.class).description(group);
          node = getOnlyElement(client.createNodesInGroup(group, 1, options));
@@ -116,21 +117,14 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
          String apiOutput = vm.getGuestCustomizationSection().getCustomizationScript();
          checkApiOutput(apiOutput);
 
-         IPSocket socket = getSocket(node);
+         ExecResponse vmTools = client.runScriptOnNode(node.getId(), PARSE_VMTOOLSD,
+               wrapInInitScript(false).runAsRoot(false));
+         checkApiOutput(new String(base64(vmTools.getOutput().trim())));
 
-         System.out.printf("%s:%s@%s", node.getCredentials().identity, node.getCredentials().credential, socket);
-         assert socketTester.apply(socket) : socket;
+         ExecResponse foo = client.runScriptOnNode(node.getId(), "cat /root/foo.txt", wrapInInitScript(false)
+               .runAsRoot(false));
+         checkCustomizationOccurred(foo);
 
-         SshClient ssh = sshFactory.create(socket, node.getCredentials());
-         try {
-            ssh.connect();
-            ExecResponse vmTools = ssh.exec(PARSE_VMTOOLSD);
-            checkApiOutput(new String(base64(vmTools.getOutput().trim())));
-            checkCustomizationOccurred(ssh.exec("cat /root/foo.txt"));
-         } finally {
-            if (ssh != null)
-               ssh.disconnect();
-         }
       } finally {
          if (node != null)
             client.destroyNode(node.getId());

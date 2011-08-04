@@ -99,10 +99,12 @@ import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import static com.google.common.base.Predicates.*;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
+import static com.google.common.base.Suppliers.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import static com.google.common.collect.Iterables.*;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -197,7 +199,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(Supplier<Map<String, ? extends Org>> orgNameToOrgSuppier) {
-      return Suppliers.compose(new Function<Map<String, ? extends Org>, Map<String, String>>() {
+      return compose(new Function<Map<String, ? extends Org>, Map<String, String>>() {
 
          @Override
          public Map<String, String> apply(Map<String, ? extends Org> arg0) {
@@ -471,7 +473,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
                               @Override
                               public Map<String, ? extends CatalogItem> apply(org.jclouds.vcloud.domain.Catalog from) {
-                                 return uniqueIndex(allCatalogItemsInCatalog.apply(from), name);
+                                 return uniqueIndex(filter(allCatalogItemsInCatalog.apply(from), notNull()), name);
                               }
                            });
 

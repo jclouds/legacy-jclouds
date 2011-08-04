@@ -22,18 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
 import org.testng.annotations.AfterGroups;
@@ -42,7 +37,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
@@ -60,9 +54,6 @@ public abstract class BaseVCloudClientLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
-
-   protected RetryablePredicate<IPSocket> socketTester;
-   protected Factory sshFactory;
 
    protected VCloudClient getVCloudApi() {
       return VCloudClient.class.cast(client.getContext().getProviderSpecificContext().getApi());
@@ -95,9 +86,7 @@ public abstract class BaseVCloudClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       client = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getComputeService();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
-      sshFactory = Guice.createInjector(getSshModule()).getInstance(Factory.class);
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).getComputeService();
    }
 
    protected Properties setupRestProperties() {
