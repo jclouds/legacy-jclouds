@@ -693,7 +693,7 @@ public class RestAnnotationProcessor<T> {
                         method));
                return returnVal;
             } catch (NullPointerException e) {
-               throw new IllegalArgumentException(String.format("argument at indexes %s on method %s", map.keySet(),
+               throw new IllegalArgumentException(String.format("illegal argument in [%s] for method %s", argsToParse,
                         method), e);
             }
          }
