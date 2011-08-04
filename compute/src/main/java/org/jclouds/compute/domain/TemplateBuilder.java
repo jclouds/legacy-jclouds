@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 
+import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -134,6 +135,11 @@ public interface TemplateBuilder {
     * Configure this template to have an image description that matches the regular expression
     */
    TemplateBuilder imageDescriptionMatches(String imageDescriptionRegex);
+
+   /**
+    * Configure this template to have an image description that matches the supplied condition
+    */
+   TemplateBuilder imageMatches(Predicate<Image> condition);
 
    /**
     * Configure this template to require the minimum cores below

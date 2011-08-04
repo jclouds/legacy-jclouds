@@ -278,7 +278,7 @@ public class TemplateBuilderImplTest {
          // make sure big data is not in the exception message
          assertEquals(
                   e.getMessage(),
-                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=notImageId, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
+                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=notImageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
          verify(image);
          verify(os);
          verify(defaultTemplate);

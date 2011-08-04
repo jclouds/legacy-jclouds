@@ -58,7 +58,7 @@ public class ImagePredicates {
    }
 
    /**
-    * evaluates true if the Image
+    * evaluates true if the Image id is in the supplied set
     * 
     * @param ids
     *           ids of the images
@@ -76,6 +76,31 @@ public class ImagePredicates {
          @Override
          public String toString() {
             return "idIn(" + search + ")";
+         }
+      };
+   }
+   
+   /**
+    * evaluates true if the Image metadata contains the following values
+    * 
+    * @param key
+    *           key in Image#getUserMetadata
+    * @param value
+    *           value in Image#getUserMetadata
+     * @return predicate
+    */
+   public static Predicate<Image> userMetadataContains(final String key, final String value) {
+      checkNotNull(key, "key must be defined");
+      checkNotNull(value, "value must be defined");
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return value.equals(image.getUserMetadata().get(key));
+         }
+
+         @Override
+         public String toString() {
+            return "metadataContains(" + key +", "+value + ")";
          }
       };
    }
