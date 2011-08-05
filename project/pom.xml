@@ -510,7 +510,7 @@ pageTracker._trackPageview();
                         <dependency>
                             <groupId>org.apache.maven.wagon</groupId>
                             <artifactId>wagon-webdav-jackrabbit</artifactId>
-                            <version>1.0-beta-8-WAGON-319.328</version>
+                            <version>1.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -835,7 +835,7 @@ pageTracker._trackPageview();
                     <plugins>
                         <plugin>
                             <artifactId>maven-site-plugin</artifactId>
-                            <version>3.0-beta-4-SNAPSHOT</version>
+                            <version>3.0</version>
                             <configuration>
                                 <reportPlugins>
                                     <plugin>
