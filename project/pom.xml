@@ -404,7 +404,7 @@ pageTracker._trackPageview();
             </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.0-beta-1</version>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
                         <id>enforce-banned-dependencies</id>
@@ -627,7 +627,7 @@ pageTracker._trackPageview();
                 <plugins>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2-beta-5</version>
+                        <version>2.2.1</version>
                         <executions>
                             <execution>
                                 <id>generate-distribution-files</id>
@@ -702,7 +702,7 @@ pageTracker._trackPageview();
                     <!-- disable the Maven enforcer plugin and prevent forking (unlike -Denforcer.skip) -->
                     <plugin>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>1.0-beta-1</version>
+                        <version>1.0.1</version>
                         <executions>
                             <execution>
                                 <id>enforce-banned-dependencies</id>
