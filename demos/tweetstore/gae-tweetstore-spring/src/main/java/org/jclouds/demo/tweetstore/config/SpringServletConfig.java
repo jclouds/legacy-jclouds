@@ -87,6 +87,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
    private Twitter twitterClient;
    private String container;
+   private Queue queue;
 
    @PostConstruct
    public void initialize() throws IOException {
@@ -119,7 +120,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       }
 
       // get a queue for submitting store tweet requests
-      Queue queue = QueueFactory.getQueue("twitter");
+      queue = QueueFactory.getQueue("twitter");
       // submit a job to store tweets for each configured blobstore
       for (String name : providerTypeToBlobStoreMap.keySet()) {
          queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
@@ -210,6 +211,9 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
          context.close();
       }
       logger.trace("Contexts closed.");
+      logger.trace("About to purge request queue.");
+      queue.purge();
+      logger.trace("Request queue purged.");
    }
 
    /*
