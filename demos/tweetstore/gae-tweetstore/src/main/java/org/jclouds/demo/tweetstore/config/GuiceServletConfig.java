@@ -77,6 +77,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
    private Twitter twitterClient;
    private String container;
+   private Queue queue;
 
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -110,7 +111,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       }
 
       // get a queue for submitting store tweet requests
-      Queue queue = QueueFactory.getQueue("twitter");
+      queue = QueueFactory.getQueue("twitter");
       // submit a job to store tweets for each configured blobstore
       for (String name : providerTypeToBlobStoreMap.keySet()) {
           queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
@@ -162,6 +163,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       for (BlobStoreContext context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
+      queue.purge();
       super.contextDestroyed(servletContextEvent);
    }
 }
