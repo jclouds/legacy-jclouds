@@ -51,11 +51,11 @@ public class BlobToHttpGetOptions implements Function<org.jclouds.blobstore.opti
          httpOptions.ifUnmodifiedSince(from.getIfUnmodifiedSince());
       }
       for (String range : from.getRanges()) {
-         String[] firstLast = range.split("\\-");
-         if (firstLast.length == 2)
+         String[] firstLast = range.split("\\-", 2);
+         if (!firstLast[0].isEmpty() && !firstLast[1].isEmpty())
             httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
-         else if (range.startsWith("-"))
-            httpOptions.tail(Long.parseLong(firstLast[0]));
+         else if (firstLast[0].isEmpty() && !firstLast[1].isEmpty())
+            httpOptions.tail(Long.parseLong(firstLast[1]));
          else
             httpOptions.startAt(Long.parseLong(firstLast[0]));
       }

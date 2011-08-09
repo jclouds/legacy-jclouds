@@ -72,6 +72,16 @@ public class GetOptions {
       return this;
    }
 
+
+   /**
+    * download the specified range of the object starting from the end of the object.
+    */
+   public GetOptions tail(long length) {
+      checkArgument(length >= 0, "length must be >= 0");
+      getRanges().add(String.format("-%d", length));
+      return this;
+   }
+
    /**
     * Only return the object if it has changed since this time.
     * <p />

@@ -103,6 +103,29 @@ public class BlobToHttpGetOptionsTest {
       assertEquals(fn.apply(in), expected);
 
    }
+
+   @Test
+   public void testRangesTail(){
+      org.jclouds.blobstore.options.GetOptions in = new org.jclouds.blobstore.options.GetOptions();
+      in.tail(1024);
+
+      GetOptions expected = new GetOptions();
+      expected.tail(1024);
+
+      assertEquals(fn.apply(in), expected);
+
+   }
+   @Test
+   public void testRangesStart(){
+      org.jclouds.blobstore.options.GetOptions in = new org.jclouds.blobstore.options.GetOptions();
+      in.startAt(1024);
+
+      GetOptions expected = new GetOptions();
+      expected.startAt(1024);
+
+      assertEquals(fn.apply(in), expected);
+
+   }
    
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {

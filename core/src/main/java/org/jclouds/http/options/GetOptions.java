@@ -80,7 +80,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     */
    public GetOptions startAt(long start) {
       checkArgument(start >= 0, "start must be >= 0");
-      ranges.add(String.format("%d-%d", start, Long.MAX_VALUE));
+      ranges.add(String.format("%d-", start));
       return this;
    }
 
