@@ -53,8 +53,9 @@ h1, #column2 h1
 }
 
 .sidebaritem, .sidebaritem a, .sidebaritem a:hover
-{ background: transparent;
-  color: #165872;
+{
+	background: transparent;
+	color: #F79C88;
 }
 
 .sbihead {
