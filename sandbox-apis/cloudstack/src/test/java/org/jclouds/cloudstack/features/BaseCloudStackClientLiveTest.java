@@ -44,7 +44,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
@@ -133,7 +133,7 @@ public class BaseCloudStackClientLiveTest {
                   "invalid account type: %s, please specify an apiKey of a USER, for example: %s", currentUser
                            .getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
 
-      injector = Guice.createInjector(new JschSshClientModule(), new Log4JLoggingModule());
+      injector = Guice.createInjector(new SshjSshClientModule(), new Log4JLoggingModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);

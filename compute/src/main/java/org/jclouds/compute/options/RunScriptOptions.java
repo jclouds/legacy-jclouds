@@ -185,6 +185,15 @@ public class RunScriptOptions {
       return this;
    }
 
+   /**
+    * As of version 1.1.0, we cannot kick off a script unless a node is in
+    * RUNNING state.
+    * 
+    * @param blockOnComplete (default true)
+    *           false means kick off the script in the background, but don't
+    *           wait for it to finish. (as of version 1.1.0, implemented as
+    *           nohup)
+    */
    public RunScriptOptions blockOnComplete(boolean blockOnComplete) {
       this.blockOnComplete = blockOnComplete;
       return this;
@@ -233,9 +242,7 @@ public class RunScriptOptions {
    }
 
    /**
-    * Whether to wait until the script has completed. By default, true.
-    * 
-    * @return value
+    * @see #blockOnComplete(boolean)
     */
    public boolean shouldBlockOnComplete() {
       return blockOnComplete;
@@ -276,7 +283,10 @@ public class RunScriptOptions {
          RunScriptOptions options = new RunScriptOptions();
          return options.runAsRoot(value);
       }
-
+      
+      /**
+       * @see RunScriptOptions#blockOnComplete(boolean)
+       */
       public static RunScriptOptions blockOnComplete(boolean value) {
          RunScriptOptions options = new RunScriptOptions();
          return options.blockOnComplete(value);
