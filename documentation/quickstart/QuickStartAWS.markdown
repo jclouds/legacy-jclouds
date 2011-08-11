@@ -1,6 +1,8 @@
 ---
-title: Quick Start: Amazon Web Services
+layout: docs
+title: Quick Start - Amazon Web Services
 ---
+
 # Quick Start: Amazon Web Services
 
 This page helps you get started with `jclouds` API with Amazon Web Services
@@ -14,7 +16,7 @@ This page helps you get started with `jclouds` API with Amazon Web Services
 
 ## Using S3
 
-```java
+{% highlight java %}
 import static org.jclouds.aws.s3.options.PutObjectOptions.Builder.withAcl;
 
 // get a context with amazon that offers the portable BlobStore API
@@ -42,11 +44,11 @@ s3Client.putObject(bucket, object, withAcl(CannedAccessPolicy.PUBLIC_READ));
 
 context.close();
 
-```
+{% endhighlight %}
 
 ## Using EC2
 
-```java
+{% highlight java %}
 
 // get a context with ec2 that offers the portable ComputeService API
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", 
@@ -80,6 +82,6 @@ String ip = ec2Client.getElasticIPAddressServices().allocateAddressInRegion(node
 ec2Client.getElasticIPAddressServices().associateAddressInRegion(node.getLocation().getId(),ip, node.getProviderId());
 
 context.close();
-```
+{% endhighlight %}
 
-`Last Updated: 2011-05-16`
+

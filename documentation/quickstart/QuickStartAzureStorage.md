@@ -1,5 +1,6 @@
 ---
-title: Quick Start: Azure Storage Service
+layout: docs
+title: Quick Start Azure Storage Service
 ---
 
 1. Sign up for an [Azure Account](http://www.microsoft.com/windowsazure/offers/)
@@ -16,7 +17,7 @@ title: Quick Start: Azure Storage Service
 	* Get the dependency `org.jclouds.provider/azureblob` using jclouds [[Installation Guide|Installation]].
 5. Start coding
 
-```java
+{% highlight java %}
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 
 // get a context with amazon that offers the portable BlobStore api
@@ -35,6 +36,4 @@ AzureBlobClient client = AzureBlobClient.class.cast(context.getProviderSpecificC
 client.createRootContainer(withPublicAc());
 
 context.close();
-```
-
-`Last Updated: 2011-05-17`
+{% endhighlight %}
