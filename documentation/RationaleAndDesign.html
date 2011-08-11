@@ -1,0 +1,90 @@
+<h1>Rationale &amp; Design</h1>
+
+<p><a href="https://jets3t.dev.java.net/">JetS3t</a> was a pioneering effort to connect the Java world to Amazon S3 services.</p>
+
+<p>The decision to create another API was not taken lightly:  JetS3t has many useful tools, and is a mature
+ implementation of S3 connectivity.<br />
+However useful in simple environments, JetS3t (v0.7.0) is unusable in concurrent or google app engine JVMs.
+Spending about a week in JetS3t code, it became clear that the effort needed was high enough to warrant a fresh start.</p>
+
+<h2>Concurrency By Design</h2>
+
+<h3>Motivation</h3>
+
+<p><a href="http://www.jboss.org/infinispan">I N F I N I S P A N</a> is by nature a highly concurrent platform.<br />
+When asked to develop S3 integration,I researched the three mechanisms that currently exist:
+code-copy from Amazon's sample code, JetS3t, and noderunner-s3.</p>
+
+<p>As it turned out, JetS3t seemed the most viable option due to its currency and popularity.<br />
+While single-threaded requests worked well, neither JetS3t nor the other two apis are capable of working in a highly
+ concurrent environment:  their Date and Encryption strategies simply wouldn't work.</p>
+
+<h3>Implementation Approach</h3>
+
+<h4>API</h4>
+
+<p>At its core, the JClouds api is designed for concurrency.  All methods are written to return Futures instead of blocking.<br />
+This allows you to do the dishes while waiting for laundry.   Have a look at S3Connection:</p>
+
+<pre><code>S3Connection connection = context.createConnection();
+Future&lt;String&gt; md5HashFuture = connection.addObject(s3Bucket,s3Object);
+//do productive work.. why wait?
+String  md5Hash =  md5HashFuture.get();  // ok. I'm ready</code></pre>
+
+<p>Under the scenes, <code>S3Connection</code> creates a <code>FutureCommand</code> for the <code>addObject()</code> operation.
+It then submits it to a <code>FutureCommandClient</code> for execution.
+In environments that support non-blocking I/O, JClouds can use a non-blocking <code>FutureCommandClient</code>.
+In restricted environments, the <code>FutureCommandClient</code> used will execute the request sequentially.<br />
+The power is that the API is the same regardless of the limitations of the environment.
+ Programming to Futures will ensure you can take most advantage of the concurrency available on the platform.</p>
+
+<h4>Dates</h4>
+
+<p>The Java Date class is not a thread-safe class. In other words, if you have multiple
+threads parsing or manipulating date objects, you cannot expect idempotence.</p>
+
+<p>The following key points are designed-into JClouds to avoid performance problems in dates.</p>
+
+<ul><li>Use joda-time</li>
+</ul><p><a href="http://joda-time.sourceforge.net/">joda-time</a> is a thread-safe date utility.<br />
+It constructs immutable date objects.  JClouds uses DateTime objects for all domain objects.</p>
+
+<ul><li>Don't over-calculate</li>
+</ul><p>Parsing date objects is very expensive. <br />
+Amazon S3 requires that your request is signed within 15 minutes of their clock.
+ While the joda-time parser is thread-safe, it is synchronized and therefore slows
+highly concurrent applications.  To work around this slowness, JClouds will only
+parse date objects every second.</p>
+
+<h4>Encryption</h4>
+
+<p>JCE encryption apis are also not all thread-safe.</p>
+
+<p>JClouds ditched JCE in favor of more efficient and threadsafe <a href="http://www.bouncycastle.org/">bouncycastle</a> apis.</p>
+
+<h2>Google App Engine</h2>
+
+<h3>Motivation</h3>
+
+<p><a href="http://code.google.com/appengine/">Google App Engine</a> has a
+<a href="http://code.google.com/appengine/docs/java/runtime.html">restricted runtime</a>
+that among other things prevents spawning threads, JCE, and socket i/o.
+JetS3t uses libraries that violate these rules and therefore cannot be used in Google App Engine.</p>
+
+<p>JClouds pluggable http layer makes it easy to overcome these hurdles.<br />
+From an implementation standpoint, we simply created a new FutureCommandClient that abides by the rules.
+Furthermore, we test continually with our SDK 1.2 <a href="http://jclouds.googlecode.com/svn/trunk/samples/googleappengine/">example</a>.
+In other words, JClouds will operate in GAE.  There are a couple reasons for this.</p>
+
+<ul><li>I/O and Threading</li>
+</ul><p>We have a special configuration module written for GAE (URLFetchServiceClientModule).<br />
+This uses their low-level <code>URLFetchService</code>
+API and does not spawn threads. Here's an example of how to create an S3 context inside GAE:</p>
+
+<pre><code>      S3Context context = S3ContextFactory.createS3Context(accesskeyid,secretkey, new URLFetchServiceClientModule());</code></pre>
+
+<h3>JCE on GAE</h3>
+
+<p>JClouds uses <code>bouncycastle</code> instead of JCE, as explained above.  As such, it does not violate the JCE restriction of GAE.</p>
+
+<p><code>Last Updated: 2011-05-24</code></p>

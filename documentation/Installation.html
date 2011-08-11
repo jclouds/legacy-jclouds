@@ -1,0 +1,152 @@
+<h1>Installation</h1>
+
+<h3>Getting latest jclouds binaries</h3>
+
+<p>You can download the latest jclouds libraries from <a href="https://github.com/jclouds/jclouds/archives/master">jclouds distribution</a></p>
+
+<ul><li><p>Download and extract the <a href="https://github.com/jclouds/jclouds/zipball/jclouds-1.0.0">distribution</a></p></li>
+<li><p>Put the following in your classpath:</p>
+
+<ul><li>jclouds-1.0.0/core/lib/*</li>
+<li>jclouds-1.0.0/providers/<strong>provider</strong>/lib/*</li>
+</ul></li>
+<li><p>if your provider is an extension of an api (ex. s3), extract its libs, too</p>
+
+<ul><li>jclouds-1.0.0/apis/<strong>api</strong>/lib/*</li>
+</ul></li>
+<li><p>if you plan to use runScript features of <a class="internal absent" href="/Compute-Service.html">ComputeGuide</a>, add jsch</p>
+
+<ul><li>jclouds-1.0.0/drivers/jsch/lib/*</li>
+</ul></li>
+</ul><p>Replace the <strong>provider</strong> and <strong>api</strong> in the above directory paths to the ones you want to use in your project.</p>
+
+<h3>Adding jclouds to your Apache Maven project</h3>
+
+<p>If your project is managed using Apache Maven, then it is very easy to use the jclouds, just add
+the following your project's <strong>pom.xml</strong>:</p>
+
+<pre><code>&lt;dependencies&gt; 
+   &lt;dependency&gt;
+        &lt;groupId&gt;org.jclouds&lt;/groupId&gt;
+        &lt;artifactId&gt;jclouds-allcompute&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0&lt;/version&gt;
+   &lt;/dependency&gt;
+   &lt;dependency&gt;
+       &lt;groupId&gt;org.jclouds&lt;/groupId&gt;
+       &lt;artifactId&gt;jclouds-allblobstore&lt;/artifactId&gt;
+       &lt;version&gt;1.0.0&lt;/version&gt;
+   &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+<h3>Adding jclouds to your Apache Ant project.</h3>
+
+<p>If you use ant, you will need to install <a href="http://maven.apache.org/ant-tasks/index.html">maven ant tasks</a>.
+Then, add jclouds to your <strong>build.xml</strong> as shown below:</p>
+
+<pre><code>&lt;artifact:dependencies pathId="jclouds.classpath"&gt;
+ &lt;dependency groupId="org.jclouds" 
+			 artifactId="jclouds-allcompute" 
+			version="1.0.0" /&gt;
+ &lt;dependency groupId="org.jclouds" 
+			 artifactId="jclouds-allblobstore" 
+			version="1.0.0" /&gt;
+&lt;/artifact:dependencies&gt;</code></pre>
+
+<h3>Getting the binaries using Apache Ant</h3>
+
+<p>If you want to automate fetching the jclouds binaries, you can use the following ant script.</p>
+
+<p>Install ant, copy the following into a <strong>build.xml</strong> file, tweaking things like 'provider' and 'driver' as necessary.
+The following example uses <em>aws-s3</em> as provider and <em>jclouds-gae</em> as driver.
+You can see the list of supported providers in the <a class="internal present" href="/SupportedProviders.html">Supported Providers</a>.</p>
+
+<p>When you runt this script, it will build a <strong>lib</strong> directory full of jars you can later copy into your own project.</p>
+
+<pre><code>&lt;project default="sync-lib" xmlns:artifact="urn:maven-artifact-ant" &gt;
+  &lt;target name="sync-lib" depends="initmvn"&gt;
+    &lt;delete dir="lib" /&gt;
+    &lt;mkdir dir="lib" /&gt;
+    &lt;artifact:dependencies filesetId="jclouds.fileset" versionsId="dependency.versions"&gt;
+      &lt;dependency groupId="org.jclouds.provider" artifactId="aws-s3" version="1.0.0" /&gt;
+      &lt;dependency groupId="org.jclouds.driver" artifactId="jclouds-gae" version="1.0.0" /&gt;
+    &lt;/artifact:dependencies&gt;
+    &lt;copy todir="lib" verbose="true"&gt;
+      &lt;fileset refid="jclouds.fileset"/&gt;
+      &lt;mapper type="flatten" /&gt;
+    &lt;/copy&gt;
+  &lt;/target&gt;
+  &lt;get src="http://opensource.become.com/apache/maven/binaries/maven-ant-tasks-2.1.1.jar" dest="maven-ant-tasks"/&gt;
+  &lt;target name="initmvn"&gt;
+    &lt;path id="maven-ant-tasks.classpath" path="maven-ant-tasks"/&gt;
+    &lt;typedef resource="org/apache/maven/artifact/ant/antlib.xml" 
+			uri="urn:maven-artifact-ant" 
+			classpathref="maven-ant-tasks.classpath"/&gt;
+  &lt;/target&gt;
+&lt;/project&gt;</code></pre>
+
+<h3>Adding jclouds to your Clojure project using lieningen</h3>
+
+<p>If you use lieningen, you can add jclouds to your project.clj like below:</p>
+
+<pre><code>:dependencies [[org.clojure/clojure "1.2.0"]
+               [org.clojure/clojure-contrib "1.2.0"]
+               [org.jclouds/jclouds-allcompute "1.0.0"]
+               [org.jclouds/jclouds-allblobstore "1.0.0"]]</code></pre>
+
+<h3>Using the jclouds Snapshot Builds</h3>
+
+<p>If you want to use the bleeding edge release of jclouds, you'll need to setup a maven dependency pointing to our sonatype snapshot repo.</p>
+
+<p>You need to update your repositories and add the following in your project's pom.xml:</p>
+
+<pre><code>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;jclouds-snapshots&lt;/id&gt;
+        &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+        &lt;snapshots&gt;
+             &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;dependencies&gt; 
+   &lt;dependency&gt;
+        &lt;groupId&gt;org.jclouds&lt;/groupId&gt;
+        &lt;artifactId&gt;jclouds-allcompute&lt;/artifactId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+   &lt;/dependency&gt;
+   &lt;dependency&gt;
+        &lt;groupId&gt;org.jclouds&lt;/groupId&gt;
+        &lt;artifactId&gt;jclouds-allblobstore&lt;/artifactId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+   &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+<h3>Adding jclouds snapshot to your ant project</h3>
+
+<p>If you use ant, you will need to install <a href="http://maven.apache.org/ant-tasks/index.html">maven ant tasks</a>.</p>
+
+<p>Then, add jclouds snapshot dependencies to your <strong>build.xml</strong> as shown below:</p>
+
+<pre><code>&lt;artifact:remoteRepository id="jclouds.snapshot.repository" 
+						   url="https://oss.sonatype.org/content/repositories/snapshots" /&gt;
+&lt;artifact:dependencies pathId="jclouds.classpath"&gt;
+ &lt;dependency groupId="org.jclouds" 
+			 artifactId="jclouds-allcompute" 
+			 version="1.0-SNAPSHOT" /&gt;
+ &lt;dependency groupId="org.jclouds" 
+			artifactId="jclouds-allblobstore" 
+			version="1.0-SNAPSHOT" /&gt;
+ &lt;remoteRepository refid="jclouds.snapshot.repository" /&gt;
+&lt;/artifact:dependencies&gt;</code></pre>
+
+<h3>Adding jclouds snapshots to your leiningen (clojure) project</h3>
+
+<p>If you use lieningen, you can add jclouds snapshots to your <strong>project.clj</strong> like below:</p>
+
+<pre><code>:dependencies [[org.clojure/clojure "1.2.0"]
+               [org.clojure/clojure-contrib "1.2.0"]
+               [org.jclouds/jclouds-allcompute "1.0-SNAPSHOT"]
+               [org.jclouds/jclouds-allblobstore "1.0-SNAPSHOT"]]
+:repositories { "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}</code></pre>
+
+<p><code>Last Updated: 2011-07-26</code></p>

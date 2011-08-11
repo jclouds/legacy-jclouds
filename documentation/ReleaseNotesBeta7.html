@@ -1,0 +1,54 @@
+<h1>Release Notes: jclouds Beta 7</h1>
+
+<p>There is 4 months solid effort in jclouds 1.0-beta-7 release. <a href="http://code.google.com/p/jclouds/issues/list?can=1&amp;q=label%3AMilestone-1.0-beta-7">65 issues</a>
+were addressed.<br />
+Our !ComputeService provisioning api is much stronger, with a mock provider and new Hardware and !OperatingSystem models,
+ not to mention the new vCloud 1.0 api. We've also updated BlobStore with much sought after filesystem and blob signing support.</p>
+
+<p>Below is more information on these enhancements.</p>
+
+<h2>New Features</h2>
+
+<ul><li>We now have an [http://code.google.com/p/jclouds/wiki/ComputeGuide#Operating_System OperatingSystem] type to help you be more specific
+in provisioning and operations commands.</li>
+<li>Our new [http://code.google.com/p/jclouds/wiki/ComputeGuide#Hardware Hardware] type exposes lots of details
+including number of cores and speed per processor, as well mounted volume information including Amazon EBS and vCloud.</li>
+<li>We've enhanced testability by adding a [http://code.google.com/p/jclouds/wiki/ComputeGuide#Stub_Provider stub] ComputeService provider.
+With this you can write test provisioning code without launching servers.</li>
+<li>Our [vCloud vCloud] support is completely revamped to support the new 1.0 api implemented by <a href="http://www.vmware.com/products/vcloud-director/">vCloud Director</a>
+with many thanks to VMware and [http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/ BlueLock].<br />
+Moreover, we've revamped [Terremark Terremark] vCloud Express and started on their eCloud offering.</li>
+<li><a href="http://www.rainbowbreeze.it">Alfredo Morresi</a> contributed a [http://code.google.com/p/jclouds/wiki/BlobStore#Filesystem_Provider file system blobstore],
+which allows you to to use the same api persisting to disk, memory, or a blobstore like Amazon S3.</li>
+<li>With our [http://code.google.com/p/jclouds/wiki/BlobStore#Integration_with_non-java_clients portable request signer],
+you can pass blobstore commands to non-java environments to execute.  Be creative!</li>
+<li>Our core is stronger, now using <a href="http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/urlfetch/URLFetchService.html#fetchAsync%28com.google.appengine.api.urlfetch.HTTPRequest%29">Asynchronous URLFetch</a>
+in Google Appengine and jaxrs processing via <a href="https://jersey.dev.java.net/">Jersey</a>.</li>
+</ul><h2>API Breaking Changes</h2>
+
+<ul><li>Blob now uses our new Payload class; blob's data needs to be accessed via <code>getPayload()</code> not <code>getContent()</code></li>
+<li>We've completely dropped the <code>Size</code> object for <code>Hardware</code>, look for corresponding method names.</li>
+<li>The <code>Architecture</code> enum has been replaced with a free form field due to it being too coupled to EC2 concepts.
+Generally, <code>os64bit(true)</code> replaces its functionality.</li>
+<li>ContentMetadata is now its own type; use <code>md.getContentMetadata().getContentType()</code> as opposed to <code>md.getContentType()</code></li>
+<li>Encryption utilities are now functions; use<code>Payloads.calculateMD5(blob)</code>, not <code>blob.generateMD5()</code></li>
+<li>vCloud offerings have been significantly changed to address vCloud 1.0 and a prior modeling gap.</li>
+<li>Look for enum of <code>UNRECOGNIZED</code> which allows jclouds to operate even when an API clone provides bad data.</li>
+</ul><h2>Known Issues</h2>
+
+<ul><li>trmk-vcloudexpress is unstable when using <code>runScriptOnNodesMatching</code></li>
+<li>eucalyptus tests skipped due to no resources on the test cloud</li>
+<li>the following providers are unstable
+
+<ul><li>trmk-ecloud</li>
+<li>rimuhosting</li>
+<li>ibmdev (sandbox)</li>
+</ul></li>
+<li>the following are known limitations of filesystem provider
+
+<ul><li>Provider is not tested on windows</li>
+<li>Blobstore list method lists all the file inside the container in a recursive way. Other options of the method aren't manager yes</li>
+<li>There are issues when compiling the class under Windows. Need to be fixed</li>
+<li>No blob metadata are stored in this current implementation. Only the name and the content of the source payload is stored.</li>
+</ul></li>
+</ul>

@@ -1,0 +1,39 @@
+<h1>Quick Start: BlueLock vCloud Service</h1>
+
+<p><strong>Please note that the support for BlueLock vCloud Director is not complete</strong></p>
+
+<ol><li>Sign up for <a href="http://www.bluelock.com/bluelock-cloud-hosting/">BlueLock vCloud</a></li>
+<li>Ensure you are using a recent JDK 6</li>
+<li>Setup your project to include bluelock-vcdirector
+
+<ul><li>Get the dependency <code>org.jclouds.provider/bluelock-vcdirector</code> using jclouds <a class="internal present" href="/Installation.html">Installation Guide</a>.</li>
+</ul></li>
+<li>Start coding</li>
+</ol><pre><code>
+ComputeServiceContext context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector", "username@orgname", password,
+                                                              ImmutableSet.&lt;Module&gt; of(new JschSshClientModule()));
+
+// create a customization script to run when the machine starts up 
+String script = "cat &gt; /root/foo.txt&lt;&lt;EOF\nI love candy\nEOF\n";
+TemplateOptions options = client.templateOptions();
+options.as(VCloudTemplateOptions.class).customizationScript(script);
+
+// run a couple nodes accessible via group
+nodes = context.getComputeService().createNodesInGroup("webserver", 2, options);
+
+// get a synchronous object to use for manipulating vcloud objects in BlueLock
+VCloudClient client = VCloudClient.class.cast(context.getProviderSpecificContext()
+         .getApi());
+
+// look at all the thumbnails of my vApps
+VApp app = client.getVApp(vApp.getHref());
+for (Vm vm : app.getChildren()) {
+     assert client.getThumbnailOfVm(vm.getHref()) != null;
+}
+
+// release resources 
+context.close();
+</code></pre>
+
+<ol><li>Validate on the <a href="https://vcenterprise.bluelock.com/cloud/">BlueLock console</a></li>
+</ol><p><code>Last Updated: 2011-05-17</code></p>

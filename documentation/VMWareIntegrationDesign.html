@@ -1,0 +1,96 @@
+<h1>VMWare Integration Design &amp; Approach</h1>
+
+<h2>Overall goals and approach</h2>
+
+<p>See <a href="http://www.slideshare.net/jclouds/jclouds-vsphere">jclouds vsphere presentation</a></p>
+
+<h2>outstanding issues</h2>
+
+<h3>Non-Clone approach</h3>
+
+<p>How do we allow with creating machines from scratch instead of cloning?  For example network booting.</p>
+
+<ul><li>relationship between vmx file and cloning?</li>
+<li>which VMware products support cloning? ( vmware esx/fusion stuff?)</li>
+<li>template could be generified to support network boot or image as opposed to only image.</li>
+</ul><h3>Next steps</h3>
+
+<p><code>Adrian will propose a design</code></p>
+
+<h2>Difference between Image and Node</h2>
+
+<p>Difference between image and node is that an image is immutable, and typically doesn't have a correlation to hardware.<br />
+However (see vcloud), sometimes there is a direct relationship.</p>
+
+<ul><li>need a way to filter what is a node vs what is an image (template flag?)</li>
+</ul><h3>Next steps</h3>
+
+<p><code>Andrea will clarify this sec</code>tion with current approach and applicability.</p>
+
+<h3>Managing Images</h3>
+
+<p>Mapping VMware volumes to blobstore could help deal with image-based use cases such as groupging, bulk transfer, conversion, etc.
+ This could provide a clean and testable means to integrate with the compute service.</p>
+
+<ul><li>groups or metadata on the volume could map to blob.userMetadata and then be used in the vsphere driver</li>
+<li>Blobstore: link to datastore to retrieve machines (upload, download)</li>
+<li>convert image to ovf, ova via a blobstore transformer</li>
+</ul><h4>Next steps</h4>
+
+<p><code>Patrick will have a look at this after creating the means to bootstrap vmware installs</code></p>
+
+<h2>Snapshots</h2>
+
+<p>The idea of snapshots doesn't exist yet in jclouds.  Closest is Image, which has an image version which could correlate to the snapshot date.
+  * snapshot in vmware also includes memory state.  is this a problem?</p>
+
+<h3>Next steps</h3>
+
+<p><code>Adrian will propose a design</code></p>
+
+<h2>Customization &amp; bootstrap</h2>
+
+<p>How do we generify the jclouds runScript/file injection to take advangroupe of alternate means?<br />
+Doing so will allow easier mapping to async provisioners like ec2 spot, and applicability to windows (no-ssh).</p>
+
+<ul><li>ec2 userdata -&gt; cloudinit</li>
+<li>vnc -&gt; not windows</li>
+<li>run guest command -&gt; vixjava</li>
+<li>send rdp sequences (</li>
+<li>run commands over rdp</li>
+<li>access ssh over</li>
+<li>winrm http://msdn.microsoft.com/en-us/library/aa384426(v=vs.85).aspx</li>
+<li>enable VNC (vsphere level)</li>
+<li>host session framework (xebia lib, yeah!)</li>
+<li>flexiant use of default ip address from dhcp to pull customization</li>
+<li>Push vs Pull (using default dhcp non configured) (flexiant?)</li>
+</ul><h3>Next steps</h3>
+
+<p><code>Andrew will normalize this information into a taxonomy and check on xebia's ability to contribute the host session framework</code></p>
+
+<h2>Bootstrapping VMware installs</h2>
+
+<p>We need a means for developers to test and verify our vmware support.  This needs to support cloning which may impact applicability.</p>
+
+<h3>Next steps</h3>
+
+<p><code>Patrick will make a puppet manifest.</code></p>
+
+<h2>links</h2>
+
+<ul><li><a href="http://www.slideshare.net/jclouds/jclouds-vsphere">deck by andrea</a></li>
+<li><a href="http://jedi.be/blog/2010/12/08/libvirt-0-8-6-and-vmware-esx/">for compatible libvirt/vsphere status</a></li>
+<li>[][http://java.sun.com/javase/technologies/core/mntr-mgmt/javamanagement/JSR262_Interop.pdf]]</li>
+<li><a href="http://distributed-frostbite.blogspot.com/2010/08/managing-windows-with-ruby-part-1-or.html">http://distributed-frostbite.blogspot.com/2010/08/managing-windows-with-ruby-part-1-or.html</a></li>
+</ul><h2>Implementation</h2>
+
+<p>Adrian suggests to enhance the implementation in these areas:</p>
+
+<ul><li>add unit tests</li>
+<li>remove commented out code</li>
+<li>explict the 'write' commands: trace all the commands that leave a trace on the server
+(Ex if it failed halfway through which would need to be undone)</li>
+<li>add an HTTP log of running a vm, using jclouds HttpHelper</li>
+<li>retrieve log from vmware server by using http://www.doublecloud.org/2010/10/how-you-can-use-vsphere-apis-to-collect-vcenter-and-esx-logs/</li>
+<li>how to verify via api the operation on vm</li>
+</ul><p><code>Last Updated: 2011-05-26</code></p>

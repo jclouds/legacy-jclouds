@@ -1,0 +1,277 @@
+<h1>Using the amazon EC2 cloud</h1>
+
+<h2>Introduction</h2>
+
+<p>The compute service is implemented fully for EC2 - so you can follow the guides to using the <a class="internal present" href="/ComputeGuide.html">ComputeService API</a>.</p>
+
+<p>For credentials you will want you access key id and secret access key (don't use your user id or anything else).
+For practical EC2 usage - you will probably want to check out <a class="internal present" href="/QuickStartAWS.html">QuickStartAWS</a></p>
+
+<h2>Images</h2>
+
+<h3>Default image</h3>
+
+<p>The default image for version 1.0.0 is <a href="http://aws.amazon.com/amazon-linux-ami">Amazon Linux</a> and 64 bit.<br />
+This by default chooses t1.micro size.  The m1.small instance size does not support 64 bit images,
+if you need this, you'll have to revise the template:</p>
+
+<pre><code>// use the m1 small with amazon linux
+Template template = compute.templateBuilder().hardwareId(InstanceType.M1_SMALL).osFamily(OsFamily.AMZN_LINUX).build();</code></pre>
+
+<p>In order to match an Ubuntu, or CentOs image, you'll need to see the Image Parsing section.</p>
+
+<h3>Image Parsing</h3>
+
+<p>We had feedback from one of our users that our default image list for EC2 didn't contain CentOs.
+As you may know, parsing all images would take minutes due to the delay in calling
+ec2 across all 4 regions. We now by default parse images from Amazon, Canonical, Alestic, and
+ RightScale. With the addition of RightScale, we now support CentOs.</p>
+
+<pre><code>
+// pick the highest version of the RightScale CentOs template
+Template template = compute.templateBuilder().osFamily(CENTOS).build();
+
+// pick version 10.04 of ubuntu from canonical
+Template template = compute.templateBuilder().hardwareId(InstanceType.M1_SMALL)
+                  .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();</code></pre>
+
+<h3>Lazy Image Fetching</h3>
+
+<p>By default, the ComputeService will prefetch images from Alestic, Canonical, and
+RightScale. This allows you to query the images, which is great,
+if you don't know what you are looking for. However, if you already know the imageId you want, this is wasteful.
+We now provide the option to lazy-fetch images, which speed-ups execution.</p>
+
+<pre><code>Properties overrides = new Properties();
+// set owners to nothing
+overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
+
+context = new ComputeServiceContextFactory().createContext("aws-ec2",
+   accessid, secretkey, ImmutableSet.of(new Log4JLoggingModule()), overrides);
+
+Template template = context.getComputeService().templateBuilder().imageId(
+         "ami-ccb35ea5").build();</code></pre>
+
+<h3>Private Images</h3>
+
+<p>Amazon EC2 has the concept of private-but-shared amis - images that were bundled on
+another account, and not made public, but shared with a specified account.
+This is useful in the consolidated billing scenario - where you have one user
+managing image curation, and others using them (but all billed together).</p>
+
+<p>This private image may not show up in listImages, and jclouds will struggle with this.</p>
+
+<p>Here's the solution:</p>
+
+<pre><code>Properties props = new Properties();
+
+//have a myFavouriteOwner - the user ID of the owner of the image.
+props.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, myFavoriteOwner + ",063491364108,099720109477");
+
+// or.. you can set to '*' but this will take forever on amazon's ec2 service
+props.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "*");
+
+
+ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", "accesss", "secret",
+                                        ImmutableSet.&lt;Module&gt; of(new JschSshClientModule()), props);</code></pre>
+
+<p>You can then create nodes using the templateBuilder.imageId() method.</p>
+
+<h4>Parsing private images</h4>
+
+<p>If you publish your own images, you probably would like to be able to choose
+the latest version using templateBuilder.  For example, you might want to say
+<code>templateBuilder.imageNameMatches("my-image").imageVersionMatches("1.1.0-.*").build()</code>
+which would pick the latest version of your image within the <code>1.1.0</code> range.</p>
+
+<p>Amazon EC2 does not have typed fields for things like operating system family, image version, etc.<br />
+In jclouds, we attempt to parse these fields from well known naming conventions.<br />
+However, you might not be using naming conventions we know of, so often images show up as
+OsFamily.UNRECOGNIZED, with no image version.  Here's how to instruct jclouds to parse your images.</p>
+
+<h4>Create a custom parser</h4>
+
+<p>You'll need to override the default image parser with one that knows all the intimate secrets of your image.</p>
+
+<pre><code>package com.foo;
+
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
+import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.Credentials;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Singleton;
+
+@Singleton
+public class FooAWSEC2ReviseParsedImage extends AWSEC2ReviseParsedImage {
+
+   @Inject
+   public FooAWSEC2ReviseParsedImage() {
+      super(ImmutableMap.&lt;OsFamily, Map&lt;String, String&gt;&gt; of());
+   }
+
+   /**
+    * revide image
+    */
+   @Override
+   public void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
+            OperatingSystemBuilder osBuilder) {
+      // I always build Ubuntu 10.10 images
+      osBuilder.family(OsFamily.UBUNTU);
+      osBuilder.version("10.10");
+
+      // our image version naming convention is /us-west-1/foo/1.1.0.20110224-0001
+      builder.version(from.getImageLocation().substring(from.getImageLocation().lastIndexOf('/') + 1));
+      builder.name("foo");
+
+      // our image has a default user that's sudo-enable named foo-user
+      builder.defaultCredentials(new Credentials("foo-user", "password"));
+   }
+}</code></pre>
+
+<h4>Create a test for your parser</h4>
+
+<pre><code>package com.foo;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
+import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.Credentials;
+import org.testng.annotations.Test;
+
+@Test
+public class FooAWSEC2ReviseParsedImageTest {
+   public void testFooImage() {
+
+      ImageBuilder builder = createMock(ImageBuilder.class);
+      OperatingSystemBuilder osBuilder = createMock(OperatingSystemBuilder.class);
+      org.jclouds.ec2.domain.Image from = createMock(org.jclouds.ec2.domain.Image.class);
+
+      expect(from.getImageLocation()).andReturn("/us-west-1/foo/1.1.0.20110224-0001").times(2);
+
+      expect(osBuilder.family(OsFamily.UBUNTU)).andReturn(osBuilder);
+      expect(osBuilder.version("10.10")).andReturn(osBuilder);
+      // ensure our version parses properly
+      expect(builder.version("1.1.0.20110224-0001")).andReturn(builder);
+      expect(builder.name("foo")).andReturn(builder);
+      expect(builder.defaultCredentials(new Credentials("foo-user", "password"))).andReturn(builder);
+
+      // replay mocks
+      replay(builder);
+      replay(osBuilder);
+      replay(from);
+
+      new FooAWSEC2ReviseParsedImage().reviseParsedImage(from, builder, OsFamily.UNRECOGNIZED, osBuilder);
+
+      // verify mocks
+      verify(builder);
+      verify(osBuilder);
+      verify(from);
+   }
+
+}
+</code></pre>
+
+<h4>Instruct jclouds to use your parser</h4>
+
+<pre><code>Properties overrides = setupProperties();
+// your owner id
+overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "123123123213123");
+
+context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+         .&lt;Module&gt; of(new JschSshClientModule(), new AbstractModule(){
+
+            @Override
+            protected void configure() {
+               bind(AWSEC2ReviseParsedImage.class).to(FooAWSEC2ReviseParsedImage.class);
+            }
+            
+         }), overrides);</code></pre>
+
+<h4>Use your image version</h4>
+
+<p>jclouds will now pick the lexicographic highest version, as it now can parse your images.</p>
+
+<pre><code>Template template = context.getComputeService().templateBuilder().imageVersionMatches("1.1.0.*").build();</code></pre>
+
+<h2>ComputeService API extensions</h2>
+
+<p>Power users have requested more control over the choices jclouds ComputeService makes when provisioning nodes.
+By default, we automatically create a security group and keypair for your nodes before launching them.
+We now allow you to control this a bit through extended template options.</p>
+
+<h2>Spot Instances</h2>
+
+<p>If you are using the <code>aws-ec2</code> provider, you can use spot instances via the spotPrice parameter on template options:                                                                    <br /></p><pre><code>options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);                                                                                                                                  
+```                                                                                                                                                                                   
+AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin() uses the spot price option on the portable interface.                                                                          
+                                                                                                                                                                                          
+### Details                                                                                                                                                                           
+In the code, AWSEC2CreateNodesInGroupThenAddToSet actually manages creating the spot instance request.  The way jclouds manages this is that it looks for both regular reservations and a\
+so spot requests when listing nodes.  The convergence of these 2 is what you'll see in a listNodes command (AWSEC2ListNodesStrategy ex. does these multiple listings in parallel)         
+                                                                                                                                                                                          
+                                                                                                                                                                                          
+If there's an error on the parameters requesting nodes, you'll receive an HttpResponseException in the 400 range from ec2 itself.  The other condition you should be aware of is when the\
+spot request goes through, but perhaps takes longer to provision the nodes than the jclouds default timeout (jclouds.compute.timeout.node-running), something I've not seen.              
+
+
+### Security Groups
+```java
+// specify your own groups which already have the correct rules applied
+template.getOptions().as(EC2TemplateOptions.class).securityGroups(group1, group2);</code></pre>
+
+<h3>Key Pairs</h3>
+
+<pre><code>// specify your own keypair for use in creating nodes
+template.getOptions().as(EC2TemplateOptions.class).keyPair(group);
+
+// if your image doesn't use keypairs (ex enstratus), skip creating one
+template.getOptions().as(EC2TemplateOptions.class).noKeyPair();
+</code></pre>
+
+<h3>VPC</h3>
+
+<p>To create nodes in a subnet under Amazon VPC add the following option to your template options.  Note that VPCs
+ and Security Groups are mutually exclusive.</p>
+
+<pre><code>TemplateOptions options = compute.templateOptions();
+options.as(EC2TemplateOptions.class).withSubnetId(subnetId);
+
+Set&lt;? extends NodeMetadata&gt; nodes = client.runNodesInGroup(group, 1,
+               options);</code></pre>
+
+<p>You can also checkout <code>EC2ComputeServiceListTest.testExtendedOptionsWithSubnetId()</code></p>
+
+<h3>Monitoring (Cloud Watch)</h3>
+
+<p><em>Note this is currently only in 1.0-SNAPSHOT</em></p>
+
+<p>To create nodes that are automatically monitored in CloudWatch, add the following to your template options:</p>
+
+<pre><code>TemplateOptions options =  compute.templateOptions();
+options.as(EC2TemplateOptions.class).enableMonitoring();
+
+Set&lt;? extends NodeMetadata&gt; monitoredNodes = compute.runNodesInGroup(group, 1, options);
+</code></pre>
+
+<p>You can then use the !CloudWatchClient to get statistics on your nodes.
+</p><pre><code>RestContext&lt;CloudWatchClient, CloudWatchAsyncClient&gt; cloudWatchContext =
+       new RestContextFactory().createContext("cloudwatch",  accessid, secretkey);
+
+String region = node.getLocation().getParent().getId();
+
+Set&lt;Datapoint&gt; datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(region,
+                  "CPUUtilization", before, new Date(), 60, "Average");</code></pre>
+
+<p><code>Last Updated: 2011-07-26</code></p>

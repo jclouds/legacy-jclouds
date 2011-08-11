@@ -1,0 +1,39 @@
+<h1>JClouds Automated testing + snapshots repository.</h1>
+
+<h2>Introduction</h2>
+
+<p>There is an instance of Hudson monitoring SVN commits every 15 minutes.
+When a commit is done, it builds the code, runs the tests, and
+deploys new snapshot jars to the Apache Archiva server.</p>
+
+<h2>Hudson</h2>
+
+<p>Hudson can be accessed from http://jclouds.rimuhosting.com/hudson. Anyone should be able to see the build status.
+If you think you need more access (i.e. to run builds manually), please ask Adrian or Ivan.</p>
+
+<p>Once every 15minutes, if SVN has been committed to, Hudson builds the project, and
+as part of the build, deploys to Apache Archiva.</p>
+
+<h3>Adding a user to manage the jclouds build</h3>
+
+<ul><li>manage-hudson &gt; Manage users</li>
+<li>look at there user id in the url of the person</li>
+<li>back to manage hudson &gt; configure system</li>
+<li>then add the user with the right access</li>
+</ul><h2>Nexus</h2>
+
+<p>Installation of Nexus is on jclouds.rimuhosting.com.</p>
+
+<p>Nexus is set up to purge all snapshots older than 90 days every night (keeping a minimum of 10 builds),
+but we can of course modify that too.</p>
+
+<p>Nexus details:</p>
+
+<ul><li>UI: <a href="http://jclouds.rimuhosting.com:8081/nexus/">http://jclouds.rimuhosting.com:8081/nexus/</a></li>
+<li>Snapshot repo: <a href="https://oss.sonatype.org/content/repositories/snapshots">https://oss.sonatype.org/content/repositories/snapshots</a></li>
+</ul><h3>Starting nexus</h3>
+
+<ul><li><code>ssh root@jclouds.rimuhosting.com</code></li>
+<li><code>su - nexus</code></li>
+<li><code>./nexus start</code></li>
+</ul><p><code>Last Updated: 2011-05-29</code></p>

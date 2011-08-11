@@ -1,0 +1,44 @@
+<h1>Filesystem provider</h1>
+
+<h2>Package description</h2>
+
+<p>There is only one package that contains all the code for filesystem provider implementation,
+and could be found inside /filesystem folder in jclouds project</p>
+
+<h2>Architecture and classes responsibilities</h2>
+
+<ul><li><p><em>FilesystemAsyncBlobStore</em> is the main actor of the provider.
+It is responsible for all container and blob tasks. Currently, when the high-level and
+ generic BlobStore methods are called (like putBlob or deleteBlob),
+the code inside this class is executed.
+It relies on <em>FilesystemStorageStrategy</em> and <em>FileSystemBlobUtilsImpl</em> for IO specific tasks.
+Generally, first exploration of the code should be performed inside this class.</p></li>
+<li><p><em>FilesystemStorageStrategy</em> and derived class <em>FilesystemStorageStrategyImpl</em> performs
+IO task on filesystem, like creation and deletion of containers and blobs.</p></li>
+<li><p><em>FileSystemBlobUtilsImpl</em> implements the required BlobUtils interface and redirects to
+the <em>FilesystemStorageStrategy</em> all its methods.</p></li>
+<li><p><em>FilesystemBlobKeyValidator</em> and derived class <em>FilesystemBlobKeyValidatorImpl</em> validates the key of the blob.</p></li>
+<li><p><em>FilesystemContainerNameValidator</em> and derived class <em>FilesystemContainerNameValidatorImpl</em>
+validates the container name.</p></li>
+<li><p><em>FilesystemBlobStoreContextBuilder</em>, <em>FilesystemBlobStorePropertiesBuilder</em> and
+<em>FilesystemBlobStoreModule</em> are used by jclouds specific IoC implementation.</p></li>
+<li><p><em>FilesystemBlobStoreContextModule</em> is the <a href="http://code.google.com/p/google-guice/">Module</a> that
+link interfaces and their implementation.</p></li>
+</ul><h2>Common developer customization</h2>
+
+<p>Changes validation rules for container name and blob key</p>
+
+<p>Currently validation is performed inside classes <em>FilesystemBlobKeyValidatorImpl</em> and
+ <em>FilesystemContainerNameValidatorImpl</em>, of package <em>org.jclouds.filesystem.predicates.validators.internal</em>.</p>
+
+<p>If you want to change these rules, create a new class that implements interface <em>FilesystemBlobKeyValidator</em> or
+ <em>FilesystemContainerNameValidator</em> and assign it your personalized modules list, used when creating the context.</p>
+
+<h2>Know issues and limits</h2>
+
+<ul><li><p>blobstore list method lists all the file inside the container in a recursive way.
+Other options of the method aren't manager yes.</p></li>
+<li><p>There are issues when compiling the class under Windows. Need to be fixed</p></li>
+<li><p>No blob metadata are stored in this current implementation. Only the name and
+the content of the source payload is stored.</p></li>
+</ul><p><code>Last Updated: 2011-05-29</code></p>

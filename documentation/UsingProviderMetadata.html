@@ -1,0 +1,106 @@
+<h1>Using Provider Metadata</h1>
+
+<p>In the ProviderMetadata wiki page we learned how to implement [Provider Meta Data|ProviderMetadata].
+Now let's see how we might consume [Provider Meta Data|ProviderMetadata] to make our lives easier.
+We'll start with the basics on how to obtain [Provider Meta Data|ProviderMetadata] based on id or type.</p>
+
+<h2>Finding [Provider Meta Data|ProviderMetadata] Based on Type or ID</h2>
+
+<p>For all basic usage, you will rely on using the <a href="https://github.com/jclouds/jclouds/blob/master/core/src/main/java/org/jclouds/providers/Providers.java">org.jclouds.providers.Providers</a> class.
+This class exposes static helper methods to obtain [Provider Meta Data|ProviderMetadata] based on many of things the most basic of is by id.
+To find an exact [Provider Meta Data|ProviderMetadata] implementation based on its identifier, you'd use something like this:</p>
+
+<pre><code>...
+// Retrieves the Amazon Elastic Compute Cloud (EC2) ProviderMetadata by its id
+ProviderMetadata awsEC2 = Providers.withId("aws-ec2");
+...</code></pre>
+
+<p>Pretty simple stuff.  What if you wanted a list of all compute types?<br />
+Well, org.jclouds.providers.Providers has a getType(String) method that will let you look items up by their "type",
+which corresponds to a public static final string exposed from the <a href="https://github.com/jclouds/jclouds/blob/master/core/src/main/java/org/jclouds/providers/ProviderMetadata.java">org.jclouds.providers.ProviderMetadata</a> class.<br />
+For all known types there is also a helper method on <code>org.jclouds.providers.Providers</code> that you can use instead.<br />
+Below is a code sample with both usage examples:</p>
+
+<p>```java                                                                                                                                   <br />
+...                                                                                                                                       <br />
+// Retrieve ProviderMetadata for all compute providers (manual way)                                                                       <br />
+Iterable mcProviders = Providers.ofType(ProviderMetadata.COMPUTE_TYPE);</p>
+
+<p>// Retrieve ProviderMetadata for all compute providers (helper way)                                                                       <br />
+Iterable&lt;ProviderMetadata hcProviders = Providers.allCompute()                                                                            <br />
+...                                                                                                                                       <br />
+```</p>
+
+<p>As you can easy, [Provider Meta Data|ProviderMetadata] has made things pretty simple when it comes to findings providers based on a       <br />
+particular type or id.  What about when you want to find things based on geo-location?                                                    <br />
+Well, <code>org.jclouds.providers.Providers</code> helps with that too.</p>
+
+<h2>Finding [Provider Meta Data|ProviderMetadata] Based on ISO 3166 Code</h2>
+
+<p>As with the example above, we'll resort to using org.jclouds.providers.Providers to find [Provider Meta Data|ProviderMetadata] based on   <br /><a href="http://en.wikipedia.org/wiki/ISO_3166">ISO 3166</a> code(s).                                                                                <br />
+The first example is easy, give me all providers that are in the US-CA location:</p>
+
+<p><code>java                                                                                                                                     
+...                                                                                                                                         
+Iterable&lt;ProviderMetadata&gt; usCAProviders = Providers.boundedByIso3166Code("US-CA");                                                         
+...                                                                                                                                         
+</code></p>
+
+<p>Oh?  You only wanted blobstore providers in US-CA?  Here you go:</p>
+
+<p><code>java                                                                                                                                     
+...                                                                                                                                         
+Iterable&lt;ProviderMetadata&gt; usCABlobStoreProviders = Providers.boundedByIso3166Code("US-CA", ProviderMetadata.BLOBSTORE_TYPE);               
+...                                                                                                                                         
+</code></p>
+
+<p>Ah, that's better.  Now, what if you wanted to find all US providers?                                                                     <br />
+Don't worry, you don't have to maintain a list of US ISO 3166 codes, you'd just use something like this:</p>
+
+<p><code>java                                                                                                                                     
+...                                                                                                                                         
+Iterable&lt;ProviderMetadata&gt; usProviders = Providers.boundedByIso3166Code("US");                                                              
+...                                                                                                                                         
+</code></p>
+
+<p>As you can see, [Provider Meta Data|ProviderMetadata] has made things very, very simple when it comes to                                  <br />
+locating things based on geo-location.  What?  You want to find providers based on a reference provider?                                  <br />
+Well, we have that documented next.</p>
+
+<h2>Finding [Provider Meta Data|ProviderMetadata] Based on Relativity to Another Provider</h2>
+
+<p>Locating by type, id and ISO 3166 code have been demonstrated above and they are pretty straight forward.                                 <br />
+One last basic way to find [Provider Meta Data|ProviderMetadata] is based on similar hosting locations or                                 <br />
+being able to find "collocated" providers.  Let's do this based on the AWS EC2 example above.                                             <br />
+Let's find all providers that are in regions/locations that AWS EC2 supports ("US-VA", "US-CA", "IE", "SG", "JP-13"):</p>
+
+<p><code>java                                                                                                                                     
+...                                                                                                                                         
+ProviderMetadata awsEC2 = Providers.withId("aws-ec2");                                                                                      
+Iterable&lt;ProviderMetadata&gt; collocatedProviders = Providers.collocatedWith(awsEC2):                                                          
+...                                                                                                                                         
+</code></p>
+
+<p>Yup, all providers that are in the the same locations AWS EC2 is would had been returned.                                                 <br />
+Huh?  You didn't mention before that you only wanted blobstore providers.                                                                 <br />
+Well, good for you [Provider Meta Data|ProviderMetadata] has you covered:</p>
+
+<p><code>java                                                                                                                                     
+...                                                                                                                                         
+ProviderMetadata awsEC2 = Providers.withId("aws-ec2");                                                                                      
+Iterable&lt;ProviderMetadata&gt; collocatedBlobstoreProviders = Providers.collocatedWith(awsEC2, ProviderMetadata.BLOBSTORE_TYPE):                
+...                                                                                                                                         
+</code></p>
+
+<h2>Summary</h2>
+
+<p>As you can see by the examples above, using Jclouds' [Provider Meta Data|ProviderMetadata]  (introduced in Jclouds 1.0.0) makes finding   <br />
+ [Provider Meta Data|ProviderMetadata] extremely easy.                                                                                    <br />
+All of these examples should have all of us "cloud fluffers", a term I never heard before talking to Adrian,                              <br />
+dreaming of auto-populated drop down lists for our UIs, simple wizards and other things that                                              <br />
+ [Provider Meta Data|ProviderMetadata] makes available.</p>
+
+<p>[Provider Meta Data|ProviderMetadata] is still a moving target so to stay up to date, click one of the ProviderMetadata links in this     <br />
+ wiki page to see exactly what provider metadata is available.</p>
+
+<p><code>Last Updated: 2011-07-26</code></p>

@@ -1,0 +1,25 @@
+<h1>Quick Start: RimuHosting</h1>
+
+<p>RimuHosting's cloud is built on top of Xen with an in-house API layer to control it.</p>
+
+<ol><li><p>Sign up with Rimu Hosting
+ To start using the API to create instances a VPS needs to be manually ordered and setup the first time.
+ This helps stop CC fraud and spammers.
+ After the first setup has been successfully run the API can be used. You can Order a VPS
+ from <a href="http://rimuhosting.com/order/startorder1.jsp?hom=t-vps">here</a></p></li>
+<li><p>The RimuHosting API uses a special key to authenticate. It is available from [http://rimuhosting.com/cp/apikeys.jsp]</p></li>
+<li><p>Setup jclouds</p></li>
+<li><p>get the dependency <code>jclouds-rimuhosting</code> using our [http://code.google.com/p/jclouds/wiki/Installation#Getting_the_Latest_Release installation guide]</p></li>
+<li><p>Start Coding</p></li>
+<li>Obtaining a context to Rimuhosting
+Once you have jclouds libraries loaded, the easiest way to get started is to use the <code>ComputeServiceContextFactory</code>.<br />
+  This takes your apikey and gives you a context to either get a synchronous interface (<code>getApi()</code>) or
+  asynchronous interface (<code>getAsyncApi()</code>) to the RimuHosting service.</li>
+</ol><pre><code>// create context to obtain rimuhosting objects
+RestContext&lt;RimuHostingClient, RimuHostingAsyncClient&gt; context = 
+   				new ComputeServiceContextFactory().createContext("rimuhosting", 
+																apiKey, null).getProviderSpecificContext();
+
+// get a synchronous object to use for manipulating objects in the RimuHosting Cloud
+RimuHostingClient rhClient = context.getApi();</code></pre>
+<code>Last Updated: 2011-05-24</code>
