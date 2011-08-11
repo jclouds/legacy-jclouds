@@ -1,4 +1,6 @@
-# Quick Start: Azure Storage Service
+---
+title: Quick Start: Azure Storage Service
+---
 
 1. Sign up for an [Azure Account](http://www.microsoft.com/windowsazure/offers/)
 2. Get your account and key

@@ -1,3 +1,6 @@
+---
+title: Quick Start: Amazon Web Services
+---
 # Quick Start: Amazon Web Services
 
 This page helps you get started with `jclouds` API with Amazon Web Services
