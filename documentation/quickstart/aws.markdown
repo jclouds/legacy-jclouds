@@ -52,10 +52,9 @@ context.close();
 
 // get a context with ec2 that offers the portable ComputeService API
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", 
-											accesskeyid,
-											secretkey, 
-											ImmutableSet.<Module> of(new Log4JLoggingModule(), <!-- TODO Review -->
-											new JschSshClientModule()));
+accesskeyid,
+secretkey, 
+ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()));
 
 // here's an example of the portable api
 Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
