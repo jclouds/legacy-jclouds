@@ -300,5 +300,8 @@ font-size: 100%;
 }
 
 pre {
-font-family: 'Droid Sans Mono', sans-serif;
+ font-family: 'Droid Sans Mono', sans-serif;
+ background: #f0f0f0;
+ border-top: 1px solid black;
+ border-botton: 1px solid black;
 }
