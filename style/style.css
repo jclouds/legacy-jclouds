@@ -7,7 +7,7 @@ body {
 font-family: verdana, arial, sans-serif;
 padding: 0px;
 margin: 0px;
-font-size: 1em;
+font-size: 0.68em;
 }
 
 p {
@@ -231,7 +231,6 @@ border: 0px;
 
 /* column 2 - page content */
 #column2 {
-text-align: justify;
 width: 512px;
 float: left;
 padding: 12px 3px 15px 19px;
@@ -300,5 +299,9 @@ font-size: 100%;
 }
 
 pre {
- font-family: 'Droid Sans Mono', sans-serif;
+ 	font-family: 'Droid Sans Mono', sans-serif;
+	overflow: auto; 
+	overflow-y: visible; 
+	width: 512px;
+	font-size: 150%;
 }

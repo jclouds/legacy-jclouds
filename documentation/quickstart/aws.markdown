@@ -17,10 +17,12 @@ This page helps you get started with `jclouds` API with Amazon Web Services
 ## Using S3
 
 {% highlight java %}
-import static org.jclouds.aws.s3.options.PutObjectOptions.Builder.withAcl;
+import static 
+	org.jclouds.aws.s3.options.PutObjectOptions.Builder.withAcl;
 
 // get a context with amazon that offers the portable BlobStore API
-BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", accesskeyid, secretkey);
+BlobStoreContext context = new BlobStoreContextFactory().
+			createContext("aws-s3", accesskeyid, secretkey);
 
 // create a container in the default location
 BlobStore blobStore = context.getBlobStore();
@@ -31,8 +33,10 @@ Blob blob = blobStore.newBlob("test");
 blob.setPayload("test data");
 blobStore.putBlob(bucket, blob);
 
-// when you need access to s3-specific features, use the provider-specific context
-S3Client s3Client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
+// when you need access to s3-specific features, 
+// use the provider-specific context
+S3Client s3Client = 
+	S3Client.class.cast(context.getProviderSpecificContext().getApi());
 
 // make the object world readable
 String publicReadWriteObjectKey = "public-read-write-acl";
@@ -51,13 +55,17 @@ context.close();
 {% highlight java %}
 
 // get a context with ec2 that offers the portable ComputeService API
-ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", 
-accesskeyid,
-secretkey, 
-ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()));
+ComputeServiceContext context = 
+		new ComputeServiceContextFactory().createContext("aws-ec2", 
+								accesskeyid,
+								secretkey, 
+								ImmutableSet.<Module> of(new Log4JLoggingModule(), 
+								new JschSshClientModule()));
 
 // here's an example of the portable api
-Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
+Set<? extends Location> locations = 
+	context.getComputeService().listAssignableLocations();
+
 Set<? extends Image> images = context.getComputeService().listImages();
 
 // pick the highest version of the RightScale CentOS template
