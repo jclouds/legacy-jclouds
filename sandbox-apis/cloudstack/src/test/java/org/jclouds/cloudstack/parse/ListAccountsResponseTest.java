@@ -28,7 +28,7 @@ import org.jclouds.cloudstack.domain.User;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -62,7 +62,7 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
    }
 
    @Override
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("account")
    public Set<Account> expected() {
       return ImmutableSet.<Account> of(Account
             .builder()
@@ -88,6 +88,7 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
             .templateLimit(15l)
             .templates(0)
             .templatesAvailable(15l)
+            .VMsAvailable(14l)
             .VMsStopped(0)
             .VMsRunning(1)
             .state(State.ENABLED)

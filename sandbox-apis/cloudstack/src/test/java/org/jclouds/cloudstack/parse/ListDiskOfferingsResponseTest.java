@@ -23,7 +23,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +41,7 @@ public class ListDiskOfferingsResponseTest extends BaseSetParserTest<DiskOfferin
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("diskoffering")
    public Set<DiskOffering> expected() {
       return ImmutableSet.<DiskOffering> of(
             DiskOffering.builder().id(3).domainId(1).domain("ROOT").name("Small").displayText("Small Disk, 5 GB")

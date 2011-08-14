@@ -33,9 +33,10 @@ import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -58,7 +59,7 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listServiceOfferings")
-   @Unwrap(depth = 2)
+   @SelectJson("serviceoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<ServiceOffering>> listServiceOfferings(ListServiceOfferingsOptions... options);
@@ -68,7 +69,8 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listServiceOfferings")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("serviceoffering")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ServiceOffering> getServiceOffering(@QueryParam("id") long id);
@@ -78,7 +80,7 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listDiskOfferings")
-   @Unwrap(depth = 2)
+   @SelectJson("diskoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<DiskOffering>> listDiskOfferings(ListDiskOfferingsOptions... options);
@@ -88,7 +90,8 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listDiskOfferings")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("diskoffering")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<DiskOffering> getDiskOffering(@QueryParam("id") long id);
@@ -98,7 +101,7 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listNetworkOfferings")
-   @Unwrap(depth = 2)
+   @SelectJson("networkoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<NetworkOffering>> listNetworkOfferings(ListNetworkOfferingsOptions... options);
@@ -108,7 +111,8 @@ public interface OfferingAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listNetworkOfferings")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("networkoffering")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<NetworkOffering> getNetworkOffering(@QueryParam("id") long id);

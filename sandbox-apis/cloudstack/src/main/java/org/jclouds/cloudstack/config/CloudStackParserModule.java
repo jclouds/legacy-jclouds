@@ -90,7 +90,7 @@ public class CloudStackParserModule extends AbstractModule {
          private String name;
          @SerializedName("receivedbytes")
          private long receivedBytes;
-         @SerializedName("sentBytes")
+         @SerializedName("sentbytes")
          private long sentBytes;
          @SerializedName("snapshotavailable")
          private String snapshotsAvailable;

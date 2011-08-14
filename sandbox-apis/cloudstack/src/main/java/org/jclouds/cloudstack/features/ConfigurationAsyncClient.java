@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.domain.Capabilities;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -47,7 +47,7 @@ public interface ConfigurationAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listCapabilities")
-   @Unwrap(depth = 2)
+   @SelectJson("capability")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Capabilities> listCapabilities();
 

@@ -31,8 +31,10 @@ import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -56,7 +58,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listVirtualMachines")
-   @Unwrap(depth = 2)
+   @SelectJson("virtualmachine")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualMachine>> listVirtualMachines(ListVirtualMachinesOptions... options);
@@ -66,7 +68,8 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listVirtualMachines")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("virtualmachine")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") long id);

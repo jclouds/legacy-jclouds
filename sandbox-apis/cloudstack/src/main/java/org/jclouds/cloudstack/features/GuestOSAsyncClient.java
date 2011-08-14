@@ -32,10 +32,11 @@ import org.jclouds.cloudstack.functions.ParseIdToNameEntryFromHttpResponse;
 import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -58,7 +59,7 @@ public interface GuestOSAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listOsTypes")
-   @Unwrap(depth = 2)
+   @SelectJson("ostype")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<OSType>> listOSTypes(ListOSTypesOptions... options);
@@ -68,7 +69,8 @@ public interface GuestOSAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listOsTypes")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("ostype")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<OSType> getOSType(@QueryParam("id") long id);

@@ -32,6 +32,7 @@ import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -55,7 +56,7 @@ public interface FirewallAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listPortForwardingRules")
-   @Unwrap(depth = 2)
+   @SelectJson("portforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<PortForwardingRule>> listPortForwardingRules(ListPortForwardingRulesOptions... options);

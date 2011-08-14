@@ -29,9 +29,10 @@ import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListAccountsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -53,7 +54,7 @@ public interface AccountAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listAccounts")
-   @Unwrap(depth = 2)
+   @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Account>> listAccounts(ListAccountsOptions... options);
@@ -63,7 +64,8 @@ public interface AccountAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listAccounts")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("account")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Account> getAccount(@QueryParam("id") long id);

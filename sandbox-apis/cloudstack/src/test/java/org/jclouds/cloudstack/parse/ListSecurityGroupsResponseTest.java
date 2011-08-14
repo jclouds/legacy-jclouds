@@ -23,7 +23,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.domain.IngressRule;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +41,7 @@ public class ListSecurityGroupsResponseTest extends BaseSetParserTest<SecurityGr
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("securitygroup")
    public Set<SecurityGroup> expected() {
       return ImmutableSet
             .<SecurityGroup> builder()

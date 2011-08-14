@@ -24,7 +24,7 @@ import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.StorageType;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +42,7 @@ public class ListServiceOfferingsResponseTest extends BaseSetParserTest<ServiceO
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("serviceoffering")
    public Set<ServiceOffering> expected() {
       return ImmutableSet.<ServiceOffering> of(
             ServiceOffering.builder().id(1).name("Small Instance")

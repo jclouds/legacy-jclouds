@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -48,7 +48,7 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("network")
    public Set<Network> expected() {
       return ImmutableSet
             .<Network> of(Network

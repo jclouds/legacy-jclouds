@@ -20,7 +20,7 @@ package org.jclouds.cloudstack.parse;
 
 import org.jclouds.cloudstack.domain.Capabilities;
 import org.jclouds.json.BaseItemParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 /**
@@ -36,7 +36,7 @@ public class ListCapabilitiesResponseTest extends BaseItemParserTest<Capabilitie
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("capability")
    public Capabilities expected() {
       return Capabilities.builder().securityGroupsEnabled(true).sharedTemplatesEnabled(true).cloudStackVersion("2.2")
             .build();

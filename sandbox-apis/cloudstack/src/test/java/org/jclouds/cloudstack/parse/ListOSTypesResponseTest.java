@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +40,7 @@ public class ListOSTypesResponseTest extends BaseSetParserTest<OSType> {
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("ostype")
    public Set<OSType> expected() {
       return ImmutableSet.<OSType> builder().add(
                OSType.builder().id(69).OSCategoryId(7).description("Asianux 3(32-bit)").build()).add(

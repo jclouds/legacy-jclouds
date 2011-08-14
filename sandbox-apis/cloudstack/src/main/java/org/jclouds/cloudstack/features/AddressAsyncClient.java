@@ -32,8 +32,10 @@ import org.jclouds.cloudstack.functions.ReturnVoidOnNotFoundOr404OrUnableToFindA
 import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -57,7 +59,7 @@ public interface AddressAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listPublicIpAddresses")
-   @Unwrap(depth = 2)
+   @SelectJson("publicipaddress")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<PublicIPAddress>> listPublicIPAddresses(ListPublicIPAddressesOptions... options);
@@ -67,7 +69,8 @@ public interface AddressAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listPublicIpAddresses")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("publicipaddress")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<PublicIPAddress> getPublicIPAddress(@QueryParam("id") long id);

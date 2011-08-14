@@ -23,7 +23,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +42,7 @@ public class ListPublicIPAddressesResponseTest extends BaseSetParserTest<PublicI
    }
    
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("publicipaddress")
    public Set<PublicIPAddress> expected() {
       return ImmutableSet.of(PublicIPAddress.builder().id(30).IPAddress("72.52.126.59")
             .allocated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-19T21:15:01-0800")).zoneId(1)

@@ -29,9 +29,10 @@ import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListZonesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -54,7 +55,7 @@ public interface ZoneAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listZones")
-   @Unwrap(depth = 2)
+   @SelectJson("zone")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Zone>> listZones(ListZonesOptions... options);
@@ -64,7 +65,8 @@ public interface ZoneAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listZones")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("zone")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Zone> getZone(@QueryParam("id") long id);

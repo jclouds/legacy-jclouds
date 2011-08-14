@@ -33,8 +33,10 @@ import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -60,7 +62,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listSecurityGroups")
-   @Unwrap(depth = 2)
+   @SelectJson("securitygroup")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SecurityGroup>> listSecurityGroups(ListSecurityGroupsOptions... options);
@@ -70,7 +72,8 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listSecurityGroups")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("securitygroup")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") long id);
@@ -80,7 +83,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "createSecurityGroup")
-   @Unwrap(depth = 2)
+   @SelectJson("securitygroup")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<SecurityGroup> createSecurityGroup(@QueryParam("name") String name);
 

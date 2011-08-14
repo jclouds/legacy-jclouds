@@ -25,12 +25,14 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -38,7 +40,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class ParseNamesFromHttpResponse implements Function<HttpResponse, Set<String>> {
-   private final UnwrapOnlyNestedJsonValue<Set<Name>> parser;
+   private final ParseFirstJsonValueNamed<Set<Name>> parser;
 
    private static class Name {
       private String name;
@@ -71,8 +73,9 @@ public class ParseNamesFromHttpResponse implements Function<HttpResponse, Set<St
    }
 
    @Inject
-   public ParseNamesFromHttpResponse(UnwrapOnlyNestedJsonValue<Set<Name>> parser) {
-      this.parser = checkNotNull(parser, "parser");
+   public ParseNamesFromHttpResponse(GsonWrapper gsonWrapper) {
+      this.parser = new ParseFirstJsonValueNamed<Set<Name>>(checkNotNull(gsonWrapper, "gsonWrapper"), new TypeLiteral<Set<Name>>(){},
+            "hypervisor");
    }
 
    public Set<String> apply(HttpResponse response) {

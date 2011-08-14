@@ -46,7 +46,7 @@ public class ParseAsyncJobsFromHttpResponse implements Function<HttpResponse, Se
 
    @Inject
    public ParseAsyncJobsFromHttpResponse(ParseTypedAsyncJob parseTyped,
-            UnwrapOnlyNestedJsonValue<Set<AsyncJob<Map<String, JsonBall>>>> parser) {
+         UnwrapOnlyNestedJsonValue<Set<AsyncJob<Map<String, JsonBall>>>> parser) {
       this.parseTyped = checkNotNull(parseTyped, "parseTyped");
       this.parser = checkNotNull(parser, "parser");
    }

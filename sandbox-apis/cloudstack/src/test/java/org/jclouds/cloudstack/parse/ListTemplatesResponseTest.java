@@ -25,7 +25,7 @@ import org.jclouds.cloudstack.domain.Template.Format;
 import org.jclouds.cloudstack.domain.Template.Type;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +45,7 @@ public class ListTemplatesResponseTest extends BaseSetParserTest<Template> {
    }
 
    @Override
-   @Unwrap(depth = 2)
+   @SelectJson("template")
    public Set<Template> expected() {
       return ImmutableSet.of(
             Template.builder().id(2).name("CentOS 5.3(64-bit) no GUI (XenServer)")
