@@ -48,7 +48,7 @@ Note that this will go away as of the 7-October-2010 release of eCloud where SSH
 
 You have to configure your own dns servers.  Here's how you can do this using [OpenDns](http://www.opendns.com) hosts:
 
-{% highlight %}
+{% highlight text %}
    # prime your password 
    echo p4ssw0rd|sudo -S echo hello
    echo nameserver 208.67.222.222 |sudo tee -a /etc/resolv.conf
@@ -199,7 +199,7 @@ Note that your vApp must be off before you can configure it.  You can configure 
 
 *  How do I change the name of my vApp? 
 
-{% highlight %}
+{% highlight text %}
 import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.changeNameTo;
 ...
 
@@ -343,7 +343,7 @@ There can be multiple networks, and jclouds needs to know which is the default t
   This can be done via specifying an additional property when connecting.  
 The list of available networks is in the exception message.  For example:
 
-{% highlight %}
+{% highlight text %}
 1) Error in custom provider, java.lang.IllegalStateException: you must specify the property jclouds.vcloud.defaults.network as one of [10.1.1.160/27, 10.1.1.192/27, 10.1.1.224/27, 10.1.1.0/28]
 {% endhighlight %}`
 
