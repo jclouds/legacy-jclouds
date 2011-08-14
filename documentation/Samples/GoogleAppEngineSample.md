@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Google App Engine Sample
+---
+
 # How to install and deploy the google app engine sample
 
 ## Introduction 
