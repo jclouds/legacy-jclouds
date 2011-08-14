@@ -24,7 +24,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 **jclouds** provides two abstraction APIs at the moment: Compute and Blobstore. 
 
-   * [[Compute API|ComputeGuide]] helps you bootstrap machines in the cloud.
+   * [Compute API](refere) helps you bootstrap machines in the cloud.
    * [[Blobstore]] API helps you manage key-value data.
 
 ## Contents
