@@ -37,7 +37,7 @@ do real object equality checks we needed a class to implement the equals/hashCod
 That being said, here is an example of implementing provider metadata for [Amazon Elastic Compute Cloud (EC2)](http://aws.amazon.com/) 
 [AWSEC2ProviderMetadata.java](https://github.com/jclouds/jclouds/blob/master/providers/aws-ec2/src/main/java/org/jclouds/aws/ec2/AWSEC2ProviderMetadata.java):
 
-```java
+{% highlight  java %}
 /**
  *
  * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -154,7 +154,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    }
 
 }
-```
+{% endhighlight %}
 
 The code above is pretty self-explanatory but if you want more details, 
 the `org.jclouds.provider.ProviderMetadata` has the actual javadocs that have more detail.  
@@ -170,9 +170,9 @@ The `ServiceLoader`'s provider configuration file has two requirements:
 In our example, we would end up with a provider configuration file of *META-INF/services/org.jclouds.providers.ProviderMetadata*
  with a single line in it looking like this:
 
-```java
+{% highlight  java %}
 org.jclouds.aws.ec2.AWSEC2ProviderMetadata
-```
+{% endhighlight %}
 
 Now that we know how to implement provider metadata for jclouds providers, let's look at an example test for 
 the above provider to see how you might go about testing your provider metadata implementation.
@@ -185,7 +185,7 @@ All you have to do is check for object equality to make sure the provider you ex
 Below is the [org.jclouds.providers.AWSEC2ProviderTest.java](https://github.com/jclouds/jclouds/blob/master/providers/aws-ec2/src/test/java/org/jclouds/aws/ec2/AWSEC2ProviderTest.java) 
 class that tests the `org.jclouds.aws.ec2.AWSEC2ProviderMetadata` class:
 
-```java
+{% highlight  java %}
 /**
  *
  * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -223,7 +223,7 @@ public class AWSEC2ProviderTest extends BaseProviderMetadataTest {
       super(new AWSEC2ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
 }
-```
+{% endhighlight %}
 
 Now that we know how to implement and test provider metadata, below is an example of why this might be useful to jclouds consumers.
 

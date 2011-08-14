@@ -43,4 +43,3 @@ Nexus details:
   * `su - nexus`
   * `./nexus start`
 
-`Last Updated: 2011-05-29`

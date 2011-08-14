@@ -174,20 +174,20 @@ via the commandline using maven. This is about how to run using maven.
 #### Verifying installation
 We currently use maven 3.0 beta 3, so ensure you have "mvn" in your path.  
 To test this out, issue the `mvn -version` command.  It should look like below:
-```
+{% highlight %}
 Adrian-Coles-MacBook-Pro:~ adrian$ mvn --version
 Apache Maven 3.0-beta-3 (r990787; 2010-08-30 13:44:03+0100)
 Java version: 1.6.0_20
 Java home: /System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home
 Default locale: en_US, platform encoding: MacRoman
 OS name: "mac os x" version: "10.6.4" arch: "x86_64" Family: "mac"
-```
+{% endhighlight %}
 
 Note you should be in the directory of the service you'd like to test.  For example, 
 if you are testing the terremark module, you should already have cloned jclouds and
 changed into the vcloud/terremark directory.  Here's an example:
 
-```
+{% highlight %}
 Adrian-Coles-MacBook-Pro:tmp adrian$ git clone git://github.com/jclouds/jclouds.git
 Initialized empty Git repository in /private/tmp/jclouds/.git/
 remote: Counting objects: 58795, done.
@@ -196,7 +196,7 @@ remote: Total 58795 (delta 28015), reused 58636 (delta 27916)
 Receiving objects: 100% (58795/58795), 17.41 MiB | 45 KiB/s, done.
 Resolving deltas: 100% (28015/28015), done.
 Adrian-Coles-MacBook-Pro:tmp adrian$ cd jclouds/vcloud/terremark/
-```
+{% endhighlight %}
 
 #### Invoking the tests 
 
@@ -220,7 +220,7 @@ Tests can fail because of problems in code, problems in the service, or configur
 such as passing the wrong credentials into the service.  The first thing to do is to review the logs of the tests that failed.
 
 Here's an example of a failure:
-```
+{% highlight %}
 Failed tests: 
   testConfigureNode(org.jclouds.vcloud.terremark.TerremarkVCloudClientLiveTest)
   testGet(org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeServiceLiveTest)
@@ -232,7 +232,7 @@ Tests run: 41, Failures: 3, Errors: 0, Skipped: 2
 [ERROR] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
 [INFO] There are test failures.
-```
+{% endhighlight %}
 
 In this case, a few tests didn't pass, although most did.  There are a few logs to check into:
 
@@ -271,13 +271,13 @@ of `RestClientModule` to specify a `HttpErrorHandler` which takes
 an  `HttpCommand`and  `HttpResponse` and convert it them into a relevant exception.  
 Here's an example of taking a 404 and turning it into a `ResourceNotFoundException`
 
-```java
+{% highlight  java %}
 case 404:
   if (!command.getRequest().getMethod().equals("DELETE")) {
      exception = new ResourceNotFoundException(message, exception);
   }
   break;
-```
+{% endhighlight %}
 #### Special RuntimeException Types
 
 Certain exceptions are propagated, even if nested inside other exceptions.  
@@ -285,7 +285,7 @@ These allow jclouds code to operate without exception searching.
 
 For example, you could wrap any jclouds command in the following reliably:
 
-```java
+{% highlight  java %}
   try {
       String = client.getFoo("bar");
   } catch (AuthorizationException e) {
@@ -293,7 +293,7 @@ For example, you could wrap any jclouds command in the following reliably:
       // the first exception of type AuthorizationException will show up here.  This allows
       // you to make preventative measures that ensure your code doesn't lock out accounts.
   }
-```
+{% endhighlight %}
 
 Here's a list of our "standard" exceptions which are defined in
  `org.jclouds.util.Utils#returnFirstExceptionIfInListOrThrowStandardExceptionOrCause`:
@@ -315,7 +315,7 @@ simply means the resource isn't there, and should return false, rather than thro
 On you AsyncClient, decaare an `ExceptionParser` on the method you'd like to control.  
 
 Here's an example of common conventions, where an exception is ok:
-```java
+{% highlight  java %}
 @DELETE
 @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
 @Path("")
@@ -334,14 +334,14 @@ ListenableFuture<? extends Set<Image>> listImages();
 @XMLResponseParser(InstanceHandler.class)
 ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 
-```
+{% endhighlight %}
 
 #### Creating new http methods
 
 Sometimes, standard http methods will not do.  For example, you may need to use http PROPFIND. 
  To do this, you first need to create an annotation for the new method, then use that in your markup.  See below:
 
-```java
+{% highlight  java %}
 
 @Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -352,7 +352,7 @@ public @interface ROWDY {
 @ROWDY
 @Path("objects/{id}")
 ListenableFuture<Boolean> rowdy(@PathParam("id") String path);
-```
+{% endhighlight %}
 ### Dealing with Enums
 
 Many clouds are attempting to create ec2, s3, or vcloud compatible apis.  
@@ -362,4 +362,3 @@ isn't critical (ex. new instance type, state, etc.)  In fact, throwing an except
 Instead, let's return UNRECOGNIZED for any enums we cannot parse.
 
 
-`Last Updated: Thu Jun  2 14:05:57 2011`
