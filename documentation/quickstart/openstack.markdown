@@ -103,10 +103,8 @@ on github and scratch that itch yourself.
 	
   * A script can't be executed as a part of node creation process (`TemplateOptions.runScript` attribute). 
 	The node is pinged using the private address and then the node creation process exits on timeout.
-	
   		* Node creation process can't wait until the ports on node are opened (`TemplateOptions.blockOnPort` attribute). 
 		The reason is the same - private IP address is used.
-	
   		* Flavor reference is not returned in servers/details/list output by Openstack 
 		(but is returned if the instance details are requested directly in servers/id/details call) and 
 		therefore sometimes node metadata does not have the correct hardware info.

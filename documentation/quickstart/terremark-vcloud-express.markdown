@@ -6,10 +6,9 @@ title: Quick Start- Terremark vCloud Express
 
 # Quick Start: Terremark vCloud Express
 
-1. Sign up for Terremark vCloud Express
-  * [https://signup.vcloudexpress.terremark.com sign-up link]
+1. Sign up for [Terremark vCloud Express](https://signup.vcloudexpress.terremark.com sign-up link)
 2. Await for your Welcome Letter in email
-  * Your username and password for the portal are also your credentials.
+    * Your username and password for the portal are also your credentials.
 3. Ensure you are using a recent JDK 6 
 4. Setup your project to include trmk-vcloudexpress
 	* get the dependency `org.jclouds.provider/trmk-vcloudexpress` using jclouds [[Installation Guide|Installation]].

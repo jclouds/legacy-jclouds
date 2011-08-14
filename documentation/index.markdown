@@ -27,6 +27,3 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
    * [[Compute API|ComputeGuide]] helps you bootstrap machines in the cloud.
    * [[Blobstore]] API helps you manage key-value data.
 
-
-
-`Last Updated: 2011-05-10`
