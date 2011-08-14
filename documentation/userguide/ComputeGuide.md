@@ -115,24 +115,24 @@ Here's how to perform common commands.
 ### Open your context and get a service reference
 Here, you specify the particular service you wish to manage and get a reference to `ComputeService`
 
-```java
+{% highlight java %}
 ComputeServiceContext context = new ComputeServiceContextFactory()
              .createContext("terremark", user, password);
 
 ComputeService computeService = context.getComputeService();
-```
+{% endhighlight %}
 
 ### List the nodes you have in all locations
 As mentioned above, this context can operate all of your nodes across the globe.  Here's how to list them:
 
-```java
+{% highlight java %}
 for (ComputeMetadata node : client.listNodes()) {
    node.getId(); // how does jclouds address this in a global scope
    node.getProviderId(); // how does the provider api address this in a specific scope
    node.getName(); // if the node is named, what is it?
    node.getLocation(); // where in the world is the node
 }
-```
+{% endhighlight %}
 
 Note that the result is of type `ComputeMetadata` rather than the more useful `NodeMetadata`.  
 This is because many services offer only minimal details on listing.  To flesh out the objects you want, 
@@ -140,7 +140,7 @@ call the _Get Node Metadata_ command.
 
 ### Get Node Metadata
 Use the _Get Node Metadata_ command to retrieve commonly required information about a node.
-```java
+{% highlight java %}
 NodeMetadata metadata = client.getNodeMetadata(node);
 metadata.getId();
 metadata.getProviderId(); 
@@ -154,7 +154,7 @@ metadata.getState();
 metadata.getPrivateAddresses();
 metadata.getPublicAddresses();
 metadata.getCredentials();// only available after createNodesInGroup, identifies login user/credential
-```
+{% endhighlight %}
 ### List Assignable Locations
 
 The _List Assignable Location_ command returns all the valid locations for nodes.  
@@ -163,9 +163,9 @@ A location has a scope, which is typically region or zone. A region is a general
 like eu-west, where a zone is similar to a datacenter. If a location has a parent, 
 that implies it is within that location. For example a location can be a rack, whose parent is likely to be a zone.
 
-```
+{% highlight %}
 Set<? extends Location> listAssignableLocations();
-```
+{% endhighlight %}
 
 ### List Hardware Profiles
 The _List Hardware Profiles_ command returns settings including virtual CPU count, memory, and disks. 
@@ -175,18 +175,18 @@ command shows you the options including virtual cpu count, memory, and disks. cp
 a portable quantity across clouds, as they are measured differently. However, it is a good indicator of
  relative speed within a cloud. memory is measured in megabytes and disks in gigabytes.
 
-```java
+{% highlight java %}
 Set<? extends Hardware> listHardwareProfiles();
-```
+{% endhighlight %}
 
 ### List Images
 The _List Images_ command define the operating system and metadata related to a node.  
 In some clouds, images are bound to a specific region, and their identifiers are different across regions.  
 For this reason, you should consider matching image requirements like operating system family with TemplateBuilder as opposed to choosing an image explicitly.
 
-```java
+{% highlight java %}
    Set<? extends Image> listImages();
-```
+{% endhighlight %}
 
 ### Create Nodes with Group 
 
@@ -197,18 +197,18 @@ you can choose to operate on one or many nodes as a logical unit without regard 
 If resources such as security groups are needed, they will be reused or created for you.
 Here's an example of how to start a nodeSet:
 
-```java
+{% highlight java %}
 NodeSet nodes = client.createNodesInGroup(group, 2, template);
-```
+{% endhighlight %}
 
 The set that is returned will include credentials you can use to ssh into the nodes. 
 The "credential" part of the credentials is either a password or a private key. You have to inspect the value to determine this.  
 Make sure you look also at the "identity" part of the credentials object so that you don't attempt to login as the wrong user.
 
-```java
+{% highlight java %}
 if (node.getCredentials().credential.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
  // it is a private key, not a password.
-```
+{% endhighlight %}
 
 Note: If all you want to do is execute a script at bootup, you should consider use of the runScript option. 
 
@@ -222,24 +222,24 @@ There are a number of predicates in the `NodePredicates` class.  Here are a few 
   
   * `runningInGroup(group)` - affect any nodes that are already running, refined to a specific group
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
 
 Map<? extends NodeMetadata, ExecResponse>  responses = client.runScriptOnNodesMatching(runningInGroup(group), script,
                   overrideCredentialsWith(creds));
-```
+{% endhighlight %}
 
   * `and(withGroup(group), not(TERMINATED))` match everything that has a group, but not destroyed.
 
-```java
+{% highlight java %}
 import static com.google.common.base.Predicates.*;
 import static org.jclouds.compute.predicates.NodePredicates.*;
 import static com.google.common.collect.Iterables.*;
 
 Iterable<? extends NodeMetadata> billedNodes = filter(client.listNodesDetailsMatching(all()), and(withGroup(group), not(TERMINATED))));
 
-```
+{% endhighlight %}
 #### Commands
 
 ##### Destroy Nodes Matching Predicate
@@ -247,27 +247,27 @@ Iterable<? extends NodeMetadata> billedNodes = filter(client.listNodesDetailsMat
 nodes matching the filter are destroyed as a logical set.   
 When the last node in a set is destroyed, any indirect resources it uses, such as keypairs, are also destroyed.  Ex. here's how to destroy all nodes with a specific group:
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.*;
    client.destroyNodesMatching(withGroup(group));
-```
+{% highlight %}
 
 ##### Reboot Nodes Matching Predicate 
 Ex. here's how to reboot all nodes with a specific group:
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.*;
    client.rebootNodesMatching(withGroup(group));
-```
+{% endhighlight %}
 
 ##### Run Script on Nodes Matching Predicate
 Here's how to run a script on all nodes as root with the credentials that they were created with.
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 
 responses = client.runScriptOnNodesMatching(runningInGroup(group), script);
-```
+{% endhighlight %}
 
 If you created your nodes using the `authorizePublicKey` option, then you are probably interested in using that again here.  
 However, you should always look up the login user associated with the host, as it may not be root.
@@ -275,7 +275,7 @@ However, you should always look up the login user associated with the host, as i
 *Note* if you think this should change, please file an issue.  For example, we could in the future create a 
 sudo-able login user on the nodes, simplifying this process.
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.options.TemplateOptions.Builder.authorizePublicKey;
@@ -289,7 +289,7 @@ loginUser = good.identity;
 // later, you will use your key with the default login user
 responses = client.runScriptOnNodesMatching(runningInGroup(group), script,
                   overrideCredentialsWith(new Credentials(loginUser, myKey));
-```
+{% endhighlight %}
 
 ##### Working with credentials
 
@@ -297,7 +297,7 @@ Note that by default, jclouds stores credentials in a static member.
 If you close and reopen your compute context, your credentials will still be accessible.  
 If you'd like to have credentials persist across compute service contexts, then supply a backing map like below:
 
-```java
+{% highlight java %}
 // set the location of the filesystem you wish to persist credentials to
 props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/var/gogrid");
 
@@ -307,7 +307,7 @@ credentialsMap = blobContext.createInputStreamMap("credentials");
 
 computeContext = new ComputeServiceContextFactory().createContext("gogrid", secret, apiKey,
          ImmutableSet.of(new CredentialStoreModule(credentialsMap)));
-```
+{% endhighlight %}
 ### Individual Node Commands
 Individual commands are executed against a specific node's `id` (not `providerId`!).  
 You can save time if you know you are only affecting one node, and don't need jclouds' help finding it.
@@ -317,16 +317,16 @@ You can save time if you know you are only affecting one node, and don't need jc
 
 If you save a node's id to disk, you can inflate it later without querying by using the `getNodeMetadata` command.
 
-```java
+{% highlight java %}
 NodeMetadata metadata = client.getNodeMetadata(savedId);
-```
+{% endhighlight %}
 ##### Destroy Node
 ##### Reboot Node
 
 ### Logging
 You can now see status of compute commands by enabling at least DEBUG on the log category: "jclouds.compute".  Here is example output:
 
-```
+{% highlight %}
 2010-02-06 09:43:54,985 DEBUG [jclouds.compute] (main) >> providing images
 2010-02-06 09:44:01,186 DEBUG [jclouds.compute] (main) << didn't match os(folding)
 2010-02-06 09:44:01,642 DEBUG [jclouds.compute] (main) << images(614)
@@ -344,10 +344,10 @@ You can now see status of compute commands by enabling at least DEBUG on the log
 2010-02-06 09:44:07,824 DEBUG [jclouds.compute] (main) << authorized securityGroup(ec2)
 2010-02-06 09:44:07,828 DEBUG [jclouds.compute] (main) >> running 2 instance region(us-east-1) zone(null) ami(ami-87a243ee) type(m1.large) keyPair(ec2) securityGroup(ec2)
 2010-02-06 09:44:09,239 DEBUG [jclouds.compute] (main) << started instances(i-7c180614,i-7e180616)
-```
+{% endhighlight %}
 
 If you are using the Log4JLoggingModule, here is an example log4j.xml stanza you can use to enable compute logging:
-```xml
+{% highlight xml %}
 <appender name="COMPUTEFILE" class="org.apache.log4j.DailyRollingFileAppender">
      <param name="File" value="logs/jclouds-compute.log" />
      <param name="Append" value="true" />
@@ -366,7 +366,7 @@ If you are using the Log4JLoggingModule, here is an example log4j.xml stanza you
      <priority value="TRACE" />
      <appender-ref ref="ASYNCCOMPUTE" />
 </category>
-```
+{% endhighlight %}
 
 ## Usage in Google AppEngine
 Please see [][UsingJCloudsWithGAE]]
@@ -375,12 +375,12 @@ Please see [][UsingJCloudsWithGAE]]
 Almost all advanced features require ssh.  You will likely also want to use log4j and our 
 enterprise configuration module.  Here's how to configure these.
 
-```java
+{% highlight java %}
 Properties overrides = new Properties();
 Set<Module> wiring = ImmutableSet.of(new JschSshClientModule(), new Log4JLoggingModule(), new EnterpriseConfigurationModule());
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("terremark", user, password,
              wiring, overrides);
-```
+{% endhighlight %}
 
 For mode information, check out the [[jcloudsAPI]] wiki page.
 
@@ -390,29 +390,29 @@ You'll need to get an ssh client for the node in order to upload files in the cu
 
 if you just created the node, it will have login credentials set in node.getCredentials().  Ask for an ssh client based on the node.
 
-```java
+{% highlight java %}
 client = context.utils().sshForNode().apply(node);
-```
+{% highlight %}
 
 if the node's credentials aren't set, you'll have to assign them first.
 
-```java
+{% highlight java %}
 client = context.utils().sshForNode().apply(NodeMetadataBuilder.fromNodeMetadata(node).credentials(
 	                   new Credentials("adrian",sshKeyInString)).build());
-```
+{% endhighlight %}
 
 Once you have the client, you can push files to it
 
-```java
+{% highlight java %}
 client.put("/path/to/file", Payloads.newFilePayload(contents));
-```
+{% endhighlight %}
 
 ### Selecting a correct package manager
 
 Below, you'll see how you can consolidate bootstrap instructions when empowered with an operating system type.
  No more listing the dozen flavors of compatible unix's when all you're really concerned about is the package manager:
 
-```java
+{% highlight java %}
 if (OperatingSystemPredicates.supportsApt().apply(os))
   return RunScriptData.APT_RUN_SCRIPT;
 else if (OperatingSystemPredicates.supportsYum().apply(os))
@@ -421,7 +421,7 @@ else if (OperatingSystemPredicates.supportsZypper().apply(os))
   return RunScriptData.ZYPPER_RUN_SCRIPT;
 else
   throw new IllegalArgumentException("don't know how to handle" + os.toString());
-```
+{% endhighlight %}
 
 ### Opening ports
 Unless you specify otherwise, only access to public IP on port 22 is explicitly configured.  
@@ -429,21 +429,21 @@ In clouds such as hosting.com and Rackspace, this doesn't matter, as all service
 However, in clouds like Terremark and EC2, you will want to open at least 1 additional port most of the time.  
 Here's how:
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
 ...
       Template template = client.templateBuilder().options(inboundPorts(22, 8080)).build();
       // start 2 nodes
       nodes = client.createNodesInGroup(group, 2, template);
 
-```
+{% endhighlight %}
 ### Template Matching
 
 #### Matching an operating system version
-```java
+{% highlight java %}
 template = client.templateBuilder().hardwareId(InstanceType.M1_SMALL)
                   .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
-```
+{% endhighlight %}
 
 ### Authorizing your RSA SSH Public Key
 
@@ -455,13 +455,13 @@ If you are interested in changing the private key, look at the `installPrivateKe
 In order to use this feature, you must generate or load your RSA public key into a String.  Set the option `authorizePublicKey` to this value.  Note that if you have done this correctly, your key will start with `ssh-rsa`.
 
 Ex.
-```java
+{% highlight java %}
 import static org.jclouds.compute.options.TemplateOptions.Builder.authorizePublicKey;
 ...
       Template template = client.templateBuilder().options(authorizePublicKey(Payloads.newPayload(new File("/home/me/.ssh/id_rsa.pub")).build();
       // start 10 nodes
       nodes = client.createNodesInGroup(group, 10, template);
-```
+{% endhighlight %}
 
 Note that SSH must be configured for this feature to work.
 
@@ -477,12 +477,12 @@ In order to use this feature, you must generate or load your RSA key into a Stri
 `-----BEGIN RSA PRIVATE KEY-----`.
 
 Ex.
-```java
+{% highlight java %}
 import static org.jclouds.compute.options.TemplateOptions.Builder.installPrivateKey;
 ...
       // start 10 nodes
       nodes = client.createNodesInGroup(group, 10, installPrivateKey(Files.toString(new File("/home/me/.ssh/id_rsa"));
-```
+{% endhighlight %}
 
 Note that SSH must be configured for this feature to work.
 
@@ -495,12 +495,12 @@ In order to use this feature, you must generate or load a script as a jclouds `S
 Set the option `runScript` to this value.
 
 Ex.
-```java
+{% highlight java %}
 import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
 ...
       // start 10 nodes
       nodes = client.createNodesInGroup(group, 10, runScript(Files.toString(new File("runscript.sh")));
-```
+{% endhighlight %}
 
 Note that SSH must be configured for this feature to work. 
 
@@ -544,17 +544,17 @@ TODO: This is significantly out of date.
 
   * OperatingSystemPredicates.supportsApt().apply(node.getOperatingSystem())
 
-```
+{% highlight %}
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 cp /etc/apt/sources.list /etc/apt/sources.list.old
 sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
 apt-get update
 apt-get install -f -y --force-yes openjdk-6-jdk
-```
+{% endhighlight %}
 
   * OperatingSystemPredicates.supportsYum().apply(node.getOperatingSystem())
 
-```
+{% highlight %}
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 echo "[jdkrepo]" >> /etc/yum.repos.d/CentOS-Base.repo
 echo "name=jdkrepository" >> /etc/yum.repos.d/CentOS-Base.repo
@@ -562,7 +562,7 @@ echo "baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/" >> /etc/yum
 echo "enabled=1" >> /etc/yum.repos.d/CentOS-Base.repo
 yum --nogpgcheck -y install java-1.6.0-openjdk
 echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bashrc
-```
+{% endhighlight %}
 
 
 ## Clojure
@@ -573,16 +573,16 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
   * `vi project.clj`
 
 
-```clojure
+{% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.jclouds/jclouds-allcompute "1.0.0"]]
   :repositories [["jclouds" "https://oss.sonatype.org/content/repositories/releases"]])
-```
+{% endhighlight %}
     * for snapshot
-```clojure
+{% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
@@ -590,7 +590,7 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
                  [org.jclouds/jclouds-allcompute "1.0-SNAPSHOT"]]
   :repositories {
                "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"})
-```
+{% endhighlight %}
   * `lein deps`
 
 
@@ -598,22 +598,22 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
 Execute `lein repl` to get a repl, then paste the following or write your own code.  Clearly, 
 you need to substitute your accounts and keys below.
 
-```clojure
+{% highlight clojure %}
 (use 'org.jclouds.compute)
 
 (with-compute-service ["cloudservers" "email" "password"]
   (nodes))
-```
+{% endhighlight %}
 
 Here's an example of creating and running a small linux node with the group webserver:
 
-```clojure  
+{% highlight clojure %}  
   ; create a compute service using ssh and log4j extensions
   (def compute 
     (compute-service provider user password :ssh :log4j))
 
   (create-node "webserver" compute)
-```
+{% endhighlight %}
 
 ## Tools
 
@@ -624,5 +624,3 @@ These tools enable developers to focus on working code, as opposed to  build a
 
 Please check [[ApacheAntComputeGuide]] on how to use ant for compute API tasks.
 
-
-`Last Updated: 2011-07-26`

@@ -50,6 +50,5 @@ If you want to change these rules, create a new class that implements interface 
 
   * No blob metadata are stored in this current implementation. Only the name and
  	the content of the source payload is stored. 
-
-`Last Updated: 2011-05-29`
+`
  

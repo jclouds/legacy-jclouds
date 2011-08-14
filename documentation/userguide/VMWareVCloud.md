@@ -25,7 +25,7 @@ to either get a portable cloud computing interface (`getComputeService()` ), or 
 
 * Getting a context to connect to Terremark vCloud Express:
 
-```java
+{% highlight java %}
 // add the ssh module, if you are using ComputeService, otherwise leave it out
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("trmk-vcloudexpress", 
 			user, password, ImmutableSet.of(new JshSshClientModule()));
@@ -33,11 +33,11 @@ ComputeServiceContext context = new ComputeServiceContextFactory().createContext
 // use context to obtain vcloud objects with terremark vCloud express extensions
 RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>  providerContext = context.getProviderContext();
 
-```
+{% endhighlight %}
 
 * Getting a context to use Terremark eCloud
 
-```java
+{% highlight java %}
 // add the ssh module, if you are using ComputeService, otherwise leave it out
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("trmk-ecloud", 
 									user, password, ImmutableSet.of(new JshSshClientModule()));
@@ -45,11 +45,11 @@ ComputeServiceContext context = new ComputeServiceContextFactory().createContext
 // use context to obtain vcloud objects with terremark eCloud extensions
 RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>  providerContext = context.getProviderContext();
 
-```
+{% endhighlight %}
 
 * Here's an example of getting a context to BlueLock vCloud Director
 
-```java
+{% highlight java %}
 // add the ssh module, if you are using ComputeService, otherwise leave it out
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector",
  							user, password, ImmutableSet.of(new JshSshClientModule()));
@@ -57,22 +57,22 @@ ComputeServiceContext context = new ComputeServiceContextFactory().createContext
 RestContext<VCloudClient, VCloudAsyncClient> providerContext = context.getProviderContext();
 
 
-```
+{% endhighlight %}
 
 * Here's an example of getting a context to StratoGen vCloud Director                                                                                                      
 
-```java                                                                                                                                                                      
+{% highlight java %}                                                                                                                                                                      
       // add the ssh module, if you are using ComputeService, otherwise leave it out                                                                                     
       ComputeServiceContext context = new ComputeServiceContextFactory().createContext("stratogen-vcloud-mycloud", user, password, ImmutableSet.of(new JshSshClientModul\
 ()));                                                                                                                                                                    
                                                                                                                                                                          
       RestContext<VCloudClient, VCloudAsyncClient> providerContext = context.getProviderContext();                                                                       
-```                                                                                                                                                                  
+{% endhighlight %}                                                                                                                                                                  
 
 
 * Getting a context to any portable version 1.0 vCloud:
 
-```java
+{% highlight java %}
 
 Properties overrides = new Properties();
 overrides.setProperty("vcloud.endpoint", "https://****/api");
@@ -82,7 +82,7 @@ ComputeServiceContext context = new ComputeServiceContextFactory().createContext
                		ImmutableSet.of(new Log4JLoggingModule(), new JshSshClientModule()), overrides);
 
 RestContext<VCloudClient, VCloudAsyncClient> providerContext = context.getProviderContext();
-```
+{% endhighlight %}
 
 
 ## Portability 
@@ -90,10 +90,10 @@ RestContext<VCloudClient, VCloudAsyncClient> providerContext = context.getProvid
 All vClouds (Express or Director) extend the same interfaces `CommonVCloudClient` and 
 `CommonVCloudAsyncClient`  You can always use this in place of the vendor-specific interface.
 
-```
+{% highlight %}
 // get a synchronous object to use for manipulating vcloud objects
 CommonVCloudClient client = context.getApi()
-```
+{% endhighlight %}
 
 If you are interacting with Terremark, you can cast to `VCloudExpressClient` and `VCloudExpressAsyncClient` 
 to use the common features between eCloud and vCloud Express.
@@ -102,7 +102,7 @@ to use the common features between eCloud and vCloud Express.
 
 In order to instantiate a vApp template, you must first find one.  Here's how to lookup a Ubuntu template:
 
-```java
+{% highlight java %}
 // lookup the item holding the vAppTemplate you wish to deploy by name
 // note that if you don't specify a parameter for org and catalog, jclouds will search the default catalog
 CatalogItem item = client.findCatalogItemInOrgCatalogNamed(null, null, "Ubuntu JeOS 9.04 (32-bit)");
@@ -115,13 +115,13 @@ VAppTemplate vAppTemplate = client.getVAppTemplate(item.getEntity().getHref());
 // Use VCloudExpressVAppTemplate in that case
 VCloudExpressVAppTemplate vAppTemplate = client.getVAppTemplate(item.getEntity().getHref());
 
-```
+{% endhighlight %}
 
 ### Instantiate, deploy, and powerOn a vApp template in vCloud 0.8 (Terremark)
 
 To make use of a vApp, you must first instantiate it, then deploy it, finally power it on. 
 
-```java
+{% highlight java %}
 // lookup the datacenter you are deploying into, nulls for default
 vdc = clent.findVDCInOrgNamed(null, null);
 
@@ -145,14 +145,14 @@ Task onTask = client.powerOnVApp(vApp.getHref());
 // block until poweron task shows success
 if (!taskTester.apply(onTask.getHref())) 
       throw new Exception("could not turn on "+vApp.getHref());
-```
+{% endhighlight %}
 
 ### Instantiate, deploy, and powerOn a vApp template in vCloud 1.0 
 
 To make use of a vApp, you must first instantiate it, then deploy it, finally power it on.  Default in vCloud 1.0 is 
 to transition to powerOn state from instantiate.
 
-```java
+{% highlight java %}
 // lookup the datacenter you are deploying into, nulls for default
 vdc = clent.findVDCInOrgNamed(null, null);
 
@@ -169,13 +169,13 @@ RetryablePredicate<String> taskTester = new RetryablePredicate<String>(new TaskS
 // block until task shows success
 if (!taskTester.apply(task.getHref()) 
      throw new Exception("could not deploy and powerOn "+vApp.getHref());
-```
+{% endhighlight %}
 
 ### Getting vApp details
 
 In order to get details such as the private IP address, the vApp must at least be deployed.
 
-```java
+{% highlight java %}
      // after deployment, the vApp will have all details. 
      // note that 0.8 or VCloudExpress objects are not compatible with 1.0 ones
 
@@ -185,15 +185,15 @@ In order to get details such as the private IP address, the vApp must at least b
      // for vCloud 1.0 based services
      vApp = client.getVApp(vApp.getHref());
 
-```
+{% endhighlight %}
 
 ### Closing the context 
 
 The context object uses threads and other resources.  When you are finished, close it.
 
-```java
+{% highlight java %}
       context.close();
-```
+{% endhighlight %}
 
 ### vApp Templates
 
@@ -209,7 +209,7 @@ vApp Templates are like images in other systems.  However, these also include vi
 
 vApps are listed as ResourceEntities in the vDC. 
 
-```java
+{% highlight java %}
 for (ReferenceType item :  vdc.getResourceEntities().values()) {
    if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
       // version 1.0
@@ -218,12 +218,12 @@ for (ReferenceType item :  vdc.getResourceEntities().values()) {
       VCloudExpressVApp app = client.getVApp(item.getHref());
    }
 }
-```
+{% endhighlight %}
 
 * How do I get the size of a vApp? (1.0)
 Get a reference to the vApp object and query the ResourceAllocations in the hardware section of the enclosed VMs
 
-```java
+{% highlight java %}
 import static com.google.common.collect.Iterables.*;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
@@ -237,13 +237,13 @@ int vpus = (int) find(hardware.getResourceAllocations(), resourceType(ResourceTy
 
 // be careful as you may have multiple disks
 int kbDisk = (int) find(hardware.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity();
-```
+{% endhighlight %}
 
 *  How do I get the size of a vApp? (0.8)
 
 Get a reference to the vApp object and query the ResourceAllocations
 
-```java
+{% highlight java %}
 import static com.google.common.collect.Iterables.*;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
@@ -254,7 +254,7 @@ int vpus = (int) find(vApp.getResourceAllocations(), resourceType(ResourceType.P
 
 // be careful as you may have multiple disks
 int kbDisk = (int) find(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity();
-```
+{% endhighlight %}
 
 * How do I clone my vApp without starting the clone?
 
@@ -262,20 +262,20 @@ int kbDisk = (int) find(vApp.getResourceAllocations(), resourceType(ResourceType
 
 This is the default behavior of cloneVApp.
 
-```java
+{% highlight java %}
 // lookup the datacenter you are deploying into, nulls for default
 vdc = clent.findVDCInOrgNamed(null, null);
 
 String newName = "clone of "+sourceVApp.getName();
 
 Task task = client.cloneVAppInVDC(vdc.getHref(), sourceVApp.getHref(), newName);
-```
+{% endhighlight %}
 
 *  How do I make a clone which automatically powers on?
 
 You need to set a couple options for this.  deploy, then poweron.
 
-```java
+{% highlight java %}
 import static org.jclouds.vcloud.options.CloneVAppOptions.Builder.deploy;
 
 // lookup the datacenter you are deploying into, nulls for default
@@ -284,6 +284,5 @@ vdc = clent.findVDCInOrgNamed(null, null);
 String newName = "clone of "+sourceVApp.getName();
 
 Task task = client.cloneVAppInVDC(vdc.getHref(), sourceVApp.getHref(), newName, deploy().powerOn());
-```
+{% endhighlight %}
 
-`Last Updated: 2011-07-26`

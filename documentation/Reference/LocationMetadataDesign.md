@@ -104,9 +104,9 @@ To facilitate overrides, or exports to other systems, a data format should be id
 This must include at least a JSON syntax, and may include XML schema.
 
 An example of such syntax is below
-```
+{% highlight %}
 //TODO
-```
+{% endhighlight %}
 
 ## Location Suppliers 
 

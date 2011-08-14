@@ -41,7 +41,7 @@ an api or inspect response status for rate info.  Sometimes, there's a process o
 
 Here's an example of the data, which of course you can answer only what you are comfortable answering, and those which are relevant.
 
-```
+{% highlight %}
 service provider: cloud2cloud
 
 offering: enterprise-de
@@ -63,7 +63,7 @@ request to extend limits: http://express.cloud2cloud.co.uk/cloudup
 simple scale/customer: 20 servers launched in 3 minutes
 optimized scale/customer: same
 optimization strategy: n/a
-```
+{% endhighlight %}
 
 This information will go into a public wiki and become inputs to our design of how to start pools that 
 can ideally supply >20 nodes potentially many more per cloud.  

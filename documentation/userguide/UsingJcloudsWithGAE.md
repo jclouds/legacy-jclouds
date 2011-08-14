@@ -14,19 +14,19 @@ Configuration can be made via property or a typed module.  Here's how you can do
 
 * Using typed configuration
 
-```java	
+{% highlight java %}	
 modules = ImmutableSet.of(new AsyncGoogleAppEngineConfigurationModule());
 // note if you are using <= beta-9, providers will be ec2 and s3
 compute = new ComputeServiceContextFactory().createContext("aws-ec2", accesskey, secret, modules);
 blobStore = new BlobStoreContextFactory().createContext("aws-s3", accesskey, secret, modules);
-```
+{% endhighlight %}
 
 * Using property-based configuration
 
 Using properties-based configuration, you can load configuration from resource, and therefore choose to include the
 Google App Engine config only when running inside Google AppEngine.
 
-```java
+{% highlight java %}
 Properties overrides = new Properties();
 overrides.setProperty("jclouds.modules","org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule");
 // note if you are using <= beta-9, providers will be ec2 and s3
@@ -37,17 +37,17 @@ overrides.setProperty("aws-s3.credential","secret");
 
 compute = new ComputeServiceContextFactory().createContext("aws-ec2", overrides);
 blobStore = new BlobStoreContextFactory().createContext("aws-s3", overrides);
-```
+{% endhighlight %}
 
 ### Usage with Clojure
   * note you need to include the maven dependency: 
 	org.jclouds/jclouds-gae if < beta-9, or org.jclouds.driver/jclouds-gae if beta-9/snapshot
 
-```clojure
+{% highlight clojure %}
   (def compute
     (compute-service
       "aws-ec2" "accessKey" "secret" :gae-async))
-```
+{% endhighlight %}
 
   * note that this refers to `:gae-async` and `aws-ec2` which were added after 1.0-beta-9, 
 	you can use `:gae` and `ec2` if you are using 1.0-beta-8 or earlier.
@@ -59,28 +59,28 @@ your WEB-INF directory, e.g., here are two files and a servlet context listener 
 
 Edit or create `WEB-INF/jclouds-local.properties` as shown below:
 
-```
+{% highlight %}
 jclouds.blobstore=filesystem
 jclouds.filesystem.basedir=/tmp/blobstore
 filesystem.identity=foo
-```
+{% endhighlight %}
 
 Edit or create `WEB-INF/jclouds-gae.properties` 
 
 this assumes you want to use googlestorage provider.  use the same conventions for s3, azurestorage, cloudfiles, etc.
 
-```
+{% highlight %}
 jclouds.blobstore=googlestorage
 jclouds.filesystem.basedir=/tmp/blobstore
 jclouds.modules=org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule
 googlestorage.identity=accessKey
 googlestorage.credential=secret
-```
+{% endhighlight %}
 
 #### Configuring servlet listener
 `Note you'll have to register this in your web.xml`
 
-```java
+{% highlight java %}
 public class BlobStoreRegistrationListener implements ServletContextListener {
 
    /**
@@ -131,7 +131,7 @@ public class BlobStoreRegistrationListener implements ServletContextListener {
       return props;
    }
 }
-```
+{% endhighlight %}
 
 ### Logging
 
@@ -159,15 +159,15 @@ exceed timeouts.  Here are the most important things you'll need to do:
 Every current cloud takes longer than 30 seconds to provision a node. 
 You do not have luxury to synchronously block.  Setting the blockUntilRunning(false) option will help.
 
-```java
+{% highlight java %}
 computeService = context.getComputeService();
 options = computeService.templateOptions().blockUntilRunning(false);
 template = computeService.templateBuilder().options(options).build();
-```
+{% endhighlight %}
 
 * Tone down all default wait properties to under 30 seconds
 
-```java
+{% highlight java %}
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
@@ -182,20 +182,18 @@ overrides.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, "25000");
 context = new ComputeServiceContextFactory()
       .createContext(service, identity, credential, ImmutableSet.of(
             new AsyncGoogleAppEngineConfigurationModule()), overrides);
-```
+{% endhighlight %}
 
 ### FAQ
 1. I get a log message: "Failed to start reference finalizer" what gives?
  * A log message like below is an overly verbose way of Guice saying it can't spawn threads.  
 	This is expected and also not a problem, as it works around the issue.
 	
-```
+{% highlight %}
 com.google.inject.internal.util.$FinalizableReferenceQueue <init>: Failed to start reference finalizer thread. Reference cleanup will only occur when new references are created.
 java.lang.reflect.InvocationTargetException
 	at com.google.appengine.runtime.Request.process-8e3e8ebfb87d6827(Request.java)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-```
+{% endhighlight %}
 
-
-`Last Updated: 2011-05-24`

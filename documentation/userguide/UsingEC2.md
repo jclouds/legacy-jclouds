@@ -13,10 +13,10 @@ The default image for version 1.0.0 is [Amazon Linux](http://aws.amazon.com/amaz
 This by default chooses t1.micro size.  The m1.small instance size does not support 64 bit images, 
 if you need this, you'll have to revise the template:
 
-```java
+{% highlight java %}
 // use the m1 small with amazon linux
 Template template = compute.templateBuilder().hardwareId(InstanceType.M1_SMALL).osFamily(OsFamily.AMZN_LINUX).build();
-```
+{% endhighlight %}
 
 In order to match an Ubuntu, or CentOs image, you'll need to see the Image Parsing section.
 
@@ -27,7 +27,7 @@ As you may know, parsing all images would take minutes due to the delay in calli
 ec2 across all 4 regions. We now by default parse images from Amazon, Canonical, Alestic, and
  RightScale. With the addition of RightScale, we now support CentOs.
 
-```java
+{% highlight java %}
 
 // pick the highest version of the RightScale CentOs template
 Template template = compute.templateBuilder().osFamily(CENTOS).build();
@@ -35,7 +35,7 @@ Template template = compute.templateBuilder().osFamily(CENTOS).build();
 // pick version 10.04 of ubuntu from canonical
 Template template = compute.templateBuilder().hardwareId(InstanceType.M1_SMALL)
                   .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
-```
+{% endhighlight %}
 
 ### Lazy Image Fetching
 
@@ -44,7 +44,7 @@ RightScale. This allows you to query the images, which is great,
 if you don't know what you are looking for. However, if you already know the imageId you want, this is wasteful. 
 We now provide the option to lazy-fetch images, which speed-ups execution.
 
-```java
+{% highlight java %}
 Properties overrides = new Properties();
 // set owners to nothing
 overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
@@ -54,7 +54,7 @@ context = new ComputeServiceContextFactory().createContext("aws-ec2",
 
 Template template = context.getComputeService().templateBuilder().imageId(
          "ami-ccb35ea5").build();
-```
+{% endhighlight %}
 
 ### Private Images
 Amazon EC2 has the concept of private-but-shared amis - images that were bundled on 
@@ -66,7 +66,7 @@ This private image may not show up in listImages, and jclouds will struggle with
 
 Here's the solution:
 
-```java
+{% highlight java %}
 Properties props = new Properties();
 
 //have a myFavouriteOwner - the user ID of the owner of the image.
@@ -78,7 +78,7 @@ props.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "*");
 
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", "accesss", "secret",
                                         ImmutableSet.<Module> of(new JschSshClientModule()), props);
-```
+{% endhighlight %}
 
 You can then create nodes using the templateBuilder.imageId() method. 
 
@@ -97,7 +97,7 @@ OsFamily.UNRECOGNIZED, with no image version.  Here's how to instruct jclouds to
 #### Create a custom parser
 You'll need to override the default image parser with one that knows all the intimate secrets of your image.
 
-```java
+{% highlight java %}
 package com.foo;
 
 import java.util.Map;
@@ -139,11 +139,11 @@ public class FooAWSEC2ReviseParsedImage extends AWSEC2ReviseParsedImage {
       builder.defaultCredentials(new Credentials("foo-user", "password"));
    }
 }
-```
+{% endhighlight %}
 
 #### Create a test for your parser
 
-```java
+{% highlight java %}
 package com.foo;
 
 import static org.easymock.EasyMock.expect;
@@ -189,11 +189,11 @@ public class FooAWSEC2ReviseParsedImageTest {
 
 }
 
-```
+{% endhighlight %}
 
 #### Instruct jclouds to use your parser
 
-```java
+{% highlight java %}
 Properties overrides = setupProperties();
 // your owner id
 overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "123123123213123");
@@ -207,14 +207,14 @@ context = new ComputeServiceContextFactory().createContext(provider, ImmutableSe
             }
             
          }), overrides);
-```
+{% endhighlight %}
 
 #### Use your image version
 jclouds will now pick the lexicographic highest version, as it now can parse your images.
 
-```java
+{% highlight java %}
 Template template = context.getComputeService().templateBuilder().imageVersionMatches("1.1.0.*").build();
-```
+{% endhighlight %}
 
 ## ComputeService API extensions
 Power users have requested more control over the choices jclouds ComputeService makes when provisioning nodes. 
@@ -224,9 +224,9 @@ We now allow you to control this a bit through extended template options.
 ## Spot Instances
                                                                                                                                                                                           
 If you are using the `aws-ec2` provider, you can use spot instances via the spotPrice parameter on template options:                                                                      
-```java                                                                                                                                                                                      
+{% highlight java %}                                                                                                                                                                                      
 options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);                                                                                                                                  
-```                                                                                                                                                                                   
+{% endhighlight %}                                                                                                                                                                                   
 AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin() uses the spot price option on the portable interface.                                                                          
                                                                                                                                                                                           
 ### Details                                                                                                                                                                           
@@ -239,31 +239,31 @@ spot request goes through, but perhaps takes longer to provision the nodes than 
 
 
 ### Security Groups
-```java
+{% highlight java %}
 // specify your own groups which already have the correct rules applied
 template.getOptions().as(EC2TemplateOptions.class).securityGroups(group1, group2);
-```
+{% endhighlight %}
 ### Key Pairs
-```java
+{% highlight java %}
 // specify your own keypair for use in creating nodes
 template.getOptions().as(EC2TemplateOptions.class).keyPair(group);
 
 // if your image doesn't use keypairs (ex enstratus), skip creating one
 template.getOptions().as(EC2TemplateOptions.class).noKeyPair();
 
-```
+{% endhighlight %}
 
 ### VPC
 To create nodes in a subnet under Amazon VPC add the following option to your template options.  Note that VPCs
  and Security Groups are mutually exclusive.
 
-```java
+{% highlight java %}
 TemplateOptions options = compute.templateOptions();
 options.as(EC2TemplateOptions.class).withSubnetId(subnetId);
 
 Set<? extends NodeMetadata> nodes = client.runNodesInGroup(group, 1,
                options);
-```
+{% endhighlight %}
 
 You can also checkout `EC2ComputeServiceListTest.testExtendedOptionsWithSubnetId()`
 
@@ -273,16 +273,16 @@ _Note this is currently only in 1.0-SNAPSHOT_
 
 To create nodes that are automatically monitored in CloudWatch, add the following to your template options:
 
-```java
+{% highlight java %}
 TemplateOptions options =  compute.templateOptions();
 options.as(EC2TemplateOptions.class).enableMonitoring();
 
 Set<? extends NodeMetadata> monitoredNodes = compute.runNodesInGroup(group, 1, options);
 
-```
+{% endhighlight %}
 
 You can then use the !CloudWatchClient to get statistics on your nodes.
-```java
+{% highlight java %}
 RestContext<CloudWatchClient, CloudWatchAsyncClient> cloudWatchContext =
        new RestContextFactory().createContext("cloudwatch",  accessid, secretkey);
 
@@ -290,6 +290,5 @@ String region = node.getLocation().getParent().getId();
 
 Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(region,
                   "CPUUtilization", before, new Date(), 60, "Average");
-```
+{% endhighlight %}
 
-`Last Updated: 2011-07-26`

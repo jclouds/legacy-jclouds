@@ -50,32 +50,32 @@ As of jclouds 1.0.0 release jcoulds-karaf feature is available on central maven 
 and building it and go directly to the install of JClouds feature.
 
 
-```sh
+{% highlight sh %}
 git clone git://github.com/jclouds/jclouds-karaf.git
 cd jclouds-karaf
 mvn clean install
-```
+{% endhighlight %}
 
 * Start Karaf and install the JClouds feature!
 
-```
+{% highlight %}
 features:addurl mvn:org.jclouds.karaf/feature/1.0/xml/features
 features:install jclouds
-```
+{% endhighlight %}
 
 Now the core of JClouds is installed. You can select which additional JClouds features you wish and install them using the shell:
 
-```
+{% highlight %}
 features:list | grep jclouds
-```
+{% endhighlight %}
 
 _*Example*_
 
 For installing the module for aws-s3:
 
-```
+{% highlight %}
 features:install jclouds-aws-s3
-```
+{% endhighlight %}
 
 
 = Running the examples =
@@ -86,17 +86,17 @@ the OSGi configuration admin and can change dynamically.
 
 The first step is to get and build the example:
 
-```
+{% highlight %}
 git clone https://iocanel@github.com/jclouds/jclouds-examples.git
 cd jcoulds-examples/blobstore-karaf-shell
 mvn clean install
-```
+{% endhighlight %}
 
 Then from Karaf shell you can install the example:
 
-```
+{% highlight %}
 osgi:install -s mvn:org.jclouds.examples/blobstore-karaf-shell/1.0-SNAPSHOT
-```
+{% endhighlight %}
 
 The command above installs in Karaf two new commands:
 
@@ -108,20 +108,20 @@ using the org.jclouds.blobstore PID. You can create the configuration either fro
 by dropping  a file named org.jclouds.blobstore.cfg under karaf's etc folder. 
 Let's see how it can be done using the Karaf shell:
 
-```
+{% highlight %}
 config:edit org.jclouds.blobstore
 config:propset provider aws-s3
 config:propset accessKeyId XXXXXX 
 config:propset secretKey XXXXXX 
 config:update
-```
+{% endhighlight %}
 
 Now you are ready to use the commands
 
-```
+{% highlight %}
 jclouds:blobstore-write mybucket myblob JCloudsRocks
 jclouds:blobstore-write mybucket myblob
-```
+{% endhighlight %}
 
 At any point in time, you can edit the configuration, either using the shell or 
 by editing the configuration file. The commands will pick up the changes immediately. 
@@ -130,4 +130,3 @@ This way you can even switch providers.
 
 You can also watch the [demo video](http://www.youtube.com/watch?v=SIvSaGEKrkM).
 
-`Last Updated: 2011-07-26`

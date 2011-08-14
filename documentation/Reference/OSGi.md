@@ -13,7 +13,7 @@ Deploy jclouds to osgi felix container
 * change to target/dependency
  run the following command to create bundles of non-osgi dependencies
 
-```
+{% highlight %}
 java -jar biz.aQute.bnd.jar wrap aopalliance-1.0.jar \
 bsh-2.0b4.jar \
 cglib-nodep-2.1_3.jar \
@@ -33,7 +33,7 @@ snakeyaml-1.6.jar \
 swank-clojure-1.2.1.jar
 
 for f in *bar ; do mv $f `basename $f bar`jar; done
-```
+{% endhighlight %}
 
 * Download felix file install and copy to felix/bundle.
 * Create felix/load dir and copy all jar files from target/dependency here.

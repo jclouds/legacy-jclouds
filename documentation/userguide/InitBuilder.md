@@ -6,9 +6,9 @@ InitBuilder gives  you a standard, predictable and portable way of controlling
 the lifecycle of your applications at a process level.  For example, using InitBuilder,  
 you to setup something like Tomcat on your Windows laptop and move it to a remote Linux machine.
 
-```
+{% highlight %}
 TODO example
-```
+{% endhighlight %}
 
 InitBuilder introduces standard system variables, directory structures and
  writes portable initialization scripts.  The initialization scripts help level 
@@ -129,4 +129,3 @@ In Windows, we execute `net start %INSTANCE_NAME%`;
 
 Returns `0` if the process is running, and `1` if the process isn't.
 
-`Last Updated: 2011-05-29`

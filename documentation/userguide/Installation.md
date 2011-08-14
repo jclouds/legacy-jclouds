@@ -23,7 +23,7 @@ Replace the __provider__ and __api__ in the above directory paths to the ones yo
 If your project is managed using Apache Maven, then it is very easy to use the jclouds, just add 
 the following your project's __pom.xml__:
 	
-```xml
+{% highlight xml %}
 <dependencies> 
    <dependency>
         <groupId>org.jclouds</groupId>
@@ -36,14 +36,14 @@ the following your project's __pom.xml__:
        <version>1.0.0</version>
    </dependency>
 </dependencies>
-```
+{% endhighlight %}
 
 ### Adding jclouds to your Apache Ant project.
 
 If you use ant, you will need to install [maven ant tasks](http://maven.apache.org/ant-tasks/index.html).
 Then, add jclouds to your __build.xml__ as shown below:
 	
-```xml
+{% highlight xml %}
 <artifact:dependencies pathId="jclouds.classpath">
  <dependency groupId="org.jclouds" 
 			 artifactId="jclouds-allcompute" 
@@ -52,7 +52,7 @@ Then, add jclouds to your __build.xml__ as shown below:
 			 artifactId="jclouds-allblobstore" 
 			version="1.0.0" />
 </artifact:dependencies>
-```
+{% endhighlight %}
 	
 ### Getting the binaries using Apache Ant
 
@@ -64,7 +64,7 @@ You can see the list of supported providers in the [[Supported Providers|Support
 
 When you runt this script, it will build a __lib__ directory full of jars you can later copy into your own project.
 
-```xml
+{% highlight xml %}
 <project default="sync-lib" xmlns:artifact="urn:maven-artifact-ant" >
   <target name="sync-lib" depends="initmvn">
     <delete dir="lib" />
@@ -86,18 +86,18 @@ When you runt this script, it will build a __lib__ directory full of jars you ca
 			classpathref="maven-ant-tasks.classpath"/>
   </target>
 </project>
-```
+{% endhighlight %}
 
 ### Adding jclouds to your Clojure project using lieningen
 
 If you use lieningen, you can add jclouds to your project.clj like below:
 
-```clojure
+{% highlight clojure %}
 :dependencies [[org.clojure/clojure "1.2.0"]
                [org.clojure/clojure-contrib "1.2.0"]
                [org.jclouds/jclouds-allcompute "1.0.0"]
                [org.jclouds/jclouds-allblobstore "1.0.0"]]
-```
+{% endhighlight %}
 
 ### Using the jclouds Snapshot Builds 
 
@@ -105,7 +105,7 @@ If you want to use the bleeding edge release of jclouds, you'll need to setup a 
 
 You need to update your repositories and add the following in your project's pom.xml:
 
-```xml
+{% highlight xml %}
 <repositories>
     <repository>
         <id>jclouds-snapshots</id>
@@ -127,7 +127,7 @@ You need to update your repositories and add the following in your project's pom
         <version>1.0-SNAPSHOT</version>
    </dependency>
 </dependencies>
-```
+{% endhighlight %}
 
 ### Adding jclouds snapshot to your ant project
 
@@ -135,7 +135,7 @@ If you use ant, you will need to install [maven ant tasks](http://maven.apache.o
 
 Then, add jclouds snapshot dependencies to your __build.xml__ as shown below:
 
-```xml
+{% highlight xml %}
 <artifact:remoteRepository id="jclouds.snapshot.repository" 
 						   url="https://oss.sonatype.org/content/repositories/snapshots" />
 <artifact:dependencies pathId="jclouds.classpath">
@@ -147,18 +147,16 @@ Then, add jclouds snapshot dependencies to your __build.xml__ as shown below:
 			version="1.0-SNAPSHOT" />
  <remoteRepository refid="jclouds.snapshot.repository" />
 </artifact:dependencies>
-```
+{% endhighlight %}
 
 ### Adding jclouds snapshots to your leiningen (clojure) project
 
 If you use lieningen, you can add jclouds snapshots to your __project.clj__ like below:
 
-```clojure
+{% highlight clojure %}
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.jclouds/jclouds-allcompute "1.0-SNAPSHOT"]
                  [org.jclouds/jclouds-allblobstore "1.0-SNAPSHOT"]]
   :repositories { "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}
-```
-
-`Last Updated: 2011-07-26`
+{% endhighlight %}

@@ -148,9 +148,9 @@ An `BlobStoreContext` associates an identity on a provider to a set of network c
 At a minimum, you need to specify your identity (in the case of S3, AWS Access Key ID) and a credential (in S3, your Secret Access Key).  
 Once you have your credentials, connecting to your `BlobStore` service is easy:
 
-```java
+{% highlight java %}
 BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", identity, credential);
-```
+{% endhighlight %}
 
 This will give you a connection to the BlobStore, and if it is remote, it will be SSL unless unsupported by 
 the provider.  Everything you access from this context will use the same credentials and potentially the same objects. 
@@ -159,9 +159,9 @@ the provider.  Everything you access from this context will use the same credent
 
 When you are finished with a context, you should close it using close method:
 
-```java
+{% highlight java %}
 context.close();
-```
+{% endhighlight %}
 <!-- TODO Check Links -->
 There are many options available for creating contexts.  Please see the javadoc for 
 [BlobStoreContextFactory](http://jclouds.rimuhosting.com/apidocs/org/jclouds/blobstore/BlobStoreContextFactory.html)
@@ -179,19 +179,19 @@ If you don't want to be bothered with the details of a BlobStore like Amazon S3,
  as a plain `Map<String, InputStream>` object.  Just create your context to to the BlobStore, choose the container of the stuff
  you want to manage, and get to work:
 
-```java
+{% highlight java %}
 BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", identity, credential);
 Map<String, InputStream> map = context.createInputStreamMap("adrian.photos");
 // do work
 context.close();
-```
+{% endhighlight %}
 
 ##### Tips
 * Always close your InputStreams
 When you do something like this, the `InputStream` returned may be holding a connection to the provider.  
 Be sure to close your `InputStream` promptly.
 
-```java
+{% highlight java %}
 InputStream aGreatMovie = map.get("theshining.mpg");
 try {
       //watch
@@ -199,18 +199,18 @@ try {
 if (aGreatMovie != null) aGreatMovie.close();
 }
 
-```
+{% endhighlight %}
 
 * Extra put methods
 While you can feel free to use `map.put("stuff", new FileInputStream("stuff.txt")`, jclouds does provide some extra goodies.  
 To use these, use the `InputStreamMap` class as opposed to `Map<String,InputStream>` when creating you Map view.
 
-```java
+{% highlight java %}
 InputStreamMap map = context.createInputStreamMap("adrian.photos");
 map.putFile("stuff", new File("stuff.txt"));
 map.putBytes("secrets", Util.encrypt("secrets.txt"));
 map.putString("index.html", "<html><body>hello world</body></html>");
-```
+{% endhighlight %}
 
 There are also corresponding `putAllFiles`, `Bytes`, `Strings` methods if you have bulk stuff to store.
 
@@ -223,7 +223,7 @@ Considering it is only one class at this point, this is a decent tradeoff for ma
 
 Here is an example that shows how to use the `BlobMap` api:
 
-```java
+{% highlight java %}
 BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", identity, credential);
 BlobMap map = context.createBlobMap("adrian.photos");
 
@@ -236,14 +236,14 @@ Blob blob = map.blobBuilder("sushi.jpg")
 map.put(blob.getName(), blob);
 
 context.close();
-```
+{% endhighlight %}
 
 #### BlobStore (Synchronous)
 <!-- TODO The difference between BlobStore/Introduction -->
 
 Here is an example of the `BlobStore` interface.
 
-```java
+{% highlight java %}
 // init
 context = new BlobStoreContextFactory().createContext(
 												"aws-s3",
@@ -258,19 +258,19 @@ blobStore.createContainerInLocation(null, "mycontainer");
 blob = blobStore.blobBuilder("test")  // you can use folders via newBlob(folderName + "/sushi.jpg")                                                                                     
                   .payload("testdata").build();
 blobStore.putBlob(containerName, blob);
-```
+{% endhighlight %}
 
 ##### Creating a Container
 If you don't already have a container, you will need to create one.  First, get a BlobStore from your context:
 
-```java
+{% highlight java %}
 BlobStore blobstore = context.getBlobStore();
-```
+{% endhighlight %}
 
 `Location` is a region, provider or another scope in which a container can be created to ensure data locality.
 If you don't have a location concern, pass `null` to accept the default.
 
-```java
+{% highlight java %}
 boolean created = blobStore.createContainerInLocation(null, String container);
 if (created){
 	// the container didn't exist, but does now
@@ -278,7 +278,7 @@ if (created){
  	// the container already existed
 }
     
-```
+{% endhighlight %}
 
 #### AsyncBlobStore
 
@@ -290,7 +290,7 @@ You can also attach listeners to the result, so that you can do things like publ
 
 Here's an example of uploading tons of blobs at the same time:
 
-```java
+{% highlight java %}
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 Map<Blob, Future<?>> responses = Maps.newHashMap();
@@ -302,7 +302,7 @@ exceptions = awaitCompletion(responses,
       maxTime,
       logger,
       String.format("putting into containerName: %s", containerName));
-```
+{% endhighlight %}
 
 
 ### Multipart upload
@@ -310,7 +310,7 @@ exceptions = awaitCompletion(responses,
 Providers may implement multipart upload for large or very files.                                                                                                                         
 Here's an example of `multipart upload` using aws-s3 provider, which [allow uploading files large as 5TB.](http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?qfacts.html)   
 
-```java
+{% highlight java %}
 import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;                                                                                                                 
 
   // init                                                                                                                                                                                 
@@ -332,21 +332,21 @@ import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
                                                                                                                                                                                           
   // asynchronously wait for the upload                                                                                                                                                   
   String eTag = futureETag.get();                                                                                                                                                         
-```
+{% endhighlight %}
 
 ### Logging
 
 You can now see status of aggregate blobstore commands by enabling at least DEBUG on the log category: "jclouds.blobstore".  
 
 Here is example output:
-```
+{% highlight %}
 2010-01-31 14:41:14,921 TRACE [jclouds.blobstore] (pool-4-thread-4) deleting from containerName: adriancole-blobstore2, 
 completed: 5001/5001, errors: 0, rate: 14ms/op
-```
+{% endhighlight %}
 
 If you are using the Log4JLoggingModule, here is an example log4j.xml stanza you can use to enable blobstore logging:
 
-```xml
+{% highlight xml %}
    <appender name="BLOBSTOREFILE" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="logs/jclouds-blobstore.log" />
         <param name="Append" value="true" />
@@ -365,7 +365,7 @@ If you are using the Log4JLoggingModule, here is an example log4j.xml stanza you
         <priority value="TRACE" />
         <appender-ref ref="ASYNCBLOBSTORE" />
     </category>
-```
+{% endhighlight %}
 
 # Clojure
 
@@ -380,22 +380,22 @@ The above examples show how to use the `BlobStore` API in Java. You can also use
   * for 1.0.0
 
 
-```clojure
+{% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
 				 [org.jclouds/jclouds-allblobstore "1.0.0"]])
-```
+{% endhighlight %}
     * for snapshot
-```clojure
+{% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.jclouds/jclouds-allblobstore "1.0.0"]]
   :repositories {"jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}) 
-```
+{% endhighlight %}
 
   * Execute `lein deps`
 
@@ -404,13 +404,13 @@ The above examples show how to use the `BlobStore` API in Java. You can also use
 Execute `lein repl` to get a repl, then paste the following or write your own code.  
 Clearly, you need to substitute your accounts and keys below.
 
-```clojure
+{% highlight clojure %}
 (use 'org.jclouds.blobstore2)
 
 (def *blobstore* (blobstore "azureblob" account encodedkey))                                                                                                                            
 (create-container *blobstore* "mycontainer")                                                                                                                                            
 (put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
-```
+{% endhighlight %}
 
 # Advanced Concepts
 
@@ -419,19 +419,19 @@ This section covers advanced topics typically needed by developers of clouds.
 ## Signing requests
 
 ### java example 
-```java
+{% highlight java %}
 
 HttpRequest request = context.getSigner().
                               signGetBlob(“adriansmovies”,
                                           "sushi.avi");
-```
+{% endhighlight %}
 ### clojure example 
 
-```clojure
+{% highlight clojure %}
 (let [request (sign-blob-request "adriansmovies"
                                  "sushi.avi" {:method :get})])
 
-```
+{% endhighlight %}
 
 ## Configure multipart upload strategies ==                                                                                                                                               
 There are two `MultipartUploadStrategy` implementations: `SequentialMultipartUploadStrategy` and `ParallelMultipartUploadStrategy`.                                                       
@@ -466,13 +466,13 @@ a the download dialog appears.  To control the name of the file in the "save as"
 you must set [Content Disposition](http://www.jtricks.com/bits/content_disposition.html).  Here's how you can do 
 it with BlobStore API:
 
-```java
+{% highlight java %}
 Blob blob = context.getBlobStore().blobBuilder("sushi.jpg")                                                                                                                               
                .payload(new File("sushi.jpg"))// or byte[]. InputStream, etc.                                                                                                             
                .contentDisposition("attachment; filename=sushi.jpg")                                                                                                                      
                .contentType("image/jpeg")                                                                                                                                                 
                .calculateMD5().build();
-```
+{% endhighlight %}
 
 
 ## Large Lists
@@ -488,9 +488,9 @@ In the new `BlobStore` api, list responses return a `PageSet` object.
 
 A `PageSet` object is the same as a normal `Set`, except that it has a new method 
 
-```java
+{% highlight java %}
 String getNextMarker();
-```
+{% endhighlight %}
 
 If this returns `null`, you have the entire listing.  If not, you can choose to continue iterating the list by 
 specifying the `ListContainerOption` 
@@ -520,4 +520,3 @@ A blob you've downloaded via `blobstore.getBlob()` can be accessed via `blob.get
 `blob.getPayload().writeTo(outputStream)`.  Since these are streaming, you shouldn't have a problem with memory 
 unless you rebuffer it.
 
-`Last Updated: 2011-07-26`
