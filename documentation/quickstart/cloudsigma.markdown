@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start Azure Storage Service
+title: QuickStart: Cloud Sigma
 ---
 
 # QuickStart: Cloud Sigma

@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start: Terremark eCloud
+---
+
 # Quick Start:  Terremark eCloud
 
 1. Sign up for Terremark eCloud: [sign-up link](http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx)
@@ -8,7 +13,7 @@
 	* get the dependency `org.jclouds.provider/trmk-ecloud` using jclouds [[Installation Guide|Installation]].
 5. Start coding
 
-```java
+{% highlight java %}
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
 // get a context with Terremark that offers the portable ComputeService api
@@ -72,8 +77,7 @@ if (!taskTester.apply(onTask.getHref()))
  System.out.printf("you can now connect to ssh://ecloud:$Ep455l0ud!2@%s:22%n", publicIp.getHostAddress());
 
  context.close();
-```
+{% endhighlight %}
 
 6. Validate results on the [Terremark console](https://icenter.digitalops.net/Default.aspx)
 
-`Last Updated: 2011-05-24`

@@ -1,3 +1,9 @@
+---
+layout: docs
+title: Quick Start: Terremark vCloud Express
+---
+
+
 # Quick Start: Terremark vCloud Express
 
 1. Sign up for Terremark vCloud Express

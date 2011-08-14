@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start: Open Stack
+---
+
 # Quick Start: Open Stack
 
 `Note: This page is a work in progress and will be updated often. Check back later if something is missing.`
@@ -22,12 +27,13 @@ Instructions for downloading the dependencies are available in the [[Installatio
 
 5. Start coding using Nova
 
-```java
+{% highlight java %}
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.*;
 import org.jclouds.Constants;
-```
-```java
+{% endhighlight %}
+
+{% highlight java %}
 Properties overrides = new Properties();
 //point the JClouds to the Openstack v 1.1 API endpoint URL
 overrides.setProperty(Constants.PROPERTY_ENDPOINT, "https://authurl");
@@ -65,12 +71,12 @@ servers = novaClient.listServers(changesSince(yesterday));
 List<Image> images = novaClient.listImages(startAt(200).maxResults(100));
 
 context.close();
-```
+{% endhighlight %}
 
 
 
 ## Known Issues
-<!-- TODO Changet let us know link -->
+<!-- TODO Change let us know link -->
 This provider is a work in progress. Some issues remain open and are described here. If you are missing some features,
  [let us know](http://groups.google.com/group/jclouds?pli=1) Or just [fork](https://github.com/jclouds/jclouds) the code 
 on github and scratch that itch yourself.
@@ -104,6 +110,3 @@ on github and scratch that itch yourself.
   		* Flavor reference is not returned in servers/details/list output by Openstack 
 		(but is returned if the instance details are requested directly in servers/id/details call) and 
 		therefore sometimes node metadata does not have the correct hardware info.
-		
-
-`Last Updated: 2011-07-26`

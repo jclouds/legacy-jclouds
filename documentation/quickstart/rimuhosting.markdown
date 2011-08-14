@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start: RimuHosting
+---
+
 # Quick Start: RimuHosting
 
 RimuHosting's cloud is built on top of Xen with an in-house API layer to control it.
@@ -19,7 +24,7 @@ Once you have jclouds libraries loaded, the easiest way to get started is to use
 	This takes your apikey and gives you a context to either get a synchronous interface (`getApi()`) or 
 	asynchronous interface (`getAsyncApi()`) to the RimuHosting service.
 
-```java
+{% highlight java %}
 // create context to obtain rimuhosting objects
 RestContext<RimuHostingClient, RimuHostingAsyncClient> context = 
    				new ComputeServiceContextFactory().createContext("rimuhosting", 
@@ -27,5 +32,4 @@ RestContext<RimuHostingClient, RimuHostingAsyncClient> context =
 
 // get a synchronous object to use for manipulating objects in the RimuHosting Cloud
 RimuHostingClient rhClient = context.getApi();
-```
-`Last Updated: 2011-05-24`
+{% endhighlight %}

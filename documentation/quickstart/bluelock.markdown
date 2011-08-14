@@ -1,10 +1,6 @@
 ---
 layout: docs
-title: Quick Start - Amazon Web Services
----
----
-layout: docs
-title: Quick Start Azure Storage Service
+title: Quick Start: BlueLock vCloud Service
 ---
 
 # Quick Start: BlueLock vCloud Service

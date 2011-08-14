@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start: IBM Developer Cloud
+---
+
 # Quick Start: IBM Developer Cloud
 
 **Note that IBM Developer Cloud support is not complete**
@@ -9,7 +14,7 @@
   * Get the **snapshot** dependency `org.jclouds.provider/ibmdev` using jclouds [[Installation Guide|Installation]].
 4. Start coding
 
-```java
+{% highlight java %}
 // get a context with ibm that offers the portable ComputeService api
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("ibmdev", email, password,
                                                         ImmutableSet.<Module> of(new JschSshClientModule()));
@@ -40,8 +45,6 @@ ComputeService service = context.getComputeService();
 // release resources 
 context.close();
 
-```
+{% endhighlight %}
+
 6. Validate on the IBM Developer Cloud [console](https://www-180.ibm.com/cloud/enterprise/beta/user/control.jsp)
-
-
-`Last Updated: 2011-05-17`

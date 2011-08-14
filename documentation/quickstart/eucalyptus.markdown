@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start Azure Storage Service
+title: Quick Start: Eucalyptus
 ---
 
 # Quick Start: Eucalyptus

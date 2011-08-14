@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start Azure Storage Service
+title: Quick Start: Go Grid
 ---
 
 # Quick Start: Go Grid
@@ -66,49 +66,49 @@ Also, GoGrid will mark the server creation job finished when the OS is still boo
 
 To restart the server, or turn it off, a power command with [PowerCommand](http://github.com/jclouds/jclouds/blob/master/gogrid/src/main/java/org/jclouds/gogrid/domain/PowerCommand.java) enum may be used:
 
-```java
+{% highlight java %}
 client.getServerServices().power(nameOfServer, PowerCommand.RESTART);
-```
+{% endhighlight %}
 
 Deleting an existing server is accomplished by calling:
 
-```java
+{% highlight java %}
 client.getServerServices().deleteByName(nameOfServer);
-```
+{% endhighlight %}
 
 To ssh into a third-party image, you may need credentials that aren't default. 
 To find out the proper credentials, start up a server and run:
 
-```java
+{% highlight java %}
 Credentials instanceCredentials = client.getServerServices().getServerCredentialsList().get(nameOfServer)
-```
+{% endhighlight %}
 
 Using these credentials, it's possible to use jclouds to log in to the instance:
-```java
+
+{% highlight java %}
 SshClient sshClient = context.utils().sshFactory().create(socket,
                 instanceCredentials.account, instanceCredentials.key);
 sshClient.connect();
 String output = sshClient.exec("df").getOutput();
 sshClient.disconnect();
-```
+{% endhighlight %}
+
 ### Using ComputeService abstraction==
 
 To create a generic context, use (as in the previous section):
 
-```java
+{% highlight java %}
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("gogrid", user, password,
                 ImmutableSet.of(new Log4JLoggingModule(), new JschSshClientModule()));
 ComputeService service = context.getComputeService();
-```
+{% endhighlight %}
 
 With having a ComputeService object in place, you can search for specific type of instance and/or image, and run it:
 
-```java
+{% highlight java %}
 Template t = service.templateBuilder().minRam(4096).imageId("GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2").build();
 service.runNodesInGroup("testGroup", 1 /*number of instances*/, t);
-```
+{% endhighlight %}
+
 For more information on using this abstraction, refer to 
 the detailed [test case](http://github.com/jclouds/jclouds/blob/master/providers/gogrid/src/test/java/org/jclouds/gogrid/compute/GoGridComputeServiceLiveTest.java).
-
-`Last Updated: 2011-05-29`
-

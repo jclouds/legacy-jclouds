@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start: Rackspace Cloud
+---
+
 # Quick Start: Rackspace Cloud
 
 1. Sign up for Rackspace Cloud by going to this [page](https://www.rackspacecloud.com/signup)
@@ -10,7 +15,8 @@
 5. Start coding
 
 ## Cloud Files
-```java
+
+{% highlight java %}
 // get a context with rackspace that offers the portable BlobStore api
 BlobStoreContext context = new BlobStoreContextFactory().createContext("cloudfiles-us", user, password);
 
@@ -28,10 +34,10 @@ CloudFilesClient rackspaceClient = CloudFilesClient.class.cast(context.getProvid
 URI cdnURI = rackspaceClient.enableCDN(container);
 
 context.close();
-```
+{% endhighlight %}
 
 ## Cloud Servers
-```java
+{% highlight java %}
 import static org.jclouds.rackspace.cloudservers-us.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers-us.options.ListOptions.Builder.*;
 
@@ -66,6 +72,4 @@ import static org.jclouds.rackspace.cloudservers-us.options.ListOptions.Builder.
  List<Image> images = rackspaceClient.listImages(startAt(200).maxResults(100));
 
  context.close();
-```
-
-`Last Updated: 2011-05-24`
+{% endhighlight %}
