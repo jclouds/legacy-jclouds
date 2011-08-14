@@ -89,6 +89,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -122,6 +123,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PartParam;
@@ -130,6 +132,7 @@ import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -801,6 +804,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Consumes(MediaType.APPLICATION_JSON)
       String testUnwrap();
 
+      @GET
+      @Path("/")
+      @SelectJson("foo")
+      @Consumes(MediaType.APPLICATION_JSON)
+      String testUnwrapValueNamed();
+      
       @POST
       @Path("/")
       String testWrapWith(@WrapWith("foo") String param);
@@ -834,13 +843,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Unwrap(depth = 2)
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<Long> testUnwrapDepth2Long();
-
+      
+      @GET
+      @Path("/")
+      @SelectJson("jobid")
+      ListenableFuture<Long> selectLong();
+      
       @GET
       @Path("/")
       @Unwrap(depth = 2, edgeCollection = Set.class)
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<String> testUnwrapDepth2Set();
-
+      
+      @GET
+      @Path("/")
+      @SelectJson("runit")
+      @OnlyElement
+      @Consumes(MediaType.APPLICATION_JSON)
+      ListenableFuture<String> selectOnlyElement();
+      
       @GET
       @Path("/")
       @Unwrap(depth = 3, edgeCollection = Set.class)
@@ -984,6 +1005,21 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    }
 
+
+   @SuppressWarnings("unchecked")
+   public void testUnwrapValueNamed() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("testUnwrapValueNamed");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      assertResponseParserClassEquals(method, request, ParseFirstJsonValueNamed.class);
+      // now test that it works!
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+               .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
+
+   }
    public void testWrapWith() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPut.class.getMethod("testWrapWith", String.class);
       HttpRequest request = factory(TestPut.class).createRequest(method, "bar");
@@ -1069,6 +1105,20 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[]}"))), null);
    }
 
+
+   @SuppressWarnings("unchecked")
+   public void testSelectOnlyElement() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("selectOnlyElement");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+               .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\"]}"))), "0.7.0");
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[]}"))), null);
+   }
+
    @SuppressWarnings("unchecked")
    public void testUnwrapDepth2Long() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPut.class.getMethod("testUnwrapDepth2Long");
@@ -1084,6 +1134,21 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
    }
 
+   @SuppressWarnings("unchecked")
+   public void selectLong() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("selectLong");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      assertResponseParserClassEquals(method, request, ParseFirstJsonValueNamed.class);
+      // now test that it works!
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+               .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(new HttpResponse(200, "ok",
+               newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
+   }
+   
    @SuppressWarnings("unchecked")
    public void testUnwrapDepth3() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPut.class.getMethod("testUnwrapDepth3");

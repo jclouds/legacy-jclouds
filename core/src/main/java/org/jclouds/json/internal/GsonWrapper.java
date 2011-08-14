@@ -25,13 +25,14 @@ import javax.inject.Singleton;
 
 import org.jclouds.json.Json;
 
+import com.google.common.collect.ForwardingObject;
 import com.google.gson.Gson;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class GsonWrapper implements Json {
+public class GsonWrapper extends ForwardingObject implements Json  {
 
    private final Gson gson;
 
@@ -59,6 +60,11 @@ public class GsonWrapper implements Json {
    @Override
    public String toJson(Object src, Type type) {
       return gson.toJson(src, type);
+   }
+
+   @Override
+   public Gson delegate() {
+      return gson;
    }
 
 }

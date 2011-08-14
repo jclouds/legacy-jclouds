@@ -46,9 +46,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nullable;
@@ -70,12 +70,15 @@ import javax.ws.rs.core.UriBuilderException;
 
 import org.jclouds.Constants;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.functions.OnlyElementOrNull;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
@@ -85,7 +88,6 @@ import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
@@ -96,6 +98,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.MultipartForm;
 import org.jclouds.io.payloads.Part;
 import org.jclouds.io.payloads.Part.PartOptions;
+import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
@@ -108,6 +111,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PartParam;
@@ -116,6 +120,7 @@ import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -129,18 +134,19 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -252,10 +258,27 @@ public class RestAnnotationProcessor<T> {
       if (handler != null) {
          transformer = parserFactory.create(injector.getInstance(handler));
       } else {
-         transformer = injector.getInstance(getParserOrThrowException(method));
+         transformer = getTransformerForMethod(method, injector);
       }
       if (transformer instanceof InvocationContext<?>) {
          ((InvocationContext<?>) transformer).setContext(request);
+      }
+      return transformer;
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public static Function<HttpResponse, ?> getTransformerForMethod(Method method, Injector injector) {
+      Function<HttpResponse, ?> transformer;
+      if (method.isAnnotationPresent(SelectJson.class)) {
+         Type returnVal = getReturnTypeForMethod(method);
+         if (method.isAnnotationPresent(OnlyElement.class))
+            returnVal = Types.newParameterizedType(Set.class,returnVal);
+         transformer = new ParseFirstJsonValueNamed(injector.getInstance(GsonWrapper.class), TypeLiteral.get(returnVal),
+               method.getAnnotation(SelectJson.class).value());
+         if (method.isAnnotationPresent(OnlyElement.class))
+            transformer = Functions.compose(new OnlyElementOrNull(), transformer);
+      } else {
+         transformer = injector.getInstance(getParserOrThrowException(method));
       }
       return transformer;
    }

@@ -55,8 +55,8 @@ public abstract class BaseParserTest<T, G> {
    @SuppressWarnings("unchecked")
    protected Function<HttpResponse, T> parser(Injector i) {
       try {
-         return (Function<HttpResponse, T>) i.getInstance(RestAnnotationProcessor.getJsonParserKeyForMethod(getClass()
-                  .getMethod("expected")));
+         return (Function<HttpResponse, T>) RestAnnotationProcessor.getTransformerForMethod(getClass()
+                  .getMethod("expected"), i);
       } catch (Exception e) {
          Throwables.propagate(e);
          return null;
