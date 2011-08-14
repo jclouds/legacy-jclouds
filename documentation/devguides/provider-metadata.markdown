@@ -9,8 +9,8 @@ title: Provider Metadata
 
 Provider metadata in jclouds lets the provider implementor/maintainer to do two major things very easily:
 
-  * Describe the provider (Verbose name, documentation url, homepage url, console url, etc.)
-  * Hook into a provider loading mechanism similar to a "plugin loader"
+*  Describe the provider (Verbose name, documentation url, homepage url, console url, etc.)
+*  Hook into a provider loading mechanism similar to a "plugin loader"
 
 The purpose for this document it to further explain how you can implement provider metadata for a provider.
 
@@ -164,8 +164,8 @@ Now that you have an example implementation class, let's look at how to create t
 
 The `ServiceLoader`'s provider configuration file has two requirements:
 
-  * The location of the file is META-INF/services/<fully-qualified binary name of the interface>
-  * The contents of the file is a line-delimited list of fully-qualified binary names of the concrete classes
+*  The location of the file is META-INF/services/<fully-qualified binary name of the interface>
+*  The contents of the file is a line-delimited list of fully-qualified binary names of the concrete classes
 
 In our example, we would end up with a provider configuration file of *META-INF/services/org.jclouds.providers.ProviderMetadata*
  with a single line in it looking like this:
@@ -237,4 +237,3 @@ You could also know the proper labels to display to the user when asking for the
 This is only one brief, high-level example but by understanding how to implement provider metadata, you should easily 
 see how this could be used in other ways.
 
-`Last Updated: Thu Jun  2 13:33:27 2011`
