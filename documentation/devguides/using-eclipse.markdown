@@ -53,12 +53,12 @@ You'll key these on the provider name (ex. provider  is s3, cloudfiles, ec2, etc
 
 To implement this, open the test's Run Configurations and enter in the following into VM arguments:
 
-{% highlight bash %}
+{% highlight text %}
 -Dbasedir=. -Dtest.provider.identity=identity -Dtest.provider.credential=credential
 {% endhighlight}
 
 ex. for vcloud
-{% highlight bash %}
+{% highlight shell %}
 -Dbasedir=. -Dtest.vcloud.endpoint=https://vcloudserverilike/api -Dtest.vcloud.identity=user@org -Dtest.vcloud.credential=password
 {% endhighlight %}
 
