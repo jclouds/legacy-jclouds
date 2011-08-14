@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Introduction
+---
 # Introduction
 
 JClouds log design has the following goals:

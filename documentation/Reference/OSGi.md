@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Deploying jclouds to Apache Fleix OSGi container
+---
 # Deploying jclouds to Apache Fleix OSGi container
 
 ## Introduction

@@ -1,3 +1,7 @@
+---
+layout: docs
+title: jclouds - supported providers
+---
 # jclouds : supported providers
 
 The following is the list of providers that are supported by the jclouds API.

@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Rationale & Design
+---
 # Rationale & Design
 
 [JetS3t](https://jets3t.dev.java.net/) was a pioneering effort to connect the Java world to Amazon S3 services.  

@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Discussion of a Pool provider Design
+---
 # Discussion of a Pool provider Design
 <wiki:toc max_depth="3" />
 

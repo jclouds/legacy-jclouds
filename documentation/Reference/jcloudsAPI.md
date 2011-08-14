@@ -1,3 +1,7 @@
+---
+layout: docs
+title: jclouds API
+---
 # jclouds API
  
 This page explains the jclouds API which is underneath all tools that use jclouds. 

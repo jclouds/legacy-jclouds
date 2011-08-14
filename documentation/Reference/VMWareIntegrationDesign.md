@@ -1,3 +1,7 @@
+---
+layout: docs
+title: VMWare Integration Design & Approach
+---
 # VMWare Integration Design & Approach
 
 ## Overall goals and approach 
