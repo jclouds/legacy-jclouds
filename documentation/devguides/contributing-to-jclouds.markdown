@@ -362,7 +362,7 @@ On you AsyncClient, decaare an `ExceptionParser` on the method you'd like to con
 
 Here's an example of common conventions, where an exception is ok:
 
-{% highlight  java %}
+{% highlight java %}
 
 @DELETE
 @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -390,7 +390,7 @@ ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 Sometimes, standard http methods will not do.  For example, you may need to use http PROPFIND. 
  To do this, you first need to create an annotation for the new method, then use that in your markup.  See below:
 
-{% highlight  java %}
+{% highlight java %}
 
 @Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

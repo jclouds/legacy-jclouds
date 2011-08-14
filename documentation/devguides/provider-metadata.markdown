@@ -185,7 +185,7 @@ All you have to do is check for object equality to make sure the provider you ex
 Below is the [org.jclouds.providers.AWSEC2ProviderTest.java](https://github.com/jclouds/jclouds/blob/master/providers/aws-ec2/src/test/java/org/jclouds/aws/ec2/AWSEC2ProviderTest.java) 
 class that tests the `org.jclouds.aws.ec2.AWSEC2ProviderMetadata` class:
 
-{% highlight  java %}
+{% highlight java %}
 /**
  *
  * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
