@@ -4,7 +4,7 @@ title: User Guide- How to use the Compute API and tools
 ---
 # User Guide: How to use the Compute API and tools
 
-## Introduction =
+## Introduction 
 The jclouds Compute API provides a basic abstraction across Compute APIs such as Amazon EC2 and VMware vCloud.  
 We also have integrations for popular tools such as Ant and Maven.
 
@@ -151,7 +151,7 @@ You can also set the context property `provider`.endpoint to use the following A
 The Compute API is a portable means of managing nodes in clouds. It can manage nodes as a 
 set and address resources in any cloud without needing separate connections. It also has a 
 Template feature which allows you to search for configurations that match parameters such as 
-CPU count or operating sytem.  Finally, it contains utilities to execute scripts as part of 
+CPU count or operating system.  Finally, it contains utilities to execute scripts as part of 
 the bootstrap process of your nodes.
 
 ### Template
@@ -187,7 +187,8 @@ Using the API is straightforward. You need to create a context to the service yo
 Here's how to perform common commands.
 
 ### Open your context and get a service reference
-Here, you specify the particular service you wish to manage and get a reference to `ComputeService`
+
+Here, you specify the particular service you wish to manage and get a reference to _ComputeService_
 
 {% highlight java %}
 
@@ -198,7 +199,7 @@ ComputeService computeService = context.getComputeService();
 {% endhighlight %}
 
 ### List the nodes you have in all locations
-As mentioned above, this context can operate all of your nodes across the globe.  Here's how to list them:
+As mentioned above, this context can operate all of your nodes across the globe.  Here's how to list them
 
 {% highlight java %}
 for (ComputeMetadata node : client.listNodes()) {

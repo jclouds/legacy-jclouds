@@ -81,27 +81,27 @@ This provider is a work in progress. Some issues remain open and are described h
  [let us know](http://groups.google.com/group/jclouds?pli=1) Or just [fork](https://github.com/jclouds/jclouds) the code 
 on github and scratch that itch yourself.
 
-  * No public IP on current Cactus Release: The current version of Openstack API has a shortcoming. 
-	Nova Compute system boots the nodes without a public IP if the vlan network topology is used. 
-	This makes them unreachable from the outside world. And there is no way to assign the public IP to a node using
- 	the Openstack API. There is a patch which adds the additional `auto_assign_floating_ip` parameter to the Nova config. 
-	When this parameter is set to true Nova automatically assigns theIP from the pool of floating IPs to a node after its startup.
- 	This patch has already been submitted to OpenStack. Just take the nighty builds of the Openstack Compute or 
-	use Openstack Cactus packages for RHEL from [here](http://yum.griddynamics.net/)which is also include this patch.
-	
-  * Some features are currently not working if KVM hypervisor is used but may work on other hypervisors supported by OpenStack. 
-	It looks that Openstack does not support that features on KVM.
-    * root password returned in create server call is not the right password.
-    * image customization by uploading additional files before the instance creation is not working
-    * injection of an SSH key from the JClouds is not working (but working for the registered user's default key)
+* No public IP on current Cactus Release: The current version of Openstack API has a shortcoming. 
+  Nova Compute system boots the nodes without a public IP if the vlan network topology is used. 
+  This makes them unreachable from the outside world. And there is no way to assign the public IP to a node using
+   the Openstack API. There is a patch which adds the additional `auto_assign_floating_ip` parameter to the Nova config. 
+  When this parameter is set to true Nova automatically assigns theIP from the pool of floating IPs to a node after its startup.
+   This patch has already been submitted to OpenStack. Just take the nighty builds of the Openstack Compute or 
+  use Openstack Cactus packages for RHEL from [here](http://yum.griddynamics.net/)which is also include this patch.
+  
+* Some features are currently not working if KVM hypervisor is used but may work on other hypervisors supported by OpenStack. 
+  It looks that Openstack does not support that features on KVM.
+  * root password returned in create server call is not the right password.
+  * image customization by uploading additional files before the instance creation is not working
+  * injection of an SSH key from the JClouds is not working (but working for the registered user's default key)
 
-  * Request to create image from a running instance returns incorrect JSON output. Possibly a bug in OpenStack.
+* Request to create image from a running instance returns incorrect JSON output. Possibly a bug in OpenStack.
 
-  * If the node in running status does not have the public IP addresses yet and have only 
-	private address (the public addresses can be assigned a bit later after the node status is changed to running)
-	then some features of the JClouds are not working, namely:
-	
-  * A script can't be executed as a part of node creation process (`TemplateOptions.runScript` attribute). 
+* If the node in running status does not have the public IP addresses yet and have only 
+  private address (the public addresses can be assigned a bit later after the node status is changed to running)
+  then some features of the JClouds are not working, namely:
+  
+* A script can't be executed as a part of node creation process (`TemplateOptions.runScript` attribute). 
 	The node is pinged using the private address and then the node creation process exits on timeout.
   		* Node creation process can't wait until the ports on node are opened (`TemplateOptions.blockOnPort` attribute). 
 		The reason is the same - private IP address is used.
