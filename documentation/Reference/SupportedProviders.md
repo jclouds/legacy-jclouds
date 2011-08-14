@@ -49,4 +49,3 @@ The following is the list of providers that are supported by the jclouds API.
  * swift (generic)
  * transient (in-mem)
 
-`Last Updated: 2011-05-10`

@@ -23,7 +23,7 @@ collocation at various levels.
 
 Here's an example of the current location object serialized in json
 
-```json
+{% highlight json %}
 {
     "scope": "REGION",
     "id": "us-east-1",
@@ -34,7 +34,7 @@ Here's an example of the current location object serialized in json
         "description": "ec2"
     }
 }
-```
+{% endhighlight %}
 
 The data in these location objects were a combination of well known facts and API accessible information.
 
@@ -494,4 +494,3 @@ A "!" in front of a country code excludes that country from the previous list of
 	the introduction here)
 	
 	
-`Last Updated: 2011-05-28`

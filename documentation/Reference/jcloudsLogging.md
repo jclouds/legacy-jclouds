@@ -40,10 +40,10 @@ At runtime, this will be overridden with an appropriate logger implementation so
 
 Here's an example of how a developer can achieve this:
 
-```java
+{% highlight java %}
 @Resource
 protected Logger logger = Logger.NULL;
-```
+{% endhighlight %}
 
 ## Usage
 
@@ -59,23 +59,23 @@ An additional implementation is available when you add the optional jclouds-log4
   * `Log4JLoggingModule`
 
 Here is example code of how to configure your components to use Log4J:
-```java
+{% highlight java %}
     public static class A {
 	@Resource
 	private Logger logger = Logger.NULL;
     }
 
     A a = Guice.createInjector(new Log4JLoggingModule()).getInstance(A.class);
-```
+{% endhighlight %}
 
 Note that some classes hide this away.  For example, S3ContextFactory will by default create a 
 `JDKLoggingModule` unless you specify otherwise.
 
-```java
+{% highlight java %}
 S3Context contextWithJDKLogging = S3ContextFactory.createS3Context("myaccesskeyid","mysecretkey");
 S3Context contextWithLog4JLogging = S3ContextFactory.createS3Context("myaccesskeyid","mysecretkey", 
 										new Log4JLoggingModule());
-```
+{% endhighlight %}
 
 
 ## Logging in jclouds
@@ -84,7 +84,7 @@ In effort to not conflict with other libraries, `jclouds` contains its own loggi
 These are by default bound to `java.util.logging`, but they can be rebound to other libraries such as `Log4J` or use `Guice` configuration modules.
 
 Here's an example of adding log4j logging:
-```java
+{% highlight java %}
 // add properties that override defaults, as necessary
 Properties overrides = new Properties();
 
@@ -94,7 +94,7 @@ Set<Module> wiring = ImmutableSet.<Module> of(new Log4JLoggingModule());
 // construct your context with the overrides in place
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("terremark", user, key,
                                                               wiring, overrides);
-```
+{% endhighlight %}
 
 jclouds performs three different kinds of logging: 
 
@@ -126,5 +126,3 @@ The content log is `jclouds.wire` and the header log is `jclouds.headers`.
 ## Abstraction Logging
 <!-- TODO Need more info -->
 jclouds.compute and jclouds.blobstore
-
-`Last Updated: 2011-05-26`

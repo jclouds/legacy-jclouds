@@ -23,12 +23,12 @@ While single-threaded requests worked well, neither JetS3t nor the other two api
 At its core, the JClouds api is designed for concurrency.  All methods are written to return Futures instead of blocking.  
 This allows you to do the dishes while waiting for laundry.   Have a look at S3Connection:
 
-```java
+{% highlight java %}
 S3Connection connection = context.createConnection();
 Future<String> md5HashFuture = connection.addObject(s3Bucket,s3Object);
 //do productive work.. why wait?
 String  md5Hash =  md5HashFuture.get();  // ok. I'm ready
-```
+{% endhighlight %}
 
 Under the scenes, `S3Connection` creates a `FutureCommand` for the `addObject()` operation.
 It then submits it to a `FutureCommandClient` for execution.
@@ -83,12 +83,10 @@ We have a special configuration module written for GAE (URLFetchServiceClientMod
 This uses their low-level `URLFetchService`
 API and does not spawn threads. Here's an example of how to create an S3 context inside GAE:
 
-```java
+{% highlight java %}
         S3Context context = S3ContextFactory.createS3Context(accesskeyid,secretkey, new URLFetchServiceClientModule());
-```
+{% endhighlight %}
 
 ### JCE on GAE
 
 JClouds uses `bouncycastle` instead of JCE, as explained above.  As such, it does not violate the JCE restriction of GAE.
-
-`Last Updated: 2011-05-24`

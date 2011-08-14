@@ -23,7 +23,7 @@ Specifically, this chooses `joda` dates, `bouncycastle` encryption, and `apache 
 
 You can also add further configuration, by passing it in the set of modules to configure.  For example, here's how to change the default connection and thread limits, and add log4j.
 
-```java
+{% highlight java %}
 import static org.jclouds.Constants.*;
 
 
@@ -42,7 +42,7 @@ import static org.jclouds.Constants.*;
   // same properties and wiring can be used for many services, although the limits are per context
   blobStoreContext = new BlobStoreContextFactory().createContext("s3", account, key, wiring, overrides);
   computeContext = new ComputeServiceContextFactory().createContext("ec2", account, key, wiring, overrides);
-```
+{% endhighlight %}
 
 ### Timeout
 
@@ -59,7 +59,7 @@ These allow `jclouds` code to operate without exception searching.
 
 For example, you can wrap any `jclouds` command in the following reliably:
 
-```java
+{% highlight java %}
   try {
       String = client.getFoo("bar");
   } catch (AuthorizationException e) {
@@ -67,7 +67,7 @@ For example, you can wrap any `jclouds` command in the following reliably:
       // the first exception of type AuthorizationException will show up here.  This allows
       // you to make preventative measures that ensure your code doesn't lock out accounts.
   }
-```
+{% endhighlight %}
 
 Here's a list of our "standard" exceptions which are defined in `org.jclouds.util.Utils#returnFirstExceptionIfInListOrThrowStandardExceptionOrCause`:
 
@@ -84,5 +84,3 @@ All API methods, either provider-specific or abstracti, must return _null_ when 
 Throwing exceptions is only appropriate when there is a state problem, for example requesting an object from a container that does not 
 exist is a state problem, and should throw an exception.
 
-
-`Last Updated: 2011-05-15`

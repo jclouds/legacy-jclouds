@@ -41,4 +41,3 @@ for f in *bar ; do mv $f `basename $f bar`jar; done
 * Wait a few seconds and list the bundles using `lb` command.
 
 
-`Last Updated: 2011-07-26`

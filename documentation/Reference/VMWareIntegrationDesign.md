@@ -92,4 +92,3 @@ Adrian suggests to enhance the implementation in these areas:
   * retrieve log from vmware server by using http://www.doublecloud.org/2010/10/how-you-can-use-vsphere-apis-to-collect-vcenter-and-esx-logs/
   * how to verify via api the operation on vm
 
-`Last Updated: 2011-05-26`

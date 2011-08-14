@@ -78,5 +78,3 @@
 
   * [NeoLoad](http://www.neotys.com/product/neoload-cloud-testing.html)
     * uses jclouds to manage load generators in the Cloud.
-
-`Last Updated: 2011-05-29`

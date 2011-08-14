@@ -262,4 +262,3 @@ Request is where a node and its relevant templateoptions placed into a map, awai
 #### How do we clean nodes?
 [perhaps lxc?](http://sysadvent.blogspot.com/2010/12/day-1-linux-containers-lxc.html)
 
-`Last Updated: 2011-07-26`

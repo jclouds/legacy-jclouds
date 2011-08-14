@@ -127,4 +127,3 @@ Load Balancer code hasn't yet been written
 ## Discussions
   * [loadbalancer design now -> code sprint early next week](http://groups.google.com/group/jclouds-dev/browse_thread/thread/481fe09da50ba241)
 
-`Last Updated: Sat Jun  4 23:15:34 2011`

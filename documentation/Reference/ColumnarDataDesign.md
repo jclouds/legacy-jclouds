@@ -59,9 +59,9 @@ So first abstraction that I considered was an Identifier, then every instance ha
 
 The create table is strongly related with the scalability issue, so in that case the API will be something like:
 
-```java
+{% highlight java %}
 	   public void createTable(String table);
-```
+{% endhighlight %}
 
 
 In a Columnar database, the data auto-fit into the table, and we don't need to design the 
@@ -72,9 +72,9 @@ structure of table in the create action, because it has a mutable state.
 
 The remove APi it is quite similar to the create, but more simple, just something like that:
 
-```java
+{% highlight java %}
 	   public void removeTable(String table);
-```
+{% endhighlight %}
 
 * **Query**
 
@@ -84,17 +84,17 @@ This implementation should be based on JPA implementation.
 
 * **Select data**
 
-```java
+{% highlight java %}
 // First arg is table name, and the second one is the list of fields to retrieve.
 public Query createQuery(String table, List<String> fields);
 public Query createNativeQuery(String sql);
-```
+{% endhighlight %}
 
 For instance
 
-```SQL
+{% highlight sql %}
 SELECT A, B, C FROM Table 
-```
+{% endhighlight %}
 
 
 * **Conditions**
@@ -102,48 +102,46 @@ SELECT A, B, C FROM Table
 How to apply conditions/filter the query? First step, it will be create 
 a Query through the createQuery method. Thus, you should be able to filter the query.
 
-```java
+{% highlight java %}
 public void executeQuery();
 public void setParameter(String name, String value);
-```
+{% endhighlight %}
 Sample SQL:
 
-```SQL
+{% highlight sql %}
 SELECT A, B, C FROM Table WHERE name = :name 
-```
+{% endhighlight %}
 Then, you can apply the set 
 
-```java
+{% highlight java %}
 Query query = ColumnarObj.createNativeQuery("SELECT A, B, C FROM Table WHERE name = :name");
 query.setParameter("name", "Luis");
-```
+{% endhighlight %}
 
 * **Insert**
 
 The insert mechanism, will be also using the abstraction of JPA, however 
 we will specialize into an Table implementation in order to receive attributes. 
 
-```java
+{% highlight java %}
 public void persist(Table table);
-```
+{% endhighlight %}
 
 Moreover, it will have the same behavior, however merge operation will also be supported by this function.
 
 * **Update**
 
-```java
+{% highlight java %}
 new Exception("NOT SUPPORTED YET!!!");
-```
+{% endhighlight %}
 
 * **Remove**
 
 
-```java
+{% highlight java %}
 public void remove(String table, String id);
-```
+{% endhighlight %}
 
 ## Supported providers
 
 None until now on jclouds, but the simpledb implementation already lives in sandbox.
-
-`Last Updated: 2011-07-26`

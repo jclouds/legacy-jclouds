@@ -160,12 +160,12 @@ However, we will have helpers for calls that always take a long time.
 
 Here's what creating and starting an Node might look like if you let jclouds handle reasonable timeouts:
 
-```java
+{% highlight java %}
 // setup an option to wait up to 120 seconds for port 22 to open
 TemplateOptions options = computeService.templateOptions().blockOnPort(22, 120);
 // run a single node accessible via the group "foo"
 Set<? extends NodeMetadata> nodes = computeService.runNodesInGroup("foo", 1, options);
-```
+{% endhighlight %}
 
 ## Template 
 
@@ -173,14 +173,14 @@ A template provides an ability to encapsulate the implementation details corresp
 For example, a user may desire the cheapest node configuration in dallas.  `computeService.templateBuilder()` would accept
  arguments to return the best match of this request.  The Template is then used to create a node, for example:
 
-```java
+{% highlight java %}
 Template template = computeService.templateBuilder().hardwareId(InstanceType.M1_SMALL)
               .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 
 // run 5 nodes accessible with the group "webserver"
 Set<? extends NodeMetadata> nodes = computeService.runNodesInGroup("webserver", 5, template);
 
-```
+{% endhighlight %}
 
 As you can see above, Profile allows users to use cloud-specific lookups while at the same time use the portable interface.  
 It also allows you to create multiple nodes.
@@ -223,7 +223,7 @@ The above are fairly "fine-grained" use cases, and as such it would appear helpf
 The node has operations, but also acts as a container for Platforms and Instances of them.   
 Here's what that might look like in java:
 
-```java
+{% highlight java %}
 if (!node.containsPlatform("mybilling-1.0.1")){
    Archive billingArchive = // from archive
    Future<PlatformMetadata> = service.createPlatform(node.getId(), "mybilling-1.0.1", archive, readOnly().onSharedMount(volume));
@@ -237,6 +237,5 @@ if (billingInstances.size() <5){
   //  check it, etc.
 }
 
-```
+{% endhighlight %}
 
-`Last Updated: 2011-07-26`
