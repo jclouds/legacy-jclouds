@@ -15,7 +15,7 @@ title: Quick Start: Terremark vCloud Express
 	* get the dependency `org.jclouds.provider/trmk-vcloudexpress` using jclouds [[Installation Guide|Installation]].
 5. Start coding
 
-```java
+{% highlight java %}
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
 // get a context with terremark that offers the portable ComputeService api
@@ -90,8 +90,7 @@ System.out.printf("you can now connect to ssh://vcloud@%s:22%nusing private key 
 	key.getPrivateKey());
 
 context.close();
-```
+{% endhighlight %}
 
 6. Validate on the [Terremark console](https://my.vcloudexpress.terremark.com/default.aspx)
 
-`Last Updated: 2011-05-24`
