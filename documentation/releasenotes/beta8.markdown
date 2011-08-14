@@ -12,7 +12,7 @@ We resolved [23 issues](http://code.google.com/p/jclouds/issues/list?can=1&q=lab
  in our jclouds 1.0-beta-8 release.  While mostly a bugfix release we have a few notable features to discuss.
 
 ## New Features
-  * Tested support for a [http://www.peer1.com/hosting/cloudone-storage.php peer1-storage]
+  * Tested support for a [peer1-storage](http://www.peer1.com/hosting/cloudone-storage.php)
   * jclouds can now persist credentials of started nodes across contexts, which allows you
  to run scripts without ever knowing the login credentials of nodes.
   * Integration tests are stronger including os version match tests and running web services on launched nodes

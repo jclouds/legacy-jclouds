@@ -14,18 +14,18 @@ Below is more information on these enhancements.
 
 ## New Features
 
-* We now have an [http://code.google.com/p/jclouds/wiki/ComputeGuide#Operating_System OperatingSystem] type to help you be more specific 
+* We now have an [OperatingSystem](http://code.google.com/p/jclouds/wiki/ComputeGuide#Operating_System) type to help you be more specific 
 	in provisioning and operations commands.
-* Our new [http://code.google.com/p/jclouds/wiki/ComputeGuide#Hardware Hardware] type exposes lots of details 
+* Our new [Hardware](http://code.google.com/p/jclouds/wiki/ComputeGuide#Hardware) type exposes lots of details 
 	including number of cores and speed per processor, as well mounted volume information including Amazon EBS and vCloud.
-* We've enhanced testability by adding a [http://code.google.com/p/jclouds/wiki/ComputeGuide#Stub_Provider stub] ComputeService provider.
+* We've enhanced testability by adding a [stub](http://code.google.com/p/jclouds/wiki/ComputeGuide#Stub_Provider) ComputeService provider.
   With this you can write test provisioning code without launching servers.
 * Our [vCloud vCloud] support is completely revamped to support the new 1.0 api implemented by [vCloud Director](http://www.vmware.com/products/vcloud-director/) 
-  with many thanks to VMware and [http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/ BlueLock].  
-  Moreover, we've revamped [Terremark Terremark] vCloud Express and started on their eCloud offering.
-* [Alfredo Morresi](http://www.rainbowbreeze.it) contributed a [http://code.google.com/p/jclouds/wiki/BlobStore#Filesystem_Provider file system blobstore], 
+  with many thanks to VMware and [BlueLock](http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/).  
+  Moreover, we've revamped [Terremark](/documentation/quickstart/terremark-vcloud-express) vCloud Express and started on their eCloud offering.
+* [Alfredo Morresi](http://www.rainbowbreeze.it) contributed a [filesystem blobstore](/documentation/userguide/blobstore-guide), 
   which allows you to to use the same api persisting to disk, memory, or a blobstore like Amazon S3.
-* With our [http://code.google.com/p/jclouds/wiki/BlobStore#Integration_with_non-java_clients portable request signer],
+* With our  [blobstore portable request signer](/documentation/userguide/blobstore-guide),
   you can pass blobstore commands to non-java environments to execute.  Be creative!
 * Our core is stronger, now using [Asynchronous URLFetch](http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/urlfetch/URLFetchService.html#fetchAsync%28com.google.appengine.api.urlfetch.HTTPRequest%29)
   in Google Appengine and jaxrs processing via [Jersey](https://jersey.dev.java.net/).

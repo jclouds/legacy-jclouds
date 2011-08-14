@@ -18,8 +18,8 @@ if you need functionality that is not available in our abstraction.
 ### Location Aware API
 
 Our location API helps you to portably identify a container within context, such as Americas or Europe.
-<!-- TODO Fix link -->
-We use the same model across the [ComputeGuide ComputeService] which allows you to facilitate collocation of processing and data.
+
+We use the same model across the [ComputeGuide](/documentation/userguide/compute) which allows you to facilitate collocation of processing and data.
 
 ### Asynchronous API
 
@@ -46,32 +46,34 @@ Our file system BlobStore allows you to use the same API when persisting to disk
 
 All of the following providers can be used equally in any BlobStore API tool.
 
-|| *provider* || *artifact* || *version* ||
-|| transient || jclouds-blobstore || 1.0.0 ||                                                                                                                                             
-|| filesystem || jclouds-filesystem || 1.0.0 ||                                                                                                                                           
-|| eucalyptus-partnercloud-s3 || org.jclouds.provider/eucalyptus-partnercloud-s3 || 1.0.0 ||                                                                                              
-|| synaptic-storage || org.jclouds.provider/synaptic-storage || 1.0.0 ||                                                                                                                  
-|| azureblob || org.jclouds.provider/azureblob || 1.0.0 ||                                                                                                                                
-|| cloudonestorage || org.jclouds.provider/cloudonestorage || 1.0.0 ||                                                                                                                    
-|| cloudfiles-us || org.jclouds.provider/cloudfiles-us || 1.0.0 ||                                                                                                                        
-|| cloudfiles-uk || org.jclouds.provider/cloudfiles-uk || 1.0.0 ||                                                                                                                        
-|| ninefold-storage || org.jclouds.provider/ninefold-storage || 1.0.0 ||                                                                                                                  
-|| aws-s3 ||  org.jclouds.provider/aws-s3 || 1.0.0 ||                                                                                                                                     
-|| googlestorage || org.jclouds.provider/googlestorage || 1.0-SNAPSHOT ||                                                                                                                 
-|| scaleup-storage || org.jclouds.provider/scaleup-storage || 1.0-SNAPSHOT ||                                                                                                             
-|| hosteurope-storage || org.jclouds.provider/scaleup-storage || 1.0-SNAPSHOT ||                                                                                                          
-|| tiscali-storage || org.jclouds.provider/scaleup-storage || 1.0-SNAPSHOT ||
+| *provider* | *artifact* | *version* |
+|------------|------------|-----------|
+| transient | jclouds-blobstore | 1.0.0 |
+| filesystem | jclouds-filesystem | 1.0.0 |
+| eucalyptus-partnercloud-s3 | org.jclouds.provider/eucalyptus-partnercloud-s3 | 1.0.0 |
+| synaptic-storage | org.jclouds.provider/synaptic-storage | 1.0.0 |
+| azureblob | org.jclouds.provider/azureblob | 1.0.0 |
+| cloudonestorage | org.jclouds.provider/cloudonestorage | 1.0.0 |
+| cloudfiles-us | org.jclouds.provider/cloudfiles-us | 1.0.0 |
+| cloudfiles-uk | org.jclouds.provider/cloudfiles-uk | 1.0.0 |
+| ninefold-storage | org.jclouds.provider/ninefold-storage | 1.0.0 |
+| aws-s3 |  org.jclouds.provider/aws-s3 | 1.0.0 |
+| googlestorage | org.jclouds.provider/googlestorage | 1.0-SNAPSHOT |
+| scaleup-storage | org.jclouds.provider/scaleup-storage | 1.0-SNAPSHOT |
+| hosteurope-storage | org.jclouds.provider/scaleup-storage | 1.0-SNAPSHOT |
+| tiscali-storage | org.jclouds.provider/scaleup-storage | 1.0-SNAPSHOT |
 
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
 
-|| *api* ||                                                                                                                                                                               
-||atmos||                                                                                                                                                                                 
-||cloudfiles||                                                                                                                                                                            
-||filesystem||                                                                                                                                                                            
-||nova||                                                                                                                                                                                  
-||swift||                                                                                                                                                                                 
-||swift||                                                                                                                                                                                 
-||walrus||                                                                                                                                                                                
+| api  			|                                                                                                                                                                               
+|---------------|
+| atmos			|                                                                                                                                                                                 
+| cloudfiles	|                                                                                                                                                                            
+| filesystem	|                                                                                                                                                                            
+| nova			|                                                                                                                                                                                  
+| swift			|                                                                                                                                                                                 
+| swift			|                                                                                                                                                                                 
+| walrus		|                                                                                                                                                                                
 
 
 ## Concepts 
@@ -84,12 +86,12 @@ and blob relates directly to an HTTPs url.
 
 Here are some key points about blobstores:
 
-  * Globally addressable
-  * Key, value with metadata
-  * Accessed via HTTP
-  * Containers are provisioned on demand through API calls
-  * Unlimited scaling
-  * Most are billed on a usage basis
+* Globally addressable
+* Key, value with metadata
+* Accessed via HTTP
+* Containers are provisioned on demand through API calls
+* Unlimited scaling
+* Most are billed on a usage basis
 
 ### Container
 

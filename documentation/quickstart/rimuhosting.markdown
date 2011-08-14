@@ -16,7 +16,7 @@ RimuHosting's cloud is built on top of Xen with an in-house API layer to control
 2. The RimuHosting API uses a special key to authenticate. It is available from [http://rimuhosting.com/cp/apikeys.jsp]
 
 3. Setup jclouds
- * get the dependency `jclouds-rimuhosting` using our [http://code.google.com/p/jclouds/wiki/Installation#Getting_the_Latest_Release installation guide]
+ * get the dependency `jclouds-rimuhosting` using our [Installation Guide](/documentation/userguide/installation-guide).
 
 4. Start Coding
 * Obtaining a context to Rimuhosting
