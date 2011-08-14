@@ -115,17 +115,32 @@ Adds compute service components to an *existing* project.
 In order for this to work, you must use the identical parameters as json-client-archetype, and beforehand, 
 you must delete the files this code will replace.  Here are the files:
 
-<!-- TODO Table -->
-|| file || reason ||
-|| src/test/resources/log4j.xml || adding compute logger||
-|| src/main/java/org/jclouds/`artifactId`/`providerName`ContextBuilder || converts to build a ComputeServiceContext instead of a RestContext ||
-|| src/main/java/org/jclouds/`artifactId`/`providerName`ContextFactory || converts to build a ComputeServiceContext instead of a RestContext ||
+<table>
+	<thead>
+		<tr>
+			<th>file</th>
+			<th>Reason</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>src/test/resources/log4j.xml</td>
+		<td>adding compute logger</td>
+	</tr>
+	<tr>
+		<td>src/main/java/org/jclouds/`artifactId`/`providerName`ContextBuilder</td>
+		<td>converts to build a ComputeServiceContext instead of a RestContext</td>
+	</tr>
+	<tr>
+		<td>src/main/java/org/jclouds/`artifactId`/`providerName`ContextFactory</td>
+		<td>converts to build a ComputeServiceContext instead of a RestContext</td>
+	</tr>
+</table>
 
 #### Fixing up
 
-  * You will have to change usage like context.getAPI() to context.getProviderSpecificContext().getAPI();
-  * add in appropriate lines to compute.properties hooking this provider to it.
-  * code in `providerName`ComputeServiceContextModule and run `providerName`ComputeServiceLiveTest until it passes.
+*  You will have to change usage like context.getAPI() to context.getProviderSpecificContext().getAPI();
+*  add in appropriate lines to compute.properties hooking this provider to it.
+*  code in `providerName`ComputeServiceContextModule and run `providerName`ComputeServiceLiveTest until it passes.
 
 ### Coding
 
@@ -207,10 +222,10 @@ When live is enabled, any tests that have `LiveTest` suffix will be run during t
 In order for this to operate, you must specify the following either inside your `~/.m2/settings.xml` 
 or directly on the commandline:
 
-  * test._provider_.identity
-  * test._provider_.credential (some clouds do not require this)
-  * test._provider_.endpoint (optional)
-  * test._provider_.apiversion (optional)
+*  test._provider_.identity
+*  test._provider_.credential (some clouds do not require this)
+*  test._provider_.endpoint (optional)
+*  test._provider_.apiversion (optional)
 
 Here's an example of running a live test with a specific username and password:
 
@@ -241,10 +256,10 @@ In this case, a few tests didn't pass, although most did.  There are a few logs 
 <table>
 	<thead>
 		<tr>
-			<td>log</td>
-			<td>path</td>
-			<td>purpose</td>
-			<tr>
+			<th>log</th>
+			<th>path</th>
+			<th>purpose</th>
+		</tr>
 	</thead>
 	<tr>
 	 	<td>test log</td>
@@ -279,8 +294,8 @@ In this case, a few tests didn't pass, although most did.  There are a few logs 
 When failures happen, and you cannot figure out why, here's a couple places to check.  
 Please make sure you have log files handy, and at least paste the test log for others.
 
-  * IRC - #jclouds on freenode 
-  * [jclouds-dev google group](http://groups.google.com/group/jclouds-dev)
+*  IRC - #jclouds on freenode 
+*  [jclouds-dev google group](http://groups.google.com/group/jclouds-dev)
 
 ## Creating a new release
 
@@ -329,12 +344,12 @@ For example, you could wrap any jclouds command in the following reliably:
 Here's a list of our "standard" exceptions which are defined in
  `org.jclouds.util.Utils#returnFirstExceptionIfInListOrThrowStandardExceptionOrCause`:
   
-  * IllegalStateException
-  * UnsupportedOperationException
-  * IllegalArgumentException
-  * AuthorizationException
-  * ResourceNotFoundException
-  * HttpResponseException
+*  IllegalStateException
+*  UnsupportedOperationException
+*  IllegalArgumentException
+*  AuthorizationException
+*  ResourceNotFoundException
+*  HttpResponseException
 
 #### Per method conversion of an Exception into another exception or a value
 
