@@ -3,7 +3,7 @@ layout: docs
 title: Quick Start Index
 ---
 
-**Quick Start Guides**
+# Quick Start Guides
 
 * [Amazon Web Services](/documentation/quickstart/aws)
 * [Azure Storage Service](/documentation/quickstart/azure-storage)
