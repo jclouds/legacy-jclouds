@@ -10,12 +10,17 @@ title: Quick Start: BlueLock vCloud Service
 1. Sign up for [BlueLock vCloud](http://www.bluelock.com/bluelock-cloud-hosting/)
 2. Ensure you are using a recent JDK 6
 3. Setup your project to include bluelock-vcdirector
-	* Get the dependency `org.jclouds.provider/bluelock-vcdirector` using jclouds [[Installation Guide|Installation]].
-4. Start coding
+	a. Get the dependency `org.jclouds.provider/bluelock-vcdirector` using jclouds [[Installation Guide|Installation]].
+4. Start coding.
 
 {% highlight java %}
-ComputeServiceContext context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector", "username@orgname", password,
-                                                              ImmutableSet.<Module> of(new JschSshClientModule()));
+
+ComputeServiceContext context = 
+	new ComputeServiceContextFactory().createContext("bluelock-vcdirector", 
+													  "username@orgname", 
+													   password,
+    												  ImmutableSet.<Module> of(new JschSshClientModule()));
+
 
 // create a customization script to run when the machine starts up 
 String script = "cat > /root/foo.txt<<EOF\nI love candy\nEOF\n";
@@ -26,11 +31,12 @@ options.as(VCloudTemplateOptions.class).customizationScript(script);
 nodes = context.getComputeService().createNodesInGroup("webserver", 2, options);
 
 // get a synchronous object to use for manipulating vcloud objects in BlueLock
-VCloudClient client = VCloudClient.class.cast(context.getProviderSpecificContext()
-         .getApi());
+VCloudClient client = 
+	VCloudClient.class.cast(context.getProviderSpecificContext().getApi());
 
 // look at all the thumbnails of my vApps
 VApp app = client.getVApp(vApp.getHref());
+
 for (Vm vm : app.getChildren()) {
      assert client.getThumbnailOfVm(vm.getHref()) != null;
 }
@@ -40,5 +46,5 @@ context.close();
 
 {% endhighlight %}
 
-6. Validate on the [BlueLock console](https://vcenterprise.bluelock.com/cloud/)
+6. Validate on the [BlueLock](https://vcenterprise.bluelock.com/cloud/)
 
