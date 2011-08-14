@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: BlueLock vCloud Service
+title: Quick Start - BlueLock vCloud Service
 ---
 
 # Quick Start: BlueLock vCloud Service

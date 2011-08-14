@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Terremark vCloud Express
+title: Quick Start- Terremark vCloud Express
 ---
 
 

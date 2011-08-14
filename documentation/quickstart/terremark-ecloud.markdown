@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Terremark eCloud
+title: Quick Start - Terremark eCloud
 ---
 
 # Quick Start:  Terremark eCloud

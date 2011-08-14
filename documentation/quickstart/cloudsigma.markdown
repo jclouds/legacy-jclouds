@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: QuickStart: Cloud Sigma
+title: Quick Start - Cloud Sigma
 ---
 
 # QuickStart: Cloud Sigma

@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: IBM Developer Cloud
+title: Quick Start - IBM Developer Cloud
 ---
 
 # Quick Start: IBM Developer Cloud

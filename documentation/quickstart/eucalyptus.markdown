@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Eucalyptus
+title: Quick Start - Eucalyptus
 ---
 
 # Quick Start: Eucalyptus

@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Open Stack
+title: Quick Start - Open Stack
 ---
 
 # Quick Start: Open Stack

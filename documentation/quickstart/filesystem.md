@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: File System
+title: Quick Start - File System
 ---
 
 # Quick Start: File System

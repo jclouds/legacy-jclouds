@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Go Grid
+title: Quick Start - Go Grid
 ---
 
 # Quick Start: Go Grid

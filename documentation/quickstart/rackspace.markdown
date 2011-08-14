@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: Rackspace Cloud
+title: Quick Start - Rackspace Cloud
 ---
 
 # Quick Start: Rackspace Cloud

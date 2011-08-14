@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start: RimuHosting
+title: Quick Start - RimuHosting
 ---
 
 # Quick Start: RimuHosting
