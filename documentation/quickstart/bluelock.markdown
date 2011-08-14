@@ -1,3 +1,12 @@
+---
+layout: docs
+title: Quick Start - Amazon Web Services
+---
+---
+layout: docs
+title: Quick Start Azure Storage Service
+---
+
 # Quick Start: BlueLock vCloud Service
 
 **Please note that the support for BlueLock vCloud Director is not complete**
@@ -8,8 +17,7 @@
 	* Get the dependency `org.jclouds.provider/bluelock-vcdirector` using jclouds [[Installation Guide|Installation]].
 4. Start coding
 
-```java
-
+{% highlight java %}
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector", "username@orgname", password,
                                                               ImmutableSet.<Module> of(new JschSshClientModule()));
 
@@ -34,8 +42,7 @@ for (Vm vm : app.getChildren()) {
 // release resources 
 context.close();
 
-```
+{% endhighlight %}
 
 6. Validate on the [BlueLock console](https://vcenterprise.bluelock.com/cloud/)
 
-`Last Updated: 2011-05-17`

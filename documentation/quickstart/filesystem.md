@@ -1,10 +1,15 @@
+---
+layout: docs
+title: Quick Start Azure Storage Service
+---
+
 # Quick Start: File System
 
 1. Setup your project to include filesystem
 	* Get the dependency `org.jclouds.api/filesystem` using jclouds [[Installation Guide|Installation]].
 2. Start coding
 
-```java
+{% highlight java %}
 // setup where the provider must store the files
 Properties properties = new Properties();
 properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "./local/filesystemstorage");
@@ -31,7 +36,7 @@ blobStore.removeBlob(containerName, "test");
 
 //close context
 context.close();
-```
+{% endhighlight %}
 
 ### Tips & tricks
 
@@ -40,5 +45,3 @@ context.close();
   *  Blob key represent the name of the file stored in the filesystem. It can contains path separator. 
 	In this case, the entire directory structure is generated, starting from the container path.
 	 Also in this case, common rules for allowed file names must be followed.
-
-`Last Updated: 2011-05-17`

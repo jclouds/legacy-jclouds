@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start Azure Storage Service
+---
+
 # Quick Start: Go Grid
 
 ## Introduction
@@ -16,44 +21,44 @@ Using your account's email address won't substitute the key and won't let you ac
 
 To create a context for all subsequent API calls, use:
 
-```java
+{% highlight java %}
 RestContext<GoGridClient, GoGridAsyncClient> context = 
 					new ComputeServiceFactory().createContext(key, sharedSecret)
 										.getProviderSpecificContext();
 
 GoGridClient client = context.getApi();
 
-```
+{% endhighlight %}
 
 A typical use case, as demonstrated in much detail [here](http://github.com/jclouds/jclouds/blob/master/gogrid/src/test/java/org/jclouds/gogrid/GoGridLiveTestDisabled.java):
 
-```java
-
+{% highlight java %}
 // make an API call to get the IPs
 Set<Ip> availableIps = client.getIpServices().getUnassignedIpList(); 
 
 // iterate over the collection. you're not required to use Iterables
 Ip availableIp = Iterables.getLast(availableIps);
 
-```
+{% endhighlight %}
+
 Having an available IP address, you can create a server:
 
-```java
+{% highlight java %}
 Server createdServer = client.getServerServices().addServer(nameOfServer,
                 "GSI-f8979644-e646-4711-ad58-d98a5fa3612c" /*image name*/,
                 "1" /*ID of ram, 1 is 512 MB, 2 is 1GB*/,
                 availableIp.getIp());
-```
+{% endhighlight %}
 
 and optionally wait until it fully starts (in GoGrid's terms, until the server creation job is completed):
 
-```java
+{% highlight java %}
 RetryablePredicate<Server> serverLatestJobCompleted = new RetryablePredicate<Server>(
                 new ServerLatestJobCompleted(client.getJobServices()),
                 800, 20, TimeUnit.SECONDS);
 serverLatestJobCompleted.apply(createdServer); //blocks until the condition is met or timeout is exceeded
 //                                                   (returns true/false whether it was never met or not)
-```
+{% endhighlight %}
 
 Note that this predicate can be used for any type of server-related jobs (for load balancer-related jobs,
  please see [this predicate](http://github.com/jclouds/jclouds/blob/master/gogrid/src/main/java/org/jclouds/gogrid/predicates/LoadBalancerLatestJobCompleted.java)).

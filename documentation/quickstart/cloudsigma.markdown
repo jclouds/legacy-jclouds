@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start Azure Storage Service
+---
+
 # QuickStart: Cloud Sigma
 
 1. Signup for [CloudSigma](https://cs.cloudsigma.com/accounts/signup/)
@@ -6,7 +11,7 @@
 	* Get the dependency `org.jclouds.provider/cloudsigma-zrh` using jclouds [[Installation Guide|Installation]].
 4. Start coding
 
-```java
+{% highlight java %}
 // get a context with ibm that offers the portable ComputeService api
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext(
                     "cloudsigma-zrh", email, password,
@@ -31,9 +36,6 @@ ServerInfo newServer = client.createServer(toCreate);
 
 // release resources 
 context.close();
-```
+{% endhighlight %}
 
 5. Validate on the [CloudSigma console](https://cs.cloudsigma.com)
-
-
-`Last Updated: 2011-05-17`

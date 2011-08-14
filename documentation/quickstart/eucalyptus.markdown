@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Quick Start Azure Storage Service
+---
+
 # Quick Start: Eucalyptus
 
 1. Install Eucalyptus or signup for the [ECC cloud](https://ecc.eucalyptus.com:8443/#login)
@@ -9,7 +14,7 @@
 
 ### Using Walrus
 
-```java
+{% highlight java %}
 import static org.jclouds.aws.s3.options.PutObjectOptions.Builder.withAcl;
 
 Properties overrides = new Properties();
@@ -42,10 +47,11 @@ object.setPayload("hello world");
 s3Client.putObject(bucket, object, withAcl(CannedAccessPolicy.PUBLIC_READ));
 
 context.close();
-```
+{% endhighlight %}
 
 ### Using Eucalyptus
-```java
+
+{% highlight java %}
 // get a context with eucalyptus that offers the portable ComputeService api
 Properties overrides = new Properties();
 overrides.setProperty("eucalyptus.endpoint", "http://173.205.188.130:8773/services/Eucalyptus");
@@ -75,6 +81,4 @@ NodeMetadata node = Iterables.get(nodes, 0);
 Attachment attachment = ec2Client.getElasticBlockStoreServices().attachVolumeInRegion(null, volumeId, node.getLocation().getId(), device);
 
 context.close();
-```
-
-`Last Updated: 2011-05-17`
+{% endhighlight %}
