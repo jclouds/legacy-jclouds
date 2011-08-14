@@ -43,8 +43,8 @@ All of the following providers can be used equally in any Compute API tool.
 <table>
 	<thead>
 		<tr>
-			<th>*maven dependency*</th>
-			<th>*iso 3166 codes*</th>
+			<th>maven dependency*</th>
+			<th>iso 3166 codes</th>
 		</tr>
 		<tbody>
 			<tr>
@@ -133,8 +133,8 @@ All of the following providers can be used equally in any Compute API tool.
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
                                                                                                                                                                                           
 | *maven dependency*  			|                                                                                                                                                            
-|:-----------------------------:|
-|org.jclouds.api/byon 			|                                                                                                                                                                  
+|:------------------------------|
+| org.jclouds.api/byon 			|                                                                                                                                                                  
 | org.jclouds.api/deltacloud	|                                                                                                                                                            
 | org.jclouds.api/elasticstack	|                                                                                                                                                          
 | org.jclouds.api/eucalyptus	|                                                                                                                                                            
