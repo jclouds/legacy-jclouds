@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Installing jclouds on Apache KarafKaraf,OSGi
+---
 # Installing jclouds on Apache KarafKaraf,OSGi
 
 Instructions on how to install Jclouds on [Apache Karaf](http://karaf.apache.org) and run the examples.
@@ -58,14 +62,14 @@ mvn clean install
 
 * Start Karaf and install the JClouds feature!
 
-{% highlight %}
+{% highlight text %}
 features:addurl mvn:org.jclouds.karaf/feature/1.0/xml/features
 features:install jclouds
 {% endhighlight %}
 
 Now the core of JClouds is installed. You can select which additional JClouds features you wish and install them using the shell:
 
-{% highlight %}
+{% highlight text %}
 features:list | grep jclouds
 {% endhighlight %}
 
@@ -73,7 +77,7 @@ _*Example*_
 
 For installing the module for aws-s3:
 
-{% highlight %}
+{% highlight text %}
 features:install jclouds-aws-s3
 {% endhighlight %}
 
@@ -86,7 +90,7 @@ the OSGi configuration admin and can change dynamically.
 
 The first step is to get and build the example:
 
-{% highlight %}
+{% highlight text %}
 git clone https://iocanel@github.com/jclouds/jclouds-examples.git
 cd jcoulds-examples/blobstore-karaf-shell
 mvn clean install
@@ -94,7 +98,7 @@ mvn clean install
 
 Then from Karaf shell you can install the example:
 
-{% highlight %}
+{% highlight text %}
 osgi:install -s mvn:org.jclouds.examples/blobstore-karaf-shell/1.0-SNAPSHOT
 {% endhighlight %}
 
@@ -108,7 +112,7 @@ using the org.jclouds.blobstore PID. You can create the configuration either fro
 by dropping  a file named org.jclouds.blobstore.cfg under karaf's etc folder. 
 Let's see how it can be done using the Karaf shell:
 
-{% highlight %}
+{% highlight text %}
 config:edit org.jclouds.blobstore
 config:propset provider aws-s3
 config:propset accessKeyId XXXXXX 
@@ -118,7 +122,7 @@ config:update
 
 Now you are ready to use the commands
 
-{% highlight %}
+{% highlight text %}
 jclouds:blobstore-write mybucket myblob JCloudsRocks
 jclouds:blobstore-write mybucket myblob
 {% endhighlight %}

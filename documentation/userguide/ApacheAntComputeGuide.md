@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Using jclouds ant task for Compute API Operations
+---
 # Using jclouds ant task for Compute API Operations
 
 Ant is a popular Java build tool...kind of like make.  We have written a few Ant tasks in the 

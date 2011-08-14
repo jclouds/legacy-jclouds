@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Filesystem provider
+---
 # Filesystem provider
 
 ## Package description

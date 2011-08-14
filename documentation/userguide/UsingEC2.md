@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Using the amazon EC2 cloud
+---
 # Using the amazon EC2 cloud
 
 ## Introduction

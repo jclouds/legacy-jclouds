@@ -1,3 +1,7 @@
+---
+layout: docs
+title: BlobStore Guide
+---
 # BlobStore Guide
 
 The BlobStore API is a portable means of managing key-value storage providers such as Microsoft Azure Blob Service
@@ -339,7 +343,7 @@ import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 You can now see status of aggregate blobstore commands by enabling at least DEBUG on the log category: "jclouds.blobstore".  
 
 Here is example output:
-{% highlight %}
+{% highlight text %}
 2010-01-31 14:41:14,921 TRACE [jclouds.blobstore] (pool-4-thread-4) deleting from containerName: adriancole-blobstore2, 
 completed: 5001/5001, errors: 0, rate: 14ms/op
 {% endhighlight %}

@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Using jclouds with Google App Engine
+---
 # Using jclouds with Google App Engine
 
 ## Introduction
@@ -59,7 +63,7 @@ your WEB-INF directory, e.g., here are two files and a servlet context listener 
 
 Edit or create `WEB-INF/jclouds-local.properties` as shown below:
 
-{% highlight %}
+{% highlight text %}
 jclouds.blobstore=filesystem
 jclouds.filesystem.basedir=/tmp/blobstore
 filesystem.identity=foo
@@ -69,7 +73,7 @@ Edit or create `WEB-INF/jclouds-gae.properties`
 
 this assumes you want to use googlestorage provider.  use the same conventions for s3, azurestorage, cloudfiles, etc.
 
-{% highlight %}
+{% highlight text %}
 jclouds.blobstore=googlestorage
 jclouds.filesystem.basedir=/tmp/blobstore
 jclouds.modules=org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule
@@ -189,7 +193,7 @@ context = new ComputeServiceContextFactory()
  * A log message like below is an overly verbose way of Guice saying it can't spawn threads.  
 	This is expected and also not a problem, as it works around the issue.
 	
-{% highlight %}
+{% highlight text %}
 com.google.inject.internal.util.$FinalizableReferenceQueue <init>: Failed to start reference finalizer thread. Reference cleanup will only occur when new references are created.
 java.lang.reflect.InvocationTargetException
 	at com.google.appengine.runtime.Request.process-8e3e8ebfb87d6827(Request.java)
