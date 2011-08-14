@@ -1,3 +1,6 @@
+---
+title: JClouds Documentation
+---
 
 ### Getting Started
 
