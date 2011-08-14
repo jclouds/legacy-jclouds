@@ -35,8 +35,8 @@ but we can of course modify that too.
 
 Nexus details:
 
-*  UI: [[http://jclouds.rimuhosting.com:8081/nexus/]]
-*  Snapshot repo: [[https://oss.sonatype.org/content/repositories/snapshots]]
+*  UI: (http://jclouds.rimuhosting.com:8081/nexus/)
+*  Snapshot repo: [https://oss.sonatype.org/content/repositories/snapshots]
 
 ### Starting nexus 
 *  `ssh root@jclouds.rimuhosting.com`
