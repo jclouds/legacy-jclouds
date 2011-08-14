@@ -8,18 +8,18 @@ title: Contributing to jclouds
 ## Creating and working with your fork
 
 ### setup your fork
-  * go to github,com and fork jclouds/jclouds
-  * `git clone http://github.com/___YOUR_USER___/jclouds.git`
-  * if you are already a jclouds collaborator you can use git:// instead of http://
-  *` git remote add jclouds git://github.com/jclouds/jclouds.git`
+*  go to github,com and fork jclouds/jclouds
+*  `git clone http://github.com/___YOUR_USER___/jclouds.git`
+*  if you are already a jclouds collaborator you can use git:// instead of http://
+*  `git remote add jclouds git://github.com/jclouds/jclouds.git`
 
 ### pulling changes from master
-  * `git pull jclouds master`
+*  `git pull jclouds master`
 
 ## Creating new providers with maven archetypes
 
-  * Help developers _working on_ jclouds get sub-projects up and running quickly
-  * Give developers trying to _use_ jclouds a hands-up in terms of project setup, dependencies and sample code
+*  Help developers _working on_ jclouds get sub-projects up and running quickly
+*  Give developers trying to _use_ jclouds a hands-up in terms of project setup, dependencies and sample code
 
 The quickest way to make the jclouds archetypes available locally is to run
 `mvn install` from the `jclouds/archetypes` directory. This will build the archetypes and place them in your local catalogue. 
@@ -33,6 +33,7 @@ In order to create a project based _on_ an archetype, navigate to the directory 
 A template project for a jclouds client of a cloud service.
 
 Parameters:
+
 <table>
 	<thead>
 		<tr>
@@ -130,26 +131,26 @@ you must delete the files this code will replace.  Here are the files:
 
 #### Adding new operations to an existing provider
 
-  * You will need to add http markup in `providerName`AsyncClient and its respective unit test to create a new service
-    * Note that `providerName`Client must mirror method signatures in `providerName`AsyncClient except the return val is not a Future
-  * Here's advise for coding new methods that need http bodies parsed
-    * create a method with the appropriate markup in `providerName`AsyncClient; have it return ListenableFuture*<String*> as a returnVal.
-    * create the identical method in  `providerName`Client but have it return a String and don't add any annotations.
-    * create a test method in `providerName`AsyncClientTest, and make sure this passes.
-    * create a test method in `providerName`ClientLiveTest and capture the resultant string to stdout or stderr.
-    * save that output to a file under test/resources related to the name
-    * create a domain object under the domain package related to this output
-    * create a parser that subclasses `ParseJson`, if json or `ParseSax.HandlerWithResult, if xml
-      * ex ParseContainerListFromJsonResponse
-      * ex AccountNameEnumerationResultsHandler
-    * create a test that subclasses `BaseHandlerTest`
-      * ex ParseContainerListFromJsonResponseTest
-      * ex AccountNameEnumerationResultsHandlerTest
-    * when this works
-      * change the returnVal of the methods in `providerName`AsyncClient and `providerName`Client appropriately
-      * add an annotation linking the parser to the result, @XMLResponseParser for xml and  @ResponseParser for anything else
-      * validate/correct `providerName`AsyncClientTest
-    * now check your `providerName`ClientLiveTest to ensure the value indeed comes back as expected from the service.
+*  You will need to add http markup in `providerName`AsyncClient and its respective unit test to create a new service
+   -  Note that `providerName`Client must mirror method signatures in `providerName`AsyncClient except the return val is not a Future
+*  Here's advise for coding new methods that need http bodies parsed
+   *  create a method with the appropriate markup in `providerName`AsyncClient; have it return ListenableFuture*&lt;String*&gt; as a returnVal.
+   *  create the identical method in  `providerName`Client but have it return a String and don't add any annotations.
+   *  create a test method in `providerName`AsyncClientTest, and make sure this passes.
+   *  create a test method in `providerName`ClientLiveTest and capture the resultant string to stdout or stderr.
+   *  save that output to a file under test/resources related to the name
+   *  create a domain object under the domain package related to this output
+   *  create a parser that subclasses `ParseJson`, if json or `ParseSax.HandlerWithResult, if xml
+      -  ex ParseContainerListFromJsonResponse
+      -  ex AccountNameEnumerationResultsHandler
+   * create a test that subclasses `BaseHandlerTest`
+      -  ex ParseContainerListFromJsonResponseTest
+      - ex AccountNameEnumerationResultsHandlerTest
+   *  when this works
+      *  change the returnVal of the methods in `providerName`AsyncClient and `providerName`Client appropriately
+      *  add an annotation linking the parser to the result, @XMLResponseParser for xml and  @ResponseParser for anything else
+      *  validate/correct `providerName`AsyncClientTest
+   *  now check your `providerName`ClientLiveTest to ensure the value indeed comes back as expected from the service.
 
 #### Multiple API versions and dialects 
 
@@ -237,13 +238,42 @@ Tests run: 41, Failures: 3, Errors: 0, Skipped: 2
 
 In this case, a few tests didn't pass, although most did.  There are a few logs to check into:
 
-<!-- TODO Table -->
-|| log || path || purpose ||
-|| test log || target/surefire-reports/TestSuite.txt || shows you the line in the test code that failed and specific reason ||
-|| wire log || target/test-data/jclouds-wire.log || shows you all http packets sent to the service and their responses ||
-|| jclouds log || target/test-data/jclouds.log || shows you which java methods created which packets and also other debug info ||
-|| ssh log || target/test-data/jclouds-ssh.log || shows you connections to other machines ||
-|| abstraction log || target/test-data/jclouds-_compute or blobstore_.log || shows you high-level commands, like what node is being deployed at what time ||
+<table>
+	<thead>
+		<tr>
+			<td>log</td>
+			<td>path</td>
+			<td>purpose</td>
+			<tr>
+	</thead>
+	<tr>
+	 	<td>test log</td>
+		<td>target/surefire-reports/TestSuite.txt</td> 
+		<td>shows you the line in the test code that failed and specific reason </td>
+	</tr>
+	<tr>
+		<td>wire log</td>
+		<td>target/test-data/jclouds-wire.log</td> 
+		<td>shows you all http packets sent to the service and their responses</td>
+	</tr>
+	<tr>
+		<td>jclouds log</td>
+		<td>target/test-data/jclouds.log</td>
+		<td>shows you which java methods created which packets and also other debug info</td>
+	</tr>	
+	<tr>
+		<td>ssh log</td>
+		<td>target/test-data/jclouds-ssh.log</td>
+		<td>shows you connections to other machines</td>
+	</tr>
+	<tr>
+		<td>abstraction log</td>
+		<td>target/test-data/jclouds-_compute or blobstore_.log</td>
+		<td>shows you high-level commands, like what node is being deployed at what time </td>
+	</tr>
+	
+</table>
+
 
 #### How to get help
 When failures happen, and you cannot figure out why, here's a couple places to check.  
@@ -310,13 +340,15 @@ Here's a list of our "standard" exceptions which are defined in
 
 You may have a method that is valid if an exception occurs.
 
-For example, an `exists(resource)` method would return ListenableFuture<Boolean>, if in the AsyncClient, 
+For example, an `exists(resource)` method would return ListenableFuture&lt;Boolean&gt;, if in the AsyncClient, 
 and boolean if in the normal Client.  In this case, a `ResourceNotFoundException` 
 simply means the resource isn't there, and should return false, rather than throw an exception.  
 On you AsyncClient, decaare an `ExceptionParser` on the method you'd like to control.  
 
 Here's an example of common conventions, where an exception is ok:
+
 {% highlight  java %}
+
 @DELETE
 @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
 @Path("")
@@ -336,6 +368,7 @@ ListenableFuture<? extends Set<Image>> listImages();
 ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 
 {% endhighlight %}
+
 
 #### Creating new http methods
 

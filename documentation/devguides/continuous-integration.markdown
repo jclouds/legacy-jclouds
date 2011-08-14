@@ -21,10 +21,10 @@ as part of the build, deploys to Apache Archiva.
 
 ### Adding a user to manage the jclouds build
 
-  * manage-hudson > Manage users
-  * look at there user id in the url of the person
-  * back to manage hudson > configure system
-  * then add the user with the right access
+*  manage-hudson > Manage users
+*  look at there user id in the url of the person
+*  back to manage hudson > configure system
+*  then add the user with the right access
 
 ## Nexus 
 
@@ -35,11 +35,11 @@ but we can of course modify that too.
 
 Nexus details:
 
-  * UI: [[http://jclouds.rimuhosting.com:8081/nexus/]]
-  * Snapshot repo: [[https://oss.sonatype.org/content/repositories/snapshots]]
+*  UI: [[http://jclouds.rimuhosting.com:8081/nexus/]]
+*  Snapshot repo: [[https://oss.sonatype.org/content/repositories/snapshots]]
 
 ### Starting nexus 
-  * `ssh root@jclouds.rimuhosting.com`
-  * `su - nexus`
-  * `./nexus start`
+*  `ssh root@jclouds.rimuhosting.com`
+*  `su - nexus`
+*  `./nexus start`
 
