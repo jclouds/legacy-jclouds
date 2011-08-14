@@ -4,7 +4,7 @@ title: User Guide- How to use the Compute API and tools
 ---
 # User Guide: How to use the Compute API and tools
 
-## Introduction =
+## Introduction 
 The jclouds Compute API provides a basic abstraction across Compute APIs such as Amazon EC2 and VMware vCloud.  
 We also have integrations for popular tools such as Ant and Maven.
 
@@ -132,14 +132,14 @@ All of the following providers can be used equally in any Compute API tool.
 
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
                                                                                                                                                                                           
-| *maven dependency*  			|                                                                                                                                                            
+| *maven dependency*  		|                                                                                                                                                            
 |:------------------------------|
-| org.jclouds.api/byon 			|                                                                                                                                                                  
+| org.jclouds.api/byon 		|                                                                                                                                                                  
 | org.jclouds.api/deltacloud	|                                                                                                                                                            
 | org.jclouds.api/elasticstack	|                                                                                                                                                          
 | org.jclouds.api/eucalyptus	|                                                                                                                                                            
-| org.jclouds.api/nova			|                                                                                                                                                                  
-| org.jclouds.api/vcloud		|                                                                                                                                                                
+| org.jclouds.api/nova		|                                                                                                                                                                  
+| org.jclouds.api/vcloud	|                                                                                                                                                                
                                                                                                                                                                                           
 
 
