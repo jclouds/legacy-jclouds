@@ -1,4 +1,9 @@
-#Contributing to jclouds: How to develop and extend jclouds providers
+---
+layout: docs
+title: Contributing to jclouds
+---
+
+#How to develop and extend jclouds providers
 
 ## Creating and working with your fork
 
@@ -27,7 +32,6 @@ In order to create a project based _on_ an archetype, navigate to the directory 
 
 A template project for a jclouds client of a cloud service.
 
-<!-- TODO Table -->
 Parameters:
 <table>
 	<thead>

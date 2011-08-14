@@ -1,4 +1,9 @@
-# Provider Medata in jclouds
+---
+layout: docs
+title: Provider Metadata
+---
+
+# Provider Metadata in jclouds
 
 ## Introduction
 

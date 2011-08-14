@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Developer Setup instructions for Eclipse
+---
+
 # jclouds Developer Setup instructions for Eclipse
 
 ## Introduction
@@ -48,14 +53,15 @@ You'll key these on the provider name (ex. provider  is s3, cloudfiles, ec2, etc
 
 To implement this, open the test's Run Configurations and enter in the following into VM arguments:
 
-```
+{% highlight bash %}
 -Dbasedir=. -Dtest.provider.identity=identity -Dtest.provider.credential=credential
-```
+{% endhighlight}
 
 ex. for vcloud
-```
+{% highlight bash %}
 -Dbasedir=. -Dtest.vcloud.endpoint=https://vcloudserverilike/api -Dtest.vcloud.identity=user@org -Dtest.vcloud.credential=password
-```
+{% endhighlight %}
+
 ## Ssh testing
 
 Ssh tests need access to an ssh host you have access to.  
@@ -70,9 +76,9 @@ Note that the destination must be a Unix-like host that at least contains a worl
 
 Then, for each test that uses ssh, open the test's Run Configurations and enter in the following into VM arguments:
 
-```
+{% highlight bash %}
 -Dtest.ssh.host=localhost -Dtest.ssh.port=22 -Dtest.ssh.username=${test.ssh.username} -Dtest.ssh.password=${test.ssh.password}
-```
+{% endhighlight %}
 
   * note that you can replace {{{test.ssh.host}}} and {{{test.ssh.port}}} above if you are not connecting to localhost.
 
@@ -101,5 +107,3 @@ For instance if you want to create a demo project in aws, you can do it with fol
     * Open Eclipse
     * Delete old project references (but not underlying files)
     * Re-import projects
-
-`Last Updated: 2011-07-26`

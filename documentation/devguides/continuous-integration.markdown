@@ -1,3 +1,8 @@
+---
+layout: docs
+title: JClouds Automated testing
+---
+
 # JClouds Automated testing + snapshots repository.
 
 ## Introduction
