@@ -45,7 +45,7 @@ an api or inspect response status for rate info.  Sometimes, there's a process o
 
 Here's an example of the data, which of course you can answer only what you are comfortable answering, and those which are relevant.
 
-{% highlight %}
+{% highlight text %}
 service provider: cloud2cloud
 
 offering: enterprise-de

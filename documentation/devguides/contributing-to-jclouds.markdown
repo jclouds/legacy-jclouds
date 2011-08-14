@@ -174,7 +174,8 @@ via the commandline using maven. This is about how to run using maven.
 #### Verifying installation
 We currently use maven 3.0 beta 3, so ensure you have "mvn" in your path.  
 To test this out, issue the `mvn -version` command.  It should look like below:
-{% highlight %}
+
+{% highlight text %}
 Adrian-Coles-MacBook-Pro:~ adrian$ mvn --version
 Apache Maven 3.0-beta-3 (r990787; 2010-08-30 13:44:03+0100)
 Java version: 1.6.0_20
@@ -187,7 +188,7 @@ Note you should be in the directory of the service you'd like to test.  For exam
 if you are testing the terremark module, you should already have cloned jclouds and
 changed into the vcloud/terremark directory.  Here's an example:
 
-{% highlight %}
+{% highlight text%}
 Adrian-Coles-MacBook-Pro:tmp adrian$ git clone git://github.com/jclouds/jclouds.git
 Initialized empty Git repository in /private/tmp/jclouds/.git/
 remote: Counting objects: 58795, done.
@@ -220,7 +221,7 @@ Tests can fail because of problems in code, problems in the service, or configur
 such as passing the wrong credentials into the service.  The first thing to do is to review the logs of the tests that failed.
 
 Here's an example of a failure:
-{% highlight %}
+{% highlight text %}
 Failed tests: 
   testConfigureNode(org.jclouds.vcloud.terremark.TerremarkVCloudClientLiveTest)
   testGet(org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeServiceLiveTest)

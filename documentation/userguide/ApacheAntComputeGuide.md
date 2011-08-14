@@ -59,13 +59,13 @@ If you are using the default [build.xml](http://github.com/jclouds/jclouds/blob/
 and have the [Ant Maven integration JAR](http://jclouds.googlecode.com/svn/trunk/tools/ant-plugin/maven-ant-tasks-2.1.0.jar) 
 in you current directory, it is easy to start.  The syntax is:
 
-{% highlight %}
+{% highlight bash %}
 ant  -Dprovider=provider -Ddriver=mvn-dependency -Didentity=account -Dcredential=key command
 {% endhighlight %}
 
 Example:
 
-{% highlight %}
+{% highlight bash %}
 ant  -Dprovider=trmk-vcloudexpress 
      -Ddriver=terremark 
      -Didentity=your_registered_email 
@@ -81,7 +81,7 @@ By default, it opens port 22 to the internet through your public IP.  The defaul
 
 Here's an example run, which creates 2 nodes.
 
-{% highlight %}
+{% highlight text %}
 $ ant  -Dprovider=bluelock-vcdirector -Ddriver=bluelock -Didentity=acole@jclouds -Dcredential=**** -Dcount=2 -Dgroup=test create
 create:
     [input] skipping input as property group has already been set.
@@ -128,7 +128,7 @@ This is performed in a portable manner, and potentially uses SSH.
 #### Example Run
 
 Here's an example run that executes a runscript and opens a couple ports.  In this case, we are using the task to create a VMware vCloud vApp on the BlueLock network: 
-{% highlight %}
+{% highlight text %}
       >> searching params([biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=null, imageVersion=null, location=[id=https://vcenterprise.bluelock.com/api/v1.0/vdc/105186609, scope=ZONE, description=Jclouds-Commit-compG1xstorA01, parent=https://vcenterprise.bluelock.com/api/v1.0/org/744127301], minCores=0.0, minRam=0, osFamily=ubuntu, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=null, hardwareId=null])
       <<   matched hardware([id=https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1785525267, providerId=https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1785525267, name=jeos_v2, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1785525267)])
       <<   matched image([id=https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1785525267, name=jeos_v2, operatingSystem=[osType=UBUNTU, version=null, arch=null, description=Ubuntu Linux (32-bit)], description=jeos_v2, version=, location=[id=https://vcenterprise.bluelock.com/api/v1.0/org/744127301, scope=REGION, description=jclouds, parent=bluelock-vcdirector]])
@@ -170,7 +170,7 @@ In order to integrate with other tasks, you'll want to use the `hostproperty`, `
 These will set Ant project properties accordingly on successful completion.
 
 See an example below:
-{% highlight %}
+{% highlight xml %}
 <compute actions="destroy,create" provider="${url}">
    <nodes group="${group}" os="UBUNTU" hardware="SMALLEST"
          runscript="runscript.sh" openports="22,${listenport}"
@@ -182,7 +182,7 @@ See an example below:
 If you are using an alternate endpoint, or standing up a private cloud without a proper certifcate,
  you can add options to ensure clouds will be flexible on ssl
 
-{% highlight %}
+{% highlight bash %}
 ant  -Dprovider=vcloud -Ddriver=vcloud -Dvcloud.endpoint=https://192.168.0.1/api -Djclouds.trust-all-certs=true -Djclouds.relax-hostname=true -Didentity=user@org -Dcredential='password'
 {% endhighlight %}
 #### get
@@ -190,7 +190,7 @@ ant  -Dprovider=vcloud -Ddriver=vcloud -Dvcloud.endpoint=https://192.168.0.1/api
 The _get_ target retrieves details about the node, including its IP addresses and state.
 
 *Note:* You must specify the Ant property `group`.
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=bluelock-vcdirector -Ddriver=bluelock -Didentity=acole@jclouds -Dcredential=XXXX -Dgroup=test get
 get-group:
     [input] skipping input as property group has already been set.
@@ -202,7 +202,7 @@ get-group:
 #### list
 _list_ will show you the mapping between names and node IDs.
 
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=bluelock-vcdirector -Ddriver=bluelock -Didentity=acole@jclouds -Dcredential=XXXX list
 list:
   [compute] list
@@ -215,7 +215,7 @@ list:
 
 _list-details_ is the same as doing `get` for each node.
 
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=trmk-vcloudexpress -Ddriver=terremark -Didentity=adrian@jclouds.org -Dcredential=**** list-details
 list-details:
   [compute] list details
@@ -230,7 +230,7 @@ Total time: 14 seconds
 #### list-locations
 _list-locations_ will display all the locations you can configure a node to run in.
 
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=trmk-vcloudexpress -Ddriver=terremark -Didentity=adrian@jclouds.org -Dcredential=**** list-locations
 list-locations:
   [compute] list locations
@@ -239,7 +239,7 @@ list-locations:
 #### list-images
 _list-images_ will display all the images you can run on a node.
 
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=bluelock-vcdirector -Ddriver=bluelock -Didentity=acole@jclouds -Dcredential=**** list-images
 list-images:
   [compute] list images
@@ -252,7 +252,8 @@ list-images:
 {% endhighlight %}
 #### list-hardware
 _list-hardware_  will display all the hardware profiles you can configure a node with.
-{% highlight %}
+
+{% highlight bash %}
 $ ant  -Dprovider=bluelock-vcdirector -Ddriver=bluelock -Didentity=acole@jclouds -Dcredential=**** list-hardware
 list-hardware:
   [compute] list hardwares
@@ -267,7 +268,7 @@ list-hardware:
 _destroy_ does the reverse of create: it takes down your internet services, powers off and destroys all nodes matching a group.
 
 *Note:* You must specify the Ant property `group`.
-{% highlight %}
+{% highlight bash %}
 $ ant  -Dprovider=trmk-vcloudexpress -Ddriver=terremark -Didentity=adrian@jclouds.org -Dcredential=**** -Dgroup=vcxrun destroy
 destroy-id:
 

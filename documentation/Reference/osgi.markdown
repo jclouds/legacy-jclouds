@@ -17,7 +17,7 @@ Deploy jclouds to osgi felix container
 * change to target/dependency
  run the following command to create bundles of non-osgi dependencies
 
-{% highlight %}
+{% highlight text %}
 java -jar biz.aQute.bnd.jar wrap aopalliance-1.0.jar \
 bsh-2.0b4.jar \
 cglib-nodep-2.1_3.jar \
