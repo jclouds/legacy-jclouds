@@ -275,7 +275,7 @@ Stewardship and to distinguish it from Ownership.
   * Definition of STEWARDSHIP (From www.merriam-webster.com/dictionary )
     # the office, duties, and obligations of a steward
     # the conducting, supervising, or managing of something; especially : the careful and 
-responsible management of something entrusted to one's care <stewardship of natural resources>
+responsible management of something entrusted to one's care &lt;stewardship of natural resources&gt;
   * In considering responsibility to meet compliance criteria, both owner and steward 
 (the party to which responsibility has been delegated) are subject to policy, and may be 
 treated differently by a jurisdiction.  
