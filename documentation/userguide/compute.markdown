@@ -132,14 +132,14 @@ All of the following providers can be used equally in any Compute API tool.
 
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
                                                                                                                                                                                           
-| *maven dependency*  			|                                                                                                                                                            
+| *maven dependency*  		|                                                                                                                                                            
 |:------------------------------|
-| org.jclouds.api/byon 			|                                                                                                                                                                  
+| org.jclouds.api/byon 		|                                                                                                                                                                  
 | org.jclouds.api/deltacloud	|                                                                                                                                                            
 | org.jclouds.api/elasticstack	|                                                                                                                                                          
 | org.jclouds.api/eucalyptus	|                                                                                                                                                            
-| org.jclouds.api/nova			|                                                                                                                                                                  
-| org.jclouds.api/vcloud		|                                                                                                                                                                
+| org.jclouds.api/nova		|                                                                                                                                                                  
+| org.jclouds.api/vcloud	|                                                                                                                                                                
                                                                                                                                                                                           
 
 
