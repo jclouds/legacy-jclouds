@@ -11,7 +11,7 @@ title: Quick Start - IBM Developer Cloud
 2. Ensure you are using a recent JDK 6
 3. Setup your project to include `jclouds-ibmdev`
   * Clone jclouds from git, and execute `mvn install` from the ibmdev folder
-  * Get the **snapshot** dependency `org.jclouds.provider/ibmdev` using jclouds [[Installation Guide|Installation]].
+  * Get the **snapshot** dependency `org.jclouds.provider/ibmdev` using jclouds [Installation](/documentation/userguide/installation-guide).
 4. Start coding
 
 {% highlight java %}

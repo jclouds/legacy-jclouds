@@ -13,7 +13,7 @@ deploys new snapshot jars to the Apache Archiva server.
 
 ## Hudson
 
-Hudson can be accessed from http://jclouds.rimuhosting.com/hudson. Anyone should be able to see the build status. 
+Hudson can be accessed from [hudson](http://jclouds.rimuhosting.com/hudson). Anyone should be able to see the build status. 
 If you think you need more access (i.e. to run builds manually), please ask Adrian or Ivan. 
 
 Once every 15minutes, if SVN has been committed to, Hudson builds the project, and 
@@ -35,8 +35,8 @@ but we can of course modify that too.
 
 Nexus details:
 
-*  UI: (http://jclouds.rimuhosting.com:8081/nexus/)
-*  Snapshot repo: [https://oss.sonatype.org/content/repositories/snapshots]
+*  [UI](http://jclouds.rimuhosting.com:8081/nexus/)
+*  [Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots)
 
 ### Starting nexus 
 *  `ssh root@jclouds.rimuhosting.com`

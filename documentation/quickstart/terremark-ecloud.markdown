@@ -10,7 +10,7 @@ title: Quick Start - Terremark eCloud
   * Your username and password for the portal are also your credentials.
 3. Ensure you are using a recent JDK 6
 4. Setup your project to include trmk-ecloud
-	* get the dependency `org.jclouds.provider/trmk-ecloud` using jclouds [[Installation Guide|Installation]].
+	* get the dependency `org.jclouds.provider/trmk-ecloud` using jclouds [Installation](/documentation/userguide/installation-guide).
 5. Start coding
 
 {% highlight java %}

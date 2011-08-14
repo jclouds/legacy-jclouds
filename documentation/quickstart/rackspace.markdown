@@ -11,7 +11,7 @@ title: Quick Start - Rackspace Cloud
 4. Setup your project to include cloudfiles-us,-uk or cloudservers-us,-uk
 	get the dependency `org.jclouds.provider/cloudfiles-us`, `org.jclouds.provider/cloudfiles-uk`, 
 	`org.jclouds.provider/cloudservers-us`, or `org.jclouds.provider/cloudservers-uk`
-	using jclouds [[Installation Guide|Installation]].
+	using jclouds [Installation](/documentation/userguide/installation-guide).
 5. Start coding
 
 ## Cloud Files

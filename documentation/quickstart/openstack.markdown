@@ -23,7 +23,7 @@ title: Quick Start - Open Stack
   	* openstack-common
   	* nova
 
-Instructions for downloading the dependencies are available in the [[Installation Guide|Installation]].
+Instructions for downloading the dependencies are available in the [Installation](/documentation/userguide/installation-guide).
 
 5. Start coding using Nova
 

@@ -9,7 +9,7 @@ title: Quick Start - Eucalyptus
 2. Get your Access Key ID and Secret Access Key
 3. Ensure you are using a recent JDK 6
 4. Setup your project to include `jclouds-aws`
-	* Get the dependency `org.jclouds.api/eucalyptus` or `org.jclouds.api/walrus` using jclouds [[Installation Guide|Installation]].
+	* Get the dependency `org.jclouds.api/eucalyptus` or `org.jclouds.api/walrus` using jclouds [Installation](/documentation/userguide/installation-guide).
 5. Start coding
 
 ### Using Walrus

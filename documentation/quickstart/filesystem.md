@@ -6,7 +6,7 @@ title: Quick Start - File System
 # Quick Start: File System
 
 1. Setup your project to include filesystem
-	* Get the dependency `org.jclouds.api/filesystem` using jclouds [[Installation Guide|Installation]].
+	* Get the dependency `org.jclouds.api/filesystem` using jclouds [Installation](/documentation/userguide/installation-guide).
 2. Start coding
 
 {% highlight java %}

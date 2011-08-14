@@ -31,7 +31,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 ### Getting Started
 
-* [[Installation]]
+* [Installation](/documentation/userguide/installation-guide)
 
 ### Quick Start Guides
 
