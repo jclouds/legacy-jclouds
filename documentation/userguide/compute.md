@@ -39,45 +39,115 @@ this means you can keep track of all of your cloud nodes' credentials in a singl
 
 ### Supported Providers
 All of the following providers can be used equally in any Compute API tool.
-<!-- TODO Table -->
-|| *maven dependency* || *iso 3166 codes* ||
-||org.jclouds.provider/aws-ec2||US-VA,US-CA,IE,SG||
-||org.jclouds.provider/bluelock-vcloud-vcenterprise||US-IN||                                                                                                                              
-||org.jclouds.provider/bluelock-vcloud-zone01||US-IN||
-||org.jclouds.provider/cloudservers-uk||GB-SLG||
-||org.jclouds.provider/cloudservers-us||US-IL,US-TX||
-||org.jclouds.provider/cloudsigma-zrh||CH-ZH||
-||org.jclouds.provider/elastichosts-lon-b||GB-LND||
-||org.jclouds.provider/elastichosts-lon-p||GB-LND||
-||org.jclouds.provider/elastichosts-sat-p||US-TX||
-||org.jclouds.provider/eucalyptus-partnercloud-ec2||US-CA||
-||org.jclouds.provider/gogrid||US-CA,US-VA||
-||org.jclouds.provider/openhosting-east1||US-VA||
-||org.jclouds.provider/rimuhosting||compute||NZ-AUK,US-TX,AU-NSW,GB-LND||
-||org.jclouds.provider/serverlove-z1-man||GB-MAN||
-||org.jclouds.provider/skalicloud-sdg-my||MY-10||
-||org.jclouds.provider/slicehost||US-IL,US-TX,US-MO||
-||org.jclouds.provider/stratogen-vcloud-mycloud||compute||GB||
-||org.jclouds.provider/trmk-ecloud||US-FL,NL-NH||
-||org.jclouds./trmk-vcloudexpress||US-FL|| 
+
+<table>
+	<thead>
+		<tr>
+			<th>*maven dependency*</th>
+			<th>*iso 3166 codes*</th>
+		</tr>
+		<tbody>
+			<tr>
+				<td>org.jclouds.provider/aws-ec2</td>
+				<td>US-VA,US-CA,IE,SG</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/bluelock-vcloud-vcenterprise</td>
+				<td>US-IN</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/bluelock-vcloud-zone01</td>
+				<td>US-IN</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/cloudservers-uk</td>
+				<td>GB-SLG</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/cloudservers-us</td>
+				<td>US-IL,US-TX</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/cloudsigma-zrh</td>
+				<td>CH-ZH</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/elastichosts-lon-b</td>
+				<td>GB-LND</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/elastichosts-lon-p</td>
+				<td>GB-LND</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/elastichosts-sat-p</td>
+				<td>US-TX</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/eucalyptus-partnercloud-ec2</td>
+				<td>US-CA</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/gogrid</td>
+				<td>US-CA,US-VA</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/openhosting-east1</td>
+				<td>US-VA</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/rimuhosting (compute)</td>
+				<td>NZ-AUK,US-TX,AU-NSW,GB-LND</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/serverlove-z1-man</td>
+				<td>GB-MAN</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/skalicloud-sdg-my</td>
+				<td>MY-10</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/slicehost</td>
+				<td>US-IL,US-TX,US-MO</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/stratogen-vcloud-mycloud (compute)</td>
+				<td>GB</td>
+			</tr>
+			<tr>
+				<td>org.jclouds.provider/trmk-ecloud</td>
+				<td>US-FL,NL-NH</td>
+			</tr>
+			<tr>
+				<td>org.jclouds./trmk-vcloudexpress</td>
+				<td>US-FL</td>
+			</tr>
+		</tbody>
+
+	</thead>
+</table>
+
 
 
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
                                                                                                                                                                                           
-|| *maven dependency* ||                                                                                                                                                                  
-||org.jclouds.api/byon||                                                                                                                                                                  
-||org.jclouds.api/deltacloud||                                                                                                                                                            
-||org.jclouds.api/elasticstack||                                                                                                                                                          
-||org.jclouds.api/eucalyptus||                                                                                                                                                            
-||org.jclouds.api/nova||                                                                                                                                                                  
-||org.jclouds.api/vcloud||                                                                                                                                                                
+| *maven dependency*  			|                                                                                                                                                            
+|:-----------------------------:|
+|org.jclouds.api/byon 			|                                                                                                                                                                  
+| org.jclouds.api/deltacloud	|                                                                                                                                                            
+| org.jclouds.api/elasticstack	|                                                                                                                                                          
+| org.jclouds.api/eucalyptus	|                                                                                                                                                            
+| org.jclouds.api/nova			|                                                                                                                                                                  
+| org.jclouds.api/vcloud		|                                                                                                                                                                
                                                                                                                                                                                           
 
 
 *Note, that if you use the `jclouds-allcompute` dependency, your project will have all of the above!*
 
 ## API
-== Concepts ==
+
+### Concepts 
 The Compute API is a portable means of managing nodes in clouds. It can manage nodes as a 
 set and address resources in any cloud without needing separate connections. It also has a 
 Template feature which allows you to search for configurations that match parameters such as 
@@ -120,8 +190,9 @@ Here's how to perform common commands.
 Here, you specify the particular service you wish to manage and get a reference to `ComputeService`
 
 {% highlight java %}
-ComputeServiceContext context = new ComputeServiceContextFactory()
-             .createContext("terremark", user, password);
+
+ComputeServiceContext context = 
+	new ComputeServiceContextFactory().createContext("terremark", user, password);
 
 ComputeService computeService = context.getComputeService();
 {% endhighlight %}
@@ -144,7 +215,9 @@ call the _Get Node Metadata_ command.
 
 ### Get Node Metadata
 Use the _Get Node Metadata_ command to retrieve commonly required information about a node.
+
 {% highlight java %}
+
 NodeMetadata metadata = client.getNodeMetadata(node);
 metadata.getId();
 metadata.getProviderId(); 
@@ -167,7 +240,7 @@ A location has a scope, which is typically region or zone. A region is a general
 like eu-west, where a zone is similar to a datacenter. If a location has a parent, 
 that implies it is within that location. For example a location can be a rack, whose parent is likely to be a zone.
 
-{% highlight text %}
+{% highlight java %}
 Set<? extends Location> listAssignableLocations();
 {% endhighlight %}
 
@@ -351,6 +424,7 @@ You can now see status of compute commands by enabling at least DEBUG on the log
 {% endhighlight %}
 
 If you are using the Log4JLoggingModule, here is an example log4j.xml stanza you can use to enable compute logging:
+
 {% highlight xml %}
 <appender name="COMPUTEFILE" class="org.apache.log4j.DailyRollingFileAppender">
      <param name="File" value="logs/jclouds-compute.log" />
@@ -558,7 +632,7 @@ apt-get install -f -y --force-yes openjdk-6-jdk
 
   * OperatingSystemPredicates.supportsYum().apply(node.getOperatingSystem())
 
-{% highlight text %}
+{% highlight bash %}
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 echo "[jdkrepo]" >> /etc/yum.repos.d/CentOS-Base.repo
 echo "name=jdkrepository" >> /etc/yum.repos.d/CentOS-Base.repo
@@ -577,7 +651,7 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
   * `vi project.clj`
 
 
-{% highlight clojure %}
+{% highlight clj %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
@@ -585,7 +659,9 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
                  [org.jclouds/jclouds-allcompute "1.0.0"]]
   :repositories [["jclouds" "https://oss.sonatype.org/content/repositories/releases"]])
 {% endhighlight %}
+
     * for snapshot
+
 {% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
@@ -595,6 +671,7 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
   :repositories {
                "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"})
 {% endhighlight %}
+
   * `lein deps`
 
 
