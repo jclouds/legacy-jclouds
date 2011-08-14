@@ -57,7 +57,7 @@ To implement this, open the test's Run Configurations and enter in the following
 
 -Dbasedir=. -Dtest.provider.identity=identity -Dtest.provider.credential=credential
 
-{% endhighlight}
+{% endhighlight %}
 
 ex. for vcloud
 

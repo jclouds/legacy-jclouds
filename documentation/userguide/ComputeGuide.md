@@ -254,7 +254,7 @@ When the last node in a set is destroyed, any indirect resources it uses, such a
 {% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.*;
    client.destroyNodesMatching(withGroup(group));
-{% highlight text %}
+{% endhighlight %}
 
 ##### Reboot Nodes Matching Predicate 
 Ex. here's how to reboot all nodes with a specific group:
