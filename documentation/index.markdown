@@ -73,26 +73,26 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 ### Reference
 
-* [jclouds Rationale and Design|RationaleAndDesign]]
-* [Location Metadata Design|LocationMetadataDesign]]
-* [Compute API Design|ComputeDesign]]
-* [Columnar Data Design|ColumnarDataDesign]]
-* [JClouds API|jcloudsAPI]]
-* [JClouds OAuth Integration|OAuth]]
-* [Using jclounds with Apache Felix OSGi Container|OSGi]]
-* [Pool Design|PoolDesign]]
-* [Load Balancer Design|LoadBlancerDesign]]
-* [Logging in jclouds|jcloudsLogging]]
-* [VMWare Integration Approach & Design|VMWareIntegrationDesign]]
-* [JClouds Continuous Integration|JCloudsContinuousIntegration]]
-* [Supported Providers|SupportedProviders]]
-* [Apps that use JClouds|AppsThatUseJClouds]]
-* [Using Provider Metadata|UsingProviderMetadata]]
+* [jclouds Rationale and Design](/documentation/reference/rationale-design)
+* [Location Metadata Design](/documentation/reference/location-metadata-design)
+* [Compute API Design](/documentation/reference/compute-design)
+* [Columnar Data Design](/documentation/reference/columnar-datadesign)
+* [JClouds API](/documentation/reference/jclouds-api)
+* [JClouds OAuth Integration](/documentation/reference/oauth)
+* [Using jclouds with Apache Felix OSGi Container](/documentation/reference/osgi)
+* [Pool Design](/documentation/reference/pool-design)
+* [Load Balancer Design](/documentation/reference/load-balancer-design)
+* [Logging in jclouds](/documentation/reference/jclounds-logging)
+* [VMWare Integration Approach & Design](/documentation/reference/vmware-integration-design)
+* [Supported Providers](/documentation/reference/supported-providers)
+* [Apps that use JClouds](/documentation/reference/apps-that-use-jclouds)
+* [Using Provider Metadata](/documentation/reference/using-provider-metadata)
 
 
 ### Developer Resources
 
-* [Contributing to jclouds|ContributingToJclouds]]
-* [Using Eclipse|UsingEclipse]]
-* [Provider Metadata|ProviderMetadata]]
+* [Contributing to jclouds](/documentation/devguides/contributing-to-jclouds)
+* [Using Eclipse](/documentation/devguides/using-eclipse)
+* [JClouds Continuous Integration](/documentation/devguides/continuous-integration)
+* [Provider Metadata](/documentation/devguides/provider-metadata)
 
