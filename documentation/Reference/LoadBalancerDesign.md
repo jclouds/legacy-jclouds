@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Design of our Load Balancer Abstraction
+---
 # Design of our Load Balancer Abstraction
 
 ### Design  Goals

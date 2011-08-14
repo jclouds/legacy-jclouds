@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Using Provider Metadata
+---
 # Using Provider Metadata
 
 In the ProviderMetadata wiki page we learned how to implement [Provider Meta Data|ProviderMetadata].

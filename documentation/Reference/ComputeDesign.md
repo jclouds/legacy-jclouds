@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Design of jclouds compute abstraction
+---
 # Design of jclouds compute abstraction
 
 ## Introduction

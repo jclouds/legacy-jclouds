@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Summary of motivation and design choices for the Location Metadata API
+---
 # Summary of motivation and design choices for the Location Metadata API
 
 ## Introduction

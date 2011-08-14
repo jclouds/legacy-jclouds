@@ -1,3 +1,7 @@
+---
+layout: docs
+title: A List of applications that use jclouds
+---
 # A List of applications that use jclouds
 
 
