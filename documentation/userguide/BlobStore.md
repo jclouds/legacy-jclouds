@@ -426,7 +426,7 @@ This section covers advanced topics typically needed by developers of clouds.
 {% highlight java %}
 
 HttpRequest request = context.getSigner().
-                              signGetBlob(“adriansmovies”,
+                              signGetBlob("adriansmovies",
                                           "sushi.avi");
 {% endhighlight %}
 ### clojure example 
