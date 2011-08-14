@@ -56,43 +56,43 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 ### User Guides
 
-* [[Using Blob Store API|BlobStore]]
-* [[Using Compute API and Tools|ComputeGuide]]
-* [[Google App Engine|UsingJcloudsWithGAE]]
-* [[VMWare vCloud|VMWareVCloud]]
-* [[Terremerk|Terremerk]]
-* [[File System Provider|FileSystemProvider]]
-* [[Init Builder|InitBuilder]]
-* [[Using jclouds with Apache Karaf|ApacheKarafGuide]]
-* [[Using EC2|UsingEC2]]
-* [[Using Maven|UsingMaven]]
+* [Using Blob Store API](/documentation/userguide/blobstore-guide)
+* [Using Compute API and Tools](/documentation/userguide/compute)
+* [Google App Engine](/documentation/userguide/google-app-engine)
+* [VMWare vCloud](/documentation/userguide/vmware-cloud)
+* [Terremerk](/documentation/userguide/terremark)
+* [File System Provider](/documentation/userguide/filesystem-provider)
+* [Init Builder](/documentation/userguide/init-builder)
+* [Using jclouds with Apache Karaf](/documentation/userguide/karaf)
+* [Using EC2](/documentation/userguide/using-ec2)
+* [Using Maven](/documentation/userguide/using-maven)
 
 ### Samples & Examples
 
-* [[jclouds with Google App Engine|GoogleAppEngineSample]]
+* [jclouds with Google App Engine](/documentation/examples/google-app-engine)
 
 ### Reference
 
-* [[jclouds Rationale and Design|RationaleAndDesign]]
-* [[Location Metadata Design|LocationMetadataDesign]]
-* [[Compute API Design|ComputeDesign]]
-* [[Columnar Data Design|ColumnarDataDesign]]
-* [[JClouds API|jcloudsAPI]]
-* [[JClouds OAuth Integration|OAuth]]
-* [[Using jclounds with Apache Felix OSGi Container|OSGi]]
-* [[Pool Design|PoolDesign]]
-* [[Load Balancer Design|LoadBlancerDesign]]
-* [[Logging in jclouds|jcloudsLogging]]
-* [[VMWare Integration Approach & Design|VMWareIntegrationDesign]]
-* [[JClouds Continuous Integration|JCloudsContinuousIntegration]]
-* [[Supported Providers|SupportedProviders]]
-* [[Apps that use JClouds|AppsThatUseJClouds]]
-* [[Using Provider Metadata|UsingProviderMetadata]]
+* [jclouds Rationale and Design|RationaleAndDesign]]
+* [Location Metadata Design|LocationMetadataDesign]]
+* [Compute API Design|ComputeDesign]]
+* [Columnar Data Design|ColumnarDataDesign]]
+* [JClouds API|jcloudsAPI]]
+* [JClouds OAuth Integration|OAuth]]
+* [Using jclounds with Apache Felix OSGi Container|OSGi]]
+* [Pool Design|PoolDesign]]
+* [Load Balancer Design|LoadBlancerDesign]]
+* [Logging in jclouds|jcloudsLogging]]
+* [VMWare Integration Approach & Design|VMWareIntegrationDesign]]
+* [JClouds Continuous Integration|JCloudsContinuousIntegration]]
+* [Supported Providers|SupportedProviders]]
+* [Apps that use JClouds|AppsThatUseJClouds]]
+* [Using Provider Metadata|UsingProviderMetadata]]
 
 
 ### Developer Resources
 
-* [[Contributing to jclouds|ContributingToJclouds]]
-* [[Using Eclipse|UsingEclipse]]
-* [[Provider Metadata|ProviderMetadata]]
+* [Contributing to jclouds|ContributingToJclouds]]
+* [Using Eclipse|UsingEclipse]]
+* [Provider Metadata|ProviderMetadata]]
 
