@@ -358,7 +358,7 @@ You may have a method that is valid if an exception occurs.
 For example, an `exists(resource)` method would return ListenableFuture&lt;Boolean&gt;, if in the AsyncClient, 
 and boolean if in the normal Client.  In this case, a `ResourceNotFoundException` 
 simply means the resource isn't there, and should return false, rather than throw an exception.  
-On you AsyncClient, decaare an `ExceptionParser` on the method you'd like to control.  
+On you AsyncClient, declare an `ExceptionParser` on the method you'd like to control.  
 
 Here's an example of common conventions, where an exception is ok:
 
@@ -388,7 +388,8 @@ ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 #### Creating new http methods
 
 Sometimes, standard http methods will not do.  For example, you may need to use http PROPFIND. 
- To do this, you first need to create an annotation for the new method, then use that in your markup.  See below:
+To do this, you first need to create an annotation for the new method, then use that in your markup.  
+See below:
 
 {% highlight java %}
 
@@ -407,7 +408,7 @@ ListenableFuture<Boolean> rowdy(@PathParam("id") String path);
 Many clouds are attempting to create ec2, s3, or vcloud compatible apis.  
 Often it is the case that they get data values wrong.  When this happens, IllegalArgumentExceptions are thrown.  
 As a general practice, we shouldn't throw an exception on something that is parsed from a server, as it probably 
-isn't critical (ex. new instance type, state, etc.)  In fact, throwing an exception essentially disables functionality.  
-Instead, let's return UNRECOGNIZED for any enums we cannot parse.
+isn't critical (ex. new instance type, state, etc.)  
+In fact, throwing an exception essentially disables functionality.   Instead, let's return UNRECOGNIZED for any enums we cannot parse.
 
 

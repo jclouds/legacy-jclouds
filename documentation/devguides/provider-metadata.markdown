@@ -164,7 +164,7 @@ Now that you have an example implementation class, let's look at how to create t
 
 The `ServiceLoader`'s provider configuration file has two requirements:
 
-*  The location of the file is META-INF/services/<fully-qualified binary name of the interface>
+*  The location of the file is META-INF/services/&lt;fully-qualified binary name of the interface&gt;
 *  The contents of the file is a line-delimited list of fully-qualified binary names of the concrete classes
 
 In our example, we would end up with a provider configuration file of *META-INF/services/org.jclouds.providers.ProviderMetadata*
