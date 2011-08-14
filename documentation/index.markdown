@@ -29,11 +29,11 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 ## Contents
 
-**Getting Started**
+### Getting Started
 
 * [[Installation]]
 
-**Quick Start Guides**
+### Quick Start Guides
 
 * [Amazon Web Services](/documentation/quickstart/aws)
 * [Azure Storage Service](/documentation/quickstart/azure-storage)
@@ -49,12 +49,12 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [Terremark eCloud](/documentation/quickstart/terremark-ecloud)
 * [Terremark vCloud Express](/documentation/quickstart/terremark-vcloud-express)
 
-**Release Notes**
+### Release Notes
 
-* [[Beta 7|ReleaseNotesBeta7]]
-* [[Beta 8|ReleaseNotesBeta8]]
+* [Beta 8](/documentation/releasenotes/beta8)
+* [Beta 7](/documentation/releasenotes/beta7)
 
-**User Guides**
+### User Guides
 
 * [[Using Blob Store API|BlobStore]]
 * [[Using Compute API and Tools|ComputeGuide]]
@@ -67,11 +67,11 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [[Using EC2|UsingEC2]]
 * [[Using Maven|UsingMaven]]
 
-**Samples & Examples**
+### Samples & Examples
 
 * [[jclouds with Google App Engine|GoogleAppEngineSample]]
 
-**Reference**
+### Reference
 
 * [[jclouds Rationale and Design|RationaleAndDesign]]
 * [[Location Metadata Design|LocationMetadataDesign]]
@@ -90,7 +90,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [[Using Provider Metadata|UsingProviderMetadata]]
 
 
-**jclouds Developer Resources**
+### Developer Resources
 
 * [[Contributing to jclouds|ContributingToJclouds]]
 * [[Using Eclipse|UsingEclipse]]
