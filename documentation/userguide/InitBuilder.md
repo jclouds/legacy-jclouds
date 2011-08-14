@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Design and Usage of the InitBuilder components
+---
 #Design and Usage of the InitBuilder components
 
 ## Introduction =
@@ -6,7 +10,7 @@ InitBuilder gives  you a standard, predictable and portable way of controlling
 the lifecycle of your applications at a process level.  For example, using InitBuilder,  
 you to setup something like Tomcat on your Windows laptop and move it to a remote Linux machine.
 
-{% highlight %}
+{% highlight text %}
 TODO example
 {% endhighlight %}
 

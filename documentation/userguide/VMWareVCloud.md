@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Using jclouds to Manage VMWare vCloud
+---
 #Using jclouds to Manage VMWare vCloud
 
 ## Introduction
@@ -90,7 +94,7 @@ RestContext<VCloudClient, VCloudAsyncClient> providerContext = context.getProvid
 All vClouds (Express or Director) extend the same interfaces `CommonVCloudClient` and 
 `CommonVCloudAsyncClient`  You can always use this in place of the vendor-specific interface.
 
-{% highlight %}
+{% highlight text %}
 // get a synchronous object to use for manipulating vcloud objects
 CommonVCloudClient client = context.getApi()
 {% endhighlight %}

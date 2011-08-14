@@ -1,3 +1,7 @@
+---
+layout: docs
+title: User Guide- How to use the Compute API and tools
+---
 # User Guide: How to use the Compute API and tools
 
 ## Introduction =
@@ -163,7 +167,7 @@ A location has a scope, which is typically region or zone. A region is a general
 like eu-west, where a zone is similar to a datacenter. If a location has a parent, 
 that implies it is within that location. For example a location can be a rack, whose parent is likely to be a zone.
 
-{% highlight %}
+{% highlight text %}
 Set<? extends Location> listAssignableLocations();
 {% endhighlight %}
 
@@ -250,7 +254,7 @@ When the last node in a set is destroyed, any indirect resources it uses, such a
 {% highlight java %}
 import static org.jclouds.compute.predicates.NodePredicates.*;
    client.destroyNodesMatching(withGroup(group));
-{% highlight %}
+{% highlight text %}
 
 ##### Reboot Nodes Matching Predicate 
 Ex. here's how to reboot all nodes with a specific group:
@@ -326,7 +330,7 @@ NodeMetadata metadata = client.getNodeMetadata(savedId);
 ### Logging
 You can now see status of compute commands by enabling at least DEBUG on the log category: "jclouds.compute".  Here is example output:
 
-{% highlight %}
+{% highlight text %}
 2010-02-06 09:43:54,985 DEBUG [jclouds.compute] (main) >> providing images
 2010-02-06 09:44:01,186 DEBUG [jclouds.compute] (main) << didn't match os(folding)
 2010-02-06 09:44:01,642 DEBUG [jclouds.compute] (main) << images(614)
@@ -392,7 +396,7 @@ if you just created the node, it will have login credentials set in node.getCred
 
 {% highlight java %}
 client = context.utils().sshForNode().apply(node);
-{% highlight %}
+{% highlight text %}
 
 if the node's credentials aren't set, you'll have to assign them first.
 
@@ -544,7 +548,7 @@ TODO: This is significantly out of date.
 
   * OperatingSystemPredicates.supportsApt().apply(node.getOperatingSystem())
 
-{% highlight %}
+{% highlight text %}
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 cp /etc/apt/sources.list /etc/apt/sources.list.old
 sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
@@ -554,7 +558,7 @@ apt-get install -f -y --force-yes openjdk-6-jdk
 
   * OperatingSystemPredicates.supportsYum().apply(node.getOperatingSystem())
 
-{% highlight %}
+{% highlight text %}
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 echo "[jdkrepo]" >> /etc/yum.repos.d/CentOS-Base.repo
 echo "name=jdkrepository" >> /etc/yum.repos.d/CentOS-Base.repo

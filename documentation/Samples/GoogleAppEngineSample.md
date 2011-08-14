@@ -39,25 +39,25 @@ The application id corresponds to the live appengine application you wish to dep
 * Verify your setup
   * ensure your appid is correct
 
-```
+{% highlight text %}
 $ mvn help:effective-pom |grep appengine.applicationid 
     <appengine.applicationid>your_appid</appengine.applicationid>
-```
+{% endhighlight %}
 
   * ensure your appengine home is correct
 
-```
+{% highlight text %}
 bash-3.2$ export |grep APPENGINE_HOME
 declare -x APPENGINE_HOME="/Users/adriancole/appengine-java-sdk-1.4.3"
-```
+{% endhighlight %}
 
   * if you are running the aws demo, you only need aws credentials. 
 
-```
+{% highlight text %}
 $  mvn -Plive help:effective-pom|grep test.aws
     <test.aws.credential>YOUR_VALUE_HERE</test.aws.credential>
     <test.aws.identity>YOUR_VALUE_HERE</test.aws.identity>
-```` 
+{% endhighlight %}` 
 
 ## Working with the Sample
 
@@ -80,4 +80,3 @@ the google app engine dev server (jetty listening on localhost on your machine).
     * [demo](http://appengine.google.com/dashboard?&app_id=jclouds-aws-demo aws-ec2/aws-s3)
 
 
-`Last Updated: 2011-05-28`

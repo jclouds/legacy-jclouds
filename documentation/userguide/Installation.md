@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Installation
+---
 # Installation
 
 ### Getting latest jclouds binaries
