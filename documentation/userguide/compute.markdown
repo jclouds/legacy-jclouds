@@ -188,7 +188,7 @@ Here's how to perform common commands.
 
 ### Open your context and get a service reference
 
-Here, you specify the particular service you wish to manage and get a reference to _ComputeService_
+Here, you specify the particular service you wish to manage and get a reference to ComputeService.
 
 {% highlight java %}
 
@@ -196,18 +196,21 @@ ComputeServiceContext context =
 	new ComputeServiceContextFactory().createContext("terremark", user, password);
 
 ComputeService computeService = context.getComputeService();
+
 {% endhighlight %}
 
 ### List the nodes you have in all locations
 As mentioned above, this context can operate all of your nodes across the globe.  Here's how to list them
 
 {% highlight java %}
+
 for (ComputeMetadata node : client.listNodes()) {
    node.getId(); // how does jclouds address this in a global scope
    node.getProviderId(); // how does the provider api address this in a specific scope
    node.getName(); // if the node is named, what is it?
    node.getLocation(); // where in the world is the node
 }
+
 {% endhighlight %}
 
 Note that the result is of type `ComputeMetadata` rather than the more useful `NodeMetadata`.  
@@ -471,7 +474,7 @@ if you just created the node, it will have login credentials set in node.getCred
 
 {% highlight java %}
 client = context.utils().sshForNode().apply(node);
-{% highlight text %}
+{% endhighlight %}
 
 if the node's credentials aren't set, you'll have to assign them first.
 
@@ -593,14 +596,14 @@ As of jclouds 1.0-beta-7, here are the template patterns that represent the defa
 
 *Unless specified below, the default template is `osFamily(UBUNTU)`*
 
-<!-- TODO Table -->
-|| *provider* || *default template* ||
-|| cloudservers || osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") ||
-|| ec2 || osFamily(AMZN_LINUX).os64Bit(true) ||
-|| eucalyptus || osFamily(CENTOS) ||
-|| gogrid || osFamily(CENTOS).imageNameMatches(".*w/ None.*") ||
-|| rimuhosting || hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*") ||
-|| slicehost || osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") ||
+|  *provider*  | *default template*  |
+|--------------|---------------------|
+| cloudservers | osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") |
+| ec2 | osFamily(AMZN_LINUX).os64Bit(true) |
+| eucalyptus || osFamily(CENTOS) |
+| gogrid | osFamily(CENTOS).imageNameMatches(".*w/ None.*") |
+| rimuhosting | hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*") |
+| slicehost | osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") |
 
 ##### 1.0.0
 
@@ -610,16 +613,17 @@ As of jclouds 1.0.0 here are the template patterns that represent the default te
 
 TODO: This is significantly out of date.
 
-<!-- TODO TABLE -->
-|| *provider* || *default template* ||
-|| vcloud/bluelock-vcdirector || osFamily(UBUNTU).os64Bit(true) ||
-|| trmk-vcloudexpress || osFamily(UBUNTU).osDescriptionMatches(".*JeOS.*").os64Bit(true) ||
-|| trmk-ecloud || osFamily(CENTOS).os64Bit(true) ||
-|| ec2 || osFamily(AMZN_LINUX).os64Bit(true) ||
-|| eucalyptus || osFamily(CENTOS) ||
-|| gogrid || osFamily(CENTOS).imageNameMatches(".*w/ None.*") ||
 
-##### Test Scripts =====
+| *provider* | *default template* |
+|------------|--------------------|
+| vcloud/bluelock-vcdirector | osFamily(UBUNTU).os64Bit(true) |
+| trmk-vcloudexpress | osFamily(UBUNTU).osDescriptionMatches(".*JeOS.*").os64Bit(true) |
+| trmk-ecloud | osFamily(CENTOS).os64Bit(true) |
+| ec2 | osFamily(AMZN_LINUX).os64Bit(true) |
+| eucalyptus | osFamily(CENTOS) |
+| gogrid | osFamily(CENTOS).imageNameMatches(".*w/ None.*") |
+
+##### Test Scripts 
 
   * OperatingSystemPredicates.supportsApt().apply(node.getOperatingSystem())
 
@@ -646,7 +650,7 @@ echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bash
 
 ## Clojure
 ## Setup
-  * install [http://github.com/technomancy/leiningen lein]
+  * install [lein](http://github.com/technomancy/leiningen)
   * `lein new mygroup/myproject`
   * `cd myproject`
   * `vi project.clj`
