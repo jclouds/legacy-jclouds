@@ -452,7 +452,7 @@ But in some cases they may be sets of strings.  How should the API present these
 
 #### Adrian Cole
 json types should be supported including lists, maps, and primitives.  
-These would map to Map<String, Object> in java.
+These would map to Map&lt;String, Object&gt; in java.
 
 ### What Jurisdictions? 
 
