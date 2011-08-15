@@ -611,7 +611,7 @@ As of jclouds 1.0.0 here are the template patterns that represent the default te
 
 *Unless specified below, the default template is `osFamily(UBUNTU).osVersionMatches("10.04").os64Bit(true)`*
 
-TODO: This is significantly out of date.
+_This is significantly out of date._
 
 
 | *provider* | *default template* |

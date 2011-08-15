@@ -14,11 +14,12 @@ We also provide tools that make developing to it easier.
 
 Here are the providers of the VMware vCloud API and the level of support in jclouds:
 
-|| *Company* || *Offering* || *Provider in jclouds* || *API Version in jclouds* ||
-|| [http://code.google.com/p/jclouds/wiki/Terremark http://www.vmware.com/files/images/vam/img-terremark.gif] || [http://vcloudexpress.terremark.com/blog.aspx vCloud Express] || trmk-vcloudexpress || 0.8a-ext1.6 ||
-|| [http://code.google.com/p/jclouds/wiki/Terremark http://www.vmware.com/files/images/vam/img-terremark.gif] || [http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx Enterprise Cloud] || trmk-ecloud || 0.8b-ext2.3 || 
-|| [http://code.google.com/p/jclouds/wiki/QuickStartBlueLock http://www.vmware.com/files/images/vam/img-bluelock.gif] || [http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/ vCloud Enterprise]|| bluelock-vcdirector || 1.0 || 
-|| [http://www.stratogen.net/products/vmware-hosting.html http://www.stratogen.net/images/footerlogo.gif] || [http://www.stratogen.net/products/vmware-hosting.html VMware Hosting]|| stratogen-vcloud-mycloud || 1.0 ||
+| *Company* | *Offering* | *Provider in jclouds* | *API Version in jclouds* |
+|-----------|------------|-----------------------|--------------------------|
+| <img src="http://www.vmware.com/files/images/vam/img-terremark.gif"> | [vCloud Express](http://vcloudexpress.terremark.com/blog.aspx) | trmk-vcloudexpress | 0.8a-ext1.6 |
+| <img src="http://www.vmware.com/files/images/vam/img-terremark.gif">| [Enterprise Cloud](http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx) | trmk-ecloud | 0.8b-ext2.3 |
+| <img src="http://www.vmware.com/files/images/vam/img-bluelock.gif"> | [vCloud Enterprise](http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/)| bluelock-vcdirector | 1.0 | 
+| <a href="http://www.stratogen.net/products/vmware-hosting.html"><img src="http://www.stratogen.net/images/footerlogo.gif"></a> | [VMware Hosting](http://www.stratogen.net/products/vmware-hosting.html)| stratogen-vcloud-mycloud | 1.0 |
 
 
 ## Obtaining a context to vCloud
