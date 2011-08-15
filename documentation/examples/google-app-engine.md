@@ -18,7 +18,7 @@ The Google App Engine for Java sample (samples/googleappengine) requires that yo
 download and extract the [sdk](http://googleappengine.googlecode.com/files/appengine-java-sdk-1.4.3.zip0) 
 and export the shell variable APPENGINE_HOME to that location.
 
-*  checkout from git ==
+*  checkout from git
   * git clone git://github.com/jclouds/jclouds.git
   * enter the right directory for aws-ec2 + aws-s3 `cd jclouds/aws/demos/googleappengine`
  

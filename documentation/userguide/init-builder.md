@@ -4,7 +4,7 @@ title: Design and Usage of the InitBuilder components
 ---
 #Design and Usage of the InitBuilder components
 
-## Introduction =
+## Introduction
 
 InitBuilder gives  you a standard, predictable and portable way of controlling
 the lifecycle of your applications at a process level.  For example, using InitBuilder,  
@@ -20,9 +20,9 @@ the operating environment across operating system platforms.
 Standard directory paths help you avoid multi-tenancy conflicts and the need to access the root user.   
 
 ## Vocabulary
-  * Platform - a cross-platform product, like JBoss, Tomcat, Apache httpd, which as base binaries and configuration applicable to all instantiations of it.  Platforms that do not work on most operating systems are out of scope.  These include products that only exist on Windows such as [http://en.wikipedia.org/wiki/Internet_Information_Services IIS]
+  * Platform - a cross-platform product, like JBoss, Tomcat, Apache httpd, which as base binaries and configuration applicable to all instantiations of it.  Platforms that do not work on most operating systems are out of scope.  These include products that only exist on Windows such as [IIS](http://en.wikipedia.org/wiki/Internet_Information_Services)
   * Instance - an instance of a platform, most often implemented as a process on the host operating system.  Multiple instances must be able to run on the same host without conflicts.
-  * Environment Variable -  Environment variables are a set of dynamic named values that can affect the way running processes will behave on a computer. [http://en.wikipedia.org/wiki/Environment_variable ref]
+  * Environment Variable -  Environment variables are a set of dynamic named values that can affect the way running processes will behave on a computer. [ref](http://en.wikipedia.org/wiki/Environment_variable)
   * Environment Module - Introduces environment variables for a particular scope.  These are overridable.
 
 ## Design

@@ -6,10 +6,10 @@ title: Using the amazon EC2 cloud
 
 ## Introduction
 
-The compute service is implemented fully for EC2 - so you can follow the guides to using the [[ComputeService API|ComputeGuide]]. 
+The compute service is implemented fully for EC2 - so you can follow the guides to using the [ComputeService API](/documentation/userguide/compute). 
 
 For credentials you will want you access key id and secret access key (don't use your user id or anything else). 
-For practical EC2 usage - you will probably want to check out [[QuickStartAWS]] 
+For practical EC2 usage - you will probably want to check out [AWS Quick Start](/documentation/quickstart/aws) 
 
 ## Images
 ### Default image
