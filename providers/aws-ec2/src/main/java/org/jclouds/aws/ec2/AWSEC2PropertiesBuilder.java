@@ -83,10 +83,12 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       if (props.containsKey(PROPERTY_EC2_AMI_OWNERS)) {
          StringBuilder query = new StringBuilder();
          String owners = properties.remove(PROPERTY_EC2_AMI_OWNERS).toString();
-         if (!"*".equals(owners) && !"".equals(owners))
-            query.append("owner-id=").append(owners).append(';');
-         if (!"".equals(owners))
+         if ("*".equals(owners))
             query.append("state=available;image-type=machine");
+         else if (!"".equals(owners))
+            query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
+         else if ("".equals(owners))
+            query = new StringBuilder();
          props.setProperty(PROPERTY_EC2_AMI_QUERY, query.toString());
          Logger.getAnonymousLogger().warning(
                   String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
@@ -97,7 +99,7 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
    protected void warnAndReplaceIfUsingOldCCImageKey(Properties props) {
       if (props.containsKey(PROPERTY_EC2_CC_AMIs)) {
          String amis = properties.remove(PROPERTY_EC2_CC_AMIs).toString();
-         String value = "image-id=" + amis.replace("us-east-1/", "");
+         String value = ("".equals(amis)) ? "" : "image-id=" + amis.replace("us-east-1/", "");
          props.setProperty(PROPERTY_EC2_CC_AMI_QUERY, value);
          Logger.getAnonymousLogger().warning(
                   String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_CC_AMIs,

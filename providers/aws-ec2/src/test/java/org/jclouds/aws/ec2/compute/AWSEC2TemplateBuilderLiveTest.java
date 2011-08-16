@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
@@ -215,6 +216,42 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          // set owners to nothing
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
+
+         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), overrides);
+
+         assertEquals(context.getComputeService().listImages().size(), 0);
+
+         Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
+         System.out.println(template.getHardware());
+         assert (template.getImage().getProviderId().startsWith("ami-")) : template;
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
+         assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
+         assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
+         assertEquals(template.getLocation().getId(), "us-east-1");
+         assertEquals(getCores(template.getHardware()), 2.0d);
+         assertEquals(template.getHardware().getId(), "m1.large"); // because it
+         // is 64bit
+
+         // ensure we cache the new image for next time
+         assertEquals(context.getComputeService().listImages().size(), 1);
+
+      } finally {
+         if (context != null)
+            context.close();
+      }
+   }
+
+   @Test
+   public void testTemplateBuilderWithNoOwnersParsesImageOnDemandDeprecated() throws IOException {
+      ComputeServiceContext context = null;
+      try {
+         Properties overrides = setupProperties();
+         // set owners to nothing
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMIs, "");
+         overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
          context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
                   .<Module> of(new Log4JLoggingModule()), overrides);
