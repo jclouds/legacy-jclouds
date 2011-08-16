@@ -111,7 +111,7 @@ public class GsonExperimentsTest {
       JsonToken token = reader.peek();
       for (; token != JsonToken.END_DOCUMENT && nnn(toFind, reader, token, name); token = skipAndPeek(token, reader))
          ;
-      T val = gson.fromJson(reader, type);
+      T val = gson.<T>fromJson(reader, type);
       reader.close();
       return val;
    }
