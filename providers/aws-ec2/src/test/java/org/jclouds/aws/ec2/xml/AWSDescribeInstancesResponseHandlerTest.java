@@ -41,6 +41,7 @@ import org.jclouds.location.Region;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -81,6 +82,49 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                   .rootDeviceType(RootDeviceType.INSTANCE_STORE).build()), "993194456877", null, "r-a3c508cb"));
 
       Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_running.xml");
+
+      assertEquals(result.toString(), contents.toString());
+   }
+   
+   public void testWhenRunningLatest() throws UnknownHostException {
+
+      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
+               defaultRegion, ImmutableSet.of("jclouds#ec2-s#us-east-1"), ImmutableSet.of(
+                        new AWSRunningInstance.Builder().region(defaultRegion).instanceId("i-911444f0").imageId(
+                                 "ami-63be790a").instanceState(InstanceState.RUNNING).privateDnsName(
+                                 "ip-10-212-81-7.ec2.internal").dnsName("ec2-174-129-173-155.compute-1.amazonaws.com")
+                                 .keyName("jclouds#zkclustertest#us-east-1#23").amiLaunchIndex("0").instanceType(
+                                          "t1.micro").launchTime(
+                                          dateService.iso8601DateParse("2011-08-16T13:40:50.000Z")).availabilityZone(
+                                          "us-east-1c").kernelId("aki-427d952b").monitoringState(
+                                          MonitoringState.DISABLED).privateIpAddress("10.212.81.7").ipAddress(
+                                          "174.129.173.155").securityGroupIdToNames(
+                                          ImmutableMap.<String, String> of("sg-ef052b86",
+                                                   "jclouds#zkclustertest#us-east-1")).rootDeviceType(
+                                          RootDeviceType.EBS).rootDeviceName("/dev/sda1").device(
+                                          "/dev/sda1",
+                                          new BlockDevice("vol-5829fc32", Attachment.Status.ATTACHED, dateService
+                                                   .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
+                                 .virtualizationType("paravirtual").build(),//
+                        new AWSRunningInstance.Builder().region(defaultRegion).instanceId("i-931444f2").imageId(
+                                 "ami-63be790a").instanceState(InstanceState.RUNNING).privateDnsName(
+                                 "ip-10-212-185-8.ec2.internal").dnsName("ec2-50-19-207-248.compute-1.amazonaws.com")
+                                 .keyName("jclouds#zkclustertest#us-east-1#23").amiLaunchIndex("0").instanceType(
+                                          "t1.micro").launchTime(
+                                          dateService.iso8601DateParse("2011-08-16T13:40:50.000Z")).availabilityZone(
+                                          "us-east-1c").kernelId("aki-427d952b").monitoringState(
+                                          MonitoringState.DISABLED).privateIpAddress("10.212.185.8").ipAddress(
+                                          "50.19.207.248").securityGroupIdToNames(
+                                          ImmutableMap.<String, String> of("sg-ef052b86",
+                                                   "jclouds#zkclustertest#us-east-1")).rootDeviceType(
+                                          RootDeviceType.EBS).rootDeviceName("/dev/sda1").device(
+                                          "/dev/sda1",
+                                          new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService
+                                                   .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
+                                 .virtualizationType("paravirtual").build()), defaultRegion, defaultRegion,
+               defaultRegion));
+
+      Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_latest.xml");
 
       assertEquals(result.toString(), contents.toString());
    }

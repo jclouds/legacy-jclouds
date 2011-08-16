@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -108,11 +109,12 @@ public class RunningInstanceToNodeMetadataTest {
                ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
 
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
-
-      assertEquals(parser.apply(server), new NodeMetadataBuilder().hostname("ip-10-243-42-70").state(NodeState.RUNNING)
-            .privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68"))
-            .imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f").location(provider)
-            .build());
+      NodeMetadata expected = new NodeMetadataBuilder().hostname("ip-10-243-42-70").state(NodeState.RUNNING)
+               .privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68"))
+               .imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f")
+               .location(provider).build();
+      
+      assertEquals(parser.apply(server), expected);
    }
 
    @Test
