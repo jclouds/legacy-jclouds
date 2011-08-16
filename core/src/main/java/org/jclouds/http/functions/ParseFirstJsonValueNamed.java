@@ -69,7 +69,7 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
                reader))
             ;
          if (name.get().equals(this.name)) {
-            return json.delegate().fromJson(reader, type.getType());
+            return json.delegate().<T>fromJson(reader, type.getType());
          } else {
             return nothing();
          }
