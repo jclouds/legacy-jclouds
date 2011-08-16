@@ -1,33 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
-    <requestId>e32bb361-415e-484b-8651-5fd0c0a85fab</requestId>
+    <requestId>a03c1896-0543-485f-a732-ebc83873a3ca</requestId>
     <reservationSet>
         <item>
-            <reservationId>r-6d62c002</reservationId>
+            <reservationId>r-0f4c2160</reservationId>
             <ownerId>993194456877</ownerId>
             <groupSet>
                 <item>
-                    <groupId>sg-1f1c3976</groupId>
-                    <groupName>jclouds#ec2-s#us-east-1</groupName>
+                    <groupId>sg-ef052b86</groupId>
+                    <groupName>jclouds#zkclustertest#us-east-1</groupName>
                 </item>
             </groupSet>
             <instancesSet>
                 <item>
-                    <instanceId>i-5f833d3e</instanceId>
-                    <imageId>ami-8e1fece7</imageId>
+                    <instanceId>i-911444f0</instanceId>
+                    <imageId>ami-63be790a</imageId>
                     <instanceState>
                         <code>16</code>
                         <name>running</name>
                     </instanceState>
-                    <privateDnsName>domU-12-31-38-04-25-D8.compute-1.internal</privateDnsName>
-                    <dnsName>ec2-50-16-149-221.compute-1.amazonaws.com</dnsName>
+                    <privateDnsName>ip-10-212-81-7.ec2.internal</privateDnsName>
+                    <dnsName>ec2-174-129-173-155.compute-1.amazonaws.com</dnsName>
                     <reason/>
-                    <keyName>jclouds#ec2-s#us-east-1#38</keyName>
+                    <keyName>jclouds#zkclustertest#us-east-1#23</keyName>
                     <amiLaunchIndex>0</amiLaunchIndex>
                     <productCodes/>
                     <instanceType>t1.micro</instanceType>
-                    <launchTime>2011-07-29T04:08:19.000Z</launchTime>
+                    <launchTime>2011-08-16T13:40:50.000Z</launchTime>
                     <placement>
-                        <availabilityZone>us-east-1d</availabilityZone>
+                        <availabilityZone>us-east-1c</availabilityZone>
                         <groupName/>
                         <tenancy>default</tenancy>
                     </placement>
@@ -35,12 +36,12 @@
                     <monitoring>
                         <state>disabled</state>
                     </monitoring>
-                    <privateIpAddress>10.220.38.38</privateIpAddress>
-                    <ipAddress>50.16.149.221</ipAddress>
+                    <privateIpAddress>10.212.81.7</privateIpAddress>
+                    <ipAddress>174.129.173.155</ipAddress>
                     <groupSet>
                         <item>
-                            <groupId>sg-1f1c3976</groupId>
-                            <groupName>jclouds#ec2-s#us-east-1</groupName>
+                            <groupId>sg-ef052b86</groupId>
+                            <groupName>jclouds#zkclustertest#us-east-1</groupName>
                         </item>
                     </groupSet>
                     <architecture>x86_64</architecture>
@@ -50,9 +51,59 @@
                         <item>
                             <deviceName>/dev/sda1</deviceName>
                             <ebs>
-                                <volumeId>vol-4bc3da20</volumeId>
+                                <volumeId>vol-5829fc32</volumeId>
                                 <status>attached</status>
-                                <attachTime>2011-07-29T04:08:40.000Z</attachTime>
+                                <attachTime>2011-08-16T13:41:19.000Z</attachTime>
+                                <deleteOnTermination>true</deleteOnTermination>
+                            </ebs>
+                        </item>
+                    </blockDeviceMapping>
+                    <virtualizationType>paravirtual</virtualizationType>
+                    <clientToken/>
+                    <hypervisor>xen</hypervisor>
+                </item>
+                <item>
+                    <instanceId>i-931444f2</instanceId>
+                    <imageId>ami-63be790a</imageId>
+                    <instanceState>
+                        <code>16</code>
+                        <name>running</name>
+                    </instanceState>
+                    <privateDnsName>ip-10-212-185-8.ec2.internal</privateDnsName>
+                    <dnsName>ec2-50-19-207-248.compute-1.amazonaws.com</dnsName>
+                    <reason/>
+                    <keyName>jclouds#zkclustertest#us-east-1#23</keyName>
+                    <amiLaunchIndex>1</amiLaunchIndex>
+                    <productCodes/>
+                    <instanceType>t1.micro</instanceType>
+                    <launchTime>2011-08-16T13:40:50.000Z</launchTime>
+                    <placement>
+                        <availabilityZone>us-east-1c</availabilityZone>
+                        <groupName/>
+                        <tenancy>default</tenancy>
+                    </placement>
+                    <kernelId>aki-427d952b</kernelId>
+                    <monitoring>
+                        <state>disabled</state>
+                    </monitoring>
+                    <privateIpAddress>10.212.185.8</privateIpAddress>
+                    <ipAddress>50.19.207.248</ipAddress>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-ef052b86</groupId>
+                            <groupName>jclouds#zkclustertest#us-east-1</groupName>
+                        </item>
+                    </groupSet>
+                    <architecture>x86_64</architecture>
+                    <rootDeviceType>ebs</rootDeviceType>
+                    <rootDeviceName>/dev/sda1</rootDeviceName>
+                    <blockDeviceMapping>
+                        <item>
+                            <deviceName>/dev/sda1</deviceName>
+                            <ebs>
+                                <volumeId>vol-5029fc3a</volumeId>
+                                <status>attached</status>
+                                <attachTime>2011-08-16T13:41:19.000Z</attachTime>
                                 <deleteOnTermination>true</deleteOnTermination>
                             </ebs>
                         </item>

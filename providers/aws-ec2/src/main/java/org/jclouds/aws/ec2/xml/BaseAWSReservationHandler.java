@@ -120,10 +120,10 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       } else if (equalsOrSuffix(qName, "groupName")) {
          switch (itemDepth) {
          case 2:
-            builder.securityGroupIdToName(groupId, currentOrNull(currentText));
+            reservationGroupIdToNames.put(groupId, currentOrNull(currentText));
             break;
          case 3:
-            reservationGroupIdToNames.put(groupId, currentOrNull(currentText));
+            builder.securityGroupIdToName(groupId, currentOrNull(currentText));
             break;
          }
          groupId = null;
