@@ -7,8 +7,8 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.1.0
-our next maintenance version is 1.1.1-SNAPSHOT
+our current version is 1.1.1
+our next maintenance version is 1.1.2-SNAPSHOT
 our dev version is 1.2.0-SNAPSHOT
  
 check out our examples site! https://github.com/jclouds/jclouds-examples
@@ -109,6 +109,7 @@ Compute Example (Clojure):
     (RunScriptOptions$Builder/wrapInInitScript false))
 
 Downloads:
+  * release notes: http://code.google.com/p/jclouds/wiki/ReleaseNotes111
   * installation guide: http://code.google.com/p/jclouds/wiki/Installation
   * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
@@ -116,6 +117,7 @@ Downloads:
 Links:
   * project page: http://code.google.com/p/jclouds/
   * javadocs: http://jclouds.rimuhosting.com/apidocs/
+  * maven site: http://jclouds.googlecode.com/svn/maven-sites/1.1.1/jclouds-multi/index.html
   * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
