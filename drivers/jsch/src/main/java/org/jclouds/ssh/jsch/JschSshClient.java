@@ -47,6 +47,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.CredentialUtils;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -167,6 +168,9 @@ public class JschSshClient implements SshClient {
             session.setPassword(password);
          } else {
             // jsch wipes out your private key
+            if (CredentialUtils.isPrivateKeyEncrypted(privateKey)) {
+               throw new IllegalArgumentException("JschSshClientModule does not support private keys that require a passphrase");
+            }
             jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null, emptyPassPhrase);
          }
          java.util.Properties config = new java.util.Properties();

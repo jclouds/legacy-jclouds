@@ -53,5 +53,8 @@ public class CredentialUtils {
                   .startsWith(Pems.PRIVATE_PKCS8_MARKER));
    }
 
+   public static boolean isPrivateKeyEncrypted(byte[] privateKey) {
+      return new String(privateKey).contains("Proc-Type: 4,ENCRYPTED");
+   }
 
 }

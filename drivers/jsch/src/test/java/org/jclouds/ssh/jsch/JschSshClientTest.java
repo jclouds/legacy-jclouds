@@ -26,6 +26,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -104,5 +105,18 @@ public class JschSshClientTest {
       assert ssh.causalChainHasMessageContaining(
             new JSchException("Session.connect: java.net.SocketException: Connection reset")).apply("java.net.Socket");
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
+   }
+
+   public void testPrivateKeyWithPassphrase() throws UnknownHostException {
+      Injector i = Guice.createInjector(module());
+      SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
+      try {
+         JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
+               "username", "-----BEGIN RSA PRIVATE KEY-----\nProc-Type: 4,ENCRYPTED\nDEK-Info: AES-128-CBC,123\n\n123")));
+         ssh.connect();
+         assert false; // this code should never be reached.
+      } catch (SshException e) {
+         // Success!
+      }
    }
 }
