@@ -55,6 +55,9 @@ public class GetOptions {
 
    /**
     * download the specified range of the object.
+    * @param start first offset included in the response
+    * @param end last offset included in the response (inclusive).
+    * @return itself to enable daisy-chaining of expressions
     */
    public GetOptions range(long start, long end) {
       checkArgument(start >= 0, "start must be >= 0");
@@ -69,6 +72,16 @@ public class GetOptions {
    public GetOptions startAt(long start) {
       checkArgument(start >= 0, "start must be >= 0");
       getRanges().add(String.format("%d-", start));
+      return this;
+   }
+
+
+   /**
+    * download the specified range of the object starting from the end of the object.
+    */
+   public GetOptions tail(long length) {
+      checkArgument(length >= 0, "length must be >= 0");
+      getRanges().add(String.format("-%d", length));
       return this;
    }
 

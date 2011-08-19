@@ -567,7 +567,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                   String[] firstLast = s.split("\\-");
                   int offset = Integer.parseInt(firstLast[0]);
                   int last = Integer.parseInt(firstLast[1]);
-                  int length = (last < data.length) ? last + 1 : data.length - offset;
+                  int length = last - offset + 1; // the range end is included
                   out.write(data, offset, length);
                } else {
                   return immediateFailedFuture(new IllegalArgumentException("first and last were null!"));
