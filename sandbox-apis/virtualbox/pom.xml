@@ -43,7 +43,7 @@
     <repositories>
         <repository>
             <id>temporary</id>
-            <url>https://github.com/jclouds/jclouds/tree/master/repo</url>
+            <url>https://github.com/jclouds/jclouds/raw/master/repo</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
