@@ -35,7 +35,7 @@
 
     <properties>
         <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
-        <test.virtualbox.apiversion>4.1.0r73009</test.virtualbox.apiversion>
+        <test.virtualbox.apiversion>4.1.2r73507</test.virtualbox.apiversion>
         <test.virtualbox.identity>administrator</test.virtualbox.identity>
         <test.virtualbox.credential>12345</test.virtualbox.credential>
     </properties>
@@ -43,7 +43,7 @@
     <repositories>
         <repository>
             <id>temporary</id>
-            <url>https://jclouds.googlecode.com/svn/repo</url>
+            <url>https://github.com/jclouds/jclouds/tree/master/repo</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

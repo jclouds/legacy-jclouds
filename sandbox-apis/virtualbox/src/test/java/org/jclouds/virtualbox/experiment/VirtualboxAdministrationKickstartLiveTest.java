@@ -119,7 +119,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
       identity = System.getProperty("test." + provider + ".identity", "administrator");
       credential = System.getProperty("test." + provider + ".credential", "12345");
       endpoint = URI.create(System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/"));
-      apiVersion = System.getProperty("test." + provider + ".apiversion", "4.1.0r73009");
+      apiVersion = System.getProperty("test." + provider + ".apiversion", "4.1.2r73507");
       majorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 0);
       minorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 1);
    }
