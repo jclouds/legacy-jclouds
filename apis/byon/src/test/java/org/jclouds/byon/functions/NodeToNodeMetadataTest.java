@@ -73,10 +73,15 @@ public class NodeToNodeMetadataTest {
    }
 
    public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location) {
+      return expectedNodeMetadataFromResource(id, resource, location, 22);
+   }
+   
+   public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location, int loginPort) {
       return new NodeMetadataBuilder()
             .ids("cluster-" + id)
             .group("hadoop")
             .name("cluster-" + id)
+            .loginPort(loginPort)
             .hostname("cluster-" + id + ".mydomain.com")
             .location(location)
             .state(NodeState.RUNNING)
@@ -97,5 +102,10 @@ public class NodeToNodeMetadataTest {
       assertEquals(parser.apply(NodesFromYamlTest.TEST2), expectedNodeMetadataFromResource(resource, zoneCalled(
                "virginia", provider)));
       assertEquals(credentialStore, ImmutableMap.of("node#cluster-1", new Credentials("myUser", NodesFromYamlTest.key)));
+   }
+   
+   @Test
+   public void testNodesParseLoginPort() throws Exception {
+      assertEquals(parser.apply(NodesFromYamlTest.TEST3), expectedNodeMetadataFromResource(2, resource, provider, 2022));
    }
 }
