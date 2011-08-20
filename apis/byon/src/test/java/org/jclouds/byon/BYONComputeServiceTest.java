@@ -109,7 +109,7 @@ public class BYONComputeServiceTest {
          Location maryland = zoneCalled("maryland", providerLocation);
 
          assertEquals(context.getComputeService().listNodes(), ImmutableSet.of(expectedNodeMetadataFromResource(1,
-                  endpoint, virginia), expectedNodeMetadataFromResource(2, endpoint, maryland)));
+                  endpoint, virginia), expectedNodeMetadataFromResource(2, endpoint, maryland, 2022)));
          
          assertEquals(context.getComputeService().listAssignableLocations(), ImmutableSet.of(virginia, maryland));
       } finally {
