@@ -148,8 +148,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
       gaIsoName = System.getProperty("test." + provider + ".gaIsoName", "VBoxGuestAdditions_" + majorVersion
             + "-update-" + minorVersion + ".iso");
       gaIsoUrl = URI.create(System.getProperty("test." + provider + ".gaIsoUrl",
-            "http://download.virtualbox.org/virtualbox/" + majorVersion + "/VBoxGuestAdditions_" + majorVersion
-                  + "-update-" + minorVersion + ".iso"));
+            "http://download.virtualbox.org/virtualbox/" + majorVersion + "/VBoxGuestAdditions_" + majorVersion + ".iso"));
 
       distroIsoName = System.getProperty("test." + provider + ".distroIsoName", "ubuntu-11.04-server-i386.iso");
       distroIsoUrl = URI.create(System.getProperty("test." + provider + ".distroIsoUrl",
