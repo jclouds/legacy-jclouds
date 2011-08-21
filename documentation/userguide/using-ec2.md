@@ -41,12 +41,34 @@ Template template = compute.templateBuilder().hardwareId(InstanceType.M1_SMALL)
                   .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 {% endhighlight %}
 
+### Image Filters [v1.1.0+]
+
+Even refining lists to a set of user ids, using EC2 can be bogged down, parsing the thousands of public images published by the Amazon EC2 community.  Several users have expressed the desire to refine further, based on qualifications they choose.  You can set a property to restrict the list to a subset matching any recognized [http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html image query].
+{% highlight java %}
+   overrides = new Properties();
+   // choose only amazon images that are ebs-backed
+   overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY,
+                         "owner-id=137112412989;state=available;image-type=machine;root-device-type=ebs");
+   context = new ComputeServiceContextFactory().createContext("aws-ec2", access, secret,
+            ImmutableSet.<Module> of(new SshjSshClientModule()), overrides)
+{% endhighlight %}
+
+=== Properties to set cluster compute images ==
+Cluster compute images are assigned the following default query, corresponding to the property key constant AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY
+{{{
+virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs
+}}}
+In order to save time, we only look for cluster compute images in regions that support them.  In order to change the default for this, affect the property PROPERTY_EC2_CC_REGIONS, currently set to "us-east-1"
+
+
 ### Lazy Image Fetching
 
 By default, the ComputeService will prefetch images from Alestic, Canonical, and 
 RightScale. This allows you to query the images, which is great, 
 if you don't know what you are looking for. However, if you already know the imageId you want, this is wasteful. 
 We now provide the option to lazy-fetch images, which speed-ups execution.
+
+#### Release 1.0.0 and below
 
 {% highlight java %}
 Properties overrides = new Properties();

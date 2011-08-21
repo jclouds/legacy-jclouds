@@ -25,7 +25,7 @@ title: A List of applications that use jclouds
     * through Dasein-jclouds integration, enStratus manages more compute and blobstore providers
 
   * [Omixon](http://www.omixon.com/)
-    * uses jclouds blobstore for big data transfer and whirr to provision hadoop
+    * uses jclouds blobstore for big data transfer and  made whirr to provision hadoop
 
   * [android integration](http://code.google.com/p/jclouds-android)
     * enables jclouds framework to android developers
