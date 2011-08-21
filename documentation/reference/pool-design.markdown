@@ -191,7 +191,11 @@ This probably makes most sense at the Region, or availability zone level.
 
 This is now [complete](http://code.google.com/p/jclouds/issues/detail?id=561) scheduled for 1.0-beta-10
 
-## Working Design
+## Working Design *OUT OF DATE*
+
+*NOTE* this is not the intended path and needs to be revisited entirely.  
+Latest word is that we don't need durability of pool state, which can significantly simplify design.
+
 
 The working design is being tracked here and in 
 [issue 558](http://code.google.com/p/jclouds/issues/detail?id=558) in a branch called 
