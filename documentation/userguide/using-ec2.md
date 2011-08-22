@@ -82,6 +82,19 @@ Template template = context.getComputeService().templateBuilder().imageId(
          "ami-ccb35ea5").build();
 {% endhighlight %}
 
+#### Release 1.1.0 and above 
+{% highlight java %}
+   Properties overrides = new Properties();
+   // set owners to nothing
+   overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_QUERY, "");
+
+   context = new ComputeServiceContextFactory().createContext("aws-ec2",
+      accessid, secretkey, ImmutableSet.of(new Log4JLoggingModule()), overrides);
+
+   Template template = context.getComputeService().templateBuilder().imageId(
+            "ami-ccb35ea5").build();
+{% endhighlight %}
+
 ### Private Images
 Amazon EC2 has the concept of private-but-shared amis - images that were bundled on 
 another account, and not made public, but shared with a specified account. 
@@ -91,6 +104,9 @@ managing image curation, and others using them (but all billed together).
 This private image may not show up in listImages, and jclouds will struggle with this.
 
 Here's the solution:
+
+
+#### Release 1.0.0 and below
 
 {% highlight java %}
 Properties props = new Properties();
@@ -105,6 +121,22 @@ props.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "*");
 ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", "accesss", "secret",
                                         ImmutableSet.<Module> of(new JschSshClientModule()), props);
 {% endhighlight %}
+
+#### Release 1.1.0 and above
+{% highlight java %}
+Properties props = new Properties();
+
+//have a myFavoriteOwner - the user ID of the owner of the image.
+props.setProperty(EC2Constants.PROPERTY_EC2_AMI_QUERY, "owner-id=137112412989,063491364108,099720109477,411009282317,"+myFavoriteOwner+";state=available;image-type=machine");
+
+// or.. you can remove the owner part of the query, but this will take forever on amazon's ec2 service
+props.setProperty(EC2Constants.PROPERTY_EC2_AMI_QUERY, "state=available;image-type=machine");
+
+
+ComputeServiceContext context = new ComputeServiceContextFactory().createContext("aws-ec2", "accesss", "secret",
+                                        ImmutableSet.<Module> of(new JschSshClientModule()), props);
+{% endhighlight %}
+
 
 You can then create nodes using the templateBuilder.imageId() method. 
 

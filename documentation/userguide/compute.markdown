@@ -133,7 +133,7 @@ All of the following providers can be used equally in any Compute API tool.
 You can also set the context property `provider`.endpoint to use the following APIs for your private cloud                                                                                
                                                                                                                                                                                           
 | *maven dependency*  		|                                                                                                                                                            
-|:------------------------------|
+|:--------------------------|
 | org.jclouds.api/byon 		|                                                                                                                                                                  
 | org.jclouds.api/deltacloud	|                                                                                                                                                            
 | org.jclouds.api/elasticstack	|                                                                                                                                                          
@@ -321,6 +321,7 @@ import static com.google.common.collect.Iterables.*;
 Iterable<? extends NodeMetadata> billedNodes = filter(client.listNodesDetailsMatching(all()), and(withGroup(group), not(TERMINATED))));
 
 {% endhighlight %}
+
 #### Commands
 
 ##### Destroy Nodes Matching Predicate
@@ -489,6 +490,21 @@ Once you have the client, you can push files to it
 client.put("/path/to/file", Payloads.newFilePayload(contents));
 {% endhighlight %}
 
+
+Here's a full example:
+
+{% highlight java %}
+      SshClient ssh = context.utils().sshForNode().apply(node);
+      try {
+         ssh.connect();
+         ssh.put("/path/to/file",
+Payloads.newPayload(fileOrInputStreamOrBytesOrString));
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+{% endhighlight %}
+
 ### Selecting a correct package manager
 
 Below, you'll see how you can consolidate bootstrap instructions when empowered with an operating system type.
@@ -547,6 +563,8 @@ import static org.jclouds.compute.options.TemplateOptions.Builder.authorizePubli
 
 Note that SSH must be configured for this feature to work.
 
+To install an SSH private key for a different user, override the credentials with the `overrideCredentialsWith` method.
+
 ### Installing your RSA SSH Private Key
 
 The compute API supports replacing the node's private key with one you specify.  
@@ -590,20 +608,6 @@ Note that SSH must be configured for this feature to work.
 While many configurations may work with runScript, we setup the default template so that it can work 
 without parameters (ex. `templateBulder().build()` works). 
 
-##### 1.0-beta-7 
-
-As of jclouds 1.0-beta-7, here are the template patterns that represent the default template. 
-
-*Unless specified below, the default template is `osFamily(UBUNTU)`*
-
-|  *provider*  | *default template*  |
-|--------------|---------------------|
-| cloudservers | osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") |
-| ec2 | osFamily(AMZN_LINUX).os64Bit(true) |
-| eucalyptus || osFamily(CENTOS) |
-| gogrid | osFamily(CENTOS).imageNameMatches(".*w/ None.*") |
-| rimuhosting | hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*") |
-| slicehost | osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*") |
 
 ##### 1.0.0
 
@@ -646,6 +650,26 @@ echo "enabled=1" >> /etc/yum.repos.d/CentOS-Base.repo
 yum --nogpgcheck -y install java-1.6.0-openjdk
 echo "export PATH=\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\$PATH\"" >> /root/.bashrc
 {% endhighlight %}
+
+
+### Creating non-root users
+
+To add additional users on nodes, use the `UserAdd.Builder` facility, like this:
+{% highlight java %}
+UserAdd.Builder userBuilder = UserAdd.builder();
+userBuilder.login("john.doe");
+userBuilder.authorizeRSAPublicKey("john's public key");
+Statement userBuilderStatement = userBuilder.build();
+{% endhighlight %}
+
+and run the built statement in `templateOptions.runScript` or add to a `StatementList`.
+
+#### Note on internal implementation and debugging
+The jclouds API allows many `Statements` to be built entirely from high-level concepts, 
+without having to resort to OS-specific scripts. This enables developers to express what they mean without having
+ to deal with the gory details of various OS flavors.
+To see the commands that will be executed, print the result of `Statement.render(OsFamily.UNIX)`, for example.
+
 
 
 ## Clojure

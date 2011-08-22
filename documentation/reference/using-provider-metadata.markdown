@@ -8,7 +8,7 @@ In the ProviderMetadata wiki page we learned how to implement [Provider Meta Dat
 Now let's see how we might consume [Provider Meta Data|ProviderMetadata] to make our lives easier.
 We'll start with the basics on how to obtain [Provider Meta Data|ProviderMetadata] based on id or type.
 
-## Finding [Provider Meta Data|ProviderMetadata] Based on Type or ID
+## Finding Provider Meta Data Based on Type or ID
 
 For all basic usage, you will rely on using the [org.jclouds.providers.Providers](https://github.com/jclouds/jclouds/blob/master/core/src/main/java/org/jclouds/providers/Providers.java) class.
 This class exposes static helper methods to obtain [Provider Meta Data|ProviderMetadata] based on many of things the most basic of is by id.

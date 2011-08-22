@@ -19,3 +19,4 @@ title: Reference Index
 * [Supported Providers](/documentation/reference/supported-providers)
 * [Apps that use JClouds](/documentation/reference/apps-that-use-jclouds)
 * [Using Provider Metadata](/documentation/reference/using-provider-metadata)
+* [Error Handling](/documentation/reference/error-handling)
