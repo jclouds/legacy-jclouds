@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Releaes Notes Beta 8
+title: Release Notes Beta 8
 ---
 
 # Release Notes: jclouds Beta 8
