@@ -225,15 +225,9 @@ public class AWSEC2ProviderTest extends BaseProviderMetadataTest {
 }
 {% endhighlight %}
 
-Now that we know how to implement and test provider metadata, below is an example of why this might be useful to jclouds consumers.
+Now that we know how to implement and test provider metadata, below is an example of why this might be useful 
+to jclouds consumers. 
 
-## Usage Example
-
-The main user of provider metadata in previous discussions has been those building UIs/tools around jclouds. 
- For example, imagine you wanted to let a user select a cloud provider out of the list jclouds supports.
-With provider metadata, you can easily create a drop-down list of provider names that the user could select.  
-You could also know the proper labels to display to the user when asking for their cloud provider credentials.  
-
-This is only one brief, high-level example but by understanding how to implement provider metadata, you should easily 
-see how this could be used in other ways.
+For examples on how to use !ProviderMetadata now that you know how to implement your own, check out the 
+[Using Provider Metadata](/documentation/reference/using-provider-metadata) page.
 
