@@ -16,43 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.features;
 
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.softlayer.features.DatacenterClient;
-import org.jclouds.softlayer.features.ProductPackageClient;
-import org.jclouds.softlayer.features.VirtualGuestClient;
 
 /**
- * Provides synchronous access to SoftLayer.
+ * Provides synchronous access to ProductPackage.
  * <p/>
  * 
- * @see SoftLayerAsyncClient
+ * @see ProductPackageAsyncClient
  * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface SoftLayerClient {
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+public interface ProductPackageClient {
 
    /**
-    * Provides synchronous access to VirtualGuest features.
+    * 
+    * @param id
+    *           id of the product package
+    * @return product package or null if not found
     */
-   @Delegate
-   VirtualGuestClient getVirtualGuestClient();
-
-   /**
-    * Provides synchronous access to Datacenter features.
-    */
-   @Delegate
-   DatacenterClient getDatacenterClient();
-
-   /**
-    * Provides synchronous access to ProductPackage features.
-    */
-   @Delegate
-   ProductPackageClient getProductPackageClient();
+   String getProductPackage(long id);
 
 }

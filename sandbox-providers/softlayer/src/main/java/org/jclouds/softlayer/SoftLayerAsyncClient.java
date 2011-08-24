@@ -20,6 +20,7 @@ package org.jclouds.softlayer;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.softlayer.features.DatacenterAsyncClient;
+import org.jclouds.softlayer.features.ProductPackageAsyncClient;
 import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
 
 /**
@@ -43,4 +44,10 @@ public interface SoftLayerAsyncClient {
     */
    @Delegate
    DatacenterAsyncClient getDatacenterClient();
+   
+   /**
+    * Provides asynchronous access to ProductPackage features.
+    */
+   @Delegate
+   ProductPackageAsyncClient getProductPackageClient();
 }

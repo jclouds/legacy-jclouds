@@ -44,11 +44,13 @@ public class SoftLayerAsyncClientTest extends BaseSoftLayerAsyncClientTest<SoftL
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert syncClient.getVirtualGuestClient() != null;
       assert syncClient.getDatacenterClient() != null;
+      assert syncClient.getProductPackageClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert asyncClient.getVirtualGuestClient() != null;
       assert asyncClient.getDatacenterClient() != null;
+      assert asyncClient.getProductPackageClient() != null;
    }
 
    @Override
