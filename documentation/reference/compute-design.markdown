@@ -211,11 +211,11 @@ _please extend!_
 
 The above are fairly "fine-grained" use cases, and as such it would appear helpful to add some higher-level context in terms of applications or scenarios in which these Use Cases might occur.
 
-  * Provisioning as part of the build cycle, e.g. from [http://ant.apache.org/ Ant], [http://cargo.codehaus.org/ Cargo] or [https://hudson.dev.java.net/ Hudson]
-  * Monitoring from existing infrastructure monitors, e.g. [http://www.nagios.org/about/ Nagios]
+  * Provisioning as part of the build cycle, e.g. from [Ant](http://ant.apache.org/), [Cargo](http://cargo.codehaus.org/) or [Hudson](https://hudson.dev.java.net/)
+  * Monitoring from existing infrastructure monitors, e.g. [Nagios](http://www.nagios.org/about/)
   * Monitoring from within a cloud application
-  * Monitoring and auto-provisioning from an infrastructure management application, e.g. a [http://en.wikipedia.org/wiki/Hypervisor hypervisor] or [http://www.rightscale.com/ RightScale]
-  * Monitoring and auto-provisioning from an application platfrom, e.g. [http://www.gigaspaces.com/ GigaSpaces]
+  * Monitoring and auto-provisioning from an infrastructure management application, e.g. a [hypervisor](http://en.wikipedia.org/wiki/Hypervisor) or [RightScale](http://www.rightscale.com/)
+  * Monitoring and auto-provisioning from an application platfrom, e.g. [GigaSpaces]http://www.gigaspaces.com/)
 
 
 ## Platform Extension 
