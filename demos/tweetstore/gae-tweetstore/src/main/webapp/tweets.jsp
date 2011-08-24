@@ -85,23 +85,24 @@ overflow-y:auto;
 </head>
 <body>
 <h2>Tweets in Clouds</h2>
-    <table width="100%" border="0">
-                <tr>
-                        <td>
-
-<div class="TableContainer">
-
-<display:table name="tweets" defaultsort="1" cellpadding="5" cellspacing="1" class="staticheader">
-	<display:column property="id"  title="Tweet ID" />
-	<display:column property="from"  title="Who Said it" />
-	<display:column property="tweet"  title="Tweet" />
-	<display:column property="service"  title="Cloud" />
-	<display:column property="host"  title="Host" />
-    <display:column property="status"  title="Status" />	
-</display:table>
-
-</div>
-</td>
+<table width="100%" border="0">
+<tr>
+  <td>
+  <div class="TableContainer">
+  <display:table name="tweets" defaultsort="1" cellpadding="5" cellspacing="1" class="staticheader">
+    <display:column property="id" title="Tweet ID" />
+    <display:column property="from" title="Who Said it" />
+    <display:column property="tweet" title="Tweet" />
+    <display:column property="service" title="Cloud" />
+    <display:column property="host" title="Host" />
+    <display:column property="status" title="Status" />	
+  </display:table>
+  </div>
+  </td>
+</tr>
+<tr>
+  <td><img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif" 
+alt="Powered by Google App Engine" /></td>
 </tr>
 </table>
 </body>

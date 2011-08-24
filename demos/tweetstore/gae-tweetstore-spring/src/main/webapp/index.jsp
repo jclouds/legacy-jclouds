@@ -24,8 +24,8 @@
 </head>
 <body>
 <h2>Welcome!</h2>
-Click
-<a href="/tweets/get">here</a>
-to see tweets about jclouds.
+<p>Click <a href="/tweets/get">here</a> to see tweets about jclouds.</p>
+<p><img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif" 
+alt="Powered by Google App Engine" /></p>
 </body>
 </html>
