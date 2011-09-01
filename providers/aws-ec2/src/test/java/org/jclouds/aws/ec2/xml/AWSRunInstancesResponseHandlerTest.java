@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.xml;
 
@@ -50,7 +50,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "RunInstancesResponseHandlerTest")
 public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
@@ -78,32 +79,40 @@ public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/run_instances.xml");
 
       Reservation<? extends AWSRunningInstance> expected = new Reservation<AWSRunningInstance>(defaultRegion,
-               ImmutableSet.of("default"), ImmutableSet.of(
+            ImmutableSet.of("default"), ImmutableSet.of(
 
-               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0").imageId(
-                        "ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
-                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).monitoringState(
-                        MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
+                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0")
+                        .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING)
+                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
+                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
 
-               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1").imageId(
-                        "ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
-                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).monitoringState(
-                        MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
+                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1")
+                        .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING)
+                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
+                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
 
-               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2").imageId(
-                        "ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
-                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).monitoringState(
-                        MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2")
+                        .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING)
+                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
+                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
 
-               , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
+            , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 
       AWSRunInstancesResponseHandler handler = injector.getInstance(AWSRunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);
       Reservation<? extends RunningInstance> result = factory.create(handler).parse(is);
-      assertEquals(result, expected);
+      assertEquals(result.toString(), expected.toString());
+   }
+
+   public void testApplyInputStreamDoesntNPE() {
+
+      InputStream is = getClass().getResourceAsStream("/run_instances_1.xml");
+      AWSRunInstancesResponseHandler handler = injector.getInstance(AWSRunInstancesResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      factory.create(handler).parse(is);
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

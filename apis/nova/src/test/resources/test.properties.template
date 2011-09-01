@@ -1,7 +1,0 @@
-test.nova.endpoint=http://dragon004.hw.griddynamics.net:8774
-test.nova.apiversion=1.1
-test.nova.identity=admin
-test.nova.credential=d744752f-20d3-4d75-979f-f62f16033b07
-test.initializer=
-test.ssh.keyfile.private=f:/gigaspace/distr/gigaspaces.pem
-test.ssh.keyfile.public=f:/gigaspace/distr/gigaspaces.pem

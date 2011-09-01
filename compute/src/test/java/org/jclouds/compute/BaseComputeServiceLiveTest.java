@@ -1,26 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Throwables.getRootCause;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -185,8 +184,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      // wait a maximum of 30 seconds for port 8080 to open.
-      long maxWait = TimeUnit.SECONDS.toMillis(30);
+      // wait a maximum of 60 seconds for port 8080 to open.
+      long maxWait = TimeUnit.SECONDS.toMillis(60);
       long interval = 50;
       // get more precise than default socket tester
       preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
@@ -243,45 +242,55 @@ public abstract class BaseComputeServiceLiveTest {
       TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
       try {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
-         Credentials good = nodes.iterator().next().getCredentials();
+         NodeMetadata node = get(nodes, 0);
+         Credentials good = node.getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
 
-         OperatingSystem os = get(nodes, 0).getOperatingSystem();
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
-                     good.identity, "romeo"));
-            assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (RunScriptOnNodesException e) {
-            assert getRootCause(e).getMessage().contains("Auth fail") : e;
-         }
-
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-                  runningInGroup(group), Statements.exec("echo hello"),
-                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
-            assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-                     + response.getValue();
-
+                  runningInGroup(group), Statements.exec("hostname"),
+                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()){
+            checkResponseEqualsHostname(response.getValue(), response.getKey());
+         }
+         
          // test single-node execution
-         ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
+         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false)
                   .runAsRoot(false));
-         assert response.getOutput().trim().equals("hello") : get(nodes, 0).getId() + ": " + response;
+         checkResponseEqualsHostname(response, node);
+         OperatingSystem os = node.getOperatingSystem();
+         
+         // test bad password
+         try {
+            Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
+                     runningInGroup(group), "echo $USER", wrapInInitScript(false).runAsRoot(false)
+                              .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
+            assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+         } catch (AssertionError e) {
+            throw e;
+         } catch (RunScriptOnNodesException e) {
+            assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
+                     + " not authexception!";
+         }
 
          runScriptWithCreds(group, os, good);
 
          checkNodes(nodes, group);
 
          // test adding AdminAccess later changes the default boot user, in this case to foo
-         response = client.runScriptOnNode(get(nodes, 0).getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
+         response = client.runScriptOnNode(node.getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
          
-         response = client.runScriptOnNode(get(nodes, 0).getId(), "echo $USER", wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false)
                   .runAsRoot(false));
          
-         assert response.getOutput().trim().equals("foo") : get(nodes, 0).getId() + ": " + response;
+         assert response.getOutput().trim().equals("foo") : node.getId() + ": " + response;
          
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
+   }
+
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      assert execResponse.getOutput().trim().equals(node1.getHostname()) : node1 + ": " + execResponse;
    }
 
    @Test(enabled = true, dependsOnMethods = { "testImagesCache" })
@@ -395,12 +404,8 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
-      try {
-         return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-                  .nameTask("runScriptWithCreds"));
-      } catch (SshException e) {
-         throw e;
-      }
+      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
+            .nameTask("runScriptWithCreds"));
    }
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {
@@ -555,7 +560,7 @@ public abstract class BaseComputeServiceLiveTest {
       stats.backgroundProcessSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
-      assert preciseSocketTester.apply(socket) : node;
+      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket, node);
       stats.socketOpenMilliseconds = currentTimeMillis() - startSeconds;
 
       exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
@@ -608,7 +613,10 @@ public abstract class BaseComputeServiceLiveTest {
 
          long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
-         getAnonymousLogger().info(format("<< configured node(%s) in %ss", nodeId, configureSeconds));
+         getAnonymousLogger().info(
+               format("<< configured node(%s) with %s in %ss", nodeId,
+                     client.runScriptOnNode(nodeId, "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
+                     configureSeconds));
 
          trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
 

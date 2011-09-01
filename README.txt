@@ -7,9 +7,9 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.0.0
-our next maintenance version is 1.0.1-SNAPSHOT
-our dev version is 1.1.0-SNAPSHOT
+our current version is 1.1.1
+our next maintenance version is 1.1.2-SNAPSHOT
+our dev version is 1.2.0-SNAPSHOT
  
 check out our examples site! https://github.com/jclouds/jclouds-examples
 
@@ -77,7 +77,7 @@ Compute Example (Java):
                   accesskeyid,
                   secretaccesskey,
                   ImmutableSet.of(new Log4JLoggingModule(),
-                                  new JschSshClientModule()));
+                                  new SshjSshClientModule()));
   client = context.getComputeService();
  
   // define the requirements of your node
@@ -96,9 +96,9 @@ Compute Example (Java):
 Compute Example (Clojure):
   (use 'org.jclouds.compute2)
 
-  ; create a compute service using ssh and log4j extensions
+  ; create a compute service using sshj and log4j extensions
   (def compute 
-    (*compute* "trmk`-ecloud" "user" "password" :ssh :log4j))
+    (*compute* "trmk`-ecloud" "user" "password" :sshj :log4j))
 
   ; launch a couple nodes with the default operating system, installing your user.
   (create-nodes *compute* "mycluster" 2
@@ -109,6 +109,7 @@ Compute Example (Clojure):
     (RunScriptOptions$Builder/wrapInInitScript false))
 
 Downloads:
+  * release notes: http://code.google.com/p/jclouds/wiki/ReleaseNotes111
   * installation guide: http://code.google.com/p/jclouds/wiki/Installation
   * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
@@ -116,6 +117,7 @@ Downloads:
 Links:
   * project page: http://code.google.com/p/jclouds/
   * javadocs: http://jclouds.rimuhosting.com/apidocs/
+  * maven site: http://jclouds.googlecode.com/svn/maven-sites/1.1.1/jclouds-multi/index.html
   * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
@@ -123,7 +125,7 @@ Links:
 
 ## License
 
-Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+Copyright (C) 2009-2011 jclouds, Inc.
 
 Licensed under the Apache License, Version 2.0
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+    <requestId>d9da716a-5cd4-492e-83b9-6777ac16d6cf</requestId>
+    <spotInstanceRequestSet>
+        <item>
+            <spotInstanceRequestId>sir-1ede0012</spotInstanceRequestId>
+            <spotPrice>0.300000</spotPrice>
+            <type>one-time</type>
+            <state>active</state>
+            <launchSpecification>
+                <imageId>ami-8e1fece7</imageId>
+                <keyName>jclouds#adriancole-ec2unssh</keyName>
+                <groupSet>
+                    <item>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>jclouds#adriancole-ec2unssh#us-east-1</groupName>
+                    </item>
+                </groupSet>
+                <instanceType>t1.micro</instanceType>
+                <blockDeviceMapping/>
+                <monitoring>
+                    <enabled>false</enabled>
+                </monitoring>
+            </launchSpecification>
+            <instanceId>i-ef308e8e</instanceId>
+            <createTime>2011-07-29T05:27:39.000Z</createTime>
+            <productDescription>Linux/UNIX</productDescription>
+            <launchedAvailabilityZone>us-east-1b</launchedAvailabilityZone>
+        </item>
+    </spotInstanceRequestSet>
+</DescribeSpotInstanceRequestsResponse>

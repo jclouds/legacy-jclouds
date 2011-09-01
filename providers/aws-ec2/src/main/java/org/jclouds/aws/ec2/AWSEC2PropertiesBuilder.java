@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2;
 
@@ -46,11 +46,8 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       properties.setProperty(PROPERTY_TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
-      properties.setProperty("jclouds.ssh.max_retries", "7");
-      properties
-               .setProperty(
-                        "jclouds.ssh.retryable_messages",
-                        "Auth fail,failed to send channel request,channel is not opened,invalid data,End of IO Stream Read,Connection reset,socket is not established,connection is closed by foreign host,socket is not established");
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.putAll(Region.regionProperties());
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
@@ -86,10 +83,12 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       if (props.containsKey(PROPERTY_EC2_AMI_OWNERS)) {
          StringBuilder query = new StringBuilder();
          String owners = properties.remove(PROPERTY_EC2_AMI_OWNERS).toString();
-         if (!"*".equals(owners) && !"".equals(owners))
-            query.append("owner-id=").append(owners).append(';');
-         if (!"".equals(owners))
+         if ("*".equals(owners))
             query.append("state=available;image-type=machine");
+         else if (!"".equals(owners))
+            query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
+         else if ("".equals(owners))
+            query = new StringBuilder();
          props.setProperty(PROPERTY_EC2_AMI_QUERY, query.toString());
          Logger.getAnonymousLogger().warning(
                   String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
@@ -100,7 +99,7 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
    protected void warnAndReplaceIfUsingOldCCImageKey(Properties props) {
       if (props.containsKey(PROPERTY_EC2_CC_AMIs)) {
          String amis = properties.remove(PROPERTY_EC2_CC_AMIs).toString();
-         String value = "image-id=" + amis.replace("us-east-1/", "");
+         String value = ("".equals(amis)) ? "" : "image-id=" + amis.replace("us-east-1/", "");
          props.setProperty(PROPERTY_EC2_CC_AMI_QUERY, value);
          Logger.getAnonymousLogger().warning(
                   String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_CC_AMIs,

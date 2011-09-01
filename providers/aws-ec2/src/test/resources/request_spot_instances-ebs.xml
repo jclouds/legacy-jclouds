@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RequestSpotInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2010-11-15/">
+<RequestSpotInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
     <requestId>02401e8e-a4f5-4285-8ea8-6d742fbaadd8</requestId>
     <spotInstanceRequestSet>
         <item>
@@ -11,7 +11,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>m1.large</instanceType>

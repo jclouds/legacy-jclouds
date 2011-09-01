@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.callables;
 
@@ -40,6 +40,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -54,7 +55,6 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
-   public static final String PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP = "jclouds.compute.push-init-script-via-sftp";
    public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -67,14 +67,6 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    protected final String initFile;
 
    protected SshClient ssh;
-
-   /**
-    * true to use sftp, false to use ssh. If there's a problem with the sftp configuration, setting
-    * this to false will help.
-    */
-   @Inject(optional = true)
-   @Named(PROPERTY_PUSH_INIT_SCRIPT_VIA_SFTP)
-   private boolean pushInitViaSftp = true;
 
    /**
     * determines the naming convention of init scripts.
@@ -141,9 +133,16 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
     * ssh client is initialized through this call.
     */
    protected ExecResponse doCall() {
-      if (pushInitViaSftp) {
+      try {
          ssh.put(initFile, init.render(OsFamily.UNIX));
-      } else {
+      } catch (SshException e) {
+         // If there's a problem with the sftp configuration, we can try via ssh exec
+         if (logger.isTraceEnabled())
+            logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         else
+            logger.warn("<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         ssh.disconnect();
+         ssh.connect();
          ssh.exec("rm " + initFile);
          ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
                   AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
@@ -210,8 +209,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName()).add("runAsRoot",
-               runAsRoot).toString();
+      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
+            .add("runAsRoot", runAsRoot).toString();
    }
 
    @Override

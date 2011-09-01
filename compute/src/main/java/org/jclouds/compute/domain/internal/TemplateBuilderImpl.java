@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.domain.internal;
 
@@ -105,6 +105,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected String imageName;
    @VisibleForTesting
    protected String imageDescription;
+   @VisibleForTesting
+   protected Predicate<Image> imagePredicate;
    @VisibleForTesting
    protected double minCores;
    @VisibleForTesting
@@ -570,7 +572,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
       Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
-      logger.debug("<<   matched image(%s)", image);
+      logger.debug("<<   matched image(%s)", image.getId());
 
       return new TemplateImpl(image, hardware, location, options);
    }
@@ -614,7 +616,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.warn(exception, "hardware profiles %s\nimage ids %s", hardwarel, transform(images, imageToId));
          throw exception;
       }
-      logger.debug("<<   matched hardware(%s)", hardware);
+      logger.debug("<<   matched hardware(%s)", hardware.getId());
       return hardware;
    }
 
@@ -719,6 +721,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             predicates.add(imageNamePredicate);
          if (imageDescription != null)
             predicates.add(imageDescriptionPredicate);
+         if (imagePredicate != null)
+            predicates.add(imagePredicate);
       }
 
       // looks verbose, but explicit <Image> type needed for this to compile
@@ -736,6 +740,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.imageId = imageId;
       this.imageName = null;
       this.imageDescription = null;
+      this.imagePredicate = null;
       this.imageVersion = null;
       this.osFamily = null;
       this.osName = null;
@@ -761,6 +766,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder imageDescriptionMatches(String descriptionRegex) {
       this.imageDescription = descriptionRegex;
+      return this;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public TemplateBuilder imageMatches(Predicate<Image> condition) {
+      this.imagePredicate = condition;
       return this;
    }
 
@@ -849,8 +863,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
       return osFamily == null && location == null && imageId == null && hardwareId == null && osName == null
-            && osDescription == null && imageVersion == null && osVersion == null && osArch == null && os64Bit == null
-            && imageName == null && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest;
+            && imagePredicate == null && osDescription == null && imageVersion == null && osVersion == null
+            && osArch == null && os64Bit == null && imageName == null && imageDescription == null && minCores == 0
+            && minRam == 0 && !biggest && !fastest;
    }
 
    /**
@@ -864,7 +879,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public String toString() {
       return "[biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName + ", imageDescription="
-            + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion + ", location=" + location
+            + imageDescription + ", imageId=" + imageId + ", imagePredicate=" + imagePredicate + ", imageVersion=" + imageVersion + ", location=" + location
             + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName=" + osName
             + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
             + os64Bit + ", hardwareId=" + hardwareId + "]";

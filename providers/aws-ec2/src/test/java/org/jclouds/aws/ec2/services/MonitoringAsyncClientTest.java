@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.services;
 
@@ -45,7 +45,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
       HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      String payload = "Version=2010-11-15&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
+      String payload = "Version=2011-05-15&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, payload, "application/x-www-form-urlencoded", false);
 
@@ -64,7 +64,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2010-11-15&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
+            "Version=2011-05-15&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

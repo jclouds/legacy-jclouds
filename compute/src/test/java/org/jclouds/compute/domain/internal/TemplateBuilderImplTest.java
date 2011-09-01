@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.domain.internal;
 
@@ -139,6 +139,7 @@ public class TemplateBuilderImplTest {
       expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
+      expect(image.getId()).andReturn("1");
 
       expect(os.getArch()).andReturn("X86_32").atLeastOnce();
       expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
@@ -277,7 +278,7 @@ public class TemplateBuilderImplTest {
          // make sure big data is not in the exception message
          assertEquals(
                   e.getMessage(),
-                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=notImageId, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
+                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=notImageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
          verify(image);
          verify(os);
          verify(defaultTemplate);

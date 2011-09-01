@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.byon.functions;
 
@@ -73,12 +73,22 @@ public class NodeToNodeMetadataTest {
    }
 
    public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location) {
-      return new NodeMetadataBuilder().ids("cluster-" + id).group("hadoop").name("cluster-" + id).location(location)
-               .state(NodeState.RUNNING).operatingSystem(
-                        OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86")
-                                 .version("5.3").build()).publicAddresses(
-                        ImmutableSet.of("cluster-" + id + ".mydomain.com")).credentials(
-                        new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
+      return expectedNodeMetadataFromResource(id, resource, location, 22);
+   }
+   
+   public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location, int loginPort) {
+      return new NodeMetadataBuilder()
+            .ids("cluster-" + id)
+            .group("hadoop")
+            .name("cluster-" + id)
+            .loginPort(loginPort)
+            .hostname("cluster-" + id + ".mydomain.com")
+            .location(location)
+            .state(NodeState.RUNNING)
+            .operatingSystem(
+                  OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
+                        .build()).publicAddresses(ImmutableSet.of("cluster-" + id + ".mydomain.com"))
+            .credentials(new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
    }
 
    @Test
@@ -92,5 +102,10 @@ public class NodeToNodeMetadataTest {
       assertEquals(parser.apply(NodesFromYamlTest.TEST2), expectedNodeMetadataFromResource(resource, zoneCalled(
                "virginia", provider)));
       assertEquals(credentialStore, ImmutableMap.of("node#cluster-1", new Credentials("myUser", NodesFromYamlTest.key)));
+   }
+   
+   @Test
+   public void testNodesParseLoginPort() throws Exception {
+      assertEquals(parser.apply(NodesFromYamlTest.TEST3), expectedNodeMetadataFromResource(2, resource, provider, 2022));
    }
 }

@@ -80,7 +80,7 @@ grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 apt-get update -qq
 which curl || apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes openjdk-6-jdk
+apt-get install -f -y -qq --force-yes openjdk-7-jdk||apt-get install -f -y -qq --force-yes openjdk-6-jdk
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
 
 END_OF_SCRIPT

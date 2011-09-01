@@ -14,6 +14,13 @@
       "size": "1"
   },
   {
+      "uuid": "6aa953cc-3395-4e8d-938e-65c74fd20334",
+      "description": "Debian Linux 6.0.1",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
+      "size": "1"
+  },
+  {
       "uuid": "aee5589a-88c3-43ef-bb0a-9cab6e64192d",
       "description": "Ubuntu Linux 10.04",
       "osFamily": "UBUNTU",
@@ -21,18 +28,11 @@
       "size": "1"
   },
   {
-      "uuid": "bf1d943e-2a55-46bb-a8c7-6099e44a3dde",
-      "description": "Ubuntu Linux 8.10: Base system with X",
+      "uuid": "2bae7a5a-7a56-4d02-a711-ed90f25b74a3",
+      "description": "Ubuntu Linux 10.10",
       "osFamily": "UBUNTU",
-      "osVersion": "8.10",
-      "size": "3"
-  },
-  {
-      "uuid": "757586d5-f1e9-4d9c-b215-5a391c9a24bf",
-      "description": "Ubuntu Linux 9.04: Base system with X",
-      "osFamily": "UBUNTU",
-      "osVersion": "9.04",
-      "size": "3"
+      "osVersion": "10.10",
+      "size": "1"
   },
   {
       "uuid": "b9d0eb72-d273-43f1-98e3-0d4b87d372c0",

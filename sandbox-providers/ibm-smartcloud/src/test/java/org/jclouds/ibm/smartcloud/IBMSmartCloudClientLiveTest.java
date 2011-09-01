@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ibm.smartcloud;
 
@@ -37,14 +37,14 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.ibm.smartcloud.domain.Address;
 import org.jclouds.ibm.smartcloud.domain.Image;
 import org.jclouds.ibm.smartcloud.domain.Instance;
+import org.jclouds.ibm.smartcloud.domain.Instance.Software;
 import org.jclouds.ibm.smartcloud.domain.InstanceType;
 import org.jclouds.ibm.smartcloud.domain.Key;
 import org.jclouds.ibm.smartcloud.domain.Location;
 import org.jclouds.ibm.smartcloud.domain.Offering;
 import org.jclouds.ibm.smartcloud.domain.StorageOffering;
-import org.jclouds.ibm.smartcloud.domain.Volume;
-import org.jclouds.ibm.smartcloud.domain.Instance.Software;
 import org.jclouds.ibm.smartcloud.domain.StorageOffering.Format;
+import org.jclouds.ibm.smartcloud.domain.Volume;
 import org.jclouds.ibm.smartcloud.predicates.AddressFree;
 import org.jclouds.ibm.smartcloud.predicates.InstanceActive;
 import org.jclouds.ibm.smartcloud.predicates.InstanceActiveOrFailed;
@@ -55,7 +55,7 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.sshj.SshjSshClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -498,7 +498,7 @@ public class IBMSmartCloudClientLiveTest extends BaseIBMSmartCloudClientLiveTest
 
       socketOpen.apply(socket);
 
-      SshClient ssh = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000, credentials.identity, null,
+      SshClient ssh = new SshjSshClient(new BackoffLimitedRetryHandler(), socket, 60000, credentials.identity, null,
                credentials.credential.getBytes());
       try {
          ssh.connect();

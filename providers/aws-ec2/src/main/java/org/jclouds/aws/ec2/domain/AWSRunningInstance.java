@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.domain;
 
@@ -31,12 +31,15 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunningInstancesItemType.html"
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunningInstancesItemType.html"
  *      />
  * @author Adrian Cole
  */
@@ -52,6 +55,19 @@ public class AWSRunningInstance extends RunningInstance {
       private String subnetId;
       private String spotInstanceRequestId;
       private String vpcId;
+      private Map<String, String> securityGroupIdToNames = Maps.newLinkedHashMap();
+
+      public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
+         this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames,
+               "securityGroupIdToNames"));
+         return this;
+      }
+
+      public Builder securityGroupIdToName(String key, String value) {
+         if (key != null && value != null)
+            this.securityGroupIdToNames.put(key, value);
+         return this;
+      }
 
       public Builder monitoringState(MonitoringState monitoringState) {
          this.monitoringState = monitoringState;
@@ -211,11 +227,11 @@ public class AWSRunningInstance extends RunningInstance {
 
       @Override
       public AWSRunningInstance build() {
-         return new AWSRunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
-                  instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
-                  platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
-                  ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId, spotInstanceRequestId,
-                  vpcId);
+         return new AWSRunningInstance(region, securityGroupIdToNames, amiLaunchIndex, dnsName, imageId, instanceId,
+               instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
+               virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
+               rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
+               spotInstanceRequestId, vpcId);
       }
 
    }
@@ -230,23 +246,30 @@ public class AWSRunningInstance extends RunningInstance {
    private final String spotInstanceRequestId;
    @Nullable
    private final String vpcId;
+   private final Map<String, String> securityGroupIdToNames;
 
-   protected AWSRunningInstance(String region, Iterable<String> groupIds, String amiLaunchIndex, String dnsName,
-            String imageId, String instanceId, InstanceState instanceState, String instanceType, String ipAddress,
-            String kernelId, String keyName, Date launchTime, String availabilityZone, String virtualizationType,
-            String platform, String privateDnsName, String privateIpAddress, String ramdiskId, String reason,
-            RootDeviceType rootDeviceType, String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices,
-            MonitoringState monitoringState, String placementGroup, Iterable<String> productCodes, String subnetId,
-            String spotInstanceRequestId, String vpcId) {
-      super(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId, instanceState, instanceType, ipAddress,
-               kernelId, keyName, launchTime, availabilityZone, virtualizationType, platform, privateDnsName,
-               privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName, ebsBlockDevices);
+   protected AWSRunningInstance(String region, Map<String, String> securityGroupIdToNames, String amiLaunchIndex,
+         String dnsName, String imageId, String instanceId, InstanceState instanceState, String instanceType,
+         String ipAddress, String kernelId, String keyName, Date launchTime, String availabilityZone,
+         String virtualizationType, String platform, String privateDnsName, String privateIpAddress, String ramdiskId,
+         String reason, RootDeviceType rootDeviceType, String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices,
+         MonitoringState monitoringState, String placementGroup, Iterable<String> productCodes, String subnetId,
+         String spotInstanceRequestId, String vpcId) {
+      super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
+            instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType, platform,
+            privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName, ebsBlockDevices);
       this.monitoringState = checkNotNull(monitoringState, "monitoringState");
       this.placementGroup = placementGroup;
-      this.productCodes = ImmutableSet.copyOf(checkNotNull(groupIds, "groupIds"));
+      this.productCodes = ImmutableSet.copyOf(checkNotNull(productCodes, "productCodes"));
       this.subnetId = subnetId;
       this.spotInstanceRequestId = spotInstanceRequestId;
       this.vpcId = vpcId;
+      this.securityGroupIdToNames = ImmutableMap.<String, String> copyOf(checkNotNull(securityGroupIdToNames,
+            "securityGroupIdToNames"));
+   }
+
+   public Map<String, String> getSecurityGroupIdToNames() {
+      return securityGroupIdToNames;
    }
 
    /**
@@ -257,7 +280,8 @@ public class AWSRunningInstance extends RunningInstance {
    }
 
    /**
-    * The name of the placement group the instance is in (for cluster compute instances).
+    * The name of the placement group the instance is in (for cluster compute
+    * instances).
     */
    public String getPlacementGroup() {
       return placementGroup;
@@ -278,14 +302,16 @@ public class AWSRunningInstance extends RunningInstance {
    }
 
    /**
-    * Specifies the VPC in which the instance is running (Amazon Virtual Private Cloud).
+    * Specifies the VPC in which the instance is running (Amazon Virtual Private
+    * Cloud).
     */
    public String getVpcId() {
       return vpcId;
    }
 
    /**
-    * Specifies the subnet ID in which the instance is running (Amazon Virtual Private Cloud).
+    * Specifies the subnet ID in which the instance is running (Amazon Virtual
+    * Private Cloud).
     */
    public String getSubnetId() {
       return subnetId;
@@ -343,14 +369,13 @@ public class AWSRunningInstance extends RunningInstance {
    @Override
    public String toString() {
       return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-               + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
-               + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
-               + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
-               + keyName + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
-               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices
-               + ", monitoringState=" + monitoringState + ", placementGroup=" + placementGroup + ", productCodes="
-               + productCodes + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId
-               + ", vpcId=" + vpcId + "]";
+            + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
+            + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
+            + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName=" + keyName
+            + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName=" + rootDeviceName
+            + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices + ", monitoringState="
+            + monitoringState + ", placementGroup=" + placementGroup + ", productCodes=" + productCodes
+            + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId + ", vpcId=" + vpcId + "]";
    }
 
 }

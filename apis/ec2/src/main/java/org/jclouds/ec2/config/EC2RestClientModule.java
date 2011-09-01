@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.config;
 
@@ -67,7 +67,7 @@ import com.google.inject.name.Names;
 /**
  * Configures the EC2 connection.
  * 
- * @author Adrian Cole
+ * @author Adrian Cole (EDIT: Nick Terry nterry@familysearch.org)
  */
 @RequiresHttp
 @ConfiguresRestClient
@@ -133,27 +133,30 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    }
 
    @Singleton
-   public static class RegionIdToZoneId implements javax.inject.Provider<Map<String, String>> {
-      private final AvailabilityZoneAndRegionClient client;
-      private final Map<String, URI> regions;
-
-      @Inject
-      public RegionIdToZoneId(EC2Client client, @Region Map<String, URI> regions) {
-         this.client = client.getAvailabilityZoneAndRegionServices();
-         this.regions = regions;
-      }
-
-      @Singleton
       @Zone
       @Override
       public Map<String, String> get() {
-         Builder<String, String> map = ImmutableMap.<String, String> builder();
+         Builder<String, String> map = ImmutableMap.builder();
+         HttpResponseException exception = null;
          for (Entry<String, URI> region : regions.entrySet()) {
-            for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region.getKey())) {
-               map.put(zoneInfo.getZone(), region.getKey());
+            try {
+               for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region.getKey())) {
+                  map.put(zoneInfo.getZone(), region.getKey());
+               }
+            } catch (HttpResponseException e) {
+               if (e.getMessage().contains("Unable to tunnel through proxy")) {
+                  exception = e;
+                  logger.error(e, "Could not describe availability zones in Region: %s", region.getKey());
+               } else {
+                  throw e;
+               }
             }
          }
-         return map.build();
+         ImmutableMap<String, String> result = map.build();
+         if (result.isEmpty() && exception != null) {
+            throw exception;
+         }
+         return result;
       }
 
    }

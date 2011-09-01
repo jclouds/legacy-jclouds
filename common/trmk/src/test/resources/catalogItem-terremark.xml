@@ -1,0 +1,16 @@
+<CatalogItem
+    href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22"
+    type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Web Server 2008 R2 (64-bit)"
+    xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Link rel="down"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22/options/compute"
+        type="application/xml" name="Compute Options" />
+    <Link rel="down"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22/options/customization"
+        type="application/xml" name="Customization Options" />
+    <Entity
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/vAppTemplate/22"
+        type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows Web Server 2008 R2 (64-bit)" />
+    <Property key="LicensingCost">0</Property>
+</CatalogItem>

@@ -101,12 +101,12 @@ grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 apt-get update -qq
 which curl || apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes openjdk-6-jdk
+apt-get install -f -y -qq --force-yes openjdk-7-jdk||apt-get install -f -y -qq --force-yes openjdk-6-jdk
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
 iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
 iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
 iptables-save
-curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://d37gkgjhl3prlk.cloudfront.net/jboss-7.0.0.CR1.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.jboss.org/jbossas/7.0/jboss-as-7.0.0.Final/jboss-as-web-7.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
 mkdir -p /usr/local/jboss
 mv /usr/local/jboss-*/* /usr/local/jboss
 (cd /usr/local/jboss/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)
