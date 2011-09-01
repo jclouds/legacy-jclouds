@@ -46,7 +46,7 @@ public class NovaImageToImage implements Function<org.jclouds.openstack.nova.dom
       builder.ids(from.getId() + "");
       builder.name(from.getName() != null ? from.getName() : "unspecified");
       builder.description(from.getName() != null ? from.getName() : "unspecified");
-      builder.version(from.getUpdated().getTime() + "");
+      builder.version(from.getUpdated() != null ? from.getUpdated().getTime() + "" : "-1");
       builder.operatingSystem(imageToOs.apply(from)); //image name may not represent the OS type
       builder.defaultCredentials(new Credentials("root", null));
       builder.uri(from.getURI());
