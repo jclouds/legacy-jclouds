@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ReturnStringIf2xx;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -44,12 +44,12 @@ public class ProductPackageAsyncClientTest extends BaseSoftLayerAsyncClientTest<
       assertRequestLineEquals(
                httpRequest,
                "GET https://api.softlayer.com/rest/v3/SoftLayer_Product_Package/1234.json?objectMask=items HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf2xx.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 

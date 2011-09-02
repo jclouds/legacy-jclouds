@@ -21,6 +21,7 @@ package org.jclouds.softlayer.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.softlayer.domain.ProductPackage;
 
 /**
  * Provides synchronous access to ProductPackage.
@@ -30,7 +31,7 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ProductPackageClient {
 
    /**
@@ -39,6 +40,6 @@ public interface ProductPackageClient {
     *           id of the product package
     * @return product package or null if not found
     */
-   String getProductPackage(long id);
+   ProductPackage getProductPackage(long id);
 
 }

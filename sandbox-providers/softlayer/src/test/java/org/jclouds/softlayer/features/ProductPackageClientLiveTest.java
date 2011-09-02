@@ -18,6 +18,11 @@
  */
 package org.jclouds.softlayer.features;
 
+import static org.testng.Assert.assertTrue;
+
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductPackage;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -38,7 +43,39 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    @Test
    public void testGetProductPackage() {
-      client.getProductPackage(46);
+      ProductPackage response = client.getProductPackage(46);
+      assert null != response;
+      assert response.getId() > 0 : response;
+      assert response.getName() != null : response;
+      assert response.getDescription() != null : response;
+
+      assertTrue(response.getItems().size() >= 0);
+      for (ProductItem item : response.getItems()) {
+         // ProductItem newDetails = client.getProductItem(item.getId());
+         // assertEquals(item.getId(), newDetails.getId());
+         checkProductItem(item);
+      }
+   }
+
+   private void checkProductItem(ProductItem item) {
+      assert item.getId() > 0 : item;
+      assert item.getDescription() != null : item;
+      // units and capacity may be null
+
+      assertTrue(item.getPrices().size() >= 0);
+
+      for (ProductItemPrice price : item.getPrices()) {
+         // ProductItemPrice newDetails =
+         // client.getProductItemPrice(price.getId());
+         // assertEquals(item.getId(), newDetails.getId());
+         checkPrice(price);
+      }
+   }
+
+   private void checkPrice(ProductItemPrice price) {
+      assert price.getId() > 0 : price;
+      assert price.getItemId() > 0 : price;
+      assert price.getRecurringFee() != null || price.getHourlyRecurringFee() != null : price;
    }
 
 }
