@@ -352,7 +352,8 @@ Here's an example of creating and running a small linux node in the group webser
        ;; aws ec2 options
        :spot-price :spot-options :placement-group :subnet-id
        :block-device-mappings :unmapDeviceNamed :security-groups
-       :key-pair :user-data])
+       :key-pair :user-data
+       :override-credentials-with])
     (make-option-map kw-memfn-varargs [:inbound-ports])
     (make-option-map
       kw-memfn-2arg
