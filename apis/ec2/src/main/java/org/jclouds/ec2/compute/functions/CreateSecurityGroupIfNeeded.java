@@ -84,8 +84,8 @@ public class CreateSecurityGroupIfNeeded implements Function<RegionNameAndIngres
 
    private void authorizeGroupToItself(String region, String name) {
       logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
-      String myOwnerId = Iterables.get(ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region), 0)
-               .getOwnerId();
+      String myOwnerId = Iterables.get(
+            ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
       ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name,
                new UserIdGroupPair(myOwnerId, name));
       logger.debug("<< authorized securityGroup(%s)", name);
