@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -48,9 +49,11 @@ import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.ec2.services.WindowsClient;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Predicates;
@@ -133,6 +136,20 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    }
 
    @Singleton
+   public static class RegionIdToZoneId implements javax.inject.Provider<Map<String, String>> {
+      @Resource
+      protected Logger logger = Logger.NULL;
+      
+      private final AvailabilityZoneAndRegionClient client;
+      private final Map<String, URI> regions;
+
+      @Inject
+      public RegionIdToZoneId(EC2Client client, @Region Map<String, URI> regions) {
+         this.client = client.getAvailabilityZoneAndRegionServices();
+         this.regions = regions;
+      }
+
+      @Singleton
       @Zone
       @Override
       public Map<String, String> get() {
