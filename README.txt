@@ -26,8 +26,8 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.0-beta-9c
-our dev version is 1.0-SNAPSHOT
+our current version is 1.1.0
+our dev version is 1.2.0-SNAPSHOT
  
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
@@ -114,10 +114,11 @@ Downloads:
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
-  * project page: http://code.google.com/p/jclouds/
-  * javadocs (1.0-beta-9c): http://jclouds.rimuhosting.com/apidocs/
+  * project page: http://jclouds.org/
+  * documentation: http://www.jclouds.org/documentation/index
+  * javadocs (1.1.0): http://jclouds.rimuhosting.com/apidocs/
   * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
-  * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
+  * community: http://www.jclouds.org/documentation/reference/apps-that-use-jclouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
   * twitter: http://twitter.com/jclouds
