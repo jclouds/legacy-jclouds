@@ -9,18 +9,6 @@ title: Frequently Asked Questions - JClouds EC2 integration
 Amazon doesn't store the private key data, so if you supply an existing public key for jclouds to use, you'll also 
 need to supply the private key correlating to it.
 
-You can use your keypair when creating the nodes as shown below:
-
-{% highlight java %}
-import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
-import static org.jclouds.compute.options.TemplateOptions.Builder.authorizePublicKey;
-
-nodes = client.createNodesInGroup(group, 1, authorizePublicKey(myKey));
-Credentials good = nodes.iterator().next().getCredentials();
-
-{% endhighlight %}
-
 There are two ways you can tell jclouds to use your keypair for an EC2 AMI.
 
 The *preferable way* is to just pass it as Template Option. 
@@ -30,6 +18,17 @@ If you are using an image where jclouds doesn't know the login user, you'll need
 {% highlight java%}
 overrideLoginCredentialWith(your_id_rsa_string)
 overrideCredentialsWith(new Credentials("root", your_id_rsa_string))
+{% endhighlight %}
+
+If you want to authorize your keypair, you can use the `auhtorizePublicKey(yourKey)` method 
+{% highlight java %}
+client.createNodesInGroup(group, 1, authorizePublicKey(myKey));
+{% endhighlight %}
+
+Here's how you can run a script using the overrideLoginCredentialsWith
+
+{% highlight java %}
+templateOptions.runScript(_script_). authorizePublicKey().overrideLoginCredentialWith(private)
 {% endhighlight %}
 
 Keep in mind that _authorizePublicKey()_ is redundant, if it is the same as what corresponds to the `keyPair()` option.
