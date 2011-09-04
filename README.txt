@@ -115,10 +115,11 @@ Downloads:
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
-  * project page: http://code.google.com/p/jclouds/
-  * javadocs: http://jclouds.rimuhosting.com/apidocs/
-  * maven site: http://jclouds.googlecode.com/svn/maven-sites/1.1.1/jclouds-multi/index.html
-  * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
+  * project page: http://jclouds.org/
+  * documentation: http://www.jclouds.org/documentation/index
+  * javadocs (1.1.0): http://jclouds.rimuhosting.com/apidocs/
+  * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
+  * community: http://www.jclouds.org/documentation/reference/apps-that-use-jclouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
   * twitter: http://twitter.com/jclouds
