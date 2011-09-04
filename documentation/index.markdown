@@ -88,6 +88,8 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [Apps that use JClouds](/documentation/reference/apps-that-use-jclouds)
 * [Using Provider Metadata](/documentation/reference/using-provider-metadata)
 
+### FAQs
+* [Amazon EC2 FAQ](/documentation/faqs/ec2-faq.html)
 
 ### Developer Resources
 
