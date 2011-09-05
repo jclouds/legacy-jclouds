@@ -99,7 +99,25 @@ list, Alan Dipert and MeikelBrandmeyer."
     (testing "one arg"
       (is (> (-> (build-template service {:min-ram 512})
                  bean :hardware bean :ram)
-             512)))
+             512))
+      (let [credentials (org.jclouds.domain.Credentials. "user" "pwd")
+            f (juxt #(.identity %) #(.credential %))
+            template (build-template
+                      service {:override-credentials-with credentials})
+            node (create-node "something" template service)]
+        (is (= (-> node bean :credentials f)
+               (f credentials))))
+      (let [user "fred"
+            f #(.identity %)
+            template (build-template service {:override-login-user-with user})
+            node (create-node "something" template service)]
+        (is (= (-> node bean :credentials f) user)))
+      (let [credential "fred"
+            f #(.credential %)
+            template (build-template
+                      service {:override-login-credential-with credential})
+            node (create-node "something" template service)]
+        (is (= (-> node bean :credentials f) credential))))
     (testing "enumerated"
       (is (= OsFamily/CENTOS
              (-> (build-template service {:os-family :centos})
