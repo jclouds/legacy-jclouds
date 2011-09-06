@@ -66,18 +66,23 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
          builder.tags(Splitter.on(' ').split(from.get("tags")));
       if (from.containsKey("status"))
          builder.status(ServerStatus.fromValue(from.get("status")));
+
       if (from.containsKey("smp") && !"auto".equals(from.get("smp")))
          builder.smp(new Integer(from.get("smp")));
+
       builder.cpu(Integer.parseInt(from.get("cpu")));
       builder.mem(Integer.parseInt(from.get("mem")));
       builder.user(from.get("user"));
       if (from.containsKey("started"))
          builder.started(new Date(new Long(from.get("started"))));
       builder.uuid(from.get("server"));
-      builder.vnc(new VNC(from.get("vnc:ip"), from.get("vnc:password"), from.containsKey("vnc:tls")
-            && Boolean.valueOf(from.get("vnc:tls"))));
       if (from.containsKey("boot"))
          builder.bootDeviceIds(Splitter.on(' ').split(from.get("boot")));
+
+
+      builder.vnc(new VNC(from.get("vnc:ip") == null ? "auto" : from.get("vnc:ip"), from.get("vnc:password"), from.containsKey("vnc:tls")
+              && Boolean.valueOf(from.get("vnc:tls"))));
+
 
       Map<String, String> metadata = Maps.newLinkedHashMap();
       for (Entry<String, String> entry : from.entrySet()) {

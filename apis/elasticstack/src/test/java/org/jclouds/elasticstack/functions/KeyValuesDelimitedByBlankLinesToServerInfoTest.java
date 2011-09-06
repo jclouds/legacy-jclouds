@@ -30,6 +30,7 @@ import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -48,6 +49,7 @@ public class KeyValuesDelimitedByBlankLinesToServerInfoTest {
 
       @Override
       protected void configure() {
+         bindConstant().annotatedWith(ApiVersion.class).to("1.0");
          bind(new TypeLiteral<Function<Map<String, String>, List<NIC>>>() {
          }).to(MapToNICs.class);
          bind(new TypeLiteral<Function<Map<String, String>, Map<String, ? extends Device>>>() {
