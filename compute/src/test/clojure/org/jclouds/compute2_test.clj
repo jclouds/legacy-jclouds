@@ -137,12 +137,11 @@ list, Alan Dipert and MeikelBrandmeyer."
             node (create-node service "something" template)]
         (is (= (-> node bean :credentials f)
                (f credentials)))
-        (let [credentials (org.jclouds.domain.Credentials. "user" "pwd")
+        (let [identity "fred"
             f #(.identity %)
-            template (build-template service {:override-login-user-with "fred"})
+            template (build-template service {:override-login-user-with identity})
             node (create-node service "something" template)]
-        (is (= (-> node bean :credentials f)
-               (f credentials))))
+        (is (= (-> node bean :credentials f) identity)))
         (let [credential "fred"
               f #(.credential %)
               template (build-template
