@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.xml;
 
@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.VirtualizationType;
@@ -56,7 +57,7 @@ public class DescribeImagesResponseHandlerTest {
                "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE,
                ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
                RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL));
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images.xml");
 
@@ -68,7 +69,8 @@ public class DescribeImagesResponseHandlerTest {
                "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml", "771350841976",
                ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet("5771E9A6"), null, "windows",
                null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL));
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+
 
       Set<Image> result = parseImages("/describe_images_windows.xml");
 
@@ -81,7 +83,7 @@ public class DescribeImagesResponseHandlerTest {
                ImageState.AVAILABLE, ImageType.MACHINE, true, Sets.<String> newHashSet(), null, "windows", null,
                RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
                         new EbsBlockDevice("snap-d01272b9", 30, true), "xvdf", new EbsBlockDevice("snap-d31272ba", 250,
-                                 false)), VirtualizationType.HVM));
+                                 false)), VirtualizationType.HVM, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images_ebs.xml");
 

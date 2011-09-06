@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.config;
 
@@ -73,6 +73,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 public abstract class BaseComputeServiceContextModule extends AbstractModule {
+
    @Override
    protected void configure() {
       install(new LocationModule(authException));
@@ -88,6 +89,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
                   RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class)
             .implement(RunScriptOnNode.class, Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class)
             .build(RunScriptOnNodeFactoryImpl.Factory.class));
+
+      install(new PersistNodeCredentialsModule());
 
       bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
 
@@ -157,7 +160,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("10.04").os64Bit(true);
+      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true);
    }
 
    /**
@@ -170,8 +173,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    }
 
    /**
-    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
-    * and tag is the first
+    * supplies how the tag is encoded into the name. A string of hex characters
+    * is the last argument and tag is the first
     */
    @Provides
    @Named("NAMING_CONVENTION")
@@ -207,8 +210,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-            new Supplier<Set<? extends Image>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
+            seconds, new Supplier<Set<? extends Image>>() {
                @Override
                public Set<? extends Image> get() {
                   return imageSupplier.get();
@@ -241,8 +244,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Hardware>> hardwareSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-            new Supplier<Set<? extends Hardware>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException,
+            seconds, new Supplier<Set<? extends Hardware>>() {
                @Override
                public Set<? extends Hardware> get() {
                   return hardwareSupplier.get();

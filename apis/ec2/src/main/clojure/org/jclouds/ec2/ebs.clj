@@ -1,20 +1,20 @@
 ;
+; Licensed to jclouds, Inc. (jclouds) under one or more
+; contributor license agreements.  See the NOTICE file
+; distributed with this work for additional information
+; regarding copyright ownership.  jclouds licenses this file
+; to you under the Apache License, Version 2.0 (the
+; "License"); you may not use this file except in compliance
+; with the License.  You may obtain a copy of the License at
 ;
-; Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+;   http://www.apache.org/licenses/LICENSE-2.0
 ;
-; ====================================================================
-; Licensed under the Apache License, Version 2.0 (the "License");
-; you may not use this file except in compliance with the License.
-; You may obtain a copy of the License at
-;
-; http://www.apache.org/licenses/LICENSE-2.0
-;
-; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
-; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-; See the License for the specific language governing permissions and
-; limitations under the License.
-; ====================================================================
+; Unless required by applicable law or agreed to in writing,
+; software distributed under the License is distributed on an
+; "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+; KIND, either express or implied.  See the License for the
+; specific language governing permissions and limitations
+; under the License.
 ;
 
 (ns 
@@ -25,20 +25,20 @@
   (:use (clojure.contrib def core))
   (:import org.jclouds.aws.domain.Region
     org.jclouds.compute.domain.NodeMetadata
-    (org.jclouds.aws.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZone)
-    (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
+    (org.jclouds.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZoneInfo)
+    (org.jclouds.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
 
 (defn snapshot?
-  "Returns true iff the argument is a org.jclouds.aws.ec2.domain.Snapshot."
+  "Returns true iff the argument is a org.jclouds.ec2.domain.Snapshot."
   [s]
   (instance? Snapshot s))
 
 (defn volume?
-  "Returns true iff the argument is a org.jclouds.aws.ec2.domain.Volume."
+  "Returns true iff the argument is a org.jclouds.ec2.domain.Volume."
   [v]
   (instance? Volume v))
 
-(defn #^org.jclouds.aws.ec2.services.ElasticBlockStoreClient
+(defn #^org.jclouds.ec2.services.ElasticBlockStoreClient
   ebs-service
   "Returns the synchronous ElasticBlockStoreClient associated with
    the specified compute service, or compute/*compute* as bound by with-compute-service."
@@ -74,7 +74,7 @@
                    (str "Can't obtain volume id from argument of type " (class v))))))
 
 (defn volumes
-  "Returns a set of org.jclouds.aws.ec2.domain.Volume instances corresponding to the
+  "Returns a set of org.jclouds.ec2.domain.Volume instances corresponding to the
    volumes in the specified region (defaulting to your account's default region).
 
    e.g. (with-compute-service [compute] (volumes))
@@ -172,7 +172,7 @@
 (defn get-zone
   [v]
   (cond
-    (instance? AvailabilityZone v) v
+    (instance? AvailabilityZoneInfo v) (.getZone  v)
     (instance? NodeMetadata v) (compute/location #^NodeMetadata v)
     (string? v) v
     (keyword? v) (name v)
@@ -225,14 +225,14 @@
 (defn create-volume
   "Creates a new volume given a set of options:
 
-   - one of :zone (keyword, string, or AvailabilityZone) or :node (NodeMetadata)
+   - one of :zone (keyword, string, or AvailabilityZoneInfo) or :node (NodeMetadata)
    - one or both of :snapshot (keyword, string, or Snapshot instance) or :size
      (string, keyword, or number)
    - :device (string or keyword) provided *only* when you want to attach the new volume to
      the :node you specified!
 
-   Returns a vector of [created org.jclouds.aws.ec2.domain.Volume,
-                        optional org.jclouds.aws.ec2.domain.Attachment]
+   Returns a vector of [created org.jclouds.ec2.domain.Volume,
+                        optional org.jclouds.ec2.domain.Attachment]
 
    Note that specifying :node instead of :zone will only attach the created volume
    :device is also provided.  Otherwise, the node is only used to obtain the desired

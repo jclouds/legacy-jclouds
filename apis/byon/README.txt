@@ -1,20 +1,20 @@
 ====
+    Licensed to jclouds, Inc. (jclouds) under one or more
+    contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  jclouds licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+      http://www.apache.org/licenses/LICENSE-2.0
 
-    ====================================================================
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-    ====================================================================
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 ====
 
 = Bring Your Own Nodes to the jclouds ComputeService =
@@ -65,11 +65,14 @@ Here are the properties:
   * description    - optional; long description of this node 
                                * note this is not yet in jclouds NodeMetadata
   * hostname       - name or ip address to contact the node on
+  * location_id    - optional; correlates to a ZONE-scoped Location
+                               * note that if present for one node, must be present for all
   * os_arch        - ex. x86 
   * os_family      - must conform to org.jclouds.compute.domain.OsFamily in lower-hyphen format
                      ex. rhel, ubuntu, centos, debian, amzn-linux
   * os_description - long description of the os ex. Ubuntu with lamp stack 
   * os_version     - normalized to numbers when possible. ex. for centos: 5.3, ubuntu: 10.10 
+  * login_port     - optional; alternate port for ssh access
   * group          - primary group of the machine. ex. hadoop 
   * tags           - optional; list of arbitrary tags. 
                                * note this list is not yet in jclouds NodeMetadata 
@@ -96,6 +99,7 @@ nodes:
       name: cluster-1
       description: accounting analytics cluster
       hostname: cluster-1.mydomain.com
+      location_id: virginia
       os_arch: x86
       os_family: rhel
       os_description: redhat with CDH

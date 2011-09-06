@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.domain.internal;
 
@@ -61,13 +61,15 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final Hardware hardware;
    @Nullable
    private final OperatingSystem os;
-
+   @Nullable
+   private final String hostname;
+   
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String group, @Nullable Hardware hardware,
+            Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
             @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
             Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
-            @Nullable Credentials credentials) {
-      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
+            @Nullable Credentials credentials, String hostname) {
+      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
       this.group = group;
       this.hardware = hardware;
       this.imageId = imageId;
@@ -78,6 +80,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
       this.adminPassword = adminPassword;
       this.credentials = credentials;
+      this.hostname = hostname;
    }
 
    /**
@@ -168,14 +171,22 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       return os;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getHostname() {
+      return hostname;
+   }
+   
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getTag() + ", name=" + getName()
-               + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-               + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
-               + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
-               + ", userMetadata=" + getUserMetadata() + "]";
+            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
+            + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", hostname="
+            + getHostname() + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
+            + ", hardware=" + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
+            + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";
    }
 
    @Override
@@ -186,6 +197,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((group == null) ? 0 : group.hashCode());
+      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
@@ -214,6 +226,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.publicAddresses != null)
             return false;
       } else if (!publicAddresses.equals(other.publicAddresses))
+         return false;
+      if (hostname == null) {
+         if (other.hostname != null)
+            return false;
+      } else if (!hostname.equals(other.hostname))
          return false;
       if (group == null) {
          if (other.group != null)

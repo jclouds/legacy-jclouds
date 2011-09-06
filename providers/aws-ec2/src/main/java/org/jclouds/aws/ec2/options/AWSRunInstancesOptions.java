@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.options;
 
@@ -81,7 +81,29 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
       return this;
    }
 
+   public AWSRunInstancesOptions withSecurityGroupId(String securityGroup) {
+      return withSecurityGroupIds(securityGroup);
+   }
+
+   public AWSRunInstancesOptions withSecurityGroupIds(Iterable<String> securityGroupIds) {
+      launchSpecificationBuilder.securityGroupIds(securityGroupIds);
+      indexFormValuesWithPrefix("SecurityGroupId", securityGroupIds);
+      return this;
+   }
+
+   public AWSRunInstancesOptions withSecurityGroupIds(String... securityGroupIds) {
+      return withSecurityGroupIds(ImmutableSet.copyOf(securityGroupIds));
+   }
+   
    public static class Builder extends RunInstancesOptions.Builder {
+
+      /**
+       * @see AWSRunInstancesOptions#withSecurityGroupId(String)
+       */
+      public static AWSRunInstancesOptions withSecurityGroupId(String securityGroup) {
+         AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+         return options.withSecurityGroupId(securityGroup);
+      }
 
       /**
        * @see AWSRunInstancesOptions#inPlacementGroup(String)
@@ -191,19 +213,19 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
 
    @Override
    public AWSRunInstancesOptions withSecurityGroup(String securityGroup) {
-      launchSpecificationBuilder.groupId(securityGroup);
+      launchSpecificationBuilder.securityGroupName(securityGroup);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroup(securityGroup));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(Iterable<String> securityGroups) {
-      launchSpecificationBuilder.groupIds(securityGroups);
+      launchSpecificationBuilder.securityGroupNames(securityGroups);
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 
    @Override
    public AWSRunInstancesOptions withSecurityGroups(String... securityGroups) {
-      launchSpecificationBuilder.groupIds(ImmutableSet.copyOf(securityGroups));
+      launchSpecificationBuilder.securityGroupNames(ImmutableSet.copyOf(securityGroups));
       return AWSRunInstancesOptions.class.cast(super.withSecurityGroups(securityGroups));
    }
 

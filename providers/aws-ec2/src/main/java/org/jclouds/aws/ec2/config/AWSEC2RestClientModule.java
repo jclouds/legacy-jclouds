@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.config;
 
@@ -32,6 +32,8 @@ import org.jclouds.aws.ec2.services.AWSInstanceAsyncClient;
 import org.jclouds.aws.ec2.services.AWSInstanceClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairClient;
+import org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClient;
+import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
@@ -73,18 +75,18 @@ import com.google.inject.Provides;
 public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AWSEC2AsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(AWSAMIClient.class, AWSAMIAsyncClient.class)//
-            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-            .put(AWSInstanceClient.class, AWSInstanceAsyncClient.class)//
-            .put(AWSKeyPairClient.class, AWSKeyPairAsyncClient.class)//
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-            .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
-            .put(MonitoringClient.class, MonitoringAsyncClient.class)//
-            .put(WindowsClient.class, WindowsAsyncClient.class)//
-            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-            .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
-            .build();
+         .put(AWSAMIClient.class, AWSAMIAsyncClient.class)//
+         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+         .put(AWSInstanceClient.class, AWSInstanceAsyncClient.class)//
+         .put(AWSKeyPairClient.class, AWSKeyPairAsyncClient.class)//
+         .put(AWSSecurityGroupClient.class, AWSSecurityGroupAsyncClient.class)//
+         .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
+         .put(MonitoringClient.class, MonitoringAsyncClient.class)//
+         .put(WindowsClient.class, WindowsAsyncClient.class)//
+         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+         .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
+         .build();
 
    public AWSEC2RestClientModule() {
       super(AWSEC2Client.class, AWSEC2AsyncClient.class, DELEGATE_MAP);
@@ -112,6 +114,18 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
    @Provides
    InstanceAsyncClient getInstanceServices(AWSEC2AsyncClient in) {
       return in.getInstanceServices();
+   }
+
+   @Singleton
+   @Provides
+   SecurityGroupClient getSecurityGroupServices(AWSEC2Client in) {
+      return in.getSecurityGroupServices();
+   }
+
+   @Singleton
+   @Provides
+   SecurityGroupAsyncClient getSecurityGroupServices(AWSEC2AsyncClient in) {
+      return in.getSecurityGroupServices();
    }
 
    @Singleton

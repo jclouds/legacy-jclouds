@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudsigma.compute.functions;
 
@@ -24,8 +24,9 @@ import javax.inject.Singleton;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
@@ -53,7 +54,7 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       if (drive.getName() == null)
          return null;
       String description = drive.getDescription() != null ? drive.getDescription() : drive.getName();
-      OperatingSystemBuilder builder = new OperatingSystemBuilder();
+      Builder builder = OperatingSystem.builder();
       OsFamilyVersion64Bit parsed = imageParser.apply(drive.getName());
       builder.name(drive.getName()).description(description).is64Bit(parsed.is64Bit).version(parsed.version).family(
                parsed.family);

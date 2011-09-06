@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudstack.functions;
 
@@ -26,12 +26,14 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -39,7 +41,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map<Long, String>> {
-   private final UnwrapOnlyNestedJsonValue<Set<IdName>> parser;
+   private final ParseFirstJsonValueNamed<Set<IdName>> parser;
 
    private static class IdName {
       private long id;
@@ -76,15 +78,17 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
    }
 
    @Inject
-   public ParseIdToNameFromHttpResponse(UnwrapOnlyNestedJsonValue<Set<IdName>> parser) {
-      this.parser = checkNotNull(parser, "parser");
+   public ParseIdToNameFromHttpResponse(GsonWrapper gsonWrapper) {
+      this.parser = new ParseFirstJsonValueNamed<Set<IdName>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+            new TypeLiteral<Set<IdName>>() {
+            }, "oscategory");
    }
 
    public Map<Long, String> apply(HttpResponse response) {
       checkNotNull(response, "response");
       Set<IdName> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<Long, String> builder = ImmutableMap.<Long, String> builder();
+      Builder<Long, String> builder = ImmutableSortedMap.<Long, String> naturalOrder();
       for (IdName entry : toParse)
          builder.put(entry.id, entry.name);
       return builder.build();

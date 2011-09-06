@@ -1,25 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.scriptbuilder.domain;
 
 import java.net.URI;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -32,6 +32,8 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class SaveHttpResponseTo extends InterpretableStatement {
+   static final String CURL = "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20";
+
    /**
     * 
     * @param dir
@@ -44,15 +46,17 @@ public class SaveHttpResponseTo extends InterpretableStatement {
     *           request headers to send
     */
    public SaveHttpResponseTo(String dir, String file, String method, URI endpoint, Multimap<String, String> headers) {
-      super(String.format("({md} %s &&{cd} %s &&curl -X %s -s --retry 20 %s %s >%s\n", dir, dir, method, Joiner.on(' ')
-               .join(Iterables.transform(headers.entries(), new Function<Entry<String, String>, String>() {
+      super(String.format("({md} %s && {cd} %s && [ ! -f %s ] && %s -C - -X %s %s %s >%s)\n", dir, dir, file, CURL,
+               method, Joiner.on(' ').join(
+                        Iterables.transform(headers.entries(), new Function<Map.Entry<String, String>, String>() {
 
-                  @Override
-                  public String apply(Entry<String, String> from) {
-                     return String.format("-H \"%s: %s\"", from.getKey(), from.getValue());
-                  }
+                           @Override
+                           public String apply(Map.Entry<String, String> from) {
+                              return String.format("-H \"%s: %s\"", from.getKey(), from.getValue());
+                           }
 
-               })), endpoint.toASCIIString(), file));
+                        })), endpoint.toASCIIString(), file));
+
    }
 
 }

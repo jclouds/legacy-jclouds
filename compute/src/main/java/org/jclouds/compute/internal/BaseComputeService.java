@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.internal;
 
@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.filter;
@@ -63,6 +62,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -79,13 +79,15 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Credentials.Builder;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.Credentials.Builder;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.functions.InitAdminAccess;
+import org.jclouds.util.Maps2;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
@@ -93,6 +95,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -128,6 +131,9 @@ public class BaseComputeService implements ComputeService {
    private final Predicate<NodeMetadata> nodeSuspended;
    private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
    private final Timeouts timeouts;
+   private final InitAdminAccess initAdminAccess;
+   private final PersistNodeCredentials persistNodeCredentials;
+   private final RunScriptOnNode.Factory runScriptOnNodeFactory;
    private final ExecutorService executor;
 
    @Inject
@@ -143,8 +149,9 @@ public class BaseComputeService implements ComputeService {
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
             @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
             @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
@@ -164,6 +171,9 @@ public class BaseComputeService implements ComputeService {
       this.nodeSuspended = checkNotNull(nodeSuspended, "nodeSuspended");
       this.initScriptRunnerFactory = checkNotNull(initScriptRunnerFactory, "initScriptRunnerFactory");
       this.timeouts = checkNotNull(timeouts, "timeouts");
+      this.initAdminAccess = checkNotNull(initAdminAccess, "initAdminAccess");
+      this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
+      this.persistNodeCredentials = checkNotNull(persistNodeCredentials, "persistNodeCredentials");
       this.executor = checkNotNull(executor, "executor");
    }
 
@@ -213,13 +223,16 @@ public class BaseComputeService implements ComputeService {
       Map<NodeMetadata, Exception> badNodes = newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
+      if (template.getOptions().getRunScript() != null)
+         initAdminAccess.visit(template.getOptions().getRunScript());
+
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
                customizationResponses);
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "runNodesWithTag("
                + group + ")");
-      for (NodeMetadata node : concat(goodNodes, badNodes.keySet()))
-         if (node.getCredentials() != null)
-            credentialStore.put("node#" + node.getId(), node.getCredentials());
+      Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.always(template.getOptions().getRunScript());
+      badNodes = Maps2.transformKeys(badNodes, fn);
+      goodNodes = ImmutableSet.copyOf(Iterables.transform(goodNodes, fn));
       if (executionExceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunNodesException(group, count, template, goodNodes, executionExceptions, badNodes);
       }
@@ -230,7 +243,6 @@ public class BaseComputeService implements ComputeService {
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, TemplateOptions templateOptions)
             throws RunNodesException {
       return createNodesInGroup(group, count, templateBuilder().any().options(templateOptions).build());
-
    }
 
    @Override
@@ -518,8 +530,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")),
-               RunScriptOptions.NONE);
+      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")), options);
    }
 
    /**
@@ -538,6 +549,8 @@ public class BaseComputeService implements ComputeService {
       Map<NodeMetadata, Future<ExecResponse>> responses = newLinkedHashMap();
       Map<?, Exception> exceptions = ImmutableMap.<Object, Exception> of();
 
+      initAdminAccess.visit(runScript);
+
       Iterable<? extends RunScriptOnNode> scriptRunners = transformNodesIntoInitializedScriptRunners(
                nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter), runScript, options, badNodes);
       if (Iterables.size(scriptRunners) > 0) {
@@ -548,10 +561,56 @@ public class BaseComputeService implements ComputeService {
          exceptions = awaitCompletion(responses, executor, null, logger, "runScriptOnNodesMatching(" + filter + ")");
       }
 
+      Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.ifAdminAccess(runScript);
+      badNodes = Maps2.transformKeys(badNodes, fn);
+      goodNodes = Maps2.transformKeys(goodNodes, fn);
+
       if (exceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunScriptOnNodesException(runScript, options, goodNodes, exceptions, badNodes);
       }
       return goodNodes;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ExecResponse runScriptOnNode(String id, String runScript) {
+      return runScriptOnNode(id, runScript, RunScriptOptions.NONE);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options) {
+      return runScriptOnNode(id, Statements.exec(checkNotNull(runScript, "runScript")), options);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ExecResponse runScriptOnNode(String id, Statement runScript) {
+      return runScriptOnNode(id, runScript, RunScriptOptions.NONE);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ExecResponse runScriptOnNode(String id, Statement runScript, RunScriptOptions options) {
+      NodeMetadata node = this.getNodeMetadata(id);
+      if (node == null)
+         throw new NoSuchElementException(id);
+      if (node.getState() != NodeState.RUNNING)
+         throw new IllegalStateException("node " + id
+                  + " needs to be running before executing a script on it. current state: " + node.getState());
+      initAdminAccess.visit(runScript);
+      node = updateNodeWithCredentialsIfPresent(node, options);
+      ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
+      persistNodeCredentials.ifAdminAccess(runScript).apply(node);
+      return response;
    }
 
    private Iterable<? extends RunScriptOnNode> transformNodesIntoInitializedScriptRunners(
@@ -570,6 +629,20 @@ public class BaseComputeService implements ComputeService {
       return templateOptionsProvider.get();
    }
 
+   protected NodeMetadata updateNodeWithCredentialsIfPresent(NodeMetadata node, RunScriptOptions options) {
+      checkNotNull(node, "node");
+      if (options.getOverridingCredentials() != null) {
+         Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
+                  : new Credentials.Builder<Credentials>();
+         if (options.getOverridingCredentials().identity != null)
+            builder.identity(options.getOverridingCredentials().identity);
+         if (options.getOverridingCredentials().credential != null)
+            builder.credential(options.getOverridingCredentials().credential);
+         node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
+      }
+      return node;
+   }
+   
    private final class TransformNodesIntoInitializedScriptRunners implements
             Function<NodeMetadata, Future<RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
@@ -585,18 +658,10 @@ public class BaseComputeService implements ComputeService {
 
       @Override
       public Future<RunScriptOnNode> apply(NodeMetadata node) {
-         checkNotNull(node, "node");
-         if (options.getOverridingCredentials() != null) {
-            Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
-                     : new Credentials.Builder<Credentials>();
-            if (options.getOverridingCredentials().identity != null)
-               builder.identity(options.getOverridingCredentials().identity);
-            if (options.getOverridingCredentials().credential != null)
-               builder.credential(options.getOverridingCredentials().credential);
-            node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
-         }
+         node = updateNodeWithCredentialsIfPresent(node, options);
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
+
    }
 
 }

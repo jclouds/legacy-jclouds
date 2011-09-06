@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudstack.domain;
 
@@ -23,11 +23,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -267,7 +269,8 @@ public class Network implements Comparable<Network> {
    @SerializedName("zoneid")
    private long zoneId;
    @SerializedName("service")
-   private Set<? extends NetworkService> services = ImmutableSet.<NetworkService> of();
+   // so tests and serialization comes out expected
+   private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService> of();
 
    /**
     * present only for serializer
@@ -311,7 +314,7 @@ public class Network implements Comparable<Network> {
       this.VLAN = vLAN;
       this.trafficType = trafficType;
       this.zoneId = zoneId;
-      this.services = ImmutableSet.copyOf(checkNotNull(services, "services"));
+      this.services = ImmutableSortedSet.copyOf(checkNotNull(services, "services"));
    }
 
    /**

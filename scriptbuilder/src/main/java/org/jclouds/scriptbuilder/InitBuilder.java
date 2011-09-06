@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.scriptbuilder;
 
@@ -30,6 +30,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 
 import java.util.Map;
 
+import org.jclouds.scriptbuilder.domain.CreateRunScript;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 
@@ -47,38 +48,40 @@ public class InitBuilder extends ScriptBuilder {
    private final String instanceName;
    private final String instanceHome;
    private final String logDir;
+   private final StatementList initStatement;
+   private final CreateRunScript createRunScript;
 
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
             Iterable<Statement> statements) {
-      this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement>of(), statements);
+      this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement> of(), statements);
    }
 
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
             Iterable<Statement> initStatements, Iterable<Statement> statements) {
+      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
+               instanceHome, "logDir", logDir);
+      this.initStatement = new StatementList(initStatements);
+      this.createRunScript = createRunScript(instanceName,// TODO: convert
+               // so
+               // that
+               // createRunScript
+               // can take from a
+               // variable
+               Iterables.concat(variables.keySet(), defaultVariables.keySet()), "{varl}INSTANCE_HOME{varr}", statements);
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.instanceHome = checkNotNull(instanceHome, "instanceHome");
       this.logDir = checkNotNull(logDir, "logDir");
-      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
-               instanceHome, "logDir", logDir);
+
       addEnvironmentVariableScope("default", defaultVariables)
                .addEnvironmentVariableScope(instanceName, variables)
                .addStatement(
                         switchArg(
                                  1,
-                                 new ImmutableMap.Builder<String,Statement>()
+                                 new ImmutableMap.Builder<String, Statement>()
                                           .put(
                                                    "init",
-                                                   newStatementList(call("default"), call(instanceName),
-                                                            new StatementList(initStatements), createRunScript(
-                                                                     instanceName,// TODO: convert
-                                                                     // so
-                                                                     // that
-                                                                     // createRunScript
-                                                                     // can take from a
-                                                                     // variable
-                                                                     Iterables.concat(variables.keySet(),
-                                                                              defaultVariables.keySet()),
-                                                                     "{varl}INSTANCE_HOME{varr}", statements)))
+                                                   newStatementList(call("default"), call(instanceName), initStatement,
+                                                            createRunScript))
                                           .put(
                                                    "status",
                                                    newStatementList(call("default"),
@@ -164,5 +167,13 @@ public class InitBuilder extends ScriptBuilder {
    @Override
    public String toString() {
       return "[instanceName=" + instanceName + ", instanceHome=" + instanceHome + ", logDir=" + logDir + "]";
+   }
+
+   public StatementList getInitStatement() {
+      return initStatement;
+   }
+
+   public CreateRunScript getCreateRunScript() {
+      return createRunScript;
    }
 }

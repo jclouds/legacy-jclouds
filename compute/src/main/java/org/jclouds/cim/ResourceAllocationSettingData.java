@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cim;
 
@@ -31,16 +31,18 @@ import com.google.common.collect.Maps;
 
 /**
  * 
- * The ResourceAllocationSettingData class represents settings specifically related to an allocated
- * resource that are outside the scope of the CIM class typically used to represent the resource
- * itself. These settings include information specific to the allocation that may not be visible to
- * the consumer of the resource itself. For example, a virtual processor may look like a 2 ghz
- * processor to the consumer (virtual computer system), however the virtualization system may use
- * time-slicing to schedule the the virtual processor to only allow it to use 1 ghz.
+ * The ResourceAllocationSettingData class represents settings specifically
+ * related to an allocated resource that are outside the scope of the CIM class
+ * typically used to represent the resource itself. These settings include
+ * information specific to the allocation that may not be visible to the
+ * consumer of the resource itself. For example, a virtual processor may look
+ * like a 2 ghz processor to the consumer (virtual computer system), however the
+ * virtualization system may use time-slicing to schedule the the virtual
+ * processor to only allow it to use 1 ghz.
  * 
  * @author Adrian Cole
- * @see <a
- *      href="http://dmtf.org/sites/default/files/cim/cim_schema_v2280/cim_schema_2.28.0Final-Doc.zip"
+ * @see <a href=
+ *      "http://dmtf.org/sites/default/files/cim/cim_schema_v2280/cim_schema_2.28.0Final-Doc.zip"
  *      />
  * 
  */
@@ -48,6 +50,14 @@ public class ResourceAllocationSettingData extends ManagedElement {
 
    public static Builder builder() {
       return new Builder();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return builder().fromResourceAllocationSettingData(this);
    }
 
    public static class Builder extends ManagedElement.Builder {
@@ -242,22 +252,29 @@ public class ResourceAllocationSettingData extends ManagedElement {
 
       public ResourceAllocationSettingData build() {
          return new ResourceAllocationSettingData(elementName, instanceID, caption, description, address,
-                  addressOnParent, allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility,
-                  limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
-                  resourceType, virtualQuantity, virtualQuantityUnits, weight, connections, hostResources);
+               addressOnParent, allocationUnits, automaticAllocation, automaticDeallocation, consumerVisibility, limit,
+               mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+               virtualQuantity, virtualQuantityUnits, weight, connections, hostResources);
       }
 
       public Builder fromResourceAllocationSettingData(ResourceAllocationSettingData in) {
-         return elementName(in.getElementName()).instanceID(in.getInstanceID()).caption(in.getCaption()).description(
-                  in.getDescription()).address(in.getAddress()).addressOnParent(in.getAddressOnParent())
-                  .allocationUnits(in.getAllocationUnits()).automaticAllocation(in.isAutomaticAllocation())
-                  .automaticDeallocation(in.isAutomaticDeallocation()).consumerVisibility(in.getConsumerVisibility())
-                  .limit(in.getLimit()).mappingBehavior(in.getMappingBehavior()).otherResourceType(
-                           in.getOtherResourceType()).parent(in.getParent()).poolID(in.getPoolID()).reservation(
-                           in.getReservation()).resourceSubType(in.getResourceSubType()).resourceType(
-                           in.getResourceType()).virtualQuantity(in.getVirtualQuantity()).virtualQuantityUnits(
-                           in.getVirtualQuantityUnits()).weight(in.getWeight()).connections(in.getConnections())
-                  .hostResources(in.getHostResources());
+         return fromManagedElement(in).address(in.getAddress()).addressOnParent(in.getAddressOnParent())
+               .allocationUnits(in.getAllocationUnits()).automaticAllocation(in.isAutomaticAllocation())
+               .automaticDeallocation(in.isAutomaticDeallocation()).consumerVisibility(in.getConsumerVisibility())
+               .limit(in.getLimit()).mappingBehavior(in.getMappingBehavior())
+               .otherResourceType(in.getOtherResourceType()).parent(in.getParent()).poolID(in.getPoolID())
+               .reservation(in.getReservation()).resourceSubType(in.getResourceSubType())
+               .resourceType(in.getResourceType()).virtualQuantity(in.getVirtualQuantity())
+               .virtualQuantityUnits(in.getVirtualQuantityUnits()).weight(in.getWeight())
+               .connections(in.getConnections()).hostResources(in.getHostResources());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromManagedElement(ManagedElement in) {
+         return Builder.class.cast(super.fromManagedElement(in));
       }
 
       /**
@@ -300,12 +317,12 @@ public class ResourceAllocationSettingData extends ManagedElement {
    public static enum ResourceType {
 
       OTHER(1), COMPUTER_SYSTEM(2), PROCESSOR(3), MEMORY(4), IDE_CONTROLLER(5), PARALLEL_SCSI_HBA(6), FC_HBA(7), ISCSI_HBA(
-               8), IB_HCA(9), ETHERNET_ADAPTER(10), OTHER_NETWORK_ADAPTER(11), IO_SLOT(12), IO_DEVICE(13), FLOPPY_DRIVE(
-               14), CD_DRIVE(15), DVD_DRIVE(16), DISK_DRIVE(17), TAPE_DRIVE(18), STORAGE_EXTENT(19), OTHER_STORAGE_DEVICE(
-               20), SERIAL_PORT(21), PARALLEL_PORT(22), USB_CONTROLLER(23), GRAPHICS_CONTROLLER(24), IEEE_1394_CONTROLLER(
-               25), PARTITIONABLE_UNIT(26), BASE_PARTITIONABLE_UNIT(27), POWER(28), COOLING_CAPACITY(29), ETHERNET_SWITCH_PORT(
-               30), LOGICAL_DISK(31), STORAGE_VOLUME(32), ETHERNET_CONNECTION(33), DMTF_RESERVED(Integer.valueOf(
-               "8000", 16)), VENDOR_RESERVED(Integer.valueOf("FFFF", 16));
+            8), IB_HCA(9), ETHERNET_ADAPTER(10), OTHER_NETWORK_ADAPTER(11), IO_SLOT(12), IO_DEVICE(13), FLOPPY_DRIVE(14), CD_DRIVE(
+            15), DVD_DRIVE(16), DISK_DRIVE(17), TAPE_DRIVE(18), STORAGE_EXTENT(19), OTHER_STORAGE_DEVICE(20), SERIAL_PORT(
+            21), PARALLEL_PORT(22), USB_CONTROLLER(23), GRAPHICS_CONTROLLER(24), IEEE_1394_CONTROLLER(25), PARTITIONABLE_UNIT(
+            26), BASE_PARTITIONABLE_UNIT(27), POWER(28), COOLING_CAPACITY(29), ETHERNET_SWITCH_PORT(30), LOGICAL_DISK(
+            31), STORAGE_VOLUME(32), ETHERNET_CONNECTION(33), DMTF_RESERVED(Integer.valueOf("8000", 16)), VENDOR_RESERVED(
+            Integer.valueOf("FFFF", 16));
 
       protected final int code;
 
@@ -317,15 +334,15 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, ResourceType> RESOURCE_TYPE_BY_ID = Maps.uniqueIndex(ImmutableSet
-               .copyOf(ResourceType.values()), new Function<ResourceType, Integer>() {
+      protected final static Map<Integer, ResourceType> RESOURCE_TYPE_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(ResourceType.values()), new Function<ResourceType, Integer>() {
 
-         @Override
-         public Integer apply(ResourceType input) {
-            return input.code;
-         }
+               @Override
+               public Integer apply(ResourceType input) {
+                  return input.code;
+               }
 
-      });
+            });
 
       public static ResourceType fromValue(String type) {
          return RESOURCE_TYPE_BY_ID.get(new Integer(checkNotNull(type, "type")));
@@ -338,20 +355,21 @@ public class ResourceAllocationSettingData extends ManagedElement {
    public static enum ConsumerVisibility {
       UNKNOWN(0),
       /**
-       * indicates the underlying or host resource is utilized and passed through to the consumer,
-       * possibly using partitioning. At least one item shall be present in the HostResource
-       * property.
+       * indicates the underlying or host resource is utilized and passed
+       * through to the consumer, possibly using partitioning. At least one item
+       * shall be present in the HostResource property.
        */
       PASSED_THROUGH(2),
       /**
-       * indicates the resource is virtualized and may not map directly to an underlying/host
-       * resource. Some implementations may support specific assignment for virtualized resources,
-       * in which case the host resource(s) are exposed using the HostResource property.
+       * indicates the resource is virtualized and may not map directly to an
+       * underlying/host resource. Some implementations may support specific
+       * assignment for virtualized resources, in which case the host
+       * resource(s) are exposed using the HostResource property.
        */
       VIRTUALIZED(3),
       /**
-       * indicates a representation of the resource does not exist within the context of the
-       * resource consumer.
+       * indicates a representation of the resource does not exist within the
+       * context of the resource consumer.
        */
       NOT_REPRESENTED(4), DMTF_RESERVED(32767), VENDOR_RESERVED(65535);
 
@@ -365,15 +383,15 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, ConsumerVisibility> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(ImmutableSet
-               .copyOf(ConsumerVisibility.values()), new Function<ConsumerVisibility, Integer>() {
+      protected final static Map<Integer, ConsumerVisibility> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(ConsumerVisibility.values()), new Function<ConsumerVisibility, Integer>() {
 
-         @Override
-         public Integer apply(ConsumerVisibility input) {
-            return input.code;
-         }
+               @Override
+               public Integer apply(ConsumerVisibility input) {
+                  return input.code;
+               }
 
-      });
+            });
 
       public static ConsumerVisibility fromValue(String behavior) {
          return MAPPING_BEHAVIOR_BY_ID.get(new Integer(checkNotNull(behavior, "behavior")));
@@ -381,12 +399,13 @@ public class ResourceAllocationSettingData extends ManagedElement {
    }
 
    /**
-    * Specifies how this resource maps to underlying resourcesIf the HostResource array contains any
-    * entries, this property reflects how the resource maps to those specific resources.
+    * Specifies how this resource maps to underlying resourcesIf the
+    * HostResource array contains any entries, this property reflects how the
+    * resource maps to those specific resources.
     */
    public static enum MappingBehavior {
       UNKNOWN(0), NOT_SUPPORTED(2), DEDICATED(3), SOFT_AFFINITY(4), HARD_AFFINITY(5), DMTF_RESERVED(32767), VENDOR_RESERVED(
-               65535);
+            65535);
 
       protected final int code;
 
@@ -398,15 +417,15 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, MappingBehavior> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(ImmutableSet
-               .copyOf(MappingBehavior.values()), new Function<MappingBehavior, Integer>() {
+      protected final static Map<Integer, MappingBehavior> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(MappingBehavior.values()), new Function<MappingBehavior, Integer>() {
 
-         @Override
-         public Integer apply(MappingBehavior input) {
-            return input.code;
-         }
+               @Override
+               public Integer apply(MappingBehavior input) {
+                  return input.code;
+               }
 
-      });
+            });
 
       public static MappingBehavior fromValue(String behavior) {
          return MAPPING_BEHAVIOR_BY_ID.get(new Integer(checkNotNull(behavior, "behavior")));
@@ -434,11 +453,11 @@ public class ResourceAllocationSettingData extends ManagedElement {
    protected final List<String> hostResources;
 
    public ResourceAllocationSettingData(String elementName, String instanceID, String caption, String description,
-            String address, String addressOnParent, String allocationUnits, Boolean automaticAllocation,
-            Boolean automaticDeallocation, ConsumerVisibility consumerVisibility, Long limit,
-            MappingBehavior mappingBehavior, String otherResourceType, String parent, String poolID, Long reservation,
-            String resourceSubType, ResourceType resourceType, Long virtualQuantity, String virtualQuantityUnits,
-            Integer weight, List<String> connections, List<String> hostResources) {
+         String address, String addressOnParent, String allocationUnits, Boolean automaticAllocation,
+         Boolean automaticDeallocation, ConsumerVisibility consumerVisibility, Long limit,
+         MappingBehavior mappingBehavior, String otherResourceType, String parent, String poolID, Long reservation,
+         String resourceSubType, ResourceType resourceType, Long virtualQuantity, String virtualQuantityUnits,
+         Integer weight, List<String> connections, List<String> hostResources) {
       super(elementName, instanceID, caption, description);
       this.address = address;
       this.addressOnParent = addressOnParent;
@@ -462,7 +481,8 @@ public class ResourceAllocationSettingData extends ManagedElement {
    }
 
    /**
-    * The address of the resource. For example, the MAC address of a Ethernet port.
+    * The address of the resource. For example, the MAC address of a Ethernet
+    * port.
     */
    public String getAddress() {
       return address;
@@ -470,41 +490,47 @@ public class ResourceAllocationSettingData extends ManagedElement {
 
    /**
     * Describes the address of this resource in the context of the Parent. The
-    * Parent/AddressOnParent properties are used to describe the controller relationship as well the
-    * ordering of devices on a controller.For example, if the parent is a PCI Controller, this
-    * property would specify the PCI slot of this child device.
+    * Parent/AddressOnParent properties are used to describe the controller
+    * relationship as well the ordering of devices on a controller.For example,
+    * if the parent is a PCI Controller, this property would specify the PCI
+    * slot of this child device.
     */
    public String getAddressOnParent() {
       return addressOnParent;
    }
 
    /**
-    * This property specifies the units of allocation used by the Reservation and Limit properties.
-    * For example, when ResourceType=Processor, AllocationUnits may be set to hertz*10^6 or percent.
-    * When ResourceType=Memory, AllocationUnits may be set to bytes*10^3. It is expected that
-    * profiles constrain the units that apply in context of particular resource types. The value of
-    * this property shall be a legal value of the Programmatic Units qualifier as defined in Annex
-    * C.1 of DSP0004 V2.5 or later.
+    * This property specifies the units of allocation used by the Reservation
+    * and Limit properties. For example, when ResourceType=Processor,
+    * AllocationUnits may be set to hertz*10^6 or percent. When
+    * ResourceType=Memory, AllocationUnits may be set to bytes*10^3. It is
+    * expected that profiles constrain the units that apply in context of
+    * particular resource types. The value of this property shall be a legal
+    * value of the Programmatic Units qualifier as defined in Annex C.1 of
+    * DSP0004 V2.5 or later.
     */
    public String getAllocationUnits() {
       return allocationUnits;
    }
 
    /**
-    * This property specifies if the resource will be automatically allocated. For example when set
-    * to true, when the consuming virtual computer system is powered on, this resource would be
-    * allocated. A value of false indicates the resource must be explicitly allocated. For example,
-    * the setting may represent removable media (cdrom, floppy, etc.) where at power on time, the
-    * media is not present. An explicit operation is required to allocate the resource.
+    * This property specifies if the resource will be automatically allocated.
+    * For example when set to true, when the consuming virtual computer system
+    * is powered on, this resource would be allocated. A value of false
+    * indicates the resource must be explicitly allocated. For example, the
+    * setting may represent removable media (cdrom, floppy, etc.) where at power
+    * on time, the media is not present. An explicit operation is required to
+    * allocate the resource.
     */
    public Boolean isAutomaticAllocation() {
       return automaticAllocation;
    }
 
    /**
-    * This property specifies if the resource will be automatically de-allocated. For example, when
-    * set to true, when the consuming virtual computer system is powered off, this resource would be
-    * de-allocated. When set to false, the resource will remain allocated and must be explicitly
+    * This property specifies if the resource will be automatically
+    * de-allocated. For example, when set to true, when the consuming virtual
+    * computer system is powered off, this resource would be de-allocated. When
+    * set to false, the resource will remain allocated and must be explicitly
     * de-allocated.
     */
    public Boolean isAutomaticDeallocation() {
@@ -519,60 +545,66 @@ public class ResourceAllocationSettingData extends ManagedElement {
    }
 
    /**
-    * This property specifies the upper bound, or maximum amount of resource that will be granted
-    * for this allocation. For example, a system which supports memory paging may support setting
-    * the Limit of a Memory allocation below that of the VirtualQuantity, thus forcing paging to
-    * occur for this allocation. The value of the Limit property is expressed in the unit specified
-    * by the value of the AllocationUnits property.
+    * This property specifies the upper bound, or maximum amount of resource
+    * that will be granted for this allocation. For example, a system which
+    * supports memory paging may support setting the Limit of a Memory
+    * allocation below that of the VirtualQuantity, thus forcing paging to occur
+    * for this allocation. The value of the Limit property is expressed in the
+    * unit specified by the value of the AllocationUnits property.
     */
    public Long getLimit() {
       return limit;
    }
 
    /**
-    * Specifies how this resource maps to underlying resourcesIf the HostResource array contains any
-    * entries, this property reflects how the resource maps to those specific resources.
+    * Specifies how this resource maps to underlying resourcesIf the
+    * HostResource array contains any entries, this property reflects how the
+    * resource maps to those specific resources.
     */
    public MappingBehavior getMappingBehavior() {
       return mappingBehavior;
    }
 
    /**
-    * A string that describes the resource type when a well defined value is not available and
-    * ResourceType has the value "Other".
+    * A string that describes the resource type when a well defined value is not
+    * available and ResourceType has the value "Other".
     */
    public String getOtherResourceType() {
       return otherResourceType;
    }
 
    /**
-    * The Parent of the resource. For example, a controller for the current allocation
+    * The Parent of the resource. For example, a controller for the current
+    * allocation
     */
    public String getParent() {
       return parent;
    }
 
    /**
-    * This property specifies which ResourcePool the resource is currently allocated from, or which
-    * ResourcePool the resource will be allocated from when the allocation occurs.
+    * This property specifies which ResourcePool the resource is currently
+    * allocated from, or which ResourcePool the resource will be allocated from
+    * when the allocation occurs.
     */
    public String getPoolID() {
       return poolID;
    }
 
    /**
-    * This property specifies the amount of resource guaranteed to be available for this allocation.
-    * On system which support over-commitment of resources, this value is typically used for
-    * admission control to prevent an an allocation from being accepted thus preventing starvation.
-    * The value of the Reservation property is expressed in the unit specified by the value of the
-    * AllocationUnits property.
+    * This property specifies the amount of resource guaranteed to be available
+    * for this allocation. On system which support over-commitment of resources,
+    * this value is typically used for admission control to prevent an an
+    * allocation from being accepted thus preventing starvation. The value of
+    * the Reservation property is expressed in the unit specified by the value
+    * of the AllocationUnits property.
     */
    public Long getReservation() {
       return reservation;
    }
 
    /**
-    * A string describing an implementation specific sub-type for this resource. F
+    * A string describing an implementation specific sub-type for this resource.
+    * F
     */
    public String getResourceSubType() {
       return resourceSubType;
@@ -586,79 +618,83 @@ public class ResourceAllocationSettingData extends ManagedElement {
    }
 
    /**
-    * This property specifies the quantity of resources presented to the consumer. For example, when
-    * ResourceType=Processor, this property would reflect the number of discrete Processors
-    * presented to the virtual computer system. When ResourceType=Memory, this property could
-    * reflect the number of MB reported to the virtual computer system. The value of the
-    * VirtualQuantity property should be expressed in units as defined by the value of the
-    * VirtualQuantityUnits property.
+    * This property specifies the quantity of resources presented to the
+    * consumer. For example, when ResourceType=Processor, this property would
+    * reflect the number of discrete Processors presented to the virtual
+    * computer system. When ResourceType=Memory, this property could reflect the
+    * number of MB reported to the virtual computer system. The value of the
+    * VirtualQuantity property should be expressed in units as defined by the
+    * value of the VirtualQuantityUnits property.
     */
    public Long getVirtualQuantity() {
       return virtualQuantity;
    }
 
    /**
-    * This property specifies the units used by the VirtualQuantity property. For example - if
-    * ResourceType=Processor, the value of the VirtualQuantityUnits property may be set to "count",
-    * indicating that the value of the VirtualQuantity property is expressed as a count. - if
-    * ResourceType=Memory, the value of the VirtualQuantityUnits property may be set to
-    * "bytes*10^3", indicating that the value of the VirtualQuantity property is expressed in
-    * kilobyte. It is expected that profiles constrain the units that apply in context of particular
-    * resource types. The value of this property shall be a legal value of the Programmatic Units
-    * qualifier as defined in Annex C.1 of DSP0004 V2.5 or later.
+    * This property specifies the units used by the VirtualQuantity property.
+    * For example - if ResourceType=Processor, the value of the
+    * VirtualQuantityUnits property may be set to "count", indicating that the
+    * value of the VirtualQuantity property is expressed as a count. - if
+    * ResourceType=Memory, the value of the VirtualQuantityUnits property may be
+    * set to "bytes*10^3", indicating that the value of the VirtualQuantity
+    * property is expressed in kilobyte. It is expected that profiles constrain
+    * the units that apply in context of particular resource types. The value of
+    * this property shall be a legal value of the Programmatic Units qualifier
+    * as defined in Annex C.1 of DSP0004 V2.5 or later.
     */
    public String getVirtualQuantityUnits() {
       return virtualQuantityUnits;
    }
 
    /**
-    * This property specifies a relative priority for this allocation in relation to other
-    * allocations from the same ResourcePool. This property has no unit of measure, and is only
-    * relevant when compared to other allocations vying for the same host resources.
+    * This property specifies a relative priority for this allocation in
+    * relation to other allocations from the same ResourcePool. This property
+    * has no unit of measure, and is only relevant when compared to other
+    * allocations vying for the same host resources.
     */
    public Integer getWeight() {
       return weight;
    }
 
    /**
-    * The thing to which this resource is connected. For example, a named network or switch port.
+    * The thing to which this resource is connected. For example, a named
+    * network or switch port.
     */
    public List<String> getConnections() {
       return connections;
    }
 
    /**
-    * This property exposes specific assignment of resources. Each non-null value of the
-    * HostResource property shall be formated as a URI per RFC3986. If this resource is modeled then
-    * a value should be a WBEM URI (DSP0207). If the resource is not modeled then see the
-    * appropriate profile. Profiles may further constrain the type of URI. A NULL value or empty
-    * array requests the implementation decide the kind of host resource. If the virtual resource is
-    * mapped to more than oneunderlying resource, this property may be left NULL. If NULL, the
-    * DeviceAllocatedFromPool or ResourceAllocationFromPool associations may be used to determine
-    * the pool of host resources this virtual resource may use. If specific assignment is utilized,
-    * all underlying resources used by this virtual resource should be listed.The kind of dependency
-    * is specified by the ConsumerVisibility and the MappingBehavior properties. Typically the array
-    * contains one item, however multiple host resources may be specified. A client may set the
-    * value(s) to indicate that the requested virtual resource allocation be based on host resources
-    * that are identified by element values.
+    * This property exposes specific assignment of resources. Each non-null
+    * value of the HostResource property shall be formated as a URI per RFC3986.
+    * If this resource is modeled then a value should be a WBEM URI (DSP0207).
+    * If the resource is not modeled then see the appropriate profile. Profiles
+    * may further constrain the type of URI. A NULL value or empty array
+    * requests the implementation decide the kind of host resource. If the
+    * virtual resource is mapped to more than oneunderlying resource, this
+    * property may be left NULL. If NULL, the DeviceAllocatedFromPool or
+    * ResourceAllocationFromPool associations may be used to determine the pool
+    * of host resources this virtual resource may use. If specific assignment is
+    * utilized, all underlying resources used by this virtual resource should be
+    * listed.The kind of dependency is specified by the ConsumerVisibility and
+    * the MappingBehavior properties. Typically the array contains one item,
+    * however multiple host resources may be specified. A client may set the
+    * value(s) to indicate that the requested virtual resource allocation be
+    * based on host resources that are identified by element values.
     */
    public List<String> getHostResources() {
       return hostResources;
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromResourceAllocationSettingData(this);
-   }
-
    @Override
    public String toString() {
       return String
-               .format(
-                        "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s]",
-                        elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
-                        automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources,
-                        limit, mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType,
-                        resourceType, virtualQuantity, virtualQuantityUnits, weight);
+            .format(
+                  "[elementName=%s, instanceID=%s, caption=%s, description=%s, address=%s, addressOnParent=%s, allocationUnits=%s, automaticAllocation=%s, automaticDeallocation=%s, connections=%s, consumerVisibility=%s, hostResources=%s, limit=%s, mappingBehavior=%s, otherResourceType=%s, parent=%s, poolID=%s, reservation=%s, resourceSubType=%s, resourceType=%s, virtualQuantity=%s, virtualQuantityUnits=%s, weight=%s]",
+                  elementName, instanceID, caption, description, address, addressOnParent, allocationUnits,
+                  automaticAllocation, automaticDeallocation, connections, consumerVisibility, hostResources, limit,
+                  mappingBehavior, otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
+                  virtualQuantity, virtualQuantityUnits, weight);
    }
 
    @Override

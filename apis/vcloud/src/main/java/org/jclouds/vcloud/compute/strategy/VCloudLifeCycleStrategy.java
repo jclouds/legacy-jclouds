@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud.compute.strategy;
 
@@ -57,7 +57,7 @@ public class VCloudLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeSt
    @Override
    public NodeMetadata rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.resetVAppOrVm(id);
+      Task task = client.getVAppClient().resetVApp(id);
       return returnWhenTaskCompletes(in, task);
    }
 
@@ -68,13 +68,13 @@ public class VCloudLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeSt
 
    @Override
    public NodeMetadata resumeNode(String in) {
-      Task task = client.powerOnVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      Task task = client.getVAppClient().powerOnVApp(URI.create(checkNotNull(in, "node.id")));
       return returnWhenTaskCompletes(in, task);
    }
 
    @Override
    public NodeMetadata suspendNode(String in) {
-      Task task = client.powerOffVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      Task task = client.getVAppClient().powerOffVApp(URI.create(checkNotNull(in, "node.id")));
       return returnWhenTaskCompletes(in, task);
    }
 }

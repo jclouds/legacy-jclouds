@@ -1,26 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,9 +28,9 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.InputSupplierMap;
 import org.jclouds.collect.TransformingMap;
 import org.jclouds.domain.Credentials;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ConfiguresCredentialStore;
@@ -39,8 +38,6 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.common.io.InputSupplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -95,48 +92,6 @@ public class CredentialStoreModule extends AbstractModule {
       public InputStream apply(Credentials from) {
          return Strings2.toInputStream(json.toJson(checkNotNull(from)));
       }
-   }
-
-   @Singleton
-   public static class CopyInputStreamInputSupplierMap extends InputSupplierMap<String, InputStream> {
-      @Singleton
-      public static class CopyInputStreamIntoSupplier implements Function<InputStream, InputSupplier<InputStream>> {
-         @Resource
-         protected Logger logger = Logger.NULL;
-
-         @SuppressWarnings("unchecked")
-         @Override
-         public InputSupplier<InputStream> apply(InputStream from) {
-            if (from == null)
-               return new InputSupplier<InputStream>() {
-
-                  @Override
-                  public InputStream getInput() throws IOException {
-                     return null;
-                  }
-
-               };
-            try {
-               return InputSupplier.class.cast(ByteStreams.newInputStreamSupplier(ByteStreams.toByteArray(from)));
-            } catch (Exception e) {
-               logger.warn(e, "ignoring problem retrieving credentials");
-               return null;
-            } finally {
-               Closeables.closeQuietly(from);
-            }
-         }
-      }
-
-      @Inject
-      public CopyInputStreamInputSupplierMap(Map<String, InputSupplier<InputStream>> toMap,
-            CopyInputStreamIntoSupplier putFunction) {
-         super(toMap, putFunction);
-      }
-
-      public CopyInputStreamInputSupplierMap(Map<String, InputSupplier<InputStream>> toMap) {
-         super(toMap, new CopyInputStreamIntoSupplier());
-      }
-
    }
 
    @Singleton

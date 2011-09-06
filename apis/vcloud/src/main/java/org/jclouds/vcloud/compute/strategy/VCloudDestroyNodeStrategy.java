@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud.compute.strategy;
 
@@ -64,53 +64,50 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    @Override
    public NodeMetadata destroyNode(String id) {
       URI vappId = URI.create(checkNotNull(id, "node.id"));
-      VApp vApp = client.getVApp(vappId);
+      VApp vApp = client.getVAppClient().getVApp(vappId);
       if (vApp == null)
          return null;
-      vApp = powerOffVAppIfDeployed(vApp);
+
+      waitForPendingTasksToComplete(vApp);
+
       vApp = undeployVAppIfDeployed(vApp);
-      deleteVApp(vappId);
+      deleteVApp(vApp);
       try {
          return getNode.getNode(id);
       } catch (AuthorizationException e) {
+         // vcloud bug will sometimes throw an exception getting the vapp right after deleting it.
          logger.trace("authorization error getting %s after deletion: %s", id, e.getMessage());
          return null;
       }
    }
 
-   void deleteVApp(URI vappId) {
-      logger.debug(">> deleting vApp(%s)", vappId);
-      Task task = client.deleteVApp(vappId);
+   void waitForPendingTasksToComplete(VApp vApp) {
+      for (Task task : vApp.getTasks())
+         waitForTask(task, vApp);
+   }
+
+   public void waitForTask(Task task, VApp vAppResponse) {
       if (!successTester.apply(task.getHref())) {
-         throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vappId, task));
+         throw new RuntimeException(String.format("failed to %s %s: %s", task.getName(), vAppResponse.getName(), task));
       }
-      logger.debug("<< deleted vApp(%s)", vappId);
+   }
+
+   void deleteVApp(VApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getHref());
+      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()), vApp);
+      logger.debug("<< deleted vApp(%s)", vApp.getHref());
    }
 
    VApp undeployVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.RESOLVED) > 0) {
+      if (vApp.getStatus() != Status.OFF) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.undeployVAppOrVm(vApp.getHref());
-         if (!successTester.apply(task.getHref())) {
-            // TODO timeout
-            throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
+         try {
+            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()), vApp);
+            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         } catch (IllegalStateException e) {
+            logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
-         vApp = client.getVApp(vApp.getHref());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
-      }
-      return vApp;
-   }
-
-   VApp powerOffVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.OFF) > 0) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-         Task task = client.powerOffVAppOrVm(vApp.getHref());
-         if (!successTester.apply(task.getHref())) {
-            // TODO timeout
-            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
-         }
-         vApp = client.getVApp(vApp.getHref());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;
    }

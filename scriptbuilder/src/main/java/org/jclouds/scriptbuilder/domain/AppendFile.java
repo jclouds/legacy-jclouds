@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.scriptbuilder.domain;
 
@@ -39,13 +39,20 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class AppendFile implements Statement {
-   public final static String MARKER = "END_OF_FILE";
+   public static final String MARKER = "END_OF_FILE";
+
    final String path;
    final Iterable<String> lines;
+   final String marker;
 
-   public AppendFile(String path, Iterable<String> lines) {// TODO: convert so
+   public AppendFile(String path, Iterable<String> lines) {
+      this(path, lines, MARKER);
+   }
+
+   public AppendFile(String path, Iterable<String> lines, String marker) {
       this.path = checkNotNull(path, "path");
       this.lines = checkNotNull(lines, "lines");
+      this.marker = checkNotNull(marker, "marker");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");
    }
 
@@ -84,11 +91,11 @@ public class AppendFile implements Statement {
    }
 
    private void hereFile(String path, StringBuilder builder) {
-      builder.append("cat >> ").append(path).append(" <<'").append(MARKER).append("'\n");
+      builder.append("cat >> ").append(path).append(" <<'").append(marker).append("'\n");
       for (String line : lines) {
          builder.append(line).append("\n");
       }
-      builder.append(MARKER).append("\n");
+      builder.append(marker).append("\n");
    }
 
    private Statement appendToFile(String line, String path, OsFamily family) {

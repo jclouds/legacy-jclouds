@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.callables;
 
@@ -28,17 +28,25 @@ import javax.inject.Named;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.domain.AdminAccessVisitor;
+import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -47,17 +55,27 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
+   public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    protected final Function<NodeMetadata, SshClient> sshFactory;
-   protected final NodeMetadata node;
-   protected final Statement init;
-   protected final String name;
+   protected NodeMetadata node;
+   protected final InitBuilder init;
    protected final boolean runAsRoot;
+   protected final String initFile;
 
    protected SshClient ssh;
+
+   /**
+    * determines the naming convention of init scripts.
+    * 
+    * ex. {@code /tmp/init-%s}
+    */
+   @Inject(optional = true)
+   @Named(PROPERTY_INIT_SCRIPT_PATTERN)
+   private String initScriptPattern = "/tmp/init-%s";
 
    @AssistedInject
    public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
@@ -71,9 +89,9 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
          else
             name = "jclouds-script-" + System.currentTimeMillis();
       }
-      this.name = checkNotNull(name, "name");
       this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
                : createInitScript(name, script);
+      this.initFile = String.format(initScriptPattern, name);
       this.runAsRoot = options.shouldRunAsRoot();
    }
 
@@ -100,14 +118,53 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       return this;
    }
 
+   public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
+      if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
+         ssh.disconnect();
+         logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
+         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(null).credentials(
+                  input.getAdminCredentials()).build());
+         ssh.connect();
+         setupLinkToInitFile();
+      }
+   }
+
    /**
     * ssh client is initialized through this call.
     */
    protected ExecResponse doCall() {
-      ssh.put(name, init.render(OsFamily.UNIX));
-      ssh.exec("chmod 755 " + name);
+      try {
+         ssh.put(initFile, init.render(OsFamily.UNIX));
+      } catch (SshException e) {
+         // If there's a problem with the sftp configuration, we can try via ssh exec
+         if (logger.isTraceEnabled())
+            logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         else
+            logger.warn("<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+         ssh.disconnect();
+         ssh.connect();
+         ssh.exec("rm " + initFile);
+         ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
+                  AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
+      }
+
+      ssh.exec("chmod 755 " + initFile);
+      setupLinkToInitFile();
+
       runAction("init");
+      init.getInitStatement().accept(new AdminAccessVisitor() {
+
+         @Override
+         public void visit(AdminAccess input) {
+            refreshSshIfNewAdminCredentialsConfigured(input);
+         }
+
+      });
       return runAction("start");
+   }
+
+   protected void setupLinkToInitFile() {
+      ssh.exec(String.format("ln -fs %s %s", initFile, init.getInstanceName()));
    }
 
    protected ExecResponse runAction(String action) {
@@ -133,17 +190,17 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    public String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
-         command = "./" + name + " " + action;
+         command = "./" + init.getInstanceName() + " " + action;
       } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), name, action);
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
       } else {
-         command = "sudo ./" + name + " " + action;
+         command = "sudo ./" + init.getInstanceName() + " " + action;
       }
       return command;
    }
 
    protected String execScriptAsDefaultUser(String action) {
-      return "./" + name + " " + action;
+      return "./" + init.getInstanceName() + " " + action;
    }
 
    public NodeMetadata getNode() {
@@ -152,7 +209,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", name).add("runAsRoot", runAsRoot).toString();
+      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
+            .add("runAsRoot", runAsRoot).toString();
    }
 
    @Override

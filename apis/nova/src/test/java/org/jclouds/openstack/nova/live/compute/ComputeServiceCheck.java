@@ -1,24 +1,31 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.openstack.nova.live.compute;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -27,18 +34,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
-import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Not intended to be run with maven and does not performs a cleanup after tests
@@ -48,13 +49,15 @@ import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
 public class ComputeServiceCheck {
    private ComputeServiceContextFactory contextFactory;
    private ComputeServiceContext context;
+   private String testImageId;
 
    @BeforeTest
    public void setupClient() throws IOException {
       contextFactory = new ComputeServiceContextFactory();
       Properties properties = setupOverrides(setupProperties(this.getClass()));
       context = contextFactory.createContext("nova",
-            ImmutableSet.of(new JschSshClientModule(), new SLF4JLoggingModule()), properties);
+            ImmutableSet.of(new SshjSshClientModule(), new SLF4JLoggingModule()), properties);
+      testImageId = properties.getProperty("test.nova.image.id");
    }
 
    @Test
@@ -72,7 +75,7 @@ public class ComputeServiceCheck {
       ComputeService cs = context.getComputeService();
 
       TemplateOptions options = new TemplateOptions().blockUntilRunning(false);
-      Template template = cs.templateBuilder().imageId("95").hardwareId("2").options(options).build();
+      Template template = cs.templateBuilder().imageId(testImageId).hardwareId("2").options(options).build();
       Set<? extends NodeMetadata> metedata = cs.createNodesInGroup("test", 1, template);
       System.out.println(metedata);
    }

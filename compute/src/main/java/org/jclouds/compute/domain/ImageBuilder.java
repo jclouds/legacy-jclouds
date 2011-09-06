@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.domain;
 
@@ -73,6 +73,10 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    public ImageBuilder id(String id) {
       return ImageBuilder.class.cast(super.id(id));
    }
+   
+   public ImageBuilder tags(Iterable<String> tags) {
+      return ImageBuilder.class.cast(super.tags(tags));
+   }
 
    @Override
    public ImageBuilder ids(String id) {
@@ -106,13 +110,13 @@ public class ImageBuilder extends ComputeMetadataBuilder {
 
    @Override
    public Image build() {
-      return new ImageImpl(providerId, name, id, location, uri, userMetadata, operatingSystem, description, version,
+      return new ImageImpl(providerId, name, id, location, uri, userMetadata, tags, operatingSystem, description, version,
                adminPassword, defaultCredentials);
    }
 
    public static ImageBuilder fromImage(Image image) {
       return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId()).location(
-               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).version(
+               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).tags(image.getTags()).version(
                image.getVersion()).description(image.getDescription()).operatingSystem(image.getOperatingSystem())
                .adminPassword(image.getAdminPassword()).defaultCredentials(image.getDefaultCredentials());
    }

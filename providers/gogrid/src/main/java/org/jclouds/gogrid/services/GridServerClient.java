@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.gogrid.services;
 
@@ -139,7 +139,40 @@ public interface GridServerClient {
     * @return server before the command is executed
     */
    Server deleteByName(String name);
-
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param newDescription
+    *           description to replace the current one
+    * @return edited server
+    */
+   Server editServerDescription(long id, String newDescription);
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param idOrNameOfType
+    *           type to replace the current one
+    * @return edited server
+    */
+   Server editServerType(long id, String idOrNameOfType);
+   
+   /**
+    * Edits an existing server
+    * 
+    * @param id
+    *           id of the existing server
+    * @param idOrNameOfRam
+    *           ram to replace the current one
+    * @return edited server
+    */
+   Server editServerRam(long id, String idOrNameOfRam);
+   
    /**
     * Retrieves the list of supported RAM configurations. The objects will have
     * RAM ID, name and description. In most cases, id or name will be used for
@@ -153,6 +186,14 @@ public interface GridServerClient {
     */
    Set<Option> getRamSizes();
 
+   /**
+    * Retrieves the list of supported server types, for example Web/App Server and Database Server. In most cases, id
+    * or name will be used for {@link #editServerType}.
+    * 
+    * @return supported server types
+    */
+   Set<Option> getTypes();
+   
    /**
     * Retrieves the list of supported Datacenters to launch servers into. The
     * objects will have datacenter ID, name and description. In most cases, id

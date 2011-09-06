@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.atmos;
 
@@ -42,8 +42,11 @@ import org.jclouds.atmos.functions.AtmosObjectName;
 import org.jclouds.atmos.functions.ParseDirectoryListFromContentAndHeaders;
 import org.jclouds.atmos.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
+import org.jclouds.atmos.functions.ParseUserMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
+import org.jclouds.atmos.functions.ReturnTrueIfGroupACLIsOtherRead;
 import org.jclouds.atmos.options.ListOptions;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.options.GetOptions;
@@ -106,7 +109,7 @@ public interface AtmosAsyncClient {
    @ExceptionParser(ReturnEndpointIfAlreadyExists.class)
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @Consumes(MediaType.WILDCARD)
-   ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName);
+   ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName, PutOptions... options);
 
    /**
     * @see AtmosClient#createFile
@@ -116,7 +119,8 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object,
+            PutOptions... options);
 
    /**
     * @see AtmosClient#updateFile
@@ -127,7 +131,8 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Void> updateFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindMetadataToHeaders.class) AtmosObject object,
+            PutOptions... options);
 
    /**
     * @see AtmosClient#readFile
@@ -164,7 +169,7 @@ public interface AtmosAsyncClient {
     * @see AtmosClient#getUserMetadata
     */
    @HEAD
-   @ResponseParser(ParseSystemMetadataFromHeaders.class)
+   @ResponseParser(ParseUserMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{path}")
    @QueryParams(keys = "metadata/user")
@@ -189,12 +194,14 @@ public interface AtmosAsyncClient {
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> pathExists(@PathParam("path") String path);
 
-   // signature currently doesn't work
-   // @POST
-   // @QueryParams(keys = "acl")
-   // @Headers(keys = { "x-emc-useracl", "x-emc-groupacl" }, values = { "root=FULL_CONTROL",
-   // "other=READ" })
-   // @Consumes(MediaType.WILDCARD)
-   // void makePublic(@Endpoint URI url);
+   /**
+    * @see AtmosClient#isPublic
+    */
+   @HEAD
+   @ResponseParser(ReturnTrueIfGroupACLIsOtherRead.class)
+   @Path("/{path}")
+   @Consumes(MediaType.WILDCARD)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> isPublic(@PathParam("path") String path);
 
 }

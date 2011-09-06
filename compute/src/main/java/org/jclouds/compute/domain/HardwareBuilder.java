@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.domain;
 
@@ -87,6 +87,11 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    public HardwareBuilder id(String id) {
       return HardwareBuilder.class.cast(super.id(id));
    }
+   
+   @Override
+   public HardwareBuilder tags(Iterable<String> tags) {
+      return HardwareBuilder.class.cast(super.tags(tags));
+   }
 
    @Override
    public HardwareBuilder ids(String id) {
@@ -120,14 +125,14 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
 
    @Override
    public Hardware build() {
-      return new HardwareImpl(providerId, name, id, location, uri, userMetadata, processors, ram, volumes,
+      return new HardwareImpl(providerId, name, id, location, uri, userMetadata, tags, processors, ram, volumes,
                supportsImage);
    }
 
    @SuppressWarnings("unchecked")
    public static HardwareBuilder fromHardware(Hardware in) {
       return new HardwareBuilder().id(in.getId()).providerId(in.getProviderId()).location(in.getLocation()).name(
-               in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).processors(
+               in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).tags(in.getTags()).processors(
                List.class.cast(in.getProcessors())).ram(in.getRam()).volumes(List.class.cast(in.getVolumes()))
                .supportsImage(in.supportsImage());
    }

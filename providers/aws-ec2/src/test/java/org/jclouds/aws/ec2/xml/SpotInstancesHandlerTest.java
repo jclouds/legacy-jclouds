@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.xml;
 
@@ -45,7 +45,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "SpotInstancesHandlerTest")
 public class SpotInstancesHandlerTest extends BaseEC2HandlerTest {
 
@@ -66,23 +67,27 @@ public class SpotInstancesHandlerTest extends BaseEC2HandlerTest {
       dateService = injector.getInstance(DateService.class);
       assert dateService != null;
    }
+
    public void testDescribe() {
 
       InputStream is = getClass().getResourceAsStream("/describe_spot_instance_requests.xml");
-      SpotInstancesHandler handler = injector
-            .getInstance(SpotInstancesHandler.class);
+      SpotInstancesHandler handler = injector.getInstance(SpotInstancesHandler.class);
       addDefaultRegionToHandler(handler);
       Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
       assertEquals(result.size(), 18);
    }
-   public void testRequest() {
 
+   public void testRequest() {
       InputStream is = getClass().getResourceAsStream("/request_spot_instances.xml");
-      SpotInstancesHandler handler = injector
-            .getInstance(SpotInstancesHandler.class);
+      SpotInstancesHandler handler = injector.getInstance(SpotInstancesHandler.class);
       addDefaultRegionToHandler(handler);
       Set<SpotInstanceRequest> result = factory.create(handler).parse(is);
       assertEquals(result.size(), 3);
+   }
+
+   public void testParseNoNPE() {
+      factory.create(injector.getInstance(SpotInstancesHandler.class)).parse(
+            getClass().getResourceAsStream("/describe_spot_instances_1.xml"));
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

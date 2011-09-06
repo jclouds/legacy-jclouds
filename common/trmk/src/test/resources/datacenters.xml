@@ -1,0 +1,23 @@
+<DataCenterList xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+
+  <DataCenter>
+
+    <Code>MIA</Code>
+
+    <Id>1</Id>
+
+    <Name>Terremark - Miami</Name>
+
+  </DataCenter>
+
+  <DataCenter>
+
+    <Code>CUA</Code>
+
+    <Id>3670</Id>
+
+    <Name>Terremark - Culpeper</Name>
+
+  </DataCenter>
+
+</DataCenterList>

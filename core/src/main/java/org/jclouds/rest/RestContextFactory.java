@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.rest;
 
@@ -304,11 +304,11 @@ public class RestContextFactory {
          contextBuilderClass = Providers.resolveContextBuilderClass(providerName, props);
          propertiesBuilderClass = Providers.resolvePropertiesBuilderClass(providerName, props);
          sync = (Class<S>) (syncClassName != null ? Class.forName(syncClassName) : null);
-         async = (Class<A>) (syncClassName != null ? Class.forName(asyncClassName) : null);
+         async = (Class<A>) (asyncClassName != null ? Class.forName(asyncClassName) : null);
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(
                String.format(
-                     "provider %s not configured or supported. consider one of the following, as the provider name may have changed:%n%s%nIf you are sure that provider name is correct, check that the maven dependency org.jclouds.provider/%s is loaded.",
+                     "The specified provider \"%s\" is either not configured or supported. Currently configured providers are:%n  %s%nCheck this list, as the provider name may have changed. If you are sure that provider name is correct, check that your project has a dependency on org.jclouds.provider/%s, or on org.jclouds/jclouds-all.",
                      providerName, Providers.getSupportedProviders(), providerName), e);
       } catch (Exception e) {
          propagate(e);

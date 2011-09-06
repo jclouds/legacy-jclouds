@@ -1,24 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
@@ -35,12 +36,16 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.savvis.vpdc.binders.BindCaptureVAppTemplateToXmlPayload;
+import org.jclouds.savvis.vpdc.binders.BindCloneVMToXmlPayload;
 import org.jclouds.savvis.vpdc.binders.BindVMSpecToXmlPayload;
+import org.jclouds.savvis.vpdc.binders.BindVMSpecsToXmlPayload;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
 import org.jclouds.savvis.vpdc.functions.DefaultOrgIfNull;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
+import org.jclouds.savvis.vpdc.xml.TasksListHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -63,8 +68,7 @@ public interface VMAsyncClient {
    @MapBinder(BindVMSpecToXmlPayload.class)
    ListenableFuture<Task> addVMIntoVDC(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
-            @PathParam("vpdcId") String vpdcId, @PayloadParam("networkName") String networkTierName,
-            @PayloadParam("name") String vAppName, VMSpec spec);
+            @PathParam("vpdcId") String vpdcId, VMSpec spec);
 
    /**
     * @see VMClient#addVMIntoVDC
@@ -73,8 +77,48 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @Path("vApp/")
    @MapBinder(BindVMSpecToXmlPayload.class)
-   ListenableFuture<Task> addVMIntoVDC(@EndpointParam URI vpdc, @PayloadParam("networkName") String networkTierName,
-            @PayloadParam("name") String vAppName, VMSpec spec);
+   ListenableFuture<Task> addVMIntoVDC(@EndpointParam URI vpdc, VMSpec spec);
+
+   /**
+    * @see VMClient#addMultipleVMsIntoVDC
+    */
+   @GET
+   @XMLResponseParser(TasksListHandler.class)
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/vApp/")
+   @MapBinder(BindVMSpecsToXmlPayload.class)
+   ListenableFuture<Set<Task>> addMultipleVMsIntoVDC(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, Iterable<VMSpec> vmSpecs);
+   
+   /**
+    * @see VMClient#addMultipleVMsIntoVDC
+    */
+   @GET
+   @XMLResponseParser(TasksListHandler.class)
+   @Path("vApp/")
+   @MapBinder(BindVMSpecsToXmlPayload.class)
+   ListenableFuture<Set<Task>> addMultipleVMsIntoVDC(@EndpointParam URI vpdc, Iterable<VMSpec> vmSpecs);
+
+   /**
+    * @see VMClient#captureVApp
+    */
+   @POST
+   @XMLResponseParser(TaskHandler.class)
+   @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/action/captureVApp")
+   @MapBinder(BindCaptureVAppTemplateToXmlPayload.class)
+   ListenableFuture<Task> captureVApp(
+            @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
+            @PathParam("vpdcId") String vpdcId, URI vAppUri);
+
+   /**
+    * @see VMClient#cloneVApp
+    */
+   @POST
+   @XMLResponseParser(TaskHandler.class)
+   @Path("action/cloneVApp")
+   @MapBinder(BindCloneVMToXmlPayload.class)
+   ListenableFuture<Task> cloneVApp(@EndpointParam URI vAppUri, @PayloadParam("name") String newVAppName,
+            @PayloadParam("networkTierName") String networkTierName);
 
    /**
     * @see VMClient#removeVMFromVDC
@@ -94,7 +138,7 @@ public interface VMAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> removeVM(@EndpointParam URI vm);
-   
+
    /**
     * @see VMClient#powerOffVM
     */
@@ -103,7 +147,7 @@ public interface VMAsyncClient {
    @Path("action/powerOff")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> powerOffVM(@EndpointParam URI vm);
-   
+
    /**
     * @see VMClient#powerOnVM
     */

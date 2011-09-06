@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud.compute.util;
 
@@ -57,6 +57,16 @@ public class VCloudComputeUtils {
       return CIMOperatingSystem.toComputeOs(vm.getOperatingSystemSection());
    }
 
+   public static String getVirtualSystemIdentifierOfFirstVMIn(VApp vApp) {
+      return vApp.getChildren().size() > 0 ? getVirtualSystemIdentifierOf(Iterables.get(vApp.getChildren(), 0)) : null;
+   }
+
+   public static String getVirtualSystemIdentifierOf(Vm vm) {
+      if (vm.getVirtualHardwareSection() != null && vm.getVirtualHardwareSection().getSystem() != null)
+         return vm.getVirtualHardwareSection().getSystem().getVirtualSystemIdentifier();
+      return null;
+   }
+
    public static Credentials getCredentialsFrom(VApp vApp) {
       return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
    }
@@ -83,8 +93,10 @@ public class VCloudComputeUtils {
       Builder<String> ips = ImmutableSet.<String> builder();
       Vm vm = Iterables.get(vApp.getChildren(), 0);
       // TODO: figure out how to differentiate public from private ip addresses
-      // assumption is that we'll do this from the network object, which may have
-      // enough data to tell whether or not it is a public network without string
+      // assumption is that we'll do this from the network object, which may
+      // have
+      // enough data to tell whether or not it is a public network without
+      // string
       // parsing. At worst, we could have properties set per cloud provider to
       // declare the networks which are public, then check against these in
       // networkconnection.getNetwork

@@ -1,26 +1,27 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud.compute.options;
 
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.authorizePublicKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.blockOnPort;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.customizationScript;
+import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.description;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.inboundPorts;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.installPrivateKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.ipAddressAllocationMode;
@@ -34,7 +35,8 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of VCloudTemplateOptions and VCloudTemplateOptions.Builder.*
+ * Tests possible uses of VCloudTemplateOptions and
+ * VCloudTemplateOptions.Builder.*
  * 
  * @author Adrian Cole
  */
@@ -80,6 +82,19 @@ public class VCloudTemplateOptionsTest {
    public void testcustomizationScriptStatic() {
       VCloudTemplateOptions options = customizationScript("mykeypair");
       assertEquals(options.getCustomizationScript(), "mykeypair");
+   }
+
+   @Test
+   public void testdescription() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      options.description("mykeypair");
+      assertEquals(options.getDescription(), "mykeypair");
+   }
+
+   @Test
+   public void testdescriptionStatic() {
+      VCloudTemplateOptions options = description("mykeypair");
+      assertEquals(options.getDescription(), "mykeypair");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

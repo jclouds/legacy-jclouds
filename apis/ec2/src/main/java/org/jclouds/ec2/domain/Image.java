@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.domain;
 
@@ -66,11 +66,17 @@ public class Image implements Comparable<Image> {
       return virtualizationType;
    }
 
+   private final Hypervisor hypervisor;
+
+   public Hypervisor getHypervisor() {
+      return hypervisor;
+   }
+
    public Image(String region, Architecture architecture, @Nullable String name, @Nullable String description,
             String imageId, String imageLocation, String imageOwnerId, ImageState imageState, ImageType imageType,
             boolean isPublic, Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
             @Nullable String ramdiskId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType) {
+            Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType, Hypervisor hypervisor) {
       this.region = checkNotNull(region, "region");
       this.architecture = checkNotNull(architecture, "architecture");
       this.imageId = checkNotNull(imageId, "imageId");
@@ -89,10 +95,8 @@ public class Image implements Comparable<Image> {
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
       this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
       this.virtualizationType = checkNotNull(virtualizationType, "virtualizationType");
+      this.hypervisor = checkNotNull(hypervisor, "hypervisor");
    }
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6965068835316857535L;
 
    public static enum ImageState {
       /**
@@ -353,6 +357,7 @@ public class Image implements Comparable<Image> {
       result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
       result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
       result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
+      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
       return result;
    }
 
@@ -452,6 +457,11 @@ public class Image implements Comparable<Image> {
             return false;
       } else if (!virtualizationType.equals(other.virtualizationType))
          return false;
+      if (hypervisor == null) {
+         if (other.hypervisor != null)
+            return false;
+      } else if (!hypervisor.equals(other.hypervisor))
+         return false;
       return true;
    }
 
@@ -463,7 +473,7 @@ public class Image implements Comparable<Image> {
                + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform + ", productCodes="
                + productCodes + ", ramdiskId=" + ramdiskId + ", region=" + region + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", virtualizationType=" + virtualizationType
-               + "]";
+               + ", hypervisor=" + hypervisor + "]";
    }
 
 }

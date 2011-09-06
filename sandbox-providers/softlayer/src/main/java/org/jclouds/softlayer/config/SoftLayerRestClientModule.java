@@ -1,22 +1,21 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
 package org.jclouds.softlayer.config;
 
 import java.util.Map;
@@ -36,6 +35,8 @@ import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.features.DatacenterAsyncClient;
 import org.jclouds.softlayer.features.DatacenterClient;
+import org.jclouds.softlayer.features.ProductPackageAsyncClient;
+import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
@@ -54,6 +55,7 @@ public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient,
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(VirtualGuestClient.class, VirtualGuestAsyncClient.class)//
          .put(DatacenterClient.class, DatacenterAsyncClient.class)//
+         .put(ProductPackageClient.class, ProductPackageAsyncClient.class)//
          .build();
 
    public SoftLayerRestClientModule() {

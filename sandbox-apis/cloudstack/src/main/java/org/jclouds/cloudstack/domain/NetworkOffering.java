@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudstack.domain;
 
@@ -50,6 +50,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       private boolean isDefault;
       private boolean supportsVLAN;
       private TrafficType trafficType;
+      private GuestIPType guestIPType;
       private Set<String> tags = ImmutableSet.of();
 
       public Builder id(long id) {
@@ -102,6 +103,11 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return this;
       }
 
+      public Builder guestIPType(GuestIPType guestIPType) {
+         this.guestIPType = guestIPType;
+         return this;
+      }
+
       public Builder tags(Set<String> tags) {
          this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
          return this;
@@ -109,7 +115,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
       public NetworkOffering build() {
          return new NetworkOffering(id, name, displayText, created, availability, supportsVLAN, maxConnections,
-               isDefault, trafficType, networkRate, tags);
+               isDefault, trafficType, guestIPType, networkRate, tags);
       }
    }
 
@@ -127,13 +133,15 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    private boolean supportsVLAN;
    @SerializedName("traffictype")
    private TrafficType trafficType;
+   @SerializedName("guestiptype")
+   private GuestIPType guestIPType;
    @SerializedName("networkrate")
    private int networkRate = -1;
    private String tags;
 
    public NetworkOffering(long id, String name, String displayText, @Nullable Date created, String availability,
          boolean supportsVLAN, @Nullable Integer maxConnections, boolean isDefault, TrafficType trafficType,
-         int networkRate, Set<String> tags) {
+         GuestIPType guestIPType, int networkRate, Set<String> tags) {
       this.id = id;
       this.name = name;
       this.displayText = displayText;
@@ -143,6 +151,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       this.maxConnections = maxConnections;
       this.isDefault = isDefault;
       this.trafficType = trafficType;
+      this.guestIPType = guestIPType;
       this.networkRate = networkRate;
       this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
    }
@@ -207,7 +216,8 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    /**
     * 
-    * @return the max number of concurrent connection the network offering supports
+    * @return the max number of concurrent connection the network offering
+    *         supports
     */
    @Nullable
    public Integer getMaxConnections() {
@@ -228,6 +238,14 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
     */
    public TrafficType getTrafficType() {
       return trafficType;
+   }
+
+   /**
+    * 
+    * @return the guest ip type for this network offering
+    */
+   public GuestIPType getGuestIPType() {
+      return guestIPType;
    }
 
    /**

@@ -1,22 +1,21 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
 package org.jclouds.savvis.vpdc.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -85,6 +84,8 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
       String billingSiteId = template.getLocation().getParent().getParent().getId();
 
       VMSpec.Builder specBuilder = VMSpec.builder();
+      specBuilder.name(name);
+      specBuilder.networkTierName(networkTierName);
       specBuilder.operatingSystem(CIMOperatingSystem.class.cast(template.getImage().getOperatingSystem()));
       specBuilder.processorCount(template.getHardware().getProcessors().size());
       specBuilder.memoryInGig(template.getHardware().getRam() / 1024);
@@ -96,7 +97,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
             specBuilder.addDataDrive(volume.getDevice(), volume.getSize().intValue());
       }
 
-      Task task = client.getVMClient().addVMIntoVDC(billingSiteId, vpdcId, networkTierName, name, specBuilder.build());
+      Task task = client.getVMClient().addVMIntoVDC(billingSiteId, vpdcId, specBuilder.build());
       // make sure there's no error
       if (task.getError() != null)
          throw new RuntimeException("cloud not add vm: " + task.getError().toString());

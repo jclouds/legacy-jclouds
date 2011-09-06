@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudstack.features;
 
@@ -32,8 +32,10 @@ import org.jclouds.cloudstack.functions.ReturnVoidOnNotFoundOr404OrUnableToFindA
 import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -57,7 +59,7 @@ public interface AddressAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listPublicIpAddresses")
-   @Unwrap(depth = 2)
+   @SelectJson("publicipaddress")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<PublicIPAddress>> listPublicIPAddresses(ListPublicIPAddressesOptions... options);
@@ -67,19 +69,20 @@ public interface AddressAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listPublicIpAddresses")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("publicipaddress")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<PublicIPAddress> getPublicIPAddress(@QueryParam("id") long id);
 
    /**
-    * @see AddressClient#associateIPAddress
+    * @see AddressClient#associateIPAddressInZone
     */
    @GET
    @QueryParams(keys = "command", values = "associateIpAddress")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> associateIPAddress(@QueryParam("zoneid") long zoneId,
+   ListenableFuture<AsyncCreateResponse> associateIPAddressInZone(@QueryParam("zoneid") long zoneId,
             AssociateIPAddressOptions... options);
 
    /**

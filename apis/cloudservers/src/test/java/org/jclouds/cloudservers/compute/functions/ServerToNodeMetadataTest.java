@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.cloudservers.compute.functions;
 
@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
@@ -72,12 +72,22 @@ public class ServerToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(server);
 
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
-               .imageId("2").id("1234").providerId("1234").name("sample-server").credentials(creds).location(
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .imageId("2")
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .hostname("sample-server")
+                  .credentials(creds)
+                  .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
-                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
-               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                              .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 
    @Test
@@ -93,12 +103,21 @@ public class ServerToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(server);
 
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
-               .imageId("2").id("1234").providerId("1234").name("sample-server").location(
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .imageId("2")
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .hostname("sample-server")
+                  .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
-                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
-               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                              .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
@@ -116,14 +135,24 @@ public class ServerToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(server);
 
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
-               .imageId("2").operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
-                                 .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .imageId("2")
+                  .operatingSystem(
+                        new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                              .is64Bit(true).build())
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .hostname("sample-server")
+                  .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
-                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
-               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                              .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
@@ -140,17 +169,32 @@ public class ServerToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(server);
 
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
-               ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16"))
-               .imageId("2").hardware(
-                        new HardwareBuilder().ids("1").name("256 MB Server").processors(
-                                 ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
-                                 ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
-                                          .bootDevice(true).build())).build()).operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
-                                 .is64Bit(true).build()).id("1234").providerId("1234").name("sample-server").location(
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .imageId("2")
+                  .hardware(
+                        new HardwareBuilder()
+                              .ids("1")
+                              .name("256 MB Server")
+                              .processors(ImmutableList.of(new Processor(1.0, 1.0)))
+                              .ram(256)
+                              .volumes(
+                                    ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f)
+                                          .durable(true).bootDevice(true).build())).build())
+                  .operatingSystem(
+                        new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                              .is64Bit(true).build())
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .hostname("sample-server")
+                  .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
-                                 .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
-               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                              .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 }

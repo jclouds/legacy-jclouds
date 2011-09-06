@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.compute;
 
@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -46,7 +47,7 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -68,7 +69,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Override
    protected Module getSshModule() {
-      return new JschSshClientModule();
+      return new SshjSshClientModule();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
@@ -159,12 +160,16 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String group = this.group + "e";
       int volumeSize = 8;
+      
+      final Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageDescriptionMatches(".*ebs.*").build();
 
       Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location arg0) {
-            return arg0.getScope() == LocationScope.ZONE;
+            return arg0.getScope() == LocationScope.ZONE
+                     && arg0.getParent().getId().equals(template.getLocation().getId());
          }
 
       });
@@ -173,9 +178,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       Volume volume = ebsClient.createVolumeInAvailabilityZone(zone.getId(), 4);
       Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
       ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
-
-      Template template = context.getComputeService().templateBuilder().locationId(volume.getRegion()).hardwareId(
-               InstanceType.M1_SMALL).imageDescriptionMatches(".*ebs.*").build();
 
       template.getOptions().as(EC2TemplateOptions.class)//
                // .unmapDeviceNamed("/dev/foo)
@@ -223,8 +225,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String group)
-            throws InterruptedException {
+   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient,
+            String group) throws InterruptedException {
       try {
          for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
             if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {

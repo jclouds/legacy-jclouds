@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
+    Licensed to jclouds, Inc. (jclouds) under one or more
+    contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  jclouds licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+      http://www.apache.org/licenses/LICENSE-2.0
 
-    ====================================================================
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-    ====================================================================
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -39,10 +38,6 @@
         <module>azureblob</module>
         <module>aws-s3</module>
         <module>aws-ec2</module>
-        <module>googlestorage</module>
-        <module>scaleup-storage</module>
-        <module>tiscali-storage</module>
-        <module>hosteurope-storage</module>
         <module>synaptic-storage</module>
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
@@ -52,15 +47,20 @@
         <module>cloudservers-uk</module>
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
-        <module>bluelock-vcdirector</module>
+        <module>cloudloadbalancers-us</module>
+        <module>bluelock-vcloud-vcenterprise</module>
+        <module>bluelock-vcloud-zone01</module>
+        <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
         <module>trmk-vcloudexpress</module>
         <module>elastichosts-lon-p</module>
         <module>elastichosts-sat-p</module>
         <module>elastichosts-lon-b</module>
+        <module>rimuhosting</module>
         <module>openhosting-east1</module>
         <module>serverlove-z1-man</module>
         <module>skalicloud-sdg-my</module>
         <module>savvis-symphonyvpdc</module>
+        <module>greenhousedata-element-vcloud</module>
     </modules>
 </project>

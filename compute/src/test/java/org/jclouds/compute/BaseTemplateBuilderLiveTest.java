@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute;
 
@@ -33,6 +33,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -75,6 +76,35 @@ public abstract class BaseTemplateBuilderLiveTest {
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
+   }
+
+   public void testCompareSizes() throws Exception {
+      Hardware defaultSize = context.getComputeService().templateBuilder().build().getHardware();
+
+      Hardware smallest = context.getComputeService().templateBuilder().smallest().build().getHardware();
+      Hardware fastest = context.getComputeService().templateBuilder().fastest().build().getHardware();
+      Hardware biggest = context.getComputeService().templateBuilder().biggest().build().getHardware();
+
+      System.out.printf("smallest %s%n", smallest);
+      System.out.printf("fastest %s%n", fastest);
+      System.out.printf("biggest %s%n", biggest);
+
+      assertEquals(defaultSize, smallest);
+
+      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
+
+      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
+
+      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
+   }
+
+   public void testFromTemplate() {
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(context.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
+               defaultTemplate.toString());
    }
 
    protected Properties setupProperties() {
@@ -167,14 +197,15 @@ public abstract class BaseTemplateBuilderLiveTest {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
 
       Template template = context.getComputeService().templateBuilder().imageId(defaultTemplate.getImage().getId())
-               .build();
+               .locationId(defaultTemplate.getLocation().getId()).build();
       assertEquals(template.getImage(), defaultTemplate.getImage());
    }
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assert defaultTemplate.getImage().getOperatingSystem().getVersion().matches("1[10].[10][04]") : defaultTemplate
+               .getImage().getOperatingSystem().getVersion();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

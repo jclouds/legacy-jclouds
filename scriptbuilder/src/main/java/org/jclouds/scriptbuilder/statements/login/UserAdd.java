@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.scriptbuilder.statements.login;
 
@@ -23,21 +23,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import javax.annotation.Nullable;
+import javax.inject.Named;
 
-import org.jclouds.encryption.internal.JCECrypto;
+import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
 import org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey;
-import org.jclouds.scriptbuilder.util.Sha512Crypt;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -108,13 +111,13 @@ public class UserAdd implements Statement {
    }
 
    public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
-            List<String> authorizeRSAPublicKeys, String defaultHome, String shell) {
+         List<String> authorizeRSAPublicKeys, String defaultHome, String shell) {
       this.login = checkNotNull(login, "login");
       this.password = password;
       this.groups = ImmutableList.copyOf(checkNotNull(groups, "groups"));
       this.installRSAPrivateKey = installRSAPrivateKey;
       this.authorizeRSAPublicKeys = ImmutableList
-               .copyOf(checkNotNull(authorizeRSAPublicKeys, "authorizeRSAPublicKeys"));
+            .copyOf(checkNotNull(authorizeRSAPublicKeys, "authorizeRSAPublicKeys"));
       this.defaultHome = checkNotNull(defaultHome, "defaultHome");
       this.shell = checkNotNull(shell, "shell");
    }
@@ -126,6 +129,16 @@ public class UserAdd implements Statement {
    private final String installRSAPrivateKey;
    private final List<String> authorizeRSAPublicKeys;
    private final String shell;
+
+   private Function<String, String> cryptFunction = Sha512Crypt.function();
+
+   @Inject(optional = true)
+   @Named("CRYPT")
+   @VisibleForTesting
+   UserAdd cryptFunction(Function<String, String> cryptFunction) {
+      this.cryptFunction = cryptFunction;
+      return this;
+   }
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
@@ -157,7 +170,7 @@ public class UserAdd implements Statement {
       userAddOptions.put("-d", homeDir);
       if (password != null) {
          try {
-            userAddOptions.put("-p", "'" + Sha512Crypt.makeShadowLine(password, null, new JCECrypto()) + "'");
+            userAddOptions.put("-p", "'" + cryptFunction.apply(password) + "'");
          } catch (Exception e) {
             Throwables.propagate(e);
          }

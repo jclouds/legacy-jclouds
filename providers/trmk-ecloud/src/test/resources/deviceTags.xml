@@ -1,0 +1,27 @@
+<Tags xmlns="urn:tmrk:eCloudExtensions-2.8" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+
+  <Tag>
+
+    <Name>Tag1</Name>
+
+    <UsageCount>1</UsageCount>
+
+  </Tag>
+
+  <Tag>
+
+    <Name>Tag2</Name>
+
+    <UsageCount>5</UsageCount>
+
+  </Tag>
+
+  <Tag>
+
+    <Name>Tag3</Name>
+
+    <UsageCount>12</UsageCount>
+
+  </Tag>
+
+</Tags>

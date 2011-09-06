@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-   Copyright (C) 2010 Cloud Conscious, LLC <info@cloudconscious.com>
+    Licensed to jclouds, Inc. (jclouds) under one or more
+    contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  jclouds licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-   ====================================================================
-   Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
 
-     http://www.apache.org/licenses/LICENSE-2.0.html 
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
-   ====================================================================
- -->
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
     <artifactId>savvis-symphonyvpdc</artifactId>
     <name>jclouds savvis-vpdc vpdc</name>
     <description>jclouds components to access Savvis Symphony VPDC</description>
+    <packaging>bundle</packaging>
     
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -52,11 +50,11 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>node-924</jclouds.compute.blacklist-nodes>
-        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/rest/api</test.savvis-symphonyvpdc.endpoint>
-        <test.savvis-symphonyvpdc.apiversion>0.8</test.savvis-symphonyvpdc.apiversion>
+        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
+        <test.savvis-symphonyvpdc.apiversion>1.0</test.savvis-symphonyvpdc.apiversion>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
-        <test.savvis-symphonyvpdc.vpdc-email>FIXME</test.savvis-symphonyvpdc.vpdc-email>
+        <test.savvis-symphonyvpdc.vdc-email>FIXME</test.savvis-symphonyvpdc.vdc-email>
         <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
         <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>
     </properties>
@@ -82,19 +80,8 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-jsch</artifactId>
+            <artifactId>jclouds-sshj</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -125,6 +112,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                	<threadCount>1</threadCount>
                                     <systemProperties>
                                         <property>
                                             <name>test.savvis-symphonyvpdc.endpoint</name>
@@ -143,7 +131,7 @@
                                             <value>${test.savvis-symphonyvpdc.credential}</value>
                                         </property>
                                         <property>
-                                            <name>savvis-symphonyvpdc.vpdc-email</name>
+                                            <name>test.savvis-symphonyvpdc.vdc-email</name>
                                             <value>${test.savvis-symphonyvpdc.vdc-email}</value>
                                         </property>
                                         <property>
@@ -167,4 +155,20 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.savvis.vpdc.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

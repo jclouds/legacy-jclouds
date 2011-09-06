@@ -1,25 +1,26 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.encryption.internal;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
@@ -41,6 +42,7 @@ import org.jclouds.crypto.Crypto;
 @Singleton
 public class JCECrypto implements Crypto {
 
+   private final KeyPairGenerator rsaKeyPairGenerator;
    private final KeyFactory rsaKeyFactory;
    private final CertificateFactory certFactory;
    private final Provider provider;
@@ -51,9 +53,11 @@ public class JCECrypto implements Crypto {
    }
 
    public JCECrypto(@Nullable Provider provider) throws NoSuchAlgorithmException, CertificateException {
+      this.rsaKeyPairGenerator = provider == null ? KeyPairGenerator.getInstance("RSA") : KeyPairGenerator.getInstance(
+            "RSA", provider);
       this.rsaKeyFactory = provider == null ? KeyFactory.getInstance("RSA") : KeyFactory.getInstance("RSA", provider);
       this.certFactory = provider == null ? CertificateFactory.getInstance("X.509") : CertificateFactory.getInstance(
-               "X.509", provider);
+            "X.509", provider);
       this.provider = provider;
    }
 
@@ -141,5 +145,10 @@ public class JCECrypto implements Crypto {
    @Override
    public KeyFactory rsaKeyFactory() {
       return rsaKeyFactory;
+   }
+
+   @Override
+   public KeyPairGenerator rsaKeyPairGenerator() {
+      return rsaKeyPairGenerator;
    }
 }

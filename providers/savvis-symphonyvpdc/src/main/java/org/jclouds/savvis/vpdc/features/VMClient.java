@@ -1,24 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -42,14 +43,12 @@ public interface VMClient {
     *           billing site Id, or null for default
     * @param vpdcId
     *           vpdc Id
-    * @param networkTierName
-    *           network tier name
     * @param spec
     *           how to
     * 
     * @return VM in progress
     */
-   Task addVMIntoVDC(String billingSiteId, String vpdcId, String networkTierName, String name, VMSpec spec);
+   Task addVMIntoVDC(String billingSiteId, String vpdcId, VMSpec spec);
 
    /**
     * 
@@ -57,7 +56,55 @@ public interface VMClient {
     *           href of the vpdc
     * @see #addVMIntoVDC
     */
-   Task addVMIntoVDC(URI vpdc, String networkTierName, String name, VMSpec spec);
+   Task addVMIntoVDC(URI vpdc, VMSpec spec);
+
+   /**
+    * Add/Deploy new VMs into VDC
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * @param vmSpecs
+    *           vm configurations
+    * @return VM's in progress
+    */
+   Set<Task> addMultipleVMsIntoVDC(String billingSiteId, String vpdcId, Iterable<VMSpec> vmSpecs);
+
+   /**
+    * Add/Deploy new VMs into VDC
+    * 
+    * @param vpdc
+    *           href of the vpdc
+    * @param vmSpecs
+    *           vm configurations
+    * @return VM's in progress
+    */
+   Set<Task> addMultipleVMsIntoVDC(URI vpdc, Iterable<VMSpec> vmSpecs);
+
+   /**
+    * 
+    * @param billingSiteId
+    *           billing site Id, or null for default
+    * @param vpdcId
+    *           vpdc Id
+    * @param vAppUri
+    *           href of the vApp
+    * @return Task with vAppTemplate href
+    */
+   Task captureVApp(String billingSiteId, String vpdcId, URI vAppUri);
+
+   /**
+    * 
+    * @param vAppUri
+    *           href of the vApp
+    * @param newVAppName
+    *           name for the new vApp
+    * @param networkTierName
+    *           network tier name for vApp
+    * @return
+    */
+   Task cloneVApp(URI vAppUri, String newVAppName, String networkTierName);
 
    /**
     * Remove a VM
@@ -89,21 +136,21 @@ public interface VMClient {
     * @see #removeVMFromVDC
     */
    Task removeVM(URI vm);
-   
+
    /**
     * Power off a VM
     * 
     * @param vm
-    * 			href of the vm
+    *           href of the vm
     * @return
     */
    Task powerOffVM(URI vm);
-   
+
    /**
     * Power on a VM
     * 
     * @param vm
-    * 			href of the vm
+    *           href of the vm
     * @return
     */
    Task powerOnVM(URI vm);
