@@ -18,8 +18,6 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.softlayer.domain.ProductItem;
-import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductPackage;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;

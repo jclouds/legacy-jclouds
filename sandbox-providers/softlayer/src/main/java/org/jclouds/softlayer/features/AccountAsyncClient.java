@@ -21,7 +21,6 @@ package org.jclouds.softlayer.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.softlayer.domain.ProductPackage;
@@ -29,7 +28,6 @@ import org.jclouds.softlayer.domain.ProductPackage;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
