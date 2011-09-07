@@ -34,6 +34,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
@@ -44,6 +45,7 @@ import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.encryption.internal.Base64;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -76,15 +78,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // create mocks
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
-               CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class, new Method[] {
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getOptionsProvider"),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
-                                 "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
-                                 TemplateOptions.class),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getSecurityGroupsForTagAndOptions", String.class, String.class,
-                                          TemplateOptions.class) });
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class,
+            new Method[] {
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
+                        .getDeclaredMethod("getOptionsProvider"),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
+                        TemplateOptions.class),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "getSecurityGroupsForTagAndOptions", String.class, String.class, TemplateOptions.class) });
 
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       Template template = createMock(Template.class);
@@ -95,7 +97,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, tag, options)).andReturn(generatedGroups);
       expect(options.getUserData()).andReturn(null);
 
@@ -107,9 +109,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // run
       RunInstancesOptions customize = strategy.execute(region, tag, template);
       assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(customize.buildFormParameters().entries(), ImmutableMultimap.<String, String> of("InstanceType",
-               size.getProviderId(), "SecurityGroup.1", generatedGroup, "KeyName", systemGeneratedKeyPairName)
-               .entries());
+      assertEquals(
+            customize.buildFormParameters().entries(),
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
+                  generatedGroup, "KeyName", systemGeneratedKeyPairName).entries());
       assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildStringPayload(), null);
@@ -131,15 +134,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // create mocks
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
-               CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class, new Method[] {
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getOptionsProvider"),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
-                                 "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
-                                 TemplateOptions.class),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getSecurityGroupsForTagAndOptions", String.class, String.class,
-                                          TemplateOptions.class) });
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class,
+            new Method[] {
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
+                        .getDeclaredMethod("getOptionsProvider"),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
+                        TemplateOptions.class),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "getSecurityGroupsForTagAndOptions", String.class, String.class, TemplateOptions.class) });
 
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       Template template = createMock(Template.class);
@@ -150,7 +153,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, tag, options)).andReturn(generatedGroups);
       expect(options.getUserData()).andReturn("hello".getBytes());
 
@@ -162,9 +165,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // run
       RunInstancesOptions customize = strategy.execute(region, tag, template);
       assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(customize.buildFormParameters().entries(), ImmutableMultimap.<String, String> of("InstanceType",
-               size.getProviderId(), "SecurityGroup.1", "group", "KeyName", systemGeneratedKeyPairName, "UserData",
-               Base64.encodeBytes("hello".getBytes())).entries());
+      assertEquals(
+            customize.buildFormParameters().entries(),
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1", "group",
+                  "KeyName", systemGeneratedKeyPairName, "UserData", Base64.encodeBytes("hello".getBytes())).entries());
       assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildStringPayload(), null);
@@ -188,6 +192,106 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(null);
+
+      // replay mocks
+      replay(options);
+      replay(keyPair);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
+
+      // verify mocks
+      verify(options);
+      verify(keyPair);
+      verifyStrategy(strategy);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptButNoCredentials() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String tag = "tag";
+      String userSuppliedKeyPair = "myKeyPair";
+
+      // create mocks
+      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      KeyPair keyPair = createMock(KeyPair.class);
+
+      // setup expectations
+      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(false);
+
+      // replay mocks
+      replay(options);
+      replay(keyPair);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
+
+      // verify mocks
+      verify(options);
+      verify(keyPair);
+      verifyStrategy(strategy);
+   }
+
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsAlreadyInMap() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String tag = "tag";
+      String userSuppliedKeyPair = "myKeyPair";
+
+      // create mocks
+      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      KeyPair keyPair = createMock(KeyPair.class);
+
+      // setup expectations
+      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
+
+      // replay mocks
+      replay(options);
+      replay(keyPair);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
+
+      // verify mocks
+      verify(options);
+      verify(keyPair);
+      verifyStrategy(strategy);
+   }
+
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsSpecified() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String tag = "tag";
+      String userSuppliedKeyPair = "myKeyPair";
+
+      // create mocks
+      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      KeyPair keyPair = createMock(KeyPair.class);
+
+      // setup expectations
+      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(new Credentials(null, "MyRsa")).atLeastOnce();
+      expect(
+            strategy.credentialsMap.put(new RegionAndName(region, userSuppliedKeyPair), KeyPair.builder()
+                  .region(region).keyName(userSuppliedKeyPair).keyFingerprint("//TODO").keyMaterial("MyRsa").build()))
+            .andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
 
       // replay mocks
       replay(options);
@@ -220,9 +324,11 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
       expect(strategy.createUniqueKeyPair.apply(new RegionAndName(region, tag))).andReturn(keyPair);
+      expect(keyPair.getRegion()).andReturn(region).atLeastOnce();
       expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
       expect(strategy.credentialsMap.put(new RegionAndName(region, systemGeneratedKeyPairName), keyPair)).andReturn(
-               null);
+            null);
+      expect(options.getRunScript()).andReturn(null);
 
       // replay mocks
       replay(options);
@@ -231,7 +337,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // run
       assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options),
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
 
       // verify mocks
       verify(options);
@@ -254,6 +360,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getRunScript()).andReturn(null);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
 
       // replay mocks
@@ -289,7 +396,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
       expect(strategy.createSecurityGroupIfNeeded.apply(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
       expect(strategy.securityGroupMap.put(regionNameAndIngressRules, generatedMarkerGroup)).andReturn(null);
@@ -325,7 +432,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
       expect(strategy.createSecurityGroupIfNeeded.apply(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
       expect(strategy.securityGroupMap.put(regionNameAndIngressRules, generatedMarkerGroup)).andReturn(null);
@@ -361,7 +468,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
 
       // replay mocks
@@ -394,7 +501,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup expectations
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf); // note
+            ports, shouldAuthorizeSelf); // note
       // this
       // works
       // since

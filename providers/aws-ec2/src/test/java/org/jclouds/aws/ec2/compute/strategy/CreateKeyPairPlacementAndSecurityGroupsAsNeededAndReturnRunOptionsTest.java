@@ -44,11 +44,13 @@ import org.jclouds.ec2.compute.EC2TemplateBuilderTest;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.encryption.internal.Base64;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -382,19 +384,24 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       verify(strategy);
    }
 
-   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldTo() {
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptButNoCredentials() {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
-      String group = "group";
+      String tag = "tag";
       String userSuppliedKeyPair = "myKeyPair";
 
       // create mocks
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
-      AWSEC2TemplateOptions options = createMock(AWSEC2TemplateOptions.class);
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(false);
 
       // replay mocks
       replay(options);
@@ -402,7 +409,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replayStrategy(strategy);
 
       // run
-      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options), userSuppliedKeyPair);
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
 
       // verify mocks
       verify(options);
@@ -410,6 +417,72 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       verifyStrategy(strategy);
    }
 
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsAlreadyInMap() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String tag = "tag";
+      String userSuppliedKeyPair = "myKeyPair";
+
+      // create mocks
+      CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      KeyPair keyPair = createMock(KeyPair.class);
+
+      // setup expectations
+      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
+
+      // replay mocks
+      replay(options);
+      replay(keyPair);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
+
+      // verify mocks
+      verify(options);
+      verify(keyPair);
+      verifyStrategy(strategy);
+   }
+
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsSpecified() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String tag = "tag";
+      String userSuppliedKeyPair = "myKeyPair";
+
+      // create mocks
+      CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      KeyPair keyPair = createMock(KeyPair.class);
+
+      // setup expectations
+      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getOverridingCredentials()).andReturn(new Credentials(null, "MyRsa")).atLeastOnce();
+      expect(
+            strategy.credentialsMap.put(new RegionAndName(region, userSuppliedKeyPair), KeyPair.builder()
+                  .region(region).keyName(userSuppliedKeyPair).keyFingerprint("//TODO").keyMaterial("MyRsa").build()))
+            .andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
+
+      // replay mocks
+      replay(options);
+      replay(keyPair);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options), userSuppliedKeyPair);
+
+      // verify mocks
+      verify(options);
+      verify(keyPair);
+      verifyStrategy(strategy);
+   }
+   
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySuppliedAndAddsCredentialToMapWhenOverridingCredsAreSet() {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
@@ -431,7 +504,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
             .andReturn(keyPair);
       expect(options.dontAuthorizePublicKey()).andReturn(options);
       expect(options.getOverridingCredentials()).andReturn(new Credentials("foo", "bar")).times(3);
-      expect(options.getRunScript()).andReturn(null);
+      expect(options.getRunScript()).andReturn(null).times(2);
       expect(options.getPrivateKey()).andReturn(null);
       expect(
             strategy.credentialsMap.put(new RegionAndName(region, "jclouds#" + group),
@@ -470,7 +543,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
             .andReturn(keyPair);
       expect(options.dontAuthorizePublicKey()).andReturn(options);
       expect(options.getOverridingCredentials()).andReturn(null);
-      expect(options.getRunScript()).andReturn(null);
+      expect(options.getRunScript()).andReturn(null).times(2);
       expect(options.getPrivateKey()).andReturn(null);
       expect(strategy.credentialsMap.put(new RegionAndName(region, "jclouds#" + group), keyPair)).andReturn(null);
 
@@ -505,7 +578,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       expect(strategy.credentialsMap.get(new RegionAndName(region, "jclouds#" + group))).andReturn(null);
       expect(options.getPublicKey()).andReturn(null).times(2);
       expect(strategy.createUniqueKeyPair.apply(new RegionAndName(region, group))).andReturn(keyPair);
+      expect(keyPair.getRegion()).andReturn(region).atLeastOnce();
       expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
+      expect(options.getRunScript()).andReturn(null);
       expect(strategy.credentialsMap.put(new RegionAndName(region, systemGeneratedKeyPairName), keyPair)).andReturn(
             null);
 
@@ -539,6 +614,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getRunScript()).andReturn(null);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
       expect(strategy.credentialsMap.get(new RegionAndName(region, "jclouds#" + group))).andReturn(keyPair);
       expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
@@ -572,6 +648,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
+      expect(options.getRunScript()).andReturn(null);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
 
       // replay mocks

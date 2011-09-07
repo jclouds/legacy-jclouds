@@ -109,15 +109,31 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       String keyPairName = null;
       boolean shouldAutomaticallyCreateKeyPair = true;
+      
       if (options instanceof EC2TemplateOptions) {
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
             shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
                   .shouldAutomaticallyCreateKeyPair();
       }
+      
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          keyPairName = createOrImportKeyPair(region, group, options);
+      } else if (keyPairName != null) {
+         if (options.getOverridingCredentials() != null && options.getOverridingCredentials().credential != null) {
+            KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).keyFingerprint("//TODO")
+                  .keyMaterial(options.getOverridingCredentials().credential).build();
+            putKeyPairIntoCredentialMap(keyPair);
+         }
       }
+      
+      if (options.getRunScript() != null) {
+         RegionAndName regionAndName = new RegionAndName(region, keyPairName);
+         checkState(credentialsMap.containsKey(regionAndName),
+               "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+               regionAndName);
+      }
+      
       return keyPairName;
    }
 
@@ -127,18 +143,20 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    }
 
    protected String createUniqueKeyPairAndPutIntoMap(String region, String group) {
-      String keyPairName;
       RegionAndName regionAndName = new RegionAndName(region, group);
       KeyPair keyPair = createUniqueKeyPair.apply(regionAndName);
-      keyPairName = keyPair.getKeyName();
+      putKeyPairIntoCredentialMap(keyPair);
+      return keyPair.getKeyName();
+   }
+
+   protected void putKeyPairIntoCredentialMap(KeyPair keyPair) {
       // get or create incidental resources
       // TODO race condition. we were using MapMaker, but it doesn't seem to
       // refresh properly
       // when
       // another thread
       // deletes a key
-      credentialsMap.put(new RegionAndName(regionAndName.getRegion(), keyPairName), keyPair);
-      return keyPairName;
+      credentialsMap.put(new RegionAndName(keyPair.getRegion(), keyPair.getKeyName()), keyPair);
    }
 
    @VisibleForTesting
