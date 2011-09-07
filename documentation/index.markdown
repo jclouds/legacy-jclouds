@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: JClouds Documentation
+title: jclouds Documentation
 ---
 
 # **jclouds** documentation
