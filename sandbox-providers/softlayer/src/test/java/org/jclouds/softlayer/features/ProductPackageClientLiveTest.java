@@ -43,17 +43,20 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    @Test
    public void testGetProductPackage() {
-      ProductPackage response = client.getProductPackage(46);
-      assert null != response;
-      assert response.getId() > 0 : response;
-      assert response.getName() != null : response;
-      assert response.getDescription() != null : response;
+      for (ProductPackage productPackage : context.getApi().getAccountClient().getActivePackages()) {
+         ProductPackage response = client.getProductPackage(productPackage.getId());
 
-      assertTrue(response.getItems().size() >= 0);
-      for (ProductItem item : response.getItems()) {
-         // ProductItem newDetails = client.getProductItem(item.getId());
-         // assertEquals(item.getId(), newDetails.getId());
-         checkProductItem(item);
+         assert null != response;
+         assert response.getId() > 0 : response;
+         assert response.getName() != null : response;
+         assert response.getDescription() != null : response;
+
+         assertTrue(response.getItems().size() >= 0);
+         for (ProductItem item : response.getItems()) {
+            // ProductItem newDetails = client.getProductItem(item.getId());
+            // assertEquals(item.getId(), newDetails.getId());
+            checkProductItem(item);
+         }
       }
    }
 
