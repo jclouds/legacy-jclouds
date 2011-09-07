@@ -47,6 +47,7 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -97,7 +98,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       TemplateOptions options = client.templateOptions();
 
       options.as(EC2TemplateOptions.class).securityGroups(group);
-      options.as(EC2TemplateOptions.class).keyPair(group);
 
       String startedId = null;
       try {
@@ -110,7 +110,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
-
+         options.as(EC2TemplateOptions.class).keyPair(result.getKeyName());
+         
+         // pass in the private key, so that we can run a script with it
+         assert result.getKeyMaterial() != null : result;
+         options.overrideLoginCredentialWith(result.getKeyMaterial());
+         
+         // an arbitrary command to run
+         options.runScript(Statements.exec("find /usr"));
+         
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
