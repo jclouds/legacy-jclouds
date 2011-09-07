@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.DatacenterClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.features.VirtualGuestClient;
@@ -55,4 +56,9 @@ public interface SoftLayerClient {
    @Delegate
    ProductPackageClient getProductPackageClient();
 
+   /**
+    * Provides synchronous access to Account features.
+    */
+   @Delegate
+   AccountClient getAccountClient();
 }
