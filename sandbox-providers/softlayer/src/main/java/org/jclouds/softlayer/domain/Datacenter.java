@@ -21,46 +21,10 @@ package org.jclouds.softlayer.domain;
 /**
  * 
  * @author Adrian Cole
- * @see <a href= "http://sldn.softlayer.com/reference/services/SoftLayer_Location_Datacenter"
+ * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Location_Datacenter"
  *      />
  */
-public class Datacenter implements Comparable<Datacenter> {
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-      private long id = -1;
-      private String name;
-      private String longName;
-
-      public Builder id(long id) {
-         this.id = id;
-         return this;
-      }
-
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      public Builder longName(String longName) {
-         this.longName = longName;
-         return this;
-      }
-
-      public Datacenter build() {
-         return new Datacenter(id, name, longName);
-      }
-
-      public static Builder fromDatacenter(Datacenter in) {
-         return Datacenter.builder().id(in.getId()).name(in.getName()).longName(in.getLongName());
-      }
-   }
-
-   private long id = -1;
-   private String name;
-   private String longName;
+public class Datacenter extends Location {
 
    // for deserializer
    Datacenter() {
@@ -68,38 +32,10 @@ public class Datacenter implements Comparable<Datacenter> {
    }
 
    public Datacenter(long id, String name, String longName) {
-      this.id = id;
-      this.name = name;
-      this.longName = longName;
+      super(id,name,longName);
    }
 
-   @Override
    public int compareTo(Datacenter arg0) {
-      return new Long(id).compareTo(arg0.getId());
-   }
-
-   /**
-    * @return The unique identifier of a specific location.
-    */
-   public long getId() {
-      return id;
-   }
-
-   /**
-    * @return A short location description.
-    */
-   public String getName() {
-      return name;
-   }
-
-   /**
-    * @return A longer location description.
-    */
-   public String getLongName() {
-      return longName;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromDatacenter(this);
+      return super.compareTo(arg0);
    }
 }
