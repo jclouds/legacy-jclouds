@@ -274,11 +274,11 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	 */
 	void startupVboxWebServer() {
 		logger().debug("disabling password access");
-		runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null");
+		runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false).wrapInInitScript(false));
 		logger().debug("starting vboxwebsrv");
 		String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
 		if (isOSX(hostId))
-			vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/&&"
+			vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && "
 					+ vboxwebsrv;
 		// allow jclouds to background the process, this is why we don't specify
 		// -b;
@@ -377,7 +377,6 @@ public class VirtualboxAdministrationKickstartLiveTest {
 			long size = 4L * 1024L * 1024L * 1024L - 4L;
 			IProgress progress = hd.createBaseStorage(new Long(size), new Long(
 					MediumVariant.STANDARD.ordinal()));
-			progress.wait();
 		}
 
 		ISession session = manager.getSessionObject();
