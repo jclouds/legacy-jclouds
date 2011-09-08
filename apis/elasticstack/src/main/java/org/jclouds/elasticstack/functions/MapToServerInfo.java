@@ -36,20 +36,22 @@ import org.jclouds.elasticstack.domain.VNC;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
+import org.jclouds.rest.annotations.ApiVersion;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
 public class MapToServerInfo implements Function<Map<String, String>, ServerInfo> {
+   private String apiVersion;
    private final Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices;
    private final Function<Map<String, String>, ServerMetrics> mapToMetrics;
    private final Function<Map<String, String>, List<NIC>> mapToNICs;
 
    @Inject
    public MapToServerInfo(Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices,
-         Function<Map<String, String>, ServerMetrics> mapToMetrics, Function<Map<String, String>, List<NIC>> mapToNICs) {
+                          Function<Map<String, String>, ServerMetrics> mapToMetrics, Function<Map<String, String>, List<NIC>> mapToNICs) {
+      this.apiVersion = apiVersion;
       this.mapToDevices = mapToDevices;
       this.mapToMetrics = mapToMetrics;
       this.mapToNICs = mapToNICs;
@@ -67,8 +69,12 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
       if (from.containsKey("status"))
          builder.status(ServerStatus.fromValue(from.get("status")));
 
-      if (from.containsKey("smp") && !"auto".equals(from.get("smp")))
-         builder.smp(new Integer(from.get("smp")));
+
+      if (from.containsKey("smp:cores")) {
+            builder.smp(new Integer(from.get("smp:cores")));
+      } else if (from.containsKey("smp") && !"auto".equals(from.get("smp"))) {
+            builder.smp(new Integer(from.get("smp")));
+      }
 
       builder.cpu(Integer.parseInt(from.get("cpu")));
       builder.mem(Integer.parseInt(from.get("mem")));
