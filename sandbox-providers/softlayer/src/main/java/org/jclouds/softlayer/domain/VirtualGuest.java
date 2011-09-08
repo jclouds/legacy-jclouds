@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  * @see <a href=
- *      "http://sldn.softlayer.com/wiki/index.php/SoftLayer_Virtual_Guest_%28type%29#Local_Properties"
+ *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest#Local_Properties"
  *      />
  */
 public class VirtualGuest implements Comparable<VirtualGuest> {

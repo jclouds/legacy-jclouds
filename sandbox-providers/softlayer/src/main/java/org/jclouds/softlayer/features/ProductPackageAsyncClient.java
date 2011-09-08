@@ -38,7 +38,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ProductPackageClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
