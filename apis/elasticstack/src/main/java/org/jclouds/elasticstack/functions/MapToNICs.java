@@ -23,29 +23,43 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import com.google.inject.Inject;
 import org.jclouds.elasticstack.domain.Model;
 import org.jclouds.elasticstack.domain.NIC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import org.jclouds.rest.annotations.ApiVersion;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
 public class MapToNICs implements Function<Map<String, String>, List<NIC>> {
 
+   private String apiVersion;
+
+   @Inject
+   public MapToNICs(@ApiVersion String apiVersion) {
+      this.apiVersion = apiVersion;
+   }
+
    @Override
    public List<NIC> apply(Map<String, String> from) {
       ImmutableList.Builder<NIC> nics = ImmutableList.builder();
-      NIC: for (int id : new int[] { 0, 1 }) {
+      NIC:
+      for (int id : new int[]{0, 1}) {
          String key = String.format("nic:%d", id);
          if (!from.containsKey(key + ":model"))
             break NIC;
          NIC.Builder nicBuilder = new NIC.Builder();
-         nicBuilder.dhcp(from.get(key + ":dhcp"));
+         
+         if (apiVersion.equals("2.0")) {
+            nicBuilder.dhcp(from.get(key + ":dhcp:ip"));
+         } else {
+            nicBuilder.dhcp(from.get(key + ":dhcp"));
+         }
          nicBuilder.model(Model.fromValue(from.get(key + ":model")));
          nicBuilder.vlan(from.get(key + ":vlan"));
          nicBuilder.mac(from.get(key + ":mac"));
