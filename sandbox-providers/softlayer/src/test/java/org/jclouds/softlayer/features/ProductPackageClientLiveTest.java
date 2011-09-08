@@ -20,6 +20,7 @@ package org.jclouds.softlayer.features;
 
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.softlayer.domain.Location;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductPackage;
@@ -57,6 +58,9 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
             // assertEquals(item.getId(), newDetails.getId());
             checkProductItem(item);
          }
+         for (Location location : response.getLocations()) {
+            checkLocation(location);
+         }
       }
    }
 
@@ -80,5 +84,11 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert price.getItemId() > 0 : price;
       assert price.getRecurringFee() != null || price.getHourlyRecurringFee() != null : price;
    }
+
+    private void checkLocation(Location location) {
+        assert location.getId() > 0 : location;
+        assert location.getName() != null : location;
+        assert location.getLongName() != null : location;
+    }
 
 }
