@@ -46,6 +46,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.experiment.settings.KeyboardScancodes;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -433,6 +434,17 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		}
 
 		sendKeyboardSequence(keyboardSequence);
+		
+		 // test if the sshd on the guest is ready
+        boolean sshDeamonIsRunning = false;
+        while(!sshDeamonIsRunning) {
+                try {
+                        if(runScriptOnNode(guestId, "echo ciao").getExitCode() == 0)
+                                sshDeamonIsRunning = true;
+                } catch(SshException e) {
+                        System.err.println("connection reset");
+                }
+        }
 	}
 
 	@Test(dependsOnMethods = "testStartVirtualMachine")
