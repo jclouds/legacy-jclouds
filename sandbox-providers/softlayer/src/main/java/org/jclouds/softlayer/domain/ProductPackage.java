@@ -65,11 +65,6 @@ public class ProductPackage implements Comparable<ProductPackage> {
          return this;
       }
 
-      public Builder productItem(ProductItem items) {
-         this.items.add(checkNotNull(items, "items"));
-         return this;
-      }
-
       public Builder items(Iterable<ProductItem> items) {
          this.items = ImmutableSet.<ProductItem> copyOf(checkNotNull(items, "items"));
          return this;
