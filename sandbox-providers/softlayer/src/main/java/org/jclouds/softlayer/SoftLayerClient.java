@@ -32,7 +32,7 @@ import org.jclouds.softlayer.features.VirtualGuestClient;
  * <p/>
  * 
  * @see SoftLayerAsyncClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)

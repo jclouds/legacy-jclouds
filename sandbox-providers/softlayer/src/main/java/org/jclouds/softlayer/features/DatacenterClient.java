@@ -29,7 +29,7 @@ import org.jclouds.softlayer.domain.Datacenter;
  * <p/>
  * 
  * @see DatacenterAsyncClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)

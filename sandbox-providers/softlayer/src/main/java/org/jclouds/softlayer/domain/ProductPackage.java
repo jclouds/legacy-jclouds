@@ -18,19 +18,19 @@
  */
 package org.jclouds.softlayer.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The SoftLayer_Product_Package data type contains information about packages
  * from which orders can be generated. Packages contain general information
  * regarding what is in them, where they are currently sold, availability, and
  * pricing.
- * 
+ *
  * @author Adrian Cole
  * @see <a href=
  *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Package"
@@ -49,6 +49,7 @@ public class ProductPackage implements Comparable<ProductPackage> {
       private String name;
       private String description;
       private Set<ProductItem> items = Sets.newLinkedHashSet();
+      private Set<Datacenter> datacenters = Sets.newLinkedHashSet();
 
       public Builder id(long id) {
          this.id = id;
@@ -65,23 +66,26 @@ public class ProductPackage implements Comparable<ProductPackage> {
          return this;
       }
 
-      public Builder productItem(ProductItem items) {
-         this.items.add(checkNotNull(items, "items"));
-         return this;
-      }
-
       public Builder items(Iterable<ProductItem> items) {
          this.items = ImmutableSet.<ProductItem> copyOf(checkNotNull(items, "items"));
          return this;
       }
 
+      public Builder datacenters(Iterable<Datacenter> datacenters) {
+         this.datacenters = ImmutableSet.<Datacenter> copyOf(checkNotNull(datacenters, "datacenters"));
+         return this;
+      }
+
       public ProductPackage build() {
-         return new ProductPackage(id, name, description, items);
+         return new ProductPackage(id, name, description, items, datacenters);
       }
 
       public static Builder fromProductPackage(ProductPackage in) {
-         return ProductPackage.builder().id(in.getId()).name(in.getName()).description(in.getDescription())
-               .items(in.getItems());
+         return ProductPackage.builder().id(in.getId())
+                                        .name(in.getName())
+                                        .description(in.getDescription())
+                                        .items(in.getItems())
+                                        .datacenters(in.getDatacenters());
       }
    }
 
@@ -89,17 +93,19 @@ public class ProductPackage implements Comparable<ProductPackage> {
    private String name;
    private String description;
    private Set<ProductItem> items = Sets.newLinkedHashSet();
+   private Set<Datacenter> locations = Sets.newLinkedHashSet();
 
    // for deserializer
    ProductPackage() {
 
    }
 
-   public ProductPackage(long id, String name, String description, Iterable<ProductItem> items) {
+   public ProductPackage(long id, String name, String description, Iterable<ProductItem> items, Iterable<Datacenter> datacenters) {
       this.id = id;
       this.name = name;
       this.description = description;
       this.items = ImmutableSet.<ProductItem> copyOf(checkNotNull(items, "items"));
+      this.locations = ImmutableSet.<Datacenter> copyOf(checkNotNull(datacenters, "datacenters"));
    }
 
    @Override
@@ -133,12 +139,20 @@ public class ProductPackage implements Comparable<ProductPackage> {
    }
 
    /**
-    * 
+    *
     * @return A collection of valid items available for purchase in this
     *         package.
     */
    public Set<ProductItem> getItems() {
       return items;
+   }
+
+   /**
+    *
+    * @return A collection of valid locations for this package.
+    */
+   public Set<Datacenter> getDatacenters() {
+      return locations;
    }
 
    public Builder toBuilder() {
@@ -169,6 +183,6 @@ public class ProductPackage implements Comparable<ProductPackage> {
 
    @Override
    public String toString() {
-      return "ProductPackage [id=" + id + ", name=" + name + ", description=" + description + ", items=" + items + "]";
+      return "ProductPackage [id=" + id + ", name=" + name + ", description=" + description + ", items=" + items + ", datacenters=" + locations + "]";
    }
 }

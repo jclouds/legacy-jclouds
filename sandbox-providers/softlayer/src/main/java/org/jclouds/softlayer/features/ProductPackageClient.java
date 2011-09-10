@@ -28,7 +28,7 @@ import org.jclouds.softlayer.domain.ProductPackage;
  * <p/>
  * 
  * @see ProductPackageAsyncClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
