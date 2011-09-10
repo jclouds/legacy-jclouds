@@ -32,7 +32,7 @@ import org.jclouds.softlayer.domain.VirtualGuest;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface VirtualGuestClient {
 
    /**
