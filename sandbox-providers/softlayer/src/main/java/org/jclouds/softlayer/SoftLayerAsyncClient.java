@@ -29,7 +29,7 @@ import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
  * <p/>
  * 
  * @see SoftLayerClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 public interface SoftLayerAsyncClient {

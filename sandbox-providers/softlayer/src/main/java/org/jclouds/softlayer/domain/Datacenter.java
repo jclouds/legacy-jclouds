@@ -21,7 +21,7 @@ package org.jclouds.softlayer.domain;
 /**
  * 
  * @author Adrian Cole
- * @see <a href= "http://sldn.softlayer.com/wiki/index.php/SoftLayer_Location_Datacenter_%28type%29"
+ * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Location_Datacenter"
  *      />
  */
 public class Datacenter implements Comparable<Datacenter> {
