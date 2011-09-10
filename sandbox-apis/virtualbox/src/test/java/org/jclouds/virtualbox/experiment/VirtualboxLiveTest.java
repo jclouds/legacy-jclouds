@@ -19,6 +19,8 @@
 package org.jclouds.virtualbox.experiment;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -26,12 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -40,6 +46,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.AccessMode;
@@ -51,12 +58,17 @@ import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.MediumType;
+import org.virtualbox_4_1.NetworkAdapterType;
+import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
 import org.virtualbox_4_1.jaxws.MediumState;
+import org.virtualbox_4_1.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -66,11 +78,11 @@ public class VirtualboxLiveTest {
    protected String provider = "virtualbox";
    protected String identity;
    protected String credential;
-   protected String endpoint;
+   protected URI endpoint;
    protected String apiversion;
    protected String vmName;
 
-   VirtualBoxManager manager = VirtualBoxManager.createInstance(null);
+   VirtualBoxManager manager = VirtualBoxManager.createInstance("");
 
    protected Injector injector;
    protected Predicate<IPSocket> socketTester;
@@ -92,7 +104,6 @@ public class VirtualboxLiveTest {
                                      // file will be overwritten.
 
    protected String workingDir;
-   protected String originalDiskPath;
    protected String clonedDiskPath;
 
    // Create disk If the @a format attribute is empty or null then the default
@@ -100,8 +111,35 @@ public class VirtualboxLiveTest {
    String format = "vdi";
 
    protected int numberOfVirtualMachine;
+   protected String originalDisk;
+private String originalDiskPath;
+private String clonedDisk;
+private IMedium clonedHd;
+private ComputeServiceContext context; 
 
-   @BeforeClass
+private String hostId = "host";
+private String guestId = "guest";
+private String majorVersion;
+private String minorVersion;
+private String apiVersion;
+
+protected Logger logger() {
+	return context.utils().loggerFactory().getLogger("jclouds.compute");
+}
+
+protected void setupCredentials() {
+	identity = System.getProperty("test." + provider + ".identity",
+			"administrator");
+	credential = System.getProperty("test." + provider + ".credential",
+			"12345");
+	endpoint = URI.create(System.getProperty("test." + provider
+			+ ".endpoint", "http://localhost:18083/"));
+	apiVersion = System.getProperty("test." + provider + ".apiversion",
+			"4.1.2r73507");
+	majorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 0);
+	minorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 1);
+}
+
    protected void setupConfigurationProperties() {
       // VBOX
       settingsFile = null; // Fully qualified path where the settings file
@@ -119,38 +157,44 @@ public class VirtualboxLiveTest {
                              // be overwritten.
 
       // OS specific information
-      vmName = checkNotNull(System.getProperty("test." + provider + ".vmname"));
-      osUsername = System.getProperty("test." + provider + ".osusername", "root");
-      osPassword = System.getProperty("test." + provider + ".ospassword", "toortoor");
+      vmName = checkNotNull(System.getProperty("test." + provider + ".vmname", "jclouds-virtualbox-node"));
+      osUsername = System.getProperty("test." + provider + ".osusername", "toor");
+      osPassword = System.getProperty("test." + provider + ".ospassword", "password");
       controller = System.getProperty("test." + provider + ".controller", "IDE Controller");
       diskFormat = System.getProperty("test." + provider + ".diskformat", "");
 
-      workingDir = checkNotNull(System.getProperty("test." + provider + ".workingDir"));
-
-      originalDiskPath = workingDir + File.separator
-            + checkNotNull(System.getProperty("test." + provider + ".originalDisk"));
-
+      workingDir = System.getProperty("user.home")
+				+ File.separator
+				+ System.getProperty("test." + provider + ".workingDir",
+						"jclouds-virtualbox-test");
+      
+	originalDisk = System.getProperty("test." + provider + ".originalDisk", "admin.vdi");
+		originalDiskPath = workingDir
+				+ File.separator + originalDisk;
+		
+	  clonedDisk = System.getProperty("test." + provider + ".clonedDisk", "clone.vdi");
+	  clonedDiskPath = workingDir + File.separator + clonedDisk;
+	  
       numberOfVirtualMachine = Integer.parseInt(checkNotNull(System.getProperty("test." + provider
-            + ".numberOfVirtualMachine")));
+            + ".numberOfVirtualMachine", "2")));
    }
 
-   @BeforeClass
-   protected void setupCredentials() throws RemoteException, MalformedURLException {
-      identity = System.getProperty("test." + provider + ".identity", "administrator");
-      credential = System.getProperty("test." + provider + ".credential", "12345");
-      endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
 
-      injector = Guice.createInjector(new SshjSshClientModule(), new SLF4JLoggingModule(),
-            new BouncyCastleCryptoModule());
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketTester);
+   @BeforeGroups(groups = "live")
+   protected void setupClient() throws Exception {
+   	context = TestUtils.computeServiceForLocalhost();
+   	socketTester = new RetryablePredicate<IPSocket>(
+   			new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);
+	setupCredentials();
+	setupConfigurationProperties();
+   	if (!new InetSocketAddressConnect().apply(new IPSocket(endpoint.getHost(), endpoint.getPort())))
+   		startupVboxWebServer();
    }
 
+   
    @BeforeMethod
    protected void setupManager() throws RemoteException, MalformedURLException {
-      manager.connect(endpoint, identity, credential);
+      manager.connect(endpoint.toASCIIString(), identity, credential);
    }
 
    @AfterMethod
@@ -160,14 +204,28 @@ public class VirtualboxLiveTest {
    }
 
    @Test
+   public void testCloneHardDisk() {
+	      IMedium hd = manager.getVBox().openMedium(originalDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, forceOverwrite);
+	      if (!new File(clonedDiskPath).exists()) {
+	    	  clonedHd = manager.getVBox().createHardDisk(diskFormat, clonedDiskPath);
+	         IProgress cloning = hd.cloneTo(clonedHd, new Long(
+						MediumVariant.STANDARD.ordinal()), null);
+	         cloning.waitForCompletion(-1);
+	      } else
+	         clonedHd = manager.getVBox().openMedium(clonedDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, forceOverwrite);
+
+	      assertEquals(clonedHd.getId().equals(""), false);
+	   }
+   
+	@Test(dependsOnMethods = "testCloneHardDisk")
    public void testStartVirtualMachines() {
-      IMedium clonedHd = cloneDisk(MediumType.MultiAttach);
+      //IMedium clonedHd = cloneDisk(MediumType.MultiAttach);
       for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-         createVirtualMachine(i, clonedHd);
+         createVirtualMachine(i);
       }
    }
-
-   private void createVirtualMachine(int i, IMedium clonedHd) {
+   
+   private void createVirtualMachine(int i) {
 
       String instanceName = vmName + "_" + i;
 
@@ -178,11 +236,6 @@ public class VirtualboxLiveTest {
       IMachine machine = manager.getVBox().findMachine(instanceName);
       machine.lockMachine(session, LockType.Write);
       IMachine mutable = session.getMachine();
-
-      // disk
-      mutable.addStorageController(controller, StorageBus.IDE);
-      mutable.attachDevice(controller, 0, 0, DeviceType.HardDisk, clonedHd);
-
       // network
       String hostInterface = null;
       String command = "vboxmanage list bridgedifs";
@@ -211,47 +264,25 @@ public class VirtualboxLiveTest {
       // mutable.getNetworkAdapter(new Long(0)).attachToBridgedInterface();
       // mutable.getNetworkAdapter(new
       // Long(0)).setHostInterface(hostInterface.trim());
+		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(
+				NetworkAttachmentType.Bridged);
+		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
       mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
+		mutable.saveSettings();      
 
-      mutable.saveSettings();
+// disk
+		mutable.addStorageController(controller, StorageBus.IDE);
+		mutable.saveSettings();      
+		IMedium distroMedium = manager.getVBox().openMedium(
+				clonedDiskPath, DeviceType.HardDisk,
+				AccessMode.ReadWrite, forceOverwrite);
+		mutable.attachDevice(controller, 0, 0, DeviceType.HardDisk, distroMedium);
+		mutable.saveSettings();
       session.unlockMachine();
    }
 
-   /**
-    * @param instanceName
-    * @return
-    */
-   private IMedium cloneDisk(MediumType mediumType) {
 
-      String clonedDisk = System.getProperty("test." + provider + ".clonedDisk");
-      String instanceClonedDisk = clonedDisk.split("\\.")[0] + "." + clonedDisk.split("\\.")[1];
-      clonedDiskPath = workingDir + File.separator + instanceClonedDisk;
 
-      // use template disk in multiattach mode
-      IMedium clonedHd = manager.getVBox().openMedium(originalDiskPath, DeviceType.HardDisk, AccessMode.ReadOnly,
-            forceOverwrite);
-
-      System.out.println("cloned HD state: " + clonedHd.getState());
-      /*
-       * An image in multiattach mode can be attached to more than one virtual
-       * machine at the same time, even if these machines are running
-       * simultaneously. For each virtual machine to which such an image is
-       * attached, a differencing image is created. As a result, data that is
-       * written to such a virtual disk by one machine is not seen by the other
-       * machines to which the image is attached; each machine creates its own
-       * write history of the multiattach image.
-       */
-      while (clonedHd.getState().equals(MediumState.NOT_CREATED)) {
-         try {
-            Thread.sleep(1500);
-         } catch (InterruptedException e) {
-            e.printStackTrace();
-         }
-      }
-
-      clonedHd.setType(mediumType);
-      return clonedHd;
-   }
 
    private void launchVMProcess(IMachine machine, ISession session) {
       IProgress prog = machine.launchVMProcess(session, "gui", "");
@@ -281,7 +312,7 @@ public class VirtualboxLiveTest {
          String instanceName = vmName + "_" + i;
          IMachine machine = manager.getVBox().findMachine(instanceName);
 
-         System.out.println("\nLaunch VM named " + machine.getName() + " ...");
+         System.out.println("\nLaunching VM named " + machine.getName() + " ...");
          launchVMProcess(machine, manager.getSessionObject());
 
          while (ipAddress == null || ipAddress.equals("")) {
@@ -326,4 +357,40 @@ public class VirtualboxLiveTest {
          }
       }
    }
+   
+   
+	protected ExecResponse runScriptOnNode(String nodeId, String command,
+			RunScriptOptions options) {
+		ExecResponse toReturn = context.getComputeService().runScriptOnNode(
+				nodeId, command, options);
+		assert toReturn.getExitCode() == 0 : toReturn;
+		return toReturn;
+	}
+
+	protected ExecResponse runScriptOnNode(String nodeId, String command) {
+		return runScriptOnNode(nodeId, command, wrapInInitScript(false));
+	}
+	
+	protected boolean isOSX(String id) {
+		return context.getComputeService().getNodeMetadata(hostId)
+				.getOperatingSystem().getDescription().equals("Mac OS X");
+	}
+	
+	void startupVboxWebServer() {
+		logger().debug("disabling password access");
+		runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false).wrapInInitScript(false));
+		logger().debug("starting vboxwebsrv");
+		String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
+		if (isOSX(hostId))
+			vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && "
+					+ vboxwebsrv;
+
+		runScriptOnNode(
+				hostId,
+				vboxwebsrv,
+				runAsRoot(false).wrapInInitScript(false)
+						.blockOnPort(endpoint.getPort(), 10)
+						.blockOnComplete(false)
+						.nameTask("vboxwebsrv"));
+	}
 }

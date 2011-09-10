@@ -99,8 +99,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	protected String diskFormat;
 
 	protected String workingDir;
-	protected String originalDisk;
-	protected String clonedDisk;
+	protected String adminDisk;
 
 	protected String guestAdditionsDvd;
 	private URI gaIsoUrl;
@@ -158,11 +157,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 				+ File.separator
 				+ System.getProperty("test." + provider + ".workingDir",
 						"jclouds-virtualbox-test");
-		if (new File(workingDir).mkdir())
-			;
-		// gaIsoName = System.getProperty("test." + provider + ".gaIsoName",
-		// "VBoxGuestAdditions_" + majorVersion + "-update-" + minorVersion +
-		// ".iso");
+		if (new File(workingDir).mkdir());
 		gaIsoName = System.getProperty("test." + provider + ".gaIsoName",
 				"VBoxGuestAdditions_" + majorVersion + ".iso");
 		gaIsoUrl = URI.create(System.getProperty("test." + provider
@@ -177,13 +172,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 								"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso"));
 		vboxDmg = URI.create(System.getProperty("test." + provider + ".vboxDmg","http://download.virtualbox.org/virtualbox/4.1.2/VirtualBox-4.1.2-73507-OSX.dmg"));
 		vboxVersionName = System.getProperty("test" + provider + ".vboxVersionName", "VirtualBox-4.1.2-73507-OSX.dmg");
-		originalDisk = workingDir
-				+ File.separator
-				+ "VDI"
-				+ File.separator
-				+ System.getProperty("test." + provider + ".originalDisk",
-						"centos-5.2-x86.vdi");
-		clonedDisk = workingDir
+
+		adminDisk = workingDir
 				+ File.separator
 				+ System.getProperty("test." + provider + ".clonedDisk",
 						"disk.vdi");
@@ -372,8 +362,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	@Test(dependsOnMethods = "testAttachIsoDvd")
 	public void testCreateAndAttachHardDisk() throws InterruptedException {
 		IMedium hd = null;
-		if (!new File(clonedDisk).exists()) {
-			hd = manager.getVBox().createHardDisk(diskFormat, clonedDisk);
+		if (!new File(adminDisk).exists()) {
+			hd = manager.getVBox().createHardDisk(diskFormat, adminDisk);
 			long size = 4L * 1024L * 1024L * 1024L - 4L;
 			IProgress progress = hd.createBaseStorage(new Long(size), new Long(
 					MediumVariant.STANDARD.ordinal()));
