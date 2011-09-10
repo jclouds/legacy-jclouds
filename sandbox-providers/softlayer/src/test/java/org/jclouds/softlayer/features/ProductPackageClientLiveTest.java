@@ -20,6 +20,7 @@ package org.jclouds.softlayer.features;
 
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductPackage;
@@ -57,6 +58,11 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
             // assertEquals(item.getId(), newDetails.getId());
             checkProductItem(item);
          }
+
+         assertTrue(response.getDatacenters().size() > 0);
+         for (Datacenter datacenter : response.getDatacenters()) {
+            checkDatacenter(datacenter);
+         }
       }
    }
 
@@ -80,5 +86,11 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert price.getItemId() > 0 : price;
       assert price.getRecurringFee() != null || price.getHourlyRecurringFee() != null : price;
    }
+
+    private void checkDatacenter(Datacenter datacenter) {
+        assert datacenter.getId() > 0 : datacenter;
+        assert datacenter.getName() != null : datacenter;
+        assert datacenter.getLongName() != null : datacenter;
+    }
 
 }

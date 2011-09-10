@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = { "unit" })
@@ -102,7 +102,7 @@ public class MapToServerInfoTest {
                      .build()).build();
 
    private static final MapToServerInfo MAP_TO_DRIVE = new MapToServerInfo(new MapToDevices(new DeviceToId()),
-         new MapToServerMetrics(new MapToDriveMetrics()), new MapToNICs());
+         new MapToServerMetrics(new MapToDriveMetrics()), new MapToNICs("1.0"));
 
    public void testEmptyMapReturnsNull() {
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.<String, String> of()), null);
@@ -154,6 +154,16 @@ public class MapToServerInfoTest {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
             Strings2.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server.txt"))).get(0);
+
+      assertEquals(MAP_TO_DRIVE.apply(input), NEW);
+
+   }
+
+
+   public void testNew2() throws IOException {
+
+      Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
+              Strings2.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server2.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), NEW);
 
