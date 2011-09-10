@@ -58,6 +58,7 @@ public class TestUtils {
       nodes.append("      os_version: 11.04").append("\n");
       nodes.append("      group: guest").append("\n");
       nodes.append("      username: toor").append("\n");
+      nodes.append("      sudo_password: password").append("\n");
       nodes.append("      credential: password").append("\n");
 
       contextProperties.setProperty("byon.nodes", nodes.toString());
