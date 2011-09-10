@@ -41,11 +41,15 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.experiment.settings.KeyboardScancodes;
 import org.testng.annotations.AfterClass;
@@ -115,6 +119,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	private String guestId = "guest";
 	private String majorVersion;
 	private String minorVersion;
+	private URI vboxDmg;
+	private String vboxVersionName;
 
 	protected void setupCredentials() {
 		identity = System.getProperty("test." + provider + ".identity",
@@ -170,7 +176,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 				.create(System
 						.getProperty("test." + provider + ".distroIsoUrl",
 								"http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso"));
-
+		vboxDmg = URI.create(System.getProperty("test." + provider + ".vboxDmg","http://download.virtualbox.org/virtualbox/4.1.2/VirtualBox-4.1.2-73507-OSX.dmg"));
+		vboxVersionName = System.getProperty("test" + provider + ".vboxVersionName", "VirtualBox-4.1.2-73507-OSX.dmg");
 		originalDisk = workingDir
 				+ File.separator
 				+ "VDI"
@@ -241,12 +248,14 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		server.start();
 	}
 
-	void installVbox() {
-		if (runScriptOnNode(hostId, "VBoxManage --version").getExitCode() != 0) {
+	void installVbox() throws Exception {
+		if (runScriptOnNode(hostId, "VBoxManage --version", runAsRoot(false).wrapInInitScript(false)).getExitCode() != 0) {
 			logger().debug("installing virtualbox");
-			if (isOSX(hostId))
-				;// TODO
-			else {
+			if (isOSX(hostId)) {
+				downloadFileUnlessPresent(vboxDmg, workingDir, vboxVersionName);
+				runScriptOnNode(hostId, "hdiutil attach " + workingDir + "/" + vboxVersionName);
+				runScriptOnNode(hostId, "installer -pkg /Volumes/VirtualBox/VirtualBox.mpkg -target /Volumes/Macintosh\\ HD");
+			} else {
 				// TODO other platforms
 				runScriptOnNode(hostId, "cat > /etc/apt/sources.list.d/TODO");
 				runScriptOnNode(
@@ -255,7 +264,6 @@ public class VirtualboxAdministrationKickstartLiveTest {
 				runScriptOnNode(hostId, "apt-get update");
 				runScriptOnNode(hostId, "apt-get --yes install virtualbox-4.1");
 			}
-
 		}
 	}
 
@@ -281,10 +289,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		if (isOSX(hostId))
 			vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && "
 					+ vboxwebsrv;
-		// allow jclouds to background the process, this is why we don't specify
-		// -b;
-		// logs will go corresponding to task name in this case under
-		// /tmp/vboxwebsrv
+
 		runScriptOnNode(
 				hostId,
 				vboxwebsrv,
@@ -311,16 +316,6 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	}
 
 	public void testCreateVirtualMachine() {
-		/*
-		 * IMachine machine = manager.getVBox().findMachine(vmName); if(machine
-		 * != null) { ISession session = manager.getSessionObject();
-		 * machine.lockMachine(session, LockType.Write); IMachine mutable =
-		 * session.getMachine(); List<IMedium> media =
-		 * machine.unregister(CleanupMode.Full); machine.delete(media);
-		 * mutable.saveSettings(); session.unlockMachine();
-		 * 
-		 * }
-		 */
 		IMachine newVM = manager.getVBox().createMachine(settingsFile, vmName,
 				osTypeId, vmId, forceOverwrite);
 		manager.getVBox().registerMachine(newVM);
@@ -439,7 +434,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
         boolean sshDeamonIsRunning = false;
         while(!sshDeamonIsRunning) {
                 try {
-                        if(runScriptOnNode(guestId, "echo ciao").getExitCode() == 0)
+                        if(runScriptOnNode(guestId, "echo ciao", runAsRoot(false).wrapInInitScript(false)).getExitCode() == 0)
                                 sshDeamonIsRunning = true;
                 } catch(SshException e) {
                         System.err.println("connection reset");
@@ -564,7 +559,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 								.get("<Return>"))) {
 					runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
 							.wrapInInitScript(false));
-					sb = new StringBuilder();
+					sb.delete(0, sb.length()-1);
 				}
 			}
 		}
