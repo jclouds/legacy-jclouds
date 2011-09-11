@@ -48,7 +48,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
