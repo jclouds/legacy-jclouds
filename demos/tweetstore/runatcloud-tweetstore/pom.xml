@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<!--
+<!--
 
+    Licensed to jclouds, Inc. (jclouds) under one or more
+    contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  jclouds licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-		Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+      http://www.apache.org/licenses/LICENSE-2.0
 
-		====================================================================
-		Licensed under the Apache License, Version 2.0 (the "License"); you
-		may not use this file except in compliance with the License. You may
-		obtain a copy of the License at
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 
-		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-		applicable law or agreed to in writing, software distributed under the
-		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-		CONDITIONS OF ANY KIND, either express or implied. See the License for
-		the specific language governing permissions and limitations under the
-		License.
-		====================================================================
-	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-demos-tweetstore-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>jclouds-demo-runatcloud-tweetstore</artifactId>
     <packaging>war</packaging>
@@ -32,9 +33,10 @@
 
     <properties>
         <bees.appid>jclouds/tweetstore</bees.appid>
-        <bees.environment>run</bees.environment>
-        <bees.address>localhost</bees.address>
-        <bees.port>8088</bees.port>
+        <!-- first part of the live URL, used in cloudbees-web.xml -->
+        <bees.apptitle>tweetstore</bees.apptitle>
+        <test.bees.address>localhost</test.bees.address>
+        <test.bees.port>8088</test.bees.port>
         <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
     </properties>
 
@@ -53,47 +55,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>integration</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>bees.address</name>
-                                    <value>${bees.address}</value>
-                                </property>
-                                <property>
-                                    <name>bees.port</name>
-                                    <value>${bees.port}</value>
-                                </property>
-                                <property>
-                                    <name>bees.environment</name>
-                                    <value>${bees.environment}</value>
-                                </property>
-                                <property>
-                                    <name>bees.basedir</name>
-                                    <value>${project.build.directory}/bees</value>
-                                </property>
-                                <property>
-                                    <name>warfile</name>
-                                    <value>${project.build.directory}/${project.artifactId}</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
+    <repositories>
+        <!-- net.stax:stax-appserver is not in central -->
+        <repository>
+            <id>bees-snapshots</id>
+            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases> 
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>
@@ -152,16 +127,28 @@
                                             <value>${test.aws-s3.credential}</value>
                                         </property>
                                         <property>
+                                            <name>test.cloudonestorage.identity</name>
+                                            <value>${test.cloudonestorage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.credential</name>
+                                            <value>${test.cloudonestorage.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.identity</name>
+                                            <value>${test.ninefold-storage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ninefold-storage.credential</name>
+                                            <value>${test.ninefold-storage.credential}</value>
+                                        </property>
+                                        <property>
                                             <name>bees.address</name>
-                                            <value>${bees.address}</value>
+                                            <value>${test.bees.address}</value>
                                         </property>
                                         <property>
                                             <name>bees.port</name>
-                                            <value>${bees.port}</value>
-                                        </property>
-                                        <property>
-                                            <name>bees.environment</name>
-                                            <value>${bees.environment}</value>
+                                            <value>${test.bees.port}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.tweetstore.blobstores</name>
@@ -190,9 +177,13 @@
         
         <profile>
             <id>deploy</id>
+            <properties>
+                <!-- classifier to choose the correct jclouds.properties file -->
+                <tweetstore.instance>runatcloud-tweetstore</tweetstore.instance>
+            </properties>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>bees-plugins-snapshots</id>
+                    <id>bees-snapshots</id>
                     <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
                     <releases>
                         <enabled>false</enabled>
@@ -209,7 +200,7 @@
                         <artifactId>bees-maven-plugin</artifactId>
                         <version>1.0-SNAPSHOT</version>
                         <configuration>
-                            <environment>${bees.environment}</environment>
+                            <environment>run</environment>
                             <apikey>${bees.apikey}</apikey>
                             <secret>${bees.secret}</secret>
                         </configuration>

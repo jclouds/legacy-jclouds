@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
@@ -164,10 +164,21 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       }
 
    };
-
+   
+   @Override
+   protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
+      return options instanceof AWSEC2TemplateOptions
+            && AWSEC2TemplateOptions.class.cast(options).getGroupIds().size() > 0
+            || super.userSpecifiedTheirOwnGroups(options);
+   }
+   
    @Override
    protected void addSecurityGroups(String region, String group, Template template, RunInstancesOptions instanceOptions) {
-      String subnetId = AWSEC2TemplateOptions.class.cast(template.getOptions()).getSubnetId();
+      AWSEC2TemplateOptions awsTemplateOptions = AWSEC2TemplateOptions.class.cast(template.getOptions());
+      AWSRunInstancesOptions awsInstanceOptions = AWSRunInstancesOptions.class.cast(instanceOptions);
+      if (awsTemplateOptions.getGroupIds().size() > 0)
+         awsInstanceOptions.withSecurityGroupIds(awsTemplateOptions.getGroupIds());
+      String subnetId = awsTemplateOptions.getSubnetId();
       if (subnetId != null) {
          AWSRunInstancesOptions.class.cast(instanceOptions).withSubnetId(subnetId);
       } else {

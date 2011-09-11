@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.services;
 
@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
@@ -44,9 +42,12 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -54,10 +55,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class SecurityGroupClientLiveTest {
 
-   private SecurityGroupClient client;
+   protected SecurityGroupClient client;
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    protected String provider = "ec2";
@@ -69,10 +70,9 @@ public class SecurityGroupClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -81,8 +81,10 @@ public class SecurityGroupClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -91,20 +93,21 @@ public class SecurityGroupClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getSecurityGroupServices();
    }
 
    @Test
    void testDescribe() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
-         SortedSet<SecurityGroup> allResults = Sets.newTreeSet(client.describeSecurityGroupsInRegion(region));
+            Region.AP_SOUTHEAST_1, Region.AP_NORTHEAST_1)) {
+         SortedSet<SecurityGroup> allResults = ImmutableSortedSet.<SecurityGroup> copyOf(client
+               .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             SecurityGroup group = allResults.last();
-            SortedSet<SecurityGroup> result = Sets.newTreeSet(client.describeSecurityGroupsInRegion(region, group
-                     .getName()));
+            SortedSet<SecurityGroup> result = ImmutableSortedSet.<SecurityGroup> copyOf(client
+                  .describeSecurityGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             SecurityGroup compare = result.last();
             assertEquals(compare, group);
@@ -115,29 +118,56 @@ public class SecurityGroupClientLiveTest {
    @Test
    void testCreateSecurityGroup() {
       String groupName = PREFIX + "1";
-      String groupDescription = PREFIX + "1 description";
-      client.deleteSecurityGroupInRegion(null, groupName);
-      client.deleteSecurityGroupInRegion(null, groupName);
+      cleanupAndSleep(groupName);
+      try {
+         String groupDescription = PREFIX + "1 description";
+         client.deleteSecurityGroupInRegion(null, groupName);
+         client.createSecurityGroupInRegion(null, groupName, groupDescription);
+         verifySecurityGroup(groupName, groupDescription);
+      } finally {
+         client.deleteSecurityGroupInRegion(null, groupName);
+      }
+   }
 
-      client.createSecurityGroupInRegion(null, groupName, groupDescription);
+   protected void cleanupAndSleep(String groupName) {
+      try {
+         client.deleteSecurityGroupInRegion(null, groupName);
+         Thread.sleep(2000);
+      } catch (Exception e) {
 
-      verifySecurityGroup(groupName, groupDescription);
+      }
    }
 
    @Test
-   void testAuthorizeSecurityGroupIngressCidr() throws InterruptedException, ExecutionException, TimeoutException {
+   void testAuthorizeSecurityGroupIngressCidr() {
       String groupName = PREFIX + "ingress";
+      cleanupAndSleep(groupName);
+      try {
+         client.createSecurityGroupInRegion(null, groupName, groupName);
+         client.authorizeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasPermission(client, groupName, new TCPPort80AllIPs()));
 
-      client.deleteSecurityGroupInRegion(null, groupName);
+         client.revokeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasNoPermissions(client, groupName));
+      } finally {
+         client.deleteSecurityGroupInRegion(null, groupName);
+      }
+   }
 
-      client.createSecurityGroupInRegion(null, groupName, groupName);
-      client.authorizeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      assertEventually(new GroupHasPermission(client, groupName, new IpPermission(80, 80, Sets
-               .<UserIdGroupPair> newLinkedHashSet(), IpProtocol.TCP, ImmutableSet.of("0.0.0.0/0"))));
+   @Test
+   void testAuthorizeSecurityGroupIngressSourcePort() {
+      String groupName = PREFIX + "ingress";
+      cleanupAndSleep(groupName);
+      try {
+         client.createSecurityGroupInRegion(null, groupName, groupName);
+         client.authorizeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasPermission(client, groupName, new TCPPort80AllIPs()));
 
-      client.revokeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      assertEventually(new GroupHasNoPermissions(client, groupName));
-
+         client.revokeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasNoPermissions(client, groupName));
+      } finally {
+         client.deleteSecurityGroupInRegion(null, groupName);
+      }
    }
 
    private void verifySecurityGroup(String groupName, String description) {
@@ -149,51 +179,55 @@ public class SecurityGroupClientLiveTest {
       assertEquals(listPair.getDescription(), description);
    }
 
-   @Test(enabled = false)
-   // TODO
-   void testAuthorizeSecurityGroupIngressSourceGroup() throws InterruptedException {
-      String group1Name = PREFIX + "ingress1";
+   @Test
+   void testAuthorizeSecurityGroupIngressSourceGroup() {
+      final String group1Name = PREFIX + "ingress1";
       String group2Name = PREFIX + "ingress2";
-
+      cleanupAndSleep(group2Name);
+      cleanupAndSleep(group1Name);
       try {
-         client.deleteSecurityGroupInRegion(null, group1Name);
-      } catch (Exception e) {
+         client.createSecurityGroupInRegion(null, group1Name, group1Name);
+         client.createSecurityGroupInRegion(null, group2Name, group2Name);
+         ensureGroupsExist(group1Name, group2Name);
+         client.authorizeSecurityGroupIngressInRegion(null, group1Name, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasPermission(client, group1Name, new TCPPort80AllIPs()));
+         Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
+         assertNotNull(oneResult);
+         assertEquals(oneResult.size(), 1);
+         final SecurityGroup group = oneResult.iterator().next();
+         assertEquals(group.getName(), group1Name);
+         final UserIdGroupPair to = new UserIdGroupPair(group.getOwnerId(), group1Name);
+         client.authorizeSecurityGroupIngressInRegion(null, group2Name, to);
+         assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
+            @Override
+            public boolean apply(IpPermission arg0) {
+               return arg0.getUserIdGroupPairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name));
+            }
+         }));
 
-      }
-      try {
-         client.deleteSecurityGroupInRegion(null, group2Name);
-      } catch (Exception e) {
-
-      }
-
-      client.createSecurityGroupInRegion(null, group1Name, group1Name);
-      client.createSecurityGroupInRegion(null, group2Name, group2Name);
-      ensureGroupsExist(group1Name, group2Name);
-      client.authorizeSecurityGroupIngressInRegion(null, group1Name, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
-               .<UserIdGroupPair> newLinkedHashSet(), IpProtocol.TCP, ImmutableSet.of("0.0.0.0/0"))));
-
-      Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
-      assertNotNull(oneResult);
-      assertEquals(oneResult.size(), 1);
-      SecurityGroup group = oneResult.iterator().next();
-      assertEquals(group.getName(), group1Name);
-
-      client.authorizeSecurityGroupIngressInRegion(null, group2Name,
+         client.revokeSecurityGroupIngressInRegion(null, group2Name,
                new UserIdGroupPair(group.getOwnerId(), group1Name));
-      assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
-               .<UserIdGroupPair> newLinkedHashSet(), IpProtocol.TCP, ImmutableSet.of("0.0.0.0/0"))));
-
-      client.revokeSecurityGroupIngressInRegion(null, group2Name, new UserIdGroupPair(group.getOwnerId(), group1Name));
-      assertEventually(new GroupHasNoPermissions(client, group2Name));
+         assertEventually(new GroupHasNoPermissions(client, group2Name));
+      } finally {
+         client.deleteSecurityGroupInRegion(null, group2Name);
+         client.deleteSecurityGroupInRegion(null, group1Name);
+      }
    }
 
-   private static final class GroupHasPermission implements Runnable {
+   public final class TCPPort80AllIPs implements Predicate<IpPermission> {
+      @Override
+      public boolean apply(IpPermission arg0) {
+         return arg0.getIpProtocol() == IpProtocol.TCP && arg0.getFromPort() == 80 && arg0.getToPort() == 80
+               && arg0.getIpRanges().equals(ImmutableSet.of("0.0.0.0/0"));
+      }
+   }
+
+   public static final class GroupHasPermission implements Runnable {
       private final SecurityGroupClient client;
       private final String group;
-      private final IpPermission permission;
+      private final Predicate<IpPermission> permission;
 
-      private GroupHasPermission(SecurityGroupClient client, String group, IpPermission permission) {
+      public GroupHasPermission(SecurityGroupClient client, String group, Predicate<IpPermission> permission) {
          this.client = client;
          this.group = group;
          this.permission = permission;
@@ -202,21 +236,19 @@ public class SecurityGroupClientLiveTest {
       public void run() {
          try {
             Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group);
-            assertNotNull(oneResult);
-            assertEquals(oneResult.size(), 1);
-            SecurityGroup listPair = oneResult.iterator().next();
-            assert listPair.getIpPermissions().contains(permission);
+            assert Iterables.all(Iterables.getOnlyElement(oneResult).getIpPermissions(), permission) : permission
+                  + ": " + oneResult;
          } catch (Exception e) {
             throw new AssertionError(e);
          }
       }
    }
 
-   private static final class GroupHasNoPermissions implements Runnable {
+   public static final class GroupHasNoPermissions implements Runnable {
       private final SecurityGroupClient client;
       private final String group;
 
-      private GroupHasNoPermissions(SecurityGroupClient client, String group) {
+      public GroupHasNoPermissions(SecurityGroupClient client, String group) {
          this.client = client;
          this.group = group;
       }
@@ -234,8 +266,9 @@ public class SecurityGroupClientLiveTest {
       }
    }
 
-   private void ensureGroupsExist(String group1Name, String group2Name) {
-      Set<SecurityGroup> twoResults = client.describeSecurityGroupsInRegion(null, group1Name, group2Name);
+   protected void ensureGroupsExist(String group1Name, String group2Name) {
+      SortedSet<SecurityGroup> twoResults = ImmutableSortedSet.copyOf(client.describeSecurityGroupsInRegion(null,
+            group1Name, group2Name));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       Iterator<SecurityGroup> iterator = twoResults.iterator();
@@ -251,10 +284,11 @@ public class SecurityGroupClientLiveTest {
    private static final int INCONSISTENCY_WINDOW = 5000;
 
    /**
-    * Due to eventual consistency, container commands may not return correctly immediately. Hence,
-    * we will try up to the inconsistency window to see if the assertion completes.
+    * Due to eventual consistency, container commands may not return correctly
+    * immediately. Hence, we will try up to the inconsistency window to see if
+    * the assertion completes.
     */
-   protected static void assertEventually(Runnable assertion) throws InterruptedException {
+   protected static void assertEventually(Runnable assertion) {
       long start = System.currentTimeMillis();
       AssertionError error = null;
       for (int i = 0; i < 30; i++) {
@@ -262,12 +296,15 @@ public class SecurityGroupClientLiveTest {
             assertion.run();
             if (i > 0)
                System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                        assertion.getClass().getSimpleName());
+                     assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;
          }
-         Thread.sleep(INCONSISTENCY_WINDOW / 30);
+         try {
+            Thread.sleep(INCONSISTENCY_WINDOW / 30);
+         } catch (InterruptedException e) {
+         }
       }
       if (error != null)
          throw error;

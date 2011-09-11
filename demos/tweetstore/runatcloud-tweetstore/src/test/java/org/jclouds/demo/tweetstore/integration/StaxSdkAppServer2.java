@@ -1,29 +1,27 @@
-/*
- * @(#)StaxSdkAppServer2.java     25 May 2011
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright © 2010 Andrew Phillips.
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static java.util.Arrays.asList;
-import static org.jclouds.demo.tweetstore.config.utils.ObjectFields.set;
-import static org.jclouds.demo.tweetstore.config.utils.ObjectFields.valueOf;
+import static org.jclouds.demo.tweetstore.integration.util.ObjectFields.set;
+import static org.jclouds.demo.tweetstore.integration.util.ObjectFields.valueOf;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +105,13 @@ class StaxSdkAppServer2 {
         serverThread.interrupt();
         StaxReflect.getStaxAppQueryTimer(server).cancel();
         KillerCallback requestMonitorAssassin = new KillerCallback(StaxReflect.getRequestMonitorTimerCallback(server));
+        /*
+         * Hoping for the best here in terms of visibility - we're setting a variable in a
+         * different thread which isn't guaranteed to see the change. 
+         * But we can't set the callbackClient before serverThread starts (which would create
+         * a happens-before relationship) because the objects on which the callbackClient is 
+         * set have not been created yet at that point.
+         */
         set("callbackClient", StaxReflect.getRequestMonitorTimer(server), requestMonitorAssassin);
         requestMonitorAssassin.setToKill();
     }

@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.rest.internal;
 
@@ -46,9 +46,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nullable;
@@ -70,12 +70,15 @@ import javax.ws.rs.core.UriBuilderException;
 
 import org.jclouds.Constants;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.functions.OnlyElementOrNull;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
@@ -85,7 +88,6 @@ import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
@@ -96,6 +98,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.MultipartForm;
 import org.jclouds.io.payloads.Part;
 import org.jclouds.io.payloads.Part.PartOptions;
+import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
@@ -108,6 +111,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PartParam;
@@ -116,6 +120,7 @@ import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -129,18 +134,19 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -178,7 +184,7 @@ public class RestAnnotationProcessor<T> {
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
       return new MapMaker().makeComputingMap(new Function<Method, Map<Integer, Set<Annotation>>>() {
-         public Map<Integer, Set<Annotation>> apply(final Method method) {
+         public Map<Integer, Set<Annotation>> apply(Method method) {
             return new MapMaker().makeComputingMap(new GetAnnotationsForMethodParameterIndex(method, annotation));
          }
       });
@@ -218,7 +224,7 @@ public class RestAnnotationProcessor<T> {
 
    static final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
             .makeComputingMap(new Function<Method, Set<Integer>>() {
-               public Set<Integer> apply(final Method method) {
+               public Set<Integer> apply(Method method) {
                   Builder<Integer> toReturn = ImmutableSet.<Integer> builder();
                   for (int index = 0; index < method.getParameterTypes().length; index++) {
                      Class<?> type = method.getParameterTypes()[index];
@@ -252,10 +258,27 @@ public class RestAnnotationProcessor<T> {
       if (handler != null) {
          transformer = parserFactory.create(injector.getInstance(handler));
       } else {
-         transformer = injector.getInstance(getParserOrThrowException(method));
+         transformer = getTransformerForMethod(method, injector);
       }
       if (transformer instanceof InvocationContext<?>) {
          ((InvocationContext<?>) transformer).setContext(request);
+      }
+      return transformer;
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public static Function<HttpResponse, ?> getTransformerForMethod(Method method, Injector injector) {
+      Function<HttpResponse, ?> transformer;
+      if (method.isAnnotationPresent(SelectJson.class)) {
+         Type returnVal = getReturnTypeForMethod(method);
+         if (method.isAnnotationPresent(OnlyElement.class))
+            returnVal = Types.newParameterizedType(Set.class,returnVal);
+         transformer = new ParseFirstJsonValueNamed(injector.getInstance(GsonWrapper.class), TypeLiteral.get(returnVal),
+               method.getAnnotation(SelectJson.class).value());
+         if (method.isAnnotationPresent(OnlyElement.class))
+            transformer = Functions.compose(new OnlyElementOrNull(), transformer);
+      } else {
+         transformer = injector.getInstance(getParserOrThrowException(method));
       }
       return transformer;
    }
@@ -307,7 +330,7 @@ public class RestAnnotationProcessor<T> {
          int result = 1;
          result = prime * result + ((declaringPackage == null) ? 0 : declaringPackage.hashCode());
          result = prime * result + ((name == null) ? 0 : name.hashCode());
-         result = prime * result + parameterCount;
+         result = prime * result + parametersTypeHashCode;
          return result;
       }
 
@@ -330,19 +353,22 @@ public class RestAnnotationProcessor<T> {
                return false;
          } else if (!name.equals(other.name))
             return false;
-         if (parameterCount != other.parameterCount)
+         if (parametersTypeHashCode != other.parametersTypeHashCode)
             return false;
          return true;
       }
 
       private final String name;
-      private final int parameterCount;
+      private final int parametersTypeHashCode;
       private final Package declaringPackage;
 
       public MethodKey(Method method) {
          this.name = method.getName();
          this.declaringPackage = method.getDeclaringClass().getPackage();
-         this.parameterCount = method.getParameterTypes().length;
+         int parametersTypeHashCode = 0;
+         for (Class<?> param: method.getParameterTypes())
+            parametersTypeHashCode +=param.hashCode();
+         this.parametersTypeHashCode = parametersTypeHashCode;
       }
 
    }
@@ -690,7 +716,7 @@ public class RestAnnotationProcessor<T> {
                         method));
                return returnVal;
             } catch (NullPointerException e) {
-               throw new IllegalArgumentException(String.format("argument at indexes %s on method %s", map.keySet(),
+               throw new IllegalArgumentException(String.format("illegal argument in [%s] for method %s", argsToParse,
                         method), e);
             }
          }

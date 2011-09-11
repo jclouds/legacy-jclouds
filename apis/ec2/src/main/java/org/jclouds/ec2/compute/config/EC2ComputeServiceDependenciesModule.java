@@ -1,26 +1,24 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.compute.config;
 
-import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -56,7 +54,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
@@ -137,16 +134,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       // return new MapMaker().makeComputingMap(in);
       return newLinkedHashMap();
    }
-
-   @Provides
-   @Singleton
-   @Named(PROPERTY_EC2_AMI_OWNERS)
-   String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
-      if (amiOwners.trim().equals(""))
-         return new String[] {};
-      return toArray(Splitter.on(',').split(amiOwners), String.class);
-   }
-
+   
    @Provides
    @Singleton
    protected Map<RegionAndName, Image> provideImageMap(Function<RegionAndName, Image> regionAndIdToImage) {

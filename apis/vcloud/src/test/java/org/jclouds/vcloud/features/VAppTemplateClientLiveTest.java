@@ -1,34 +1,31 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud.features;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.vcloud.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -38,6 +35,7 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.jclouds.vcloud.options.CatalogItemOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.testng.annotations.Test;
@@ -61,10 +59,11 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  try {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref()));
-                  } catch (AuthorizationException e) {
-
+                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref());
+                  if (template != null){
+                     assertEquals(template.getName(),item.getEntity().getName());
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }
@@ -79,14 +78,10 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
          Catalog response = getVCloudApi().getCatalogClient().getCatalog(cat.getHref());
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               try {
-                  CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
-                  if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(
-                              item.getEntity().getHref()));
-                  }
-               } catch (AuthorizationException e) {
-
+               CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
+               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+                  getVCloudApi().getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(item.getEntity().getHref());
+                  // null can be no longer available or auth exception
                }
             }
          }
@@ -102,11 +97,12 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  try {
-                     assertNotNull(getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
-                              org.getName(), response.getName(), item.getEntity().getName()));
-                  } catch (AuthorizationException e) {
-
+                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
+                           org.getName(), response.getName(), item.getEntity().getName());
+                  if (template != null) {
+                     assertEquals(template.getName(), item.getEntity().getName());
+                  } else {
+                     // null can be no longer available or auth exception
                   }
                }
             }

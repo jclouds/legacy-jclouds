@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.gogrid.compute.functions;
 
@@ -35,8 +35,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.logging.Logger;
@@ -56,10 +56,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Resource
    protected Logger logger = Logger.NULL;
    private final Map<ServerState, NodeState> serverStateToNodeState;
-   private final GoGridClient client;
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwares;
    private final Supplier<Map<String, ? extends Location>> locations;
+   private final Map<String, Credentials> credentialStore;
 
    static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
@@ -92,11 +92,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
+   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState,  Map<String, Credentials> credentialStore,
             @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
             Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
-      this.client = checkNotNull(client, "client");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
       this.locations = checkNotNull(locations, "locations");
@@ -118,7 +118,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       builder.state(serverStateToNodeState.get(from.getState()));
       builder.publicAddresses(ImmutableSet.of(from.getIp().getIp()));
-      builder.credentials(client.getServerServices().getServerCredentialsList().get(from.getName()));
+      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

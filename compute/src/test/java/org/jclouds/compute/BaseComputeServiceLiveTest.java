@@ -1,27 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Throwables.getRootCause;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -29,10 +27,17 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
+import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
+import static org.jclouds.compute.RunScriptData.startJBoss;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
+import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.runAsRoot;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
@@ -49,11 +54,12 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -81,12 +87,15 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
@@ -101,7 +110,8 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected String group;
 
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected Predicate<IPSocket> socketTester;
+   protected Predicate<IPSocket> preciseSocketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
@@ -114,6 +124,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
@@ -173,6 +184,12 @@ public abstract class BaseComputeServiceLiveTest {
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      // wait a maximum of 60 seconds for port 8080 to open.
+      long maxWait = TimeUnit.SECONDS.toMillis(60);
+      long interval = 50;
+      // get more precise than default socket tester
+      preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
+               TimeUnit.MILLISECONDS);
    }
 
    abstract protected Module getSshModule();
@@ -199,10 +216,10 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testImagesCache() throws Exception {
       client.listImages();
-      long time = System.currentTimeMillis();
+      long time = currentTimeMillis();
       client.listImages();
-      long duration = System.currentTimeMillis() - time;
-      assert duration < 1000 : String.format("%dms to get images", duration);
+      long duration = currentTimeMillis() - time;
+      assert duration < 1000 : format("%dms to get images", duration);
    }
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
@@ -225,37 +242,55 @@ public abstract class BaseComputeServiceLiveTest {
       TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
       try {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
-         Credentials good = nodes.iterator().next().getCredentials();
+         NodeMetadata node = get(nodes, 0);
+         Credentials good = node.getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
 
-         OperatingSystem os = get(nodes, 0).getOperatingSystem();
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(group, os, new Credentials(
-                     good.identity, "romeo"));
-            assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (RunScriptOnNodesException e) {
-            assert getRootCause(e).getMessage().contains("Auth fail") : e;
-         }
-
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-                  runningInGroup(group), Statements.exec("echo hello"),
-                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
-            assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-                     + response.getValue();
-
+                  runningInGroup(group), Statements.exec("hostname"),
+                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()){
+            checkResponseEqualsHostname(response.getValue(), response.getKey());
+         }
+         
          // test single-node execution
-         ExecResponse response = client.runScriptOnNode(get(nodes, 0).getId(), "echo hello", wrapInInitScript(false)
+         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false)
                   .runAsRoot(false));
-         assert response.getOutput().trim().equals("hello") : get(nodes, 0).getId() + ": " + response;
+         checkResponseEqualsHostname(response, node);
+         OperatingSystem os = node.getOperatingSystem();
+         
+         // test bad password
+         try {
+            Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
+                     runningInGroup(group), "echo $USER", wrapInInitScript(false).runAsRoot(false)
+                              .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
+            assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+         } catch (AssertionError e) {
+            throw e;
+         } catch (RunScriptOnNodesException e) {
+            assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
+                     + " not authexception!";
+         }
 
          runScriptWithCreds(group, os, good);
 
          checkNodes(nodes, group);
 
+         // test adding AdminAccess later changes the default boot user, in this case to foo
+         response = client.runScriptOnNode(node.getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
+         
+         response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false)
+                  .runAsRoot(false));
+         
+         assert response.getOutput().trim().equals("foo") : node.getId() + ": " + response;
+         
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
+   }
+
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      assert execResponse.getOutput().trim().equals(node1.getHostname()) : node1 + ": " + execResponse;
    }
 
    @Test(enabled = true, dependsOnMethods = { "testImagesCache" })
@@ -298,14 +333,15 @@ public abstract class BaseComputeServiceLiveTest {
       checkOsMatchesTemplate(node2);
    }
 
-   private void refreshTemplate() {
-      template = buildTemplate(client.templateBuilder());
+   private Template refreshTemplate() {
+      return template = addRunScriptToTemplate(buildTemplate(client.templateBuilder()));
+   }
 
-      // template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-      // .runScript(buildScript(template.getImage().getOperatingSystem()));
+   protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
                Statements.newStatementList(AdminAccess.standard(),
                         buildScript(template.getImage().getOperatingSystem())));
+      return template;
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -331,14 +367,32 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
-      refreshTemplate();
-      TreeSet<NodeMetadata> nodes = newTreeSet(client.createNodesInGroup(group, 1, template));
-      checkNodes(nodes, group);
-      NodeMetadata node = nodes.first();
-      this.nodes.add(node);
+
+      Location existingLocation = Iterables.get(this.nodes, 0).getLocation();
+      boolean existingLocationIsAssignable = Iterables.any(client.listAssignableLocations(), Predicates
+               .equalTo(existingLocation));
+
+      if (existingLocationIsAssignable) {
+         getAnonymousLogger().info("creating another node based on existing nodes' location: " + existingLocation);
+         template = addRunScriptToTemplate(client.templateBuilder().fromTemplate(template).locationId(
+                  existingLocation.getId()).build());
+      } else {
+         refreshTemplate();
+         getAnonymousLogger().info(
+                  format("%s is not assignable; using template's location %s as  ", existingLocation, template
+                           .getLocation()));
+      }
+
+      Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
       assertEquals(nodes.size(), 1);
-      assertLocationSameOrChild(node.getLocation(), template.getLocation());
+      checkNodes(nodes, group);
+      NodeMetadata node = Iterables.getOnlyElement(nodes);
+      if (existingLocationIsAssignable)
+         assertEquals(node.getLocation(), existingLocation);
+      else
+         this.assertLocationSameOrChild(node.getLocation(), template.getLocation());
       checkOsMatchesTemplate(node);
+      this.nodes.add(node);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
@@ -350,12 +404,8 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
-      try {
-         return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-                  .nameTask("runScriptWithCreds"));
-      } catch (SshException e) {
-         throw e;
-      }
+      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
+            .nameTask("runScriptWithCreds"));
    }
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {
@@ -409,7 +459,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
-      assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
+      assert metadataSet.size() == 0 : format("nodes left in set: [%s] which didn't match set: [%s]",
                metadataSet, nodes);
    }
 
@@ -432,7 +482,8 @@ public abstract class BaseComputeServiceLiveTest {
          public boolean apply(NodeMetadata input) {
             boolean returnVal = input.getState() == NodeState.SUSPENDED;
             if (!returnVal)
-               System.err.printf("warning: node %s in state %s%n", input.getId(), input.getState());
+               getAnonymousLogger().warning(
+                        format("node %s in state %s%n", input.getId(), input.getState()));
             return returnVal;
          }
 
@@ -487,27 +538,117 @@ public abstract class BaseComputeServiceLiveTest {
       return filter(client.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED)));
    }
 
+   static class ServiceStats {
+      long backgroundProcessSeconds;
+      long socketOpenMilliseconds;
+      long reportedStartupTimeMilliseconds;
+
+      @Override
+      public String toString() {
+         return String.format(
+                  "[backgroundProcessSeconds=%s, socketOpenMilliseconds=%s, reportedStartupTimeMilliseconds=%s]",
+                  backgroundProcessSeconds, socketOpenMilliseconds, reportedStartupTimeMilliseconds);
+      }
+   }
+
+   protected ServiceStats trackAvailabilityOfProcessOnNode(Supplier<ExecResponse> bgProcess, String processName,
+            NodeMetadata node, Pattern parseReported) {
+      ServiceStats stats = new ServiceStats();
+      long startSeconds = currentTimeMillis();
+
+      ExecResponse exec = bgProcess.get();
+      stats.backgroundProcessSeconds = (currentTimeMillis() - startSeconds) / 1000;
+
+      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
+      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket, node);
+      stats.socketOpenMilliseconds = currentTimeMillis() - startSeconds;
+
+      exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
+               .wrapInInitScript(false));
+
+      Matcher matcher = parseReported.matcher(exec.getOutput());
+      if (matcher.find())
+         stats.reportedStartupTimeMilliseconds = new Long(matcher.group(1));
+
+      getAnonymousLogger().info(format("<< %s on node(%s) %s", bgProcess, node.getId(), stats));
+      return stats;
+   }
+
+   // started in 6462ms -
+   public static final Pattern JBOSS_PATTERN = Pattern.compile("started in ([0-9]+)ms -");
+
+   protected ServiceStats trackAvailabilityOfJBossProcessOnNode(Supplier<ExecResponse> startProcess, NodeMetadata node) {
+      return trackAvailabilityOfProcessOnNode(startProcess, "jboss", node, JBOSS_PATTERN);
+   }
+
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
       String group = this.group + "s";
+      final String configuration = Strings2.toStringAndClose(RunScriptData.class
+               .getResourceAsStream("/standalone-basic.xml"));
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
 
-      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
-               .build();
-
-      // note this is a dependency on the template resolution
-      template.getOptions().runScript(
-               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-                        .getOperatingSystem()));
       try {
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, template));
+         long startSeconds = currentTimeMillis();
+         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080).blockOnPort(22,
+                  300)));
+         final String nodeId = node.getId();
+         long createSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
-         checkHttpGet(node);
+         getAnonymousLogger().info(
+                  format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
+
+         startSeconds = currentTimeMillis();
+
+         // note this is a dependency on the template resolution so we have the right process per
+         // operating system.  moreover, we wish this to run as root, so that it can change ip
+         // tables rules and setup our admin user
+         client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
+                  nameTask("configure-jboss"));
+
+         long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
+
+         getAnonymousLogger().info(
+               format("<< configured node(%s) with %s in %ss", nodeId,
+                     client.runScriptOnNode(nodeId, "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
+                     configureSeconds));
+
+         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+
+            @Override
+            public ExecResponse get() {
+               return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
+                        .nameTask("jboss"));
+            }
+
+            @Override
+            public String toString() {
+               return "initial start of jboss";
+            }
+
+         }, node);
+
+         client.runScriptOnNode(nodeId, "./jboss stop", runAsRoot(false).wrapInInitScript(false));
+
+         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+
+            @Override
+            public ExecResponse get() {
+               return client.runScriptOnNode(nodeId, "./jboss start", runAsRoot(false).wrapInInitScript(false));
+            }
+
+            @Override
+            public String toString() {
+               return "warm start of jboss";
+            }
+
+         }, node);
+
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
@@ -532,7 +673,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
       for (Location location : client.listAssignableLocations()) {
-         System.err.printf("location %s%n", location);
+         getAnonymousLogger().warning("location " + location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
@@ -573,12 +714,12 @@ public abstract class BaseComputeServiceLiveTest {
       // no inbound ports
       TemplateOptions options = client.templateOptions().blockUntilRunning(false).inboundPorts();
       try {
-         long time = System.currentTimeMillis();
+         long time = currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
-         long duration = (System.currentTimeMillis() - time) / 1000;
-         assert duration < nonBlockDurationSeconds : String.format("duration(%d) longer than expected(%d) seconds! ",
+         long duration = (currentTimeMillis() - time) / 1000;
+         assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                   duration, nonBlockDurationSeconds);
       } finally {
          client.destroyNodesMatching(inGroup(group));
@@ -608,20 +749,20 @@ public abstract class BaseComputeServiceLiveTest {
       Hardware fastest = client.templateBuilder().fastest().build().getHardware();
       Hardware biggest = client.templateBuilder().biggest().build().getHardware();
 
-      System.out.printf("smallest %s%n", smallest);
-      System.out.printf("fastest %s%n", fastest);
-      System.out.printf("biggest %s%n", biggest);
+      getAnonymousLogger().info("smallest " + smallest);
+      getAnonymousLogger().info("fastest " + fastest);
+      getAnonymousLogger().info("biggest " + biggest);
 
       assertEquals(defaultSize, smallest);
 
-      assert getCores(smallest) <= getCores(fastest) : String.format("%s ! <= %s", smallest, fastest);
-      assert getCores(biggest) <= getCores(fastest) : String.format("%s ! <= %s", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : format("%s ! <= %s", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : format("%s ! <= %s", biggest, fastest);
 
-      assert biggest.getRam() >= fastest.getRam() : String.format("%s ! >= %s", biggest, fastest);
-      assert biggest.getRam() >= smallest.getRam() : String.format("%s ! >= %s", biggest, smallest);
+      assert biggest.getRam() >= fastest.getRam() : format("%s ! >= %s", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : format("%s ! >= %s", biggest, smallest);
 
-      assert getCores(fastest) >= getCores(biggest) : String.format("%s ! >= %s", fastest, biggest);
-      assert getCores(fastest) >= getCores(smallest) : String.format("%s ! >= %s", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : format("%s ! >= %s", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : format("%s ! >= %s", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {

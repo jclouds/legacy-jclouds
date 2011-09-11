@@ -1,30 +1,36 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
+import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.DEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORKCONNECTIONSECTION_XML;
+import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
+import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.UNDEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VM_XML;
 
 import java.io.InputStream;
@@ -64,13 +70,19 @@ import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayload;
 import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
+import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.features.CatalogAsyncClient;
 import org.jclouds.vcloud.features.NetworkAsyncClient;
@@ -82,15 +94,27 @@ import org.jclouds.vcloud.features.VAppTemplateClient;
 import org.jclouds.vcloud.features.VDCAsyncClient;
 import org.jclouds.vcloud.features.VmAsyncClient;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameToTasksListEndpoint;
+import org.jclouds.vcloud.functions.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.CatalogItemHandler;
+import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
+import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
+import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VAppTemplateHandler;
+import org.jclouds.vcloud.xml.VDCHandler;
 import org.jclouds.vcloud.xml.VmHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -104,8 +128,143 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
+public interface VCloudAsyncClient {
+   /**
+    * @see VCloudClient#getOrg
+    */
+   @GET
+   @XMLResponseParser(OrgHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(ORG_XML)
+   ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgId);
 
+   /**
+    * @see VCloudClient#getOrgNamed
+    */
+   @GET
+   @XMLResponseParser(OrgHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(ORG_XML)
+   ListenableFuture<? extends Org> findOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
+
+   /**
+    * @see VCloudClient#getCatalog
+    */
+   @GET
+   @XMLResponseParser(CatalogHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(CATALOG_XML)
+   ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);
+
+   /**
+    * @see VCloudClient#findCatalogInOrgNamed
+    */
+   @GET
+   @XMLResponseParser(CatalogHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(CATALOG_XML)
+   ListenableFuture<? extends Catalog> findCatalogInOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
+
+   /**
+    * @see VCloudClient#getCatalogItem
+    */
+   @GET
+   @Consumes(CATALOGITEM_XML)
+   @XMLResponseParser(CatalogItemHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
+
+   /**
+    * @see VCloudClient#getCatalogItemInOrg
+    */
+   @GET
+   @Consumes(CATALOGITEM_XML)
+   @XMLResponseParser(CatalogItemHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends CatalogItem> findCatalogItemInOrgCatalogNamed(
+            @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
+            @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
+
+   /**
+    * @see VCloudClient#findNetworkInOrgVDCNamed
+    */
+   @GET
+   @Consumes(NETWORK_XML)
+   @XMLResponseParser(OrgNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
+            @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
+            @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String networkName);
+
+   /**
+    * @see VCloudClient#getNetwork
+    */
+   @GET
+   @Consumes(NETWORK_XML)
+   @XMLResponseParser(OrgNetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);
+
+   /**
+    * @see VCloudClient#getVDC(URI)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
+
+   /**
+    * @see VCloudClient#findVDCInOrgNamed(String, String)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> findVDCInOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+            @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
+
+   /**
+    * @see VCloudClient#getTasksList
+    */
+   @GET
+   @Consumes(TASKSLIST_XML)
+   @XMLResponseParser(TasksListHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends TasksList> getTasksList(@EndpointParam URI tasksListId);
+
+   /**
+    * @see VCloudClient#findTasksListInOrgNamed
+    */
+   @GET
+   @Consumes(TASKSLIST_XML)
+   @XMLResponseParser(TasksListHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
+            @Nullable @EndpointParam(parser = OrgNameToTasksListEndpoint.class) String orgName);
+
+   /**
+    * @see VCloudClient#getTask
+    */
+   @GET
+   @Consumes(TASK_XML)
+   @XMLResponseParser(TaskHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends Task> getTask(@EndpointParam URI taskId);
+
+   /**
+    * @see VCloudClient#cancelTask
+    */
+   @POST
+   @Path("/action/cancel")
+   ListenableFuture<Void> cancelTask(@EndpointParam URI taskId);
+   
    /**
     * Provides asynchronous access to VApp Template features.
     * 

@@ -1,26 +1,27 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -30,6 +31,7 @@ import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -47,7 +49,7 @@ public class LaunchSpecification {
    }
 
    public static class Builder {
-      protected ImmutableSet.Builder<String> groupIds = ImmutableSet.<String> builder();
+      protected ImmutableMap.Builder<String, String> securityGroupIdToNames = ImmutableMap.<String, String> builder();
       protected String imageId;
       protected String instanceType;
       protected String kernelId;
@@ -57,10 +59,12 @@ public class LaunchSpecification {
       protected Boolean monitoringEnabled;
       protected ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet
             .<BlockDeviceMapping> builder();
+      protected ImmutableSet.Builder<String> securityGroupIds = ImmutableSet.<String> builder();
+      protected ImmutableSet.Builder<String> securityGroupNames = ImmutableSet.<String> builder();
       protected byte[] userData;
 
       public void clear() {
-         groupIds = ImmutableSet.<String> builder();
+         securityGroupIdToNames = ImmutableMap.<String, String> builder();
          imageId = null;
          instanceType = null;
          kernelId = null;
@@ -69,17 +73,19 @@ public class LaunchSpecification {
          ramdiskId = null;
          monitoringEnabled = false;
          blockDeviceMappings = ImmutableSet.<BlockDeviceMapping> builder();
+         securityGroupIds = ImmutableSet.<String> builder();
+         securityGroupNames = ImmutableSet.<String> builder();
          userData = null;
       }
 
-      public Builder groupIds(Iterable<String> groupIds) {
-         this.groupIds.addAll(checkNotNull(groupIds, "groupIds"));
+      public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
+         this.securityGroupIdToNames.putAll(checkNotNull(securityGroupIdToNames, "securityGroupIdToNames"));
          return this;
       }
 
-      public Builder groupId(String groupId) {
-         if (groupId != null)
-            this.groupIds.add(groupId);
+      public Builder securityGroupIdToName(String groupId, String groupName) {
+         if (groupId != null && groupName != null)
+            this.securityGroupIdToNames.put(checkNotNull(groupId, "groupId"), checkNotNull(groupName, "groupName"));
          return this;
       }
 
@@ -144,6 +150,28 @@ public class LaunchSpecification {
          return this;
       }
 
+      public Builder securityGroupIds(Iterable<String> securityGroupIds) {
+         this.securityGroupIds.addAll(checkNotNull(securityGroupIds, "securityGroupIds"));
+         return this;
+      }
+
+      public Builder securityGroupId(String securityGroupId) {
+         if (securityGroupId != null)
+            this.securityGroupIds.add(securityGroupId);
+         return this;
+      }
+
+      public Builder securityGroupNames(Iterable<String> securityGroupNames) {
+         this.securityGroupNames.addAll(checkNotNull(securityGroupNames, "securityGroupNames"));
+         return this;
+      }
+
+      public Builder securityGroupName(String securityGroupName) {
+         if (securityGroupName != null)
+            this.securityGroupNames.add(securityGroupName);
+         return this;
+      }
+
       public Builder userData(byte[] userData) {
          this.userData = userData;
          return this;
@@ -151,13 +179,15 @@ public class LaunchSpecification {
 
       public LaunchSpecification build() {
          return new LaunchSpecification(instanceType, imageId, kernelId, ramdiskId, availabilityZone, keyName,
-               groupIds.build(), blockDeviceMappings.build(), monitoringEnabled, userData);
+               securityGroupIdToNames.build(), blockDeviceMappings.build(), monitoringEnabled,
+               securityGroupIds.build(), securityGroupNames.build(), userData);
       }
 
       public static Builder fromLaunchSpecification(LaunchSpecification in) {
          return new Builder().instanceType(in.getInstanceType()).imageId(in.getImageId()).kernelId(in.getKernelId())
                .ramdiskId(in.getRamdiskId()).availabilityZone(in.getAvailabilityZone()).keyName(in.getKeyName())
-               .groupIds(in.getGroupIds()).blockDeviceMappings(in.getBlockDeviceMappings())
+               .securityGroupIdToNames(in.getSecurityGroupIdToNames()).securityGroupIds(in.getSecurityGroupIds())
+               .securityGroupNames(in.getSecurityGroupNames()).blockDeviceMappings(in.getBlockDeviceMappings())
                .monitoringEnabled(in.isMonitoringEnabled()).userData(in.getUserData());
       }
    }
@@ -168,24 +198,33 @@ public class LaunchSpecification {
    protected final String ramdiskId;
    protected final String availabilityZone;
    protected final String keyName;
-   protected final Set<String> groupIds;
+   protected final Map<String, String> securityGroupIdToNames;
    protected final Set<? extends BlockDeviceMapping> blockDeviceMappings;
+   protected final Set<String> securityGroupIds;
+   protected final Set<String> securityGroupNames;
    protected final Boolean monitoringEnabled;
    protected final byte[] userData;
 
    public LaunchSpecification(String instanceType, String imageId, String kernelId, String ramdiskId,
-         String availabilityZone, String keyName, Iterable<String> groupIds,
-         Iterable<? extends BlockDeviceMapping> blockDeviceMappings, Boolean monitoringEnabled, byte[] userData) {
+         String availabilityZone, String keyName, Map<String, String> securityGroupIdToNames,
+         Iterable<? extends BlockDeviceMapping> blockDeviceMappings, Boolean monitoringEnabled,
+         Set<String> securityGroupIds, Set<String> securityGroupNames, byte[] userData) {
       this.instanceType = checkNotNull(instanceType, "instanceType");
       this.imageId = checkNotNull(imageId, "imageId");
       this.kernelId = kernelId;
       this.ramdiskId = ramdiskId;
       this.availabilityZone = availabilityZone;
       this.keyName = keyName;
-      this.groupIds = ImmutableSortedSet.copyOf(checkNotNull(groupIds, "groupIds"));
+      this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames, "securityGroupIdToNames"));
       this.blockDeviceMappings = ImmutableSortedSet.copyOf(checkNotNull(blockDeviceMappings, "blockDeviceMappings"));
+      this.securityGroupIds = ImmutableSortedSet.copyOf(checkNotNull(securityGroupIds, "securityGroupIds"));
+      this.securityGroupNames = ImmutableSortedSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames"));
       this.monitoringEnabled = monitoringEnabled;
       this.userData = userData;
+   }
+
+   public Map<String, String> getSecurityGroupIdToNames() {
+      return securityGroupIdToNames;
    }
 
    /**
@@ -217,7 +256,8 @@ public class LaunchSpecification {
    }
 
    /**
-    * If this instance was launched with an associated key pair, this displays the key pair name.
+    * If this instance was launched with an associated key pair, this displays
+    * the key pair name.
     */
    public String getKeyName() {
       return keyName;
@@ -247,8 +287,15 @@ public class LaunchSpecification {
    /**
     * Names of the security groups.
     */
-   public Set<String> getGroupIds() {
-      return groupIds;
+   public Set<String> getSecurityGroupNames() {
+      return securityGroupNames;
+   }
+
+   /**
+    * Ids of the security groups.
+    */
+   public Set<String> getSecurityGroupIds() {
+      return securityGroupIds;
    }
 
    /**
@@ -264,13 +311,15 @@ public class LaunchSpecification {
       int result = 1;
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
       result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
-      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
       result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
       result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((monitoringEnabled == null) ? 0 : monitoringEnabled.hashCode());
       result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
+      result = prime * result + ((securityGroupIdToNames == null) ? 0 : securityGroupIdToNames.hashCode());
+      result = prime * result + ((securityGroupIds == null) ? 0 : securityGroupIds.hashCode());
+      result = prime * result + ((securityGroupNames == null) ? 0 : securityGroupNames.hashCode());
       result = prime * result + Arrays.hashCode(userData);
       return result;
    }
@@ -293,11 +342,6 @@ public class LaunchSpecification {
          if (other.blockDeviceMappings != null)
             return false;
       } else if (!blockDeviceMappings.equals(other.blockDeviceMappings))
-         return false;
-      if (groupIds == null) {
-         if (other.groupIds != null)
-            return false;
-      } else if (!groupIds.equals(other.groupIds))
          return false;
       if (imageId == null) {
          if (other.imageId != null)
@@ -329,6 +373,21 @@ public class LaunchSpecification {
             return false;
       } else if (!ramdiskId.equals(other.ramdiskId))
          return false;
+      if (securityGroupIdToNames == null) {
+         if (other.securityGroupIdToNames != null)
+            return false;
+      } else if (!securityGroupIdToNames.equals(other.securityGroupIdToNames))
+         return false;
+      if (securityGroupIds == null) {
+         if (other.securityGroupIds != null)
+            return false;
+      } else if (!securityGroupIds.equals(other.securityGroupIds))
+         return false;
+      if (securityGroupNames == null) {
+         if (other.securityGroupNames != null)
+            return false;
+      } else if (!securityGroupNames.equals(other.securityGroupNames))
+         return false;
       if (!Arrays.equals(userData, other.userData))
          return false;
       return true;
@@ -341,9 +400,10 @@ public class LaunchSpecification {
    @Override
    public String toString() {
       return "[instanceType=" + instanceType + ", imageId=" + imageId + ", kernelId=" + kernelId + ", ramdiskId="
-            + ramdiskId + ", availabilityZone=" + availabilityZone + ", keyName=" + keyName + ", groupIds=" + groupIds
-            + ", blockDeviceMappings=" + blockDeviceMappings + ", monitoringEnabled=" + monitoringEnabled
-            + ", userData=" + (userData != null) + "]";
+            + ramdiskId + ", availabilityZone=" + availabilityZone + ", keyName=" + keyName
+            + ", securityGroupIdToNames=" + securityGroupIdToNames + ", blockDeviceMappings=" + blockDeviceMappings
+            + ", securityGroupIds=" + securityGroupIds + ", securityGroupNames=" + securityGroupNames
+            + ", monitoringEnabled=" + monitoringEnabled + ", userData=" + Arrays.toString(userData) + "]";
    }
 
 }

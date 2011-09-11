@@ -1,0 +1,3 @@
+<vApp:OrgList xmlns:vApp="http://www.vmware.com/vcloud/v0.8">
+<vApp:Org name="SAVVISStation Integration Testing" type="application/vnd.vmware.vcloud.org+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0"/>
+</vApp:OrgList>

@@ -1,22 +1,25 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.xml;
+
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Date;
 import java.util.Set;
@@ -56,7 +59,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    @Inject
    public BaseReservationHandler(DateService dateService, @Region String defaultRegion,
-            Provider<RunningInstance.Builder> builderProvider) {
+         Provider<RunningInstance.Builder> builderProvider) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
       this.builderProvider = builderProvider;
@@ -85,103 +88,98 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    private Set<RunningInstance> instances = Sets.newLinkedHashSet();
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
-      if (qName.equals("item")) {
+      if (equalsOrSuffix(qName, "item")) {
          itemDepth++;
-      } else if (qName.equals("instancesSet")) {
+      } else if (equalsOrSuffix(qName, "instancesSet")) {
          inInstancesSet = true;
       }
    }
 
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
-   }
-
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("item")) {
+      if (equalsOrSuffix(qName, "item")) {
          inItem();
          itemDepth--;
-      } else if (qName.equals("instancesSet")) {
+      } else if (equalsOrSuffix(qName, "instancesSet")) {
          inInstancesSet = false;
-      } else if (qName.equals("groupId")) {
-         groupIds.add(currentOrNull());
-      } else if (qName.equals("ownerId")) {
-         ownerId = currentOrNull();
-      } else if (qName.equals("requesterId")) {
-         requesterId = currentOrNull();
-      } else if (qName.equals("reservationId")) {
-         reservationId = currentOrNull();
-      } else if (qName.equals("amiLaunchIndex")) {
-         builder.amiLaunchIndex(currentOrNull());
-      } else if (qName.equals("dnsName")) {
-         String dnsName = currentOrNull();
+      } else if (equalsOrSuffix(qName, "groupId")) {
+         groupIds.add(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "ownerId")) {
+         ownerId = currentOrNull(currentText);
+      } else if (equalsOrSuffix(qName, "requesterId")) {
+         requesterId = currentOrNull(currentText);
+      } else if (equalsOrSuffix(qName, "reservationId")) {
+         reservationId = currentOrNull(currentText);
+      } else if (equalsOrSuffix(qName, "amiLaunchIndex")) {
+         builder.amiLaunchIndex(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "dnsName")) {
+         String dnsName = currentOrNull(currentText);
          // Eucalyptus
          if (!"0.0.0.0".equals(dnsName))
             builder.dnsName(dnsName);
-      } else if (qName.equals("imageId")) {
-         builder.imageId(currentOrNull());
-      } else if (qName.equals("instanceId")) {
-         builder.instanceId(currentOrNull());
-      } else if (qName.equals("name")) {
-         builder.instanceState(InstanceState.fromValue(currentOrNull()));
-      } else if (qName.equals("instanceType")) {
-         builder.instanceType(currentOrNull());
-      } else if (qName.equals("ipAddress")) {
-         builder.ipAddress(currentOrNull());
-      } else if (qName.equals("kernelId")) {
-         builder.kernelId(currentOrNull());
-      } else if (qName.equals("keyName")) {
-         builder.keyName(currentOrNull());
-      } else if (qName.equals("launchTime")) {
+      } else if (equalsOrSuffix(qName, "imageId")) {
+         builder.imageId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "instanceId")) {
+         builder.instanceId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "name")) {
+         builder.instanceState(InstanceState.fromValue(currentOrNull(currentText)));
+      } else if (equalsOrSuffix(qName, "instanceType")) {
+         builder.instanceType(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "ipAddress")) {
+         builder.ipAddress(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "kernelId")) {
+         builder.kernelId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "keyName")) {
+         builder.keyName(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "launchTime")) {
          builder.launchTime(parseDate());
-      } else if (qName.equals("availabilityZone")) {
-         builder.availabilityZone(currentOrNull());
-      } else if (qName.equals("virtualizationType")) {
-         builder.virtualizationType(currentOrNull());
-      } else if (qName.equals("platform")) {
-         builder.platform(currentOrNull());
-      } else if (qName.equals("privateDnsName")) {
-         String privateDnsName = currentOrNull();
+      } else if (equalsOrSuffix(qName, "availabilityZone")) {
+         builder.availabilityZone(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "virtualizationType")) {
+         builder.virtualizationType(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "platform")) {
+         builder.platform(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "privateDnsName")) {
+         String privateDnsName = currentOrNull(currentText);
          // Eucalyptus
          if (!"0.0.0.0".equals(privateDnsName))
             builder.privateDnsName(privateDnsName);
-      } else if (qName.equals("privateIpAddress")) {
-         builder.privateIpAddress(currentOrNull());
-      } else if (qName.equals("ramdiskId")) {
-         builder.ramdiskId(currentOrNull());
-      } else if (qName.equals("reason")) {
-         builder.reason(currentOrNull());
-      } else if (qName.equals("rootDeviceType")) {
-         builder.rootDeviceType(RootDeviceType.fromValue(currentOrNull()));
-      } else if (qName.equals("rootDeviceName")) {
-         builder.rootDeviceName(currentOrNull());
-      } else if (qName.equals("deviceName")) {
-         deviceName = currentOrNull();
-      } else if (qName.equals("volumeId")) {
-         volumeId = currentOrNull();
-      } else if (qName.equals("status")) {
+      } else if (equalsOrSuffix(qName, "privateIpAddress")) {
+         builder.privateIpAddress(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "ramdiskId")) {
+         builder.ramdiskId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "reason")) {
+         builder.reason(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "rootDeviceType")) {
+         builder.rootDeviceType(RootDeviceType.fromValue(currentOrNull(currentText)));
+      } else if (equalsOrSuffix(qName, "rootDeviceName")) {
+         builder.rootDeviceName(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "deviceName")) {
+         deviceName = currentOrNull(currentText);
+      } else if (equalsOrSuffix(qName, "volumeId")) {
+         volumeId = currentOrNull(currentText);
+      } else if (equalsOrSuffix(qName, "status")) {
          attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
-      } else if (qName.equals("attachTime")) {
+      } else if (equalsOrSuffix(qName, "attachTime")) {
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
-      } else if (qName.equals("deleteOnTermination")) {
+      } else if (equalsOrSuffix(qName, "deleteOnTermination")) {
          deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
-      } else if (qName.equals("ebs")) {
+      } else if (equalsOrSuffix(qName, "ebs")) {
          builder.device(deviceName, new BlockDevice(volumeId, attachmentStatus, attachTime, deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
-      } 
+      }
       currentText = new StringBuilder();
    }
 
    protected Date parseDate() {
       try {
-         return dateService.iso8601DateParse(currentOrNull());
+         return dateService.iso8601DateParse(currentOrNull(currentText));
       } catch (RuntimeException e) {
          // Eucalyptus
-         return dateService.iso8601SecondsDateParse(currentOrNull());
+         return dateService.iso8601SecondsDateParse(currentOrNull(currentText));
       }
    }
 
@@ -202,7 +200,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          builder.dnsName(null);
       }
       if (builder.getPrivateIpAddress() == null && builder.getPrivateDnsName() != null
-               && builder.getPrivateDnsName().matches(".*[0-9]$")) {
+            && builder.getPrivateDnsName().matches(".*[0-9]$")) {
          builder.privateIpAddress(builder.getPrivateDnsName());
          builder.privateDnsName(null);
       }
@@ -228,7 +226,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       if (region == null)
          region = defaultRegion;
       Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
-               ownerId, requesterId, reservationId);
+            ownerId, requesterId, reservationId);
       this.groupIds = Sets.newLinkedHashSet();
       this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;

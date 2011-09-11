@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.savvis.vpdc.features;
 
@@ -27,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
+import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VDC;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
@@ -47,11 +48,13 @@ public class ServiceManagementClientLiveTest extends BaseVPDCClientLiveTest {
       super.setupClient();
       client = restContext.getApi().getServiceManagementClient();
    }
-
+   
+   // test for a single vm, as savvis response times are very slow. So if there are multiple vpdc's with numerous vm's,
+   // test execution will invariably take a long time
    public void testLifeCycle() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       for (Resource org1 : restContext.getApi().listOrgs()) {
          Org org = restContext.getApi().getBrowsingClient().getOrg(org1.getId());
-         for (Resource vdc : org.getVDCs()) {
+         VDC_LOOP : for (Resource vdc : org.getVDCs()) {
             VDC VDC = restContext.getApi().getBrowsingClient().getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vmHandle : Iterables.filter(VDC.getResourceEntities(), new Predicate<Resource>() {
 
@@ -61,18 +64,21 @@ public class ServiceManagementClientLiveTest extends BaseVPDCClientLiveTest {
                }
 
             })) {
-
-               assert taskTester.apply(client.powerOffVM(vmHandle.getHref()).getId());
+            	
+               Task powerOffTask = client.powerOffVM(vmHandle.getHref());
+               assert taskTester.apply(powerOffTask.getId());
 
                VM vm = restContext.getApi().getBrowsingClient().getVM(vmHandle.getHref(), withPowerState());
                assertEquals(vm.getStatus(), VM.Status.OFF);
-
-               assert taskTester.apply(client.powerOnVM(vmHandle.getHref()).getId());
+               
+               Task powerOnTask = client.powerOnVM(vmHandle.getHref());
+               assert taskTester.apply(powerOnTask.getId());
 
                vm = restContext.getApi().getBrowsingClient().getVM(vmHandle.getHref(), withPowerState());
 
                assertEquals(vm.getStatus(), VM.Status.ON);
-
+               
+               break VDC_LOOP;
             }
          }
       }

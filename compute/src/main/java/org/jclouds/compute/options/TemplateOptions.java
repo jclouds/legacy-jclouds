@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.options;
 
@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -148,6 +149,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          throw new IllegalArgumentException("script is immutable");
       }
 
+      /**
+       * unsupported as objects of this class are immutable
+       */
       @Override
       public TemplateOptions runScript(Statement script) {
          throw new IllegalArgumentException("script is immutable");
@@ -219,6 +223,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          throw new IllegalArgumentException("publicKey is immutable");
       }
 
+      /**
+       * unsupported as objects of this class are immutable
+       */
       @Override
       public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
          throw new IllegalArgumentException("blockUntilRunning is immutable");
@@ -313,7 +320,10 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    public boolean isIncludeMetadata() {
       return includeMetadata;
    }
-
+   
+   /**
+    * @see TemplateOptions#blockUntilRunning(boolean)
+    */
    public boolean shouldBlockUntilRunning() {
       return blockUntilRunning;
    }
@@ -323,11 +333,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    /**
-    * This script will be executed as the root user upon system startup. This script gets a
-    * prologue, so no #!/bin/bash required, path set up, etc
     * <p/>
     * please use alternative that uses the {@link org.jclouds.scriptbuilder.domain.Statement} object
-    * 
+    * @see TemplateOptions#runScript(Statement)
     * @see org.jclouds.io.Payloads
     */
    @Deprecated
@@ -336,9 +344,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    /**
-    * This script will be executed as the root user upon system startup. This script gets a
-    * prologue, so no #!/bin/bash required, path set up, etc
-    * 
+    * @see TemplateOptions#runScript(Statement)
     * @see org.jclouds.io.Payloads
     */
    public TemplateOptions runScript(Payload script) {
@@ -349,7 +355,12 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return this;
       }
    }
-
+   
+   /**
+    * This script will be executed as the root user upon system startup. This script gets a
+    * prologue, so no #!/bin/bash required, path set up, etc
+    * 
+    */
    public TemplateOptions runScript(Statement script) {
       this.script = checkNotNull(script, "script");
       return this;
@@ -488,7 +499,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * @see TemplateOptions#blockUntilRunning
+       * @see TemplateOptions#blockUntilRunning(boolean)
        */
       public static TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
          TemplateOptions options = new TemplateOptions();
@@ -496,10 +507,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload} object
+       * please use alternative that uses the {@link Statement) object
        * 
-       * @see org.jclouds.io.Payloads
-       * @see #runScript(Payload)
+       * @see TemplateOptions#runScript(Statement)
        */
       @Deprecated
       public static TemplateOptions runScript(byte[] script) {
@@ -508,7 +518,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * @see TemplateOptions#runScript
+       * @see TemplateOptions#runScript(Statement)
        * @see org.jclouds.io.Payloads
        */
       public static TemplateOptions runScript(Payload script) {
@@ -517,8 +527,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * @see TemplateOptions#runScript
-       * @see org.jclouds.io.Payloads
+       * @see TemplateOptions#runScript(Statement)
        */
       public static TemplateOptions runScript(Statement script) {
          TemplateOptions options = new TemplateOptions();
@@ -587,6 +596,16 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
                + ", metadata/details: " + includeMetadata + "]";
    }
 
+   /**
+    * <h4>Note</h4> As of version 1.1.0, this option is incompatible with
+    * {@link TemplateOptions#runScript(Statement)} and
+    * {@link RunScriptOptions#blockOnComplete(boolean)}, as all current
+    * implementations utilize ssh in order to execute scripts.
+    * 
+    * @param blockUntilRunning
+    *           (default true) whether to block until the nodes in this template
+    *           are in {@link NodeState#RUNNING} state
+    */
    public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       this.blockUntilRunning = blockUntilRunning;
       if (!blockUntilRunning)

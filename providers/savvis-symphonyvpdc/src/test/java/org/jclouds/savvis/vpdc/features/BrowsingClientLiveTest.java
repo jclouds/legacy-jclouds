@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.savvis.vpdc.features;
 
@@ -115,11 +115,13 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
       }
    }
 
+   // test for a single vm, as savvis response times are very slow. So if there are multiple vpdc's with numerous vm's,
+   // test execution will invariably take a long time
    @Test
    public void testVM() throws Exception {
       for (Resource org1 : restContext.getApi().listOrgs()) {
          Org org = client.getOrg(org1.getId());
-         for (Resource vdc : org.getVDCs()) {
+         VDC_LOOP : for (Resource vdc : org.getVDCs()) {
             VDC VDC = client.getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vApp : Iterables.filter(VDC.getResourceEntities(), new Predicate<Resource>() {
 
@@ -151,11 +153,15 @@ public class BrowsingClientLiveTest extends BaseVPDCClientLiveTest {
                String ip = Iterables.get(response.getNetworkConnectionSections(), 0).getIpAddress();
                assert HostSpecifier.isValid(ip) : response;
                if (InetAddresses2.isPrivateIPAddress(ip)) {
+            	   // get public ip
                   ip = Iterables.get(response.getNetworkConfigSections(), 0).getInternalToExternalNATRules().get(ip);
+                  // could be null
+                  if(ip != null){
+                	  assert HostSpecifier.isValid(ip) : response;
+                  }
                }
-               assert HostSpecifier.isValid(ip) : response;
+               break VDC_LOOP;
             }
-
          }
       }
    }

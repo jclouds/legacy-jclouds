@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.openstack.nova.live.compute;
 
@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -55,12 +56,13 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.JschSshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.SshjSshClient;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
+import com.google.inject.Module;
 
 /**
  * @author Victor Galkin
@@ -74,6 +76,7 @@ public class ComputeBase {
 
    protected Map<String, String> keyPair;
    protected Properties overrides;
+   protected String testImageId;
 
    @BeforeTest
    public void before() throws InterruptedException, ExecutionException, TimeoutException, IOException {
@@ -81,6 +84,7 @@ public class ComputeBase {
       setupOverrides(properties);
       overrides = properties;
       keyPair = setupKeyPair(properties);
+      testImageId = properties.getProperty("test.nova.image.id");
       initializeContextAndComputeService(properties);
 
    }
@@ -91,12 +95,12 @@ public class ComputeBase {
       return new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
    }
 
-   private JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   private Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    protected TemplateBuilder getDefaultTemplateBuilder() {
-      return computeService.templateBuilder().imageId("95").options(getDefaultTemplateOptions());
+      return computeService.templateBuilder().imageId(testImageId).options(getDefaultTemplateOptions());
    }
 
    private TemplateOptions getDefaultTemplateOptions() {
@@ -132,13 +136,14 @@ public class ComputeBase {
       computeService = context.getComputeService();
    }
 
-   protected String awaitForPublicAddressAssigned(String nodeId) throws InterruptedException {
+   protected String awaitForStartup(String nodeId) throws InterruptedException {
       while (true) {
-         Set<String> addresses = computeService.getNodeMetadata(nodeId).getPublicAddresses();
+         NodeMetadata metadata = computeService.getNodeMetadata(nodeId);
+         Set<String> addresses = metadata.getPublicAddresses();
          System.out.println(addresses);
-         System.out.println(computeService.getNodeMetadata(nodeId).getState());
-         if (addresses != null)
-            if (!addresses.isEmpty()) return addresses.iterator().next();
+         System.out.println(metadata.getState());
+         if (metadata.getState() == NodeState.RUNNING && addresses != null && !addresses.isEmpty())
+            return addresses.iterator().next();
          Thread.sleep(1000);
       }
    }
@@ -150,7 +155,7 @@ public class ComputeBase {
    protected void awaitForSshPort(String address, Credentials credentials) throws URISyntaxException {
       IPSocket socket = new IPSocket(address, 22);
 
-      JschSshClient ssh = new JschSshClient(
+      SshjSshClient ssh = new SshjSshClient(
             new BackoffLimitedRetryHandler(), socket, 10000, credentials.identity, null, credentials.credential.getBytes());
       while (true) {
          try {

@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.ec2.compute.strategy;
 
@@ -109,15 +109,31 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       String keyPairName = null;
       boolean shouldAutomaticallyCreateKeyPair = true;
+      
       if (options instanceof EC2TemplateOptions) {
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
             shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
                   .shouldAutomaticallyCreateKeyPair();
       }
+      
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          keyPairName = createOrImportKeyPair(region, group, options);
+      } else if (keyPairName != null) {
+         if (options.getOverridingCredentials() != null && options.getOverridingCredentials().credential != null) {
+            KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).keyFingerprint("//TODO")
+                  .keyMaterial(options.getOverridingCredentials().credential).build();
+            putKeyPairIntoCredentialMap(keyPair);
+         }
       }
+      
+      if (options.getRunScript() != null) {
+         RegionAndName regionAndName = new RegionAndName(region, keyPairName);
+         checkState(credentialsMap.containsKey(regionAndName),
+               "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+               regionAndName);
+      }
+      
       return keyPairName;
    }
 
@@ -127,18 +143,20 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    }
 
    protected String createUniqueKeyPairAndPutIntoMap(String region, String group) {
-      String keyPairName;
       RegionAndName regionAndName = new RegionAndName(region, group);
       KeyPair keyPair = createUniqueKeyPair.apply(regionAndName);
-      keyPairName = keyPair.getKeyName();
+      putKeyPairIntoCredentialMap(keyPair);
+      return keyPair.getKeyName();
+   }
+
+   protected void putKeyPairIntoCredentialMap(KeyPair keyPair) {
       // get or create incidental resources
       // TODO race condition. we were using MapMaker, but it doesn't seem to
       // refresh properly
       // when
       // another thread
       // deletes a key
-      credentialsMap.put(new RegionAndName(regionAndName.getRegion(), keyPairName), keyPair);
-      return keyPairName;
+      credentialsMap.put(new RegionAndName(keyPair.getRegion(), keyPair.getKeyName()), keyPair);
    }
 
    @VisibleForTesting
@@ -150,12 +168,11 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
-
-         if (options instanceof EC2TemplateOptions && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
+      
+         if (userSpecifiedTheirOwnGroups(options)) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
                   false);
-            groups.addAll(EC2TemplateOptions.class.cast(options).getGroupIds());
-
+            groups.addAll(EC2TemplateOptions.class.cast(options).getGroups());
          } else {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup,
                   options.getInboundPorts(), true);
@@ -167,6 +184,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          }
       }
       return groups.build();
+   }
+
+   protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
+      return options instanceof EC2TemplateOptions && EC2TemplateOptions.class.cast(options).getGroups().size() > 0;
    }
 
    // allows us to mock this method

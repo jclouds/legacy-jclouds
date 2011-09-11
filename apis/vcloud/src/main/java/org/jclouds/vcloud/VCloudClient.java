@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.vcloud;
 
@@ -61,7 +61,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-public interface VCloudClient extends CommonVCloudClient {
+public interface VCloudClient {
    /**
     * Provides asynchronous access to VApp Template features.
     * 
@@ -281,7 +281,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see CatalogClient#getCatalog
     */
-   @Override
    @Deprecated
    Catalog getCatalog(URI catalogId);
 
@@ -289,7 +288,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see CatalogClient#getCatalogItem
     */
-   @Override
    @Deprecated
    Catalog findCatalogInOrgNamed(@Nullable String orgName, @Nullable String catalogName);
 
@@ -297,7 +295,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see CatalogClient#getCatalogItem
     */
-   @Override
    @Deprecated
    CatalogItem getCatalogItem(URI catalogItem);
 
@@ -305,7 +302,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see CatalogClient#findCatalogItemInOrgCatalogNamed
     */
-   @Override
    @Deprecated
    CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
 
@@ -313,7 +309,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see TaskClient#getTasksList
     */
-   @Override
    @Deprecated
    TasksList getTasksList(URI tasksListId);
 
@@ -321,7 +316,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see TaskClient#findTasksListInOrgNamed
     */
-   @Override
    @Deprecated
    TasksList findTasksListInOrgNamed(String orgName);
 
@@ -329,7 +323,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see TaskClient#getTask
     */
-   @Override
    @Deprecated
    Task getTask(URI taskId);
 
@@ -337,7 +330,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see TaskClient#cancelTask
     */
-   @Override
    @Deprecated
    void cancelTask(URI taskId);
 
@@ -345,7 +337,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see VDCClient#getVDC
     */
-   @Override
    @Deprecated
    VDC getVDC(URI vdc);
 
@@ -353,7 +344,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see VDCClient#findVDCInOrgNamed
     */
-   @Override
    @Deprecated
    VDC findVDCInOrgNamed(String orgName, String vdcName);
 
@@ -361,7 +351,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see NetworkClient#findNetworkInOrgVDCNamed
     */
-   @Override
    @Deprecated
    OrgNetwork findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
 
@@ -369,7 +358,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see NetworkClient#getNetwork
     */
-   @Override
    @Deprecated
    OrgNetwork getNetwork(URI network);
 
@@ -377,7 +365,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see OrgClient#getOrg
     */
-   @Override
    @Deprecated
    Org getOrg(URI orgId);
 
@@ -385,8 +372,6 @@ public interface VCloudClient extends CommonVCloudClient {
     * 
     * @see OrgClient#findOrgNamed
     */
-   @Override
    @Deprecated
    Org findOrgNamed(@Nullable String name);
-
 }

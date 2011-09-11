@@ -1,35 +1,34 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.scriptbuilder.functions;
 
-import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.scriptbuilder.domain.AcceptsStatementVisitor;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.scriptbuilder.domain.StatementVisitor;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -41,13 +40,21 @@ public enum CredentialsFromAdminAccess implements Function<Statement, Credential
    public Credentials apply(@Nullable Statement input) {
       if (input == null)
          return null;
-      if (input instanceof StatementList) {
-         try {
-            return apply(Iterables.find(StatementList.class.cast(input).getStatements(),
-                  Predicates.instanceOf(AdminAccess.class)));
-         } catch (NoSuchElementException e) {
-            return null;
-         }
+      if (input instanceof AcceptsStatementVisitor) {
+         final AtomicReference<Credentials> credsHolder = new AtomicReference<Credentials>();
+         AcceptsStatementVisitor.class.cast(input).accept(new StatementVisitor() {
+
+            @Override
+            public void visit(Statement in) {
+               if (credsHolder.get() == null) {
+                  Credentials creds = apply(in);
+                  if (creds != null)
+                     credsHolder.set(creds);
+               }
+            }
+
+         });
+         return credsHolder.get();
       } else if (input instanceof AdminAccess) {
          return AdminAccess.class.cast(input).getAdminCredentials();
       } else {

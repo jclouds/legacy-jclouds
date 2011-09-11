@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.stub.config;
 
@@ -63,12 +63,14 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    private final String passwordPrefix;
    private final Supplier<Set<? extends Location>> locationSupplier;
    private final Map<OsFamily, Map<String, String>> osToVersionMap;
+   private final Map<String, Credentials> credentialStore;
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
             @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
             @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
+            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
+            Map<String, Credentials> credentialStore) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;
@@ -77,6 +79,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.passwordPrefix = passwordPrefix;
       this.locationSupplier = locationSupplier;
       this.osToVersionMap = osToVersionMap;
+      this.credentialStore = credentialStore;
    }
 
    @Override
@@ -86,6 +89,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       String id = idProvider.get() + "";
       builder.ids(id);
       builder.name(name);
+      // using a predictable name so tests will pass
+      builder.hostname(group);
       builder.tags(template.getOptions().getTags());
       builder.group(group);
       builder.location(location.get());
@@ -94,7 +99,14 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.state(NodeState.PENDING);
       builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
-      builder.credentials(new Credentials("root", passwordPrefix + id));
+      Credentials creds = template.getOptions().getOverridingCredentials();
+      if (creds == null)
+         creds = new Credentials(null, null);
+      if (creds.identity == null)
+         creds = creds.toBuilder().identity("root").build();
+      if (creds.credential == null)
+         creds = creds.toBuilder().credential(passwordPrefix + id).build();
+      builder.credentials(creds);
       NodeMetadata node = builder.build();
       credentialStore.put("node#" + node.getId(), node.getCredentials());
       nodes.put(node.getId(), node);
@@ -140,7 +152,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public NodeMetadata getNode(String id) {
-      return nodes.get(id);
+      NodeMetadata node = nodes.get(id);
+      return node == null ? null : NodeMetadataBuilder.fromNodeMetadata(node).credentials(
+               credentialStore.get("node#" + node.getId())).build();
    }
 
    @Override

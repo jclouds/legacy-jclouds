@@ -1,20 +1,20 @@
 ;
+; Licensed to jclouds, Inc. (jclouds) under one or more
+; contributor license agreements.  See the NOTICE file
+; distributed with this work for additional information
+; regarding copyright ownership.  jclouds licenses this file
+; to you under the Apache License, Version 2.0 (the
+; "License"); you may not use this file except in compliance
+; with the License.  You may obtain a copy of the License at
 ;
-; Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+;   http://www.apache.org/licenses/LICENSE-2.0
 ;
-; ====================================================================
-; Licensed under the Apache License, Version 2.0 (the "License");
-; you may not use this file except in compliance with the License.
-; You may obtain a copy of the License at
-;
-; http://www.apache.org/licenses/LICENSE-2.0
-;
-; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
-; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-; See the License for the specific language governing permissions and
-; limitations under the License.
-; ====================================================================
+; Unless required by applicable law or agreed to in writing,
+; software distributed under the License is distributed on an
+; "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+; KIND, either express or implied.  See the License for the
+; specific language governing permissions and limitations
+; under the License.
 ;
 
 (ns org.jclouds.compute2
@@ -53,7 +53,7 @@ Here's an example of creating and running a small linux node in the group webser
   ;; create a compute service using ssh and log4j extensions
   (def compute
     (compute-service
-      provider provider-identity provider-credential :ssh :log4j))
+      provider provider-identity provider-credential :sshj :log4j))
 
   (create-node \"webserver\" compute)
 
@@ -349,6 +349,8 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [:run-script :install-private-key :authorize-public-key
+       :override-credentials-with :override-login-user-with
+       :override-login-credential-with
        ;; aws ec2 options
        :spot-price :spot-options :placement-group :subnet-id
        :block-device-mappings :unmapDeviceNamed :security-groups

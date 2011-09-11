@@ -1,0 +1,7 @@
+the images collection listed in the computeservice api is populated from preinstalled_images.json in a resource path corresponding to the provider name.  There's no way to list standard images via api in cloudstack installs.  This is the process:
+  1. log into the portal
+  2. View Source
+  3. look for the image you want ex 'Debian Linux 6.0.1'
+  4. find the UUID, which will look like:  6aa953cc-3395-4e8d-938e-65c74fd20334
+
+Other details can be found by contacting the provider and asking them

@@ -1,26 +1,31 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.demo.tweetstore.controller.StoreTweetsController.AUTHORIZED_REQUEST_ORIGINATOR_HEADER;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY;
+import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +40,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
@@ -52,7 +56,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -72,8 +75,7 @@ public class TweetStoreLiveTest {
    private Map<String, BlobStoreContext> contexts;
    private String container;
    private static final Iterable<String> blobstores = 
-       Splitter.on(',').split(System.getProperty(PROPERTY_TWEETSTORE_BLOBSTORES, 
-               "cloudfiles-us,aws-s3,azureblob"));
+       Splitter.on(',').split(getRequiredSystemProperty(PROPERTY_TWEETSTORE_BLOBSTORES)); 
    private static final Properties props = new Properties();
 
    @BeforeTest
@@ -82,7 +84,6 @@ public class TweetStoreLiveTest {
        container = getRequiredSystemProperty(PROPERTY_TWEETSTORE_CONTAINER);
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, container);
-      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
       // put all identity/credential pairs into the client
       addCredentialsForBlobStores(props);
@@ -100,10 +101,10 @@ public class TweetStoreLiveTest {
       }
 
       Configuration conf = new ConfigurationBuilder()
-          .setOAuthConsumerKey(props.getProperty(TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY))
-          .setOAuthConsumerSecret(props.getProperty(TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET))
-          .setOAuthAccessToken(props.getProperty(TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN))
-          .setOAuthAccessTokenSecret(props.getProperty(TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET))
+          .setOAuthConsumerKey(props.getProperty(PROPERTY_TWITTER_CONSUMER_KEY))
+          .setOAuthConsumerSecret(props.getProperty(PROPERTY_TWITTER_CONSUMER_SECRET))
+          .setOAuthAccessToken(props.getProperty(PROPERTY_TWITTER_ACCESSTOKEN))
+          .setOAuthAccessTokenSecret(props.getProperty(PROPERTY_TWITTER_ACCESSTOKEN_SECRET))
           .build();
       Twitter client = new TwitterFactory(conf).getInstance();
       StoreTweetsController controller = new StoreTweetsController(contexts, container, client);
@@ -149,14 +150,14 @@ public class TweetStoreLiveTest {
    }
    
    private void addConfigurationForTwitter(Properties props) {
-       props.setProperty(TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY, 
-               getRequiredSystemProperty("test." + TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY));
-       props.setProperty(TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET,
-               getRequiredSystemProperty("test." + TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET));
-       props.setProperty(TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN, 
-               getRequiredSystemProperty("test." + TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN));
-       props.setProperty(TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET,
-               getRequiredSystemProperty("test." + TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN_SECRET));
+       props.setProperty(PROPERTY_TWITTER_CONSUMER_KEY, 
+               getRequiredSystemProperty("test." + PROPERTY_TWITTER_CONSUMER_KEY));
+       props.setProperty(PROPERTY_TWITTER_CONSUMER_SECRET,
+               getRequiredSystemProperty("test." + PROPERTY_TWITTER_CONSUMER_SECRET));
+       props.setProperty(PROPERTY_TWITTER_ACCESSTOKEN, 
+               getRequiredSystemProperty("test." + PROPERTY_TWITTER_ACCESSTOKEN));
+       props.setProperty(PROPERTY_TWITTER_ACCESSTOKEN_SECRET,
+               getRequiredSystemProperty("test." + PROPERTY_TWITTER_ACCESSTOKEN_SECRET));
     }
 
     private void addCredentialsForBlobStores(Properties props) {
@@ -169,13 +170,13 @@ public class TweetStoreLiveTest {
     }
    
    @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
-   @Parameters({ "warfile", "bees.address", "bees.port", "bees.environment", "bees.basedir" })
+   @Parameters({ "warfile", "bees.address", "bees.port", "bees.basedir" })
    public void startDevAppServer(final String warfile, final String address, final String port,
-           String environments, String serverBaseDirectory) throws Exception {
+           String serverBaseDirectory) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
 
       server = new RunAtCloudServer();
-      server.writePropertiesAndStartServer(address, port, warfile, environments, 
+      server.writePropertiesAndStartServer(address, port, warfile, "itest", 
               serverBaseDirectory, props);
    }
 
@@ -198,7 +199,7 @@ public class TweetStoreLiveTest {
       for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
-         connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
+         connection.addRequestProperty(AUTHORIZED_REQUEST_ORIGINATOR_HEADER, "twitter");
          connection.addRequestProperty("context", context);
          InputStream i = connection.getInputStream();
          String string = Strings2.toStringAndClose(i);
@@ -227,12 +228,5 @@ public class TweetStoreLiveTest {
       InputStream i = gurl.openStream();
       String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Tweets in Clouds") >= 0 : string;
-   }
-   
-   private static interface TwitterConstants {
-       static final String PROPERTY_TWITTER_CONSUMER_KEY = "twitter.consumer.identity";
-       static final String PROPERTY_TWITTER_CONSUMER_SECRET = "twitter.consumer.credential";
-       static final String PROPERTY_TWITTER_ACCESSTOKEN = "twitter.access.identity";
-       static final String PROPERTY_TWITTER_ACCESSTOKEN_SECRET = "twitter.access.credential";
    }
 }

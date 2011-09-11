@@ -1,4 +1,4 @@
-<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2010-11-15/">
+<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
     <requestId>7c4dd2bd-106d-4cd3-987c-35ee819180a6</requestId>
     <spotInstanceRequestSet>
         <item>
@@ -10,7 +10,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -31,7 +32,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -52,7 +54,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -77,7 +80,8 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -102,9 +106,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -123,7 +127,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -144,7 +149,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -165,7 +171,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -190,9 +197,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -215,9 +222,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -236,7 +243,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -257,7 +265,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -282,9 +291,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -307,9 +316,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -332,9 +341,10 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
                     </item>
-                </groupSet>
+                                    </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -353,7 +363,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>
@@ -376,9 +387,9 @@
                 <keyName>default</keyName>
                 <groupSet>
                     <item>
-                        <groupId>quick-start-1</groupId>
-                    </item>
-                </groupSet>
+                        <groupId>sg-83e1c4eb</groupId>
+                        <groupName>quick-start-1</groupName>
+                    </item>                </groupSet>
                 <instanceType>t1.micro</instanceType>
                 <blockDeviceMapping/>
                 <monitoring>
@@ -397,7 +408,8 @@
                 <imageId>ami-595a0a1c</imageId>
                 <groupSet>
                     <item>
-                        <groupId>default</groupId>
+                        <groupId>sg-83e1c4ea</groupId>
+                        <groupName>default</groupName>
                     </item>
                 </groupSet>
                 <instanceType>t1.micro</instanceType>

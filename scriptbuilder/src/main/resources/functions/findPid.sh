@@ -5,7 +5,7 @@ function findPid {
       return 1
    }
    local PATTERN="$1"; shift
-   local _FOUND=`ps auxwww|grep "$PATTERN"|grep -v " $0"|grep -v grep|awk '{print $2}'`
+   local _FOUND=`ps auxwww|grep "$PATTERN"|grep -v " $0"|grep -v grep|grep -v $$|awk '{print $2}'`
    [ -n "$_FOUND" ] && {
       export FOUND_PID=$_FOUND
       return 0

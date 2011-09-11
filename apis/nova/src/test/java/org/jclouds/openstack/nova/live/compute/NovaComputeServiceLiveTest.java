@@ -1,33 +1,70 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.openstack.nova.live.compute;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.inject.Module;
-import com.jcraft.jsch.JSchException;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import net.schmizz.sshj.userauth.UserAuthException;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
-import org.jclouds.compute.domain.*;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -40,25 +77,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.uniqueIndex;
-import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
-import static org.jclouds.compute.predicates.NodePredicates.*;
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-import static org.testng.Assert.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.google.inject.Module;
 
 /**
  * Generally disabled, as it incurs higher fees.
@@ -129,10 +151,10 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
             .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
-   @Test(expectedExceptions = JSchException.class, expectedExceptionsMessageRegExp = "Auth fail", timeOut = 60000)
-   void testScriptExecutionWithWrongCredentials() throws Throwable, RunScriptOnNodesException, URISyntaxException, InterruptedException {
+   @Test(expectedExceptions = UserAuthException.class, timeOut = 240000)
+   void testScriptExecutionWithWrongCredentials() throws Throwable {
       NodeMetadata node = getDefaultNodeImmediately(group);
-      String address = awaitForPublicAddressAssigned(node.getId());
+      String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       OperatingSystem os = node.getOperatingSystem();
       try {
@@ -144,11 +166,11 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       }
    }
 
-   @Test(timeOut = 60000)
+   @Test(timeOut = 240000)
    public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException, RunScriptOnNodesException, URISyntaxException, IOException {
 
       NodeMetadata node = getDefaultNodeImmediately(group);
-      String address = awaitForPublicAddressAssigned(node.getId());
+      String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
             runningInGroup(group), Statements.exec("echo hello"),
@@ -159,7 +181,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       //TODO runJavaInstallationScriptWithCreds(group, os, new Credentials("root", keyPair.get("private")));
       //TODO no response? if os is null (ZYPPER)
 
-      checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
+      node = computeService.getNodeMetadata(node.getId());
+      checkNodes(Sets.newHashSet(node), group);
 
       @SuppressWarnings("unused")
       Credentials good = node.getCredentials();
@@ -242,10 +265,9 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       return templateBuilder.build();
    }
 
-   @Test(timeOut = 60000)
+   @Test(timeOut = 120000)
    public void testGetNodeMetadata() throws Exception {
       Set<NodeMetadata> nodes = Sets.newHashSet(getDefaultNodeImmediately(group));
-      awaitForPublicAddressAssigned(nodes.iterator().next().getId());
       Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
             .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
             new Function<NodeMetadata, String>() {
@@ -257,6 +279,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
             }));
       for (NodeMetadata node : nodes) {
+         awaitForStartup(node.getId());
          metadataMap.remove(node.getId());
          NodeMetadata nodeMetadata = computeService.getNodeMetadata(node.getId());
          assertEquals(parseGroupFromName(nodeMetadata.getName()), group);
@@ -391,8 +414,9 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       assertEquals(provider.getParent(), null);
    }
 
-   @Test(timeOut = 60000)
+   @Test(timeOut = 60000, enabled = false)
    public void testListHardwareProfiles() throws Exception {
+      //TODO: failing, OpenStack returns a hardware with 0 CPU cores
       for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;

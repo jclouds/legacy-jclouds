@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.byon;
 
@@ -45,6 +45,7 @@ public class Node {
       private String osDescription;
       private String osVersion;
       private boolean os64Bit;
+      private int loginPort = 22;
       private String group;
       private Set<String> tags = ImmutableSet.of();
       private String username;
@@ -72,6 +73,11 @@ public class Node {
          return this;
       }
 
+      public Builder loginPort(int loginPort) {
+         this.loginPort = loginPort;
+         return this;
+      }
+      
       public Builder locationId(String locationId) {
          this.locationId = locationId;
          return this;
@@ -134,12 +140,12 @@ public class Node {
 
       public Node build() {
          return new Node(id, name, description, hostname, locationId, osArch, osFamily, osDescription, osVersion,
-                  os64Bit, group, tags, username, credential, credentialUrl, sudoPassword);
+                  os64Bit, loginPort, group, tags, username, credential, credentialUrl, sudoPassword);
       }
    }
 
    public Node(String id, String name, String description, String hostname, String locationId, String osArch,
-            String osFamily, String osDescription, String osVersion, boolean os64Bit, String group,
+            String osFamily, String osDescription, String osVersion, boolean os64Bit, int loginPort, String group,
             Iterable<String> tags, String username, String credential, URI credentialUrl, String sudoPassword) {
       this.id = id;
       this.name = name;
@@ -151,6 +157,7 @@ public class Node {
       this.osDescription = osDescription;
       this.osVersion = osVersion;
       this.os64Bit = os64Bit;
+      this.loginPort = loginPort;
       this.group = group;
       this.tags = ImmutableSet.copyOf(tags);
       this.username = username;
@@ -168,6 +175,7 @@ public class Node {
    private final String osFamily;
    private final String osDescription;
    private final String osVersion;
+   private final int loginPort;
    private final boolean os64Bit;
    private final String group;
    private final Set<String> tags;
@@ -219,7 +227,11 @@ public class Node {
    public boolean isOs64Bit() {
       return os64Bit;
    }
-
+   
+   public int getLoginPort() {
+      return loginPort;
+   }
+   
    public Set<String> getTags() {
       Set<String> tagSet = new HashSet<String>();
       for (String tag : tags)
@@ -260,7 +272,7 @@ public class Node {
       return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
                "locationId", locationId).add("hostname", hostname).add("osArch", osArch).add("osFamily", osFamily).add(
                "osDescription", osDescription).add("osVersion", osVersion).add("os64Bit", os64Bit).add("group", group)
-               .add("tags", tags).add("username", username).add("hasCredential",
+               .add("loginPort", loginPort).add("tags", tags).add("username", username).add("hasCredential",
                         credential != null || credentialUrl != null).add("hasSudoPassword", sudoPassword != null)
                .toString();
    }

@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.byon.domain;
 
@@ -32,8 +32,8 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 
 /**
@@ -50,6 +50,7 @@ import com.google.common.io.Closeables;
  *       os_description: redhat
  *       os_version: 5.3
  *       os_64bit: 5.3
+ *       login_port: 2022
  *       group: hadoop
  *       tags:
  *           - vanilla
@@ -73,6 +74,7 @@ public class YamlNode {
    public String os_family;
    public String os_description;
    public String os_version;
+   public int login_port = 22;
    public boolean os_64bit;
    public String group;
    public List<String> tags = Lists.newArrayList();
@@ -89,7 +91,7 @@ public class YamlNode {
          return Node.builder().id(arg0.id).name(arg0.name).description(arg0.description).locationId(arg0.location_id)
                   .hostname(arg0.hostname).osArch(arg0.os_arch).osFamily(arg0.os_family).osDescription(
                            arg0.os_description).osVersion(arg0.os_version).os64Bit(arg0.os_64bit).group(arg0.group)
-                  .tags(arg0.tags).username(arg0.username).credential(arg0.credential).credentialUrl(
+                  .loginPort(arg0.login_port).tags(arg0.tags).username(arg0.username).credential(arg0.credential).credentialUrl(
                            arg0.credential_url != null ? URI.create(arg0.credential_url) : null).sudoPassword(
                            arg0.sudo_password).build();
       }
@@ -144,6 +146,8 @@ public class YamlNode {
             prettier.put("os_version", in.os_version);
          if (in.os_64bit)
             prettier.put("os_64bit", in.os_64bit);
+         if (in.login_port != 22)
+            prettier.put("login_port", in.login_port);
          if (in.group != null)
             prettier.put("group", in.group);
          if (in.tags.size() != 0)
@@ -186,6 +190,7 @@ public class YamlNode {
          yaml.os_description = arg0.getOsDescription();
          yaml.os_version = arg0.getOsVersion();
          yaml.os_64bit = arg0.isOs64Bit();
+         yaml.login_port = arg0.getLoginPort();
          yaml.group = arg0.getGroup();
          yaml.tags = ImmutableList.copyOf(arg0.getTags());
          yaml.username = arg0.getUsername();

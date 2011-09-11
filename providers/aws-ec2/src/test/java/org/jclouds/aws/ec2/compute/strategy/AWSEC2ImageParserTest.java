@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
@@ -125,11 +125,11 @@ public class AWSEC2ImageParserTest {
 
       assertEquals(
                new Gson().toJson(Iterables.get(result, 1)),
-               "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
+               "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"paravirtual\",\"hypervisor\":\"xen\"}}");
 
       assertEquals(
                new Gson().toJson(Iterables.get(result, 2)),
-               "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
+               "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\"}}");
    }
 
    public void testParseAmznImage() {

@@ -1,28 +1,33 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.openstack.nova.live.novaclient;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupKeyPair;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupOverrides;
+import static org.jclouds.openstack.nova.live.PropertyHelper.setupProperties;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.NovaClient;
@@ -32,22 +37,20 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeTest;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import static org.jclouds.openstack.nova.live.PropertyHelper.*;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * @author Victor Galkin
  */
 public class ClientBase {
-   protected int testImageId = 95;
+   protected int testImageId;
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
    @SuppressWarnings("unused")
@@ -62,7 +65,7 @@ public class ClientBase {
       Properties properties = setupOverrides(setupProperties(this.getClass()));
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new JschSshClientModule()), properties)
+            ImmutableSet.<Module>of(new SLF4JLoggingModule(), new SshjSshClientModule()), properties)
             .buildInjector();
 
       client = injector.getInstance(NovaClient.class);
@@ -73,6 +76,8 @@ public class ClientBase {
       injector.injectMembers(socketOpen); // add logger
 
       keyPair = setupKeyPair(properties);
+
+      testImageId = Integer.valueOf(properties.getProperty("test.nova.image.id"));
    }
 
    protected Server getDefaultServerImmediately() {
@@ -84,7 +89,7 @@ public class ClientBase {
       return createDefaultServer(defaultName);
    }
 
-   private Server createDefaultServer(String serverName) {
+   protected Server createDefaultServer(String serverName) {
       String imageRef = client.getImage(testImageId).getURI().toASCIIString();
       String flavorRef = client.getFlavor(1).getURI().toASCIIString();
 

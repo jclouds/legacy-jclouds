@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.atmos.internal;
 
@@ -42,6 +42,7 @@ import org.jclouds.atmos.domain.DirectoryEntry;
 import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.atmos.options.ListOptions;
+import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -87,7 +88,8 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       this.service = service;
    }
 
-   public ListenableFuture<URI> createDirectory(String directoryName) {
+   @Override
+   public ListenableFuture<URI> createDirectory(String directoryName, PutOptions... options) {
       final String container;
       final String path;
       if (directoryName.indexOf('/') != -1) {
@@ -112,7 +114,8 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }, service);
    }
 
-   public ListenableFuture<URI> createFile(String parent, AtmosObject object) {
+   @Override
+   public ListenableFuture<URI> createFile(String parent, AtmosObject object, PutOptions... options) {
       final String uri = "http://stub/containers/" + parent + "/" + object.getContentMetadata().getName();
       String file = object.getContentMetadata().getName();
       String container = parent;
@@ -132,6 +135,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }, service);
    }
 
+   @Override
    public ListenableFuture<Void> deletePath(String path) {
       if (path.indexOf('/') == path.length() - 1) {
          // chop off the trailing slash
@@ -150,10 +154,12 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }
    }
 
+   @Override
    public ListenableFuture<SystemMetadata> getSystemMetadata(String path) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public ListenableFuture<UserMetadata> getUserMetadata(String path) {
       if (path.indexOf('/') == -1)
          throw new UnsupportedOperationException();
@@ -168,6 +174,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }
    }
 
+   @Override
    public ListenableFuture<AtmosObject> headFile(String path) {
       String container = path.substring(0, path.indexOf('/'));
       path = path.substring(path.indexOf('/') + 1);
@@ -178,12 +185,14 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }
    }
 
+   @Override
    public ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(ListOptions... optionsList) {
       // org.jclouds.blobstore.options.ListOptions options = container2ContainerListOptions
       // .apply(optionsList);
       return Futures.compose(blobStore.list(), resource2ObjectList, service);
    }
 
+   @Override
    public ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectory(String directoryName,
             ListOptions... optionsList) {
       org.jclouds.blobstore.options.ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
@@ -197,10 +206,12 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       return Futures.compose(blobStore.list(container, options), resource2ObjectList, service);
    }
 
+   @Override
    public AtmosObject newObject() {
       return this.objectProvider.create(null);
    }
 
+   @Override
    public ListenableFuture<Boolean> pathExists(final String path) {
       if (path.indexOf('/') == path.length() - 1) {
          // chop off the trailing slash
@@ -218,6 +229,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       }
    }
 
+   @Override
    public ListenableFuture<AtmosObject> readFile(String path, GetOptions... options) {
       String container = path.substring(0, path.indexOf('/'));
       String blobName = path.substring(path.indexOf('/') + 1);
@@ -225,7 +237,13 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       return Futures.compose(blobStore.getBlob(container, blobName, getOptions), blob2Object, service);
    }
 
-   public ListenableFuture<Void> updateFile(String parent, AtmosObject object) {
+   @Override
+   public ListenableFuture<Void> updateFile(String parent, AtmosObject object, PutOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ListenableFuture<Boolean> isPublic(String path) {
       throw new UnsupportedOperationException();
    }
 

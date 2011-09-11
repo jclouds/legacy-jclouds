@@ -1,20 +1,20 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.compute.internal;
 
@@ -224,7 +224,7 @@ public class BaseComputeService implements ComputeService {
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
       if (template.getOptions().getRunScript() != null)
-         template.getOptions().runScript(initAdminAccess.apply(template.getOptions().getRunScript()));
+         initAdminAccess.visit(template.getOptions().getRunScript());
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
                customizationResponses);
@@ -530,8 +530,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")),
-               RunScriptOptions.NONE);
+      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")), options);
    }
 
    /**
@@ -550,7 +549,7 @@ public class BaseComputeService implements ComputeService {
       Map<NodeMetadata, Future<ExecResponse>> responses = newLinkedHashMap();
       Map<?, Exception> exceptions = ImmutableMap.<Object, Exception> of();
 
-      runScript = initAdminAccess.apply(runScript);
+      initAdminAccess.visit(runScript);
 
       Iterable<? extends RunScriptOnNode> scriptRunners = transformNodesIntoInitializedScriptRunners(
                nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter), runScript, options, badNodes);
@@ -607,7 +606,11 @@ public class BaseComputeService implements ComputeService {
       if (node.getState() != NodeState.RUNNING)
          throw new IllegalStateException("node " + id
                   + " needs to be running before executing a script on it. current state: " + node.getState());
-      return runScriptOnNodeFactory.create(node, runScript, options).init().call();
+      initAdminAccess.visit(runScript);
+      node = updateNodeWithCredentialsIfPresent(node, options);
+      ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
+      persistNodeCredentials.ifAdminAccess(runScript).apply(node);
+      return response;
    }
 
    private Iterable<? extends RunScriptOnNode> transformNodesIntoInitializedScriptRunners(
@@ -626,6 +629,20 @@ public class BaseComputeService implements ComputeService {
       return templateOptionsProvider.get();
    }
 
+   protected NodeMetadata updateNodeWithCredentialsIfPresent(NodeMetadata node, RunScriptOptions options) {
+      checkNotNull(node, "node");
+      if (options.getOverridingCredentials() != null) {
+         Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
+                  : new Credentials.Builder<Credentials>();
+         if (options.getOverridingCredentials().identity != null)
+            builder.identity(options.getOverridingCredentials().identity);
+         if (options.getOverridingCredentials().credential != null)
+            builder.credential(options.getOverridingCredentials().credential);
+         node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
+      }
+      return node;
+   }
+   
    private final class TransformNodesIntoInitializedScriptRunners implements
             Function<NodeMetadata, Future<RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
@@ -641,18 +658,10 @@ public class BaseComputeService implements ComputeService {
 
       @Override
       public Future<RunScriptOnNode> apply(NodeMetadata node) {
-         checkNotNull(node, "node");
-         if (options.getOverridingCredentials() != null) {
-            Builder<? extends Credentials> builder = node.getCredentials() != null ? node.getCredentials().toBuilder()
-                     : new Credentials.Builder<Credentials>();
-            if (options.getOverridingCredentials().identity != null)
-               builder.identity(options.getOverridingCredentials().identity);
-            if (options.getOverridingCredentials().credential != null)
-               builder.credential(options.getOverridingCredentials().credential);
-            node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
-         }
+         node = updateNodeWithCredentialsIfPresent(node, options);
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
+
    }
 
 }

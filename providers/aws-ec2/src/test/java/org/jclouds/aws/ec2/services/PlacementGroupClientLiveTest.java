@@ -1,25 +1,24 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2011 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -46,21 +45,18 @@ import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -112,7 +108,7 @@ public class PlacementGroupClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       keyPair = setupKeyPair();
 
       client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
@@ -172,29 +168,12 @@ public class PlacementGroupClientLiveTest {
 
    public void testStartCCInstance() throws Exception {
 
-      Set<? extends Hardware> sizes = context.getComputeService().listHardwareProfiles();
-      assert any(sizes, new Predicate<Hardware>() {
-
-         @Override
-         public boolean apply(Hardware arg0) {
-            return arg0.getProviderId().equals(InstanceType.CC1_4XLARGE);
-         }
-
-      }) : sizes;
-      Set<? extends Image> images = context.getComputeService().listImages();
-      assert any(images, new Predicate<Image>() {
-
-         @Override
-         public boolean apply(Image arg0) {
-            return arg0.getId().equals("us-east-1/ami-7ea24a17");
-         }
-
-      }) : images;
-
-      Template template = context.getComputeService().templateBuilder().fastest().build();
+      Template template = context.getComputeService().templateBuilder().fastest().osVersionMatches("11.04").build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(template.getImage().getId(), "us-east-1/ami-321eed5b");
+      assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+      assertEquals(template.getImage().getUserMetadata().get("virtualizationType"), "hvm");
+      assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");
 
       template.getOptions().overrideLoginCredentialWith(keyPair.get("private"))
             .authorizePublicKey(keyPair.get("public")).runScript(buildScript(template.getImage().getOperatingSystem()));
