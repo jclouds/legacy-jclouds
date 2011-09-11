@@ -53,13 +53,10 @@ public class MapToNICs implements Function<Map<String, String>, List<NIC>> {
          String key = String.format("nic:%d", id);
          if (!from.containsKey(key + ":model"))
             break NIC;
+
          NIC.Builder nicBuilder = new NIC.Builder();
-         
-         if (apiVersion.equals("2.0")) {
-            nicBuilder.dhcp(from.get(key + ":dhcp:ip"));
-         } else {
-            nicBuilder.dhcp(from.get(key + ":dhcp"));
-         }
+         final String ip = getDhcpIp(from, key);
+         nicBuilder.dhcp(ip);
          nicBuilder.model(Model.fromValue(from.get(key + ":model")));
          nicBuilder.vlan(from.get(key + ":vlan"));
          nicBuilder.mac(from.get(key + ":mac"));
@@ -67,6 +64,17 @@ public class MapToNICs implements Function<Map<String, String>, List<NIC>> {
             nicBuilder.block(Splitter.on(' ').split(from.get(key + ":block")));
          nics.add(nicBuilder.build());
       }
+
       return nics.build();
+   }
+
+   private String getDhcpIp(Map<String, String> from, String key) {
+      if (apiVersion.equals("2.0")) {
+         final String ip = from.get(key + ":dhcp:ip");
+         return (ip == null ? "auto" : ip);
+      } else {
+         final String ip = from.get(key + ":dhcp");
+         return (ip == null ? "auto" : ip);
+      }
    }
 }

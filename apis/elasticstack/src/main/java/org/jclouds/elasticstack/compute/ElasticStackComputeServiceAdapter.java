@@ -123,10 +123,12 @@ public class ElasticStackComputeServiceAdapter implements
       Server toCreate = small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam()).cpu(
                (int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
 
-      ServerInfo from = client.createAndStartServer(toCreate);
+      ServerInfo from = client.createServer(toCreate);
+      client.startServer(from.getUuid());
+      from = client.getServerInfo(from.getUuid());
       // store the credentials so that later functions can use them
       credentialStore.put(from.getUuid() + "", new Credentials(template.getImage().getDefaultCredentials().identity,
-               from.getVnc().getPassword()));
+              from.getVnc().getPassword()));
       return from;
    }
 

@@ -18,32 +18,23 @@
  */
 package org.jclouds.elasticstack.functions;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
+import org.jclouds.elasticstack.domain.*;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.elasticstack.domain.Device;
-import org.jclouds.elasticstack.domain.NIC;
-import org.jclouds.elasticstack.domain.ServerInfo;
-import org.jclouds.elasticstack.domain.ServerMetrics;
-import org.jclouds.elasticstack.domain.ServerStatus;
-import org.jclouds.elasticstack.domain.VNC;
-
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
-import org.jclouds.rest.annotations.ApiVersion;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class MapToServerInfo implements Function<Map<String, String>, ServerInfo> {
-   private String apiVersion;
    private final Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices;
    private final Function<Map<String, String>, ServerMetrics> mapToMetrics;
    private final Function<Map<String, String>, List<NIC>> mapToNICs;
@@ -51,7 +42,6 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
    @Inject
    public MapToServerInfo(Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices,
                           Function<Map<String, String>, ServerMetrics> mapToMetrics, Function<Map<String, String>, List<NIC>> mapToNICs) {
-      this.apiVersion = apiVersion;
       this.mapToDevices = mapToDevices;
       this.mapToMetrics = mapToMetrics;
       this.mapToNICs = mapToNICs;

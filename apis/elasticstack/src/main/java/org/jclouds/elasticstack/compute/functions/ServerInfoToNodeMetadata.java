@@ -104,7 +104,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
             .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
       builder.state(serverStatusToNodeState.get(from.getStatus()));
-      builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
+      builder.publicAddresses(ImmutableSet.<String> of(from.getNics().get(0).getDhcp()));
       builder.privateAddresses(ImmutableSet.<String> of());
       builder.credentials(credentialStore.get(from.getUuid()));
       return builder.build();
