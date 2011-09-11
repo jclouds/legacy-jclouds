@@ -18,40 +18,27 @@
  */
 package org.jclouds.elasticstack.compute.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.collect.FindResourceInSet;
-import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.VolumeBuilder;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
-import org.jclouds.elasticstack.domain.Device;
-import org.jclouds.elasticstack.domain.DriveInfo;
-import org.jclouds.elasticstack.domain.Server;
-import org.jclouds.elasticstack.domain.ServerInfo;
-import org.jclouds.elasticstack.domain.ServerStatus;
-
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import org.jclouds.collect.FindResourceInSet;
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.domain.*;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.elasticstack.domain.*;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 /**
  * @author Adrian Cole
