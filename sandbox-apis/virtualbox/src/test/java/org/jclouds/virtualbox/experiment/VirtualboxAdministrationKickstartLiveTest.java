@@ -175,8 +175,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 
 		adminDisk = workingDir
 				+ File.separator
-				+ System.getProperty("test." + provider + ".clonedDisk",
-						"disk.vdi");
+				+ System.getProperty("test." + provider + ".adminDisk",
+						"admin.vdi");
 		guestAdditionsDvd = workingDir
 				+ File.separator
 				+ System.getProperty("test." + provider + ".guestAdditionsDvd",
@@ -457,8 +457,10 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		runScriptOnNode(guestId,
 				"mount -o loop /dev/dvd /media/cdrom");
 		runScriptOnNode(guestId, "sh /media/cdrom/VBoxLinuxAdditions.run");
+		// for Debian based OS
+		runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
 		
-			//runScriptOnNode(guestId, "apt-get --yes install virtualbox-ose-guest-utils");
+			
 		//}
 	}
 
