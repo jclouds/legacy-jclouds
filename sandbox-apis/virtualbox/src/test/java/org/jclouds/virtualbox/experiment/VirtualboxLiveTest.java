@@ -23,10 +23,7 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.testng.Assert.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.RemoteException;
@@ -47,22 +44,16 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
-import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.MediumType;
-import org.virtualbox_4_1.NetworkAdapterType;
-import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MediumVariant;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -90,28 +81,16 @@ public class VirtualboxLiveTest {
 	protected String controller;
 	protected String diskFormat;
 
-	protected String settingsFile; // Fully qualified path where the settings
-	// file should be created, or NULL for a
-	// default
-	// folder and file based on the name argument (see composeMachineFilename()).
-
-	protected String osTypeId; // Guest OS Type ID.
-	protected String vmId; // Machine UUID (optional).
-	protected boolean forceOverwrite; // If true, an existing machine settings
-	// file will be overwritten.
-
+	protected String settingsFile; 
+	protected String osTypeId; 
+	protected String vmId; 
+	protected boolean forceOverwrite;
 	protected String workingDir;
 	protected String clonedDiskPath;
-
-	// Create disk If the @a format attribute is empty or null then the default
-	// storage format specified by ISystemProperties#defaultHardDiskFormat
-	String format = "vdi";
-
+	protected String format = "vdi";
 	protected int numberOfVirtualMachine;
 	protected String originalDisk;
-	private String originalDiskPath;
 	private String clonedDisk;
-	private IMedium clonedHd;
 	private ComputeServiceContext context; 
 
 	private String hostId = "host";
@@ -120,6 +99,8 @@ public class VirtualboxLiveTest {
 	private String minorVersion;
 	private String apiVersion;
 	private String adminNodeName;
+	private String snapshotDescription;
+	private String originalDiskPath;
 
 	protected Logger logger() {
 		return context.utils().loggerFactory().getLogger("jclouds.compute");
@@ -162,9 +143,9 @@ public class VirtualboxLiveTest {
 
 		clonedDisk = System.getProperty("test." + provider + ".clonedDisk", "clone.vdi");
 		clonedDiskPath = workingDir + File.separator + clonedDisk;
-
+		snapshotDescription = System.getProperty("test." + provider + "snapshotdescription", "jclouds-virtualbox-snaphot");
 		numberOfVirtualMachine = Integer.parseInt(checkNotNull(System.getProperty("test." + provider
-				+ ".numberOfVirtualMachine", "1")));
+				+ ".numberOfVirtualMachine", "3")));
 	}
 
 	@BeforeGroups(groups = "live")
@@ -191,83 +172,52 @@ public class VirtualboxLiveTest {
 	}
 
 	@Test
-	public void testCloneHardDisk() {
-		IMedium hd = manager.getVBox().openMedium(originalDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, forceOverwrite);
-		if (!new File(clonedDiskPath).exists()) {
-			clonedHd = manager.getVBox().createHardDisk(diskFormat, clonedDiskPath);
-			IProgress cloning = hd.cloneTo(clonedHd, new Long(
-					MediumVariant.STANDARD.ordinal()), null);
-			cloning.waitForCompletion(-1);
-		} else
-			clonedHd = manager.getVBox().openMedium(clonedDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, forceOverwrite);
-
-		
-		clonedHd.setType(MediumType.MultiAttach);
-		assertEquals(clonedHd.getId().equals(""), false);
-	}
-
-	@Test(dependsOnMethods = "testCloneHardDisk")
-	public void testStartVirtualMachines() throws InterruptedException {
-		//IMedium clonedHd = cloneDisk(MediumType.MultiAttach);
-		List<CloneOptions> options = new ArrayList<CloneOptions>();
-		options.add(CloneOptions.KeepDiskNames);
-		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-			createVirtualMachine(i);
+	public void testTakeAdminNodeSnapshot() {
+		ISession session = manager.getSessionObject();
+		IMachine adminNode = manager.getVBox().findMachine(adminNodeName);
+		adminNode.lockMachine(session, LockType.Write);
+		if(adminNode.getCurrentSnapshot() == null || !adminNode.getCurrentSnapshot().getDescription().equals(snapshotDescription)) {
+			manager.getSessionObject().getConsole().takeSnapshot(adminNode.getId(), snapshotDescription);
 		}
 	}
 
-	private void createVirtualMachine(int i) {
+	@Test(dependsOnMethods = "testTakeAdminNodeSnapshot")
+	public void testStartAndValidateVirtualMachines() throws InterruptedException {
+		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
+			createAndLaunchVirtualMachine(i);
+		}
+	}		
+
+	private void createAndLaunchVirtualMachine(int i) throws InterruptedException {
 
 		String instanceName = vmName + "_" + i;
+		IMachine adminNode = manager.getVBox().findMachine(adminNodeName);
+		IMachine clonedVM = manager.getVBox().createMachine(settingsFile, instanceName, osTypeId, vmId, forceOverwrite);
+		List<CloneOptions> options = new ArrayList<CloneOptions>();
+		options.add(CloneOptions.Link);
+		IProgress progress = adminNode.getCurrentSnapshot().getMachine().cloneTo(clonedVM,CloneMode.MachineState , options);
+		if(progress.getCompleted())
+			logger().debug("clone done");
 
-		IMachine newVM = manager.getVBox().createMachine(settingsFile, instanceName, osTypeId, vmId, forceOverwrite);
-		manager.getVBox().registerMachine(newVM);
-
-		ISession session = manager.getSessionObject();
-		IMachine machine = manager.getVBox().findMachine(instanceName);
+		manager.getVBox().registerMachine(clonedVM);
 		
-
-		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
-		// network
-		String hostInterface = null;
-		String command = "vboxmanage list bridgedifs";
-		try {
-			Process child = Runtime.getRuntime().exec(command);
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
-			String line = "";
-			boolean found = false;
-
-			while ((line = bufferedReader.readLine()) != null && !found) {
-				if (line.split(":")[0].contains("Name")) {
-					hostInterface = line.split(":")[1];
-				}
-				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
-					System.out.println("bridge: " + hostInterface.trim());
-					found = true;
-				}
-
+		System.out.println("\nLaunching VM named " + clonedVM.getName() + " ...");
+		launchVMProcess(clonedVM, manager.getSessionObject());
+		String ipAddress = null;
+		while (ipAddress == null || ipAddress.equals("")) {
+			try {
+				ipAddress = clonedVM.getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(
-				NetworkAttachmentType.Bridged);
-		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
-		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
-		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
-		mutable.saveSettings();      
+		System.out.println(ipAddress + " is the IP address of " + clonedVM.getName());
+		
+		//TODO
+		// IPSocket socket = new IPSocket(ipAddress, 22);
+		// checkSSH(IPSocket socket)
 
-		// disk
-		mutable.addStorageController(controller, StorageBus.IDE);
-		mutable.saveSettings();      
-		IMedium distroMedium = manager.getVBox().openMedium(
-				clonedDiskPath, DeviceType.HardDisk,
-				AccessMode.ReadWrite, forceOverwrite);
-		mutable.attachDevice(controller, 0, 0, DeviceType.HardDisk, distroMedium);
-		mutable.saveSettings();
-		session.unlockMachine();
 	}
 
 	private void launchVMProcess(IMachine machine, ISession session) {
@@ -291,34 +241,8 @@ public class VirtualboxLiveTest {
 		}
 	}
 
-	@Test(dependsOnMethods = "testStartVirtualMachines")
-	public void testSshLogin() {
-		String ipAddress = null;
-		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-			String instanceName = vmName + "_" + i;
-			IMachine machine = manager.getVBox().findMachine(instanceName);
-
-			System.out.println("\nLaunching VM named " + machine.getName() + " ...");
-			launchVMProcess(machine, manager.getSessionObject());
-
-			while (ipAddress == null || ipAddress.equals("")) {
-				try {
-					ipAddress = machine.getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			System.out.println("VM " + instanceName + " started with IP " + ipAddress);
-			IPSocket socket = new IPSocket(ipAddress, 22);
-
-			System.out.println("Check SSH for " + instanceName + " ...");
-			checkSSH(socket);
-		}
-	}
-
-	@Test(dependsOnMethods = "testSshLogin")
-	public void testStopVirtualMachine() {
+	@Test(dependsOnMethods = "testStartAndValidateVirtualMachines")
+	public void testStopVirtualMachines() {
 		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
 			String instanceName = vmName + "_" + i;
 			IMachine machine = manager.getVBox().findMachine(instanceName);

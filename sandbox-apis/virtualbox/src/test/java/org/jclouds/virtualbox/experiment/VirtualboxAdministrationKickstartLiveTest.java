@@ -162,7 +162,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 				"VBoxGuestAdditions_" + majorVersion + ".iso");
 		gaIsoUrl = URI.create(System.getProperty("test." + provider
 				+ ".gaIsoUrl", "http://download.virtualbox.org/virtualbox/"
-				+ majorVersion + "/" + gaIsoName));
+						+ majorVersion + "/" + gaIsoName));
 
 		distroIsoName = System.getProperty("test." + provider
 				+ ".distroIsoName", "ubuntu-11.04-server-i386.iso");
@@ -282,9 +282,9 @@ public class VirtualboxAdministrationKickstartLiveTest {
 				hostId,
 				vboxwebsrv,
 				runAsRoot(false).wrapInInitScript(false)
-						.blockOnPort(endpoint.getPort(), 10)
-						.blockOnComplete(false)
-						.nameTask("vboxwebsrv"));
+				.blockOnPort(endpoint.getPort(), 10)
+				.blockOnComplete(false)
+				.nameTask("vboxwebsrv"));
 	}
 
 	protected boolean isOSX(String id) {
@@ -296,7 +296,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		return context.getComputeService().getNodeMetadata(id)
 				.getOperatingSystem().getDescription().equals("ubuntu/11.04");
 	}
-	
+
 	@BeforeMethod
 	protected void setupManager() {
 		manager.connect(endpoint.toASCIIString(), identity, credential);
@@ -304,7 +304,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 
 	@AfterMethod
 	protected void disconnectAndClenaupManager() throws RemoteException,
-			MalformedURLException {
+	MalformedURLException {
 		manager.disconnect();
 		manager.cleanup();
 	}
@@ -354,7 +354,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		machine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
 		mutable.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
-		mutable.saveSettings(); // write settings to xml
+		mutable.saveSettings();
 		session.unlockMachine();
 		assertEquals(distroMedium.getId().equals(""), false);
 	}
@@ -392,9 +392,9 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(
 				NetworkAttachmentType.NAT);
 		machine.getNetworkAdapter(new Long(0))
-				.getNatDriver()
-				.addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1", 2222,
-						"", 22);
+		.getNatDriver()
+		.addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1", 2222,
+				"", 22);
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 
 		mutable.saveSettings();
@@ -402,20 +402,20 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	}
 
 	@Test(dependsOnMethods = "testConfigureNIC")
-	   public void testAttachGuestAdditions() {
-	      ISession session = manager.getSessionObject();
-	      IMachine machine = manager.getVBox().findMachine(vmName);
+	public void testAttachGuestAdditions() {
+		ISession session = manager.getSessionObject();
+		IMachine machine = manager.getVBox().findMachine(vmName);
 
-	      IMedium distroMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
-	            AccessMode.ReadOnly, forceOverwrite);
-	  		machine.lockMachine(session, LockType.Write);
-			IMachine mutable = session.getMachine();
-			mutable.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, distroMedium);
-			mutable.saveSettings(); // write settings to xml
-			session.unlockMachine();
-			assertEquals(distroMedium.getId().equals(""), false);
-		}
-	   
+		IMedium distroMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
+				AccessMode.ReadOnly, forceOverwrite);
+		machine.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
+		mutable.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, distroMedium);
+		mutable.saveSettings(); // write settings to xml
+		session.unlockMachine();
+		assertEquals(distroMedium.getId().equals(""), false);
+	}
+
 
 	@Test(dependsOnMethods = "testAttachGuestAdditions")
 	public void testStartVirtualMachine() throws InterruptedException {
@@ -430,37 +430,35 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		}
 
 		sendKeyboardSequence(keyboardSequence);
-              
-		 // test if the sshd on the guest is ready and meanwhile apply AdminAccess
-        boolean sshDeamonIsRunning = false;
-        while(!sshDeamonIsRunning) {
-        	try {
-        		AdminAccess.standard().init(new DefaultConfiguration()).render(OsFamily.UNIX);
-        		if(runScriptOnNode(guestId, "id").getExitCode() == 0)
-        			sshDeamonIsRunning = true;
-                } catch(SshException e) {
-                	System.err.println("connection reset");
-                }
-        	}
 
+		// test if the sshd on the guest is ready and meanwhile apply AdminAccess
+		boolean sshDeamonIsRunning = false;
+		while(!sshDeamonIsRunning) {
+			try {
+				AdminAccess.standard().init(new DefaultConfiguration()).render(OsFamily.UNIX);
+				if(runScriptOnNode(guestId, "id").getExitCode() == 0)
+					sshDeamonIsRunning = true;
+			} catch(SshException e) {
+				System.err.println("connection reset");
+			}
+		}
 	}
 
 	@Test(dependsOnMethods = "testStartVirtualMachine")
 	public void testConfigureGuestAdditions() {
 		// TODO generalize: at the moment we are usign apt-get not the guestadditions.iso attached
-		
-	
 		//if(isUbuntu(guestId)) {
-			// Configure your system for building kernel modules by running
-			runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
-		
+		// Configure your system for building kernel modules by running
+		runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
+
 		runScriptOnNode(guestId,
 				"mount -o loop /dev/dvd /media/cdrom");
-		runScriptOnNode(guestId, "sh /media/cdrom/VBoxLinuxAdditions.run");
+		ExecResponse response = runScriptOnNode(guestId, "sh /media/cdrom/VBoxLinuxAdditions.run");
+		response.getExitCode();
 		// for Debian based OS
 		runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
-		
-			
+
+
 		//}
 	}
 
@@ -484,15 +482,15 @@ public class VirtualboxAdministrationKickstartLiveTest {
 			while (!machine.getSessionState().equals(SessionState.Unlocked)) {
 				try {
 					System.out
-							.println("waiting for unlocking session - session state: "
-									+ machine.getSessionState());
+					.println("waiting for unlocking session - session state: "
+							+ machine.getSessionState());
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			e.printStackTrace();
 		}
 	}
@@ -504,7 +502,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		machine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
 		mutable.getNetworkAdapter(new Long(0)).getNatDriver()
-				.removeRedirect("guestssh");
+		.removeRedirect("guestssh");
 		// detach disk from controller
 		mutable.detachDevice(controllerIDE, 0, 0);
 		mutable.saveSettings();
@@ -567,41 +565,35 @@ public class VirtualboxAdministrationKickstartLiveTest {
 			for (String word : converted.split("  ")) {
 				sb.append("vboxmanage controlvm " + vmName
 						+ " keyboardputscancode " + word + "; ");
-				
+
 				if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Enter>"))) {
 					runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
 							.wrapInInitScript(false));
 					sb.delete(0, sb.length()-1);
 				}
 
-				
+
 				if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Return>"))) {
 					runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
 							.wrapInInitScript(false));
 					sb.delete(0, sb.length()-1);
 				}
-				
+
 			}
 		}
 	}
 
 	private String stringToKeycode(String s) {
-
 		StringBuilder keycodes = new StringBuilder();
-		//for (String specialButton : KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.keySet()) {
-			//System.out.println("specialbutton " + specialButton);
-			if (s.startsWith("<")) {
-				String[] specials = s.split("<");
-				for (int i = 1; i < specials.length; i++) {
-					keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
-							.get("<" + specials[i]) + "  ");	
-				}
-				
-			
-			System.out.println("keycodes: " + keycodes);
+		if (s.startsWith("<")) {
+			String[] specials = s.split("<");
+			for (int i = 1; i < specials.length; i++) {
+				keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+						.get("<" + specials[i]) + "  ");	
+			}
 			return keycodes.toString();
 		}
-		
+
 
 		int i = 0;
 		while (i < s.length()) {
