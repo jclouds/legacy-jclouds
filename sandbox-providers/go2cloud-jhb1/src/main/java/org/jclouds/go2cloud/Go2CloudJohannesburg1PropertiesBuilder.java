@@ -37,7 +37,7 @@ public class Go2CloudJohannesburg1PropertiesBuilder extends ElasticStackProperti
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "ZA-GP");
       properties.setProperty(PROPERTY_ENDPOINT, "http://api.jhb1.go2cloud.co.za");
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "2.0");
       return properties;
    }
 
