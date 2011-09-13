@@ -18,7 +18,12 @@
  */
 package org.jclouds.go2cloud.config;
 
+import static org.jclouds.compute.domain.OsFamily.DEBIAN;
+
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
+
+import com.google.inject.Injector;
 
 /**
  * 
@@ -26,4 +31,8 @@ import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContext
  */
 public class Go2CloudJohannesburg1ComputeServiceContextModule extends ElasticStackComputeServiceContextModule {
 
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(DEBIAN).osVersionMatches("6.0").os64Bit(true);
+   }
 }
