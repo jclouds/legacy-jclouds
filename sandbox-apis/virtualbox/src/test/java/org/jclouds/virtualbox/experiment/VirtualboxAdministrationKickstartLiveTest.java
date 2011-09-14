@@ -316,6 +316,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		manager.cleanup();
 	}
 
+	@Test
 	public void testCreateVirtualMachine() {
 		IMachine newVM = manager.getVBox().createMachine(settingsFile, vmName,
 				osTypeId, vmId, forceOverwrite);
