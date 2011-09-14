@@ -27,6 +27,9 @@ import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+
 /**
  * Tests behavior of {@code DatacenterClient}
  * 
@@ -43,14 +46,14 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
    private DatacenterClient client;
 
    @Test
-   public void testListDatacenters() throws Exception {
+   public void testListDatacenters() {
       Set<Datacenter> response = client.listDatacenters();
       assert null != response;
       assertTrue(response.size() >= 0);
       for (Datacenter vg : response) {
          Datacenter newDetails = client.getDatacenter(vg.getId());
          assertEquals(vg.getId(), newDetails.getId());
-         checkDatacenter(vg);
+         checkDatacenter(newDetails);
       }
    }
 
@@ -60,4 +63,24 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert vg.getLongName() != null : vg;
    }
 
+   @Test
+   public void testListDatacentersContent() {
+      Builder<Datacenter> expected = ImmutableSet.<Datacenter> builder();
+      expected.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
+      expected.add(Datacenter.builder().id(18171).name("sea01").longName("Seattle").build());
+      expected.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
+      expected.add(Datacenter.builder().id(2).name("dal00").longName("Corporate HQ").build());
+      expected.add(Datacenter.builder().id(37473).name("wdc01").longName("Washington, DC").build());
+      expected.add(Datacenter.builder().id(154770).name("dal02").longName("Dallas 2").build());
+      expected.add(Datacenter.builder().id(138124).name("dal05").longName("Dallas 5").build());
+      expected.add(Datacenter.builder().id(167093).name("hou01").longName("Houston 1").build());
+      expected.add(Datacenter.builder().id(167094).name("lon01").longName("London 1").build());
+      expected.add(Datacenter.builder().id(167092).name("dal04").longName("Dallas 4").build());
+      expected.add(Datacenter.builder().id(224092).name("sng01").longName("Singapore 1").build());
+      expected.add(Datacenter.builder().id(142775).name("hou02").longName("Houston 2").build());
+      expected.add(Datacenter.builder().id(142776).name("dal07").longName("Dallas 7").build());
+      expected.add(Datacenter.builder().id(154820).name("dal06").longName("Dallas 6").build());
+      Set<Datacenter> response = client.listDatacenters();
+      assertEquals(response.toString(), expected.build().toString());
+   }
 }

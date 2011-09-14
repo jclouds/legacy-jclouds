@@ -44,7 +44,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json?objectMask=locationAddress HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -53,7 +53,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json?objectMask=locationAddress HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest,

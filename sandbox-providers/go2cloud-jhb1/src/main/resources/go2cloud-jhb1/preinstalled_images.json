@@ -1,13 +1,13 @@
 [
   {
-      "uuid": "5192adbd-046f-4a48-90f9-3db390b1efab",
-      "description": "Ubuntu 11.04 Server 64 Bit",
-      "osFamily": "UBUNTU",
-      "osVersion": "11.04",
+      "uuid": "cc54132d-4912-4106-a91a-7a27e6866c8b",
+      "description": "Debian 6.0.2.1",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
       "size": "1"
   },
   {
-      "uuid": "757f1074-82bd-453c-8cc1-70c4e697e5fe",
+      "uuid": "46e305b6-6a49-409c-bd12-eb966cdb3664",
       "description": "Windows 2008 R2 with SP1 (x64)",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",

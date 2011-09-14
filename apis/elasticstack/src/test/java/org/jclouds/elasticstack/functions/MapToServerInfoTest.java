@@ -104,6 +104,11 @@ public class MapToServerInfoTest {
    private static final MapToServerInfo MAP_TO_DRIVE = new MapToServerInfo(new MapToDevices(new DeviceToId()),
          new MapToServerMetrics(new MapToDriveMetrics()), new MapToNICs("1.0"));
 
+
+   private static final MapToServerInfo MAP_TO_DRIVE_2_0 = new MapToServerInfo(new MapToDevices(new DeviceToId()),
+         new MapToServerMetrics(new MapToDriveMetrics()), new MapToNICs("2.0"));
+
+
    public void testEmptyMapReturnsNull() {
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.<String, String> of()), null);
    }
@@ -137,6 +142,7 @@ public class MapToServerInfoTest {
          .name("adriancole.test")
          .vnc(new VNC("83.222.249.221", "XXXXXXXX", false))
          .nics(ImmutableSet.of(new NIC.Builder()
+               .dhcp("auto")
                .model(Model.E1000)
                .block(
                      ImmutableList.of("tcp/43594", "tcp/5902", "udp/5060", "tcp/5900", "tcp/5901", "tcp/21", "tcp/22",
@@ -159,13 +165,12 @@ public class MapToServerInfoTest {
 
    }
 
-
    public void testNew2() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
               Strings2.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server2.txt"))).get(0);
 
-      assertEquals(MAP_TO_DRIVE.apply(input), NEW);
+      assertEquals(MAP_TO_DRIVE_2_0.apply(input), NEW);
 
    }
 }
