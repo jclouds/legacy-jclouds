@@ -25,10 +25,12 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScr
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.RemoteException;
@@ -66,6 +68,7 @@ import org.virtualbox_4_1.IStorageController;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_1.NetworkAdapterType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.StorageBus;
@@ -119,6 +122,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	private String minorVersion;
 	private URI vboxDmg;
 	private String vboxVersionName;
+	private String snapshotDescription;
 
 	protected void setupCredentials() {
 		identity = System.getProperty("test." + provider + ".identity",
@@ -185,6 +189,8 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		preseedUrl = System.getProperty("test." + provider + ".preseedurl",
 				"http://dl.dropbox.com/u/693111/preseed.cfg");
 
+		snapshotDescription = System.getProperty("test." + provider + "snapshotdescription", "jclouds-virtualbox-snaphot");
+
 		keyboardSequence = System
 				.getProperty(
 						"test." + provider + ".keyboardSequence",
@@ -197,6 +203,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 								+ "fb=false debconf/frontend=noninteractive "
 								+ "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
 								+ "initrd=/install/initrd.gz -- <Enter>");
+
 
 	}
 
@@ -294,7 +301,7 @@ public class VirtualboxAdministrationKickstartLiveTest {
 
 	protected boolean isUbuntu(String id) {
 		return context.getComputeService().getNodeMetadata(id)
-				.getOperatingSystem().getDescription().equals("ubuntu/11.04");
+				.getOperatingSystem().getDescription().contains("ubuntu");
 	}
 
 	@BeforeMethod
@@ -446,20 +453,18 @@ public class VirtualboxAdministrationKickstartLiveTest {
 
 	@Test(dependsOnMethods = "testStartVirtualMachine")
 	public void testConfigureGuestAdditions() {
-		// TODO generalize: at the moment we are usign apt-get not the guestadditions.iso attached
-		//if(isUbuntu(guestId)) {
-		// Configure your system for building kernel modules by running
-		runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
-
-		runScriptOnNode(guestId,
+		// TODO generalize
+		if(isUbuntu(guestId)) {
+			runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
+			runScriptOnNode(guestId,
 				"mount -o loop /dev/dvd /media/cdrom");
-		ExecResponse response = runScriptOnNode(guestId, "sh /media/cdrom/VBoxLinuxAdditions.run");
-		response.getExitCode();
-		// for Debian based OS
-		runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
-
-
-		//}
+			runScriptOnNode(guestId,
+				"sh /media/cdrom/VBoxLinuxAdditions.run");
+			runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
+			runScriptOnNode(guestId, "mkdir /etc/udev/rules.d/70-persistent-net.rules");
+			runScriptOnNode(guestId, "rm -rf /dev/.udev/");
+			runScriptOnNode(guestId, "rm /lib/udev/rules.d/75-persistent-net-generator.rules");
+		}
 	}
 
 	@Test(dependsOnMethods = "testConfigureGuestAdditions")
@@ -469,156 +474,179 @@ public class VirtualboxAdministrationKickstartLiveTest {
 		assertEquals(machine.getState(), MachineState.PoweredOff);
 	}
 
-	/**
-	 * @param machine
-	 */
-	private void powerDownMachine(IMachine machine) {
+	@Test(dependsOnMethods = "testStopVirtualMachine")
+	public void testChangeNICtoBridged() {
+		ISession session = manager.getSessionObject();
+		IMachine adminNode = manager.getVBox().findMachine(vmName);
+		adminNode.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
+		// network
+		String hostInterface = null;
+		String command = "vboxmanage list bridgedifs";
 		try {
-			ISession machineSession = manager.openMachineSession(machine);
-			IProgress progress = machineSession.getConsole().powerDown();
-			progress.waitForCompletion(-1);
-			machineSession.unlockMachine();
+			Process child = Runtime.getRuntime().exec(command);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
+			String line = "";
+			boolean found = false;
 
-			while (!machine.getSessionState().equals(SessionState.Unlocked)) {
-				try {
-					System.out
-					.println("waiting for unlocking session - session state: "
-							+ machine.getSessionState());
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+			while ((line = bufferedReader.readLine()) != null && !found) {
+				if (line.split(":")[0].contains("Name")) {
+					hostInterface = line.split(":")[1];
+				}
+				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
+					System.out.println("bridge: " + hostInterface.trim());
+					found = true;
 				}
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
 
-	@Test(dependsOnMethods = "testStopVirtualMachine")
-	public void cleanUp() throws IOException {
-		ISession session = manager.getSessionObject();
-		IMachine machine = manager.getVBox().findMachine(vmName);
-		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
-		mutable.getNetworkAdapter(new Long(0)).getNatDriver()
-		.removeRedirect("guestssh");
-		// detach disk from controller
-		mutable.detachDevice(controllerIDE, 0, 0);
+		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
+		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
+		mutable.getNetworkAdapter(new Long(0)).setMACAddress(manager.getVBox().getHost().generateMACAddress());
+		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
+		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 		mutable.saveSettings();
 		session.unlockMachine();
+	}
 
-		for (IStorageController storageController : machine
-				.getStorageControllers()) {
-			if (storageController.getName().equals(controllerSATA)) {
-				session = manager.getSessionObject();
-				machine.lockMachine(session, LockType.Write);
-
-				mutable = session.getMachine();
-				mutable.detachDevice(storageController.getName(), 1, 1);
-				mutable.saveSettings();
-				session.unlockMachine();
-			}
+	@Test(dependsOnMethods = "testChangeNICtoBridged")
+	public void testTakeAdminNodeSnapshot() {
+		ISession session = manager.getSessionObject();
+		IMachine adminNode = manager.getVBox().findMachine(vmName);
+		adminNode.lockMachine(session, LockType.Write);
+		if(adminNode.getCurrentSnapshot() == null || !adminNode.getCurrentSnapshot().getDescription().equals(snapshotDescription)) {
+			manager.getSessionObject().getConsole().takeSnapshot(adminNode.getId(), snapshotDescription);
 		}
+		session.unlockMachine();
 	}
 
 	@AfterClass
-	void stopVboxWebServer() throws IOException {
-		runScriptOnNode(guestId, "pidof vboxwebsrv | xargs kill");
-	}
+		void stopVboxWebServer() throws IOException {
+			runScriptOnNode(guestId, "pidof vboxwebsrv | xargs kill");
+		}
 
-	protected ExecResponse runScriptOnNode(String nodeId, String command,
-			RunScriptOptions options) {
-		ExecResponse toReturn = context.getComputeService().runScriptOnNode(
-				nodeId, command, options);
-		assert toReturn.getExitCode() == 0 : toReturn;
-		return toReturn;
-	}
+		protected ExecResponse runScriptOnNode(String nodeId, String command,
+				RunScriptOptions options) {
+			ExecResponse toReturn = context.getComputeService().runScriptOnNode(
+					nodeId, command, options);
+			assert toReturn.getExitCode() == 0 : toReturn;
+			return toReturn;
+		}
 
-	protected ExecResponse runScriptOnNode(String nodeId, String command) {
-		return runScriptOnNode(nodeId, command, wrapInInitScript(false));
-	}
+		protected ExecResponse runScriptOnNode(String nodeId, String command) {
+			return runScriptOnNode(nodeId, command, wrapInInitScript(false));
+		}
 
-	private File downloadFileUnlessPresent(URI sourceURL,
-			String destinationDir, String filename) throws Exception {
+		private File downloadFileUnlessPresent(URI sourceURL,
+				String destinationDir, String filename) throws Exception {
 
-		File iso = new File(destinationDir, filename);
+			File iso = new File(destinationDir, filename);
 
-		if (!iso.exists()) {
-			InputStream is = context.utils().http().get(sourceURL);
-			checkNotNull(is, "%s not found", sourceURL);
-			try {
-				ByteStreams.copy(is, new FileOutputStream(iso));
-			} finally {
-				Closeables.closeQuietly(is);
+			if (!iso.exists()) {
+				InputStream is = context.utils().http().get(sourceURL);
+				checkNotNull(is, "%s not found", sourceURL);
+				try {
+					ByteStreams.copy(is, new FileOutputStream(iso));
+				} finally {
+					Closeables.closeQuietly(is);
+				}
+			}
+			return iso;
+		}
+
+		private void sendKeyboardSequence(String keyboardSequence)
+				throws InterruptedException {
+			String[] sequenceSplited = keyboardSequence.split(" ");
+			StringBuilder sb = new StringBuilder();
+			for (String line : sequenceSplited) {
+				String converted = stringToKeycode(line);
+				for (String word : converted.split("  ")) {
+					sb.append("vboxmanage controlvm " + vmName
+							+ " keyboardputscancode " + word + "; ");
+
+					if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Enter>"))) {
+						runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
+								.wrapInInitScript(false));
+						sb.delete(0, sb.length()-1);
+					}
+
+
+					if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Return>"))) {
+						runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
+								.wrapInInitScript(false));
+						sb.delete(0, sb.length()-1);
+					}
+
+				}
 			}
 		}
-		return iso;
-	}
 
-	private void sendKeyboardSequence(String keyboardSequence)
-			throws InterruptedException {
-		String[] sequenceSplited = keyboardSequence.split(" ");
-		StringBuilder sb = new StringBuilder();
-		for (String line : sequenceSplited) {
-			String converted = stringToKeycode(line);
-			for (String word : converted.split("  ")) {
-				sb.append("vboxmanage controlvm " + vmName
-						+ " keyboardputscancode " + word + "; ");
-
-				if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Enter>"))) {
-					runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
-							.wrapInInitScript(false));
-					sb.delete(0, sb.length()-1);
+		private String stringToKeycode(String s) {
+			StringBuilder keycodes = new StringBuilder();
+			if (s.startsWith("<")) {
+				String[] specials = s.split("<");
+				for (int i = 1; i < specials.length; i++) {
+					keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+							.get("<" + specials[i]) + "  ");	
 				}
-
-
-				if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Return>"))) {
-					runScriptOnNode(hostId, sb.toString(), runAsRoot(false)
-							.wrapInInitScript(false));
-					sb.delete(0, sb.length()-1);
-				}
-
+				return keycodes.toString();
 			}
-		}
-	}
 
-	private String stringToKeycode(String s) {
-		StringBuilder keycodes = new StringBuilder();
-		if (s.startsWith("<")) {
-			String[] specials = s.split("<");
-			for (int i = 1; i < specials.length; i++) {
-				keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
-						.get("<" + specials[i]) + "  ");	
+
+			int i = 0;
+			while (i < s.length()) {
+				String digit = s.substring(i, i + 1);
+				String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP
+						.get(digit);
+				keycodes.append(hex + " ");
+				if (i != 0 && i % 14 == 0)
+					keycodes.append(" ");
+				i++;
 			}
+			keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
+					.get("<Spacebar>") + " ");
+
 			return keycodes.toString();
 		}
 
-
-		int i = 0;
-		while (i < s.length()) {
-			String digit = s.substring(i, i + 1);
-			String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP
-					.get(digit);
-			keycodes.append(hex + " ");
-			if (i != 0 && i % 14 == 0)
-				keycodes.append(" ");
-			i++;
+		/**
+		 * 
+		 * @param machine
+		 * @param session
+		 */
+		private void launchVMProcess(IMachine machine, ISession session) {
+			IProgress prog = machine.launchVMProcess(session, "gui", "");
+			prog.waitForCompletion(-1);
+			session.unlockMachine();
 		}
-		keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP
-				.get("<Spacebar>") + " ");
 
-		return keycodes.toString();
-	}
+		/**
+		 * @param machine
+		 */
+		private void powerDownMachine(IMachine machine) {
+			try {
+				ISession machineSession = manager.openMachineSession(machine);
+				IProgress progress = machineSession.getConsole().powerDown();
+				progress.waitForCompletion(-1);
+				machineSession.unlockMachine();
 
-	/**
-	 * 
-	 * @param machine
-	 * @param session
-	 */
-	private void launchVMProcess(IMachine machine, ISession session) {
-		IProgress prog = machine.launchVMProcess(session, "gui", "");
-		prog.waitForCompletion(-1);
-		session.unlockMachine();
+				while (!machine.getSessionState().equals(SessionState.Unlocked)) {
+					try {
+						System.out
+						.println("waiting for unlocking session - session state: "
+								+ machine.getSessionState());
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				e.printStackTrace();
+			}
+		}
+
 	}
-}

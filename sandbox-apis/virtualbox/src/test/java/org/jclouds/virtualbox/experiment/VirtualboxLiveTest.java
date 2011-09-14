@@ -23,7 +23,10 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.testng.Assert.assertEquals;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.RemoteException;
@@ -47,11 +50,12 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NetworkAdapterType;
+import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -143,7 +147,6 @@ public class VirtualboxLiveTest {
 
 		clonedDisk = System.getProperty("test." + provider + ".clonedDisk", "clone.vdi");
 		clonedDiskPath = workingDir + File.separator + clonedDisk;
-		snapshotDescription = System.getProperty("test." + provider + "snapshotdescription", "jclouds-virtualbox-snaphot");
 		numberOfVirtualMachine = Integer.parseInt(checkNotNull(System.getProperty("test." + provider
 				+ ".numberOfVirtualMachine", "3")));
 	}
@@ -172,16 +175,6 @@ public class VirtualboxLiveTest {
 	}
 
 	@Test
-	public void testTakeAdminNodeSnapshot() {
-		ISession session = manager.getSessionObject();
-		IMachine adminNode = manager.getVBox().findMachine(adminNodeName);
-		adminNode.lockMachine(session, LockType.Write);
-		if(adminNode.getCurrentSnapshot() == null || !adminNode.getCurrentSnapshot().getDescription().equals(snapshotDescription)) {
-			manager.getSessionObject().getConsole().takeSnapshot(adminNode.getId(), snapshotDescription);
-		}
-	}
-
-	@Test(dependsOnMethods = "testTakeAdminNodeSnapshot")
 	public void testStartAndValidateVirtualMachines() throws InterruptedException {
 		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
 			createAndLaunchVirtualMachine(i);
@@ -189,9 +182,9 @@ public class VirtualboxLiveTest {
 	}		
 
 	private void createAndLaunchVirtualMachine(int i) throws InterruptedException {
-
 		String instanceName = vmName + "_" + i;
 		IMachine adminNode = manager.getVBox().findMachine(adminNodeName);
+		
 		IMachine clonedVM = manager.getVBox().createMachine(settingsFile, instanceName, osTypeId, vmId, forceOverwrite);
 		List<CloneOptions> options = new ArrayList<CloneOptions>();
 		options.add(CloneOptions.Link);
@@ -201,6 +194,7 @@ public class VirtualboxLiveTest {
 
 		manager.getVBox().registerMachine(clonedVM);
 		
+			
 		System.out.println("\nLaunching VM named " + clonedVM.getName() + " ...");
 		launchVMProcess(clonedVM, manager.getSessionObject());
 		String ipAddress = null;
