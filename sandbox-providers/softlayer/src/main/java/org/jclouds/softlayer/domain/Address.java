@@ -20,102 +20,95 @@ package org.jclouds.softlayer.domain;
 
 /**
  * 
- * @author Adrian Cole
- * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Location_Datacenter"
+ * @author Jason King
+ * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Account_Address"
  *      />
  */
-public class Datacenter implements Comparable<Datacenter> {
+public class Address implements Comparable<Address> {
    public static Builder builder() {
       return new Builder();
    }
 
    public static class Builder {
       private long id = -1;
-      private String name;
-      private String longName;
-      private Address locationAddress;
+      private String country;
+      private String state;
 
       public Builder id(long id) {
          this.id = id;
          return this;
       }
 
-      public Builder name(String name) {
-         this.name = name;
+      public Builder country(String country) {
+         this.country = country;
          return this;
       }
 
-      public Builder longName(String longName) {
-         this.longName = longName;
+      public Builder state(String state) {
+         this.state = state;
          return this;
       }
 
-      public Builder locationAddress(Address locationAddress) {
-         this.locationAddress = locationAddress;
-         return this;
+      public Address build() {
+         return new Address(id, country, state);
       }
 
-      public Datacenter build() {
-         return new Datacenter(id, name, longName, locationAddress);
-      }
-
-      public static Builder fromDatacenter(Datacenter in) {
-         return Datacenter.builder().id(in.getId()).name(in.getName()).longName(in.getLongName()).locationAddress(in.getLocationAddress());
+      public static Builder fromAddress(Address in) {
+         return Address.builder().id(in.getId()).country(in.getCountry()).state(in.getState());
       }
    }
 
    private long id = -1;
-   private String name;
-   private String longName;
-   private Address locationAddress;
+   private String country;
+   private String state;
 
    // for deserializer
-   Datacenter() {
+   Address() {
 
    }
 
-   public Datacenter(long id, String name, String longName, Address locationAddress) {
+   public Address(long id, String country, String state) {
       this.id = id;
-      this.name = name;
-      this.longName = longName;
-      this.locationAddress = locationAddress;
+      this.country = country;
+      this.state = state;
    }
 
    @Override
-   public int compareTo(Datacenter arg0) {
+   public int compareTo(Address arg0) {
       return new Long(id).compareTo(arg0.getId());
    }
 
    /**
-    * @return The unique identifier of a specific location.
+    * @return The unique id of the address.
     */
    public long getId() {
       return id;
    }
 
    /**
-    * @return A short location description.
+    * @return The country of the address.
     */
-   public String getName() {
-      return name;
+   public String getCountry() {
+      return country;
    }
 
    /**
-    * @return A longer location description.
+    * @return The state of the address.
     */
-   public String getLongName() {
-      return longName;
+   public String getState() {
+      return state;
    }
 
    /**
-    * @return A location's physical address (optional).
+    * @return TThe iso3166 code.
+    * This is a derived value of the form 'country-state'
     */
-   public Address getLocationAddress() {
-      return locationAddress;
-   }
+   public String getIso3166Code() {
+      return ""+country+"-"+state;
+   }    
 
    public Builder toBuilder() {
-      return Builder.fromDatacenter(this);
+      return Builder.fromAddress(this);
    }
 
    @Override
@@ -134,7 +127,7 @@ public class Datacenter implements Comparable<Datacenter> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Datacenter other = (Datacenter) obj;
+      Address other = (Address) obj;
       if (id != other.id)
          return false;
       return true;
@@ -142,7 +135,7 @@ public class Datacenter implements Comparable<Datacenter> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + name + ", state=" + longName + "], locationAddress=" + locationAddress + "]";
+      return "[id=" + id + ", country=" + country + ", state=" + state + "]";
    }
    
    

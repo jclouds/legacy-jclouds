@@ -23,10 +23,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.softlayer.domain.Datacenter;
-import org.jclouds.softlayer.domain.ProductItem;
-import org.jclouds.softlayer.domain.ProductItemPrice;
-import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.*;
 import org.jclouds.softlayer.util.SoftLayerUtils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -76,28 +73,32 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       }
    }
 
-    @Test
-    public void testDatacentersForCloudLayer() {
+   @Test
+   public void testDatacentersForCloudLayer() {
 
-        ImmutableSet.Builder<Datacenter> builder = ImmutableSet.builder();
-        builder.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
-        builder.add(Datacenter.builder().id(18171).name("sea01").longName("Seattle").build());
-        builder.add(Datacenter.builder().id(37473).name("wdc01").longName("Washington, DC").build());
-        builder.add(Datacenter.builder().id(138124).name("dal05").longName("Dallas 5").build());
-        builder.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
+      ImmutableSet.Builder<Datacenter> builder = ImmutableSet.builder();
+      builder.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
+      builder.add(Datacenter.builder().id(18171).name("sea01").longName("Seattle").build());
+      builder.add(Datacenter.builder().id(37473).name("wdc01").longName("Washington, DC").build());
+      builder.add(Datacenter.builder().id(138124).name("dal05").longName("Dallas 5").build());
+      builder.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
 
-        Set<Datacenter> expected = builder.build();
+      Set<Datacenter> expected = builder.build();
 
-        Long productPackageId = SoftLayerUtils.getProductPackageId(accountClient,CLOUD_SERVER_PACKAGE_NAME);
-        assertNotNull(productPackageId);
+      Long productPackageId = SoftLayerUtils.getProductPackageId(accountClient,CLOUD_SERVER_PACKAGE_NAME);
+      assertNotNull(productPackageId);
 
-        ProductPackage productPackage = client.getProductPackage(productPackageId);
-        Set<Datacenter> datacenters = productPackage.getDatacenters();
-        assertEquals(datacenters.size(), expected.size());
-        assertTrue(datacenters.containsAll(expected));
-    }
+      ProductPackage productPackage = client.getProductPackage(productPackageId);
+      Set<Datacenter> datacenters = productPackage.getDatacenters();
+      assertEquals(datacenters.size(), expected.size());
+      assertTrue(datacenters.containsAll(expected));
 
-
+      for(Datacenter dataCenter: datacenters) {
+         Address address = dataCenter.getLocationAddress();
+         assertNotNull(address);
+         checkAddress(address);
+      }
+   }
 
    private void checkProductItem(ProductItem item) {
       assert item.getId() > 0 : item;
@@ -120,10 +121,15 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert price.getRecurringFee() != null || price.getHourlyRecurringFee() != null : price;
    }
 
-    private void checkDatacenter(Datacenter datacenter) {
-        assert datacenter.getId() > 0 : datacenter;
-        assert datacenter.getName() != null : datacenter;
-        assert datacenter.getLongName() != null : datacenter;
-    }
+   private void checkDatacenter(Datacenter datacenter) {
+      assert datacenter.getId() > 0 : datacenter;
+      assert datacenter.getName() != null : datacenter;
+      assert datacenter.getLongName() != null : datacenter;
+   }
 
+   private void checkAddress(Address address) {
+      assert address.getId() >0 : address;
+      assert address.getCountry() != null : address;
+      assert address.getState() != null : address;
+   }
 }
