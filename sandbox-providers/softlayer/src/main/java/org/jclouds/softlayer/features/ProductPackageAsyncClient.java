@@ -43,7 +43,7 @@ import javax.ws.rs.core.MediaType;
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
 public interface ProductPackageAsyncClient {
-   public static String PRODUCT_MASK = "items;locations";
+   public static String PRODUCT_MASK = "items;locations.locationAddress";
 
    /**
     * @see ProductPackageClient#getProductPackage
