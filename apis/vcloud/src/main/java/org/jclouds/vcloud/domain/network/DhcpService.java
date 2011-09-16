@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.domain.network;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * specifies the properties of the network’s DHCP service

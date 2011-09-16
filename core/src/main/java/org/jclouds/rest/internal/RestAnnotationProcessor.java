@@ -51,7 +51,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Provider;

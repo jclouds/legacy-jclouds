@@ -20,7 +20,7 @@ package org.jclouds.io.payloads;
 
 import java.io.Serializable;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;

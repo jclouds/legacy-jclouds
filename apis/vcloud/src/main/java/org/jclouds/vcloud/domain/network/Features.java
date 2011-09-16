@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.domain.network;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * The Features element defines the DHCP and firewall features of a network.

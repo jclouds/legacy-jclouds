@@ -20,7 +20,7 @@ package org.jclouds.blobstore.domain;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.io.ContentMetadata;

@@ -25,7 +25,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;

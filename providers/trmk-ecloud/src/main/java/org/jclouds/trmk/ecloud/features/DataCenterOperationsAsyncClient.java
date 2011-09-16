@@ -18,15 +18,13 @@
  */
 package org.jclouds.trmk.ecloud.features;
 
-import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.DATACENTERSLIST_XML;
-
 import java.net.URI;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -38,7 +36,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
 import org.jclouds.trmk.vcloud_0_8.xml.DataCentersHandler;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import static org.jclouds.trmk.ecloud.TerremarkECloudMediaType.DATACENTERSLIST_XML;
 
 /**
  * 

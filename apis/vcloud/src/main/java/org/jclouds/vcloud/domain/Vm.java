@@ -20,7 +20,7 @@ package org.jclouds.vcloud.domain;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VmImpl;
 import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;

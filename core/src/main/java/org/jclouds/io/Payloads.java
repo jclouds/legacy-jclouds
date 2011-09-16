@@ -30,7 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;

@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
