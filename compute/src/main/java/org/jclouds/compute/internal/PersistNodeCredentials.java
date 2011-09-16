@@ -18,7 +18,7 @@
  */
 package org.jclouds.compute.internal;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;

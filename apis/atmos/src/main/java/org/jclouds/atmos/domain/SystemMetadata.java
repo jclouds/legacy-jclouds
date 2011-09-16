@@ -20,7 +20,7 @@ package org.jclouds.atmos.domain;
 
 import java.util.Date;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Metadata of a Atmos Online object

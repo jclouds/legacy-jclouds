@@ -18,17 +18,15 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
+import com.google.common.collect.ImmutableMap;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.VDC;
 
-import com.google.common.collect.ImmutableMap;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Locations of resources in vCloud

@@ -35,7 +35,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;

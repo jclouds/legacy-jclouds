@@ -20,7 +20,7 @@ package org.jclouds.scriptbuilder.functions;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.scriptbuilder.domain.AcceptsStatementVisitor;

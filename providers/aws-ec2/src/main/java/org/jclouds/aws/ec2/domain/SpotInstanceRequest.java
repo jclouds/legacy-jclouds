@@ -18,13 +18,12 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.CaseFormat;
+import org.jclouds.javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 

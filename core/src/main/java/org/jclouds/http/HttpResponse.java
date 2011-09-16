@@ -18,7 +18,7 @@
  */
 package org.jclouds.http;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.io.Payload;
 

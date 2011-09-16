@@ -18,7 +18,7 @@
  */
 package org.jclouds.ovf;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Metadata about a virtual machine or grouping of them

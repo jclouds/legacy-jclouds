@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * A VApp is the result of instantiation of a {@link VAppTemplate}. <h2>note</h2>

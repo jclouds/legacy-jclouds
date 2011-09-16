@@ -18,9 +18,8 @@
  */
 package org.jclouds.predicates.validators;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.Validator;
-
-import javax.annotation.Nullable;
 
 /**
  * Validates that the string paremeter doesn't have any uppercase letters.

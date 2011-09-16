@@ -20,7 +20,7 @@ package org.jclouds.compute.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.internal.VolumeImpl;
 

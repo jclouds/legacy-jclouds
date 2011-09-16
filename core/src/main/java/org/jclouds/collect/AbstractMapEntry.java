@@ -20,7 +20,7 @@ package org.jclouds.collect;
 
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 

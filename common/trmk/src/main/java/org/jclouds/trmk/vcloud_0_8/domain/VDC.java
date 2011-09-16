@@ -20,7 +20,7 @@ package org.jclouds.trmk.vcloud_0_8.domain;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VDCImpl;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Catalog;

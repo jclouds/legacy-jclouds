@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;

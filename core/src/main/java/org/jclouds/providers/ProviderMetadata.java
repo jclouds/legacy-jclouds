@@ -21,7 +21,7 @@ package org.jclouds.providers;
 import java.net.URI;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * The ProviderMetadata interface allows jclouds to provide a plugin framework for gathering cloud
