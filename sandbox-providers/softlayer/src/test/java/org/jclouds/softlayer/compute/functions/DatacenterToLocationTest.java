@@ -20,6 +20,7 @@ package org.jclouds.softlayer.compute.functions;
 
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.domain.Address;
+import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -29,43 +30,44 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 /**
- * Tests {@code AddressToLocation}
+ * Tests {@code DatacenterToLocation}
  *
  * @author Jason King
  */
 @Test(singleThreaded = true,groups = "unit")
-public class AddressToLocationTest {
+public class DatacenterToLocationTest {
 
-   private AccountToLocation function;
+   private DatacenterToLocation function;
 
    @BeforeMethod
    public void setup() {
-        function = new AccountToLocation();
+        function = new DatacenterToLocation();
    }
 
    @Test
-   public void testAddressToLocation() {
-      Address address = Address.builder().id(1)
+   public void testDatacenterToLocation() {
+      Datacenter address = Datacenter.builder().id(1)
+                                         .longName("This is Texas!")
+                                         .locationAddress(Address.builder()
                                          .country("US")
                                          .state("TX")
-                                         .description("This is Texas!").build();
+                                         .description("This is Texas!").build()).build();
       Location location = function.apply(address);
 
       assertEquals(location.getId(), Long.toString(address.getId()));
       Set<String> iso3166Codes = location.getIso3166Codes();
-      assertEquals(iso3166Codes.size(),1);
+      assertEquals(iso3166Codes.size(), 1);
       assertTrue(iso3166Codes.contains("US-TX"));
    }
 
    @Test
    public void testGetIso3166CodeNoCountryAndState() {
-      Address address = Address.builder().id(1)
-                                         .description("Nowhere").build();
+      Datacenter address = Datacenter.builder().id(1)
+                                         .longName("Nowhere").build();
       Location location = function.apply(address);
 
       assertEquals(location.getId(), Long.toString(address.getId()));
       Set<String> iso3166Codes = location.getIso3166Codes();
-      assertEquals(iso3166Codes.size(),1);
-      assertTrue(iso3166Codes.contains("null-null"));
+      assertEquals(iso3166Codes.size(), 0);
    }
 }

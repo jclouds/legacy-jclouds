@@ -22,27 +22,29 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.softlayer.domain.Address;
+import org.jclouds.softlayer.domain.Datacenter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Converts an Address into a Location.
+ * Converts an Datacenter into a Location.
  */
-public class AccountToLocation implements Function<Address,Location> {
+public class DatacenterToLocation implements Function<Datacenter,Location> {
 
     @Override
-    public Location apply(Address address) {
+    public Location apply(Datacenter datacenter) {
         return new LocationBuilder().scope(LocationScope.ZONE)
                                     .metadata(ImmutableMap.<String, Object>of())
-                                    .description(address.getDescription())
-                                    .id(Long.toString(address.getId()))
-                                    .iso3166Codes(createIso3166Codes(address))
+                                    .description(datacenter.getLongName())
+                                    .id(Long.toString(datacenter.getId()))
+                                    .iso3166Codes(createIso3166Codes(datacenter.getLocationAddress()))
                                     .build();
-    }
+   }
 
-    private Iterable<String> createIso3166Codes(Address address) {
-        return ImmutableSet.of(""+address.getCountry()+"-"+address.getState());
-    }
+   private Iterable<String> createIso3166Codes(Address address) {
+      return address != null ? ImmutableSet.<String> of("" + address.getCountry() + "-" + address.getState())
+               : ImmutableSet.<String> of();
+   }
 }
