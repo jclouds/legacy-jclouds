@@ -19,6 +19,8 @@
 package org.jclouds.softlayer.features;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+
 import org.jclouds.softlayer.domain.*;
 import org.jclouds.softlayer.predicates.ProductPackagePredicates;
 import org.testng.annotations.BeforeGroups;
@@ -83,8 +85,10 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       Set<Datacenter> expected = builder.build();
 
-      Long productPackageId = ProductPackagePredicates.getProductPackageId(accountClient, CLOUD_SERVER_PACKAGE_NAME);
-      assertNotNull(productPackageId);
+      // note we don't need to check null, as this will throw NoSuchElementException if
+      // a product package named as below isn't found.
+      long productPackageId = Iterables.find(accountClient.getActivePackages(),
+               ProductPackagePredicates.named(CLOUD_SERVER_PACKAGE_NAME)).getId();
 
       ProductPackage productPackage = client.getProductPackage(productPackageId);
       Set<Datacenter> datacenters = productPackage.getDatacenters();
