@@ -317,7 +317,7 @@ To create nodes in a subnet under Amazon VPC add the following option to your te
 
 {% highlight java %}
 TemplateOptions options = compute.templateOptions();
-options.as(EC2TemplateOptions.class).withSubnetId(subnetId);
+options.as(AWSEC2TemplateOptions.class).subnetId(subnetId);
 
 Set<? extends NodeMetadata> nodes = client.runNodesInGroup(group, 1,
                options);
