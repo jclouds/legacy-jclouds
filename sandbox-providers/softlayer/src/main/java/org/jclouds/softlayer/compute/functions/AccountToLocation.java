@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.functions;
+package org.jclouds.softlayer.compute.functions;
 
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;

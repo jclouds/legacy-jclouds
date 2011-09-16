@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.functions;
+package org.jclouds.softlayer.compute.functions;
 
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.domain.Address;
@@ -33,7 +33,7 @@ import static org.testng.AssertJUnit.assertTrue;
  *
  * @author Jason King
  */
-@Test(sequential = true,groups = "unit")
+@Test(singleThreaded = true,groups = "unit")
 public class AddressToLocationTest {
 
    private AccountToLocation function;
