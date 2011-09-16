@@ -18,17 +18,15 @@
  */
 package org.jclouds.softlayer.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.softlayer.domain.*;
-import org.jclouds.softlayer.util.SoftLayerUtils;
+import org.jclouds.softlayer.predicates.ProductPackagePredicates;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.util.Set;
+
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code ProductPackageClient}
@@ -85,7 +83,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       Set<Datacenter> expected = builder.build();
 
-      Long productPackageId = SoftLayerUtils.getProductPackageId(accountClient,CLOUD_SERVER_PACKAGE_NAME);
+      Long productPackageId = ProductPackagePredicates.getProductPackageId(accountClient, CLOUD_SERVER_PACKAGE_NAME);
       assertNotNull(productPackageId);
 
       ProductPackage productPackage = client.getProductPackage(productPackageId);

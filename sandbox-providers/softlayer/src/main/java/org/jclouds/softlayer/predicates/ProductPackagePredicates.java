@@ -16,23 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.util;
+package org.jclouds.softlayer.predicates;
 
+import com.google.common.base.Predicate;
 import org.jclouds.softlayer.domain.ProductPackage;
 import org.jclouds.softlayer.features.AccountClient;
 
+import java.util.NoSuchElementException;
 
-public class SoftLayerUtils {
+public class ProductPackagePredicates {
+
    /**
     * Attempts to obtain the packageId for the supplied packageName.
     * @param accountClient @see AccountClient
     * @param packageName The name field of the @see ProductPackage to find
     * @return The id of the package or null if no match found
     */
-   public static Long getProductPackageId(AccountClient accountClient, String packageName) {
+   public static Long getProductPackageId(AccountClient accountClient,String packageName) {
       for (ProductPackage productPackage : accountClient.getActivePackages()) {
-         if (productPackage.getName().equals(packageName)) return productPackage.getId();
+         if (named(packageName).apply(productPackage)) return productPackage.getId();
       }
-      return null;
+      throw new NoSuchElementException("ProductPackage:"+packageName+" not found");
    }
+
+   /**
+    * Tests if the product package name equals the packageName
+    * @param packageName
+    * @return true if the name is equal, otherwise false.
+    */
+   public static Predicate named(final String packageName) {
+      return new Predicate<ProductPackage>() {
+         public boolean apply(ProductPackage productPackage) {
+            return productPackage.getName().equals(packageName);
+         }
+      };
+   }
+
 }
