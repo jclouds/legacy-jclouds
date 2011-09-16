@@ -27,6 +27,7 @@ import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.util.SoftLayerUtils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -87,7 +88,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
         Set<Datacenter> expected = builder.build();
 
-        Long productPackageId = getProductPackageId(CLOUD_SERVER_PACKAGE_NAME);
+        Long productPackageId = SoftLayerUtils.getProductPackageId(accountClient,CLOUD_SERVER_PACKAGE_NAME);
         assertNotNull(productPackageId);
 
         ProductPackage productPackage = client.getProductPackage(productPackageId);
@@ -96,12 +97,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
         assertTrue(datacenters.containsAll(expected));
     }
 
-   private Long getProductPackageId(String name) {
-      for (ProductPackage productPackage : accountClient.getActivePackages()) {
-         if (productPackage.getName().equals(name)) return productPackage.getId();
-      }
-      return null;
-   }
+
 
    private void checkProductItem(ProductItem item) {
       assert item.getId() > 0 : item;
