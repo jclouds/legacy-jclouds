@@ -19,6 +19,7 @@
 package org.jclouds.softlayer.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,13 +43,17 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    public void setupClient() {
       super.setupClient();
       client = context.getApi().getProductPackageClient();
+      accountClient = context.getApi().getAccountClient();
    }
 
+   private static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
+
    private ProductPackageClient client;
+   private AccountClient accountClient;
 
    @Test
    public void testGetProductPackage() {
-      for (ProductPackage productPackage : context.getApi().getAccountClient().getActivePackages()) {
+      for (ProductPackage productPackage : accountClient.getActivePackages()) {
          ProductPackage response = client.getProductPackage(productPackage.getId());
 
          assert null != response;
@@ -72,7 +77,6 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
     @Test
     public void testDatacentersForCloudLayer() {
-        ProductPackage productPackage = context.getApi().getProductPackageClient().getProductPackage(getCloudLayerPackageId());
 
         ImmutableSet.Builder<Datacenter> builder = ImmutableSet.builder();
         builder.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
@@ -83,15 +87,21 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
         Set<Datacenter> expected = builder.build();
 
+        Long productPackageId = getProductPackageId(CLOUD_SERVER_PACKAGE_NAME);
+        assertNotNull(productPackageId);
+
+        ProductPackage productPackage = client.getProductPackage(productPackageId);
         Set<Datacenter> datacenters = productPackage.getDatacenters();
         assertEquals(datacenters.size(), expected.size());
         assertTrue(datacenters.containsAll(expected));
     }
 
-    // TODO The packageId will be obtained via a search call later.
-    private int getCloudLayerPackageId() {
-        return 46;
-    }
+   private Long getProductPackageId(String name) {
+      for (ProductPackage productPackage : accountClient.getActivePackages()) {
+         if (productPackage.getName().equals(name)) return productPackage.getId();
+      }
+      return null;
+   }
 
    private void checkProductItem(ProductItem item) {
       assert item.getId() > 0 : item;
