@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -55,7 +54,7 @@ public class CloudWatchClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
+               + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint", null);
       apiversion = System.getProperty("test." + provider + ".apiversion", null);
    }
@@ -78,17 +77,19 @@ public class CloudWatchClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+               overrides);
       client = context.getApi();
    }
 
    @Test
-   void testGetMetricStatisticsInRegion() {
+   protected void testGetMetricStatisticsInRegion() {
+      getMetricStatisticsInRegion(null);
+   }
+
+   protected void getMetricStatisticsInRegion(String region) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.MINUTE, -1);
-      for (String region : Region.DEFAULT_REGIONS) {
-         assert client.getMetricStatisticsInRegion(region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average") != null;
-      }
+      assert client.getMetricStatisticsInRegion(region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average") != null;
    }
 
    @AfterTest

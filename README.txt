@@ -39,6 +39,8 @@ our loadbalancer api supports: cloudloadbalancers-us
   * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
            to all of these providers
 
+we also have aws-cloudwatch support.
+
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova, scality ring,
                           hosteurope-storage, tiscali-storage, scaleup-storage, googlestorage,
                           azurequeue, simpledb, cloudstack as well as a async-http-client

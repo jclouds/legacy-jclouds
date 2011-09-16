@@ -109,7 +109,9 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("cloudwatch", "identity", "credential", new Properties());
+      Properties props = new Properties();
+      props.setProperty("cloudwatch.endpoint", "https://monitoring.us-east-1.amazonaws.com");
+      return new RestContextFactory().createContextSpec("cloudwatch", "identity", "credential", props);
    }
 
    @Override

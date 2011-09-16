@@ -62,5 +62,6 @@
         <module>skalicloud-sdg-my</module>
         <module>savvis-symphonyvpdc</module>
         <module>greenhousedata-element-vcloud</module>
+        <module>aws-cloudwatch</module>
     </modules>
 </project>
