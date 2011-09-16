@@ -33,6 +33,7 @@ public class Address implements Comparable<Address> {
       private long id = -1;
       private String country;
       private String state;
+      private String description;
 
       public Builder id(long id) {
          this.id = id;
@@ -49,28 +50,38 @@ public class Address implements Comparable<Address> {
          return this;
       }
 
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
       public Address build() {
-         return new Address(id, country, state);
+         return new Address(id, country, state, description);
       }
 
       public static Builder fromAddress(Address in) {
-         return Address.builder().id(in.getId()).country(in.getCountry()).state(in.getState());
+         return Address.builder().id(in.getId())
+                                 .country(in.getCountry())
+                                 .state(in.getState())
+                                 .description(in.getDescription());
       }
    }
 
    private long id = -1;
    private String country;
    private String state;
+   private String description;
 
    // for deserializer
    Address() {
 
    }
 
-   public Address(long id, String country, String state) {
+   public Address(long id, String country, String state, String description) {
       this.id = id;
       this.country = country;
       this.state = state;
+      this.description = description;
    }
 
    @Override
@@ -100,12 +111,11 @@ public class Address implements Comparable<Address> {
    }
 
    /**
-    * @return TThe iso3166 code.
-    * This is a derived value of the form 'country-state'
+    * @return The description of the address.
     */
-   public String getIso3166Code() {
-      return ""+country+"-"+state;
-   }    
+   public String getDescription() {
+      return description;
+   }
 
    public Builder toBuilder() {
       return Builder.fromAddress(this);
@@ -135,7 +145,7 @@ public class Address implements Comparable<Address> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + country + ", state=" + state + "]";
+      return "[id=" + id + ", country=" + country + ", state=" + state + ", description=" + description + "]";
    }
    
    
