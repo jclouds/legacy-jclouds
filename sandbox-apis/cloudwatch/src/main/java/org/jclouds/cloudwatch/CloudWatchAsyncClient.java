@@ -21,7 +21,6 @@ package org.jclouds.cloudwatch;
 import java.util.Date;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,6 +29,7 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.functions.ISO8601Format;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;

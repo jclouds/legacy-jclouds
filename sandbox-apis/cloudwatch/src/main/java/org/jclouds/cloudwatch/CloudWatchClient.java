@@ -22,10 +22,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API

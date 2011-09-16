@@ -20,7 +20,7 @@ package org.jclouds.cloudwatch.domain;
 
 import java.util.Date;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?DT_Datapoint.html"
