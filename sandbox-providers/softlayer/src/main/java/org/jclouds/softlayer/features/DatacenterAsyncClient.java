@@ -49,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface DatacenterAsyncClient {
 
    /**
-    * @see LocationDatacenterClient#listDatacenters
+    * @see DatacenterClient#listDatacenters
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/Datacenters.json")
@@ -59,7 +59,7 @@ public interface DatacenterAsyncClient {
    ListenableFuture<Set<Datacenter>> listDatacenters();
 
    /**
-    * @see LocationDatacenterClient#getLocationDatacenter
+    * @see DatacenterClient#getDatacenter
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/{id}.json")
