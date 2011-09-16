@@ -21,7 +21,7 @@ package org.jclouds.s3.config;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 

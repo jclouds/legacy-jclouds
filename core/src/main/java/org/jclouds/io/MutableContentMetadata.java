@@ -18,7 +18,7 @@
  */
 package org.jclouds.io;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 

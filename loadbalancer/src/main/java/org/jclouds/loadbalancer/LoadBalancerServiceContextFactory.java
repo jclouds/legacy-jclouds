@@ -23,7 +23,7 @@ import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalExcep
 
 import java.util.Properties;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;

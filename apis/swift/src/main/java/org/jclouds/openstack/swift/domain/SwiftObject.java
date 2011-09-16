@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.swift.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.io.PayloadEnclosing;
 

@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 

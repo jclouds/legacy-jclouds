@@ -21,7 +21,7 @@ package org.jclouds.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.concurrent.Timeout;

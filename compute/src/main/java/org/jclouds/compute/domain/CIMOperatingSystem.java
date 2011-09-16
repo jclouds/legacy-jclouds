@@ -18,7 +18,7 @@
  */
 package org.jclouds.compute.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.cim.OSType;
 import org.jclouds.ovf.Envelope;

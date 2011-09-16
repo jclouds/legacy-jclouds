@@ -23,7 +23,7 @@ import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.http.HttpRequest;

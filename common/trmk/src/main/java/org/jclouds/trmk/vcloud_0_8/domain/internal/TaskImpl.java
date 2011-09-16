@@ -18,18 +18,17 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.TaskStatus;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudError;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
