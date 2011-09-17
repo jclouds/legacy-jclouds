@@ -16,32 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer;
+package org.jclouds.cloudwatch;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.softlayer.reference.SoftLayerConstants;
 
 /**
- * Builds properties used in SoftLayer Clients
+ * Builds properties used in Cloud Watch Clients
  * 
  * @author Adrian Cole
  */
-public class SoftLayerPropertiesBuilder extends PropertiesBuilder {
+public class CloudWatchPropertiesBuilder extends PropertiesBuilder {
+
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.softlayer.com/rest");
-      properties.setProperty(PROPERTY_API_VERSION, "3");
-      properties.setProperty(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      properties.setProperty(PROPERTY_API_VERSION, CloudWatchAsyncClient.VERSION);
       return properties;
    }
 
-   public SoftLayerPropertiesBuilder(Properties properties) {
+   public CloudWatchPropertiesBuilder() {
+      super();
+   }
+
+   public CloudWatchPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

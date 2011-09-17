@@ -16,25 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.predicates;
+package org.jclouds.aws.cloudwatch;
 
-import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.aws.domain.Region;
+import org.jclouds.cloudwatch.CloudWatchClientLiveTest;
+import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-
-public class ProductPackagePredicates {
-
-   /**
-    * Tests if the product package name equals the packageName
-    * @param packageName
-    * @return true if the name is equal, otherwise false.
-    */
-   public static Predicate<ProductPackage> named(final String packageName) {
-      return new Predicate<ProductPackage>() {
-         public boolean apply(ProductPackage productPackage) {
-            return productPackage.getName().equals(packageName);
-         }
-      };
+/**
+ * Tests behavior of {@code CloudWatchClient}
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "live", singleThreaded = true, testName = "AWSCloudWatchClientLiveTest")
+public class AWSCloudWatchClientLiveTest extends CloudWatchClientLiveTest {
+   public AWSCloudWatchClientLiveTest() {
+      provider = "aws-cloudwatch";
    }
 
+   @Test
+   public void testGetMetricStatisticsInRegion() {
+      for (String region : Region.DEFAULT_REGIONS) {
+         getMetricStatisticsInRegion(region);
+      }
+   }
 }

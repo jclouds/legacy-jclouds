@@ -16,25 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.predicates;
+package org.jclouds.aws.cloudwatch;
 
-import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
+/**
+ * The AWSCloudWatchProviderTest tests the org.jclouds.providers.AWSCloudWatchProvider class.
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "AWSCloudWatchProviderTest")
+public class AWSCloudWatchProviderTest extends BaseProviderMetadataTest {
 
-public class ProductPackagePredicates {
-
-   /**
-    * Tests if the product package name equals the packageName
-    * @param packageName
-    * @return true if the name is equal, otherwise false.
-    */
-   public static Predicate<ProductPackage> named(final String packageName) {
-      return new Predicate<ProductPackage>() {
-         public boolean apply(ProductPackage productPackage) {
-            return productPackage.getName().equals(packageName);
-         }
-      };
+   public AWSCloudWatchProviderTest() {
+      super(new AWSCloudWatchProviderMetadata(), ProviderMetadata.MONITOR_TYPE);
    }
-
 }

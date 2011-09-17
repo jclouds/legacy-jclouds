@@ -36,6 +36,7 @@ public interface ProviderMetadata {
    public static final String LOADBALANCER_TYPE = "loadbalancer";
    public static final String TABLE_TYPE = "table";
    public static final String QUEUE_TYPE = "queue";
+   public static final String MONITOR_TYPE = "monitor";
 
    /**
     * 

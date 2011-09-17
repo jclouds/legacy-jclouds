@@ -46,5 +46,6 @@
        <module>elasticstack</module>
        <module>atmos</module>
        <module>nova</module>
+       <module>cloudwatch</module>
     </modules>
 </project>

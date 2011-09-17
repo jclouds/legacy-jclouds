@@ -16,25 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.predicates;
+package org.jclouds.softlayer.reference;
 
-import org.jclouds.softlayer.domain.ProductPackage;
-
-import com.google.common.base.Predicate;
-
-public class ProductPackagePredicates {
-
+/**
+ * Configuration properties and constants used in SoftLayer connections.
+ * 
+ * @author Adrian Cole
+ */
+public interface SoftLayerConstants {
    /**
-    * Tests if the product package name equals the packageName
-    * @param packageName
-    * @return true if the name is equal, otherwise false.
+    * Name of the product package corresponding to cloud servers
     */
-   public static Predicate<ProductPackage> named(final String packageName) {
-      return new Predicate<ProductPackage>() {
-         public boolean apply(ProductPackage productPackage) {
-            return productPackage.getName().equals(packageName);
-         }
-      };
-   }
-
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
+  
 }

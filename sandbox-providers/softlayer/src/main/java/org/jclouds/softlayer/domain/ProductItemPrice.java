@@ -18,7 +18,7 @@
  */
 package org.jclouds.softlayer.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * The SoftLayer_Product_Item_Price data type contains general information
