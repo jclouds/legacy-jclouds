@@ -24,6 +24,7 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.softlayer.reference.SoftLayerConstants;
 
 /**
  * Builds properties used in SoftLayer Clients
@@ -36,6 +37,7 @@ public class SoftLayerPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.softlayer.com/rest");
       properties.setProperty(PROPERTY_API_VERSION, "3");
+      properties.setProperty(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
       return properties;
    }
 

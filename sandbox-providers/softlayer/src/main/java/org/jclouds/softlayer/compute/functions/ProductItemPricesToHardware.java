@@ -16,35 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.compute.functions;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.softlayer.compute.config.SoftLayerComputeServiceContextModule;
-import org.jclouds.softlayer.config.SoftLayerRestClientModule;
+import javax.inject.Singleton;
 
-import com.google.inject.Module;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+
+import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class SoftLayerContextBuilder extends ComputeServiceContextBuilder<SoftLayerClient, SoftLayerAsyncClient> {
-
-   public SoftLayerContextBuilder(Properties props) {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class, props);
-   }
+@Singleton
+public class ProductItemPricesToHardware implements Function<Set<ProductItemPrice>, Hardware> {
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new SoftLayerComputeServiceContextModule());
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new SoftLayerRestClientModule());
+   public Hardware apply(Set<ProductItemPrice> from) {
+      HardwareBuilder builder = new HardwareBuilder();
+//      builder.ids(from.id + "");
+//      builder.name(from.name);
+//      builder.processors(ImmutableList.of(new Processor(from.cores, 1.0)));
+//      builder.ram(from.ram);
+//      builder.volumes(ImmutableList.<Volume> of(new VolumeImpl(from.disk, true, false)));
+      return builder.build();
    }
 
 }
