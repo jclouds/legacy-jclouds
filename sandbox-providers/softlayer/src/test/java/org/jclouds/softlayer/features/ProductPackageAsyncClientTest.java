@@ -43,7 +43,7 @@ public class ProductPackageAsyncClientTest extends BaseSoftLayerAsyncClientTest<
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://api.softlayer.com/rest/v3/SoftLayer_Product_Package/1234.json?objectMask=items%3Blocations.locationAddress HTTP/1.1");
+               "GET https://api.softlayer.com/rest/v3/SoftLayer_Product_Package/1234.json?objectMask=items.prices%3Bitems.categories%3Blocations.locationAddress HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

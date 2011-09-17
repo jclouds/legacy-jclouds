@@ -105,6 +105,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    private void checkProductItem(ProductItem item) {
       assert item.getId() > 0 : item;
       assert item.getDescription() != null : item;
+      checkCategories(item.getCategories());
       // units and capacity may be null
 
       assertTrue(item.getPrices().size() >= 0);
@@ -133,5 +134,13 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert address.getId() >0 : address;
       assert address.getCountry() != null : address;
       assert address.getState() != null : address;
+   }
+
+   private void checkCategories(Set<ProductItemCategory> categories) {
+       for( ProductItemCategory category: categories ) {
+           assert category.getId() >0 : category;
+           assert category.getName() != null : category;
+           assert category.getCategoryCode() != null : category;
+       }
    }
 }
