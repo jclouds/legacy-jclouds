@@ -18,16 +18,24 @@
  */
 package org.jclouds.softlayer.features;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.jclouds.softlayer.compute.functions.CapacityFromProductItem;
+import org.jclouds.softlayer.compute.functions.DescriptionFromProductItem;
+import org.jclouds.softlayer.compute.functions.ProductItemPriceFromProductItem;
 import org.jclouds.softlayer.domain.*;
-import org.jclouds.softlayer.predicates.ProductPackagePredicates;
+import org.jclouds.softlayer.reference.SoftLayerConstants;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import java.util.Map;
 import java.util.Set;
 
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
+import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
 import static org.testng.Assert.*;
 
 /**
@@ -42,12 +50,19 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       super.setupClient();
       client = context.getApi().getProductPackageClient();
       accountClient = context.getApi().getAccountClient();
+
+      // This is used several times, so cache to speed up the test.
+      cloudServerPackageId = Iterables.find(accountClient.getActivePackages(),named(CLOUD_SERVER_PACKAGE_NAME)).getId();
+      cloudServerProductPackage = client.getProductPackage(cloudServerPackageId);
    }
 
    private static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
 
    private ProductPackageClient client;
    private AccountClient accountClient;
+
+   private long cloudServerPackageId;
+   private ProductPackage cloudServerProductPackage;
 
    @Test
    public void testGetProductPackage() {
@@ -85,13 +100,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       Set<Datacenter> expected = builder.build();
 
-      // note we don't need to check null, as this will throw NoSuchElementException if
-      // a product package named as below isn't found.
-      long productPackageId = Iterables.find(accountClient.getActivePackages(),
-               ProductPackagePredicates.named(CLOUD_SERVER_PACKAGE_NAME)).getId();
-
-      ProductPackage productPackage = client.getProductPackage(productPackageId);
-      Set<Datacenter> datacenters = productPackage.getDatacenters();
+      Set<Datacenter> datacenters = cloudServerProductPackage.getDatacenters();
       assertEquals(datacenters.size(), expected.size());
       assertTrue(datacenters.containsAll(expected));
 
@@ -100,6 +109,69 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
          assertNotNull(address);
          checkAddress(address);
       }
+   }
+
+   @Test
+   public void testGetOneGBRamPrice() {
+       //Predicate p = Predicates.and(ProductItemPredicates.categoryCode("ram"),ProductItemPredicates.capacity(1.0f));
+       Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
+               Predicates.and(categoryCode("ram"), capacity(1.0f)));
+
+       // capacity is key in GB (1Gb = 1.0f)
+       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, new CapacityFromProductItem());
+
+       ProductItemPrice price = new ProductItemPriceFromProductItem().apply(ramToProductItem.get(1.0f));
+       assert new Long(1644L).equals(price.getId());
+   }
+
+   @Test
+   public void testGetTwoCPUCoresPrice() {
+       // If use ProductItemPredicates.categoryCode("guest_core") get duplicate capacities (units = PRIVATE_CORE and N/A)
+       Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
+
+       // number of cores is the key
+       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, new CapacityFromProductItem());
+
+       ProductItemPrice price = new ProductItemPriceFromProductItem().apply(coresToProductItem.get(2.0f));
+       assert new Long(1963L).equals(price.getId());
+   }
+
+   @Test
+   public void testGetUbuntuPrice() {
+       Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
+
+       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, new DescriptionFromProductItem());
+
+       ProductItemPrice price = new ProductItemPriceFromProductItem().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
+       assert new Long(1693L).equals(price.getId());
+   }
+
+   @Test
+   public void testPricesForLaunchingGuestVM() {
+       Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
+               Predicates.and(categoryCode("ram"), capacity(1.0f)));
+
+       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, new CapacityFromProductItem());
+
+       ProductItemPrice ramPrice = new ProductItemPriceFromProductItem().apply(ramToProductItem.get(1.0f));
+
+       Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
+       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, new CapacityFromProductItem());
+
+       ProductItemPrice cpuPrice = new ProductItemPriceFromProductItem().apply(coresToProductItem.get(2.0f));
+
+       Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
+       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, new DescriptionFromProductItem());
+       ProductItemPrice osPrice = new ProductItemPriceFromProductItem().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
+
+       Set<Long> prices = Sets.<Long>newLinkedHashSet();
+       prices.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
+       prices.add(ramPrice.getId());
+       prices.add(cpuPrice.getId());
+       prices.add(osPrice.getId());
+
+       //This should be everything needed to launch Ubuntu Hardy Heron with 1GB Ram and 2 CPU Cores
+       //TODO: There must be a more concise way of expressing this logic.
    }
 
    private void checkProductItem(ProductItem item) {

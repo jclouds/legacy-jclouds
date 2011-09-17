@@ -66,4 +66,26 @@ public class ProductItemPredicates {
             }
         };
     }
+
+    /**
+    * Tests if the ProductItem has the required units.
+     * TODO Write test method
+    * @param units
+    * @return true if it does, otherwise false.
+    */
+    public static Predicate<ProductItem> units(final String units) {
+        return new Predicate<ProductItem>() {
+            @Override
+            public boolean apply(ProductItem productItem) {
+                String productItemUnits = productItem.getUnits();
+                if (productItemUnits == null) return false;
+                return productItemUnits.equals(units);
+            }
+
+            @Override
+            public String toString() {
+                return "units("+units+")";
+            }
+        };
+    }
 }
