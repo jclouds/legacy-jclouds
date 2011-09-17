@@ -18,6 +18,9 @@
  */
 package org.jclouds.softlayer.domain;
 
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * 
  * @author Jason King
@@ -79,7 +82,7 @@ public class Address implements Comparable<Address> {
 
    public Address(long id, String country, String state, String description) {
       this.id = id;
-      this.country = country;
+      this.country = checkNotNull(emptyToNull(country),"country cannot be null or empty:"+country);
       this.state = state;
       this.description = description;
    }

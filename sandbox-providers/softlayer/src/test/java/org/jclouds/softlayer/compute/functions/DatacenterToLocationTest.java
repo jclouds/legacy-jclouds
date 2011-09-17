@@ -50,12 +50,19 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testDatacenterToLocation() {
-      Datacenter address = Datacenter.builder().id(1).longName("This is Texas!").locationAddress(
-               Address.builder().country("US").state("TX").description("This is Texas!").build()).build();
+      Address address = Address.builder().country("US")
+                                         .state("TX")
+                                         .description("This is Texas!")
+                                         .build();
 
-      Location location = function.apply(address);
+      Datacenter datacenter = Datacenter.builder().id(1)
+                                                  .longName("Texas Datacenter")
+                                                  .locationAddress(address)
+                                                  .build();
 
-      assertEquals(location.getId(), Long.toString(address.getId()));
+      Location location = function.apply(datacenter);
+
+      assertEquals(location.getId(), Long.toString(datacenter.getId()));
       Set<String> iso3166Codes = location.getIso3166Codes();
       assertEquals(iso3166Codes.size(), 1);
       assertTrue(iso3166Codes.contains("US-TX"));
@@ -63,11 +70,53 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testGetIso3166CodeNoCountryAndState() {
-      Datacenter address = Datacenter.builder().id(1).longName("Nowhere").build();
-      Location location = function.apply(address);
+      Datacenter datacenter = Datacenter.builder().id(1)
+                                                  .longName("Nowhere")
+                                                  .build();
 
-      assertEquals(location.getId(), Long.toString(address.getId()));
+      Location location = function.apply(datacenter);
+
+      assertEquals(location.getId(), Long.toString(datacenter.getId()));
       Set<String> iso3166Codes = location.getIso3166Codes();
       assertEquals(iso3166Codes.size(), 0);
+   }
+
+   @Test
+   public void testGetIso3166CodeCountryOnly() {
+      Address address = Address.builder().country("US")
+                                         .description("This is North America!")
+                                         .build();
+
+      Datacenter datacenter = Datacenter.builder().id(1)
+                                                  .longName("Nowhere")
+                                                  .locationAddress(address)
+                                                  .build();
+
+      Location location = function.apply(datacenter);
+
+      assertEquals(location.getId(), Long.toString(datacenter.getId()));
+      Set<String> iso3166Codes = location.getIso3166Codes();
+      assertEquals(iso3166Codes.size(), 1);
+      assertTrue(iso3166Codes.contains("US"));
+   }
+
+   @Test
+   public void testGetIso3166CodeWhitespaceTrimmer() {
+      Address address = Address.builder().country(" US ")
+                                         .state("  TX  ")
+                                         .description("This is spaced out Texas")
+                                         .build();
+
+      Datacenter datacenter = Datacenter.builder().id(1)
+                                                  .longName("Nowhere")
+                                                  .locationAddress(address)
+                                                  .build();
+
+      Location location = function.apply(datacenter);
+
+      assertEquals(location.getId(), Long.toString(datacenter.getId()));
+      Set<String> iso3166Codes = location.getIso3166Codes();
+      assertEquals(iso3166Codes.size(), 1);
+      assertTrue(iso3166Codes.contains("US-TX"));
    }
 }
