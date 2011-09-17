@@ -24,6 +24,9 @@ import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
+import com.google.inject.util.Providers;
+
 import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -41,7 +44,7 @@ public class DatacenterToLocationTest {
 
    @BeforeMethod
    public void setup() {
-        function = new DatacenterToLocation();
+      function = new DatacenterToLocation(Providers.of(Suppliers.ofInstance((Location) null)));
    }
 
    @Test
@@ -52,6 +55,7 @@ public class DatacenterToLocationTest {
                                          .country("US")
                                          .state("TX")
                                          .description("This is Texas!").build()).build();
+      
       Location location = function.apply(address);
 
       assertEquals(location.getId(), Long.toString(address.getId()));
