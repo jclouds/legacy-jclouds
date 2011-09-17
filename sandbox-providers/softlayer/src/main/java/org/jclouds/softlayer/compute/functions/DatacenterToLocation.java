@@ -21,28 +21,28 @@ package org.jclouds.softlayer.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Converts an Datacenter into a Location.
  */
 public class DatacenterToLocation implements Function<Datacenter,Location> {
-   private final Provider<Supplier<Location>> provider;
+   private final JustProvider provider;
 
    // allow us to lazy discover the provider of a resource
    @Inject
-   public DatacenterToLocation(Provider<Supplier<Location>> provider) {
+   public DatacenterToLocation(JustProvider provider) {
       this.provider = checkNotNull(provider, "provider");
    }
    
@@ -53,7 +53,7 @@ public class DatacenterToLocation implements Function<Datacenter,Location> {
                                     .description(datacenter.getLongName())
                                     .id(Long.toString(datacenter.getId()))
                                     .iso3166Codes(createIso3166Codes(datacenter.getLocationAddress()))
-                                    .parent(provider.get().get())
+                                    .parent(Iterables.getOnlyElement(provider.get()))
                                     .build();
    }
 

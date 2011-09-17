@@ -18,44 +18,41 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+
+import java.net.URI;
+import java.util.Set;
+
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Suppliers;
-import com.google.inject.util.Providers;
-
-import java.util.Set;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests {@code DatacenterToLocation}
- *
+ * 
  * @author Jason King
  */
-@Test(singleThreaded = true,groups = "unit")
+@Test(singleThreaded = true, groups = "unit")
 public class DatacenterToLocationTest {
 
    private DatacenterToLocation function;
 
    @BeforeMethod
    public void setup() {
-      function = new DatacenterToLocation(Providers.of(Suppliers.ofInstance((Location) null)));
+      function = new DatacenterToLocation(new JustProvider(ImmutableSet.<String>of(), "softlayer", URI.create("foo")));
    }
 
    @Test
    public void testDatacenterToLocation() {
-      Datacenter address = Datacenter.builder().id(1)
-                                         .longName("This is Texas!")
-                                         .locationAddress(Address.builder()
-                                         .country("US")
-                                         .state("TX")
-                                         .description("This is Texas!").build()).build();
-      
+      Datacenter address = Datacenter.builder().id(1).longName("This is Texas!").locationAddress(
+               Address.builder().country("US").state("TX").description("This is Texas!").build()).build();
+
       Location location = function.apply(address);
 
       assertEquals(location.getId(), Long.toString(address.getId()));
@@ -66,8 +63,7 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testGetIso3166CodeNoCountryAndState() {
-      Datacenter address = Datacenter.builder().id(1)
-                                         .longName("Nowhere").build();
+      Datacenter address = Datacenter.builder().id(1).longName("Nowhere").build();
       Location location = function.apply(address);
 
       assertEquals(location.getId(), Long.toString(address.getId()));
