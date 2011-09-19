@@ -22,6 +22,8 @@ import com.google.common.base.Predicate;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ProductItemPredicates {
 
    /**
@@ -30,9 +32,11 @@ public class ProductItemPredicates {
     * @return true if it does, otherwise false.
     */
     public static Predicate<ProductItem> categoryCode(final String category) {
+        checkNotNull(category, "category cannot be null");
         return new Predicate<ProductItem>() {
             @Override
             public boolean apply(ProductItem productItem) {
+                checkNotNull(productItem, "productItem cannot ne null");
                 for(ProductItemCategory productItemCategory: productItem.getCategories()) {
                     if(category.equals(productItemCategory.getCategoryCode())) return true;
                 }
@@ -52,12 +56,14 @@ public class ProductItemPredicates {
     * @return true if it does, otherwise false.
     */
     public static Predicate<ProductItem> capacity(final Float capacity) {
+        checkNotNull(capacity, "capacity cannot be null");
         return new Predicate<ProductItem>() {
             @Override
             public boolean apply(ProductItem productItem) {
+                checkNotNull(productItem, "productItem cannot ne null");
                 Float productItemCapacity = productItem.getCapacity();
                 if (productItemCapacity == null) return false;
-                return productItemCapacity.equals(capacity);
+                return capacity.equals(productItemCapacity);
             }
 
             @Override
@@ -74,12 +80,12 @@ public class ProductItemPredicates {
     * @return true if it does, otherwise false.
     */
     public static Predicate<ProductItem> units(final String units) {
+        checkNotNull(units, "units cannot be null");
         return new Predicate<ProductItem>() {
             @Override
             public boolean apply(ProductItem productItem) {
-                String productItemUnits = productItem.getUnits();
-                if (productItemUnits == null) return false;
-                return productItemUnits.equals(units);
+                checkNotNull(productItem, "productItem cannot ne null");
+                return units.equals(productItem.getUnits());
             }
 
             @Override

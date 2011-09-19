@@ -21,24 +21,29 @@ package org.jclouds.softlayer.compute.functions;
 import com.google.common.base.Function;
 import org.jclouds.softlayer.domain.ProductItem;
 
-import java.util.NoSuchElementException;
-
-/**
- * Returns the capacity of the ProductItem.
- * @author Jason King
- */
-public class CapacityFromProductItem implements Function<ProductItem,Float> {
+public class ProductItems {
 
     /**
-     * 
-     * @param productItem the productItem to use
-     * @return the capacity
-     * @throws NoSuchElementException if the capacity is missing
+     * Creates a function to get the capacity from a product item.
      */
-    @Override
-    public Float apply(ProductItem productItem) {
-        Float result = productItem.getCapacity();
-        if(result==null) throw new NoSuchElementException();
-        return result;
+    public static Function<ProductItem,Float> capacity() {
+        return new Function<ProductItem,Float>() {
+            @Override
+            public Float apply(ProductItem productItem) {
+                return productItem.getCapacity();
+            }
+        };
+    }
+
+    /**
+     * Creates a function to get the description from a product item.
+     */
+    public static Function<ProductItem,String> description() {
+        return new Function<ProductItem,String>() {
+            @Override
+            public String apply(ProductItem productItem) {
+                return productItem.getDescription();
+            }
+        };
     }
 }

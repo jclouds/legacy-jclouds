@@ -21,6 +21,7 @@ package org.jclouds.softlayer.predicates;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertFalse;
@@ -28,31 +29,36 @@ import static org.testng.Assert.assertFalse;
 @Test(sequential = true,groups = "unit")
 public class ProductItemPredicatesTest {
 
+   private ProductItemCategory ramCategory;
+   private ProductItem item;
+   private ProductItem emptyItem;
+
+   @BeforeGroups(groups = { "unit" })
+   public void setupClient() {
+      ramCategory = ProductItemCategory.builder().id(1).categoryCode("ram").build();
+
+      item = ProductItem.builder().id(1)
+                                  .categories(ImmutableSet.of(ramCategory))
+                                  .capacity(2.0f)
+                                  .units("GB")
+                                  .build();
+
+      emptyItem = ProductItem.builder().id(1).build();
+   }
+
     @Test
     public void testCategoryCodePresent() {
-        ProductItemCategory category = ProductItemCategory.builder()
-                                            .id(1).categoryCode("ram")
-                                            .build();
-
-        ProductItem item = ProductItem.builder()
-                                      .categories(ImmutableSet.of(category))
-                                      .build();
-
         assert ProductItemPredicates.categoryCode("ram").apply(item);
     }
 
     @Test
     public void testCategoryCodePresentTwoCategories() {
-        ProductItemCategory category1 = ProductItemCategory.builder()
-                                            .id(1).categoryCode("os")
-                                            .build();
-
-        ProductItemCategory category2 = ProductItemCategory.builder()
-                                            .id(2).categoryCode("ram")
+        ProductItemCategory osCategory = ProductItemCategory.builder()
+                                            .id(2).categoryCode("os")
                                             .build();
 
         ProductItem item = ProductItem.builder()
-                                      .categories(ImmutableSet.of(category1, category2))
+                                      .categories(ImmutableSet.of(ramCategory, osCategory))
                                       .build();
 
         assert ProductItemPredicates.categoryCode("ram").apply(item);
@@ -60,36 +66,26 @@ public class ProductItemPredicatesTest {
 
     @Test
     public void testCategoryCodeMissing() {
-        ProductItem item = ProductItem.builder()
-                                      .categories(ImmutableSet.<ProductItemCategory>of())
-                                      .build();
-
-        assertFalse(ProductItemPredicates.categoryCode("ram").apply(item));
+        assertFalse(ProductItemPredicates.categoryCode("missing").apply(emptyItem));
     }
 
     @Test
-    public void testCapacity() {
-        ProductItem item = ProductItem.builder()
-                                      .id(1).capacity(2.0f)
-                                      .build();
-
+    public void testCapacityPresent() {
         assert ProductItemPredicates.capacity(2.0f).apply(item);
     }
 
     @Test
-    public void testCapacityDifferent() {
-        ProductItem item = ProductItem.builder()
-                                      .id(1).capacity(2.0f)
-                                      .build();
-
+    public void testCapacityMissing() {
         assertFalse(ProductItemPredicates.capacity(1.0f).apply(item));
     }
 
     @Test
-    public void testCapacityMissing() {
-        ProductItem item = ProductItem.builder()
-                                      .id(1).build();
+    public void testUnitsPresent() {
+        assert ProductItemPredicates.units("GB").apply(item);
+    }
 
-        assertFalse(ProductItemPredicates.capacity(2.0f).apply(item));
+    @Test
+    public void testUnitsMissing() {
+        assertFalse(ProductItemPredicates.units("Kg").apply(item));
     }
 }

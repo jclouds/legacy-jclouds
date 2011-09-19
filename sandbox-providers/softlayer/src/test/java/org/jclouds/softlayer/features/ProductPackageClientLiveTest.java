@@ -23,9 +23,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.jclouds.softlayer.compute.functions.CapacityFromProductItem;
-import org.jclouds.softlayer.compute.functions.DescriptionFromProductItem;
 import org.jclouds.softlayer.compute.functions.ProductItemPriceFromProductItem;
+import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.domain.*;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
 import org.testng.annotations.BeforeGroups;
@@ -118,7 +117,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
                Predicates.and(categoryCode("ram"), capacity(1.0f)));
 
        // capacity is key in GB (1Gb = 1.0f)
-       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, new CapacityFromProductItem());
+       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
        ProductItemPrice price = new ProductItemPriceFromProductItem().apply(ramToProductItem.get(1.0f));
        assert new Long(1644L).equals(price.getId());
@@ -130,7 +129,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
 
        // number of cores is the key
-       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, new CapacityFromProductItem());
+       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
 
        ProductItemPrice price = new ProductItemPriceFromProductItem().apply(coresToProductItem.get(2.0f));
        assert new Long(1963L).equals(price.getId());
@@ -140,7 +139,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    public void testGetUbuntuPrice() {
        Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
 
-       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, new DescriptionFromProductItem());
+       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
 
        ProductItemPrice price = new ProductItemPriceFromProductItem().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
        assert new Long(1693L).equals(price.getId());
@@ -151,17 +150,17 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
                Predicates.and(categoryCode("ram"), capacity(1.0f)));
 
-       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, new CapacityFromProductItem());
+       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
        ProductItemPrice ramPrice = new ProductItemPriceFromProductItem().apply(ramToProductItem.get(1.0f));
 
        Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
-       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, new CapacityFromProductItem());
+       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
 
        ProductItemPrice cpuPrice = new ProductItemPriceFromProductItem().apply(coresToProductItem.get(2.0f));
 
        Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
-       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, new DescriptionFromProductItem());
+       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
        ProductItemPrice osPrice = new ProductItemPriceFromProductItem().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
        Set<Long> prices = Sets.<Long>newLinkedHashSet();

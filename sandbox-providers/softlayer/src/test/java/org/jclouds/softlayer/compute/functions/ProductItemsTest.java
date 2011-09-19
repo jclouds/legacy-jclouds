@@ -22,37 +22,43 @@ import org.jclouds.softlayer.domain.ProductItem;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.NoSuchElementException;
-
+import static org.jclouds.softlayer.compute.functions.ProductItems.capacity;
+import static org.jclouds.softlayer.compute.functions.ProductItems.description;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
- * Tests {@code DescriptionFromProductItem}
+ * Tests {@code ProductItems}
  *
  * @author Jason King
  */
 @Test(groups = "unit")
-public class CapacityFromProductItemTest {
+public class ProductItemsTest {
 
-   private CapacityFromProductItem function;
+   private ProductItem item;
 
    @BeforeMethod
    public void setup() {
-       function = new CapacityFromProductItem();
+       item = ProductItem.builder().id(1).capacity(2.0f).description("an item").build();
+   }
+   @Test
+   public void testCapacity() {
+       assertEquals(capacity().apply(item), 2.0f);
    }
 
    @Test
-   public void testCapacity() {
-       ProductItem item = ProductItem.builder()
-                                      .id(1).capacity(2.0f)
-                                      .build();
-       assertEquals(function.apply(item),2.0f);
+   public void testCapacityMissing() {
+       ProductItem item = ProductItem.builder().id(1).build();
+       assertNull(capacity().apply(item));
    }
 
-   @Test(expectedExceptions = NoSuchElementException.class)
-   public void testCapacityMissing() {
-       ProductItem item = ProductItem.builder()
-                                      .id(1).build();
-       function.apply(item);
+   @Test
+   public void testDescription() {
+       assertEquals(description().apply(item),"an item");
+   }
+
+   public void testDescriptionMissing() {
+       ProductItem item = ProductItem.builder().id(1).build();
+       assertNull(description().apply(item));
    }
 }

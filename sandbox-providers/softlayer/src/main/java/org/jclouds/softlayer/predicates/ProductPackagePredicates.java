@@ -18,9 +18,10 @@
  */
 package org.jclouds.softlayer.predicates;
 
+import com.google.common.base.Predicate;
 import org.jclouds.softlayer.domain.ProductPackage;
 
-import com.google.common.base.Predicate;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ProductPackagePredicates {
 
@@ -32,7 +33,8 @@ public class ProductPackagePredicates {
    public static Predicate<ProductPackage> named(final String packageName) {
       return new Predicate<ProductPackage>() {
          public boolean apply(ProductPackage productPackage) {
-            return productPackage.getName().equals(packageName);
+             checkNotNull(productPackage, "productPackage cannot be null");
+             return productPackage.getName().equals(packageName);
          }
       };
    }
