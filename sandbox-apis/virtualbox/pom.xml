@@ -122,6 +122,12 @@
             <version>0.9.29</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
     <profiles>
