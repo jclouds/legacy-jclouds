@@ -16,27 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.predicates;
+package org.jclouds.softlayer.domain;
 
-import com.google.common.base.Predicate;
-import org.jclouds.softlayer.domain.ProductPackage;
+import org.testng.annotations.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+/**
+ * Tests {@code Address}
+ *
+ * @author Jason King
+ */
+@Test(singleThreaded = true, groups = "unit")
+public class AddressTest {
 
-public class ProductPackagePredicates {
+    @Test(expectedExceptions = java.lang.NullPointerException.class )
+    public void testConstructionWithEmpty() {
+        Address.builder().country(null).build();
+    }
 
-   /**
-    * Tests if the product package name equals the packageName
-    * @param packageName
-    * @return true if the name is equal, otherwise false.
-    */
-   public static Predicate<ProductPackage> named(final String packageName) {
-      return new Predicate<ProductPackage>() {
-         public boolean apply(ProductPackage productPackage) {
-             checkNotNull(productPackage, "productPackage cannot be null");
-             return productPackage.getName().equals(packageName);
-         }
-      };
-   }
-
+    @Test(expectedExceptions = java.lang.NullPointerException.class )
+    public void testConstructionWithNoCountry() {
+        Address.builder().country("").build();
+    }
 }
