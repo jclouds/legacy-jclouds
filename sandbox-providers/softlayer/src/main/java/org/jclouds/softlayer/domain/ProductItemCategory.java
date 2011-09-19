@@ -18,110 +18,97 @@
  */
 package org.jclouds.softlayer.domain;
 
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
+ * The SoftLayer_Product_Item_Category data type contains
+ * general category information for prices.
  * 
  * @author Jason King
- * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Account_Address"
+ * @see <a href=
+ *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Item_Category"
  *      />
  */
-public class Address implements Comparable<Address> {
+public class ProductItemCategory implements Comparable<ProductItemCategory> {
+
+   // TODO there are more elements than this.
+
    public static Builder builder() {
       return new Builder();
    }
 
    public static class Builder {
       private long id = -1;
-      private String country;
-      private String state;
-      private String description;
+      private String name;
+      private String categoryCode;
 
       public Builder id(long id) {
          this.id = id;
          return this;
       }
 
-      public Builder country(String country) {
-         this.country = country;
+      public Builder name(String name) {
+         this.name = name;
          return this;
       }
 
-      public Builder state(String state) {
-         this.state = state;
+      public Builder categoryCode(String categoryCode) {
+         this.categoryCode = categoryCode;
          return this;
       }
 
-      public Builder description(String description) {
-         this.description = description;
-         return this;
+      public ProductItemCategory build() {
+         return new ProductItemCategory(id, name, categoryCode);
       }
 
-      public Address build() {
-         return new Address(id, country, state, description);
-      }
-
-      public static Builder fromAddress(Address in) {
-         return Address.builder().id(in.getId())
-                                 .country(in.getCountry())
-                                 .state(in.getState())
-                                 .description(in.getDescription());
+      public static Builder fromProductItemCategory(ProductItemCategory in) {
+         return ProductItemCategory.builder().id(in.getId())
+                                             .name(in.getName())
+                                             .categoryCode(in.getCategoryCode());
       }
    }
 
    private long id = -1;
-   private String country;
-   private String state;
-   private String description;
+   private String name;
+   private String categoryCode;
 
    // for deserializer
-   Address() {
+   ProductItemCategory() {
 
    }
 
-   public Address(long id, String country, String state, String description) {
+   public ProductItemCategory(long id, String name, String categoryCode) {
       this.id = id;
-      this.country = checkNotNull(emptyToNull(country),"country cannot be null or empty:"+country);
-      this.state = state;
-      this.description = description;
+      this.name = name;
+      this.categoryCode = categoryCode;
    }
 
    @Override
-   public int compareTo(Address arg0) {
+   public int compareTo(ProductItemCategory arg0) {
       return new Long(id).compareTo(arg0.getId());
    }
 
    /**
-    * @return The unique id of the address.
+    * @return The unique identifier of a specific location.
     */
    public long getId() {
       return id;
    }
 
    /**
-    * @return The country of the address.
+    * @return The friendly, descriptive name of the category as seen on the order forms and on invoices.
     */
-   public String getCountry() {
-      return country;
+   public String getName() {
+      return name;
    }
 
    /**
-    * @return The state of the address.
+    * @return The code used to identify this category.
     */
-   public String getState() {
-      return state;
-   }
-
-   /**
-    * @return The description of the address.
-    */
-   public String getDescription() {
-      return description;
+   public String getCategoryCode() {
+      return categoryCode;
    }
 
    public Builder toBuilder() {
-      return Builder.fromAddress(this);
+      return Builder.fromProductItemCategory(this);
    }
 
    @Override
@@ -140,7 +127,7 @@ public class Address implements Comparable<Address> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Address other = (Address) obj;
+      ProductItemCategory other = (ProductItemCategory) obj;
       if (id != other.id)
          return false;
       return true;
@@ -148,8 +135,6 @@ public class Address implements Comparable<Address> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + country + ", state=" + state + ", description=" + description + "]";
+      return "ProductItemCategory [id=" + id + ", name=" + name + ", categoryCode=" + categoryCode + "]";
    }
-   
-   
 }

@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -58,7 +59,16 @@ public class DatacenterToLocation implements Function<Datacenter,Location> {
    }
 
    private Iterable<String> createIso3166Codes(Address address) {
-      return address != null ? ImmutableSet.<String> of("" + address.getCountry() + "-" + address.getState())
-               : ImmutableSet.<String> of();
+      if (address== null) return ImmutableSet.<String> of();
+
+      final String country = nullToEmpty(address.getCountry()).trim();
+      if (country.isEmpty()) return ImmutableSet.<String> of();
+
+      final String state = nullToEmpty(address.getState()).trim();
+      if (state.isEmpty()) return ImmutableSet.<String> of(address.getCountry());
+
+      return ImmutableSet.<String> of("" + country + "-" + state);
+
+               
    }
 }

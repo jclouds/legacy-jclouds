@@ -18,6 +18,11 @@
  */
 package org.jclouds.softlayer.reference;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import java.util.Set;
+
 /**
  * Configuration properties and constants used in SoftLayer connections.
  * 
@@ -28,5 +33,17 @@ public interface SoftLayerConstants {
     * Name of the product package corresponding to cloud servers
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
-  
+
+   public static final Set<Long> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<Long>builder()
+           .add(1639L) // 100 GB (SAN)
+           .add(21L) // 1 IP Address
+           .add(55L) // Host Ping
+           .add(58L) // Automated Notification
+           .add(1800L) // 0 GB Bandwidth
+           .add(57L) // Email and Ticket
+           .add(274L) // 1000 Mbps Public & Private Networks
+           .add(905L) // Reboot / Remote Console
+           .add(418L) // Nessus Vulnerability Assessment & Reporting
+           .add(420L) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
+           .build();
 }

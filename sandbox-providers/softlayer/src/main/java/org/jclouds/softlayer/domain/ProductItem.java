@@ -18,14 +18,13 @@
  */
 package org.jclouds.softlayer.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.jclouds.javax.annotation.Nullable;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The SoftLayer_Product_Item data type contains general information relating to
@@ -50,6 +49,7 @@ public class ProductItem implements Comparable<ProductItem> {
       private String units;
       private Float capacity;
       private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
+      private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
 
       public Builder id(long id) {
          this.id = id;
@@ -81,13 +81,27 @@ public class ProductItem implements Comparable<ProductItem> {
          return this;
       }
 
+      public Builder category(ProductItemCategory categories) {
+         this.categories.add(checkNotNull(categories, "categories"));
+         return this;
+      }
+
+      public Builder categories(Iterable<ProductItemCategory> categories) {
+         this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
+         return this;
+      }
+
       public ProductItem build() {
-         return new ProductItem(id, description, units, capacity, prices);
+         return new ProductItem(id, description, units, capacity, prices, categories);
       }
 
       public static Builder fromProductItem(ProductItem in) {
-         return ProductItem.builder().id(in.getId()).description(in.getDescription()).units(in.getUnits())
-               .capacity(in.getCapacity()).prices(in.getPrices());
+         return ProductItem.builder().id(in.getId())
+                 .description(in.getDescription())
+                 .units(in.getUnits())
+                 .capacity(in.getCapacity())
+                 .prices(in.getPrices())
+                 .categories(in.getCategories());
       }
    }
 
@@ -96,18 +110,21 @@ public class ProductItem implements Comparable<ProductItem> {
    private String units;
    private Float capacity;
    private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
+   private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
 
    // for deserializer
    ProductItem() {
 
    }
 
-   public ProductItem(long id, String description, String units, Float capacity, Iterable<ProductItemPrice> prices) {
+   public ProductItem(long id, String description, String units, Float capacity,
+                      Iterable<ProductItemPrice> prices, Iterable<ProductItemCategory> categories) {
       this.id = id;
       this.description = description;
       this.units = units;
       this.capacity = capacity;
       this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
+      this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
    }
 
    @Override
@@ -155,6 +172,14 @@ public class ProductItem implements Comparable<ProductItem> {
       return prices;
    }
 
+   /**
+    *
+    * @return An item's associated item categories.
+    */
+   public Set<ProductItemCategory> getCategories() {
+      return categories;
+   }
+
    public Builder toBuilder() {
       return Builder.fromProductItem(this);
    }
@@ -184,6 +209,6 @@ public class ProductItem implements Comparable<ProductItem> {
    @Override
    public String toString() {
       return "ProductItem [id=" + id + ", description=" + description + ", units=" + units + ", capacity=" + capacity
-            + ", prices=" + prices + "]";
+            + ", prices=" + prices + ", categories=" + categories + "]";
    }
 }
