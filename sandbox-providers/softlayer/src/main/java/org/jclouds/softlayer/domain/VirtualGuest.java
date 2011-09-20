@@ -300,7 +300,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + startCpus;
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-      result = prime * result + billingItem.hashCode();
+      result = prime * result + ((billingItem == null) ? 0 : billingItem.hashCode());
       return result;
    }
 
