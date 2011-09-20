@@ -6,11 +6,15 @@ title: A List of applications that use jclouds
 # A List of applications that use jclouds
 
 
-  * [backtype](http://www.backtype.com/)
-    * uses pallet to deploy their analytics platform to standard and variable count of spot ec2 instances
+  * [Adobe](http://www.adobe.com/)
+    * use jclouds to provision EC2 and vCloud infrastructure under their Enterprise PaaS
 
   * [Twitter](http://www.twitter.com)
+    * uses pallet to deploy their storm platform to standard and variable count of spot ec2 instances
     * uses whirr to setup test cassandra clusters
+
+  * [Red Hat](https://openshift.redhat.com/app/flex)
+    * uses jclouds to deploy OpenShift Flex applications to Terremark, Rackspace and EC2
 
   * [ I N F I N I S P A N](http://www.jboss.org/infinispan)
     * utilizes jclouds to persist the state of the grid to blobstores such as  Amazon S3
@@ -33,16 +37,13 @@ title: A List of applications that use jclouds
   * [Dasein Cloud](http://sourceforge.net/projects/dasein-cloud)
     * uses jclouds for rackspace, gogrid, azure, and terremark integration
 
-  * [Makara](http://www.makara.com)
-    * uses jclouds to extend application management to Terremark, Rackspace and EC2
-
   * [GigaSpaces](http://www.gigaspaces.com)
     * uses jclouds to integrate !GigaSpaces monitoring and application management with Terremark and Rackspace.
 
-  * [Pallet](http://hugoduncan.github.com/pallet)
+  * [Pallet](http://palletops.com/)
     * uses jclouds clojure to manage node counts and provision instances
 
-  * [Whirr!](http://github.com/tomwhite/whirr)
+  * [Whirr!](http://whirr.apache.org/)
     * uses jclouds to as a substrate for cloud cluster provisioning
 
   * [docuharvest](https://docuharvest.com/)
@@ -83,3 +84,6 @@ title: A List of applications that use jclouds
 
   * [NeoLoad](http://www.neotys.com/product/neoload-cloud-testing.html)
     * uses jclouds to manage load generators in the Cloud.
+
+  * [Meteorite Hosting](http://www.meteoriteconsulting.com/hosting.html)
+    * allows users to spawn BI environments across a range of cloud providers in a hassle-free way.
