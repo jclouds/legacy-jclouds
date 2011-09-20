@@ -48,7 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
 public interface VirtualGuestAsyncClient {
-   public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter";
+   public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter;virtualGuests.billingItem";
 
    /**
     * @see VirtualGuestClient#listVirtualGuests

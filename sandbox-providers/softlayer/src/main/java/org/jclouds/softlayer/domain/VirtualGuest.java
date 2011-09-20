@@ -86,6 +86,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    private String primaryBackendIpAddress;
    private String primaryIpAddress;
 
+   private BillingItemVirtualGuest billingItem;
+
    // for deserializer
    VirtualGuest() {
 
@@ -95,7 +97,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             String fullyQualifiedDomainName, String hostname, long id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
-            String primaryIpAddress) {
+            String primaryIpAddress,BillingItemVirtualGuest billingItem) {
       this.accountId = accountId;
       this.createDate = createDate;
       this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
@@ -116,6 +118,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       this.uuid = uuid;
       this.primaryBackendIpAddress = primaryBackendIpAddress;
       this.primaryIpAddress = primaryIpAddress;
+      this.billingItem = billingItem;
    }
 
    @Override
@@ -266,6 +269,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       return primaryIpAddress;
    }
 
+   /**
+    * @return The billing item for a CloudLayer Compute Instance.
+    */
+   public BillingItemVirtualGuest getBillingItem() {
+      return billingItem;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -290,6 +300,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + startCpus;
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+      result = prime * result + billingItem.hashCode();
       return result;
    }
 
@@ -377,6 +388,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          if (other.uuid != null)
             return false;
       } else if (!uuid.equals(other.uuid))
+         return false;
+      if (!billingItem.equals(other.billingItem))
          return false;
       return true;
    }

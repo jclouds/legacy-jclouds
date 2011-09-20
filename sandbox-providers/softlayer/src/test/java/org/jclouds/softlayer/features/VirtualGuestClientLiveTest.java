@@ -23,6 +23,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.jclouds.softlayer.domain.BillingItemVirtualGuest;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -71,6 +72,13 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert vg.getUuid() != null : vg;
       assert vg.getPrimaryBackendIpAddress() != null : vg;
       assert vg.getPrimaryIpAddress() != null : vg;
+
+      checkBillingItem(vg.getBillingItem());
+   }
+
+   private void checkBillingItem(BillingItemVirtualGuest billingItem) {
+      assert null != billingItem;
+      assert billingItem.getId() > 0 : billingItem;
    }
 
 }
