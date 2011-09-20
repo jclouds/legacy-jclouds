@@ -18,12 +18,17 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.jclouds.softlayer.compute.functions.ProductItems.capacity;
 import static org.jclouds.softlayer.compute.functions.ProductItems.description;
+import static org.jclouds.softlayer.compute.functions.ProductItems.price;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -35,11 +40,19 @@ import static org.testng.Assert.assertNull;
 @Test(groups = "unit")
 public class ProductItemsTest {
 
+   private ProductItemPrice price;
    private ProductItem item;
 
    @BeforeMethod
    public void setup() {
-       item = ProductItem.builder().id(1).capacity(2.0f).description("an item").build();
+
+       price = ProductItemPrice.builder().id(1).build();
+
+       item = ProductItem.builder().id(1)
+                                   .capacity(2.0f)
+                                   .description("an item")
+                                   .price(price)
+                                   .build();
    }
    @Test
    public void testCapacity() {
@@ -57,8 +70,27 @@ public class ProductItemsTest {
        assertEquals(description().apply(item),"an item");
    }
 
+   @Test
    public void testDescriptionMissing() {
        ProductItem item = ProductItem.builder().id(1).build();
        assertNull(description().apply(item));
+   }
+
+   @Test
+   public void testPrice() {
+      assertEquals(price().apply(item),price);
+   }
+
+   @Test
+   public void testPriceMultiplePrices() {
+       ImmutableSet<ProductItemPrice> prices = ImmutableSet.of(price, ProductItemPrice.builder().id(2).build());
+       ProductItem item2 = ProductItem.builder().prices(prices).build();
+       assertEquals(price().apply(item2),price);
+   }
+
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testPriceMissing() {
+      ProductItem noPriceItem = ProductItem.builder().id(1).build();
+      price().apply(noPriceItem);
    }
 }
