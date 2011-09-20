@@ -88,4 +88,14 @@ public interface VirtualGuestClient {
     *           id of the virtual guest
     */
    void resumeVirtualGuest(long id);
+
+
+   /**
+    * Cancel the resource or service for a billing Item
+    *
+    * @param id
+    *            The id of the billing item to cancel
+    * @return true or false
+    */
+   boolean cancelService(long id);
 }

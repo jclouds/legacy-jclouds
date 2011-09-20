@@ -19,7 +19,11 @@
 package org.jclouds.softlayer.compute.functions;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+
+import java.util.NoSuchElementException;
 
 public class ProductItems {
 
@@ -43,6 +47,21 @@ public class ProductItems {
             @Override
             public String apply(ProductItem productItem) {
                 return productItem.getDescription();
+            }
+        };
+    }
+
+    /**
+     * Creates a function to get the ProductItemPrice for the ProductItem.
+     * Currently returns the first price.
+     * This will need to be changed if more than one price is returned.
+     */
+    public static Function<ProductItem,ProductItemPrice> price() {
+        return new Function<ProductItem,ProductItemPrice>() {
+            @Override
+            public ProductItemPrice apply(ProductItem productItem) {
+                if(productItem.getPrices().size()<1) throw new NoSuchElementException("ProductItem has no prices:"+productItem);
+                return Iterables.get(productItem.getPrices(), 0);
             }
         };
     }
