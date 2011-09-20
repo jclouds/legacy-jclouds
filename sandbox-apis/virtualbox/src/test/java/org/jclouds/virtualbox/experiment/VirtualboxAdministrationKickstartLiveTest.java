@@ -370,14 +370,13 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	@Test(dependsOnMethods = "testAttachIsoDvd")
 	public void testCreateAndAttachHardDisk() throws InterruptedException {
 		IMedium hd = null;
-		if (!new File(adminDisk).exists()) {
-			hd = manager.getVBox().createHardDisk(diskFormat, adminDisk);
-			long size = 4L * 1024L * 1024L * 1024L - 4L;
-			IProgress progress = hd.createBaseStorage(new Long(size), new Long(
-					MediumVariant.STANDARD.ordinal()));
-		} else {
-			// TODO disk already exist: open it
+		if (new File(adminDisk).exists()) {
+			new File(adminDisk).delete();
 		}
+		hd = manager.getVBox().createHardDisk(diskFormat, adminDisk);
+		long size = 4L * 1024L * 1024L * 1024L - 4L;
+		IProgress progress = hd.createBaseStorage(new Long(size), new Long(
+					MediumVariant.STANDARD.ordinal()));
 
 		ISession session = manager.getSessionObject();
 		IMachine machine = manager.getVBox().findMachine(vmName);
@@ -456,11 +455,13 @@ public class VirtualboxAdministrationKickstartLiveTest {
 	public void testConfigureGuestAdditions() {
 		// TODO generalize
 		if(isUbuntu(guestId)) {
-			runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
+			runScriptOnNode(guestId,
+					"m-a prepare -i");
 			runScriptOnNode(guestId,
 				"mount -o loop /dev/dvd /media/cdrom");
 			runScriptOnNode(guestId,
 				"sh /media/cdrom/VBoxLinuxAdditions.run");
+			runScriptOnNode(guestId, "/etc/init.d/vboxadd setup");
 			runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
 			runScriptOnNode(guestId, "mkdir /etc/udev/rules.d/70-persistent-net.rules");
 			runScriptOnNode(guestId, "rm -rf /dev/.udev/");

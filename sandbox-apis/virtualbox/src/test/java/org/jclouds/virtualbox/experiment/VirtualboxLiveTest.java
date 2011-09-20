@@ -148,7 +148,7 @@ public class VirtualboxLiveTest {
 		clonedDisk = System.getProperty("test." + provider + ".clonedDisk", "clone.vdi");
 		clonedDiskPath = workingDir + File.separator + clonedDisk;
 		numberOfVirtualMachine = Integer.parseInt(checkNotNull(System.getProperty("test." + provider
-				+ ".numberOfVirtualMachine", "3")));
+				+ ".numberOfVirtualMachine", "1")));
 	}
 
 	@BeforeGroups(groups = "live")
@@ -189,12 +189,49 @@ public class VirtualboxLiveTest {
 		List<CloneOptions> options = new ArrayList<CloneOptions>();
 		options.add(CloneOptions.Link);
 		IProgress progress = adminNode.getCurrentSnapshot().getMachine().cloneTo(clonedVM,CloneMode.MachineState , options);
+		//IProgress progress = adminNode.cloneTo(clonedVM,CloneMode.MachineState , options);
+		
 		if(progress.getCompleted())
 			logger().debug("clone done");
 
 		manager.getVBox().registerMachine(clonedVM);
 		
-			
+		ISession session = manager.getSessionObject();
+		clonedVM.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
+		// network
+		String hostInterface = null;
+		String command = "vboxmanage list bridgedifs";
+		try {
+			Process child = Runtime.getRuntime().exec(command);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
+			String line = "";
+			boolean found = false;
+
+			while ((line = bufferedReader.readLine()) != null && !found) {
+				System.out.println("line: " + line);
+				if (line.split(":")[0].contains("Name")) {
+					hostInterface = line.substring(line.indexOf(":") +1);
+				}
+				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
+					System.out.println("bridge: " + hostInterface.trim());
+					found = true;
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
+		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
+		mutable.getNetworkAdapter(new Long(0)).setMACAddress(manager.getVBox().getHost().generateMACAddress());
+		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
+		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
+		mutable.saveSettings();
+		session.unlockMachine();
+
+		
 		System.out.println("\nLaunching VM named " + clonedVM.getName() + " ...");
 		launchVMProcess(clonedVM, manager.getSessionObject());
 		String ipAddress = null;
