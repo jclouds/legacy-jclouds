@@ -30,6 +30,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.RemoteException;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -177,11 +179,11 @@ public class VirtualboxLiveTest {
 	@Test
 	public void testStartAndValidateVirtualMachines() throws InterruptedException {
 		for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-			createAndLaunchVirtualMachine(i);
+			createVirtualMachine(i);
 		}
 	}		
 
-	private void createAndLaunchVirtualMachine(int i) throws InterruptedException {
+	private void createVirtualMachine(int i) throws InterruptedException {
 		String instanceName = vmName + "_" + i;
 		IMachine adminNode = manager.getVBox().findMachine(adminNodeName);
 		
@@ -189,7 +191,6 @@ public class VirtualboxLiveTest {
 		List<CloneOptions> options = new ArrayList<CloneOptions>();
 		options.add(CloneOptions.Link);
 		IProgress progress = adminNode.getCurrentSnapshot().getMachine().cloneTo(clonedVM,CloneMode.MachineState , options);
-		//IProgress progress = adminNode.cloneTo(clonedVM,CloneMode.MachineState , options);
 		
 		if(progress.getCompleted())
 			logger().debug("clone done");
@@ -231,10 +232,36 @@ public class VirtualboxLiveTest {
 		mutable.saveSettings();
 		session.unlockMachine();
 
-		
 		System.out.println("\nLaunching VM named " + clonedVM.getName() + " ...");
 		launchVMProcess(clonedVM, manager.getSessionObject());
-		String ipAddress = null;
+		
+		clonedVM = manager.getVBox().findMachine(instanceName);
+		String macAddressOfClonedVM = clonedVM.getNetworkAdapter(new Long(0)).getMACAddress();
+		System.out.println(macAddressOfClonedVM);
+		int offset = 0, step = 2;
+		for (int j = 1; j <= 5; j++) {
+			macAddressOfClonedVM = new StringBuffer(macAddressOfClonedVM).insert(j * step + offset, ":").toString().toLowerCase();
+			offset++;
+		}
+
+		String simplifiedMacAddressOfClonedVM = macAddressOfClonedVM;
+		if(simplifiedMacAddressOfClonedVM.contains("00"))
+			simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("00"), simplifiedMacAddressOfClonedVM.indexOf("00") + 1).toString();
+		
+		if(simplifiedMacAddressOfClonedVM.contains("0")) 
+			if(simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':' && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
+			simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1).toString();
+		
+		
+
+
+//runScriptOnNode(hostId, "ping 192.168.1.255", runAsRoot(false).wrapInInitScript(false));
+
+		String ipAddress = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM, runAsRoot(false).wrapInInitScript(false)).getOutput();
+		//
+		System.out.println("IP address " + ipAddress);
+
+		/*
 		while (ipAddress == null || ipAddress.equals("")) {
 			try {
 				ipAddress = clonedVM.getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
@@ -243,6 +270,7 @@ public class VirtualboxLiveTest {
 				e.printStackTrace();
 			}
 		}
+		*/
 		System.out.println(ipAddress + " is the IP address of " + clonedVM.getName());
 		
 		//TODO
