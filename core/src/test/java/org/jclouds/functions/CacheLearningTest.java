@@ -59,6 +59,20 @@ public class CacheLearningTest {
       } catch (NullPointerException e) {
          assertEquals(e.getMessage(), "testLoader returned null for key foo.");
       }
+      
+      try {
+         assertEquals(cache.activeEntries(Integer.MAX_VALUE).size(), 1);
+         assert false : "I suppose this works now! Go hunt asMap().keySet()!";
+      } catch (UnsupportedOperationException e) {
+      }
+      
+      try {
+         cache.asMap().put("foo", "bar");
+         assertEquals(cache.get("foo"), "bar");
+         assert false : "I suppose this works now! Go hunt for invalidate calls!";
+      } catch (UnsupportedOperationException e) {
+      }
+
       try {
          cache.get("exception");
       } catch (ExecutionException e) {
