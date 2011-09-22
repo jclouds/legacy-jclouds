@@ -69,7 +69,7 @@ public class Futures {
             // ExecutionException / CancellationException / RuntimeException
             // The task is done, run the listeners.
          }
-         executionList.run();
+         executionList.execute();
       }
 
       @Override
@@ -116,7 +116,7 @@ public class Futures {
             if (delegate.isDone()) {
                // If the delegate is already done, run the execution list
                // immediately on the current thread.
-               executionList.run();
+               executionList.execute();
                return;
             }
             adapterExecutor.execute(new CallGetAndRunExecutionList<T>(delegate, executionList));

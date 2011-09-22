@@ -20,6 +20,8 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,30 +34,33 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
+public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
    protected final Supplier<String> randomSuffix;
+   protected final Map<RegionAndName, KeyPair> knownKeys;
 
    @Inject
-   public CreateUniqueKeyPair(EC2Client ec2Client, Supplier<String> randomSuffix) {
+   public CreateUniqueKeyPair(Map<RegionAndName, KeyPair> knownKeys, EC2Client ec2Client, Supplier<String> randomSuffix) {
+      this.knownKeys = knownKeys;
       this.ec2Client = ec2Client;
       this.randomSuffix = randomSuffix;
    }
 
    @Override
-   public KeyPair apply(RegionAndName from) {
-      return createNewKeyPairInRegion(from.getRegion(), from.getName());
+   public KeyPair load(RegionAndName from) {
+      return knownKeys.containsKey(from) ? knownKeys.get(from) : createNewKeyPairInRegion(from.getRegion(),
+            from.getName());
    }
 
    @VisibleForTesting

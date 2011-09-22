@@ -2157,7 +2157,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testOneHeader() throws SecurityException, NoSuchMethodException {
+   public void testOneHeader() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("oneHeader", String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot");
@@ -2166,7 +2166,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testOneIntHeader() throws SecurityException, NoSuchMethodException {
+   public void testOneIntHeader() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("oneIntHeader", int.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, 1);
@@ -2175,7 +2175,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testTwoDifferentHeaders() throws SecurityException, NoSuchMethodException {
+   public void testTwoDifferentHeaders() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("twoDifferentHeaders", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot", "egg");
@@ -2185,7 +2185,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testTwoSameHeaders() throws SecurityException, NoSuchMethodException {
+   public void testTwoSameHeaders() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("twoSameHeaders", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot", "egg");
@@ -2228,7 +2228,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @SuppressWarnings("static-access")
    @Test
-   public void testOneEndpointParam() throws SecurityException, NoSuchMethodException {
+   public void testOneEndpointParam() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestEndpointParams.class.getMethod("oneEndpointParam", String.class);
       URI uri = factory(TestEndpointParams.class).getEndpointInParametersOrNull(method, new Object[] { "robot" },
                injector);
@@ -2238,7 +2238,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @SuppressWarnings("static-access")
    @Test
-   public void testTwoDifferentEndpointParams() throws SecurityException, NoSuchMethodException {
+   public void testTwoDifferentEndpointParams() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestEndpointParams.class.getMethod("twoEndpointParams", String.class, String.class);
       URI uri = factory(TestEndpointParams.class).getEndpointInParametersOrNull(method,
                new Object[] { "robot", "egg" }, injector);

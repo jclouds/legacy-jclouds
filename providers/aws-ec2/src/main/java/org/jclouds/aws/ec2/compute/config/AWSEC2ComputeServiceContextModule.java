@@ -21,8 +21,6 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
-import java.util.Map;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -56,6 +54,7 @@ import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
@@ -89,12 +88,12 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
 
    @Provides
    @Singleton
-   protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
+   protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-            authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Cache<RegionAndName, ? extends Image>>(
+            authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
                @Override
-               public Map<RegionAndName, ? extends Image> get() {
+               public Cache<RegionAndName, ? extends Image> get() {
                   return supplier.get();
                }
             });

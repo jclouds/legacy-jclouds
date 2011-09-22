@@ -27,6 +27,7 @@ import static org.testng.Assert.assertEquals;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Provider;
 
@@ -38,8 +39,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
-import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
@@ -48,14 +47,14 @@ import org.jclouds.encryption.internal.Base64;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", singleThreaded = true, testName = "CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest")
 public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
    private static final Provider<RunInstancesOptions> OPTIONS_PROVIDER = new javax.inject.Provider<RunInstancesOptions>() {
@@ -209,7 +208,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       verifyStrategy(strategy);
    }
 
-   @Test(expectedExceptions = IllegalStateException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptButNoCredentials() {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
@@ -225,7 +224,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getOverridingCredentials()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(false);
+
+      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andThrow(new NullPointerException());
 
       // replay mocks
       replay(options);
@@ -256,7 +256,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getOverridingCredentials()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
+
+      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
 
       // replay mocks
       replay(options);
@@ -287,11 +288,13 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getOverridingCredentials()).andReturn(new Credentials(null, "MyRsa")).atLeastOnce();
       expect(
-            strategy.credentialsMap.put(new RegionAndName(region, userSuppliedKeyPair), KeyPair.builder()
-                  .region(region).keyName(userSuppliedKeyPair).keyFingerprint("//TODO").keyMaterial("MyRsa").build()))
-            .andReturn(null);
+            strategy.knownKeys.put(
+                  new RegionAndName(region, tag),
+                  KeyPair.builder().region(region).keyName(userSuppliedKeyPair).keyFingerprint("//TODO")
+                        .keyMaterial("MyRsa").build())).andReturn(null);
+      strategy.credentialsMap.invalidate(new RegionAndName(region, tag));
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
+      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
 
       // replay mocks
       replay(options);
@@ -307,7 +310,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       verifyStrategy(strategy);
    }
 
-   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_createsNewKeyPairAndReturnsItsNameByDefault() {
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_createsNewKeyPairAndReturnsItsNameByDefault()
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
@@ -323,11 +327,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
-      expect(strategy.createUniqueKeyPair.apply(new RegionAndName(region, tag))).andReturn(keyPair);
-      expect(keyPair.getRegion()).andReturn(region).atLeastOnce();
       expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
-      expect(strategy.credentialsMap.put(new RegionAndName(region, systemGeneratedKeyPairName), keyPair)).andReturn(
-            null);
+      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, tag))).andReturn(keyPair);
       expect(options.getRunScript()).andReturn(null);
 
       // replay mocks
@@ -377,7 +378,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       verifyStrategy(strategy);
    }
 
-   public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesntExist() {
+   public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesntExist()
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
@@ -385,7 +387,6 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
-      boolean groupExisted = false;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -397,9 +398,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
-      expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
-      expect(strategy.createSecurityGroupIfNeeded.apply(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
-      expect(strategy.securityGroupMap.put(regionNameAndIngressRules, generatedMarkerGroup)).andReturn(null);
+      expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(tag);
 
       // replay mocks
       replay(options);
@@ -413,7 +412,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       verifyStrategy(strategy);
    }
 
-   public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenPortsAreSpecifiedWhenDoesntExist() {
+   public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenPortsAreSpecifiedWhenDoesntExist()
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
@@ -421,7 +421,6 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] { 22, 80 };
       boolean shouldAuthorizeSelf = true;
-      boolean groupExisted = false;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -433,9 +432,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
-      expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
-      expect(strategy.createSecurityGroupIfNeeded.apply(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
-      expect(strategy.securityGroupMap.put(regionNameAndIngressRules, generatedMarkerGroup)).andReturn(null);
+      expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
 
       // replay mocks
       replay(options);
@@ -449,7 +446,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       verifyStrategy(strategy);
    }
 
-   public void testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExist() {
+   public void testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExist()
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
@@ -457,7 +455,6 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
-      boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -469,7 +466,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
-      expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
+      expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
 
       // replay mocks
       replay(options);
@@ -501,13 +498,9 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup expectations
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-            ports, shouldAuthorizeSelf); // note
-      // this
-      // works
-      // since
-      // there's
-      // no equals on portsq
-      expect(strategy.securityGroupMap.containsKey(regionNameAndIngressRules)).andReturn(groupExisted);
+            ports, shouldAuthorizeSelf);
+
+      expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(groupExisted ? "tag" : null);
 
       // replay mocks
       replay(options);
@@ -522,28 +515,24 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
    }
 
    private void verifyStrategy(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {
+      verify(strategy.knownKeys);
       verify(strategy.credentialsMap);
       verify(strategy.securityGroupMap);
-      verify(strategy.createUniqueKeyPair);
-      verify(strategy.createSecurityGroupIfNeeded);
    }
 
    @SuppressWarnings("unchecked")
    private CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions setupStrategy() {
-      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
-      Map<RegionAndName, String> securityGroupMap = createMock(Map.class);
-      CreateUniqueKeyPair createUniqueKeyPair = createMock(CreateUniqueKeyPair.class);
-      Function<RegionNameAndIngressRules, String> createSecurityGroupIfNeeded = createMock(CreateSecurityGroupIfNeeded.class);
-
-      return new CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(credentialsMap, securityGroupMap,
-            createUniqueKeyPair, createSecurityGroupIfNeeded, OPTIONS_PROVIDER);
+      Map<RegionAndName, KeyPair> knownKeys = createMock(Map.class);
+      Cache<RegionAndName, KeyPair> credentialsMap = createMock(Cache.class);
+      Cache<RegionAndName, String> securityGroupMap = createMock(Cache.class);
+      return new CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(knownKeys, credentialsMap, securityGroupMap,
+            OPTIONS_PROVIDER);
    }
 
    private void replayStrategy(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {
+      replay(strategy.knownKeys);
       replay(strategy.credentialsMap);
       replay(strategy.securityGroupMap);
-      replay(strategy.createUniqueKeyPair);
-      replay(strategy.createSecurityGroupIfNeeded);
    }
 
 }

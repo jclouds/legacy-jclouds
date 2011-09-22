@@ -25,9 +25,6 @@ import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.ipOrEmptyS
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
-
-import org.jclouds.javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -43,10 +40,12 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
+import com.google.common.cache.Cache;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
 
@@ -56,7 +55,7 @@ import com.google.inject.Provider;
  */
 public class ComputeTask extends Task {
 
-   private final Map<URI, ComputeServiceContext> computeMap;
+   private final Cache<URI, ComputeServiceContext> computeMap;
    private String provider;
    private String actions;
    private NodeElement nodeElement;
@@ -72,7 +71,7 @@ public class ComputeTask extends Task {
       }
    };
 
-   public ComputeTask(@Nullable Map<URI, ComputeServiceContext> computeMap) {
+   public ComputeTask(@Nullable Cache<URI, ComputeServiceContext> computeMap) {
       this.computeMap = computeMap != null ? computeMap : buildComputeMap(projectProvider);
    }
 
@@ -88,7 +87,7 @@ public class ComputeTask extends Task {
     * makes a connection to the compute service and invokes
     */
    public void execute() throws BuildException {
-      ComputeServiceContext context = computeMap.get(HttpUtils.createUri(provider));
+      ComputeServiceContext context = computeMap.getUnchecked(HttpUtils.createUri(provider));
 
       try {
          for (String action : Splitter.on(',').split(actions)) {

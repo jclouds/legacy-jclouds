@@ -25,8 +25,10 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.testng.annotations.Test;
@@ -38,58 +40,127 @@ import com.google.common.base.Supplier;
  */
 @Test(groups = "unit")
 public class CreateUniqueKeyPairTest {
-   @SuppressWarnings( { "unchecked" })
+   @SuppressWarnings({ "unchecked" })
    @Test
    public void testApply() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       KeyPairClient keyClient = createMock(KeyPairClient.class);
       Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
+      Map<RegionAndName, KeyPair> knownKeys = createMock(Map.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#1")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andReturn(pair);
 
       replay(client);
+      replay(knownKeys);
       replay(keyClient);
       replay(uniqueIdSupplier);
 
-      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
+      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(knownKeys, client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInRegion("region", "tag"), pair);
+      assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
+      verify(knownKeys);
       verify(keyClient);
       verify(uniqueIdSupplier);
    }
 
-   @SuppressWarnings( { "unchecked" })
+   @SuppressWarnings({ "unchecked" })
    @Test
    public void testApplyWithIllegalStateException() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       KeyPairClient keyClient = createMock(KeyPairClient.class);
       Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
+      Map<RegionAndName, KeyPair> knownKeys = createMock(Map.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#1")).andThrow(new IllegalStateException());
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#2")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#2")).andReturn(pair);
 
       replay(client);
+      replay(knownKeys);
       replay(keyClient);
       replay(uniqueIdSupplier);
 
-      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
+      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(knownKeys, client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInRegion("region", "tag"), pair);
+      assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
+      verify(knownKeys);
+      verify(keyClient);
+      verify(uniqueIdSupplier);
+
+   }
+
+   @SuppressWarnings({ "unchecked" })
+   @Test
+   public void testApplyWhenKnownKeyExists() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
+      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
+      Map<RegionAndName, KeyPair> knownKeys = createMock(Map.class);
+
+      KeyPair pair = createMock(KeyPair.class);
+
+      expect(knownKeys.containsKey(new RegionAndName("region", "group"))).andReturn(true);
+      expect(knownKeys.get(new RegionAndName("region", "group"))).andReturn(pair);
+
+      replay(client);
+      replay(knownKeys);
+      replay(keyClient);
+      replay(uniqueIdSupplier);
+
+      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(knownKeys, client, uniqueIdSupplier);
+
+      assertEquals(parser.load(new RegionAndName("region", "group")), pair);
+
+      verify(client);
+      verify(knownKeys);
+      verify(keyClient);
+      verify(uniqueIdSupplier);
+
+   }
+
+   @SuppressWarnings({ "unchecked" })
+   @Test
+   public void testApplyWhenKnownKeyDoesntExist() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
+      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
+      Map<RegionAndName, KeyPair> knownKeys = createMock(Map.class);
+
+      KeyPair pair = createMock(KeyPair.class);
+
+      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+
+      expect(knownKeys.containsKey(new RegionAndName("region", "group"))).andReturn(false);
+      expect(uniqueIdSupplier.get()).andReturn("1");
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andThrow(new IllegalStateException());
+      expect(uniqueIdSupplier.get()).andReturn("2");
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#2")).andReturn(pair);
+
+      replay(client);
+      replay(knownKeys);
+      replay(keyClient);
+      replay(uniqueIdSupplier);
+
+      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(knownKeys, client, uniqueIdSupplier);
+
+      assertEquals(parser.load(new RegionAndName("region", "group")), pair);
+
+      verify(client);
+      verify(knownKeys);
       verify(keyClient);
       verify(uniqueIdSupplier);
 

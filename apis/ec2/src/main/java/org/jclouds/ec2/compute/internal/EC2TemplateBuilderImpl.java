@@ -20,9 +20,9 @@ package org.jclouds.ec2.compute.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +38,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ComputationException;
+import com.google.common.cache.Cache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * 
@@ -46,13 +47,13 @@ import com.google.common.collect.ComputationException;
  */
 public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
-   private final Map<RegionAndName, Image> imageMap;
+   private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
 
    @Inject
    protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
          Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
-         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
    }
@@ -67,10 +68,12 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
                   "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: " + imageId);
             RegionAndName key = new RegionAndName(regionName[0], regionName[1]);
             try {
-               return imageMap.get(key);
+               return imageMap.get().get(key);
+            } catch (ExecutionException e) {
+               throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
+            } catch (UncheckedExecutionException e) {
+               throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
             } catch (NullPointerException nex) {
-               throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
-            } catch (ComputationException nex) {
                throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
             }
          }
