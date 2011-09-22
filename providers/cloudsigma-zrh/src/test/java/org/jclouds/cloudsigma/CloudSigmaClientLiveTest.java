@@ -73,7 +73,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class CloudSigmaClientLiveTest {
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
@@ -455,12 +455,12 @@ public class CloudSigmaClientLiveTest {
    }
 
    protected Credentials getSshCredentials(Server server) {
-      return new Credentials("cloudsigma", "cloudsigma");
+      return new Credentials("root", vncPassword);
    }
 
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
-      drive = client.cloneDrive("6a9cd9c2-4814-4953-8e86-f8ee6a3e57d5", drive.getName(),
+      drive = client.cloneDrive("f3c7c665-cd54-4a78-8fd2-7ec2f028cf29", drive.getName(),
             new CloneDriveOptions().size(driveSize));
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));

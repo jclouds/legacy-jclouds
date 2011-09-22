@@ -168,7 +168,7 @@ public class PlacementGroupClientLiveTest {
 
    public void testStartCCInstance() throws Exception {
 
-      Template template = context.getComputeService().templateBuilder().fastest().osVersionMatches("11.04").build();
+      Template template = context.getComputeService().templateBuilder().fastest().osDescriptionMatches(".*/ubuntu-images/.*").osVersionMatches("11.04").build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");

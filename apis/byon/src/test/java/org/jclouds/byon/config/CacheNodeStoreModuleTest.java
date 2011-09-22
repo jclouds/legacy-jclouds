@@ -20,39 +20,35 @@ package org.jclouds.byon.config;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.byon.Node;
-import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.location.Provider;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.yaml.snakeyaml.Yaml;
 
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
-import com.google.common.io.InputSupplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", singleThreaded = true)
-public class YamlNodeStoreModuleTest {
-   Yaml yaml = createInjector().getInstance(Yaml.class);
+@Test(groups = "unit", singleThreaded = true, testName = "CacheNodeStoreModuleTest")
+public class CacheNodeStoreModuleTest {
 
    @DataProvider(name = "names")
    public Object[][] createData() {
@@ -60,18 +56,10 @@ public class YamlNodeStoreModuleTest {
             { "instance4", "robot" } };
    }
 
-   @Test(dataProvider = "names")
-   public void deleteObject(String id, String name) throws InterruptedException, IOException {
-      Injector injector = createInjector();
-      Map<String, InputStream> map = getMap(injector);
-      check(map, getStore(injector), "i-20312", id, name);
-   }
-
    public void testProvidedMapWithValue() throws IOException {
-      Map<String, InputStream> map = new CopyInputStreamInputSupplierMap(
-            new ConcurrentHashMap<String, InputSupplier<InputStream>>());
+      Map<String, Node> map = Maps.newConcurrentMap();
 
-      map.put("test", new ByteArrayInputStream("id: instance1\nname: instancename\n".getBytes()));
+      map.put("test", Node.builder().id("instance1").name("instancename").build());
       checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "instance1", "instancename");
       checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "instance1", "instancename");
       remove(map, getStore(createInjectorWithProvidedMap(map)), "test");
@@ -79,12 +67,11 @@ public class YamlNodeStoreModuleTest {
    }
 
    public void testProvidedConsistentAcrossRepeatedWrites() throws IOException {
-      Map<String, InputStream> map = new CopyInputStreamInputSupplierMap(
-            new ConcurrentHashMap<String, InputSupplier<InputStream>>());
+      Map<String, Node> map = Maps.newConcurrentMap();
 
       Injector injector = createInjectorWithProvidedMap(map);
-      assertEquals(injector.getInstance(Key.get(new TypeLiteral<Map<String, InputStream>>() {
-      }, Names.named("yaml"))), map);
+      assertEquals(injector.getInstance(Key.get(new TypeLiteral<Cache<String, Node>>() {
+      })).asMap(), map);
       Cache<String, Node> store = getStore(injector);
 
       for (int i = 0; i < 10; i++)
@@ -93,8 +80,7 @@ public class YamlNodeStoreModuleTest {
    }
 
    public void testProvidedConsistentAcrossMultipleInjectors() throws IOException {
-      Map<String, InputStream> map = new CopyInputStreamInputSupplierMap(
-            new ConcurrentHashMap<String, InputSupplier<InputStream>>());
+      Map<String, Node> map = Maps.newConcurrentMap();
 
       put(map, getStore(createInjectorWithProvidedMap(map)), "test", "instance1", "instancename");
       checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "instance1", "instancename");
@@ -103,32 +89,28 @@ public class YamlNodeStoreModuleTest {
 
    }
 
-   public void testDefaultConsistentAcrossMultipleInjectors() throws IOException {
-      Map<String, InputStream> map = getMap(createInjector());
+   public void testProvidedCacheConsistentAcrossMultipleInjectors() throws IOException {
+      Map<String, Node> map = Maps.newConcurrentMap();
 
-      put(map, getStore(createInjector()), "test", "instance1", "instancename");
-      
-      checkConsistent(map, getStore(createInjector()), "test", "instance1", "instancename");
-      checkConsistent(map, getStore(createInjector()), "test", "instance1", "instancename");
-      remove(map, getStore(createInjector()), "test");
+      Cache<String, Node> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(map)));
+
+      put(map, getStore(createInjectorWithProvidedCache(cache)), "test", "instance1", "instancename");
+      checkConsistent(map, getStore(createInjectorWithProvidedCache(cache)), "test", "instance1", "instancename");
+      checkConsistent(map, getStore(createInjectorWithProvidedCache(cache)), "test", "instance1", "instancename");
+      remove(map, getStore(createInjectorWithProvidedCache(cache)), "test");
 
    }
 
-   protected Cache<String, Node> getStore(Injector injector) {
+   private Cache<String, Node> getStore(Injector injector) {
       return injector.getInstance(Key.get(new TypeLiteral<Cache<String, Node>>() {
       }));
    }
 
-   protected Map<String, InputStream> getMap(Injector injector) {
-      return injector.getInstance(Key.get(new TypeLiteral<Map<String, InputStream>>() {
-      }, Names.named("yaml")));
-   }
-
-   protected Injector createInjectorWithProvidedMap(Map<String, InputStream> map) {
-      return Guice.createInjector(new YamlNodeStoreModule(map), new AbstractModule() {
+   private Injector createInjectorWithProvidedMap(Map<String, Node> map) {
+      return Guice.createInjector(new CacheNodeStoreModule(map), new AbstractModule() {
 
          @Override
-         protected void configure() {
+         public void configure() {
             bind(new TypeLiteral<Supplier<InputStream>>() {
             }).annotatedWith(Provider.class).toInstance(Suppliers.<InputStream> ofInstance(null));
          }
@@ -136,11 +118,11 @@ public class YamlNodeStoreModuleTest {
       });
    }
 
-   protected Injector createInjector() {
-      return Guice.createInjector(new YamlNodeStoreModule(), new AbstractModule() {
+   private Injector createInjectorWithProvidedCache(Cache<String, Node> cache) {
+      return Guice.createInjector(new CacheNodeStoreModule(cache), new AbstractModule() {
 
          @Override
-         protected void configure() {
+         public void configure() {
             bind(new TypeLiteral<Supplier<InputStream>>() {
             }).annotatedWith(Provider.class).toInstance(Suppliers.<InputStream> ofInstance(null));
          }
@@ -148,14 +130,14 @@ public class YamlNodeStoreModuleTest {
       });
    }
 
-   protected void check(Map<String, InputStream> map, Cache<String, Node> store, String key, String id, String name)
+   private void check(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name)
          throws IOException {
       put(map, store, key, id, name);
       checkConsistent(map, store, key, id, name);
       remove(map, store, key);
    }
 
-   protected void remove(Map<String, InputStream> map, Cache<String, Node> store, String key) {
+   private void remove(Map<String, Node> map, Cache<String, Node> store, String key) {
       store.invalidate(key);
       assertEquals(store.size(), 0);
       map.remove(key);
@@ -169,8 +151,8 @@ public class YamlNodeStoreModuleTest {
       assertEquals(map.get(key), null);
    }
 
-   protected void checkConsistent(Map<String, InputStream> map, Cache<String, Node> store, String key, String id,
-         String name) throws IOException {
+   private void checkConsistent(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name)
+         throws IOException {
       assertEquals(map.size(), 1);
       if (store.size() == 0)
          store.getUnchecked(key);
@@ -178,19 +160,12 @@ public class YamlNodeStoreModuleTest {
       // checkRepeatedRead
       assertEquals(store.getUnchecked(key), Node.builder().id(id).name(name).build());
       assertEquals(store.getUnchecked(key), Node.builder().id(id).name(name).build());
-      // checkRepeatedRead
-      checkToYaml(map, key, id, name);
-      checkToYaml(map, key, id, name);
    }
 
-   protected void checkToYaml(Map<String, InputStream> map, String key, String id, String name) throws IOException {
-      assertEquals(Strings2.toStringAndClose(map.get(key)), String.format("id: %s\nname: %s\n", id, name));
-   }
-
-   protected void put(Map<String, InputStream> map, Cache<String, Node> store, String key, String id, String name) {
+   private void put(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name) {
       assertEquals(store.size(), 0);
       assertEquals(map.size(), 0);
-      map.put(key, new ByteArrayInputStream(String.format("id: %s\nname: %s\n", id, name).getBytes()));
+      map.put(key, Node.builder().id(id).name(name).build());
       store.getUnchecked(key);
    }
 }
