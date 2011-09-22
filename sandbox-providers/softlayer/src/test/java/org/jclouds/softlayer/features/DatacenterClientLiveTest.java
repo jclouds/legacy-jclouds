@@ -96,6 +96,5 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
    private void checkAddress(Address address) {
       assert address.getId() >0 : address;
       assert address.getCountry() != null : address;
-      assert address.getState() != null : address;
    }
 }
