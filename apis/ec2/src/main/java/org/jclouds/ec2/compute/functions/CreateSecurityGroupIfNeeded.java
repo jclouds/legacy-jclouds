@@ -25,14 +25,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
 
 /**
@@ -40,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateSecurityGroupIfNeeded implements Function<RegionNameAndIngressRules, String> {
+public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, String> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -48,12 +49,13 @@ public class CreateSecurityGroupIfNeeded implements Function<RegionNameAndIngres
 
    @Inject
    public CreateSecurityGroupIfNeeded(EC2Client ec2Client) {
-      this.ec2Client = ec2Client;
+      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
    }
 
    @Override
-   public String apply(RegionNameAndIngressRules from) {
-      createSecurityGroupInRegion(from.getRegion(), from.getName(), from.getPorts());
+   public String load(RegionAndName from) {
+      RegionNameAndIngressRules realFrom = RegionNameAndIngressRules.class.cast(from);        
+      createSecurityGroupInRegion(from.getRegion(), from.getName(), realFrom.getPorts());
       return from.getName();
    }
 

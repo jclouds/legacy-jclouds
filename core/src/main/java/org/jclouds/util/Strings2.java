@@ -37,6 +37,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,6 +71,8 @@ public class Strings2 {
          return returnVal;
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
+      } catch (ExecutionException e) {
+         throw new IllegalStateException("error creating pattern: " + in, e);
       }
    }
 
@@ -87,7 +90,11 @@ public class Strings2 {
 
    public static String replaceTokens(String value, Iterable<Entry<String, String>> tokenValues) {
       for (Entry<String, String> tokenValue : tokenValues) {
-         value = Strings2.replaceAll(value, TOKEN_TO_PATTERN.get(tokenValue.getKey()), tokenValue.getValue());
+         try {
+            value = Strings2.replaceAll(value, TOKEN_TO_PATTERN.get(tokenValue.getKey()), tokenValue.getValue());
+         } catch (ExecutionException e) {
+            throw new IllegalStateException("error creating pattern: " + tokenValue.getKey(), e);
+         }
       }
       return value;
    }
@@ -107,7 +114,11 @@ public class Strings2 {
 
    public static String replaceAll(String input, char match, String replacement) {
       if (input.indexOf(match) != -1) {
-         input = CHAR_TO_PATTERN.get(match).matcher(input).replaceAll(replacement);
+         try {
+            input = CHAR_TO_PATTERN.get(match).matcher(input).replaceAll(replacement);
+         } catch (ExecutionException e) {
+            throw new IllegalStateException("error creating pattern: " + match, e);
+         }
       }
       return input;
    }

@@ -1,5 +1,28 @@
 {
+    "Ubuntu-10.04-20110917 pub": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+    
+    "Ubuntu-11.04-20110917 pub": {
+        "family": "UBUNTU",
+        "version": "11.04",
+        "is64Bit": true
+    },
+    
+    "Centos-6.0-20110917 pub": {
+        "family": "CENTOS",
+        "version": "6.0",
+        "is64Bit": true
+    },
 
+    "Centos-5.6-20110917 pub": {
+        "family": "CENTOS",
+        "version": "5.6",
+        "is64Bit": true
+    },
+    
     "Ubuntu 10.04.1 LTS Desktop Edition 32bit Preinstalled System": {
         "family": "UBUNTU",
         "version": "10.04",

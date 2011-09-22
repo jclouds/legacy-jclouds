@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -35,6 +34,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class AWSEC2TemplateBuilderImpl extends EC2TemplateBuilderImpl {
    protected AWSEC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
          Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
-         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider, imageMap);
    }
 

@@ -21,35 +21,37 @@ package org.jclouds.rest.config;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.inject.Provider;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CreateClientForCaller implements Function<ClassMethodArgs, Object> {
-   private final ConcurrentMap<ClassMethodArgs, Object> asyncMap;
-   private final Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap;
+public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+   private final Cache<ClassMethodArgs, Object> asyncMap;
+   private final Provider<Cache<ClassMethodArgs, Object>> delegateMap;
    Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   CreateClientForCaller(@Named("async") ConcurrentMap<ClassMethodArgs, Object> asyncMap,
-            @Named("sync") Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap) {
+   CreateClientForCaller(@Named("async") Cache<ClassMethodArgs, Object> asyncMap,
+            @Named("sync") Provider<Cache<ClassMethodArgs, Object>> delegateMap) {
       this.asyncMap = asyncMap;
       this.delegateMap = delegateMap;
    }
 
-   public Object apply(ClassMethodArgs from) {
+   @Override
+   public Object load(ClassMethodArgs from) throws ExecutionException {
       Class<?> syncClass = from.getMethod().getReturnType();
       Class<?> asyncClass = sync2Async.get(syncClass);
       checkState(asyncClass != null, "configuration error, sync class " + syncClass

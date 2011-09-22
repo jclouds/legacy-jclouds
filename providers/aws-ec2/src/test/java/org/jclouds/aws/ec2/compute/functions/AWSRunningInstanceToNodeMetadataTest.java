@@ -45,6 +45,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -118,7 +122,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
             Map<String, Credentials> credentialStore) {
       Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
 
-      Map<RegionAndName, Image> instanceToImage = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
+      final ImmutableMap<RegionAndName, Image> backing = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
 
          @Override
          public RegionAndName apply(Image from) {
@@ -126,13 +130,23 @@ public class AWSRunningInstanceToNodeMetadataTest {
          }
 
       });
-
+      
+      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
+    
+         @Override
+         public Image load(RegionAndName key) throws Exception {
+            return backing.get(key);
+         }
+         
+      });
+            
+          
       return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
    }
 
    private AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, Map<RegionAndName, Image> instanceToImage) {
+            Map<InstanceState, NodeState> instanceToNodeState, Cache<RegionAndName, ? extends Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -150,7 +164,8 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       };
       AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeState,
-               credentialStore, instanceToImage, locationSupplier, hardwareSupplier);
+            credentialStore, Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
+            locationSupplier, hardwareSupplier);
       return parser;
    }
 

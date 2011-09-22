@@ -38,6 +38,7 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 
 /**
  * @author Adrian Cole
@@ -47,9 +48,9 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
 
    @Inject
    protected AWSRunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
-            Map<String, Credentials> credentialStore, Map<RegionAndName, Image> instanceToImage,
+            Map<String, Credentials> credentialStore, Supplier<Cache<RegionAndName, ? extends Image>> imageMap,
             @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
-      super(instanceToNodeState, credentialStore, instanceToImage, locations, hardware);
+      super(instanceToNodeState, credentialStore, imageMap, locations, hardware);
    }
 
    @Override

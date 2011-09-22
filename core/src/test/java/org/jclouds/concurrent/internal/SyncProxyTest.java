@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +35,10 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Functions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -162,8 +165,8 @@ public class SyncProxyTest {
 
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
+      sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),cache, ImmutableMap.<Class<?>, Class<?>> of()));
       // just to warm up
       sync.string();
    }
@@ -225,8 +228,9 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testWrongTypedException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
             IOException {
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
       SyncProxy.proxy(SyncWrongException.class, new SyncProxy(SyncWrongException.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+            cache, ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
    private static interface SyncNoTimeOut {
@@ -243,8 +247,9 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testNoTimeOutException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
             IOException {
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
       SyncProxy.proxy(SyncNoTimeOut.class, new SyncProxy(SyncNoTimeOut.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+            cache, ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
 }

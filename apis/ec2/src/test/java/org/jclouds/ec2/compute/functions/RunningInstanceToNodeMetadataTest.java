@@ -25,8 +25,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -43,14 +41,18 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.xml.DescribeInstancesResponseHandlerTest;
+import org.jclouds.javax.annotation.Nullable;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 
 /**
@@ -167,14 +169,14 @@ public class RunningInstanceToNodeMetadataTest {
       // Handle the case when the installed AMI no longer can be found in AWS.
 
       // Create a null-returning function to simulate that the AMI can't be found.
-      Function<RegionAndName, Image> nullReturningFunction = new Function<RegionAndName, Image>() {
+      CacheLoader<RegionAndName, Image> nullReturningFunction = new CacheLoader<RegionAndName, Image>() {
 
          @Override
-         public Image apply(@Nullable RegionAndName from) {
+         public Image load(@Nullable RegionAndName from) {
             return null;
          }
       };
-      Map<RegionAndName, Image> instanceToImage = new MapMaker().makeComputingMap(nullReturningFunction);
+      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(nullReturningFunction);
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small32().build()), ImmutableSet
                .of(provider), ImmutableMap.<String, Credentials> of(),
@@ -197,25 +199,31 @@ public class RunningInstanceToNodeMetadataTest {
    }
 
    protected RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
-            final ImmutableSet<Location> locations, Set<org.jclouds.compute.domain.Image> images,
+            final ImmutableSet<Location> locations, final Set<org.jclouds.compute.domain.Image> images,
             Map<String, Credentials> credentialStore) {
       Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
-
-      Map<RegionAndName, Image> instanceToImage = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
+      
+      CacheLoader<RegionAndName, Image> getRealImage = new CacheLoader<RegionAndName, Image>() {
 
          @Override
-         public RegionAndName apply(Image from) {
-            return new RegionAndName(from.getLocation().getId(), from.getProviderId());
+         public Image load(@Nullable RegionAndName from) {
+            return Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
+
+               @Override
+               public RegionAndName apply(Image from) {
+                  return new RegionAndName(from.getLocation().getId(), from.getProviderId());
+               }
+
+            }).get(from);
          }
-
-      });
-
+      };
+      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(getRealImage);
       return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
    }
 
    private RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, Map<RegionAndName, Image> instanceToImage) {
+            Map<InstanceState, NodeState> instanceToNodeState, Cache<RegionAndName, Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -233,7 +241,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       };
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(instanceToNodeState, credentialStore,
-               instanceToImage, locationSupplier, hardwareSupplier);
+            Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(instanceToImage), locationSupplier,
+            hardwareSupplier);
       return parser;
    }
 

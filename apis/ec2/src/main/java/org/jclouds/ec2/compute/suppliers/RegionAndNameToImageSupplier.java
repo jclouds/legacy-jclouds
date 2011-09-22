@@ -25,8 +25,8 @@ import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -45,16 +45,19 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName, ? extends Image>> {
+public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndName, ? extends Image>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -63,20 +66,23 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    private final DescribeImagesParallel describer;
    private final String[] amiOwners;
    private final EC2ImageParser parser;
-   private final Map<RegionAndName, Image> images;
+   private final Map<RegionAndName, Image> knownImages;
+   private final CacheLoader<RegionAndName, Image> regionAndIdToImage;
 
    @Inject
    protected RegionAndNameToImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
-            @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, EC2ImageParser parser, Map<RegionAndName, Image> images) {
+         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, EC2ImageParser parser,
+         Map<RegionAndName, Image> knownImages, CacheLoader<RegionAndName, Image> regionAndIdToImage) {
       this.regions = regions;
       this.describer = describer;
       this.amiOwners = amiOwners;
       this.parser = parser;
-      this.images = images;
+      this.knownImages = knownImages;
+      this.regionAndIdToImage = regionAndIdToImage;
    }
 
    @Override
-   public Map<RegionAndName, ? extends Image> get() {
+   public Cache<RegionAndName, ? extends Image> get() {
       if (amiOwners.length == 0) {
          logger.debug(">> no owners specified, skipping image parsing");
       } else {
@@ -87,8 +93,8 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
 
          Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates
                   .notNull()));
-
-         images.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+         knownImages.clear();
+         knownImages.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
             @Override
             public RegionAndName apply(Image from) {
@@ -96,14 +102,18 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
             }
 
          }));
-
-         logger.debug("<< images(%d)", images.size());
+         logger.debug("<< images(%d)", knownImages.size());
       }
-      return images;
+      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
+      // seed the cache
+      for (RegionAndName image : knownImages.keySet()) {
+         cache.getUnchecked(image);
+      }
+      return cache;
    }
 
    public Iterable<Entry<String, DescribeImagesOptions>> getDescribeQueriesForOwnersInRegions(Set<String> regions,
-            String[] amiOwners) {
+         String[] amiOwners) {
       DescribeImagesOptions options = getOptionsForOwners(amiOwners);
       Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
       for (String region : regions)

@@ -67,7 +67,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    }
 
    @Override
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
@@ -160,7 +160,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
    public void testSubnetId() throws Exception {
 
       String subnetId = System.getProperty("test.subnetId");

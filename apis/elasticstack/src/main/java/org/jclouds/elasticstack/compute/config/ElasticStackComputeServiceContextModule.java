@@ -38,10 +38,10 @@ import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
-import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
+import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
@@ -59,7 +59,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -104,12 +106,12 @@ public class ElasticStackComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected Map<String, DriveInfo> cache(GetDrive getDrive) {
-      return new MapMaker().makeComputingMap(getDrive);
+   protected Cache<String, DriveInfo> cache(GetDrive getDrive) {
+      return CacheBuilder.newBuilder().build(getDrive);
    }
 
    @Singleton
-   public static class GetDrive implements Function<String, DriveInfo> {
+   public static class GetDrive extends CacheLoader<String, DriveInfo> {
       private final ElasticStackClient client;
 
       @Inject
@@ -118,7 +120,7 @@ public class ElasticStackComputeServiceContextModule
       }
 
       @Override
-      public DriveInfo apply(String input) {
+      public DriveInfo load(String input) {
          return client.getDriveInfo(input);
       }
    }
