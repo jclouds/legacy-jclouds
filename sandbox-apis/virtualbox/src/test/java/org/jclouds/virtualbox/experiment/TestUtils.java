@@ -18,10 +18,11 @@
  */
 package org.jclouds.virtualbox.experiment;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
@@ -29,41 +30,48 @@ import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 public class TestUtils {
-   public static ComputeServiceContext computeServiceForLocalhost() throws FileNotFoundException, IOException {
-      Properties contextProperties = new Properties();
+   public static ComputeServiceContext computeServiceForLocalhost() throws IOException {
 
-      StringBuilder nodes = new StringBuilder();
-      nodes.append("nodes:\n");
-      nodes.append("    - id: host\n");
-      nodes.append("      name: host installing virtualbox\n");
-      nodes.append("      hostname: localhost\n");
-      nodes.append("      os_family: ").append(OsFamily.LINUX).append("\n");
-      nodes.append("      os_description: ").append(System.getProperty("os.name")).append("\n");
-      nodes.append("      os_version: ").append(System.getProperty("os.version")).append("\n");
-      nodes.append("      group: ").append("ssh").append("\n");
-      nodes.append("      username: ").append(System.getProperty("user.name")).append("\n");
-      nodes.append("      credential_url: file://").append(System.getProperty("user.home")).append("/.ssh/id_rsa")
-            .append("\n");
-      nodes.append("\n");
-      nodes.append("    - id: guest\n");
-      nodes.append("      name: new guest\n");
-      nodes.append("      hostname: localhost\n");
-      nodes.append("      login_port: 2222\n");
-      nodes.append("      os_family: ubuntu").append("\n");
-      nodes.append("      os_description: ubuntu/11.04").append("\n");
-      nodes.append("      os_version: 11.04").append("\n");
-      nodes.append("      group: guest").append("\n");
-      nodes.append("      username: toor").append("\n");
-      nodes.append("      sudo_password: password").append("\n");
-      nodes.append("      credential: password").append("\n");
+      Node host = Node.builder().id("host")
+              .name("host installing virtualbox")
+              .hostname("localhost")
+              .osFamily(OsFamily.LINUX.toString())
+              .osDescription(System.getProperty("os.name"))
+              .osVersion(System.getProperty("os.version"))
+              .group("ssh")
+              .username(System.getProperty("user.name"))
+              .credentialUrl(privateKeyFile())
+              .build();
+      Node guest = Node.builder().id("guest")
+              .name("new guest")
+              .hostname("localhost")
+              .loginPort(2222)
+              .osFamily(OsFamily.UBUNTU.toString())
+              .osDescription("ubuntu/11.04")
+              .osVersion(System.getProperty("11.04"))
+              .group("guest")
+              .username("toor")
+              .sudoPassword("password")
+              .credential("password")
+              .build();
 
-      contextProperties.setProperty("byon.nodes", nodes.toString());
+      final Map<String, Node> nodeMap = ImmutableMap.<String, Node>builder().put("host", host).put("guest", guest).build();
+      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
+              new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
+   }
 
-      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(
-            new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule()), contextProperties);
+   private static URI privateKeyFile() {
+      try {
+         return new URI("file://" + System.getProperty("user.home") + "/.ssh/id_rsa");
+      } catch (URISyntaxException e) {
+         e.printStackTrace();
+      }
+      return null;
    }
 }
