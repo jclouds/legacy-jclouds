@@ -18,9 +18,6 @@
  */
 package org.jclouds.cloudsigma.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -58,7 +55,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -77,7 +76,11 @@ public class CloudSigmaComputeServiceContextModule
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).minRam(1024);
+      // until there is a way to query by drive info that can suggest which
+      // drives are ssh boot
+      return template.imageId("a3011b07-3f04-467e-9390-f9a85d859de1").minRam(1024);
+      // return
+      // template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).minRam(1024);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -108,12 +111,12 @@ public class CloudSigmaComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected Map<String, DriveInfo> cache(GetDrive getDrive) {
-      return new MapMaker().makeComputingMap(getDrive);
+   protected Cache<String, DriveInfo> cache(GetDrive getDrive) {
+      return CacheBuilder.newBuilder().build(getDrive);
    }
 
    @Singleton
-   public static class GetDrive implements Function<String, DriveInfo> {
+   public static class GetDrive extends CacheLoader<String, DriveInfo> {
       private final CloudSigmaClient client;
 
       @Inject
@@ -122,7 +125,7 @@ public class CloudSigmaComputeServiceContextModule
       }
 
       @Override
-      public DriveInfo apply(String input) {
+      public DriveInfo load(String input) {
          return client.getDriveInfo(input);
       }
    }
