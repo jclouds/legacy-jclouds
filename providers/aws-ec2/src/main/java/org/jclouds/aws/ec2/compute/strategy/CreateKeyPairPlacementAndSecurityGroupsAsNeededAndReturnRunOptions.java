@@ -117,8 +117,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    }
 
    @Override
-   protected String createOrImportKeyPair(String region, String group, TemplateOptions options) {
-      RegionAndName key = new RegionAndName(region, "jclouds#" + group);
+   public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
+      RegionAndName key = new RegionAndName(region, group);
       KeyPair pair = knownKeys.get(key);
       if (pair != null)
          return pair.getKeyName();
@@ -132,7 +132,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          if (hasPublicKeyMaterial.apply(options)) {
             logger.warn("to avoid creating temporary keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");
          }
-         return super.createOrImportKeyPair(region, group, options);
+         return super.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options);
       }
       return pair.getKeyName();
    }
@@ -163,14 +163,14 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       }
 
    };
-   
+
    @Override
    protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
       return options instanceof AWSEC2TemplateOptions
             && AWSEC2TemplateOptions.class.cast(options).getGroupIds().size() > 0
             || super.userSpecifiedTheirOwnGroups(options);
    }
-   
+
    @Override
    protected void addSecurityGroups(String region, String group, Template template, RunInstancesOptions instanceOptions) {
       AWSEC2TemplateOptions awsTemplateOptions = AWSEC2TemplateOptions.class.cast(template.getOptions());

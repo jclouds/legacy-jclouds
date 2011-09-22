@@ -289,10 +289,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getOverridingCredentials()).andReturn(new Credentials(null, "MyRsa")).atLeastOnce();
       expect(
             strategy.knownKeys.put(
-                  new RegionAndName(region, tag),
+                  new RegionAndName(region, userSuppliedKeyPair),
                   KeyPair.builder().region(region).keyName(userSuppliedKeyPair).keyFingerprint("//TODO")
                         .keyMaterial("MyRsa").build())).andReturn(null);
-      strategy.credentialsMap.invalidate(new RegionAndName(region, tag));
+      strategy.credentialsMap.invalidate(new RegionAndName(region, userSuppliedKeyPair));
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
       expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
 

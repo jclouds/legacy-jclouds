@@ -49,7 +49,7 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
 
    @Inject
    public CreateSecurityGroupIfNeeded(EC2Client ec2Client) {
-      this.ec2Client = ec2Client;
+      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
    }
 
    @Override

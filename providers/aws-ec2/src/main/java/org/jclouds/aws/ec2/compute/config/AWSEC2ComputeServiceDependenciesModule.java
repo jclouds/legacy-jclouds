@@ -31,6 +31,7 @@ import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
+import org.jclouds.aws.ec2.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
@@ -115,7 +116,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @Provides
    @Singleton
    @Named("PLACEMENT")
-   protected Cache<RegionAndName, String> placementGroupMap(CreateSecurityGroupIfNeeded in) {
+   protected Cache<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
       return CacheBuilder.newBuilder().build(in);
    }
 

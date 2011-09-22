@@ -149,7 +149,12 @@ public class CreateUniqueKeyPairTest {
       expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
       expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#2")).andReturn(pair);
+      expect(pair.getKeyName()).andReturn("jclouds#group#region#2").times(2);
+      // seeding the cache explicitly.  both by keyName and also by group
+      expect(knownKeys.put(new RegionAndName("region", "jclouds#group#region#2"), pair)).andReturn(null);
+      expect(knownKeys.put(new RegionAndName("region", "group"), pair)).andReturn(null);
 
+      replay(pair);
       replay(client);
       replay(knownKeys);
       replay(keyClient);
@@ -159,6 +164,7 @@ public class CreateUniqueKeyPairTest {
 
       assertEquals(parser.load(new RegionAndName("region", "group")), pair);
 
+      verify(pair);
       verify(client);
       verify(knownKeys);
       verify(keyClient);

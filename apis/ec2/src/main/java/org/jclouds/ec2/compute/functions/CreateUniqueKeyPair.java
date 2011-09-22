@@ -59,8 +59,14 @@ public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
 
    @Override
    public KeyPair load(RegionAndName from) {
-      return knownKeys.containsKey(from) ? knownKeys.get(from) : createNewKeyPairInRegion(from.getRegion(),
-            from.getName());
+      if (knownKeys.containsKey(from)){
+         return knownKeys.get(from);
+      } else {
+         KeyPair keyPair = createNewKeyPairInRegion(from.getRegion(), from.getName());
+         knownKeys.put(new RegionAndName(from.getRegion(), keyPair.getKeyName()), keyPair);
+         knownKeys.put(from, keyPair);
+         return keyPair;
+      }
    }
 
    @VisibleForTesting

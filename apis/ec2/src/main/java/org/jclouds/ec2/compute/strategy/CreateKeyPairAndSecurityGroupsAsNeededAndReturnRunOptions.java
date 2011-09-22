@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
@@ -62,10 +63,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> knownKeys, Cache<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap, 
          Provider<RunInstancesOptions> optionsProvider) {
-      this.knownKeys=knownKeys;
-      this.credentialsMap = credentialsMap;
-      this.securityGroupMap = securityGroupMap;
-      this.optionsProvider = optionsProvider;
+      this.knownKeys = checkNotNull(knownKeys, "knownKeys");
+      this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
+      this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
+      this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
    }
 
    public RunInstancesOptions execute(String region, String group, Template template) {
@@ -120,7 +121,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
             KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).keyFingerprint("//TODO")
                   .keyMaterial(options.getOverridingCredentials().credential).build();
             
-            RegionAndName key = new RegionAndName(region, group);
+            RegionAndName key = new RegionAndName(region, keyPairName);
             knownKeys.put(key, keyPair);
             credentialsMap.invalidate(key);
          }
