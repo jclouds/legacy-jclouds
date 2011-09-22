@@ -43,7 +43,31 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    }
 
    public static class Builder {
+      private String domain;
+      private String hostname;
 
+
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder hostname(String hostname) {
+         this.hostname = hostname;
+         return this;
+      }
+
+      public VirtualGuest build() {
+         return new VirtualGuest(-1, null, true, domain,null,hostname,
+               -1,null,-1, null,-1,null,null,null,
+               true,-1,-1,null,null,null,null);
+      }
+
+      public static Builder fromVirtualGuest(VirtualGuest in) {
+         return VirtualGuest.builder()
+                                 .domain(in.getDomain())
+                                 .hostname(in.getHostname());
+      }
    }
 
    public static enum State {
@@ -389,7 +413,10 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!uuid.equals(other.uuid))
          return false;
-      if (!billingItem.equals(other.billingItem))
+      if (billingItem == null) {
+         if (other.billingItem != null)
+            return false;
+      } else if (!billingItem.equals(other.billingItem))
          return false;
       return true;
    }

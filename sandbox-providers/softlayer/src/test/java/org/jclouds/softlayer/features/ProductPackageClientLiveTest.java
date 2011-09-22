@@ -147,11 +147,11 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    @Test
    public void testPricesForLaunchingGuestVM() {
        Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
-               Predicates.and(categoryCode("ram"), capacity(1.0f)));
+               Predicates.and(categoryCode("ram"), capacity(2.0f)));
 
        Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
-       ProductItemPrice ramPrice = ProductItems.price().apply(ramToProductItem.get(1.0f));
+       ProductItemPrice ramPrice = ProductItems.price().apply(ramToProductItem.get(2.0f));
 
        Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
        Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
@@ -162,13 +162,27 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
        ProductItemPrice osPrice = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
-       Set<Long> prices = Sets.<Long>newLinkedHashSet();
+       Set<ProductItemPrice> prices = Sets.<ProductItemPrice>newLinkedHashSet();
        prices.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
-       prices.add(ramPrice.getId());
-       prices.add(cpuPrice.getId());
-       prices.add(osPrice.getId());
+       prices.add(ramPrice);
+       prices.add(cpuPrice);
+       prices.add(osPrice);
 
-       //This should be everything needed to launch Ubuntu Hardy Heron with 1GB Ram and 2 CPU Cores
+       VirtualGuest guest = VirtualGuest.builder().domain("jclouds.org")
+                                                 .hostname("livetest")
+                                                 .build();
+
+       String location = ""+Iterables.get(cloudServerProductPackage.getDatacenters(),0).getId();
+       ProductOrder order = ProductOrder.builder()
+                                       .packageId(cloudServerPackageId)
+                                       .location(location)
+                                       .quantity(1)
+                                       .useHourlyPricing(true)
+                                       .prices(prices)
+                                       .virtualGuest(guest)
+                                       .build();
+
+      //ProductOrderReceipt receipt = context.getApi().getVirtualGuestClient().orderVirtualGuest(order);
        //TODO: There must be a more concise way of expressing this logic.
    }
 
