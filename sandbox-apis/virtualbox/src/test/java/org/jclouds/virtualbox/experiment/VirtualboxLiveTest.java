@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -34,17 +35,23 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.Logger;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
@@ -63,8 +70,10 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 @Test(groups = "live", testName = "virtualbox.VirtualboxLiveTest")
 public class VirtualboxLiveTest {
@@ -227,7 +236,7 @@ public class VirtualboxLiveTest {
 		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
 		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
 		mutable.getNetworkAdapter(new Long(0)).setMACAddress("0800279DA478");
-		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface("virbr0");
+		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 		mutable.saveSettings();
 		session.unlockMachine();
@@ -247,15 +256,15 @@ public class VirtualboxLiveTest {
 		
 		String simplifiedMacAddressOfClonedVM = macAddressOfClonedVM;
 		
-		/*
+		if(isOSX(hostId)) {
 		if(simplifiedMacAddressOfClonedVM.contains("00"))
 			simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("00"), simplifiedMacAddressOfClonedVM.indexOf("00") + 1).toString();
 		
 		if(simplifiedMacAddressOfClonedVM.contains("0")) 
 			if(simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':' && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
 			simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1).toString();
-		*/
-		runScriptOnNode(hostId, "for i in $(seq 1 254) ; do ping -c 1 -t 1 192.168.122.$i & done", runAsRoot(false).wrapInInitScript(false));
+		}
+		runScriptOnNode(hostId, "for i in $(seq 1 254) ; do ping -c 1 -t 1 192.168.1.$i & done", runAsRoot(false).wrapInInitScript(false));
 
 		String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM, runAsRoot(false).wrapInInitScript(false)).getOutput();
 		String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
@@ -271,10 +280,9 @@ public class VirtualboxLiveTest {
 			}
 		}
 		*/		
-		//TODO
-		IPSocket socket = new IPSocket(ipAddress, 22);
-		checkSSH(socket);
 
+		runScriptOnNode(guestId, "echo ciao");
+		
 	}
 
 	private void launchVMProcess(IMachine machine, ISession session) {
