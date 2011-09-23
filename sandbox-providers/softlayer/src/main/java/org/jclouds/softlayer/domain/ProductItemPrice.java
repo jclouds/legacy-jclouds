@@ -140,4 +140,20 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
             + hourlyRecurringFee + "]";
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ProductItemPrice that = (ProductItemPrice) o;
+
+      if (id != that.id) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return (int) (id ^ (id >>> 32));
+   }
 }

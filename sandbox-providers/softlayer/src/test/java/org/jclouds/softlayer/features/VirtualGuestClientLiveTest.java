@@ -56,6 +56,9 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
    }
 
    private void checkVirtualGuest(VirtualGuest vg) {
+      if (vg.getBillingItem()==null) return;//Quotes and shutting down guests
+      checkBillingItem(vg.getBillingItem());
+
       assert vg.getAccountId() > 0 : vg;
       assert vg.getCreateDate() != null : vg;
       assert vg.getDomain() != null : vg;
@@ -72,8 +75,6 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert vg.getUuid() != null : vg;
       assert vg.getPrimaryBackendIpAddress() != null : vg;
       assert vg.getPrimaryIpAddress() != null : vg;
-
-      checkBillingItem(vg.getBillingItem());
    }
 
    private void checkBillingItem(BillingItemVirtualGuest billingItem) {

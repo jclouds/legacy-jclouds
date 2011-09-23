@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
 /**
@@ -98,4 +100,13 @@ public interface VirtualGuestClient {
     * @return true or false
     */
    boolean cancelService(long id);
+
+   /**
+    * Use this method for placing server orders and additional services orders.
+    * @param order
+    *             Details required to order.
+    * @return A receipt for the order
+    * @see <a href="http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder" />
+    */
+   ProductOrderReceipt orderVirtualGuest(ProductOrder order);
 }

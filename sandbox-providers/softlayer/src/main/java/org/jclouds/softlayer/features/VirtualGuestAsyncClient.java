@@ -18,24 +18,23 @@
  */
 package org.jclouds.softlayer.features;
 
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.softlayer.binders.ProductOrderToJson;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to VirtualGuest via their REST API.
@@ -123,4 +122,14 @@ public interface VirtualGuestAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Boolean> cancelService(@PathParam("id") long id);
+
+   /**
+    * @see org.jclouds.softlayer.features.VirtualGuestClient#orderVirtualGuest
+    */
+   @POST
+   @Path("/SoftLayer_Product_Order/placeOrder.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ProductOrderReceipt> orderVirtualGuest(@BinderParam(ProductOrderToJson.class)ProductOrder order);
+
 }
