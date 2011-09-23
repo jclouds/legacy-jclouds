@@ -58,7 +58,7 @@ public class NodesFromYamlTest {
       InputStream is = getClass().getResourceAsStream("/test1.yaml");
       NodesFromYamlStream parser = new NodesFromYamlStream();
 
-      assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));
+      assertEquals(parser.apply(is).asMap(), ImmutableMap.of(TEST1.getId(), TEST1));
    }
 
    @Test
@@ -67,7 +67,7 @@ public class NodesFromYamlTest {
       InputStream is = getClass().getResourceAsStream("/test_location.yaml");
       NodesFromYamlStream parser = new NodesFromYamlStream();
 
-      assertEquals(parser.apply(is), ImmutableMap.of(TEST2.getId(), TEST2, TEST3.getId(), TEST3));
+      assertEquals(parser.apply(is).asMap(), ImmutableMap.of(TEST2.getId(), TEST2, TEST3.getId(), TEST3));
    }
 
    @Test
@@ -76,7 +76,7 @@ public class NodesFromYamlTest {
       InputStream is = getClass().getResourceAsStream("/test_with_url.yaml");
       NodesFromYamlStream parser = new NodesFromYamlStream();
 
-      assertEquals(parser.apply(is), ImmutableMap.of(TEST1.getId(), TEST1));
+      assertEquals(parser.apply(is).asMap(), ImmutableMap.of(TEST1.getId(), TEST1));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)

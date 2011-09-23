@@ -31,8 +31,10 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
+import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
 
@@ -45,16 +47,25 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final EC2Client ec2Client;
+   protected final SecurityGroupClient securityClient;
+   protected final Predicate<RegionAndName> securityGroupEventualConsistencyDelay;
 
    @Inject
-   public CreateSecurityGroupIfNeeded(EC2Client ec2Client) {
-      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
+   public CreateSecurityGroupIfNeeded(EC2Client ec2Client,
+         @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
+      this(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
+   }
+
+   public CreateSecurityGroupIfNeeded(SecurityGroupClient securityClient,
+         @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
+      this.securityClient = checkNotNull(securityClient, "securityClient");
+      this.securityGroupEventualConsistencyDelay = checkNotNull(securityGroupEventualConsistencyDelay,
+            "securityGroupEventualConsistencyDelay");
    }
 
    @Override
    public String load(RegionAndName from) {
-      RegionNameAndIngressRules realFrom = RegionNameAndIngressRules.class.cast(from);        
+      RegionNameAndIngressRules realFrom = RegionNameAndIngressRules.class.cast(from);
       createSecurityGroupInRegion(from.getRegion(), from.getName(), realFrom.getPorts());
       return from.getName();
    }
@@ -64,7 +75,11 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
       checkNotNull(name, "name");
       logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
       try {
-         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
+         securityClient.createSecurityGroupInRegion(region, name, name);
+         boolean created = securityGroupEventualConsistencyDelay.apply(new RegionAndName(region, name));
+         if (!created)
+            throw new RuntimeException(String.format("security group %s/%s is not available after creating", region,
+                  name));
          logger.debug("<< created securityGroup(%s)", name);
          for (int port : ports) {
             createIngressRuleForTCPPort(region, name, port);
@@ -79,17 +94,14 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
 
    private void createIngressRuleForTCPPort(String region, String name, int port) {
       logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)", region, name, port);
-      ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, IpProtocol.TCP, port,
-               port, "0.0.0.0/0");
+      securityClient.authorizeSecurityGroupIngressInRegion(region, name, IpProtocol.TCP, port, port, "0.0.0.0/0");
       logger.debug("<< authorized securityGroup(%s)", name);
    }
 
    private void authorizeGroupToItself(String region, String name) {
       logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
-      String myOwnerId = Iterables.get(
-            ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
-      ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name,
-               new UserIdGroupPair(myOwnerId, name));
+      String myOwnerId = Iterables.get(securityClient.describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
+      securityClient.authorizeSecurityGroupIngressInRegion(region, name, new UserIdGroupPair(myOwnerId, name));
       logger.debug("<< authorized securityGroup(%s)", name);
    }
 

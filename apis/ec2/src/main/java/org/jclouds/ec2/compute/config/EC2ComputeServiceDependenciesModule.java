@@ -18,8 +18,11 @@
  */
 package org.jclouds.ec2.compute.config;
 
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT;
+
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -44,13 +47,16 @@ import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -144,6 +150,14 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       return CacheBuilder.newBuilder().build(in);
    }
    
+   @Provides
+   @Singleton
+   @Named("SECURITY")
+   protected Predicate<RegionAndName> securityGroupEventualConsistencyDelay(SecurityGroupPresent in,
+         @Named(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+      return new RetryablePredicate<RegionAndName>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
+   }
+
    @Provides
    @Singleton
    // keys that we know about.

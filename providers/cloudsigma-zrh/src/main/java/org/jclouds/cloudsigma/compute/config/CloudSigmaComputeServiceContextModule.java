@@ -78,7 +78,7 @@ public class CloudSigmaComputeServiceContextModule
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       // until there is a way to query by drive info that can suggest which
       // drives are ssh boot
-      return template.imageId("a3011b07-3f04-467e-9390-f9a85d859de1").minRam(1024);
+      return template.imageId("f3c7c665-cd54-4a78-8fd2-7ec2f028cf29").minRam(1024);
       // return
       // template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).minRam(1024);
    }

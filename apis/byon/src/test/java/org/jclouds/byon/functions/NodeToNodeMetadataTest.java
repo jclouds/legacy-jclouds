@@ -45,6 +45,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
+@Test(singleThreaded = true, testName = "NodeToNodeMetadataTest")
 public class NodeToNodeMetadataTest {
    public static Location expectedProviderLocationFromResource(String resource) {
       return new LocationBuilder().scope(LocationScope.PROVIDER).id("byon").description(resource).build();
@@ -60,9 +61,9 @@ public class NodeToNodeMetadataTest {
 
    Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
 
-   NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(provider), Suppliers
-            .<Set<? extends Location>> ofInstance(ImmutableSet.of(provider, zoneCalled("virginia", provider))),
-            new SupplyFromProviderURIOrNodesProperty(URI.create("test")), credentialStore);
+   NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(provider),
+         Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(provider, zoneCalled("virginia", provider))),
+         new SupplyFromProviderURIOrNodesProperty(URI.create("test")), credentialStore);
 
    public static NodeMetadata expectedNodeMetadataFromResource(String resource) {
       return expectedNodeMetadataFromResource(resource, expectedProviderLocationFromResource(resource));
@@ -75,7 +76,7 @@ public class NodeToNodeMetadataTest {
    public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location) {
       return expectedNodeMetadataFromResource(id, resource, location, 22);
    }
-   
+
    public static NodeMetadata expectedNodeMetadataFromResource(int id, String resource, Location location, int loginPort) {
       return new NodeMetadataBuilder()
             .ids("cluster-" + id)
@@ -99,11 +100,11 @@ public class NodeToNodeMetadataTest {
 
    @Test
    public void testNodesParseLocation() throws Exception {
-      assertEquals(parser.apply(NodesFromYamlTest.TEST2), expectedNodeMetadataFromResource(resource, zoneCalled(
-               "virginia", provider)));
+      assertEquals(parser.apply(NodesFromYamlTest.TEST2),
+            expectedNodeMetadataFromResource(resource, zoneCalled("virginia", provider)));
       assertEquals(credentialStore, ImmutableMap.of("node#cluster-1", new Credentials("myUser", NodesFromYamlTest.key)));
    }
-   
+
    @Test
    public void testNodesParseLoginPort() throws Exception {
       assertEquals(parser.apply(NodesFromYamlTest.TEST3), expectedNodeMetadataFromResource(2, resource, provider, 2022));

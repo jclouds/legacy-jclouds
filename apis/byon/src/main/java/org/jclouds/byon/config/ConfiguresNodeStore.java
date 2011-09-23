@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 import com.google.common.annotations.Beta;
 
 /**
- * designates the module configures a {@code Map<String, Node>}
+ * designates the module configures a {@code Cache<String, Node>}
  * 
  * @author Adrian Cole
  * 
