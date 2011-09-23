@@ -19,7 +19,7 @@
 package org.jclouds.softlayer.reference;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import org.jclouds.softlayer.domain.ProductItemPrice;
 
 import java.util.Set;
 
@@ -34,16 +34,16 @@ public interface SoftLayerConstants {
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
 
-   public static final Set<Long> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<Long>builder()
-           .add(1639L) // 100 GB (SAN)
-           .add(21L) // 1 IP Address
-           .add(55L) // Host Ping
-           .add(58L) // Automated Notification
-           .add(1800L) // 0 GB Bandwidth
-           .add(57L) // Email and Ticket
-           .add(274L) // 1000 Mbps Public & Private Networks
-           .add(905L) // Reboot / Remote Console
-           .add(418L) // Nessus Vulnerability Assessment & Reporting
-           .add(420L) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
+   public static final Set<ProductItemPrice> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<ProductItemPrice>builder()
+           .add(ProductItemPrice.builder().id(1639L).build()) // 100 GB (SAN)
+           .add(ProductItemPrice.builder().id(21L).build()) // 1 IP Address
+           .add(ProductItemPrice.builder().id(55L).build()) // Host Ping
+           .add(ProductItemPrice.builder().id(58L).build()) // Automated Notification
+           .add(ProductItemPrice.builder().id(1800L).build()) // 0 GB Bandwidth
+           .add(ProductItemPrice.builder().id(57L).build()) // Email and Ticket
+           .add(ProductItemPrice.builder().id(274L).build()) // 1000 Mbps Public & Private Networks
+           .add(ProductItemPrice.builder().id(905L).build()) // Reboot / Remote Console
+           .add(ProductItemPrice.builder().id(418L).build()) // Nessus Vulnerability Assessment & Reporting
+           .add(ProductItemPrice.builder().id(420L).build()) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
            .build();
 }
