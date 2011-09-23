@@ -33,6 +33,8 @@ import org.jclouds.softlayer.domain.VirtualGuest;
 import javax.inject.Inject;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Converts a ProductOrder into a json string
  * valid for placing an order via the softlayer api
@@ -51,6 +53,7 @@ public class ProductOrderToJson implements Binder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkNotNull(input,"order");
       ProductOrder order = ProductOrder.class.cast(input);
       request.setPayload(buildJson(order));
       return request;
