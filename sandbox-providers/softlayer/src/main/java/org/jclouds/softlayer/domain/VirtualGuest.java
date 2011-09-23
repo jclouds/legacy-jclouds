@@ -204,8 +204,17 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       }
    }
 
+   /**
+    * TBD: These states come from the powerState field. i.e.
+    * https://api.softlayer.com/rest/v3/SoftLayer_Account/getVirtualGuests/{id}?objectMask=powerState
+    */
    public static enum State {
-      STARTING, RUNNING, STOPPING, STOPPED, DESTROYED, EXPUNGING, MIGRATING, ERROR, UNKNOWN, SHUTDOWNED, UNRECOGNIZED;
+      //ACTIVE, // Get this from https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/{id}/getStatus
+      PAUSED,
+      RUNNING,
+      HALTED,
+      UNRECOGNIZED;
+
       @Override
       public String toString() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
@@ -218,7 +227,6 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return UNRECOGNIZED;
          }
       }
-
    }
 
    private int accountId = -1;
