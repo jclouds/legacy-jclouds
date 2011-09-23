@@ -33,9 +33,9 @@ public class BillingItemVirtualGuest implements Comparable<BillingItemVirtualGue
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -45,26 +45,26 @@ public class BillingItemVirtualGuest implements Comparable<BillingItemVirtualGue
       }
    }
 
-   private long id = -1;
+   private int id = -1;
 
    // for deserializer
    BillingItemVirtualGuest() {
 
    }
 
-   public BillingItemVirtualGuest(long id) {
+   public BillingItemVirtualGuest(int id) {
       this.id = id;
    }
 
    @Override
    public int compareTo(BillingItemVirtualGuest arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier for this billing item.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -76,7 +76,7 @@ public class BillingItemVirtualGuest implements Comparable<BillingItemVirtualGue
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       return result;
    }
 

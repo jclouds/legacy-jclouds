@@ -40,12 +40,12 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
       private long itemId = -1;
       private Float recurringFee;
       private Float hourlyRecurringFee;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -75,7 +75,7 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
       }
    }
 
-   private long id = -1;
+   private int id = -1;
    private long itemId = -1;
    private Float recurringFee;
    private Float hourlyRecurringFee;
@@ -85,7 +85,7 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
 
    }
 
-   public ProductItemPrice(long id, long itemId, Float recurringFee, Float hourlyRecurringFee) {
+   public ProductItemPrice(int id, long itemId, Float recurringFee, Float hourlyRecurringFee) {
       this.id = id;
       this.itemId = itemId;
       this.recurringFee = recurringFee;
@@ -94,13 +94,13 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
 
    @Override
    public int compareTo(ProductItemPrice arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier of a Product Item Price.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -154,6 +154,6 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
 
    @Override
    public int hashCode() {
-      return (int) (id ^ (id >>> 32));
+      return (id ^ (id >>> 32));
    }
 }

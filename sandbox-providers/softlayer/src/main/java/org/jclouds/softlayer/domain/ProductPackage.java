@@ -45,13 +45,13 @@ public class ProductPackage implements Comparable<ProductPackage> {
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
       private String name;
       private String description;
       private Set<ProductItem> items = Sets.newLinkedHashSet();
       private Set<Datacenter> datacenters = Sets.newLinkedHashSet();
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -89,7 +89,7 @@ public class ProductPackage implements Comparable<ProductPackage> {
       }
    }
 
-   private long id = -1;
+   private int id = -1;
    private String name;
    private String description;
    private Set<ProductItem> items = Sets.newLinkedHashSet();
@@ -100,7 +100,7 @@ public class ProductPackage implements Comparable<ProductPackage> {
 
    }
 
-   public ProductPackage(long id, String name, String description, Iterable<ProductItem> items, Iterable<Datacenter> datacenters) {
+   public ProductPackage(int id, String name, String description, Iterable<ProductItem> items, Iterable<Datacenter> datacenters) {
       this.id = id;
       this.name = name;
       this.description = description;
@@ -110,14 +110,14 @@ public class ProductPackage implements Comparable<ProductPackage> {
 
    @Override
    public int compareTo(ProductPackage arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return A package's internal identifier. Everything regarding a
     *         SoftLayer_Product_Package is tied back to this id.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -163,7 +163,7 @@ public class ProductPackage implements Comparable<ProductPackage> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       return result;
    }
 

@@ -49,13 +49,14 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMetadata> {
 
+   //TODO: There may be more states than this.
    public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
-         .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.RUNNING, NodeState.RUNNING)//
-         .put(VirtualGuest.State.STARTING, NodeState.PENDING)//
-         .put(VirtualGuest.State.DESTROYED, NodeState.TERMINATED)//
-         // TODO other states
-         .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
-         .build();
+         .<VirtualGuest.State, NodeState> builder()
+                       .put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
+                       .put(VirtualGuest.State.PAUSED, NodeState.SUSPENDED)
+                       .put(VirtualGuest.State.HALTED, NodeState.PENDING)
+                       .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+                       .build();
 
    private final FindHardwareForVirtualGuest findHardwareForVirtualGuest;
    private final FindLocationForVirtualGuest findLocationForVirtualGuest;
