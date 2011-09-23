@@ -1,7 +1,6 @@
 package org.jclouds.softlayer.binders;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
@@ -12,7 +11,6 @@ import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-import org.testng.collections.Sets;
 
 import java.net.URI;
 
