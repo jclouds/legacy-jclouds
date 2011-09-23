@@ -22,6 +22,7 @@ import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT;
 
 import java.util.Properties;
 
@@ -40,6 +41,7 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_API_VERSION, EC2AsyncClient.VERSION);
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
+      properties.setProperty(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT, "500");
       return properties;
    }
 
