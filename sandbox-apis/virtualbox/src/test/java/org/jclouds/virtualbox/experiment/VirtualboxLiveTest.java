@@ -38,10 +38,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jetty.util.log.Log;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
@@ -50,7 +50,11 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
+import org.jclouds.scriptbuilder.statements.login.DefaultConfiguration;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
@@ -209,34 +213,18 @@ public class VirtualboxLiveTest {
 		ISession session = manager.getSessionObject();
 		clonedVM.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
-		// network
-		String hostInterface = null;
-		String command = "vboxmanage list bridgedifs";
-		try {
-			Process child = Runtime.getRuntime().exec(command);
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
-			String line = "";
-			boolean found = false;
-
-			while ((line = bufferedReader.readLine()) != null && !found) {
-				System.out.println("line: " + line);
-				if (line.split(":")[0].contains("Name")) {
-					hostInterface = line.substring(line.indexOf(":") +1);
-				}
-				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
-					System.out.println("bridge: " + hostInterface.trim());
-					found = true;
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
-		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
-		mutable.getNetworkAdapter(new Long(0)).setMACAddress("0800279DA478");
-		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
+		String mac_address = manager.getVBox().getHost().generateMACAddress();
+		System.out.println("mac_address " + mac_address);
+		mutable.getNetworkAdapter(new Long(0)).setMACAddress(mac_address);
+		
+		if(isOSX(hostId)) {
+			mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(findBridgeInUse());
+		} else {
+			mutable.getNetworkAdapter(new Long(0)).setBridgedInterface("virbr0");
+		}
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 		mutable.saveSettings();
 		session.unlockMachine();
@@ -246,13 +234,12 @@ public class VirtualboxLiveTest {
 		
 		clonedVM = manager.getVBox().findMachine(instanceName);
 		String macAddressOfClonedVM = clonedVM.getNetworkAdapter(new Long(0)).getMACAddress();
-		System.out.println(macAddressOfClonedVM);
+
 		int offset = 0, step = 2;
 		for (int j = 1; j <= 5; j++) {
 			macAddressOfClonedVM = new StringBuffer(macAddressOfClonedVM).insert(j * step + offset, ":").toString().toLowerCase();
 			offset++;
 		}
-
 		
 		String simplifiedMacAddressOfClonedVM = macAddressOfClonedVM;
 		
@@ -264,25 +251,46 @@ public class VirtualboxLiveTest {
 			if(simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':' && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
 			simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1).toString();
 		}
-		runScriptOnNode(hostId, "for i in $(seq 1 254) ; do ping -c 1 -t 1 192.168.1.$i & done", runAsRoot(false).wrapInInitScript(false));
+		
+		// TODO as we don't know the hostname (nor the IP address) of the cloned machine we can't use "ssh check" to check that the machine is up and running
 
+		// we need to find another way to check the machine is up: only at that stage a new IP would be used by the machine and  arp will answer correctly
+		Thread.sleep(35000);	// TODO to be removed asap
+		runScriptOnNode(hostId, "for i in $(seq 1 254) ; do ping -c 1 -t 1 192.168.122.$i & done", runAsRoot(false).wrapInInitScript(false));
 		String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM, runAsRoot(false).wrapInInitScript(false)).getOutput();
 		String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
 		System.out.println("IP address " + ipAddress);
-
-		/*
-		while (ipAddress == null || ipAddress.equals("")) {
-			try {
-				ipAddress = clonedVM.getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		*/		
-
-		runScriptOnNode(guestId, "echo ciao");
 		
+		// TODO we need to redifine guest node at runtinme: in particular hostnmane and ssh port
+		//runScriptOnNode(guestId, "echo ciao");	
+	}
+
+	/**
+	 * 
+	 */
+	protected String findBridgeInUse() {
+		// network
+		String hostInterface = null;
+		String command = "vboxmanage list bridgedifs";
+		try {
+			Process child = Runtime.getRuntime().exec(command);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
+			String line = "";
+			boolean found = false;
+
+			while ((line = bufferedReader.readLine()) != null && !found) {
+				System.out.println("- " + line);
+				if (line.split(":")[0].contains("Name")) {
+					hostInterface = line.substring(line.indexOf(":") +1);
+				}
+				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
+					found = true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return hostInterface.trim();
 	}
 
 	private void launchVMProcess(IMachine machine, ISession session) {
@@ -333,7 +341,6 @@ public class VirtualboxLiveTest {
 		}
 	}
 
-
 	protected ExecResponse runScriptOnNode(String nodeId, String command,
 			RunScriptOptions options) {
 		ExecResponse toReturn = context.getComputeService().runScriptOnNode(
@@ -350,7 +357,12 @@ public class VirtualboxLiveTest {
 		return context.getComputeService().getNodeMetadata(hostId)
 				.getOperatingSystem().getDescription().equals("Mac OS X");
 	}
-
+	
+	protected boolean isUbuntu(String id) {
+		return context.getComputeService().getNodeMetadata(id)
+				.getOperatingSystem().getDescription().contains("ubuntu");
+	}
+	
 	void startupVboxWebServer() {
 		logger().debug("disabling password access");
 		runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false).wrapInInitScript(false));

@@ -469,7 +469,6 @@ public class VirtualboxAdministrationKickstartLiveTest {
 			runScriptOnNode(guestId, "mkdir /etc/udev/rules.d/70-persistent-net.rules");
 			runScriptOnNode(guestId, "rm -rf /dev/.udev/");
 			runScriptOnNode(guestId, "rm /lib/udev/rules.d/75-persistent-net-generator.rules");
-			runScriptOnNode(guestId, "echo 0 | tee /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts");
 		}
 	}
 
