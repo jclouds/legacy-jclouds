@@ -38,14 +38,14 @@ public class ProductOrder {
    }
 
    public static class Builder {
-      private long packageId = -1;
+      private int packageId = -1;
       private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
       private Set<VirtualGuest> virtualGuests = Sets.newLinkedHashSet();
       private String location;
-      private long quantity;
+      private int quantity;
       private boolean useHourlyPricing;
 
-      public Builder packageId(long packageId) {
+      public Builder packageId(int packageId) {
          this.packageId = packageId;
          return this;
       }
@@ -92,7 +92,7 @@ public class ProductOrder {
          return this;
       }
 
-      public Builder quantity(long quantity) {
+      public Builder quantity(int quantity) {
          this.quantity = quantity;
          return this;
       }
@@ -116,11 +116,11 @@ public class ProductOrder {
       }
    }
 
-   private long packageId = -1;
+   private int packageId = -1;
    private String location;
    private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
    private Set<VirtualGuest> virtualGuests = Sets.newLinkedHashSet();
-   private long quantity;
+   private int quantity;
    private boolean useHourlyPricing;
 
    // for deserializer
@@ -128,7 +128,7 @@ public class ProductOrder {
 
    }
 
-   public ProductOrder(long packageId, String location, Iterable<ProductItemPrice> prices, Iterable<VirtualGuest> virtualGuest, long quantity, boolean useHourlyPricing) {
+   public ProductOrder(int packageId, String location, Iterable<ProductItemPrice> prices, Iterable<VirtualGuest> virtualGuest, int quantity, boolean useHourlyPricing) {
       this.packageId = packageId;
       this.location = checkNotNull(emptyToNull(location),"location cannot be null or empty:"+location);
       this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
@@ -140,7 +140,7 @@ public class ProductOrder {
    /**
     * @return The package id of an order. This is required.
     */
-   public long getPackageId() {
+   public int getPackageId() {
       return packageId;
    }
 
@@ -168,7 +168,7 @@ public class ProductOrder {
       return virtualGuests;
    }
 
-   public long getQuantity() {
+   public int getQuantity() {
       return quantity;
    }
 
@@ -202,11 +202,11 @@ public class ProductOrder {
 
    @Override
    public int hashCode() {
-      int result = (int) (packageId ^ (packageId >>> 32));
+      int result = (packageId ^ (packageId >>> 32));
       result = 31 * result + (location != null ? location.hashCode() : 0);
       result = 31 * result + (prices != null ? prices.hashCode() : 0);
       result = 31 * result + (virtualGuests != null ? virtualGuests.hashCode() : 0);
-      result = 31 * result + (int) (quantity ^ (quantity >>> 32));
+      result = 31 * result + (quantity ^ (quantity >>> 32));
       result = 31 * result + (useHourlyPricing ? 1 : 0);
       return result;
    }

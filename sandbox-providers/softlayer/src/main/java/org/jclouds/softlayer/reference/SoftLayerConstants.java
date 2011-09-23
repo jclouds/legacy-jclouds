@@ -35,15 +35,15 @@ public interface SoftLayerConstants {
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
 
    public static final Set<ProductItemPrice> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<ProductItemPrice>builder()
-           .add(ProductItemPrice.builder().id(1639L).build()) // 100 GB (SAN)
-           .add(ProductItemPrice.builder().id(21L).build()) // 1 IP Address
-           .add(ProductItemPrice.builder().id(55L).build()) // Host Ping
-           .add(ProductItemPrice.builder().id(58L).build()) // Automated Notification
-           .add(ProductItemPrice.builder().id(1800L).build()) // 0 GB Bandwidth
-           .add(ProductItemPrice.builder().id(57L).build()) // Email and Ticket
-           .add(ProductItemPrice.builder().id(274L).build()) // 1000 Mbps Public & Private Networks
-           .add(ProductItemPrice.builder().id(905L).build()) // Reboot / Remote Console
-           .add(ProductItemPrice.builder().id(418L).build()) // Nessus Vulnerability Assessment & Reporting
-           .add(ProductItemPrice.builder().id(420L).build()) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
+           .add(ProductItemPrice.builder().id(1639).build()) // 100 GB (SAN)
+           .add(ProductItemPrice.builder().id(21).build()) // 1 IP Address
+           .add(ProductItemPrice.builder().id(55).build()) // Host Ping
+           .add(ProductItemPrice.builder().id(58).build()) // Automated Notification
+           .add(ProductItemPrice.builder().id(1800).build()) // 0 GB Bandwidth
+           .add(ProductItemPrice.builder().id(57).build()) // Email and Ticket
+           .add(ProductItemPrice.builder().id(274).build()) // 1000 Mbps Public & Private Networks
+           .add(ProductItemPrice.builder().id(905).build()) // Reboot / Remote Console
+           .add(ProductItemPrice.builder().id(418).build()) // Nessus Vulnerability Assessment & Reporting
+           .add(ProductItemPrice.builder().id(420).build()) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
            .build();
 }

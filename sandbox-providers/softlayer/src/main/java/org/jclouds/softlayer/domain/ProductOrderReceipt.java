@@ -30,9 +30,9 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
    }
 
    public static class Builder {
-      private long orderId = -1;
+      private int orderId = -1;
 
-      public Builder orderId(long orderId) {
+      public Builder orderId(int orderId) {
          this.orderId = orderId;
          return this;
       }
@@ -46,26 +46,26 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
       }
    }
 
-   private long orderId = -1;
+   private int orderId = -1;
 
    // for deserializer
    ProductOrderReceipt() {
 
    }
 
-   public ProductOrderReceipt(long orderId) {
+   public ProductOrderReceipt(int orderId) {
       this.orderId = orderId;
    }
 
    @Override
    public int compareTo(ProductOrderReceipt arg0) {
-      return new Long(orderId).compareTo(arg0.getOrderId());
+      return new Integer(orderId).compareTo(arg0.getOrderId());
    }
 
    /**
     * @return unique identifier for the order.
     */
-   public long getOrderId() {
+   public int getOrderId() {
       return orderId;
    }
 
@@ -77,7 +77,7 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (orderId ^ (orderId >>> 32));
+      result = prime * result + (orderId ^ (orderId >>> 32));
       return result;
    }
 

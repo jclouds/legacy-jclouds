@@ -36,11 +36,11 @@ public class ProductItemCategory implements Comparable<ProductItemCategory> {
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
       private String name;
       private String categoryCode;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -66,7 +66,7 @@ public class ProductItemCategory implements Comparable<ProductItemCategory> {
       }
    }
 
-   private long id = -1;
+   private int id = -1;
    private String name;
    private String categoryCode;
 
@@ -75,7 +75,7 @@ public class ProductItemCategory implements Comparable<ProductItemCategory> {
 
    }
 
-   public ProductItemCategory(long id, String name, String categoryCode) {
+   public ProductItemCategory(int id, String name, String categoryCode) {
       this.id = id;
       this.name = name;
       this.categoryCode = categoryCode;
@@ -83,13 +83,13 @@ public class ProductItemCategory implements Comparable<ProductItemCategory> {
 
    @Override
    public int compareTo(ProductItemCategory arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -115,7 +115,7 @@ public class ProductItemCategory implements Comparable<ProductItemCategory> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       return result;
    }
 

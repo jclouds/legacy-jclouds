@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest#Local_Properties"
+ *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest"
  *      />
  */
 public class VirtualGuest implements Comparable<VirtualGuest> {
@@ -43,8 +43,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    }
 
    public static class Builder {
-      private long id = -1;
-      private long accountId = -1;
+      private int id = -1;
+      private int accountId = -1;
       private Date createDate;
       private boolean dedicatedAccountHostOnly;
       private String hostname;
@@ -65,12 +65,12 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       private String primaryIpAddress;
       private BillingItemVirtualGuest billingItem;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
 
-      public Builder accountId(long accountId) {
+      public Builder accountId(int accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -221,14 +221,14 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    }
 
-   private long accountId = -1;
+   private int accountId = -1;
    private Date createDate;
    @SerializedName("dedicatedAccountHostOnlyFlag")
    private boolean dedicatedAccountHostOnly;
    private String domain;
    private String fullyQualifiedDomainName;
    private String hostname;
-   private long id = -1;
+   private int id = -1;
    private Date lastVerifiedDate;
    private int maxCpu = -1;
    private String maxCpuUnits;
@@ -251,8 +251,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    }
 
-   public VirtualGuest(long accountId, Date createDate, boolean dedicatedAccountHostOnly, String domain,
-            String fullyQualifiedDomainName, String hostname, long id, Date lastVerifiedDate, int maxCpu,
+   public VirtualGuest(int accountId, Date createDate, boolean dedicatedAccountHostOnly, String domain,
+            String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
             String primaryIpAddress,BillingItemVirtualGuest billingItem) {
@@ -281,13 +281,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    @Override
    public int compareTo(VirtualGuest arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return A computing instance's associated account id
     */
-   public long getAccountId() {
+   public int getAccountId() {
       return accountId;
    }
 
@@ -330,7 +330,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    /**
     * @return Unique ID for a computing instance.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -438,13 +438,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (accountId ^ (accountId >>> 32));
+      result = prime * result + (accountId ^ (accountId >>> 32));
       result = prime * result + ((createDate == null) ? 0 : createDate.hashCode());
       result = prime * result + (dedicatedAccountHostOnly ? 1231 : 1237);
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
       result = prime * result + ((fullyQualifiedDomainName == null) ? 0 : fullyQualifiedDomainName.hashCode());
       result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       result = prime * result + ((lastVerifiedDate == null) ? 0 : lastVerifiedDate.hashCode());
       result = prime * result + maxCpu;
       result = prime * result + ((maxCpuUnits == null) ? 0 : maxCpuUnits.hashCode());

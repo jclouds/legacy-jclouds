@@ -30,12 +30,12 @@ public class Datacenter implements Comparable<Datacenter> {
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
       private String name;
       private String longName;
       private Address locationAddress;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -64,7 +64,7 @@ public class Datacenter implements Comparable<Datacenter> {
       }
    }
 
-   private long id = -1;
+   private int id = -1;
    private String name;
    private String longName;
    private Address locationAddress;
@@ -74,7 +74,7 @@ public class Datacenter implements Comparable<Datacenter> {
 
    }
 
-   public Datacenter(long id, String name, String longName, Address locationAddress) {
+   public Datacenter(int id, String name, String longName, Address locationAddress) {
       this.id = id;
       this.name = name;
       this.longName = longName;
@@ -83,13 +83,13 @@ public class Datacenter implements Comparable<Datacenter> {
 
    @Override
    public int compareTo(Datacenter arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -122,7 +122,7 @@ public class Datacenter implements Comparable<Datacenter> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       return result;
    }
 

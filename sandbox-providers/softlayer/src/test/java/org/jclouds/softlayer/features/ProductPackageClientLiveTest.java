@@ -59,7 +59,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    private ProductPackageClient client;
    private AccountClient accountClient;
 
-   private long cloudServerPackageId;
+   private int cloudServerPackageId;
    private ProductPackage cloudServerProductPackage;
 
    @Test
@@ -119,7 +119,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
        ProductItemPrice price = ProductItems.price().apply(ramToProductItem.get(1.0f));
-       assert new Long(1644L).equals(price.getId());
+       assert new Integer(1644).equals(price.getId());
    }
 
    @Test
@@ -131,7 +131,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
 
        ProductItemPrice price = ProductItems.price().apply(coresToProductItem.get(2.0f));
-       assert new Long(1963L).equals(price.getId());
+       assert new Integer(1963).equals(price.getId());
    }
 
    @Test
@@ -141,7 +141,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
        Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
 
        ProductItemPrice price = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
-       assert new Long(1693L).equals(price.getId());
+       assert new Integer(1693).equals(price.getId());
    }
 
    @Test
