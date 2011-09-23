@@ -6,7 +6,6 @@ title: Installation
 
 ### Getting latest jclouds binaries
 
-Please correct this if you know a faster way.
   * download [lein](https://github.com/technomancy/leiningen/raw/stable/bin/lein leins) and make it executable
   * create a __project.clj__ file with the below contents
 {% highlight clojure %}
