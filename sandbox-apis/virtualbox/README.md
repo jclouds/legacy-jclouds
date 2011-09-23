@@ -12,31 +12,28 @@ The "VirtualboxAdministrationTest" helper will run these preliminary steps:
 
 1.  Create a working dir on 'user.home' called by default "jclouds-virtualbox-test" 
 (this value can be overwritten directly on the commandline using -Dtest.virtualbox.workingDir)
-2.  Install VBOX-OSE (available through ubuntu repo) 
-3.  Download a VDI from [here](http://downloads.sourceforge.net/virtualboximage/centos-5.2-x86.7z) into your working dir
-3.  Install p7zip on your ubuntu machine, if missing
-3.  Extract the 7z archive into your working dir
+2.  Install Virtualbox from the internet (mac os x lion and ubuntu host are supported at the moment) 
+3.  Download by default an ubuntu 11.04 server i386 ISO into "jclouds-virtualbox-test" from http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso.  
 4.  Download VirtualBox Guest Additions ISO (tested with VBoxGuestAdditions_4.0.2-update-69551.iso) into "jclouds-virtualbox-test"
 5.  Disable login credential: $ VBoxManage setproperty websrvauthlibrary null
-6.  Start webservice with increasead timeout: $ /usr/bin/vboxwebsrv --timeout 10000 and then will:
--   Clone originalDisk to clonedDisk in workingDir
+6.  Start an embedded jetty server that serves a preseed file specifically written for ubuntu 11.04
+7.  Start webservice with increasead timeout: $ /usr/bin/vboxwebsrv --timeout 10000 and then will:
+-   create a "jclouds-virtaulbox-kickstart-admin" vm in the the vbox default machine folder ("/user.home/VirtualBox VMs")
+-   install automatically the OS (ubuntu 11.04) in this vm using preseed  
 -   Set NAT on network interface eth0 
 -   Set port forwarding localhost:2222->guest:22 
--   Create a VM in the the vbox default machine folder ("/user.home/VirtualBox VMs")
--   Mount guest additions ISO 
--   Install guest additions 
+-   Mount Guest Additions ISO 
+-   Install Guest additions 
 -   Shutdown VM 
+- 	create a snapshot of this machine, to enabling linked clone feature. 
 -   Remove port forwarding rule
--   Remove NAT network interface 
--   Detach vdisk from VM template
+-   Change NIC from NAt to bridge 
 	
 At this stage, you can use your template as a master for your "private" cloud through VirtualBoxLiveTest
 
 ## Bootstrap your private cloud through VirtualBoxLiveTest helper
 To use this helper, you have to specify the name of the VM (-Dtest.virtualbox.vmname=<VM-NAME>)
 and choose the numberOfVirtualMachine you need using -Dtest.virtualbox.numberOfVirtualMachine=<#ofVMs>,
-These VMs will be cloned starting from the master VM created before
+These VMs will be cloned starting from the golden template VM created before
 
-It will create a "numberOfVirtualMachine" in a vbox default machine folder with 'VMName_i' name
-
-NB: for perfomance reason, these VM will share the same disk (the template created at step 1) attached in "multiattach mode" (http://www.virtualbox.org/manual/ch05.html#hdimagewrites) 
+It will create a "numberOfVirtualMachine" in a vbox default machine folder with 'VMName_i' name, by cloning the golden template in linked mode with a bridged NIC.
