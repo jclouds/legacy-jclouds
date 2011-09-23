@@ -21,35 +21,53 @@
 
 package org.jclouds.virtualbox.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import java.net.URI;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
-import org.jclouds.virtualbox.VirtualBox;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
-import org.jclouds.virtualbox.domain.VMSpec;
 import org.jclouds.virtualbox.domain.Host;
 import org.jclouds.virtualbox.domain.Image;
+import org.jclouds.virtualbox.domain.VMSpec;
 import org.jclouds.virtualbox.functions.HostToLocation;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.ImageToImage;
 import org.jclouds.virtualbox.functions.VMSpecToHardware;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
- * @author Mattias Holmqvist
+ * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBox, VirtualBox, IMachine, VMSpec, Image, Host> {
+public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, VMSpec, Image, Host> {
 
    public VirtualBoxComputeServiceContextModule() {
-      super(VirtualBox.class, VirtualBox.class);
+      super(VirtualBoxManager.class, VirtualBoxManager.class);
+   }
+   
+   @Provides
+   @Singleton
+   protected VirtualBoxManager createInstance(@Provider URI endpoint, @Named(Constants.PROPERTY_IDENTITY) String identity,
+           @Named(Constants.PROPERTY_CREDENTIAL) String credential) {
+	   VirtualBoxManager manager = VirtualBoxManager.createInstance("");
+       manager.connect(endpoint.toASCIIString(), identity, credential);
+       return manager;
    }
 
    @Override

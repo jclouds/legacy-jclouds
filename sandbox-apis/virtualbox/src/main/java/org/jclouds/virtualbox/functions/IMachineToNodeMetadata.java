@@ -19,22 +19,36 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import org.jclouds.compute.domain.*;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.logging.Logger;
-import org.virtualbox_4_1.*;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.eclipse.jetty.server.Server;
+import org.jclouds.collect.FindResourceInSet;
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.MachineState;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
@@ -55,6 +69,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       locationBuilder.id("");
       locationBuilder.scope(LocationScope.HOST);
       nodeMetadataBuilder.location(locationBuilder.build());
+      
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ram(vm.getMemorySize().intValue());
 
@@ -119,6 +134,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       nodeMetadataBuilder.credentials(new Credentials(identity, credential));
       nodeMetadataBuilder.id(vm.getId());
       return nodeMetadataBuilder.build();
-
    }
+   
 }

@@ -21,22 +21,24 @@
 
 package org.jclouds.virtualbox;
 
-import com.google.inject.Module;
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-
 import java.util.List;
 import java.util.Properties;
+
+import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.inject.Module;
 
 /**
  * Creates compute service context for VirtualBox
  *
- * @author Mattias Holmqvist
+ * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBox> {
+public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBoxManager> {
    
    public VirtualBoxContextBuilder(Properties properties) {
-      super(VirtualBox.class, properties);
+      super(VirtualBoxManager.class, properties);
    }
 
    @Override

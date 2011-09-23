@@ -21,74 +21,147 @@
 
 package org.jclouds.virtualbox.compute;
 
-import com.google.inject.Singleton;
-import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
-import org.jclouds.virtualbox.domain.VMSpec;
-import org.jclouds.virtualbox.domain.Host;
-import org.jclouds.virtualbox.domain.Image;
-import org.virtualbox_4_1.IMachine;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.Credentials;
+import org.jclouds.virtualbox.domain.Host;
+import org.jclouds.virtualbox.domain.Image;
+import org.jclouds.virtualbox.domain.VMSpec;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
+
 /**
- * Defines the connection between the {@link org.jclouds.virtualbox.VirtualBox} implementation and the jclouds
+ * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation and the jclouds
  * {@link org.jclouds.compute.ComputeService}
  *
- * @author Mattias Holmqvist
+ * @author Mattias Holmqvist, Andrea Turli
  */
 @Singleton
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, VMSpec, Image, Host> {
 
-   @Override
-   public IMachine createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template, Map<String, Credentials> credentialStore) {
-      return null;
-   }
+	private final VirtualBoxManager manager;
 
-   @Override
-   public Iterable<VMSpec> listHardwareProfiles() {
-      return Collections.emptyList();
-   }
+	@Inject
+	public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager) {
+		this.manager = checkNotNull(manager, "manager");
+	}
 
-   @Override
-   public Iterable<Image> listImages() {
-      return Collections.emptyList();
-   }
+	@Override
+	public IMachine createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template, Map<String, Credentials> credentialStore) {
+		return null;
+	}
 
-   @Override
-   public Iterable<Host> listLocations() {
-      return Collections.emptyList();
-   }
+	@Override
+	public Iterable<IMachine> listNodes() {
+		return Collections.emptyList();
+	}
+	
+	@Override
+	public Iterable<VMSpec> listHardwareProfiles() {
+		return Collections.emptyList();
+	}
 
-   @Override
-   public IMachine getNode(String id) {
-      return null;
-   }
+	@Override
+	public Iterable<Image> listImages() {
+		return Collections.emptyList();
+	}
 
-   @Override
-   public void destroyNode(String id) {
+	@Override
+	public Iterable<Host> listLocations() {
+		return Collections.emptyList();
+	}
 
-   }
+	@Override
+	public IMachine getNode(String vmName) {
+		return manager.getVBox().findMachine(vmName);
+	}
 
-   @Override
-   public void rebootNode(String id) {
+	@Override
+	public void destroyNode(String vmName) {
+		IMachine machine = manager.getVBox().findMachine(vmName);
+		powerDownMachine(machine);
+		machine.unregister(CleanupMode.Full);
+	}
 
-   }
+	@Override
+	public void rebootNode(String vmName) {
+		IMachine machine = manager.getVBox().findMachine(vmName);
+		powerDownMachine(machine);
+		launchVMProcess(machine, manager.getSessionObject());
+	}
 
-   @Override
-   public void resumeNode(String id) {
+	@Override
+	public void resumeNode(String vmName) {
+		IMachine machine = manager.getVBox().findMachine(vmName);
+		ISession machineSession;
+		try {
+			machineSession = manager.openMachineSession(machine);
+			machineSession.getConsole().resume();
+			machineSession.unlockMachine();
+		} catch (Exception e) {
+			propogate(e);
+		}
+	}
 
-   }
+	@Override
+	public void suspendNode(String vmName) {
+		IMachine machine = manager.getVBox().findMachine(vmName);
+		ISession machineSession;
+		try {
+			machineSession = manager.openMachineSession(machine);
+			machineSession.getConsole().pause();
+			machineSession.unlockMachine();
+		} catch (Exception e) {
+			propogate(e);
+		}
+	}
 
-   @Override
-   public void suspendNode(String id) {
+	protected <T> T propogate(Exception e) {
+		Throwables.propagate(e);
+		assert false;
+		return null;
+	}
+	
+	private void launchVMProcess(IMachine machine, ISession session) {
+		IProgress prog = machine.launchVMProcess(session, "gui", "");
+		prog.waitForCompletion(-1);
+		session.unlockMachine();
+	}
+	
+	private void powerDownMachine(IMachine machine) {
+		try {
+			ISession machineSession = manager.openMachineSession(machine);
+			IProgress progress = machineSession.getConsole().powerDown();
+			progress.waitForCompletion(-1);
+			machineSession.unlockMachine();
 
-   }
+			while (!machine.getSessionState().equals(SessionState.Unlocked)) {
+				try {
+					System.out
+					.println("waiting for unlocking session - session state: "
+							+ machine.getSessionState());
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
 
-   @Override
-   public Iterable<IMachine> listNodes() {
-      return Collections.emptyList();
-   }
+		} catch (Exception e) {
+			e.printStackTrace();
+			e.printStackTrace();
+		}
+	}
 }
