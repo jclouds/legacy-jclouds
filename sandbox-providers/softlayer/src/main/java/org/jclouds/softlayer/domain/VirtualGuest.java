@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest#Local_Properties"
+ *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest"
  *      />
  */
 public class VirtualGuest implements Comparable<VirtualGuest> {
@@ -43,12 +43,45 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    }
 
    public static class Builder {
-      private String domain;
+      private int id = -1;
+      private int accountId = -1;
+      private Date createDate;
+      private boolean dedicatedAccountHostOnly;
       private String hostname;
+      private String domain;
+      private String fullyQualifiedDomainName;
+      private Date lastVerifiedDate;
+      private int maxCpu = -1;
+      private String maxCpuUnits;
+      private int maxMemory = -1;
+      private Date metricPollDate;
+      private Date modifyDate;
+      private String notes;
+      private boolean privateNetworkOnly;
+      private int startCpus = -1;
+      private int statusId = -1;
+      private String uuid;
+      private String primaryBackendIpAddress;
+      private String primaryIpAddress;
+      private BillingItemVirtualGuest billingItem;
 
+      public Builder id(int id) {
+         this.id = id;
+         return this;
+      }
 
-      public Builder domain(String domain) {
-         this.domain = domain;
+      public Builder accountId(int accountId) {
+         this.accountId = accountId;
+         return this;
+      }
+
+      public Builder createDate(Date createDate) {
+         this.createDate = createDate;
+         return this;
+      }
+
+      public Builder dedicatedAccountHostOnly(boolean dedicatedAccountHostOnly) {
+         this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
          return this;
       }
 
@@ -57,21 +90,131 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          return this;
       }
 
+      public Builder domain(String domain) {
+         this.domain = domain;
+         return this;
+      }
+
+      public Builder fullyQualifiedDomainName(String fullyQualifiedDomainName) {
+         this.fullyQualifiedDomainName = fullyQualifiedDomainName;
+         return this;
+      }
+
+      public Builder lastVerifiedDate(Date lastVerifiedDate) {
+         this.lastVerifiedDate = lastVerifiedDate;
+         return this;
+      }
+
+      public Builder maxCpu(int maxCpu) {
+         this.maxCpu = maxCpu;
+         return this;
+      }
+
+      public Builder maxCpuUnits(String maxCpuUnits) {
+         this.maxCpuUnits = maxCpuUnits;
+         return this;
+      }
+
+      public Builder maxMemory(int maxMemory) {
+         this.maxMemory = maxMemory;
+         return this;
+      }
+
+      public Builder metricPollDate(Date metricPollDate) {
+         this.metricPollDate = metricPollDate;
+         return this;
+      }
+
+      public Builder modifyDate(Date modifyDate) {
+         this.modifyDate = modifyDate;
+         return this;
+      }
+
+      public Builder notes(String notes) {
+         this.notes = notes;
+         return this;
+      }
+
+      public Builder privateNetworkOnly(boolean privateNetworkOnly) {
+         this.privateNetworkOnly = privateNetworkOnly;
+         return this;
+      }
+
+      public Builder startCpus(int startCpus) {
+         this.startCpus = startCpus;
+         return this;
+      }
+
+      public Builder statusId(int statusId) {
+         this.statusId = statusId;
+         return this;
+      }
+
+      public Builder uuid(String uuid) {
+         this.uuid = uuid;
+         return this;
+      }
+
+      public Builder primaryBackendIpAddress(String primaryBackendIpAddress) {
+         this.primaryBackendIpAddress = primaryBackendIpAddress;
+         return this;
+      }
+
+      public Builder primaryIpAddress(String primaryIpAddress) {
+         this.primaryIpAddress = primaryIpAddress;
+         return this;
+      }
+
+      public Builder billingItem(BillingItemVirtualGuest billingItem) {
+         this.billingItem = billingItem;
+         return this;
+      }
+
       public VirtualGuest build() {
-         return new VirtualGuest(-1, null, true, domain,null,hostname,
-               -1,null,-1, null,-1,null,null,null,
-               true,-1,-1,null,null,null,null);
+         return new VirtualGuest(accountId, createDate, dedicatedAccountHostOnly, domain,
+            fullyQualifiedDomainName, hostname, id, lastVerifiedDate, maxCpu,
+            maxCpuUnits, maxMemory, metricPollDate, modifyDate, notes,
+            privateNetworkOnly, startCpus, statusId, uuid, primaryBackendIpAddress,
+            primaryIpAddress,billingItem);
       }
 
       public static Builder fromVirtualGuest(VirtualGuest in) {
          return VirtualGuest.builder()
+                                 .accountId(in.getAccountId())
+                                 .createDate(in.getCreateDate())
+                                 .dedicatedAccountHostOnly(in.isDedicatedAccountHostOnly())
                                  .domain(in.getDomain())
-                                 .hostname(in.getHostname());
+                                 .fullyQualifiedDomainName(in.getFullyQualifiedDomainName())
+                                 .hostname(in.getHostname())
+                                 .id(in.getId())
+                                 .lastVerifiedDate(in.getLastVerifiedDate())
+                                 .maxCpu(in.getMaxCpu())
+                                 .maxCpuUnits(in.getMaxCpuUnits())
+                                 .maxMemory(in.getMaxMemory())
+                                 .metricPollDate(in.getMetricPollDate())
+                                 .modifyDate(in.getModifyDate())
+                                 .notes(in.getNotes())
+                                 .privateNetworkOnly(in.isPrivateNetworkOnly())
+                                 .startCpus(in.getStartCpus())
+                                 .statusId(in.getStatusId())
+                                 .uuid(in.getUuid())
+                                 .primaryBackendIpAddress(in.getPrimaryBackendIpAddress())
+                                 .primaryIpAddress(in.getPrimaryIpAddress())
+                                 .billingItem(in.getBillingItem());
       }
    }
 
+   /**
+    * TBD: These states come from the powerState field. i.e.
+    * https://api.softlayer.com/rest/v3/SoftLayer_Account/getVirtualGuests/{id}?objectMask=powerState
+    */
    public static enum State {
-      STARTING, RUNNING, STOPPING, STOPPED, DESTROYED, EXPUNGING, MIGRATING, ERROR, UNKNOWN, SHUTDOWNED, UNRECOGNIZED;
+      //ACTIVE, // Get this from https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/{id}/getStatus
+      PAUSED,
+      RUNNING,
+      HALTED,
+      UNRECOGNIZED;
+
       @Override
       public String toString() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
@@ -84,17 +227,16 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return UNRECOGNIZED;
          }
       }
-
    }
 
-   private long accountId = -1;
+   private int accountId = -1;
    private Date createDate;
    @SerializedName("dedicatedAccountHostOnlyFlag")
    private boolean dedicatedAccountHostOnly;
    private String domain;
    private String fullyQualifiedDomainName;
    private String hostname;
-   private long id = -1;
+   private int id = -1;
    private Date lastVerifiedDate;
    private int maxCpu = -1;
    private String maxCpuUnits;
@@ -117,8 +259,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    }
 
-   public VirtualGuest(long accountId, Date createDate, boolean dedicatedAccountHostOnly, String domain,
-            String fullyQualifiedDomainName, String hostname, long id, Date lastVerifiedDate, int maxCpu,
+   public VirtualGuest(int accountId, Date createDate, boolean dedicatedAccountHostOnly, String domain,
+            String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
             String primaryIpAddress,BillingItemVirtualGuest billingItem) {
@@ -147,13 +289,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    @Override
    public int compareTo(VirtualGuest arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return A computing instance's associated account id
     */
-   public long getAccountId() {
+   public int getAccountId() {
       return accountId;
    }
 
@@ -196,7 +338,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    /**
     * @return Unique ID for a computing instance.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -304,13 +446,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (accountId ^ (accountId >>> 32));
+      result = prime * result + (accountId ^ (accountId >>> 32));
       result = prime * result + ((createDate == null) ? 0 : createDate.hashCode());
       result = prime * result + (dedicatedAccountHostOnly ? 1231 : 1237);
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
       result = prime * result + ((fullyQualifiedDomainName == null) ? 0 : fullyQualifiedDomainName.hashCode());
       result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (id ^ (id >>> 32));
       result = prime * result + ((lastVerifiedDate == null) ? 0 : lastVerifiedDate.hashCode());
       result = prime * result + maxCpu;
       result = prime * result + ((maxCpuUnits == null) ? 0 : maxCpuUnits.hashCode());
@@ -430,7 +572,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + "]";
+               + ", uuid=" + uuid + ", billingItem="+billingItem+"]";
    }
 
 }
