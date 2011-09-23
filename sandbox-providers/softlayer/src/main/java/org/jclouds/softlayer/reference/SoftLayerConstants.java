@@ -34,6 +34,11 @@ public interface SoftLayerConstants {
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
 
+   /**
+    * Name of the package used for ordering virtual guests.
+    */
+   public static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
+
    public static final Set<ProductItemPrice> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<ProductItemPrice>builder()
            .add(ProductItemPrice.builder().id(1639).build()) // 100 GB (SAN)
            .add(ProductItemPrice.builder().id(21).build()) // 1 IP Address

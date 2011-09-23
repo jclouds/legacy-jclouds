@@ -22,10 +22,8 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.domain.*;
-import org.jclouds.softlayer.reference.SoftLayerConstants;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -34,6 +32,7 @@ import java.util.Set;
 
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.CLOUD_SERVER_PACKAGE_NAME;
 import static org.testng.Assert.*;
 
 /**
@@ -53,8 +52,6 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       cloudServerPackageId = Iterables.find(accountClient.getActivePackages(),named(CLOUD_SERVER_PACKAGE_NAME)).getId();
       cloudServerProductPackage = client.getProductPackage(cloudServerPackageId);
    }
-
-   private static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
 
    private ProductPackageClient client;
    private AccountClient accountClient;
@@ -142,48 +139,6 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
        ProductItemPrice price = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
        assert new Integer(1693).equals(price.getId());
-   }
-
-   @Test
-   public void testPricesForLaunchingGuestVM() {
-       Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
-               Predicates.and(categoryCode("ram"), capacity(2.0f)));
-
-       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
-
-       ProductItemPrice ramPrice = ProductItems.price().apply(ramToProductItem.get(2.0f));
-
-       Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
-       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
-
-       ProductItemPrice cpuPrice = ProductItems.price().apply(coresToProductItem.get(2.0f));
-
-       Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
-       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
-       ProductItemPrice osPrice = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
-
-       Set<ProductItemPrice> prices = Sets.<ProductItemPrice>newLinkedHashSet();
-       prices.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
-       prices.add(ramPrice);
-       prices.add(cpuPrice);
-       prices.add(osPrice);
-
-       VirtualGuest guest = VirtualGuest.builder().domain("jclouds.org")
-                                                 .hostname("livetest")
-                                                 .build();
-
-       String location = ""+Iterables.get(cloudServerProductPackage.getDatacenters(),0).getId();
-       ProductOrder order = ProductOrder.builder()
-                                       .packageId(cloudServerPackageId)
-                                       .location(location)
-                                       .quantity(1)
-                                       .useHourlyPricing(true)
-                                       .prices(prices)
-                                       .virtualGuest(guest)
-                                       .build();
-
-      //ProductOrderReceipt receipt = context.getApi().getVirtualGuestClient().orderVirtualGuest(order);
-       //TODO: There must be a more concise way of expressing this logic.
    }
 
    private void checkProductItem(ProductItem item) {
