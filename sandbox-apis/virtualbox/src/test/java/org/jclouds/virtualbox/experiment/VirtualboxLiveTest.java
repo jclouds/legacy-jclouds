@@ -168,7 +168,7 @@ public class VirtualboxLiveTest {
 
 	@BeforeGroups(groups = "live")
 	protected void setupClient() throws Exception {
-		context = TestUtils.computeServiceForLocalhost();
+		context = TestUtils.computeServiceForLocalhostAndGuest();
 		socketTester = new RetryablePredicate<IPSocket>(
 				new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);
 		setupCredentials();

@@ -22,14 +22,35 @@
 package org.jclouds.virtualbox.functions;
 
 import com.google.common.base.Function;
-import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.virtualbox.domain.Image;
+import org.jclouds.virtualbox.VirtualBox;
+import org.virtualbox_4_1.IGuestOSType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-public class ImageToImage implements Function<Image, org.jclouds.compute.domain.Image> {
+import javax.inject.Inject;
+
+public class IMachineToHardware implements Function<IMachine, Hardware> {
+
+   private VirtualBox vbox;
+
+   @Inject
+   public IMachineToHardware(VirtualBox vbox) {
+      this.vbox = vbox;
+   }
+
    @Override
-   public org.jclouds.compute.domain.Image apply(@Nullable Image from) {
-      ImageBuilder imageBuilder = new ImageBuilder();
-      return imageBuilder.build();
+   public Hardware apply(@Nullable IMachine vm) {
+      String osTypeId = vm.getOSTypeId();
+
+      IGuestOSType guestOSType = vbox.manager().getVBox().getGuestOSType(osTypeId);
+      Boolean is64Bit = guestOSType.getIs64Bit();
+      HardwareBuilder hardwareBuilder = new HardwareBuilder();
+      hardwareBuilder.ids(vm.getId());
+      vm.getSessionPid();
+      hardwareBuilder.is64Bit(is64Bit);
+      return null;
    }
 }

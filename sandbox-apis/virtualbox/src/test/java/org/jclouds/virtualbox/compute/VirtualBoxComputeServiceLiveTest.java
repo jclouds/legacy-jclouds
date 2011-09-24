@@ -30,12 +30,11 @@ import org.jclouds.compute.StandaloneComputeServiceContextSpec;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.VirtualBox;
 import org.jclouds.virtualbox.VirtualBoxContextBuilder;
-import org.jclouds.virtualbox.domain.VMSpec;
 import org.jclouds.virtualbox.domain.Host;
-import org.jclouds.virtualbox.domain.Image;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 import java.util.Properties;
 
@@ -75,8 +74,8 @@ public class VirtualBoxComputeServiceLiveTest extends BaseComputeServiceLiveTest
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory()
-                 .createContext(new StandaloneComputeServiceContextSpec<VirtualBox, IMachine, VMSpec, Image, Host>(
-                         "virtualbox", endpoint, apiversion, "", identity, credential, VirtualBox.class,
+                 .createContext(new StandaloneComputeServiceContextSpec<VirtualBoxManager, IMachine, IMachine, IMachine, Host>(
+                         "virtualbox", endpoint, apiversion, "", identity, credential, VirtualBoxManager.class,
                          VirtualBoxContextBuilder.class, ImmutableSet.<Module>of()));
 
          context.getComputeService().listNodes();

@@ -19,36 +19,24 @@
 
 package org.jclouds.virtualbox.functions;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-
-import org.eclipse.jetty.server.Server;
-import org.jclouds.collect.FindResourceInSet;
-import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.HardwareBuilder;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Processor;
+import com.google.common.base.Function;
+import org.jclouds.compute.domain.*;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
 
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
@@ -87,42 +75,20 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       nodeMetadataBuilder.hostname(vm.getName());
       nodeMetadataBuilder.loginPort(18083);
 
-      Map<MachineState, NodeState> nodeStateMap = new HashMap<MachineState, NodeState>();
-      nodeStateMap.put(MachineState.Running, NodeState.RUNNING);
-
-      nodeStateMap.put(MachineState.PoweredOff, NodeState.SUSPENDED);
-      nodeStateMap.put(MachineState.DeletingSnapshot, NodeState.PENDING);
-      nodeStateMap.put(MachineState.DeletingSnapshotOnline, NodeState.PENDING);
-      nodeStateMap.put(MachineState.DeletingSnapshotPaused, NodeState.PENDING);
-      nodeStateMap.put(MachineState.FaultTolerantSyncing, NodeState.PENDING);
-      nodeStateMap.put(MachineState.LiveSnapshotting, NodeState.PENDING);
-      nodeStateMap.put(MachineState.SettingUp, NodeState.PENDING);
-      nodeStateMap.put(MachineState.Starting, NodeState.PENDING);
-      nodeStateMap.put(MachineState.Stopping, NodeState.PENDING);
-      nodeStateMap.put(MachineState.Restoring, NodeState.PENDING);
-
-      // TODO What to map these states to?
-      nodeStateMap.put(MachineState.FirstOnline, NodeState.PENDING);
-      nodeStateMap.put(MachineState.FirstTransient, NodeState.PENDING);
-      nodeStateMap.put(MachineState.LastOnline, NodeState.PENDING);
-      nodeStateMap.put(MachineState.LastTransient, NodeState.PENDING);
-      nodeStateMap.put(MachineState.Teleported, NodeState.PENDING);
-      nodeStateMap.put(MachineState.TeleportingIn, NodeState.PENDING);
-      nodeStateMap.put(MachineState.TeleportingPausedVM, NodeState.PENDING);
-
-
-      nodeStateMap.put(MachineState.Aborted, NodeState.ERROR);
-      nodeStateMap.put(MachineState.Stuck, NodeState.ERROR);
-
-      nodeStateMap.put(MachineState.Null, NodeState.UNRECOGNIZED);
 
       MachineState vmState = vm.getState();
-      NodeState nodeState = nodeStateMap.get(vmState);
-      if(nodeState == null)
+      NodeState nodeState = machineToNodeState.get(vmState);
+      if (nodeState == null)
          nodeState = NodeState.UNRECOGNIZED;
       nodeMetadataBuilder.state(nodeState);
 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
+
+      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
+      if (networkAdapter != null) {
+         String bridgedInterface = networkAdapter.getBridgedInterface();
+         System.out.println("Interface: " + bridgedInterface);
+      }
 
 //      nodeMetadataBuilder.imageId("");
 //      nodeMetadataBuilder.group("");

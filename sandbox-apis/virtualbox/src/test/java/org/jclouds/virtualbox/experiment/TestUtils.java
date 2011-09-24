@@ -31,15 +31,36 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.compute.LoadMachineFromVirtualBox;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
 public class TestUtils {
    public static ComputeServiceContext computeServiceForLocalhost() throws IOException {
+
+      String hostId = System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
+      Node host = Node.builder().id(hostId)
+              .name(System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID))
+              .hostname(System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOSTNAME))
+              .osFamily(OsFamily.LINUX.toString())
+              .osDescription(System.getProperty("os.name"))
+              .osVersion(System.getProperty("os.version"))
+              .group("ssh")
+              .username(System.getProperty("user.name"))
+              .credentialUrl(privateKeyFile())
+              .build();
+
+      final Map<String, Node> nodeMap = ImmutableMap.<String, Node>builder().put(hostId, host).build();
+      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
+              new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
+   }
+
+   public static ComputeServiceContext computeServiceForLocalhostAndGuest() throws IOException {
 
       Node host = Node.builder().id("host")
               .name("host installing virtualbox")
@@ -68,7 +89,7 @@ public class TestUtils {
       return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
               new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
    }
-   
+
    private static URI privateKeyFile() {
       try {
          return new URI("file://" + System.getProperty("user.home") + "/.ssh/id_rsa");
@@ -76,5 +97,10 @@ public class TestUtils {
          e.printStackTrace();
       }
       return null;
+   }
+
+   public static ComputeServiceContext computeServiceForVirtualBox(Cache<String, Node> cache) {
+      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
+              new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(cache)));
    }
 }

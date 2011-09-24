@@ -22,12 +22,16 @@
 package org.jclouds.virtualbox.experiment;
 
 import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import org.jclouds.byon.Node;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -37,17 +41,25 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.compute.LoadMachineFromVirtualBox;
+import org.jclouds.virtualbox.functions.IMachineToIpAddress;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.virtualbox_4_1.*;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhost;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForVirtualBox;
 import static org.testng.Assert.assertEquals;
 
 public class VirtualBoxLiveTest2 {
@@ -58,6 +70,8 @@ public class VirtualBoxLiveTest2 {
    protected String credential;
    protected URI endpoint;
    protected String vmName;
+   private String hostId = "host";
+   private String guestId = "guest";
 
    VirtualBoxManager manager = VirtualBoxManager.createInstance("");
 
@@ -78,13 +92,15 @@ public class VirtualBoxLiveTest2 {
    protected int numberOfVirtualMachine;
    protected String originalDisk;
    private String clonedDisk;
-   private ComputeServiceContext context;
+   private ComputeServiceContext virtualBoxComputeService;
 
    private String adminNodeName;
    private Injector injector;
+   private Cache<String, Node> cache;
+   private ComputeServiceContext localhostComputeService;
 
    protected Logger logger() {
-      return context.utils().loggerFactory().getLogger("jclouds.compute");
+      return virtualBoxComputeService.utils().loggerFactory().getLogger("jclouds.compute");
    }
 
    protected void setupCredentials() {
@@ -122,7 +138,7 @@ public class VirtualBoxLiveTest2 {
       numberOfVirtualMachine = Integer.parseInt(checkNotNull(System.getProperty("test." + provider
               + ".numberOfVirtualMachine", "3")));
       injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule())).buildInjector();
+              ImmutableSet.<Module>of(new Log4JLoggingModule(), new SshjSshClientModule())).buildInjector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
    }
@@ -139,7 +155,11 @@ public class VirtualBoxLiveTest2 {
    }
 
    private void runAll() throws IOException, InterruptedException {
-      context = TestUtils.computeServiceForLocalhost();
+      localhostComputeService = computeServiceForLocalhost();
+      IMachineToIpAddress iMachineToIpAddress = new IMachineToIpAddress(manager, localhostComputeService.getComputeService());
+      LoadMachineFromVirtualBox cacheLoader = new LoadMachineFromVirtualBox(manager, iMachineToIpAddress);
+      cache = CacheBuilder.newBuilder().build(cacheLoader);
+      virtualBoxComputeService = computeServiceForVirtualBox(cache);
       socketTester = new RetryablePredicate<IPSocket>(
               new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);
       setupCredentials();
@@ -147,32 +167,29 @@ public class VirtualBoxLiveTest2 {
 
       manager.connect(endpoint.toASCIIString(), identity, credential);
 
-      for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-         createAndLaunchVirtualMachine(i);
+      createAndLaunchVirtualMachine(1);
+
+      String instanceName = vmName + "_1";
+      IMachine machine = manager.getVBox().findMachine(instanceName);
+      logMachineStatus(machine);
+      try {
+         ISession machineSession = manager.openMachineSession(machine);
+         IProgress progress = machineSession.getConsole().powerDown();
+         progress.waitForCompletion(-1);
+         machineSession.unlockMachine();
+         while (!machine.getSessionState().equals(SessionState.Unlocked)) {
+            try {
+               logger().debug("Waiting for unlocking session - session state: " + machine.getSessionState());
+               Thread.sleep(1000);
+            } catch (InterruptedException e) {
+               e.printStackTrace();
+            }
+         }
+         logMachineStatus(machine);
+      } catch (Exception e) {
+         e.printStackTrace();
       }
 
-      for (int i = 1; i < numberOfVirtualMachine + 1; i++) {
-         String instanceName = vmName + "_" + i;
-         IMachine machine = manager.getVBox().findMachine(instanceName);
-         logMachineStatus(machine);
-         try {
-            ISession machineSession = manager.openMachineSession(machine);
-            IProgress progress = machineSession.getConsole().powerDown();
-            progress.waitForCompletion(-1);
-            machineSession.unlockMachine();
-            while (!machine.getSessionState().equals(SessionState.Unlocked)) {
-               try {
-                  logger().debug("Waiting for unlocking session - session state: " + machine.getSessionState());
-                  Thread.sleep(1000);
-               } catch (InterruptedException e) {
-                  e.printStackTrace();
-               }
-            }
-            logMachineStatus(machine);
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
 
    }
 
@@ -184,28 +201,85 @@ public class VirtualBoxLiveTest2 {
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       options.add(CloneOptions.Link);
       IProgress progress = adminNode.getCurrentSnapshot().getMachine().cloneTo(clonedVM, CloneMode.MachineState, options);
+
       if (progress.getCompleted())
          logger().debug("clone done");
 
       manager.getVBox().registerMachine(clonedVM);
 
+      ISession session = manager.getSessionObject();
+      clonedVM.lockMachine(session, LockType.Write);
+      IMachine mutable = session.getMachine();
+      // network
+      String hostInterface = null;
+      String command = "vboxmanage list bridgedifs";
+      try {
+         Process child = Runtime.getRuntime().exec(command);
+         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
+         String line = "";
+         boolean found = false;
+
+         while ((line = bufferedReader.readLine()) != null && !found) {
+            System.out.println("line: " + line);
+            if (line.split(":")[0].contains("Name")) {
+               hostInterface = line.substring(line.indexOf(":") + 1);
+            }
+            if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
+               System.out.println("bridge: " + hostInterface.trim());
+               found = true;
+            }
+         }
+      } catch (IOException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+
+      mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
+      mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
+      mutable.getNetworkAdapter(new Long(0)).setMACAddress("0800279DA478");
+      mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
+      mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
+      mutable.saveSettings();
+      session.unlockMachine();
+
       System.out.println("\nLaunching VM named " + clonedVM.getName() + " ...");
       launchVMProcess(clonedVM, manager.getSessionObject());
-      String ipAddress = null;
-      while (ipAddress == null || ipAddress.equals("")) {
-         try {
-            ipAddress = clonedVM.getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-            Thread.sleep(1000);
-         } catch (InterruptedException e) {
-            e.printStackTrace();
+
+      clonedVM = manager.getVBox().findMachine(instanceName);
+
+
+
+      try {
+         boolean gotIp = false;
+         while (!gotIp) {
+            Node node = cache.get(instanceName);
+            if (node.getHostname() != null) {
+               gotIp = true;
+            }
+            else {
+               cache.invalidate(node);
+               Thread.sleep(1000);
+               System.out.println("waiting for IP: got IP");
+            }
          }
+
+      } catch (ExecutionException e) {
       }
-      logger().debug(ipAddress + " is the IP address of " + clonedVM.getName());
 
-// TODO: This does not work yet.
-//    IPSocket socket = new IPSocket(ipAddress, 22);
-//		checkSSH(socket);
+      logger().debug("Trying echo...");
+      runScriptOnNode(instanceName, "echo ciao");
 
+   }
+
+   protected ExecResponse runScriptOnNode(String nodeId, String command) {
+      return runScriptOnNode(nodeId, command, wrapInInitScript(false));
+   }
+
+   protected ExecResponse runScriptOnNode(String nodeId, String command,
+                                          RunScriptOptions options) {
+      ExecResponse toReturn = virtualBoxComputeService.getComputeService().runScriptOnNode(nodeId, command, options);
+      assert toReturn.getExitCode() == 0 : toReturn;
+      return toReturn;
    }
 
    private void checkSSH(IPSocket socket) {

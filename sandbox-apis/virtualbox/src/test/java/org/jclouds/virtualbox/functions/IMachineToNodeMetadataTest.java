@@ -19,14 +19,37 @@
 
 package org.jclouds.virtualbox.functions;
 
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.domain.Credentials;
+import org.jclouds.virtualbox.VirtualBox;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import java.util.Map;
+import java.util.Set;
+
+//@Test(groups = "live")
 public class IMachineToNodeMetadataTest {
 
    @Test
    public void testCreate() throws Exception {
-      
+
+      Credentials creds = new Credentials("admin", "123456");
+      VirtualBoxManager manager = VirtualBoxManager.createInstance("");
+
+      Map<MachineState, NodeState> machineToNodeState = VirtualBoxComputeServiceContextModule.machineToNodeState;
+      Set<Image> images = ImmutableSet.of();
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
+
+      VirtualBox virtualBox = new VirtualBox();
+      IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
+      IMachineToHardware hwParser = new IMachineToHardware(virtualBox);
+
+//      hwParser.apply()
+
    }
 }

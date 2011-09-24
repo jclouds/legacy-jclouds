@@ -21,41 +21,39 @@
 
 package org.jclouds.virtualbox.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Location;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.domain.Host;
-import org.jclouds.virtualbox.domain.Image;
-import org.jclouds.virtualbox.domain.VMSpec;
 import org.jclouds.virtualbox.functions.HostToLocation;
+import org.jclouds.virtualbox.functions.IMachineToHardware;
+import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
-import org.jclouds.virtualbox.functions.ImageToImage;
-import org.jclouds.virtualbox.functions.VMSpecToHardware;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, VMSpec, Image, Host> {
+public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, IMachine, Host> {
 
    public VirtualBoxComputeServiceContextModule() {
       super(VirtualBoxManager.class, VirtualBoxManager.class);
@@ -73,16 +71,16 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, VMSpec, Image, Host>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, IMachine, Host>>() {
       }).to(VirtualBoxComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
       }).to(IMachineToNodeMetadata.class);
       bind(new TypeLiteral<Function<Host, Location>>() {
       }).to(HostToLocation.class);
-      bind(new TypeLiteral<Function<VMSpec, org.jclouds.compute.domain.Hardware>>() {
-      }).to(VMSpecToHardware.class);
-      bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
-      }).to(ImageToImage.class);
+      bind(new TypeLiteral<Function<IMachine, Hardware>>() {
+      }).to(IMachineToHardware.class);
+      bind(new TypeLiteral<Function<IMachine, Image>>() {
+      }).to(IMachineToImage.class);
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(OnlyLocationOrFirstZone.class);
    }
@@ -91,4 +89,34 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(OsFamily.UBUNTU).os64Bit(false).osVersionMatches("11.04-server");
    }
+
+   @VisibleForTesting
+   public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
+           .<MachineState, NodeState>builder()
+           .put(MachineState.Running, NodeState.RUNNING)
+           .put(MachineState.PoweredOff, NodeState.SUSPENDED)
+           .put(MachineState.DeletingSnapshot, NodeState.PENDING)
+           .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
+           .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
+           .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
+           .put(MachineState.LiveSnapshotting, NodeState.PENDING)
+           .put(MachineState.SettingUp, NodeState.PENDING)
+           .put(MachineState.Starting, NodeState.PENDING)
+           .put(MachineState.Stopping, NodeState.PENDING)
+           .put(MachineState.Restoring, NodeState.PENDING)
+                   // TODO What to map these states to?
+           .put(MachineState.FirstOnline, NodeState.PENDING)
+           .put(MachineState.FirstTransient, NodeState.PENDING)
+           .put(MachineState.LastOnline, NodeState.PENDING)
+           .put(MachineState.LastTransient, NodeState.PENDING)
+           .put(MachineState.Teleported, NodeState.PENDING)
+           .put(MachineState.TeleportingIn, NodeState.PENDING)
+           .put(MachineState.TeleportingPausedVM, NodeState.PENDING)
+
+
+           .put(MachineState.Aborted, NodeState.ERROR)
+           .put(MachineState.Stuck, NodeState.ERROR)
+
+           .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
+
 }

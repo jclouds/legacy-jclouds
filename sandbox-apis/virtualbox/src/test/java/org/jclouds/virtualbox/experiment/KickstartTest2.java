@@ -177,8 +177,10 @@ public class KickstartTest2 {
       context = TestUtils.computeServiceForLocalhost();
       socketTester = new RetryablePredicate<IPSocket>(
               new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);
+
       setupCredentials();
       setupConfigurationProperties();
+
       downloadFileUnlessPresent(distroIsoUrl, workingDir, distroIsoName);
       downloadFileUnlessPresent(gaIsoUrl, workingDir, gaIsoName);
 
@@ -189,7 +191,7 @@ public class KickstartTest2 {
       manager.connect(endpoint.toASCIIString(), identity, credential);
 
       // Create machine
-      IMachine newVM = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
+      IMachine newVM = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, "host", forceOverwrite);
       manager.getVBox().registerMachine(newVM);
 
       // Change RAM
@@ -301,13 +303,11 @@ public class KickstartTest2 {
       // Configure guest additions
       // TODO generalize
       if (isUbuntu(guestId)) {
-         runScriptOnNode(guestId, "m-a prepare -i", wrapInInitScript(true));
-         runScriptOnNode(guestId, "mount -o loop /dev/dvd /media/cdrom");
-         runScriptOnNode(guestId, "sh /media/cdrom/VBoxLinuxAdditions.run");
-         runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
-         runScriptOnNode(guestId, "mkdir /etc/udev/rules.d/70-persistent-net.rules");
-         runScriptOnNode(guestId, "rm -rf /dev/.udev/");
-         runScriptOnNode(guestId, "rm /lib/udev/rules.d/75-persistent-net-generator.rules");
+			runScriptOnNode(guestId, "rm /etc/udev/rules.d/70-persistent-net.rules");
+			runScriptOnNode(guestId, "mkdir /etc/udev/rules.d/70-persistent-net.rules");
+			runScriptOnNode(guestId, "rm -rf /dev/.udev/");
+			runScriptOnNode(guestId, "rm /lib/udev/rules.d/75-persistent-net-generator.rules");
+			runScriptOnNode(guestId, "echo 0 | tee /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts");
       }
 
       logMachineStatus(machine);
@@ -336,6 +336,7 @@ public class KickstartTest2 {
 
       logMachineStatus(machine);
       logger().debug("Changing to bridged networking...");
+
       session = manager.getSessionObject();
 		IMachine adminNode = manager.getVBox().findMachine(vmName);
 		adminNode.lockMachine(session, LockType.Write);

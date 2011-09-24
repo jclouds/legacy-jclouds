@@ -21,5 +21,17 @@
 
 package org.jclouds.virtualbox;
 
+import org.virtualbox_4_1.VirtualBoxManager;
+
 public class VirtualBox {
+
+   private VirtualBoxManager manager;
+
+   public VirtualBox() {
+      this.manager = VirtualBoxManager.createInstance("");
+   }
+
+   public VirtualBoxManager manager() {
+      return manager;
+   }
 }

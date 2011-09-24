@@ -33,5 +33,21 @@ public interface VirtualBoxConstants {
 
    public static final String VIRTUALBOX_SNAPSHOT_DESCRIPTION = "jclouds.virtualbox.snapshotDescription";
 
+   public static final String VIRTUALBOX_INSTALLATION_KEY_SEQUENCE = "jclouds.virtualbox.installationkeysequence";
+   
+   public static final String VIRTUALBOX_HOSTNAME = "jclouds.virtualbox.hostname";
+   
+   public static final String VIRTUALBOX_WORKINGDIR = "jclouds.virtualbox.workingdir";
+   
+   public static final String VIRTUALBOX_ISOFILE = "jclouds.virtualbox.isofile";
 
+   public static final String VIRTUALBOX_MACHINE_GROUP = "jclouds.virtualbox.machinegroup";
+
+   public static final String VIRTUALBOX_MACHINE_USERNAME = "jclouds.virtualbox.username";
+
+   public static final String VIRTUALBOX_MACHINE_CREDENTIAL = "jclouds.virtualbox.credential";
+
+   public static final String VIRTUALBOX_MACHINE_LOCATION = "jclouds.virtualbox.location";
+
+   public static final String VIRTUALBOX_HOST_ID = "jclouds.virtualbox.hostid";
 }

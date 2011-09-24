@@ -21,28 +21,19 @@
 
 package org.jclouds.virtualbox.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Collections;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.virtualbox.domain.Host;
-import org.jclouds.virtualbox.domain.Image;
-import org.jclouds.virtualbox.domain.VMSpec;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
-import com.google.common.base.Throwables;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation and the jclouds
@@ -51,7 +42,7 @@ import com.google.inject.Singleton;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @Singleton
-public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, VMSpec, Image, Host> {
+public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, IMachine, Host> {
 
 	private final VirtualBoxManager manager;
 
@@ -71,12 +62,12 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 	}
 	
 	@Override
-	public Iterable<VMSpec> listHardwareProfiles() {
+	public Iterable<IMachine> listHardwareProfiles() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Iterable<Image> listImages() {
+	public Iterable<IMachine> listImages() {
 		return Collections.emptyList();
 	}
 

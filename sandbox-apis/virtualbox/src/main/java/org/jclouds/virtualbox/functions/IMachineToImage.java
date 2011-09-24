@@ -19,7 +19,21 @@
  *
  */
 
-package org.jclouds.virtualbox.domain;
+package org.jclouds.virtualbox.functions;
 
-public class VMSpec {
+import com.google.common.base.Function;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.javax.annotation.Nullable;
+import org.virtualbox_4_1.IMachine;
+
+
+public class IMachineToImage implements Function<IMachine, Image> {
+
+   @Override
+   public Image apply(@Nullable IMachine vm) {
+      ImageBuilder imageBuilder = new ImageBuilder();
+      imageBuilder.ids(vm.getId());
+      return null;
+   }
 }

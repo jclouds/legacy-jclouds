@@ -24,6 +24,7 @@ package org.jclouds.virtualbox;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
+import java.io.File;
 import java.util.Properties;
 
 import static org.jclouds.Constants.*;
@@ -51,6 +52,22 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_ENDPOINT, "http://localhost:18083/");
       properties.put(VirtualBoxConstants.VIRTUALBOX_PRESEED_URL, "http://dl.dropbox.com/u/693111/preseed.cfg");
       properties.put(VirtualBoxConstants.VIRTUALBOX_SNAPSHOT_DESCRIPTION, "jclouds-virtualbox-snaphot");
+      properties.put(VirtualBoxConstants.VIRTUALBOX_HOSTNAME, "jclouds-virtualbox-kickstart-admin");
+      properties.put(VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
+              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
+              + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
+              + "hostname="
+              + properties.get(VirtualBoxConstants.VIRTUALBOX_HOSTNAME)
+              + " "
+              + "fb=false debconf/frontend=noninteractive "
+              + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
+              + "initrd=/install/initrd.gz -- <Enter>");
+
+      properties.put(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR, System.getProperty("user.home")
+              + File.separator
+              + System.getProperty("test.virtualbox.workingDir",
+              "jclouds-virtualbox-test"));
+      
       // TODO: Add more properties and use the wired properties from test code.
       return properties;
    }
