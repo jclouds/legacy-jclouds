@@ -56,16 +56,14 @@ public class CacheLearningTest {
       });
       try {
          cache.get("foo");
+         assert false : "expected exception on miss";
       } catch (NullPointerException e) {
          assertEquals(e.getMessage(), "testLoader returned null for key foo.");
       }
-      
-      try {
-         assertEquals(cache.activeEntries(Integer.MAX_VALUE).size(), 1);
-         assert false : "I suppose this works now! Go hunt asMap().keySet()!";
-      } catch (UnsupportedOperationException e) {
-      }
-      
+
+      assertEquals(cache.asMap().keySet().size(), 0);
+      assertEquals(cache.asMap().size(), 0);
+
       try {
          cache.asMap().put("foo", "bar");
          assertEquals(cache.get("foo"), "bar");
@@ -75,19 +73,25 @@ public class CacheLearningTest {
 
       try {
          cache.get("exception");
+         assert false : "expected checked exception in loader to rethrow as ExecutionException";
       } catch (ExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.Exception: exception");
       }
+
       try {
          cache.get("runtimeexception");
+         assert false : "expected unchecked exception in loader to rethrow as UncheckedExecutionException";
       } catch (UncheckedExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.RuntimeException: runtimeexception");
       }
+
       try {
          cache.getUnchecked("exception");
+         assert false : "expected checked exception in loader to rethrow as UncheckedExecutionException, when getUnchecked called";
       } catch (UncheckedExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.Exception: exception");
       }
+
       assertEquals(cache.get("bar"), "bar");
       assertEquals(cache.get("baz"), "baz");
       assertEquals(cache.asMap().size(), 2);
