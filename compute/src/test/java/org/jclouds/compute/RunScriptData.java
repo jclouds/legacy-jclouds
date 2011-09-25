@@ -73,7 +73,7 @@ public class RunScriptData {
                         installJavaAndCurl(os),//
                         authorizePortsInIpTables(22, 8080),//
                         extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",//
-                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.0.Final/jboss-as-web-7.0.0.Final.tar.gz")), "/usr/local"),//
+                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz")), "/usr/local"),//
                         exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
                         exec("chmod -R oug+r+w " + jbossHome),
