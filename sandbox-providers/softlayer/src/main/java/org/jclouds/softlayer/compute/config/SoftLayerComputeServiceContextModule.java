@@ -18,8 +18,9 @@
  */
 package org.jclouds.softlayer.compute.config;
 
-import java.util.Set;
-
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.TypeLiteral;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -28,17 +29,16 @@ import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
-import org.jclouds.softlayer.compute.functions.ProductItemPriceToImage;
 import org.jclouds.softlayer.compute.functions.ProductItemPricesToHardware;
+import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.TypeLiteral;
+import java.util.Set;
 
 /**
  * 
@@ -54,17 +54,17 @@ public class SoftLayerComputeServiceContextModule extends
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItemPrice>, ProductItemPrice, Datacenter>>() {
-      }).to(SoftLayerComputeServiceAdapter.class);
-      bind(new TypeLiteral<Function<VirtualGuest, NodeMetadata>>() {
-      }).to(VirtualGuestToNodeMetadata.class);
-      bind(new TypeLiteral<Function<ProductItemPrice, org.jclouds.compute.domain.Image>>() {
-      }).to(ProductItemPriceToImage.class);
-      bind(new TypeLiteral<Function<Set<ProductItemPrice>, org.jclouds.compute.domain.Hardware>>() {
-      }).to(ProductItemPricesToHardware.class);
-      bind(new TypeLiteral<Function<Datacenter, Location>>() {
-      }).to(DatacenterToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
+      bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItemPrice>, ProductItemPrice, Datacenter>>() {})
+            .to(SoftLayerComputeServiceAdapter.class);
+      bind(new TypeLiteral<Function<VirtualGuest, NodeMetadata>>() {})
+            .to(VirtualGuestToNodeMetadata.class);
+      bind(new TypeLiteral<Function<ProductItem, org.jclouds.compute.domain.Image>>() {})
+            .to(ProductItemToImage.class);
+      bind(new TypeLiteral<Function<Set<ProductItemPrice>, org.jclouds.compute.domain.Hardware>>() {})
+            .to(ProductItemPricesToHardware.class);
+      bind(new TypeLiteral<Function<Datacenter, Location>>() {})
+            .to(DatacenterToLocation.class);
+      bind(new TypeLiteral<Supplier<Location>>() {})
+            .to(OnlyLocationOrFirstZone.class);
    }
 }
