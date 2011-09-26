@@ -48,7 +48,6 @@
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
         <module>cloudloadbalancers-us</module>
-        <module>bluelock-vcloud-vcenterprise</module>
         <module>bluelock-vcloud-zone01</module>
         <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>

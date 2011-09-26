@@ -16,7 +16,7 @@ check out our examples site! https://github.com/jclouds/jclouds-examples
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
-                          cloudsigma-zrh, elasticstack(generic), bluelock-vcloud-vcenterprise,
+                          cloudsigma-zrh, elasticstack(generic), 
                           bluelock-vcloud-zone01, stratogen-vcloud-mycloud, rimuhosting,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
