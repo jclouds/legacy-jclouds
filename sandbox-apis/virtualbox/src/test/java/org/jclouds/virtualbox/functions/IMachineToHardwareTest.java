@@ -21,18 +21,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import org.jclouds.compute.domain.Hardware;
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VirtualBoxManager;
-
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
+
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.predicates.ImagePredicates;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.IGuestOSType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 @Test(groups = "unit")
 public class IMachineToHardwareTest {
@@ -46,14 +47,14 @@ public class IMachineToHardwareTest {
 
       String linuxDescription = "Ubuntu Linux 10.04";
       String machineId = "hw-machineId";
-      
+
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
       expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
 
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
       expect(vbm.getVBox()).andReturn(vBox);
       expect(guestOsType.getIs64Bit()).andReturn(true);
-      expect(vm.getId()).andReturn(machineId);
+      expect(vm.getId()).andReturn(machineId).atLeastOnce();
 
       replay(vbm, vBox, vm, guestOsType);
 
@@ -61,7 +62,10 @@ public class IMachineToHardwareTest {
 
       assertEquals(hardware.getId(), machineId);
       assertEquals(hardware.getProviderId(), machineId);
-   }
+      // for starters assume 1-to-1 relationship hardware to image (which
+      // correlate to a single source IMachine)
+      assertEquals(hardware.supportsImage().toString(), ImagePredicates.idEquals(machineId).toString());
 
+   }
 
 }
