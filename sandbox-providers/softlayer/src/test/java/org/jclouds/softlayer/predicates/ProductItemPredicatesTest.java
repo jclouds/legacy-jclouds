@@ -38,6 +38,7 @@ public class ProductItemPredicatesTest {
       ramCategory = ProductItemCategory.builder().id(1).categoryCode("ram").build();
 
       item = ProductItem.builder().id(1)
+                                  .description("a test item")
                                   .categories(ImmutableSet.of(ramCategory))
                                   .capacity(2.0f)
                                   .units("GB")
@@ -87,5 +88,15 @@ public class ProductItemPredicatesTest {
     @Test
     public void testUnitsMissing() {
         assertFalse(ProductItemPredicates.units("Kg").apply(item));
+    }
+
+    @Test
+    public void testMatchesRegex() {
+        assert ProductItemPredicates.matches(".*test.*").apply(item);
+    }
+
+    @Test
+    public void testNoMatchRegex() {
+        assertFalse(ProductItemPredicates.matches("no match").apply(item));
     }
 }

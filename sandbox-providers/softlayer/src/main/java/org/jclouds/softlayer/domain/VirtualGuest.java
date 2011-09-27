@@ -205,14 +205,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    }
 
    /**
-    * TBD: These states come from the powerState field. i.e.
+    * These states come from the powerState field. i.e.
     * https://api.softlayer.com/rest/v3/SoftLayer_Account/getVirtualGuests/{id}?objectMask=powerState
     */
    public static enum State {
-      //ACTIVE, // Get this from https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/{id}/getStatus
+      HALTED,
       PAUSED,
       RUNNING,
-      HALTED,
       UNRECOGNIZED;
 
       @Override
