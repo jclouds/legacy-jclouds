@@ -1,9 +1,11 @@
 package org.jclouds.softlayer.compute.functions;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -75,7 +77,10 @@ public class ProductItemToImageTest {
    public void testConversion() {
       for( String description : operatingSystems )
       {
-         ProductItem item = ProductItem.builder().description(description).build();
+         ProductItem item = ProductItem.builder()
+                                       .description(description)
+                                       .price(ProductItemPrice.builder().id(1234).build())
+                                       .build();
          Image i = new ProductItemToImage().apply(item);
          OperatingSystem os = i.getOperatingSystem();
          assertNotNull(os);
@@ -83,6 +88,41 @@ public class ProductItemToImageTest {
          assertFalse(os.getFamily().equals(OsFamily.UNRECOGNIZED));
          assertNotNull(os.getVersion());
       }
+   }
+
+   @Test
+   public void testUbuntu() {
+         ProductItem item = ProductItem.builder()
+                                       .description("Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install (64 bit)")
+                                       .price(ProductItemPrice.builder().id(1234).build())
+                                       .build();
+         Image i = new ProductItemToImage().apply(item);
+         OperatingSystem os = i.getOperatingSystem();
+         assertNotNull(os);
+         assertEquals(OsFamily.UBUNTU, os.getFamily());
+         assertEquals("10.04",os.getVersion());
+         assertTrue(os.is64Bit());
+   }
+
+   @Test
+   public void testId() {
+      ProductItemPrice price = ProductItemPrice.builder().id(1234).build();
+      ProductItem item = ProductItem.builder().price(price).build();
+      assertEquals("1234",imageId().apply(item));
+   }
+
+   @Test
+   public void testIdManyPrices() {
+      ProductItemPrice price1 = ProductItemPrice.builder().id(1234).build();
+      ProductItemPrice price2 = ProductItemPrice.builder().id(5678).build();
+      ProductItem item = ProductItem.builder().prices(ImmutableSet.of(price1,price2)).build();
+      assertEquals("1234",imageId().apply(item));
+   }
+
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testIdMissingPrices() {
+      ProductItem item = ProductItem.builder().build();
+      imageId().apply(item);
    }
 
    @Test
@@ -123,7 +163,7 @@ public class ProductItemToImageTest {
 
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testOsVersionMissing() {
-      ProductItem item = ProductItem.builder().description("asd Server ").build();
+      ProductItem item = ProductItem.builder().description("asd Server").build();
       osVersion().apply(item);
    }
 }

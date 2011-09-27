@@ -18,29 +18,27 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.domain.Datacenter;
-import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductPackage;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.predicates.ProductPackagePredicates;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and the jclouds
@@ -49,7 +47,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class SoftLayerComputeServiceAdapter implements
-         ComputeServiceAdapter<VirtualGuest, Set<ProductItemPrice>, ProductItemPrice, Datacenter> {
+         ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter> {
    private final SoftLayerClient client;
    private final String virtualGuestPackageName;
 
@@ -76,13 +74,13 @@ public class SoftLayerComputeServiceAdapter implements
    }
 
    @Override
-   public Iterable<Set<ProductItemPrice>> listHardwareProfiles() {
+   public Iterable<Set<ProductItem>> listHardwareProfiles() {
       // TODO: get the set of product item prices corresponding to the hardware profiles
       return ImmutableSet.of();
    }
 
    @Override
-   public Iterable<ProductItemPrice> listImages() {
+   public Iterable<ProductItem> listImages() {
       // TODO: get the list of product item prices corresponding to images
       return ImmutableSet.of();
    }

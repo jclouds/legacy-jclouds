@@ -29,7 +29,7 @@ import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
-import org.jclouds.softlayer.compute.functions.ProductItemPricesToHardware;
+import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
@@ -45,7 +45,7 @@ import java.util.Set;
  * @author Adrian Cole
  */
 public class SoftLayerComputeServiceContextModule extends
-      ComputeServiceAdapterContextModule<SoftLayerClient, SoftLayerAsyncClient, VirtualGuest, Set<ProductItemPrice>, ProductItemPrice, Datacenter> {
+      ComputeServiceAdapterContextModule<SoftLayerClient, SoftLayerAsyncClient, VirtualGuest, Set<ProductItem>, ProductItem, Datacenter> {
 
    public SoftLayerComputeServiceContextModule() {
       super(SoftLayerClient.class, SoftLayerAsyncClient.class);
@@ -54,14 +54,14 @@ public class SoftLayerComputeServiceContextModule extends
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItemPrice>, ProductItemPrice, Datacenter>>() {})
+      bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter>>() {})
             .to(SoftLayerComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<VirtualGuest, NodeMetadata>>() {})
             .to(VirtualGuestToNodeMetadata.class);
       bind(new TypeLiteral<Function<ProductItem, org.jclouds.compute.domain.Image>>() {})
             .to(ProductItemToImage.class);
-      bind(new TypeLiteral<Function<Set<ProductItemPrice>, org.jclouds.compute.domain.Hardware>>() {})
-            .to(ProductItemPricesToHardware.class);
+      bind(new TypeLiteral<Function<Set<ProductItem>, org.jclouds.compute.domain.Hardware>>() {})
+            .to(ProductItemsToHardware.class);
       bind(new TypeLiteral<Function<Datacenter, Location>>() {})
             .to(DatacenterToLocation.class);
       bind(new TypeLiteral<Supplier<Location>>() {})

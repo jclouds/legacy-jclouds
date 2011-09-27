@@ -18,10 +18,7 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -29,12 +26,16 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
 
-import com.google.common.base.Function;
-
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Jason King
@@ -57,21 +58,21 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
    protected Logger logger = Logger.NULL;
 
    @Override
-   public Image apply(ProductItem from) {
+   public Image apply(ProductItem productItem) {
+      checkNotNull(productItem,"productItem");
 
-      //Somehow this method gets called with the correct product item.
-      OsFamily family = osFamily().apply(from);
-      Integer bits = osBits().apply(from);
+      OsFamily family = osFamily().apply(productItem);
+      Integer bits = osBits().apply(productItem);
       OperatingSystem os = OperatingSystem.builder()
-                              .description(from.getDescription())
+                              .description(productItem.getDescription())
                               .family(family)
-                              .version(osVersion().apply(from))
+                              .version(osVersion().apply(productItem))
                               .is64Bit(bits.equals(64))
                               .build();
 
       return new ImageBuilder()
-            .id("" + from.getId())
-            .description(from.getDescription())
+            .id(imageId().apply(productItem))
+            .description(productItem.getDescription())
             .operatingSystem(os)
             .build();
    }
@@ -84,13 +85,15 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
        return new Function<ProductItem,OsFamily>() {
             @Override
             public OsFamily apply(ProductItem productItem) {
+               checkNotNull(productItem,"productItem");
+
                final String description = productItem.getDescription();
-               if ( description.startsWith(CENTOS)) return OsFamily.CENTOS;
-               else if( description.startsWith(DEBIAN) ) return OsFamily.DEBIAN;
-               else if( description.startsWith(FEDORA) ) return OsFamily.FEDORA;
-               else if( description.startsWith(RHEL) ) return OsFamily.RHEL;
-               else if( description.startsWith(UBUNTU) ) return OsFamily.UBUNTU;
-               else if( description.startsWith(WINDOWS) ) return OsFamily.WINDOWS;
+               if(description.startsWith(CENTOS)) return OsFamily.CENTOS;
+               else if(description.startsWith(DEBIAN)) return OsFamily.DEBIAN;
+               else if(description.startsWith(FEDORA)) return OsFamily.FEDORA;
+               else if(description.startsWith(RHEL)) return OsFamily.RHEL;
+               else if(description.startsWith(UBUNTU)) return OsFamily.UBUNTU;
+               else if(description.startsWith(WINDOWS)) return OsFamily.WINDOWS;
                return OsFamily.UNRECOGNIZED;
             }
         };
@@ -105,6 +108,8 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
        return new Function<ProductItem,String>() {
             @Override
             public String apply(ProductItem productItem) {
+               checkNotNull(productItem,"productItem");
+
                final String description = productItem.getDescription();
                OsFamily family = osFamily().apply(productItem);
                if (family.equals(OsFamily.CENTOS)) return parseVersion(description, CENTOS);
@@ -113,7 +118,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
                else if(family.equals(OsFamily.RHEL)) return parseVersion(description, RHEL);
                else if(family.equals(OsFamily.UBUNTU)) return parseVersion(description, UBUNTU);
                else if(family.equals(OsFamily.WINDOWS)) return parseVersion(description, WINDOWS);
-               else throw new NoSuchElementException("No os parseVersion for item:"+productItem);
+               else throw new NoSuchElementException("No os version for item:"+productItem);
             }
         };
     }
@@ -134,6 +139,8 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
        return new Function<ProductItem,Integer>() {
             @Override
             public Integer apply(ProductItem productItem) {
+               checkNotNull(productItem,"productItem");
+
                Matcher m = OS_BITS_PATTERN.matcher(productItem.getDescription());
                if (m.matches()) {
                   return Integer.parseInt(m.group(1));
@@ -141,7 +148,22 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
                   throw new NoSuchElementException("Cannot determine os-bits for item:"+productItem);
                }
             }
-        };
+       };
     }
+
+  /**
+   * Generates an id for an Image.
+   * @return the generated id
+   */
+   public static Function<ProductItem,String> imageId() {
+      return new Function<ProductItem,String>() {
+         @Override
+         public String apply(ProductItem productItem) {
+            checkNotNull(productItem,"productItem");
+            ProductItemPrice price = ProductItems.price().apply(productItem);
+            return ""+price.getId();
+         }
+      };
+   }
 
 }
