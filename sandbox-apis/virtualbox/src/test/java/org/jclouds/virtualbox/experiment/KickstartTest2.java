@@ -174,7 +174,7 @@ public class KickstartTest2 {
    }
 
    private void runAll() throws Exception {
-      context = TestUtils.computeServiceForLocalhost();
+      context = TestUtils.computeServiceForLocalhostAndGuest();
       socketTester = new RetryablePredicate<IPSocket>(
               new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);
 

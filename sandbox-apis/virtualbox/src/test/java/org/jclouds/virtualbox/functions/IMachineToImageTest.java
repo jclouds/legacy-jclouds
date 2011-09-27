@@ -31,8 +31,6 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.NoSuchElementException;
-
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createNiceMock;
@@ -50,13 +48,13 @@ public class IMachineToImageTest {
       IVirtualBox vBox= createNiceMock(IVirtualBox.class);
       IMachine vm = createNiceMock(IMachine.class);
       IGuestOSType guestOsType = createNiceMock(IGuestOSType.class);
-
+      String linuxDescription = "Ubuntu 10.04";
       expect(vbm.getVBox()).andReturn(vBox).anyTimes();
-      String linuxDescription = "Ubuntu Linux 10.04";
 
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
-      expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
+      expect(vm.getDescription()).andReturn("my-ubuntu-machine").anyTimes();
+      expect(guestOsType.getDescription()).andReturn(linuxDescription).anyTimes();
       expect(guestOsType.getIs64Bit()).andReturn(true);
 
       replay(vbm, vBox, vm, guestOsType);
@@ -65,7 +63,7 @@ public class IMachineToImageTest {
 
       Image image = fn.apply(vm);
 
-      assertEquals(image.getDescription(), linuxDescription);
+      assertEquals(image.getDescription(), "my-ubuntu-machine");
       assertEquals(image.getOperatingSystem().getDescription(), linuxDescription);
       assertTrue(image.getOperatingSystem().is64Bit());
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
@@ -75,22 +73,15 @@ public class IMachineToImageTest {
 
    @Test
    public void testOsVersion() throws Exception {
-      VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
-      IVirtualBox vBox= createNiceMock(IVirtualBox.class);
-      IMachine vm = createNiceMock(IMachine.class);
 
-      expect(vbm.getVBox()).andReturn(vBox).anyTimes();
+      String osDescription = "Ubuntu 10.04";
 
-      expect(vm.getDescription()).andReturn("Ubuntu Linux 10.04").anyTimes();
-
-      replay(vm);
-
-      Function<IMachine, String> iMachineStringFunction = IMachineToImage.osVersion();
-      assertEquals("10.04", iMachineStringFunction.apply(vm));
+      Function<String, String> iMachineStringFunction = IMachineToImage.osVersion();
+      assertEquals("10.04", iMachineStringFunction.apply(osDescription));
 
    }
 
-   @Test(expectedExceptions = NoSuchElementException.class)
+   @Test
    public void testUnparseableOsString() throws Exception {
       
       VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
@@ -100,16 +91,20 @@ public class IMachineToImageTest {
 
       expect(vbm.getVBox()).andReturn(vBox).anyTimes();
 
-      String linuxDescription = "SomeOtherOs 2.04";
+      String unknownOsDescription = "SomeOtherOs 2.04";
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
-      expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
-
-      expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
+      expect(vm.getDescription()).andReturn("my-unknown-machine").anyTimes();
+      expect(guestOsType.getDescription()).andReturn(unknownOsDescription).anyTimes();
       expect(guestOsType.getIs64Bit()).andReturn(true);
+      expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
 
       replay(vbm, vBox, vm, guestOsType);
 
-      new IMachineToImage(vbm).apply(vm);
+      Image image = new IMachineToImage(vbm).apply(vm);
+
+      assertEquals(image.getOperatingSystem().getDescription(), "SomeOtherOs 2.04");
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+
    }
 
 

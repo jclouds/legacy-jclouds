@@ -68,7 +68,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
 	@Override
 	public Iterable<IMachine> listImages() {
-		return Collections.emptyList();
+		return manager.getVBox().getMachines();
 	}
 
 	@Override
