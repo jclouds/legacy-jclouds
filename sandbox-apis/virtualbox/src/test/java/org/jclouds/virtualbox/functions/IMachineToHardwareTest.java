@@ -1,0 +1,67 @@
+/*
+ * *
+ *  * Licensed to jclouds, Inc. (jclouds) under one or more
+ *  * contributor license agreements.  See the NOTICE file
+ *  * distributed with this work for additional information
+ *  * regarding copyright ownership.  jclouds licenses this file
+ *  * to you under the Apache License, Version 2.0 (the
+ *  * "License"); you may not use this file except in compliance
+ *  * with the License.  You may obtain a copy of the License at
+ *  *
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing,
+ *  * software distributed under the License is distributed on an
+ *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  * KIND, either express or implied.  See the License for the
+ *  * specific language governing permissions and limitations
+ *  * under the License.
+ *
+ */
+
+package org.jclouds.virtualbox.functions;
+
+import org.jclouds.compute.domain.Hardware;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.IGuestOSType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
+
+@Test(groups = "unit")
+public class IMachineToHardwareTest {
+
+   @Test
+   public void testConvert() throws Exception {
+      VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
+      IVirtualBox vBox = createNiceMock(IVirtualBox.class);
+      IMachine vm = createNiceMock(IMachine.class);
+      IGuestOSType guestOsType = createNiceMock(IGuestOSType.class);
+
+      String linuxDescription = "Ubuntu Linux 10.04";
+      String machineId = "hw-machineId";
+      
+      expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
+      expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
+
+      expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
+      expect(vbm.getVBox()).andReturn(vBox);
+      expect(guestOsType.getIs64Bit()).andReturn(true);
+      expect(vm.getId()).andReturn(machineId);
+
+      replay(vbm, vBox, vm, guestOsType);
+
+      Hardware hardware = new IMachineToHardware(vbm).apply(vm);
+
+      assertEquals(hardware.getId(), machineId);
+      assertEquals(hardware.getProviderId(), machineId);
+   }
+
+
+}
