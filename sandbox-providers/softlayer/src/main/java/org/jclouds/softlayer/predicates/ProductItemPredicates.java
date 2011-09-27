@@ -22,6 +22,8 @@ import com.google.common.base.Predicate;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 
+import java.util.regex.Pattern;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ProductItemPredicates {
@@ -73,9 +75,8 @@ public class ProductItemPredicates {
         };
     }
 
-    /**
+   /**
     * Tests if the ProductItem has the required units.
-     * TODO Write test method
     * @param units
     * @return true if it does, otherwise false.
     */
@@ -91,6 +92,30 @@ public class ProductItemPredicates {
             @Override
             public String toString() {
                 return "units("+units+")";
+            }
+        };
+    }
+
+   /**
+    * Tests if the ProductItem's description matches the supplied regular expression.
+    * @param regex a regular expression to match against.
+    * @return true if it does, otherwise false.
+    * @throws java.util.regex.PatternSyntaxException if the regex is invalid
+    */
+    public static Predicate<ProductItem> matches(final String regex) {
+        checkNotNull(regex, "regex cannot be null");
+        final Pattern PATTERN = Pattern.compile(regex);
+
+        return new Predicate<ProductItem>() {
+            @Override
+            public boolean apply(ProductItem productItem) {
+                checkNotNull(productItem, "productItem cannot ne null");
+                return PATTERN.matcher(productItem.getDescription()).matches();
+            }
+
+            @Override
+            public String toString() {
+                return "regex("+regex+")";
             }
         };
     }

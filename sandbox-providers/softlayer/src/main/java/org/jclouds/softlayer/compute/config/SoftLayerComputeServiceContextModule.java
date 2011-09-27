@@ -20,22 +20,24 @@ package org.jclouds.softlayer.compute.config;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
-import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
+import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
-import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
 import java.util.Set;
@@ -66,5 +68,13 @@ public class SoftLayerComputeServiceContextModule extends
             .to(DatacenterToLocation.class);
       bind(new TypeLiteral<Supplier<Location>>() {})
             .to(OnlyLocationOrFirstZone.class);
+   }
+
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+     return template.osFamily(OsFamily.UBUNTU)
+                    .osVersionMatches("1[10].[10][04]")
+                    .os64Bit(true)
+                    .osDescriptionMatches(".*Minimal Install.*")
+                    .minCores(2);
    }
 }

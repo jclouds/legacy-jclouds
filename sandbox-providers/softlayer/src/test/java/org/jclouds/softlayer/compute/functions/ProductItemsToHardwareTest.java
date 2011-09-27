@@ -29,9 +29,7 @@ import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.bootVolume;
 import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.hardwareId;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -51,21 +49,6 @@ public class ProductItemsToHardwareTest {
 
       String id = hardwareId().apply(ImmutableList.of(item1, item2, item3));
       assertEquals("123,456,789",id);
-   }
-
-   @Test
-   public void testBootVolume() {
-      ProductItem item1 = ProductItem.builder().id(1).description("Not a SAN").build();
-      ProductItem item2 = ProductItem.builder().id(2).description("100 GB (SAN)").build();
-
-      ProductItem found = bootVolume().apply(ImmutableSet.of(item1,item2));
-      assertEquals(item2,found);
-   }
-
-   @Test(expectedExceptions = NoSuchElementException.class)
-   public void testBootVolumeMissing() {
-      ProductItem item1 = ProductItem.builder().id(1).description("Not a SAN").build();
-      bootVolume().apply(ImmutableSet.of(item1));
    }
 
    @Test
