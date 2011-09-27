@@ -25,10 +25,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class Go2CloudJohannesburg1ClientLiveTest extends ElasticStackClientLiveTest {
    public Go2CloudJohannesburg1ClientLiveTest() {
       provider = "go2cloud-jhb1";
-      bootDrive = "5192adbd-046f-4a48-90f9-3db390b1efab";
+      bootDrive = "14c88d27-1f5e-4ad5-9f3a-28e5d2282f61";
    }
 }

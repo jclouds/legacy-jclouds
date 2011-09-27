@@ -18,7 +18,7 @@
  */
 package org.jclouds.go2cloud.config;
 
-import static org.jclouds.compute.domain.OsFamily.DEBIAN;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
@@ -33,6 +33,6 @@ public class Go2CloudJohannesburg1ComputeServiceContextModule extends ElasticSta
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(DEBIAN).osVersionMatches("6.0").os64Bit(true);
+      return template.osFamily(UBUNTU).osVersionMatches("10.10").os64Bit(true);
    }
 }
