@@ -44,6 +44,8 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
+   public static final String MARKER = "RUN_SCRIPT_AS_ROOT_SSH";
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -102,9 +104,9 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    public String execAsRoot(String command) {
       if (node.getCredentials().identity.equals("root")) {
       } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S %s", node.getAdminPassword(), command);
+          command = String.format("sudo -S sh <<'%s'%n%s%n%s%n%s%n", MARKER, node.getAdminPassword(), command, MARKER);
       } else {
-         command = "sudo " + command;
+          command = String.format("sudo sh <<'%s'%n%s%n%s%n", MARKER, command, MARKER);
       }
       return command;
    }
