@@ -84,6 +84,6 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-IL", "US-TX", "US-MO");
+      return ImmutableSet.<String> of("SG","US-CA","US-TX","US-VA","US-WA","US-TX");
    }
 }
