@@ -21,19 +21,27 @@
 
 package org.jclouds.virtualbox.compute;
 
-import com.google.common.base.Throwables;
-import com.google.inject.Singleton;
-import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
-import org.jclouds.virtualbox.domain.Host;
-import org.virtualbox_4_1.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Inject;
+
+import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.JustProvider;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 
 /**
  * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation and the jclouds
@@ -42,13 +50,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @Singleton
-public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, IMachine, Host> {
+public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, IMachine, Location> {
 
 	private final VirtualBoxManager manager;
+   private final JustProvider justProvider;
 
 	@Inject
-	public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager) {
+	public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager, JustProvider justProvider) {
 		this.manager = checkNotNull(manager, "manager");
+      this.justProvider = checkNotNull(justProvider, "justProvider");
 	}
 
 	@Override
@@ -71,9 +81,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 		return manager.getVBox().getMachines();
 	}
 
-	@Override
-	public Iterable<Host> listLocations() {
-		return Collections.emptyList();
+	@SuppressWarnings("unchecked")
+   @Override
+	public Iterable<Location> listLocations() {
+      return (Iterable<Location>) justProvider.get();
 	}
 
 	@Override
