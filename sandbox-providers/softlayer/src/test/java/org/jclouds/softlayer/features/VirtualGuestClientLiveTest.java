@@ -34,7 +34,6 @@ import java.util.Set;
 
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
-import static org.jclouds.softlayer.reference.SoftLayerConstants.CLOUD_SERVER_PACKAGE_NAME;
 import static org.testng.Assert.*;
 
 /**
@@ -81,7 +80,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
          }
       }
 
-      int pkgId = Iterables.find(context.getApi().getAccountClient().getActivePackages(),named(CLOUD_SERVER_PACKAGE_NAME)).getId();
+      int pkgId = Iterables.find(context.getApi().getAccountClient().getActivePackages(),named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
       ProductPackage productPackage = context.getApi().getProductPackageClient().getProductPackage(pkgId);
 
       Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(),
