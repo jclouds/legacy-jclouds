@@ -165,5 +165,10 @@
             <artifactId>cloudsigma-zrh</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>go2cloud-jhb1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
