@@ -51,6 +51,6 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
       hardwareBuilder.ids(vm.getId());
       vm.getSessionPid();
       hardwareBuilder.is64Bit(is64Bit);
-      return null;
+      return hardwareBuilder.build();
    }
 }
