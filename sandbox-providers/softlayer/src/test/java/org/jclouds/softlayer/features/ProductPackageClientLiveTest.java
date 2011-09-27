@@ -99,6 +99,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       builder.add(Datacenter.builder().id(37473).name("wdc01").longName("Washington, DC").build());
       builder.add(Datacenter.builder().id(138124).name("dal05").longName("Dallas 5").build());
       builder.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
+      builder.add(Datacenter.builder().id(224092).name("sng01").longName("Singapore 1").build());
 
       Set<Datacenter> expected = builder.build();
 
@@ -179,7 +180,8 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    private void checkAddress(Address address) {
       assert address.getId() >0 : address;
       assert address.getCountry() != null : address;
-      assert address.getState() != null : address;
+      if (!address.getCountry().equals("SG"))
+         assert address.getState() != null : address;
    }
 
    private void checkCategories(Set<ProductItemCategory> categories) {

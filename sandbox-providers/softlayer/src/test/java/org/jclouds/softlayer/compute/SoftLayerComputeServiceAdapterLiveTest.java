@@ -18,10 +18,14 @@
  */
 package org.jclouds.softlayer.compute;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
+import static org.testng.Assert.assertFalse;
+import static org.testng.AssertJUnit.assertEquals;
+
+import java.util.Set;
+
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
-import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
 import org.jclouds.softlayer.features.ProductPackageClientLiveTest;
@@ -29,13 +33,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
-import static org.testng.Assert.assertFalse;
-import static org.testng.AssertJUnit.assertEquals;
+import com.google.common.collect.Iterables;
 
 @Test(groups = "live", testName = "SoftLayerComputeServiceAdapterLiveTest")
 public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
