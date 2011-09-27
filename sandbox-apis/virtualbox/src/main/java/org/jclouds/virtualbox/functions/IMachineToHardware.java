@@ -21,15 +21,17 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import javax.inject.Inject;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.javax.annotation.Nullable;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Inject;
+import com.google.common.base.Function;
 
 public class IMachineToHardware implements Function<IMachine, Hardware> {
 
@@ -49,6 +51,7 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ids(vm.getId());
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       hardwareBuilder.is64Bit(is64Bit);
       return hardwareBuilder.build();
    }
