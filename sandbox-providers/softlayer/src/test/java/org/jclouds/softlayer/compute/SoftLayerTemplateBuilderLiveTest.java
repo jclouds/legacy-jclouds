@@ -53,20 +53,20 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          public boolean apply(OsFamilyVersion64Bit input) {
             // For each os-type both 32- and 64-bit are supported.
             switch (input.family) {
-               case UBUNTU:
-               return !(input.version.equals("10.04") || input.version.equals("8"));
-               case DEBIAN:
-                  return !(input.version.equals("5.0"));
-               case FEDORA:
-                  return !(input.version.equals("13") || input.version.equals("15"));
-               case RHEL:
-                  return !(input.version.equals("5") || input.version.equals("6"));
-               case CENTOS:
-                  return !(input.version.equals("5") || input.version.equals("6.0"));
-               case WINDOWS:
-                  return !(input.version.equals("2003") || input.version.equals("2008"));
-               default:
-                  return false;
+            case UBUNTU:
+               return input.version.equals("") || input.version.equals("10.04") || input.version.equals("8");
+            case DEBIAN:
+               return input.version.equals("") || input.version.equals("5.0");
+            case FEDORA:
+               return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
+            case RHEL:
+               return input.version.equals("") || input.version.equals("5") || input.version.equals("6");
+            case CENTOS:
+               return input.version.equals("") || input.version.equals("5") || input.version.equals("6.0");
+            case WINDOWS:
+               return input.version.equals("") || input.version.equals("2003") || input.version.equals("2008");
+            default:
+               return false;
             }
          }
 
