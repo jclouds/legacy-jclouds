@@ -29,10 +29,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.domain.Datacenter;
-import org.jclouds.softlayer.domain.ProductItem;
-import org.jclouds.softlayer.domain.ProductPackage;
-import org.jclouds.softlayer.domain.VirtualGuest;
+import org.jclouds.softlayer.domain.*;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
@@ -145,8 +142,13 @@ public class SoftLayerComputeServiceAdapter implements
 
    @Override
    public void destroyNode(String id) {
-      // TODO
-      // client.getVirtualGuestClient().destroyVirtualGuest(Long.parseLong(id));
+      VirtualGuest guest = getNode(id);
+      if(guest==null) return;
+
+      BillingItemVirtualGuest billingItem = guest.getBillingItem();
+      if (billingItem==null) return;
+
+      client.getVirtualGuestClient().cancelService(billingItem.getId());
    }
 
    @Override
