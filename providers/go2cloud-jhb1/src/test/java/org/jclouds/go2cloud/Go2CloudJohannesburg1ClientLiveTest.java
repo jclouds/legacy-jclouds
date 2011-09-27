@@ -16,23 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.go2cloud.config;
+package org.jclouds.go2cloud;
 
-import static org.jclouds.compute.domain.OsFamily.DEBIAN;
-
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
-
-import com.google.inject.Injector;
+import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class Go2CloudJohannesburg1ComputeServiceContextModule extends ElasticStackComputeServiceContextModule {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(DEBIAN).osVersionMatches("6.0").os64Bit(true);
+@Test(groups = "live", singleThreaded = true)
+public class Go2CloudJohannesburg1ClientLiveTest extends ElasticStackClientLiveTest {
+   public Go2CloudJohannesburg1ClientLiveTest() {
+      provider = "go2cloud-jhb1";
+      bootDrive = "14c88d27-1f5e-4ad5-9f3a-28e5d2282f61";
    }
 }

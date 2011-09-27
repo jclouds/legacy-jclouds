@@ -1,0 +1,30 @@
+[
+  {
+      "uuid": "14c88d27-1f5e-4ad5-9f3a-28e5d2282f61",
+      "description": "Ubuntu 10.10",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.10",
+      "size": "1"
+  },
+  {
+      "uuid": "cc54132d-4912-4106-a91a-7a27e6866c8b",
+      "description": "Debian 6.0.2.1",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
+      "size": "1"
+  },
+  {
+      "uuid": "77ad0ffe-9537-4c64-a8e3-10db185261c0",
+      "description": "Windows 2008 R2 (x64) with SP1",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  },
+  {
+      "uuid": "d971ddfb-7a69-48f7-8d14-a76ef61b01d8",
+      "description": "Windows 8 Developer Preview (x64)",
+      "osFamily": "WINDOWS",
+      "osVersion": "8",
+      "size": "13"
+  }
+]

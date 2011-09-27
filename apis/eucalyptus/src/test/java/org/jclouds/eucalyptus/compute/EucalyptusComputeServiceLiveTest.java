@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "EucalyptusComputeServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "EucalyptusComputeServiceLiveTest")
 public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public EucalyptusComputeServiceLiveTest() {
@@ -45,7 +45,13 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
          // ebs backed not yet available
       }
    }
-
+   
+   @Override
+   @Test(enabled = true)
+   public void testMapEBS() throws Exception {
+      // ebs backed not yet available
+   }
+   
    @Override
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
