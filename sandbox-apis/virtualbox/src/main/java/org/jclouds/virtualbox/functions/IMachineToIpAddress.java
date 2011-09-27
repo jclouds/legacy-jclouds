@@ -34,6 +34,11 @@ import javax.annotation.Nullable;
 
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
+/**
+ * Get an IP address from an IMachine using arp of the host machine.
+ *
+ * @author Mattias Holmqvist, Andrea Turli
+ */
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
    private VirtualBoxManager manager;
@@ -67,13 +72,13 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
                simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1).toString();
       }
 
+      // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
       ExecResponse execResponse = runScriptOnNode(hostId, "for i in {1..254} ; do ping -c 1 -t 1 192.168.2.$i & done", runAsRoot(false).wrapInInitScript(false));
       System.out.println(execResponse);
 
       String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM, runAsRoot(false).wrapInInitScript(false)).getOutput();
       String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
       System.out.println("IP address " + ipAddress);
-
       return ipAddress;
    }
 
@@ -84,8 +89,7 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
    protected boolean isOSX(IMachine machine) {
       String osTypeId = machine.getOSTypeId();
       IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
-      String familyDescription = guestOSType.getFamilyDescription();
-      return true;
+      return guestOSType.getFamilyDescription().equals("Other");
    }
 
 }
