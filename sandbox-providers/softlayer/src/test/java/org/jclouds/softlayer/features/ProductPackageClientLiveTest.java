@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
-import static org.jclouds.softlayer.reference.SoftLayerConstants.CLOUD_SERVER_PACKAGE_NAME;
 import static org.testng.Assert.*;
 
 /**
@@ -42,6 +41,14 @@ import static org.testng.Assert.*;
  */
 @Test(groups = "live")
 public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
+
+   /**
+    * Name of the package used for ordering virtual guests.
+    * For real this is passed in using the property
+    * @{code org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME}
+    */
+   public static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       super.setupClient();
