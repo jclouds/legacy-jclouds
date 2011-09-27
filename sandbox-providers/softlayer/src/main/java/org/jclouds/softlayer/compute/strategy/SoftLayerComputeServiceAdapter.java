@@ -70,14 +70,12 @@ public class SoftLayerComputeServiceAdapter implements
    @Override
    public VirtualGuest createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name,
             Template template, Map<String, Credentials> credentialStore) {
-      VirtualGuest from = null; // TODO create the backend object using parameters from the
-                                // template. ex.
-      // VirtualGuest from =
-      // client.getVirtualGuestClient().createServerInDC(template.getLocation().getId(), name,
-      // Long.parseLong(template.getImage().getProviderId()),
-      // Long.parseLong(template.getHardware().getProviderId()));
-      // store the credentials so that later functions can use them
-      // credentialStore.put("node#"+ from.getId() + "", new Credentials(from.loginUser,
+      VirtualGuest from = null; // from testCancelAndPlaceOrder()
+      // use name for hostname as possible
+      // you can ignore group, unless it is valid to set as domain
+      // get the cpu, mem, datacenter from the template ids
+      // make sure you store the credentials so that later functions can use them
+      // credentialStore.put("node#"+ from.getId() + "", new Credentials(from.loginUser (might be root),
       // from.password));
       return from;
    }
