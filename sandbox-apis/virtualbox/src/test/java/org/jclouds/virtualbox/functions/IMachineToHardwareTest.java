@@ -49,12 +49,13 @@ public class IMachineToHardwareTest {
       String machineId = "hw-machineId";
 
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
+      expect(vm.getId()).andReturn(machineId).anyTimes();
+
       expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
 
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
       expect(vbm.getVBox()).andReturn(vBox);
       expect(guestOsType.getIs64Bit()).andReturn(true);
-      expect(vm.getId()).andReturn(machineId).atLeastOnce();
 
       replay(vbm, vBox, vm, guestOsType);
 

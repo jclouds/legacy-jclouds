@@ -50,7 +50,6 @@ public class IMachineToImage implements Function<IMachine, Image> {
 
       IGuestOSType guestOSType = virtualboxManager.getVBox().getGuestOSType(from.getOSTypeId());
 
-      //Somehow this method gets called with the correct product item.
       OsFamily family = osFamily().apply(guestOSType.getDescription());
       OperatingSystem os = OperatingSystem.builder()
               .description(guestOSType.getDescription())

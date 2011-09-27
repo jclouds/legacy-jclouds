@@ -51,6 +51,7 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ids(vm.getId());
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       hardwareBuilder.is64Bit(is64Bit);
       hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       return hardwareBuilder.build();
