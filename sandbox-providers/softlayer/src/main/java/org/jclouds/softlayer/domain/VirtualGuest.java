@@ -64,6 +64,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       private String primaryBackendIpAddress;
       private String primaryIpAddress;
       private BillingItemVirtualGuest billingItem;
+      private OperatingSystem operatingSystem;
 
       public Builder id(int id) {
          this.id = id;
@@ -170,12 +171,17 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          return this;
       }
 
+      public Builder operatingSystem(OperatingSystem operatingSystem) {
+         this.operatingSystem = operatingSystem;
+         return this;
+      }
+
       public VirtualGuest build() {
          return new VirtualGuest(accountId, createDate, dedicatedAccountHostOnly, domain,
             fullyQualifiedDomainName, hostname, id, lastVerifiedDate, maxCpu,
             maxCpuUnits, maxMemory, metricPollDate, modifyDate, notes,
             privateNetworkOnly, startCpus, statusId, uuid, primaryBackendIpAddress,
-            primaryIpAddress,billingItem);
+            primaryIpAddress,billingItem,operatingSystem);
       }
 
       public static Builder fromVirtualGuest(VirtualGuest in) {
@@ -200,7 +206,9 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                                  .uuid(in.getUuid())
                                  .primaryBackendIpAddress(in.getPrimaryBackendIpAddress())
                                  .primaryIpAddress(in.getPrimaryIpAddress())
-                                 .billingItem(in.getBillingItem());
+                                 .billingItem(in.getBillingItem())
+                                 .operatingSystem(in.getOperatingSystem());
+
       }
    }
 
@@ -252,6 +260,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    private String primaryIpAddress;
 
    private BillingItemVirtualGuest billingItem;
+   private OperatingSystem operatingSystem;
 
    // for deserializer
    VirtualGuest() {
@@ -262,7 +271,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
-            String primaryIpAddress,BillingItemVirtualGuest billingItem) {
+            String primaryIpAddress,BillingItemVirtualGuest billingItem, OperatingSystem operatingSystem) {
       this.accountId = accountId;
       this.createDate = createDate;
       this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
@@ -284,6 +293,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       this.primaryBackendIpAddress = primaryBackendIpAddress;
       this.primaryIpAddress = primaryIpAddress;
       this.billingItem = billingItem;
+      this.operatingSystem = operatingSystem;
    }
 
    @Override
@@ -441,6 +451,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       return billingItem;
    }
 
+   /**
+    * @return A guest's operating system.
+    */
+   public OperatingSystem getOperatingSystem() {
+      return operatingSystem;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -466,6 +483,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
       result = prime * result + ((billingItem == null) ? 0 : billingItem.hashCode());
+      result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       return result;
    }
 
@@ -559,6 +577,11 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!billingItem.equals(other.billingItem))
          return false;
+      if (operatingSystem == null) {
+         if (other.operatingSystem != null)
+            return false;
+      } else if (!operatingSystem.equals(other.operatingSystem))
+         return false;
       return true;
    }
 
@@ -571,7 +594,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + ", billingItem="+billingItem+"]";
+               + ", uuid=" + uuid + ", billingItem="+billingItem+", operatingSystem="+operatingSystem+"]";
    }
 
 }
