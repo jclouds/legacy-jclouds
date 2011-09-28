@@ -37,7 +37,7 @@ public class OpenHostingEast1PropertiesBuilder extends ElasticStackPropertiesBui
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-VA");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.east1.openhosting.com");
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "2.0");
       return properties;
    }
 
