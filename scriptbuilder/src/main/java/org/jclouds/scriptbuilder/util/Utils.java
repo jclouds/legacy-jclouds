@@ -62,7 +62,9 @@ public class Utils {
       }
    }
 
-   private static final Pattern pattern = Pattern.compile("\\{(.+?)\\}");
+   /** matches any expression inside curly braces (where the expression does not including an open curly brace) */
+   private static final Pattern pattern = Pattern.compile("\\{([^\\{]+?)\\}");
+
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>
