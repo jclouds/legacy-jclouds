@@ -63,6 +63,30 @@ public class ServerToMapTest {
                               "vnc:password", "XXXXXXXX")).build());
    }
 
+   public void testWeDontSetMac() {
+      assertEquals(
+            SERVER_TO_MAP.apply(new Server.Builder()
+                  .name("TestServer")
+                  .cpu(2000)
+                  .mem(1024)
+                  .devices(
+                        ImmutableMap.of("ide:0:0",
+                              new IDEDevice.Builder(0, 0).uuid("08c92dd5-70a0-4f51-83d2-835919d254df").build()))
+                  .bootDeviceIds(ImmutableSet.of("ide:0:0"))
+                  .nics(ImmutableSet.of(new NIC.Builder().mac("foo").model(Model.E1000).
+
+                  build())).vnc(new VNC(null, "XXXXXXXX", false)).build()),
+            ImmutableMap
+                  .builder()
+                  .putAll(ImmutableMap.of("name", "TestServer", "cpu", "2000", "smp", "auto", "mem", "1024"))
+                  .putAll(
+                        ImmutableMap.of("persistent", "false", "boot", "ide:0:0", "ide:0:0",
+                              "08c92dd5-70a0-4f51-83d2-835919d254df"))
+                  .putAll(
+                        ImmutableMap.of("ide:0:0:media", "disk", "nic:0:model", "e1000", "vnc:ip", "auto",
+                              "vnc:password", "XXXXXXXX")).build());
+   }
+
     public void testBasicsV2() {
       assertEquals(
             SERVER_TO_MAP_V2.apply(new Server.Builder()
