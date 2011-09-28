@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -78,6 +79,11 @@ public class UtilsTest {
    public void testWriteUnsetVariablesWindows() {
       assertEquals(Utils.writeUnsetVariables(ImmutableList.of("host", "port"), OsFamily.WINDOWS),
                "set HOST=\r\nset PORT=\r\n");
+   }
+
+   public void testSingleCurlyBraceDoesntBreakLfTokenReplacement() {
+      assertEquals(Utils.replaceTokens("{{lf}", ShellToken.tokenValueMap(OsFamily.UNIX)),
+            "{\n");
    }
 
 }
