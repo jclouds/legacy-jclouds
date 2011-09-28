@@ -47,6 +47,7 @@ import java.util.Set;
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
 public interface VirtualGuestAsyncClient {
+   public static String LIST_GUEST_MASK = "virtualGuests.powerState;virtualGuests.networkVlans;virtualGuests.operatingSystem.passwords;virtualGuests.datacenter;virtualGuests.billingItem";
    public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter;virtualGuests.billingItem";
 
    /**
@@ -54,7 +55,7 @@ public interface VirtualGuestAsyncClient {
     */
    @GET
    @Path("/SoftLayer_Account/VirtualGuests.json")
-   @QueryParams(keys = "objectMask", values = GUEST_MASK)
+   @QueryParams(keys = "objectMask", values = LIST_GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualGuest>> listVirtualGuests();
