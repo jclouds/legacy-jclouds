@@ -50,4 +50,6 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_MACHINE_LOCATION = "jclouds.virtualbox.location";
 
    public static final String VIRTUALBOX_HOST_ID = "jclouds.virtualbox.hostid";
+
+   public static final String VIRTUALBOX_DISTRO_ISO_NAME = "jclouds.virtualbox.distroIsoName";
 }
