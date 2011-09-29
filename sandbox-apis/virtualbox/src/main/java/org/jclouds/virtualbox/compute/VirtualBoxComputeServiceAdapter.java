@@ -73,7 +73,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 	
 	@Override
 	public Iterable<IMachine> listHardwareProfiles() {
-		return Collections.emptyList();
+		return manager.getVBox().getMachines();
 	}
 
 	@Override
