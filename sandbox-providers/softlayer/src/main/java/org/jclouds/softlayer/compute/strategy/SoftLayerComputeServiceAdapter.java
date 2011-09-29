@@ -18,32 +18,46 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
-import com.google.common.base.Predicates;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
+import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.domain.*;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
+import org.jclouds.softlayer.domain.BillingItemVirtualGuest;
+import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.OperatingSystem;
+import org.jclouds.softlayer.domain.Password;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
-import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and the jclouds
@@ -70,7 +84,12 @@ public class SoftLayerComputeServiceAdapter implements
    @Override
    public VirtualGuest createNodeWithGroupEncodedIntoNameThenStoreCredentials(String group, String name,
             Template template, Map<String, Credentials> credentialStore) {
-
+      checkNotNull(template, "template was null");
+      checkNotNull(template.getOptions(), "template options was null");
+      checkArgument(template.getOptions().getClass().isAssignableFrom(SoftLayerTemplateOptions.class),
+               "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
+                        .getClass());
+      
       Iterable<VirtualGuest> existing = findVirtualGuests(name,group);
       if(!Iterables.isEmpty(existing)) {
          throw new IllegalStateException(
@@ -78,7 +97,7 @@ public class SoftLayerComputeServiceAdapter implements
       }
 
       VirtualGuest newGuest = VirtualGuest.builder()
-                                          .domain(group)
+                                          .domain(template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName())
                                           .hostname(name)
                                           .build();
 

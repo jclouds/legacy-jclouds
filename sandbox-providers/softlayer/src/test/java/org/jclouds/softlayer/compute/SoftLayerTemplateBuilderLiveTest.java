@@ -18,20 +18,22 @@
  */
 package org.jclouds.softlayer.compute;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.OsFamilyVersion64Bit;
-import org.jclouds.compute.domain.Template;
-import org.testng.annotations.Test;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Set;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -80,6 +82,8 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
+      // test that we bound the correct templateoptions in guice
+      assertEquals(defaultTemplate.getOptions().getClass(), SoftLayerTemplateOptions.class);
    }
 
    @Override
