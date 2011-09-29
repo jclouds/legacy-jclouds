@@ -54,7 +54,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getName() {
-      return "//TODO SoftLayer";
+      return "SoftLayer";
    }
 
    /**
@@ -62,7 +62,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "//TODO";
+      return "API Username";
    }
 
    /**
@@ -70,7 +70,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getCredentialName() {
-      return "//TODO";
+      return "API Key";
    }
 
    /**
@@ -78,7 +78,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("//TODO");
+      return URI.create("http://www.softlayer.com");
    }
 
    /**
@@ -86,7 +86,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("//TODO");
+      return URI.create("https://manage.softlayer.com");
    }
    /**
     * {@inheritDoc}
