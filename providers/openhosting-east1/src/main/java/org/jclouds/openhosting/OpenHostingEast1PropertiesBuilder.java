@@ -35,7 +35,7 @@ public class OpenHostingEast1PropertiesBuilder extends ElasticStackPropertiesBui
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-FL");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.east1.openhosting.com");
       properties.setProperty(PROPERTY_API_VERSION, "2.0");
       return properties;
