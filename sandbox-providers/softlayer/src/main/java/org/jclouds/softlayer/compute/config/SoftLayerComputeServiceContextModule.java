@@ -18,15 +18,14 @@
  */
 package org.jclouds.softlayer.compute.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import java.util.Set;
+
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
@@ -35,12 +34,16 @@ import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import java.util.Set;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -68,6 +71,7 @@ public class SoftLayerComputeServiceContextModule extends
             .to(DatacenterToLocation.class);
       bind(new TypeLiteral<Supplier<Location>>() {})
             .to(OnlyLocationOrFirstZone.class);
+      bind(TemplateOptions.class).to(SoftLayerTemplateOptions.class);
    }
 
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {

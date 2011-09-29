@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
@@ -64,16 +65,19 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
-      String group = "jclouds.org";
+      String group = "foo";
       String name = "foo-ef4";
       Template template = computeContext.getComputeService().templateBuilder()
             .locationId("3") // the default (singapore) doesn't work.
             .build();
-
+      
+      // test passing custom options
+      template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
+      
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
       guest = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
       assertEquals(guest.getHostname(), name);
-      assertEquals(guest.getDomain(), group);
+      assertEquals(guest.getDomain(), template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName());
       // check other things, like cpu correct, mem correct, image/os is correct
       // (as possible)
       assert credentialStore.containsKey("node#" + guest.getId()) : "credentials to log into guest not found " + guest;
