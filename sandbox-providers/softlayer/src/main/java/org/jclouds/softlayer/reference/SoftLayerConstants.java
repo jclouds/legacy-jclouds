@@ -33,6 +33,12 @@ public interface SoftLayerConstants {
     * Name of the product package corresponding to cloud servers
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
+   
+   
+   /**
+    * number of milliseconds to wait for an order to arrive on the api.
+    */
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_ORDER_DELAY = "jclouds.softlayer.virtualguest.order-delay";
 
    public static final Set<ProductItemPrice> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<ProductItemPrice>builder()
            .add(ProductItemPrice.builder().id(1639).build()) // 100 GB (SAN)

@@ -32,6 +32,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
+import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter.OnlyOneVirtualGuestPresentWithHostAndDomainName;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
@@ -55,7 +56,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void setupClient() {
       super.setupClient();
       adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
-            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME);
+            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME, new OnlyOneVirtualGuestPresentWithHostAndDomainName(context.getApi()), 5000l);
    }
 
    @Test
