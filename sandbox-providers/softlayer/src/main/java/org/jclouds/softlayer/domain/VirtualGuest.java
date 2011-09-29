@@ -31,6 +31,17 @@ import com.google.gson.annotations.SerializedName;
  * interaction. <br/>
  * A guest, also known as a virtual server or CloudLayer Computing Instance, represents an
  * allocation of resources on a virtual host.
+ *
+ * The hostname and domain must be alphanumeric strings that may be separated by periods '.'.
+ * The only other allowable special character is the dash '-'.
+ * However the special characters '.' and '-' may not be consecutive.
+ * Each alphanumeric string separated by a period is considered a label.
+ * Labels must begin and end with an alphanumeric character.
+ * Each label cannot be soley comprised of digits and must be between 1-63 characters in length.
+ * The last label, the TLD (top level domain) must be between 2-6 alphabetic characters.
+ * The domain portion must consist of least one label followed by a period '.' then ending with the TLD label.
+ * Combining the hostname, followed by a period '.', followed by the domain gives the FQDN (fully qualified domain name),
+ * which may not exceed 253 characters in total length.
  * 
  * @author Adrian Cole
  * @see <a href=
@@ -64,6 +75,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       private String primaryBackendIpAddress;
       private String primaryIpAddress;
       private BillingItemVirtualGuest billingItem;
+      private OperatingSystem operatingSystem;
 
       public Builder id(int id) {
          this.id = id;
@@ -170,12 +182,17 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          return this;
       }
 
+      public Builder operatingSystem(OperatingSystem operatingSystem) {
+         this.operatingSystem = operatingSystem;
+         return this;
+      }
+
       public VirtualGuest build() {
          return new VirtualGuest(accountId, createDate, dedicatedAccountHostOnly, domain,
             fullyQualifiedDomainName, hostname, id, lastVerifiedDate, maxCpu,
             maxCpuUnits, maxMemory, metricPollDate, modifyDate, notes,
             privateNetworkOnly, startCpus, statusId, uuid, primaryBackendIpAddress,
-            primaryIpAddress,billingItem);
+            primaryIpAddress,billingItem,operatingSystem);
       }
 
       public static Builder fromVirtualGuest(VirtualGuest in) {
@@ -200,7 +217,9 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                                  .uuid(in.getUuid())
                                  .primaryBackendIpAddress(in.getPrimaryBackendIpAddress())
                                  .primaryIpAddress(in.getPrimaryIpAddress())
-                                 .billingItem(in.getBillingItem());
+                                 .billingItem(in.getBillingItem())
+                                 .operatingSystem(in.getOperatingSystem());
+
       }
    }
 
@@ -252,6 +271,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    private String primaryIpAddress;
 
    private BillingItemVirtualGuest billingItem;
+   private OperatingSystem operatingSystem;
 
    // for deserializer
    VirtualGuest() {
@@ -262,7 +282,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
-            String primaryIpAddress,BillingItemVirtualGuest billingItem) {
+            String primaryIpAddress,BillingItemVirtualGuest billingItem, OperatingSystem operatingSystem) {
       this.accountId = accountId;
       this.createDate = createDate;
       this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
@@ -284,6 +304,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       this.primaryBackendIpAddress = primaryBackendIpAddress;
       this.primaryIpAddress = primaryIpAddress;
       this.billingItem = billingItem;
+      this.operatingSystem = operatingSystem;
    }
 
    @Override
@@ -441,6 +462,13 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       return billingItem;
    }
 
+   /**
+    * @return A guest's operating system.
+    */
+   public OperatingSystem getOperatingSystem() {
+      return operatingSystem;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -466,6 +494,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
       result = prime * result + ((billingItem == null) ? 0 : billingItem.hashCode());
+      result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       return result;
    }
 
@@ -559,6 +588,11 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!billingItem.equals(other.billingItem))
          return false;
+      if (operatingSystem == null) {
+         if (other.operatingSystem != null)
+            return false;
+      } else if (!operatingSystem.equals(other.operatingSystem))
+         return false;
       return true;
    }
 
@@ -571,7 +605,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + ", billingItem="+billingItem+"]";
+               + ", uuid=" + uuid + ", billingItem="+billingItem+", operatingSystem="+operatingSystem+"]";
    }
 
 }

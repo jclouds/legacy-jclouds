@@ -64,9 +64,12 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
-      String group = "foo";
+      String group = "jclouds.org";
       String name = "foo-ef4";
-      Template template = computeContext.getComputeService().templateBuilder().build();
+      Template template = computeContext.getComputeService().templateBuilder()
+            .locationId("3") // the default (singapore) doesn't work.
+            .build();
+
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
       guest = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
       assertEquals(guest.getHostname(), name);
