@@ -254,30 +254,36 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyNode(final String id) {
+   public NodeMetadata destroyNode(final String id) {
+      return doDestroyNode(id);
+   }
+
+   protected NodeMetadata doDestroyNode(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
       final AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>();
       RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
 
-         @Override
-         public boolean apply(String input) {
-            try {
-               NodeMetadata md = destroyNodeStrategy.destroyNode(id);
-               if (md != null)
-                  node.set(md);
-               return true;
-            } catch (IllegalStateException e) {
-               logger.warn("<< illegal state destroying node(%s)", id);
-               return false;
-            }
+      @Override
+      public boolean apply(String input) {
+         try {
+         NodeMetadata md = destroyNodeStrategy.destroyNode(id);
+         if (md != null)
+            node.set(md);
+         return true;
+         } catch (IllegalStateException e) {
+            logger.warn("<< illegal state destroying node(%s)", id);
+            return false;
          }
+      }
 
-      }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+      },timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node.get()));
       if (successful)
          credentialStore.remove("node#" + id);
       logger.debug("<< destroyed node(%s) success(%s)", id, successful);
+      return node.get();
    }
 
    /**
@@ -296,7 +302,7 @@ public class BaseComputeService implements ComputeService {
 
                         @Override
                         public NodeMetadata call() throws Exception {
-                           destroyNode(from.getId());
+                           doDestroyNode(from.getId());
                            return from;
                         }
 

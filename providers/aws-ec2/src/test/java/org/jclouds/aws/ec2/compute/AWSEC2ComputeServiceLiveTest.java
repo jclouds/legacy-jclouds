@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
@@ -201,4 +202,39 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       }
    }
 
+  @Test
+  public void testSecurityGroupGetsDestroyedAfterInstanceIsDestroyed() throws Exception {
+     AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
+              .getSecurityGroupServices();
+
+     InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+              .getInstanceServices();
+
+     String group = this.group + "foo";
+
+     TemplateOptions options = client.templateOptions();
+
+     try {
+        Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+        NodeMetadata first = Iterables.get(nodes, 0);
+        String startedId = Iterables.getOnlyElement(nodes).getProviderId();
+
+        AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
+
+        String expectedSecurityGroupName = "jclouds#" + group + "#" + instance.getRegion();
+        assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of(expectedSecurityGroupName));
+
+        Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(instance.getRegion(), expectedSecurityGroupName);
+        assertEquals(securityGroups.size(), 1);
+
+        client.destroyNode(first.getId());
+
+        Set<SecurityGroup> securityGroupsPostDestroy = securityGroupClient.describeSecurityGroupsInRegion(instance.getRegion(), expectedSecurityGroupName);
+        assertEquals(securityGroupsPostDestroy, new HashSet());
+
+     } finally {
+        client.destroyNodesMatching(NodePredicates.inGroup(group));
+
+     }
+  }
 }

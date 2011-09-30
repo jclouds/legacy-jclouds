@@ -222,7 +222,7 @@ public interface ComputeService {
     * destroy the node, given its id. If it is the only node in a tag set, the dependent resources
     * will also be destroyed.
     */
-   void destroyNode(String id);
+   NodeMetadata destroyNode(String id);
 
    /**
     * nodes matching the filter are treated as a logical set. Using the delete command, you can save

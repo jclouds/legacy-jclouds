@@ -23,6 +23,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -178,24 +179,42 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    /**
+    * like {@link BaseComputeService#destroyNode} except that this will
+    * clean implicit keypairs and security groups.
+    */
+    @Override
+   public NodeMetadata destroyNode(String id) {
+      NodeMetadata destroyedNode = super.destroyNode(id);
+      Set<NodeMetadata> nodeMetadata = new HashSet<NodeMetadata>();
+      nodeMetadata.add(destroyedNode);
+
+      cleanUpIncidentalResourcesOfDeadNodes(nodeMetadata);
+      return destroyedNode ;
+   }
+
+   /**
     * like {@link BaseComputeService#destroyNodesMatching} except that this will
     * clean implicit keypairs and security groups.
     */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
-      Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
-      for (NodeMetadata nodeMetadata : deadOnes) {
-         if (nodeMetadata.getGroup() != null)
-            regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
-      }
-      for (Entry<String, String> regionGroup : regionGroups.build().entries()) {
-         cleanUpIncidentalResources(regionGroup);
-      }
+      cleanUpIncidentalResourcesOfDeadNodes(deadOnes);
       return deadOnes;
    }
 
-   protected void cleanUpIncidentalResources(Entry<String, String> regionGroup) {
+   protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
+      Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
+      for (NodeMetadata nodeMetadata : deadNodes) {
+         if (nodeMetadata.getGroup() != null)
+            regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
+         }
+      for (Entry<String, String> regionGroup : regionGroups.build().entries()) {
+         cleanUpIncidentalResources(regionGroup);
+      }
+   }
+
+   protected void cleanUpIncidentalResources(Entry<String, String> regionGroup){
       deleteKeyPair(regionGroup.getKey(), regionGroup.getValue());
       deleteSecurityGroup(regionGroup.getKey(), regionGroup.getValue());
    }
