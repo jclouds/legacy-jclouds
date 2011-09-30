@@ -18,6 +18,7 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
@@ -28,6 +29,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
@@ -44,6 +46,7 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
 
@@ -61,12 +64,21 @@ public class SoftLayerComputeServiceAdapter implements
 
    private final SoftLayerClient client;
    private final String virtualGuestPackageName;
+   private final RetryablePredicate<VirtualGuest> loginDetailsTester;
+   private final long guestLoginDelay;
 
    @Inject
    public SoftLayerComputeServiceAdapter(SoftLayerClient client,
-            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName) {
+            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName,
+            VirtualGuestHasLoginDetailsPresent virtualGuestHasLoginDetailsPresent,
+            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY) long guestLoginDelay)  {
       this.client = checkNotNull(client, "client");
       this.virtualGuestPackageName = checkNotNull(virtualGuestPackageName, "virtualGuestPackageName");
+      checkArgument(guestLoginDelay > 500, "guestOrderDelay must be in milliseconds and greater than 500");
+      this.guestLoginDelay =guestLoginDelay;
+
+      this.loginDetailsTester = new RetryablePredicate<VirtualGuest>(virtualGuestHasLoginDetailsPresent,
+               guestLoginDelay);
    }
 
    @Override
@@ -89,18 +101,13 @@ public class SoftLayerComputeServiceAdapter implements
       ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);
       VirtualGuest result = Iterables.get(productOrderReceipt.getOrderDetails().getVirtualGuests(), 0);
 
+      boolean orderInSystem = loginDetailsTester.apply(result);
 
-      Credentials credentials = new Credentials(null, null);
+      checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result, Long.toString(guestLoginDelay));
+      result = client.getVirtualGuestClient().getVirtualGuest(result.getId());
 
-      // This information is not always available.
-      OperatingSystem os = result.getOperatingSystem();
-      if (os != null) {
-         Set<Password> passwords = os.getPasswords();
-         if (passwords.size() > 0) {
-            Password pw = Iterables.get(passwords, 0);
-            credentials = new Credentials(pw.getUsername(), pw.getPassword());
-         }
-      }
+      Password pw = Iterables.get(result.getOperatingSystem().getPasswords(),0);
+      Credentials credentials = new Credentials(pw.getUsername(), pw.getPassword());
       credentialStore.put("node#" + result.getId(), credentials);
       return result;
    }
@@ -209,5 +216,26 @@ public class SoftLayerComputeServiceAdapter implements
    @Override
    public void suspendNode(String id) {
       client.getVirtualGuestClient().pauseVirtualGuest(Long.parseLong(id));
+   }
+
+   public static class VirtualGuestHasLoginDetailsPresent implements Predicate<VirtualGuest> {
+      private final SoftLayerClient client;
+
+      @Inject
+      public VirtualGuestHasLoginDetailsPresent(SoftLayerClient client) {
+         this.client = checkNotNull(client, "client was null");
+      }
+
+      @Override
+      public boolean apply(VirtualGuest guest) {
+         checkNotNull(guest, "virtual guest was null");
+
+         VirtualGuest newGuest = client.getVirtualGuestClient().getVirtualGuest(guest.getId());
+         boolean hasBackendIp = newGuest.getPrimaryBackendIpAddress() != null;
+         boolean hasPrimaryIp = newGuest.getPrimaryIpAddress() != null;
+         boolean hasPasswords = newGuest.getOperatingSystem()!=null && newGuest.getOperatingSystem().getPasswords().size() > 0;
+
+         return hasBackendIp && hasPrimaryIp && hasPasswords;
+      }
    }
 }

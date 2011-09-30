@@ -56,7 +56,8 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void setupClient() {
       super.setupClient();
       adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
-            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME);
+            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME,
+            new SoftLayerComputeServiceAdapter.VirtualGuestHasLoginDetailsPresent(context.getApi()),300000);
    }
 
    @Test
