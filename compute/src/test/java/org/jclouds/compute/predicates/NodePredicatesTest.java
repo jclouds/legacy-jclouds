@@ -44,39 +44,39 @@ public class NodePredicatesTest {
    public void setUp() throws Exception {
       node = createMock(NodeMetadata.class);
       computeService = createMock(ComputeService.class);
-      
+
       expect(node.getId()).andReturn("myid").anyTimes();
       expect(computeService.getNodeMetadata("myid")).andReturn(node).anyTimes();
       expect(node.getLocation()).andReturn(null).anyTimes();
    }
-   
+
    @Test
    public void testNodeRunningReturnsTrueWhenRunning() {
-       expect(node.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
-       replay(node);
-       replay(computeService);
-	   
-	   NodeRunning nodeRunning = new NodeRunning(computeService);
-	   Assert.assertTrue(nodeRunning.apply(node));
+      expect(node.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
+      replay(node);
+      replay(computeService);
+
+      NodeRunning nodeRunning = new NodeRunning(computeService);
+      Assert.assertTrue(nodeRunning.apply(node));
    }
 
-   @Test(expectedExceptions=IllegalStateException.class)
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnTerminated() {
-	   expect(node.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
-	   replay(node);
-       replay(computeService);
-	   
-	   NodeRunning nodeRunning = new NodeRunning(computeService);
-	   nodeRunning.apply(node);
-   }
-   
-   @Test(expectedExceptions=IllegalStateException.class)
-   public void testNodeRunningFailsOnError() {
-       expect(node.getState()).andReturn(NodeState.ERROR).atLeastOnce();
-       replay(node);
-       replay(computeService);
+      expect(node.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
+      replay(node);
+      replay(computeService);
 
-       NodeRunning nodeRunning = new NodeRunning(computeService);
-       nodeRunning.apply(node);
+      NodeRunning nodeRunning = new NodeRunning(computeService);
+      nodeRunning.apply(node);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testNodeRunningFailsOnError() {
+      expect(node.getState()).andReturn(NodeState.ERROR).atLeastOnce();
+      replay(node);
+      replay(computeService);
+
+      NodeRunning nodeRunning = new NodeRunning(computeService);
+      nodeRunning.apply(node);
    }
 }
