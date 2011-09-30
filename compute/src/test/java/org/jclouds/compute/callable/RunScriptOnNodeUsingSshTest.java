@@ -29,8 +29,6 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 import static org.easymock.EasyMock.*;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
@@ -95,7 +93,7 @@ public class RunScriptOnNodeUsingSshTest  {
         testMe.call();
     }
 
-    public void simpleRootTestWithSudoPassword() throws IOException {
+    public void simpleRootTestWithSudoPassword() {
         node = createMock(NodeMetadata.class);
         expect(node.getCredentials()).andReturn(new Credentials("tester", "notalot"));
         expect(node.getAdminPassword()).andReturn("testpassword!").atLeastOnce();
