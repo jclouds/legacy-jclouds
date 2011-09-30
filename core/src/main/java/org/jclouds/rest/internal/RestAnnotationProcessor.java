@@ -969,6 +969,10 @@ public class RestAnnotationProcessor<T> {
                throw new IllegalArgumentException("Argument index "+(entry.getKey()+1)+" is out of bounds for method "+request.getJavaMethod());
             }
             
+            if (request.getJavaMethod().isVarArgs() && entry.getKey() + 1 == request.getJavaMethod().getParameterTypes().length)
+               //allow null/missing for var args
+               continue OUTER;
+                  
             Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
             for (Annotation a: annotations) {
                if (Nullable.class.isAssignableFrom(a.annotationType()))
