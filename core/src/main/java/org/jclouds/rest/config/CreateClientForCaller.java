@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import com.google.inject.Injector;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
@@ -39,6 +40,8 @@ import com.google.common.cache.CacheLoader;
  * @author Adrian Cole
  */
 public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+   @Inject
+   Injector injector;
    private final Cache<ClassMethodArgs, Object> asyncMap;
    private final Provider<Cache<ClassMethodArgs, Object>> delegateMap;
    Map<Class<?>, Class<?>> sync2Async;
@@ -59,8 +62,10 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
       Object asyncClient = asyncMap.get(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
       try {
-         return SyncProxy.proxy(syncClass, new SyncProxy(syncClass, asyncClient, delegateMap.get(),
-                  sync2Async));
+         final SyncProxy syncProxy = new SyncProxy(syncClass, asyncClient, delegateMap.get(), sync2Async);
+         injector.injectMembers(syncProxy);
+
+         return SyncProxy.proxy(syncClass, syncProxy);
       } catch (Exception e) {
          Throwables.propagate(e);
          assert false : "should have propagated";

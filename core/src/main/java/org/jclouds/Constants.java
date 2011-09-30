@@ -230,4 +230,23 @@ public interface Constants {
     */
    public static final String PROPERTY_CREDENTIAL = "jclouds.credential";
 
+   /**
+    * Long properties
+    * <p/>
+    * Overrides timeouts on sync interfaces. Timeout value is in ms.
+    * Here's an example of an override for a single method:
+    * <p/>
+    * <code>
+    * #10 seconds <br/>
+    * jclouds.timeouts.S3Client.bucketExists=10000
+    * </code>
+    * <p/>
+    * Or for all methods:
+    * <p/>
+    * <code>
+    * jclouds.timeouts.GridServerClient = 350000
+    * </code>
+    */
+   public static final String PROPERTY_TIMEOUTS_PREFIX = "jclouds.timeouts.";
+
 }

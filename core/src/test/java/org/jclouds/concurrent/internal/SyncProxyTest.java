@@ -29,6 +29,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
@@ -44,6 +49,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 /**
  * Tests behavior of ListenableFutureExceptionParser
  * 
@@ -51,6 +59,21 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit", singleThreaded = true)
 public class SyncProxyTest {
+   Injector injector = Guice.createInjector(new AbstractModule() {
+       @SuppressWarnings("unused")
+       @Provides
+       @Singleton
+       @Named("CONSTANTS")
+       protected Multimap<String, String> constants() {
+           final Multimap<String, String> props = LinkedHashMultimap.create();
+           props.put("jclouds.timeouts.Sync.takeXMillisecondsPropOverride", "250");
+           return props;
+       }
+
+       @Override
+       protected void configure() {
+       }
+   });
 
    @Test
    void testConvertNanos() {
@@ -77,6 +100,7 @@ public class SyncProxyTest {
       @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
       String take200MillisecondsAndOverride();
 
+      String takeXMillisecondsPropOverride(long ms);
    }
 
    static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -159,6 +183,21 @@ public class SyncProxyTest {
          return take200MillisecondsAndTimeout();
       }
 
+      public ListenableFuture<String> takeXMillisecondsPropOverride(final long ms) {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
+
+            public String call() {
+               try {
+                  Thread.sleep(ms);
+               } catch (InterruptedException e) {
+                  e.printStackTrace();
+               }
+               return "foo";
+            }
+
+         }), executorService);
+      }
+
    }
 
    private Sync sync;
@@ -166,7 +205,9 @@ public class SyncProxyTest {
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
-      sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),cache, ImmutableMap.<Class<?>, Class<?>> of()));
+      final SyncProxy proxy = new SyncProxy(Sync.class, new Async(),cache, ImmutableMap.<Class<?>, Class<?>> of());
+      injector.injectMembers(proxy);
+      sync = SyncProxy.proxy(Sync.class, proxy);
       // just to warm up
       sync.string();
    }
@@ -196,6 +237,16 @@ public class SyncProxyTest {
    @Test
    public void testTake200MillisecondsAndOverride() {
       assertEquals(sync.take200MillisecondsAndOverride(), "foo");
+   }
+
+   @Test
+   public void testTake200MillisecondsPropOverride() {
+      assertEquals(sync.takeXMillisecondsPropOverride(200), "foo");
+   }
+
+   @Test(expectedExceptions = RuntimeException.class)
+   public void testTake300MillisecondsPropTimeout() {
+      assertEquals(sync.takeXMillisecondsPropOverride(300), "foo");
    }
 
    @Test
