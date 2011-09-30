@@ -31,30 +31,38 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
 
    public static class Builder {
       private int orderId = -1;
+      private ProductOrder orderDetails;
 
       public Builder orderId(int orderId) {
          this.orderId = orderId;
          return this;
       }
 
+      public Builder orderDetails(ProductOrder orderDetails) {
+         this.orderDetails = orderDetails;
+         return this;
+      }
+
       public ProductOrderReceipt build() {
-         return new ProductOrderReceipt(orderId);
+         return new ProductOrderReceipt(orderId,orderDetails);
       }
 
       public static Builder fromAddress(ProductOrderReceipt in) {
-         return ProductOrderReceipt.builder().orderId(in.getOrderId());
+         return ProductOrderReceipt.builder().orderId(in.getOrderId()).orderDetails(in.getOrderDetails());
       }
    }
 
    private int orderId = -1;
+   private ProductOrder orderDetails;
 
    // for deserializer
    ProductOrderReceipt() {
 
    }
 
-   public ProductOrderReceipt(int orderId) {
+   public ProductOrderReceipt(int orderId,ProductOrder orderDetails) {
       this.orderId = orderId;
+      this.orderDetails = orderDetails;
    }
 
    @Override
@@ -67,6 +75,16 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
     */
    public int getOrderId() {
       return orderId;
+   }
+
+   /**
+    * This is a copy of the SoftLayer_Container_Product_Order
+    * which holds all the data related to an order.
+    * This will only return when an order is processed successfully.
+    * It will contain all the items in an order as well as the order totals.
+    */
+   public ProductOrder getOrderDetails() {
+      return orderDetails;
    }
 
    public Builder toBuilder() {
@@ -97,7 +115,7 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
 
    @Override
    public String toString() {
-      return "[orderId=" + orderId + "]";
+      return "[orderId=" + orderId + ", orderDetails="+orderDetails+"]";
    }
    
    
