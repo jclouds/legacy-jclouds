@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
@@ -66,7 +67,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
-      String name = "foo-ef4";
+      String name = "node"+new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder()
             .locationId("3") // the default (singapore) doesn't work.
             .build();
