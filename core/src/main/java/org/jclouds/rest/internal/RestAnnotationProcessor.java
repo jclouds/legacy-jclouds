@@ -135,6 +135,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
@@ -1093,7 +1094,9 @@ public class RestAnnotationProcessor<T> {
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
                options.filename(Strings2.replaceTokens(param.filename(), iterable));
-            Part part = Part.create(param.name(), newPayload(args[entry.getKey()]), options);
+            Object arg = args[entry.getKey()];
+            Preconditions.checkNotNull(arg, param.name());
+            Part part = Part.create(param.name(), newPayload(arg), options);
             parts.add(part);
          }
       }
@@ -1200,7 +1203,9 @@ public class RestAnnotationProcessor<T> {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               paramValue = args[entry.getKey()].toString();
+               Object pvo = args[entry.getKey()];
+               Preconditions.checkNotNull(pvo, paramKey);
+               paramValue = pvo.toString();
             }
             formParamValues.put(paramKey, paramValue);
          }
