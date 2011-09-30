@@ -609,27 +609,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertPayloadEquals(request, null, "application/unknown", false);
    }
 
-   //FIXME the following two tests fail, suggesting that the tests above aren't actually testing Nullable
-   //but rather indicates that RestAnnotationProcessor.decorateRequest silently ignores nulls
-//   public void testCreatePostRequestNullNotOk1() throws SecurityException, NoSuchMethodException, IOException {
-//      Method method = TestPost.class.getMethod("postNonnull", String.class);
-//      try {
-//         HttpRequest request = factory(TestPost.class).createRequest(method);
-//         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
-//      } catch (NullPointerException e) {
-////         Assert.assertTrue(e.toString().indexOf("???")>=0, "Error message should have referred to parameter 'fooble': "+e);
-//      }
-//   }
-//
-//   public void testCreatePostRequestNullNotOk2() throws SecurityException, NoSuchMethodException, IOException {
-//      Method method = TestPost.class.getMethod("postNonnull", String.class);
-//      try {
-//         HttpRequest request = factory(TestPost.class).createRequest(method, (String)null);
-//         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
-//      } catch (NullPointerException e) {
-//         //      Assert.assertTrue(e.toString().indexOf("???")>=0, "Error message should have referred to parameter 'fooble': "+e);
-//      }
-//   }
+   public void testCreatePostRequestNullNotOk1() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("postNonnull", String.class);
+      try {
+         HttpRequest request = factory(TestPost.class).createRequest(method);
+         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
+      } catch (NullPointerException e) {
+         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1")>=0, "Error message should have referred to 'parameter 1': "+e);
+      }
+   }
+
+   public void testCreatePostRequestNullNotOk2() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("postNonnull", String.class);
+      try {
+         HttpRequest request = factory(TestPost.class).createRequest(method, (String)null);
+         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
+      } catch (NullPointerException e) {
+               Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1")>=0, "Error message should have referred to parameter 'parameter 1': "+e);
+      }
+   }
 
    public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("postAsJson", String.class);

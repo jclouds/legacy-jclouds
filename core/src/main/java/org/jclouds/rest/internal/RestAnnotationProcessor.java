@@ -960,6 +960,21 @@ public class RestAnnotationProcessor<T> {
             }
             if (shouldBreak)
                break OUTER;
+         } else {
+            // either arg is null, or request.getArgs().size() < entry.getKey() + 1
+            // in either case, we require that null be allowed
+            // (first, however, let's make sure we have enough args on the actual method)
+            if (entry.getKey() >= request.getJavaMethod().getParameterAnnotations().length) {
+               // not known whether this happens
+               throw new IllegalArgumentException("Argument index "+(entry.getKey()+1)+" is out of bounds for method "+request.getJavaMethod());
+            }
+            
+            Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
+            for (Annotation a: annotations) {
+               if (Nullable.class.isAssignableFrom(a.annotationType()))
+                  continue OUTER;
+            }
+            Preconditions.checkNotNull(null, request.getJavaMethod().getName()+" parameter "+(entry.getKey()+1));
          }
       }
 
