@@ -135,6 +135,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
@@ -959,6 +960,25 @@ public class RestAnnotationProcessor<T> {
             }
             if (shouldBreak)
                break OUTER;
+         } else {
+            // either arg is null, or request.getArgs().size() < entry.getKey() + 1
+            // in either case, we require that null be allowed
+            // (first, however, let's make sure we have enough args on the actual method)
+            if (entry.getKey() >= request.getJavaMethod().getParameterAnnotations().length) {
+               // not known whether this happens
+               throw new IllegalArgumentException("Argument index "+(entry.getKey()+1)+" is out of bounds for method "+request.getJavaMethod());
+            }
+            
+            if (request.getJavaMethod().isVarArgs() && entry.getKey() + 1 == request.getJavaMethod().getParameterTypes().length)
+               //allow null/missing for var args
+               continue OUTER;
+                  
+            Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
+            for (Annotation a: annotations) {
+               if (Nullable.class.isAssignableFrom(a.annotationType()))
+                  continue OUTER;
+            }
+            Preconditions.checkNotNull(null, request.getJavaMethod().getName()+" parameter "+(entry.getKey()+1));
          }
       }
 
@@ -1093,7 +1113,9 @@ public class RestAnnotationProcessor<T> {
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
                options.filename(Strings2.replaceTokens(param.filename(), iterable));
-            Part part = Part.create(param.name(), newPayload(args[entry.getKey()]), options);
+            Object arg = args[entry.getKey()];
+            Preconditions.checkNotNull(arg, param.name());
+            Part part = Part.create(param.name(), newPayload(arg), options);
             parts.add(part);
          }
       }
@@ -1200,7 +1222,9 @@ public class RestAnnotationProcessor<T> {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               paramValue = args[entry.getKey()].toString();
+               Object pvo = args[entry.getKey()];
+               Preconditions.checkNotNull(pvo, paramKey);
+               paramValue = pvo.toString();
             }
             formParamValues.put(paramKey, paramValue);
          }
