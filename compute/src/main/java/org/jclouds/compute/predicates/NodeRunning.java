@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeState;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
@@ -36,6 +37,6 @@ public class NodeRunning extends NodePresentAndInIntendedState {
 
    @Inject
    public NodeRunning(ComputeService client) {
-      super(NodeState.RUNNING, client);
+      super(NodeState.RUNNING, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
    }
 }
