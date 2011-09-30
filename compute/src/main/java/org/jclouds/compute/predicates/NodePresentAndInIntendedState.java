@@ -20,6 +20,8 @@ package org.jclouds.compute.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -29,6 +31,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
@@ -42,13 +45,19 @@ public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
 
    private final ComputeService client;
    private final NodeState intended;
+   private final Set<NodeState> invalids;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
    public NodePresentAndInIntendedState(NodeState intended, ComputeService client) {
+      this(intended, ImmutableSet.of(NodeState.ERROR), client);
+   }
+
+   public NodePresentAndInIntendedState(NodeState intended, Set<NodeState> invalids, ComputeService client) {
       this.intended = intended;
       this.client = client;
+      this.invalids = invalids;
    }
 
    public boolean apply(NodeMetadata node) {
@@ -57,9 +66,9 @@ public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
       if (node == null)
          return false;
       logger.trace("%s: looking for node state %s: currently: %s", node.getId(), intended, node.getState());
-      if (node.getState() == NodeState.ERROR)
+      if (invalids.contains(node.getState()))
          throw new IllegalStateException("node " + node.getId() + " in location " + node.getLocation()
-                  + " is in error state");
+                  + " is in invalid state "+node.getState());
       return node.getState() == intended;
    }
 
