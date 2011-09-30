@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.features;
+
+package org.jclouds.virtualbox;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
-import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -35,25 +36,36 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
- * Tests behavior of {@code SoftLayerClient}
+ * Tests behavior of {@code VirtualBoxClient}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSoftLayerClientLiveTest {
+public class BaseVirtualBoxClientLiveTest {
 
-   protected RestContext<SoftLayerClient, SoftLayerAsyncClient> context;
-   protected ComputeServiceContext computeContext;
+   protected String provider = "virtualbox";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   @BeforeClass
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
+      apiversion = System.getProperty("test." + provider + ".apiversion", "4.1.2r73507");
+   }
+
+   protected ComputeServiceContext context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("test.softlayer.identity"), "test.softlayer.identity");
-      String credential = checkNotNull(System.getProperty("test.softlayer.credential"), "test.softlayer.credential");
-
-      computeContext = new ComputeServiceContextFactory().createContext("softlayer", identity, credential,
+      Properties properties = new Properties();
+      properties.setProperty(provider + ".endpoint", endpoint);
+      properties.setProperty(provider + ".apiversion", apiversion);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
-      context = computeContext.getProviderSpecificContext();
-
    }
 
    @AfterGroups(groups = "live")

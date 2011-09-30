@@ -47,7 +47,7 @@ public class IMachineToNodeMetadataTest {
 
       VirtualBox virtualBox = new VirtualBox();
       IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
-      IMachineToHardware hwParser = new IMachineToHardware(virtualBox);
+      IMachineToHardware hwParser = new IMachineToHardware(manager);
 
 //      hwParser.apply()
 

@@ -16,33 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openhosting;
+package org.jclouds.go2cloud.config;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
-import java.util.Properties;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
 
-import org.jclouds.elasticstack.ElasticStackPropertiesBuilder;
+import com.google.inject.Injector;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class OpenHostingEast1PropertiesBuilder extends ElasticStackPropertiesBuilder {
+public class Go2CloudJohannesburg1ComputeServiceContextModule extends ElasticStackComputeServiceContextModule {
 
    @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-FL");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.east1.openhosting.com");
-      properties.setProperty(PROPERTY_API_VERSION, "2.0");
-      return properties;
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(UBUNTU).osVersionMatches("10.10").os64Bit(true);
    }
-
-   public OpenHostingEast1PropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
 }

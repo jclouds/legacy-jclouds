@@ -21,23 +21,26 @@
 
 package org.jclouds.virtualbox.config;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.*;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
-import org.jclouds.virtualbox.domain.Host;
-import org.jclouds.virtualbox.functions.HostToLocation;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
@@ -45,15 +48,18 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.net.URI;
-import java.util.Map;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, IMachine, Host> {
+public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, IMachine, Location> {
 
    public VirtualBoxComputeServiceContextModule() {
       super(VirtualBoxManager.class, VirtualBoxManager.class);
@@ -68,15 +74,16 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
        return manager;
    }
 
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, IMachine, Host>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, IMachine, Location>>() {
       }).to(VirtualBoxComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
       }).to(IMachineToNodeMetadata.class);
-      bind(new TypeLiteral<Function<Host, Location>>() {
-      }).to(HostToLocation.class);
+      bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<IMachine, Hardware>>() {
       }).to(IMachineToHardware.class);
       bind(new TypeLiteral<Function<IMachine, Image>>() {

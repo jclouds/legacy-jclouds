@@ -21,36 +21,39 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import javax.inject.Inject;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.virtualbox.VirtualBox;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Inject;
+import com.google.common.base.Function;
 
 public class IMachineToHardware implements Function<IMachine, Hardware> {
 
-   private VirtualBox vbox;
+   private VirtualBoxManager virtualBoxManager;
 
    @Inject
-   public IMachineToHardware(VirtualBox vbox) {
-      this.vbox = vbox;
+   public IMachineToHardware(VirtualBoxManager virtualBoxManager) {
+      this.virtualBoxManager = virtualBoxManager;
    }
 
    @Override
    public Hardware apply(@Nullable IMachine vm) {
       String osTypeId = vm.getOSTypeId();
 
-      IGuestOSType guestOSType = vbox.manager().getVBox().getGuestOSType(osTypeId);
+
+      IGuestOSType guestOSType = virtualBoxManager.getVBox().getGuestOSType(osTypeId);
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ids(vm.getId());
-      vm.getSessionPid();
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       hardwareBuilder.is64Bit(is64Bit);
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       return hardwareBuilder.build();
    }
 }

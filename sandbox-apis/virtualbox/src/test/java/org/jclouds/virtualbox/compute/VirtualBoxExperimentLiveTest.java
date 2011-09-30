@@ -16,19 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.go2cloud;
 
-import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+package org.jclouds.virtualbox.compute;
+
+import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class Go2CloudJohannesburg1ClientLiveTest extends ElasticStackClientLiveTest {
-   public Go2CloudJohannesburg1ClientLiveTest() {
-      provider = "go2cloud-jhb1";
-      bootDrive = "5192adbd-046f-4a48-90f9-3db390b1efab";
+@Test(groups = "live", testName = "VirtualBoxExperimentLiveTest")
+public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest{
+
+   @Test
+   public void testAndExperiment() {
+      context.getComputeService().listNodes();
    }
+
 }

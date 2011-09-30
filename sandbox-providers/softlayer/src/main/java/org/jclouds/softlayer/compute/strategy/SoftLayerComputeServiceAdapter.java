@@ -18,31 +18,46 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
+import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.domain.*;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
+import org.jclouds.softlayer.domain.BillingItemVirtualGuest;
+import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.OperatingSystem;
+import org.jclouds.softlayer.domain.Password;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
-import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and the jclouds
@@ -54,7 +69,6 @@ public class SoftLayerComputeServiceAdapter implements
       ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter> {
 
    public static final String SAN_DESCRIPTION_REGEX=".*GB \\(SAN\\).*";
-   //TODO: Better to pass this in as a property like virtualGuestPackageName?
    private static final Float BOOT_VOLUME_CAPACITY = 100F;
 
    private final SoftLayerClient client;
@@ -68,19 +82,86 @@ public class SoftLayerComputeServiceAdapter implements
    }
 
    @Override
-   public VirtualGuest createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name,
+   public VirtualGuest createNodeWithGroupEncodedIntoNameThenStoreCredentials(String group, String name,
             Template template, Map<String, Credentials> credentialStore) {
-      VirtualGuest from = null; // TODO create the backend object using parameters from the
-                                // template. ex.
-      // VirtualGuest from =
-      // client.getVirtualGuestClient().createServerInDC(template.getLocation().getId(), name,
-      // Long.parseLong(template.getImage().getProviderId()),
-      // Long.parseLong(template.getHardware().getProviderId()));
-      // store the credentials so that later functions can use them
-      // credentialStore.put("node#"+ from.getId() + "", new Credentials(from.loginUser,
-      // from.password));
-      return from;
+      checkNotNull(template, "template was null");
+      checkNotNull(template.getOptions(), "template options was null");
+      checkArgument(template.getOptions().getClass().isAssignableFrom(SoftLayerTemplateOptions.class),
+               "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
+                        .getClass());
+      
+      Iterable<VirtualGuest> existing = findVirtualGuests(name,group);
+      if(!Iterables.isEmpty(existing)) {
+         throw new IllegalStateException(
+               "VirtualGuest(s) already exist with hostname:"+name+", group:"+group+". Existing:"+existing);
+      }
+
+      VirtualGuest newGuest = VirtualGuest.builder()
+                                          .domain(template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName())
+                                          .hostname(name)
+                                          .build();
+
+      ProductOrder order = ProductOrder.builder()
+                                       .packageId(getProductPackage().getId())
+                                       .location(template.getLocation().getId())
+                                       .quantity(1)
+                                       .useHourlyPricing(true)
+                                       .prices(getPrices(template))
+                                       .virtualGuest(newGuest)
+                                       .build();
+
+      client.getVirtualGuestClient().orderVirtualGuest(order);
+
+
+      VirtualGuest result = Iterables.getOnlyElement(findVirtualGuests(name, group));
+      Credentials credentials = new Credentials(null,null);
+
+      // This information is not always available.
+      OperatingSystem os = result.getOperatingSystem();
+      if(os!=null) {
+         Set<Password> passwords = os.getPasswords();
+         if(passwords.size()>0) {
+            Password pw = Iterables.get(passwords,0);
+            credentials = new Credentials(pw.getUsername(),pw.getPassword());
+         }
+      }
+      credentialStore.put("node#"+result.getId(),credentials);
+      return result;
    }
+
+   private Iterable<VirtualGuest> findVirtualGuests(String hostname,String domain) {
+      checkNotNull(hostname,"hostname");
+      checkNotNull(domain,"domain");
+
+      Set<VirtualGuest> result = Sets.newLinkedHashSet();
+
+      for( VirtualGuest guest : client.getVirtualGuestClient().listVirtualGuests())  {
+         if ( guest.getHostname().equals(hostname) && guest.getDomain().equals(domain)) {
+            result.add(guest);
+         }
+      }
+
+      return result;
+   }
+
+   private Iterable<ProductItemPrice> getPrices(Template template) {
+      Set<ProductItemPrice> result = Sets.newLinkedHashSet();
+
+      int imageId = Integer.parseInt(template.getImage().getId());
+      result.add(ProductItemPrice.builder().id(imageId).build());
+
+      Iterable<String> hardwareIds = Splitter.on(",").split(template.getHardware().getId());
+      for(String hardwareId: hardwareIds) {
+         int id = Integer.parseInt(hardwareId);
+         result.add(ProductItemPrice.builder().id(id).build());
+      }
+
+      result.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
+
+      return result;
+   }
+
+
 
    @Override
    public Iterable<Set<ProductItem>> listHardwareProfiles() {

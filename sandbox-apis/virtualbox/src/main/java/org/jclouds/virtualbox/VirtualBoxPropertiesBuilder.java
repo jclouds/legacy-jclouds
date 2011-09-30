@@ -69,6 +69,7 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
               "jclouds-virtualbox-test"));
       
       // TODO: Add more properties and use the wired properties from test code.
+      properties.put(VirtualBoxConstants.VIRTUALBOX_DISTRO_ISO_NAME, "ubuntu-11.04-server-i386.iso");
       return properties;
    }
 }
