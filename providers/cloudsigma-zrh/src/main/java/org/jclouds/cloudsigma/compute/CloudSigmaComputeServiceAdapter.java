@@ -32,7 +32,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.domain.Device;
 import org.jclouds.cloudsigma.domain.DriveInfo;
@@ -60,33 +59,35 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
- * defines the connection between the {@link CloudSigmaClient} implementation and the jclouds
- * {@link ComputeService}
+ * defines the connection between the {@link CloudSigmaClient} implementation
+ * and the jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class CloudSigmaComputeServiceAdapter implements
-         ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
+      ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
    private static final Predicate<DriveInfo> PREINSTALLED_DISK = Predicates.and(Predicates.notNull(),
-            new Predicate<DriveInfo>() {
+         new Predicate<DriveInfo>() {
 
-               @Override
-               public boolean apply(DriveInfo drive) {
-                  return drive.getType().equals(DriveType.DISK) && drive.getDriveType().contains("preinstalled");
-               }
+            @Override
+            public boolean apply(DriveInfo drive) {
+               return drive.getType().equals(DriveType.DISK) && drive.getDriveType().contains("preinstalled");
+            }
 
-            });
+         });
    private final CloudSigmaClient client;
-   private final CloudSigmaAsyncClient aclient;
    private final Predicate<DriveInfo> driveNotClaimed;
    private final JustProvider locationSupplier;
    private final String defaultVncPassword;
-   private final Map<String, DriveInfo> cache;
+   private final Cache<String, DriveInfo> cache;
    private final ExecutorService executor;
 
    @Resource
@@ -94,12 +95,10 @@ public class CloudSigmaComputeServiceAdapter implements
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public CloudSigmaComputeServiceAdapter(CloudSigmaClient client, CloudSigmaAsyncClient aclient,
-            Predicate<DriveInfo> driveNotClaimed, JustProvider locationSupplier,
-            @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword, Map<String, DriveInfo> cache,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   public CloudSigmaComputeServiceAdapter(CloudSigmaClient client, Predicate<DriveInfo> driveNotClaimed,
+         JustProvider locationSupplier, @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
+         Cache<String, DriveInfo> cache, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
-      this.aclient = checkNotNull(aclient, "aclient");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
@@ -109,21 +108,20 @@ public class CloudSigmaComputeServiceAdapter implements
 
    @Override
    public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-            Map<String, Credentials> credentialStore) {
+         Map<String, Credentials> credentialStore) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
       logger.debug(">> imaging boot drive source(%s) bytes(%d)", template.getImage().getId(), bootSize);
       DriveInfo drive = client.cloneDrive(template.getImage().getId(), template.getImage().getId(),
-               new CloneDriveOptions().size(bootSize));
+            new CloneDriveOptions().size(bootSize));
       boolean success = driveNotClaimed.apply(drive);
       logger.debug("<< image(%s) complete(%s)", drive.getUuid(), success);
       if (!success) {
          client.destroyDrive(drive.getUuid());
          throw new IllegalStateException("could not image drive in time!");
       }
-      cache.put(drive.getUuid(), drive);
 
       Server toCreate = Servers.small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam())
-               .cpu((int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
+            .cpu((int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
 
       logger.debug(">> creating server");
       ServerInfo from = client.createServer(toCreate);
@@ -131,7 +129,7 @@ public class CloudSigmaComputeServiceAdapter implements
       logger.debug(">> starting server(%s)", from.getUuid());
       client.startServer(from.getUuid());
       // store the credentials so that later functions can use them
-      credentialStore.put("node#"+ from.getUuid(), new Credentials("cloudsigma", "cloudsigma"));
+      credentialStore.put("node#" + from.getUuid(), new Credentials("root", defaultVncPassword));
       return from;
    }
 
@@ -155,30 +153,39 @@ public class CloudSigmaComputeServiceAdapter implements
                   return "sizeLessThanOrEqual(" + size + ")";
                }
 
-            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu))).volumes(
-                     ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
+            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu)))
+                  .volumes(ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
          }
       return hardware.build();
    }
 
    /**
-    * look up the current standard images and do not error out, if they are not found.
+    * look up the current standard images and do not error out, if they are not
+    * found.
     */
    @Override
    public Iterable<DriveInfo> listImages() {
       Iterable<DriveInfo> drives = transformParallel(client.listStandardDrives(),
-               new Function<String, Future<DriveInfo>>() {
+            new Function<String, Future<DriveInfo>>() {
 
-                  @Override
-                  public Future<DriveInfo> apply(String input) {
-                     return aclient.getDriveInfo(input);
+               @Override
+               public Future<DriveInfo> apply(String input) {
+                  try {
+                     return Futures.immediateFuture(cache.getUnchecked(input));
+                  } catch (NullPointerException e) {
+                     logger.debug("drive %s not found", input);
+                  } catch (UncheckedExecutionException e) {
+                     logger.warn(e, "error finding drive %s: %s", input, e.getMessage());
                   }
+                  return Futures.immediateFuture(null);
+               }
 
-               }, executor, null, logger, "drives");
-      Iterable<DriveInfo> returnVal = filter(drives, PREINSTALLED_DISK);
-      for (DriveInfo drive : returnVal)
-         cache.put(drive.getUuid(), drive);
-      return returnVal;
+               @Override
+               public String toString() {
+                  return "seedDriveCache()";
+               }
+            }, executor, null, logger, "drives");
+      return filter(drives, PREINSTALLED_DISK);
    }
 
    @SuppressWarnings("unchecked")

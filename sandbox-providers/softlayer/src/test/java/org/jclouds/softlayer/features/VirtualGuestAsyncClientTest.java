@@ -47,7 +47,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
 
       assertRequestLineEquals(
             httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=virtualGuests.powerState%3BvirtualGuests.networkVlans%3BvirtualGuests.operatingSystem.passwords%3BvirtualGuests.datacenter%3BvirtualGuests.billingItem HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -57,7 +57,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
 
       assertRequestLineEquals(
             httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=virtualGuests.powerState%3BvirtualGuests.networkVlans%3BvirtualGuests.operatingSystem.passwords%3BvirtualGuests.datacenter%3BvirtualGuests.billingItem HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest,
@@ -78,7 +78,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
 
       assertRequestLineEquals(
             httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/1234.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/1234.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter%3BvirtualGuests.billingItem HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

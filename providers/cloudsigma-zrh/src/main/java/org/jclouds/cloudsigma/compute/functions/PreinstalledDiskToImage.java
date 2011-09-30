@@ -56,8 +56,9 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       String description = drive.getDescription() != null ? drive.getDescription() : drive.getName();
       Builder builder = OperatingSystem.builder();
       OsFamilyVersion64Bit parsed = imageParser.apply(drive.getName());
-      builder.name(drive.getName()).description(description).is64Bit(parsed.is64Bit).version(parsed.version).family(
-               parsed.family);
+      builder.name(drive.getName()).description(description)
+            .is64Bit(drive.getBits() != null ? drive.getBits() == 64 : parsed.is64Bit).version(parsed.version)
+            .family(parsed.family);
       return new ImageBuilder().ids(drive.getUuid()).adminPassword("cloudsigma").userMetadata(
                ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + "")).defaultCredentials(
                new Credentials("cloudsigma", "cloudsigma")).location(locationSupplier.get()).name(drive.getName())

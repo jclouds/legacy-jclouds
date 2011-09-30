@@ -19,7 +19,6 @@
 package org.jclouds.rest.config;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,6 +27,7 @@ import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
 import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
@@ -58,8 +58,8 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Singleton
    public S get() {
       A client = (A) injector.getInstance(Key.get(asyncClientType));
-      ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-               new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+      Cache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+               new TypeLiteral<Cache<ClassMethodArgs, Object>>() {
                }, Names.named("sync")));
       try {
          return (S) SyncProxy.proxy(syncClientType, new SyncProxy(syncClientType, client,

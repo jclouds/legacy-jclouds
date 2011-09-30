@@ -20,19 +20,19 @@ package org.jclouds.ec2.compute.functions;
 
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 
-import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.ResourceNotFoundException;
 
-import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
 
 /**
@@ -40,33 +40,31 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public final class RegionAndIdToImage implements Function<RegionAndName, Image> {
+public class RegionAndIdToImage extends CacheLoader<RegionAndName, Image> {
    @Resource
    protected Logger logger = Logger.NULL;
 
+   private final Map<RegionAndName, Image> knownImages;
    private final EC2ImageParser parser;
    private final EC2Client sync;
 
    @Inject
-   public RegionAndIdToImage(EC2ImageParser parser, EC2Client sync) {
+   public RegionAndIdToImage(Map<RegionAndName, Image> knownImages, EC2ImageParser parser, EC2Client sync) {
+      this.knownImages = knownImages;
       this.parser = parser;
       this.sync = sync;
    }
 
-   public Image apply(RegionAndName key) {
+   @Override
+   public Image load(RegionAndName key) throws ExecutionException{
+      if (knownImages.containsKey(key))
+         return knownImages.get(key);
       try {
          org.jclouds.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
                .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
          return parser.apply(image);
-      } catch (NoSuchElementException e) {
-         logger.debug(message(key, e));
-         return null;
-      } catch (ResourceNotFoundException e) {
-         logger.debug(message(key, e));
-         return null;
       } catch (Exception e) {
-         logger.warn(e, message(key, e));
-         return null;
+         throw new ExecutionException(message(key, e), e);
       }
    }
 

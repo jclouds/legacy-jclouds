@@ -107,11 +107,6 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>bluelock-vcloud-vcenterprise</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
             <artifactId>bluelock-vcloud-zone01</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -168,6 +163,11 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>cloudsigma-zrh</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>go2cloud-jhb1</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

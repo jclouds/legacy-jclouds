@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;

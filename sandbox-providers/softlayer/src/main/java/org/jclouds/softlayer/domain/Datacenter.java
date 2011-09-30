@@ -21,7 +21,7 @@ package org.jclouds.softlayer.domain;
 /**
  * 
  * @author Adrian Cole
- * @see <a href= "http://sldn.softlayer.com/wiki/index.php/SoftLayer_Location_Datacenter_%28type%29"
+ * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Location_Datacenter"
  *      />
  */
 public class Datacenter implements Comparable<Datacenter> {
@@ -30,11 +30,12 @@ public class Datacenter implements Comparable<Datacenter> {
    }
 
    public static class Builder {
-      private long id = -1;
+      private int id = -1;
       private String name;
       private String longName;
+      private Address locationAddress;
 
-      public Builder id(long id) {
+      public Builder id(int id) {
          this.id = id;
          return this;
       }
@@ -49,39 +50,46 @@ public class Datacenter implements Comparable<Datacenter> {
          return this;
       }
 
+      public Builder locationAddress(Address locationAddress) {
+         this.locationAddress = locationAddress;
+         return this;
+      }
+
       public Datacenter build() {
-         return new Datacenter(id, name, longName);
+         return new Datacenter(id, name, longName, locationAddress);
       }
 
       public static Builder fromDatacenter(Datacenter in) {
-         return Datacenter.builder().id(in.getId()).name(in.getName()).longName(in.getLongName());
+         return Datacenter.builder().id(in.getId()).name(in.getName()).longName(in.getLongName()).locationAddress(in.getLocationAddress());
       }
    }
 
-   private long id = -1;
+   private int id = -1;
    private String name;
    private String longName;
+   private Address locationAddress;
 
    // for deserializer
    Datacenter() {
 
    }
 
-   public Datacenter(long id, String name, String longName) {
+   public Datacenter(int id, String name, String longName, Address locationAddress) {
       this.id = id;
       this.name = name;
       this.longName = longName;
+      this.locationAddress = locationAddress;
    }
 
    @Override
    public int compareTo(Datacenter arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return new Integer(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
-   public long getId() {
+   public int getId() {
       return id;
    }
 
@@ -99,7 +107,43 @@ public class Datacenter implements Comparable<Datacenter> {
       return longName;
    }
 
+   /**
+    * @return A location's physical address (optional).
+    */
+   public Address getLocationAddress() {
+      return locationAddress;
+   }
+
    public Builder toBuilder() {
       return Builder.fromDatacenter(this);
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (id ^ (id >>> 32));
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Datacenter other = (Datacenter) obj;
+      if (id != other.id)
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[id=" + id + ", country=" + name + ", state=" + longName + "], locationAddress=" + locationAddress + "]";
+   }
+   
+   
 }

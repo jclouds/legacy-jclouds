@@ -26,7 +26,6 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +37,7 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Throwables2;
 
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -62,13 +62,13 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private final ConcurrentMap<ClassMethodArgs, Object> delegateMap;
+   private final Cache<ClassMethodArgs, Object> delegateMap;
    private final Map<Class<?>, Class<?>> sync2Async;
    private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
 
    @Inject
    public SyncProxy(Class<?> declaring, Object async,
-         @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
+         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
          throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;
       this.delegate = async;

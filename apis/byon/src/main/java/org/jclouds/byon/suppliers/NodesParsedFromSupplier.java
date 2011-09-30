@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.InputStream;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,28 +33,29 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class NodesParsedFromSupplier implements Supplier<Map<String, Node>> {
+public class NodesParsedFromSupplier implements Supplier<Cache<String, Node>> {
    @Resource
    protected Logger logger = Logger.NULL;
 
    private final Supplier<InputStream> supplier;
-   private final Function<InputStream, Map<String, Node>> parser;
+   private final Function<InputStream, Cache<String, Node>> parser;
 
    @Inject
-   NodesParsedFromSupplier(@Provider Supplier<InputStream> supplier, Function<InputStream, Map<String, Node>> parser) {
+   NodesParsedFromSupplier(@Provider Supplier<InputStream> supplier, Function<InputStream, Cache<String, Node>> parser) {
       this.supplier = checkNotNull(supplier, "supplier");
       this.parser = checkNotNull(parser, "parser");
    }
 
    @Override
-   public Map<String, Node> get() {
-      Map<String, Node> nodes = parser.apply(supplier.get());
+   public Cache<String, Node> get() {
+      Cache<String, Node> nodes = parser.apply(supplier.get());
       checkState(nodes != null && nodes.size() > 0, "no nodes parsed from supplier: %s", supplier);
       return nodes;
    }

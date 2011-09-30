@@ -20,10 +20,12 @@ package org.jclouds.softlayer;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.softlayer.reference.SoftLayerConstants;
 
 /**
  * Builds properties used in SoftLayer Clients
@@ -36,6 +38,8 @@ public class SoftLayerPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.softlayer.com/rest");
       properties.setProperty(PROPERTY_API_VERSION, "3");
+      properties.setProperty(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "SG,US-CA,US-TX,US-VA,US-WA,US-TX");
       return properties;
    }
 

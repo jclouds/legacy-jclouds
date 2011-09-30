@@ -20,11 +20,10 @@ package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.Credentials;
-
 
 
 /**
@@ -53,5 +52,8 @@ public class CredentialUtils {
                   .startsWith(Pems.PRIVATE_PKCS8_MARKER));
    }
 
+   public static boolean isPrivateKeyEncrypted(byte[] privateKey) {
+      return new String(privateKey).contains("Proc-Type: 4,ENCRYPTED");
+   }
 
 }

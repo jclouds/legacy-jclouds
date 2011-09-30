@@ -53,13 +53,13 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case RHEL:
-                  return input.version.equals("") || input.version.equals("5.4");
+                  return input.version.equals("") || input.version.matches("5.[67]");
                case DEBIAN:
-                  return input.version.equals("") || input.version.equals("5.0");
+                  return input.version.equals("") || input.version.matches("[56].0");
                case UBUNTU:
                   return input.version.equals("") || input.version.equals("10.04");
                case CENTOS:
-                  return input.version.equals("") || input.version.matches("5.[35]");
+                  return input.version.equals("") || input.version.matches("5.[56]") || input.version.equals("6.0");
                case WINDOWS:
                   return input.version.equals("") || input.version.matches("200[38]");
                default:

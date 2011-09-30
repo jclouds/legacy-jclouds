@@ -349,6 +349,8 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [:run-script :install-private-key :authorize-public-key
+       :override-credentials-with :override-login-user-with
+       :override-login-credential-with
        ;; aws ec2 options
        :spot-price :spot-options :placement-group :subnet-id
        :block-device-mappings :unmapDeviceNamed :security-groups

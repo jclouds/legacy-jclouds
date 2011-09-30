@@ -34,15 +34,15 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.cache.CacheLoader;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreatePlacementGroupIfNeeded implements Function<RegionAndName, String> {
+public class CreatePlacementGroupIfNeeded extends CacheLoader<RegionAndName, String> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -57,7 +57,7 @@ public class CreatePlacementGroupIfNeeded implements Function<RegionAndName, Str
    }
 
    @Override
-   public String apply(RegionAndName from) {
+   public String load(RegionAndName from) {
       createPlacementGroupInRegion(from.getRegion(), from.getName());
       return from.getName();
    }

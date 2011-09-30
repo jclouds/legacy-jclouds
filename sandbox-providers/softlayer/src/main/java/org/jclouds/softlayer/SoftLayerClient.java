@@ -22,7 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.DatacenterClient;
+import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 
 /**
@@ -30,7 +32,7 @@ import org.jclouds.softlayer.features.VirtualGuestClient;
  * <p/>
  * 
  * @see SoftLayerAsyncClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -47,4 +49,16 @@ public interface SoftLayerClient {
     */
    @Delegate
    DatacenterClient getDatacenterClient();
+
+   /**
+    * Provides synchronous access to ProductPackage features.
+    */
+   @Delegate
+   ProductPackageClient getProductPackageClient();
+
+   /**
+    * Provides synchronous access to Account features.
+    */
+   @Delegate
+   AccountClient getAccountClient();
 }

@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedMap;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.parsers.FactoryConfigurationError;

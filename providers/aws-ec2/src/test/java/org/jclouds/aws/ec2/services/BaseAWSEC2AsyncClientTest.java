@@ -25,10 +25,14 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -38,8 +42,12 @@ import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
@@ -60,6 +68,18 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
          bindRegionsToProvider(Regions.class);
       }
 
+      @Provides
+      @Singleton
+      Cache<RegionAndName, Image> provide(){
+         return CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
+
+            @Override
+            public Image load(RegionAndName key) throws Exception {
+               return null;
+            }
+
+         });
+      }
       static class Regions implements javax.inject.Provider<Map<String, URI>> {
          @Override
          public Map<String, URI> get() {

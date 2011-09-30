@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
-import javax.annotation.concurrent.NotThreadSafe;
+import org.jclouds.javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Named;
 
 import org.jclouds.Constants;

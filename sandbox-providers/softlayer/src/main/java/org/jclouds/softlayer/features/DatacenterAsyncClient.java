@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see DatacenterClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
@@ -49,16 +49,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface DatacenterAsyncClient {
 
    /**
-    * @see LocationDatacenterClient#listDatacenters
+    * @see DatacenterClient#listDatacenters
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/Datacenters.json")
+   @QueryParams(keys = "objectMask", values = "locationAddress")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Datacenter>> listDatacenters();
 
    /**
-    * @see LocationDatacenterClient#getLocationDatacenter
+    * @see DatacenterClient#getDatacenter
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/{id}.json")

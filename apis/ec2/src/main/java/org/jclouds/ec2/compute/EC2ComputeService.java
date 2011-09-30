@@ -68,6 +68,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -78,8 +79,8 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
-   private final Map<RegionAndName, KeyPair> credentialsMap;
-   private final Map<RegionAndName, String> securityGroupMap;
+   private final Cache<RegionAndName, KeyPair> credentialsMap;
+   private final Cache<RegionAndName, String> securityGroupMap;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -96,7 +97,7 @@ public class EC2ComputeService extends BaseComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap) {
+         Cache<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
@@ -116,7 +117,7 @@ public class EC2ComputeService extends BaseComputeService {
          try {
             ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
             // TODO: test this clear happens
-            securityGroupMap.remove(new RegionNameAndIngressRules(region, groupName, null, false));
+            securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
             logger.debug("<< deleted securityGroup(%s)", groupName);
          } catch (IllegalStateException e) {
             logger.debug("<< inUse securityGroup(%s)", groupName);
@@ -142,7 +143,7 @@ public class EC2ComputeService extends BaseComputeService {
                logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
                ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
                // TODO: test this clear happens
-               credentialsMap.remove(new RegionAndName(region, keyPair.getKeyName()));
+               credentialsMap.invalidate(new RegionAndName(region, keyPair.getKeyName()));
                logger.debug("<< deleted keyPair(%s)", keyPair.getKeyName());
             }
          }

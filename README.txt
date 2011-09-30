@@ -16,7 +16,7 @@ check out our examples site! https://github.com/jclouds/jclouds-examples
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
-                          cloudsigma-zrh, elasticstack(generic), bluelock-vcloud-vcenterprise,
+                          cloudsigma-zrh, elasticstack(generic), go2cloud-jhb1,
                           bluelock-vcloud-zone01, stratogen-vcloud-mycloud, rimuhosting,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
@@ -38,6 +38,8 @@ our loadbalancer api supports: cloudloadbalancers-us
  
   * note * the pom dependency org.jclouds/jclouds-allloadbalancer gives you access to
            to all of these providers
+
+we also have aws-cloudwatch support.
 
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova, scality ring,
                           hosteurope-storage, tiscali-storage, scaleup-storage, googlestorage,
@@ -115,10 +117,11 @@ Downloads:
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
-  * project page: http://code.google.com/p/jclouds/
-  * javadocs: http://jclouds.rimuhosting.com/apidocs/
-  * maven site: http://jclouds.googlecode.com/svn/maven-sites/1.1.1/jclouds-multi/index.html
-  * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
+  * project page: http://jclouds.org/
+  * documentation: http://www.jclouds.org/documentation/index
+  * javadocs (1.1.0): http://jclouds.rimuhosting.com/apidocs/
+  * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
+  * community: http://www.jclouds.org/documentation/reference/apps-that-use-jclouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
   * twitter: http://twitter.com/jclouds

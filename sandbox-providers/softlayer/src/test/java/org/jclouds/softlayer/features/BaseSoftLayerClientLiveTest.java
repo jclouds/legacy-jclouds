@@ -20,15 +20,13 @@ package org.jclouds.softlayer.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Properties;
-
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
-import org.jclouds.softlayer.SoftLayerContextBuilder;
-import org.jclouds.softlayer.SoftLayerPropertiesBuilder;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -45,18 +43,16 @@ import com.google.inject.Module;
 public class BaseSoftLayerClientLiveTest {
 
    protected RestContext<SoftLayerClient, SoftLayerAsyncClient> context;
+   protected ComputeServiceContext computeContext;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String identity = checkNotNull(System.getProperty("test.softlayer.identity"), "test.softlayer.identity");
       String credential = checkNotNull(System.getProperty("test.softlayer.credential"), "test.softlayer.credential");
 
-      Properties restProperties = new Properties();
-      restProperties.setProperty("softlayer.contextbuilder", SoftLayerContextBuilder.class.getName());
-      restProperties.setProperty("softlayer.propertiesbuilder", SoftLayerPropertiesBuilder.class.getName());
-
-      context = new RestContextFactory(restProperties).createContext("softlayer", identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()));
+      computeContext = new ComputeServiceContextFactory().createContext("softlayer", identity, credential,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
+      context = computeContext.getProviderSpecificContext();
 
    }
 

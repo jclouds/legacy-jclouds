@@ -24,8 +24,8 @@
 </head>
 <body>
 <h2>Welcome!</h2>
-Click
-<a href="/tweets/get">here</a>
-to see tweets about jclouds.
+<p>Click <a href="/tweets/get">here</a> to see tweets about jclouds.</p>
+<p><img src="http://di388e0fcqllf.cloudfront.net/images/badges/powered-by-cloudbees-button.png" 
+alt="Powered by RUN@cloud" /></p>
 </body>
 </html>

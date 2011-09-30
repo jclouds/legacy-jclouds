@@ -53,7 +53,8 @@ public class ParseOsFamilyVersion64BitFromImageName implements Function<String, 
    }
 
    // ex CentOS 5.5 Linux 64bit Preinstalled System with AppFirst Monitoring
-   public static final Pattern PATTERN = Pattern.compile("([^ ]+)[^0-9]([0-9.]+) .*");
+   // ex. Centos-5.6-20110917 pub
+   public static final Pattern PATTERN = Pattern.compile("([^ -]+)[^0-9]([0-9.]+)[ -].*");
 
    @Override
    public OsFamilyVersion64Bit apply(String input) {

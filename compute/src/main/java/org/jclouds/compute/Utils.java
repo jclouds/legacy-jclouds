@@ -18,7 +18,7 @@
  */
 package org.jclouds.compute;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.UtilsImpl;

@@ -20,12 +20,16 @@ package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.cloudwatch.CloudWatchAsyncClient;
+import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -38,11 +42,17 @@ import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.util.IpPermissions;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.Module;
 
 /**
  * 
@@ -57,7 +67,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    }
 
    @Override
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
@@ -72,9 +82,8 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
-      // Date before = new Date();
+      Date before = new Date();
 
-      options.as(AWSEC2TemplateOptions.class).keyPair(group);
       options.as(AWSEC2TemplateOptions.class).enableMonitoring();
       options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
@@ -93,7 +102,15 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
-
+         options.as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
+         
+         // pass in the private key, so that we can run a script with it
+         assert result.getKeyMaterial() != null : result;
+         options.overrideLoginCredentialWith(result.getKeyMaterial());
+         
+         // an arbitrary command to run
+         options.runScript(Statements.exec("find /usr"));
+         
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
@@ -106,20 +123,17 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), group);
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
 
-         // TODO when the cloudwatchclient is finished
 
-         // RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new
-         // RestContextFactory().createContext(
-         // "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
-         //
-         // try {
-         // Set<Datapoint> datapoints =
-         // monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-         // "CPUUtilization", before, new Date(), 60, "Average");
-         // assert datapoints != null;
-         // } finally {
-         // monitoringContext.close();
-         // }
+         RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory()
+                  .createContext("aws-cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+
+         try {
+            Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
+                     "CPUUtilization", before, new Date(), 60, "Average");
+            assert datapoints != null;
+         } finally {
+            monitoringContext.close();
+         }
 
          // make sure we made our dummy group and also let in the user's group
          assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
@@ -146,7 +160,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
    public void testSubnetId() throws Exception {
 
       String subnetId = System.getProperty("test.subnetId");

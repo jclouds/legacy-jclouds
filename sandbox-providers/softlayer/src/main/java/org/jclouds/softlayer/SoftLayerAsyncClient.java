@@ -19,7 +19,9 @@
 package org.jclouds.softlayer;
 
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.softlayer.features.AccountAsyncClient;
 import org.jclouds.softlayer.features.DatacenterAsyncClient;
+import org.jclouds.softlayer.features.ProductPackageAsyncClient;
 import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
 
 /**
@@ -27,7 +29,7 @@ import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
  * <p/>
  * 
  * @see SoftLayerClient
- * @see <a href="http://sldn.softlayer.com/wiki/index.php/REST" />
+ * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 public interface SoftLayerAsyncClient {
@@ -43,4 +45,16 @@ public interface SoftLayerAsyncClient {
     */
    @Delegate
    DatacenterAsyncClient getDatacenterClient();
+   
+   /**
+    * Provides asynchronous access to ProductPackage features.
+    */
+   @Delegate
+   ProductPackageAsyncClient getProductPackageClient();
+
+   /**
+    * Provides asynchronous access to Account features.
+    */
+   @Delegate
+   AccountAsyncClient getAccountClient();
 }

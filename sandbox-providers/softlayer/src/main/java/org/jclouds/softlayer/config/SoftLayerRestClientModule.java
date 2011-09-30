@@ -33,8 +33,12 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.features.AccountAsyncClient;
+import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.DatacenterAsyncClient;
 import org.jclouds.softlayer.features.DatacenterClient;
+import org.jclouds.softlayer.features.ProductPackageAsyncClient;
+import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
@@ -53,6 +57,8 @@ public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient,
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(VirtualGuestClient.class, VirtualGuestAsyncClient.class)//
          .put(DatacenterClient.class, DatacenterAsyncClient.class)//
+         .put(ProductPackageClient.class, ProductPackageAsyncClient.class)//
+         .put(AccountClient.class, AccountAsyncClient.class)//
          .build();
 
    public SoftLayerRestClientModule() {

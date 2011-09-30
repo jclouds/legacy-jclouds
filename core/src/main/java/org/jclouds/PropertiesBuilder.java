@@ -46,7 +46,7 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.Properties;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;

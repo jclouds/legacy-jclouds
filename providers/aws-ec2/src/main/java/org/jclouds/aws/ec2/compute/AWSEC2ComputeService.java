@@ -64,6 +64,7 @@ import org.jclouds.util.Preconditions2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 
 /**
  * @author Adrian Cole
@@ -71,7 +72,7 @@ import com.google.common.base.Supplier;
 @Singleton
 public class AWSEC2ComputeService extends EC2ComputeService {
 
-   private final Map<RegionAndName, String> placementGroupMap;
+   private final Cache<RegionAndName, String> placementGroupMap;
    private final Predicate<PlacementGroup> placementGroupDeleted;
    private final AWSEC2Client ec2Client;
 
@@ -90,8 +91,8 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
-         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-         @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
+         Cache<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+         @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
          @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
@@ -117,7 +118,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
                checkState(
                      placementGroupDeleted.apply(new PlacementGroup(region, placementGroup, "cluster", State.PENDING)),
                      String.format("placementGroup region(%s) name(%s) failed to delete", region, placementGroup));
-               placementGroupMap.remove(new RegionAndName(region, placementGroup));
+               placementGroupMap.invalidate(new RegionAndName(region, placementGroup));
                logger.debug("<< deleted placementGroup(%s)", placementGroup);
             } catch (IllegalStateException e) {
                logger.debug("<< inUse placementGroup(%s)", placementGroup);

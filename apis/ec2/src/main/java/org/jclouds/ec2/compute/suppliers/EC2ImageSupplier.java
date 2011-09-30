@@ -18,16 +18,16 @@
  */
 package org.jclouds.ec2.compute.suppliers;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.collect.Sets;
 
 /**
@@ -36,16 +36,16 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
-   private final Supplier<Map<RegionAndName, ? extends Image>> map;
+   private final Supplier<Cache<RegionAndName, ? extends Image>> map;
 
    @Inject
-   EC2ImageSupplier(Supplier<Map<RegionAndName, ? extends Image>> map) {
+   EC2ImageSupplier(Supplier<Cache<RegionAndName, ? extends Image>> map) {
       this.map = map;
    }
 
    @Override
    public Set<? extends Image> get() {
-      return Sets.newLinkedHashSet(map.get().values());
+      return Sets.newLinkedHashSet(map.get().asMap().values());
    }
 
 }

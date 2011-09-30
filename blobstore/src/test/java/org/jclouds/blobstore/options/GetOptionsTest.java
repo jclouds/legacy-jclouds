@@ -136,6 +136,21 @@ public class GetOptionsTest {
       assertEquals(options.getRanges(), ImmutableList.of("0-5", "10-100"));
    }
 
+
+   @Test
+   public void testRangeStartAt() {
+      GetOptions options = new GetOptions();
+      options.startAt(5);
+      assertEquals(options.getRanges(), ImmutableList.of("5-"));
+   }
+
+   @Test
+   public void testRangeTail() {
+      GetOptions options = new GetOptions();
+      options.tail(5);
+      assertEquals(options.getRanges(), ImmutableList.of("-5"));
+   }
+
    @Test
    public void testNoRange() {
       GetOptions options = new GetOptions();

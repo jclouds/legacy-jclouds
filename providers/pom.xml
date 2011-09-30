@@ -48,7 +48,6 @@
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
         <module>cloudloadbalancers-us</module>
-        <module>bluelock-vcloud-vcenterprise</module>
         <module>bluelock-vcloud-zone01</module>
         <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
@@ -62,5 +61,7 @@
         <module>skalicloud-sdg-my</module>
         <module>savvis-symphonyvpdc</module>
         <module>greenhousedata-element-vcloud</module>
+        <module>aws-cloudwatch</module>
+        <module>go2cloud-jhb1</module>
     </modules>
 </project>

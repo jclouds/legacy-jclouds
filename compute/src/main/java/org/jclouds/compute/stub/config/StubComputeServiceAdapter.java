@@ -99,7 +99,14 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.state(NodeState.PENDING);
       builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
-      builder.credentials(new Credentials("root", passwordPrefix + id));
+      Credentials creds = template.getOptions().getOverridingCredentials();
+      if (creds == null)
+         creds = new Credentials(null, null);
+      if (creds.identity == null)
+         creds = creds.toBuilder().identity("root").build();
+      if (creds.credential == null)
+         creds = creds.toBuilder().credential(passwordPrefix + id).build();
+      builder.credentials(creds);
       NodeMetadata node = builder.build();
       credentialStore.put("node#" + node.getId(), node.getCredentials());
       nodes.put(node.getId(), node);
