@@ -602,7 +602,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public void testCreatePostRequestNullOk2() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("post", String.class);
-      HttpRequest request = factory(TestPost.class).createRequest(method, (String)null);
+      HttpRequest request = factory(TestPost.class).createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -613,19 +613,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestPost.class.getMethod("postNonnull", String.class);
       try {
          HttpRequest request = factory(TestPost.class).createRequest(method);
-         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
+         Assert
+                  .fail("call should have failed with illegal null parameter, not permitted " + request
+                           + " to be created");
       } catch (NullPointerException e) {
-         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1")>=0, "Error message should have referred to 'parameter 1': "+e);
+         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
+                  "Error message should have referred to 'parameter 1': " + e);
       }
    }
 
    public void testCreatePostRequestNullNotOk2() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("postNonnull", String.class);
       try {
-         HttpRequest request = factory(TestPost.class).createRequest(method, (String)null);
-         Assert.fail("call should have failed with illegal null parameter, not permitted "+request+" to be created");
+         HttpRequest request = factory(TestPost.class).createRequest(method, (String) null);
+         Assert
+                  .fail("call should have failed with illegal null parameter, not permitted " + request
+                           + " to be created");
       } catch (NullPointerException e) {
-               Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1")>=0, "Error message should have referred to parameter 'parameter 1': "+e);
+         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
+                  "Error message should have referred to parameter 'parameter 1': " + e);
       }
    }
 
