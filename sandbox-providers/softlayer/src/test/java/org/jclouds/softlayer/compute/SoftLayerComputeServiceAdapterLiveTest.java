@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
@@ -32,7 +33,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
-import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter.OnlyOneVirtualGuestPresentWithHostAndDomainName;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
@@ -56,7 +56,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void setupClient() {
       super.setupClient();
       adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
-            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME, new OnlyOneVirtualGuestPresentWithHostAndDomainName(context.getApi()), 5000l);
+            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME);
    }
 
    @Test
@@ -67,7 +67,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
-      String name = "foo-ef4";
+      String name = "node"+new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder()
             .locationId("3") // the default (singapore) doesn't work.
             .build();

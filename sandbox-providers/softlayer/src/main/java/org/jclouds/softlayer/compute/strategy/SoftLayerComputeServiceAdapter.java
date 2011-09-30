@@ -18,7 +18,6 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
@@ -29,7 +28,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
@@ -37,7 +35,6 @@ import org.jclouds.softlayer.domain.*;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 import org.jclouds.softlayer.reference.SoftLayerConstants;
-import org.jclouds.softlayer.util.SoftLayerUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +42,8 @@ import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
 
@@ -63,20 +61,12 @@ public class SoftLayerComputeServiceAdapter implements
 
    private final SoftLayerClient client;
    private final String virtualGuestPackageName;
-   private final RetryablePredicate<VirtualGuest> orderTester;
-   private final long guestOrderDelay;
 
    @Inject
    public SoftLayerComputeServiceAdapter(SoftLayerClient client,
-            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName, 
-            OnlyOneVirtualGuestPresentWithHostAndDomainName onlyOneVirtualGuestPresentWithHostAndDomainName,
-            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_ORDER_DELAY) long guestOrderDelay) {
+            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName) {
       this.client = checkNotNull(client, "client");
       this.virtualGuestPackageName = checkNotNull(virtualGuestPackageName, "virtualGuestPackageName");
-      checkArgument(guestOrderDelay > 500, "guestOrderDelay must be in milliseconds and greater than 500");
-      this.orderTester = new RetryablePredicate<VirtualGuest>(onlyOneVirtualGuestPresentWithHostAndDomainName,
-               guestOrderDelay);
-      this.guestOrderDelay=guestOrderDelay;
    }
 
    @Override
@@ -96,13 +86,9 @@ public class SoftLayerComputeServiceAdapter implements
                template.getLocation().getId()).quantity(1).useHourlyPricing(true).prices(getPrices(template))
                .virtualGuest(newGuest).build();
 
-      client.getVirtualGuestClient().orderVirtualGuest(order);
-      
-      boolean orderInSystem = orderTester.apply(newGuest);
-      checkState(orderInSystem, "order for guest %s didn't complete within %dms", newGuest, guestOrderDelay);
+      ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);
+      VirtualGuest result = Iterables.get(productOrderReceipt.getOrderDetails().getVirtualGuests(), 0);
 
-      Iterable<VirtualGuest> allGuests = client.getVirtualGuestClient().listVirtualGuests();
-      VirtualGuest result = SoftLayerUtils.findVirtualGuest(allGuests, name, domainName);
 
       Credentials credentials = new Credentials(null, null);
 
@@ -119,22 +105,6 @@ public class SoftLayerComputeServiceAdapter implements
       return result;
    }
 
-   public static class OnlyOneVirtualGuestPresentWithHostAndDomainName implements Predicate<VirtualGuest> {
-      private final SoftLayerClient client;
-
-      @Inject
-      public OnlyOneVirtualGuestPresentWithHostAndDomainName(SoftLayerClient client) {
-         this.client = checkNotNull(client, "client was null");
-      }
-
-      @Override
-      public boolean apply(VirtualGuest guest) {
-         checkNotNull(guest, "virtual guest was null");
-         Iterable<VirtualGuest> allGuests = client.getVirtualGuestClient().listVirtualGuests();
-         return SoftLayerUtils.findVirtualGuest(allGuests, guest.getHostname(), guest.getDomain()) != null;
-      }
-
-   }
 
    private Iterable<ProductItemPrice> getPrices(Template template) {
       Set<ProductItemPrice> result = Sets.newLinkedHashSet();
