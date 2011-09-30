@@ -678,27 +678,25 @@ To see the commands that will be executed, print the result of `Statement.render
   * `lein new mygroup/myproject`
   * `cd myproject`
   * `vi project.clj`
-
-
-{% highlight clj %}
-(defproject mygroup/myproject "1.0.0" 
-  :description "FIXME: write"
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]
-                 [org.jclouds/jclouds-allcompute "1.0.0"]]
-  :repositories [["jclouds" "https://oss.sonatype.org/content/repositories/releases"]])
-{% endhighlight %}
-
-    * for snapshot
+  * for jclouds 1.1 and earlier (clojure 1.2 only)
 
 {% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
-                 [org.jclouds/jclouds-allcompute "1.0-SNAPSHOT"]]
-  :repositories {
-               "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"})
+		 [org.jclouds/jclouds-allcompute "1.1.0"]])
+{% endhighlight %}
+
+    * for jclouds 1.2 / snapshot (clojure 1.2 and 1.3)
+{% highlight clojure %}
+(defproject mygroup/myproject "1.0.0" 
+  :description "FIXME: write"
+  :dependencies [[org.clojure/clojure "1.3.0"]
+                 [org.clojure/core.incubator "0.1.0"]
+                 [org.clojure/tools.logging "0.2.3"]
+                 [org.jclouds/jclouds-allcompute "1.2.0-SNAPSHOT"]]
+  :repositories {"jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}) 
 {% endhighlight %}
 
   * `lein deps`
@@ -715,14 +713,23 @@ you need to substitute your accounts and keys below.
   (nodes))
 {% endhighlight %}
 
-Here's an example of creating and running a small linux node with the group webserver:
+The above will list all nodes with cloudservers. Here's an example of creating and running a small linux node with the group webserver, using ssh and log4j extensions:
 
 {% highlight clojure %}  
-  ; create a compute service using ssh and log4j extensions
-  (def compute 
-    (compute-service provider user password :ssh :log4j))
+(def provider "cloudservers")
+(def user "email")
+(def password "password")
 
-  (create-node "webserver" compute)
+(def my-compute 
+  (compute-service provider user password :ssh :log4j))
+
+(create-node "webserver" my-compute)
+{% endhighlight %}
+
+You'll likely want to run the following when you're done:
+
+{% highlight clojure %}  
+(destroy-nodes-in-group "webserver" my-compute)
 {% endhighlight %}
 
 ## Tools
