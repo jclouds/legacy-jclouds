@@ -104,9 +104,9 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    public String execAsRoot(String command) {
       if (node.getCredentials().identity.equals("root")) {
       } else if (node.getAdminPassword() != null) {
-          command = String.format("sudo -S sh <<'%s'%n%s%n%s%n%s%n", MARKER, node.getAdminPassword(), command, MARKER);
+          command = String.format("sudo -S sh <<'%s'\n%s\n%s%s\n", MARKER, node.getAdminPassword(), command, MARKER);
       } else {
-          command = String.format("sudo sh <<'%s'%n%s%n%s%n", MARKER, command, MARKER);
+          command = String.format("sudo sh <<'%s'\n%s%s\n", MARKER, command, MARKER);
       }
       return command;
    }
