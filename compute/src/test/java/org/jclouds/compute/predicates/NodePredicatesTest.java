@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author Aled Sage
  */
-@Test
+@Test(singleThreaded = true, testName = "NodePredicatesTest")
 public class NodePredicatesTest {
 
    private NodeMetadata node;
