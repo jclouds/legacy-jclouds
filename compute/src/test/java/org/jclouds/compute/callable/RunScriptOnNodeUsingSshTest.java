@@ -38,7 +38,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 /**
  * @author Adam Lowe
  */
-@Test(groups={"unit"})
+@Test(groups={"unit"}, singleThreaded = true)
 public class RunScriptOnNodeUsingSshTest  {
     private SshClient sshClient;
     private NodeMetadata node;
