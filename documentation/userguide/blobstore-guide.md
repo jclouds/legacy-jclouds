@@ -383,23 +383,24 @@ The above examples show how to use the `BlobStore` API in Java. You can also use
   * `lein new mygroup/myproject`
   * `cd myproject`
   * `vi project.clj`
-  * for 1.0.0
-
+  * for jclouds 1.1 and earlier (clojure 1.2 only)
 
 {% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
-				 [org.jclouds/jclouds-allblobstore "1.0.0"]])
+		 [org.jclouds/jclouds-allblobstore "1.1.0"]])
 {% endhighlight %}
-    * for snapshot
+
+    * for jclouds 1.2 / snapshot (clojure 1.2 and 1.3)
 {% highlight clojure %}
 (defproject mygroup/myproject "1.0.0" 
   :description "FIXME: write"
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]
-                 [org.jclouds/jclouds-allblobstore "1.0.0"]]
+  :dependencies [[org.clojure/clojure "1.3.0"]
+                 [org.clojure/core.incubator "0.1.0"]
+                 [org.clojure/tools.logging "0.2.3"]
+                 [org.jclouds/jclouds-allcompute "1.2.0-SNAPSHOT"]]
   :repositories {"jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}) 
 {% endhighlight %}
 

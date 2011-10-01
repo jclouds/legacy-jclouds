@@ -87,7 +87,17 @@ When you runt this script, it will build a __lib__ directory full of jars you ca
 
 ### Adding jclouds to your Clojure project using lieningen
 
-If you use lieningen, you can add jclouds to your project.clj like below:
+If you use lieningen, you can add jclouds to your project.clj like below, supporting clojure 1.2 and 1.3:
+
+{% highlight clojure %}
+:dependencies [[org.clojure/clojure "1.3.0"]
+               [org.clojure/core.incubator "0.1.0"]
+               [org.clojure/tools.logging "0.2.3"]
+               [org.jclouds/jclouds-allcompute "1.2.0"]
+               [org.jclouds/jclouds-allblobstore "1.2.0"]]
+{% endhighlight %}
+
+Or, for older versions of jclouds (pre-1.2) supporting clojure 1.2 only, as follows:
 
 {% highlight clojure %}
 :dependencies [[org.clojure/clojure "1.2.0"]
@@ -188,9 +198,10 @@ Then, add jclouds snapshot dependencies to your __build.xml__ as shown below:
 If you use lieningen, you can add jclouds snapshots to your __project.clj__ like below:
 
 {% highlight clojure %}
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]
-                 [org.jclouds/jclouds-allcompute "1.2.0-SNAPSHOT"]
-                 [org.jclouds/jclouds-allblobstore "1.2.0-SNAPSHOT"]]
+  :dependencies [[org.clojure/clojure "1.3.0"]
+                 [org.clojure/core.incubator "0.1.0"]
+                 [org.clojure/tools.logging "0.2.3"]
+                 [org.jclouds/jclouds-allcompute "1.3.0-SNAPSHOT"]
+                 [org.jclouds/jclouds-allblobstore "1.3.0-SNAPSHOT"]]
   :repositories { "jclouds-snapshot" "https://oss.sonatype.org/content/repositories/snapshots"}
 {% endhighlight %}
