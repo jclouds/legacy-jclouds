@@ -57,7 +57,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
       super.setupClient();
       adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
             ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME,
-            new SoftLayerComputeServiceAdapter.VirtualGuestHasLoginDetailsPresent(context.getApi()),300000);
+            new SoftLayerComputeServiceAdapter.VirtualGuestHasLoginDetailsPresent(context.getApi()),60*60*1000);
    }
 
    @Test
@@ -89,7 +89,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
    protected void doConnectViaSsh(VirtualGuest guest, Credentials creds) {
       SshClient ssh = computeContext.utils().sshFactory()
-            .create(new IPSocket(guest.getPrimaryBackendIpAddress(), 22), creds);
+            .create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
