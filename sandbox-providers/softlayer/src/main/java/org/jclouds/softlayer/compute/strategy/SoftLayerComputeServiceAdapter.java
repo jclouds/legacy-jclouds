@@ -196,11 +196,10 @@ public class SoftLayerComputeServiceAdapter implements
       if (guest == null)
          return;
 
-      BillingItemVirtualGuest billingItem = guest.getBillingItem();
-      if (billingItem == null)
+      if (guest.getBillingItemId() == -1)
          return;
 
-      client.getVirtualGuestClient().cancelService(billingItem.getId());
+      client.getVirtualGuestClient().cancelService(guest.getBillingItemId());
    }
 
    @Override

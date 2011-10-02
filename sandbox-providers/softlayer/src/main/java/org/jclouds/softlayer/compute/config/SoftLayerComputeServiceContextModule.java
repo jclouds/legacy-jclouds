@@ -59,6 +59,7 @@ public class SoftLayerComputeServiceContextModule extends
    @Override
    protected void configure() {
       super.configure();
+      install(new SoftLayerParserModule());
       bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter>>() {})
             .to(SoftLayerComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<VirtualGuest, NodeMetadata>>() {})

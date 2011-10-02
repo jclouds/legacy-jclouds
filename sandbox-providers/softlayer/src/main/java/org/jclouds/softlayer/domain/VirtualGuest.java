@@ -74,7 +74,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       private String uuid;
       private String primaryBackendIpAddress;
       private String primaryIpAddress;
-      private BillingItemVirtualGuest billingItem;
+      private int billingItemId;
       private OperatingSystem operatingSystem;
       private Datacenter datacenter;
       private PowerState powerState;
@@ -179,8 +179,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          return this;
       }
 
-      public Builder billingItem(BillingItemVirtualGuest billingItem) {
-         this.billingItem = billingItem;
+      public Builder billingItemId(int billingItemId) {
+         this.billingItemId = billingItemId;
          return this;
       }
 
@@ -204,7 +204,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             fullyQualifiedDomainName, hostname, id, lastVerifiedDate, maxCpu,
             maxCpuUnits, maxMemory, metricPollDate, modifyDate, notes,
             privateNetworkOnly, startCpus, statusId, uuid, primaryBackendIpAddress,
-            primaryIpAddress,billingItem,operatingSystem,datacenter,powerState);
+            primaryIpAddress, billingItemId,operatingSystem,datacenter,powerState);
       }
 
       public static Builder fromVirtualGuest(VirtualGuest in) {
@@ -229,7 +229,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                                  .uuid(in.getUuid())
                                  .primaryBackendIpAddress(in.getPrimaryBackendIpAddress())
                                  .primaryIpAddress(in.getPrimaryIpAddress())
-                                 .billingItem(in.getBillingItem())
+                                 .billingItemId(in.getBillingItemId())
                                  .operatingSystem(in.getOperatingSystem())
                                  .datacenter(in.getDatacenter())
                                  .powerState(in.getPowerState());
@@ -283,7 +283,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    private String primaryBackendIpAddress;
    private String primaryIpAddress;
 
-   private BillingItemVirtualGuest billingItem;
+   private int billingItemId = -1;
    private OperatingSystem operatingSystem;
    private Datacenter datacenter;
    private PowerState powerState;
@@ -297,7 +297,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
-            String primaryIpAddress,BillingItemVirtualGuest billingItem, OperatingSystem operatingSystem, Datacenter datacenter, PowerState powerState) {
+            String primaryIpAddress,int billingItemId, OperatingSystem operatingSystem, Datacenter datacenter, PowerState powerState) {
       this.accountId = accountId;
       this.createDate = createDate;
       this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
@@ -318,7 +318,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       this.uuid = uuid;
       this.primaryBackendIpAddress = primaryBackendIpAddress;
       this.primaryIpAddress = primaryIpAddress;
-      this.billingItem = billingItem;
+      this.billingItemId = billingItemId;
       this.operatingSystem = operatingSystem;
       this.datacenter = datacenter;
       this.powerState = powerState;
@@ -475,8 +475,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
    /**
     * @return The billing item for a CloudLayer Compute Instance.
     */
-   public BillingItemVirtualGuest getBillingItem() {
-      return billingItem;
+   public int getBillingItemId() {
+      return billingItemId;
    }
 
    /**
@@ -525,7 +525,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + startCpus;
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-      result = prime * result + ((billingItem == null) ? 0 : billingItem.hashCode());
+      result = prime * result + (billingItemId ^ (billingItemId >>> 32));
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
       result = prime * result + ((powerState == null) ? 0 : powerState.hashCode());
@@ -617,10 +617,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!uuid.equals(other.uuid))
          return false;
-      if (billingItem == null) {
-         if (other.billingItem != null)
-            return false;
-      } else if (!billingItem.equals(other.billingItem))
+      if (billingItemId != other.billingItemId)
          return false;
       if (operatingSystem == null) {
          if (other.operatingSystem != null)
@@ -649,7 +646,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + ", billingItem="+billingItem+", operatingSystem="+operatingSystem+", datacenter="+datacenter
+               + ", uuid=" + uuid + ", billingItemId="+billingItemId+", operatingSystem="+operatingSystem+", datacenter="+datacenter
                + ", powerState="+powerState+"]";
    }
 

@@ -29,8 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
@@ -51,25 +49,18 @@ import com.google.common.collect.ImmutableSet;
 public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMetadata> {
 
    public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
-         .<VirtualGuest.State, NodeState> builder()
-                        .put(VirtualGuest.State.HALTED, NodeState.PENDING)
-                        .put(VirtualGuest.State.PAUSED, NodeState.SUSPENDED)
-                        .put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
-                        .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-                        .build();
+            .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING).put(
+                     VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
+            .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
-   private final FindHardwareForVirtualGuest findHardwareForVirtualGuest;
-   private final FindLocationForVirtualGuest findLocationForVirtualGuest;
-   private final FindImageForVirtualGuest findImageForVirtualGuest;
    private final Map<String, Credentials> credentialStore;
+   private final FindLocationForVirtualGuest findLocationForVirtualGuest;
 
    @Inject
-   VirtualGuestToNodeMetadata(Map<String, Credentials> credentialStore, FindHardwareForVirtualGuest findHardwareForVirtualGuest,
-         FindLocationForVirtualGuest findLocationForVirtualGuest, FindImageForVirtualGuest findImageForVirtualGuest) {
+   VirtualGuestToNodeMetadata(Map<String, Credentials> credentialStore,
+            FindLocationForVirtualGuest findLocationForVirtualGuest) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
-      this.findHardwareForVirtualGuest = checkNotNull(findHardwareForVirtualGuest, "findHardwareForVirtualGuest");
       this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
-      this.findImageForVirtualGuest = checkNotNull(findImageForVirtualGuest, "findImageForVirtualGuest");
    }
 
    @Override
@@ -77,67 +68,40 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       // convert the result object to a jclouds NodeMetadata
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
-      builder.name(from.getNotes());
+      builder.name(from.getHostname());
       builder.location(findLocationForVirtualGuest.apply(from));
-      builder.group(parseGroupFromName(from.getNotes()));
-      //TODO determine image id (product price)from virtual guest
-//      builder.imageId(from.imageId + "");
-      Image image = findImageForVirtualGuest.apply(from);
-      if (image != null)
-         builder.operatingSystem(image.getOperatingSystem());
-      builder.hardware(findHardwareForVirtualGuest.apply(from));
+      builder.group(parseGroupFromName(from.getHostname()));
+      // TODO determine image id (product price)from virtual guest
+      // builder.imageId(from.imageId + "");
+      // TODO make operating system from virtual guest
+      // builder.operatingSystem(OperatingSystem.builder()...);
+      // TODO make hardware from virtual guest
+      // builder.hardware(Hardware.builder()...);
       builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
 
       // These are null for 'bad' guest orders in the HALTED state.
-      if (from.getPrimaryIpAddress()!=null)builder.publicAddresses(ImmutableSet.<String> of(from.getPrimaryIpAddress()));
-      if (from.getPrimaryBackendIpAddress()!=null)builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
+      if (from.getPrimaryIpAddress() != null)
+         builder.publicAddresses(ImmutableSet.<String> of(from.getPrimaryIpAddress()));
+      if (from.getPrimaryBackendIpAddress() != null)
+         builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
 
-      builder.credentials(credentialStore.get("node#"+ from.getId()));
+      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
-   }
-
-   @Singleton
-   public static class FindHardwareForVirtualGuest extends FindResourceInSet<VirtualGuest, Hardware> {
-
-      @Inject
-      public FindHardwareForVirtualGuest(@Memoized Supplier<Set<? extends Hardware>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VirtualGuest from, Hardware input) {
-         //return input.getProviderId().equals(from.getId() + "");
-         return false;
-      }
-   }
-
-   @Singleton
-   public static class FindImageForVirtualGuest extends FindResourceInSet<VirtualGuest, Image> {
-
-      @Inject
-      public FindImageForVirtualGuest(@Memoized Supplier<Set<? extends Image>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VirtualGuest from, Image input) {
-         // TODO determine the price list from the virtual guest which would have the image in it.
-         return false;
-      }
    }
 
    @Singleton
    public static class FindLocationForVirtualGuest extends FindResourceInSet<VirtualGuest, Location> {
 
       @Inject
-      public FindLocationForVirtualGuest(@Memoized Supplier<Set<? extends Location>> hardware) {
-         super(hardware);
+      public FindLocationForVirtualGuest(@Memoized Supplier<Set<? extends Location>> location) {
+         super(location);
       }
 
       @Override
       public boolean matches(VirtualGuest from, Location input) {
          Datacenter dc = from.getDatacenter();
-         if (dc == null) return false;
+         if (dc == null)
+            return false;
          return input.getId().equals(Integer.toString(dc.getId()));
       }
    }

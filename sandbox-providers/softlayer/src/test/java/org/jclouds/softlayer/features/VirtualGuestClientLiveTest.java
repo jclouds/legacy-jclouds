@@ -73,9 +73,8 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       // objectMask: virtualGuests.activeTransaction
       for( VirtualGuest guest: client.listVirtualGuests()) {
          if (guest.getHostname().startsWith(TEST_HOSTNAME_PREFIX)) {
-            BillingItemVirtualGuest billingItem = guest.getBillingItem();
-            if(billingItem!=null) {
-               client.cancelService(billingItem.getId());
+            if(guest.getBillingItemId()!=-1) {
+               client.cancelService(guest.getBillingItemId());
             }
          }
       }
@@ -125,8 +124,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
 
 
    private void checkVirtualGuest(VirtualGuest vg) {
-      if (vg.getBillingItem()==null) return;//Quotes and shutting down guests
-      checkBillingItem(vg.getBillingItem());
+      if (vg.getBillingItemId()==-1) return;//Quotes and shutting down guests
 
       assert vg.getAccountId() > 0 : vg;
       assert vg.getCreateDate() != null : vg;
@@ -144,11 +142,6 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert vg.getUuid() != null : vg;
       assert vg.getPrimaryBackendIpAddress() != null : vg;
       assert vg.getPrimaryIpAddress() != null : vg;
-   }
-
-   private void checkBillingItem(BillingItemVirtualGuest billingItem) {
-      assert null != billingItem;
-      assert billingItem.getId() > 0 : billingItem;
    }
 
 }
