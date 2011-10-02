@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer.compute.config;
+package org.jclouds.softlayer.config;
 
 import java.lang.reflect.Type;
 import java.util.Date;

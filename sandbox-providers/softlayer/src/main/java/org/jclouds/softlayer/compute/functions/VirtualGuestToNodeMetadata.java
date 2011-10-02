@@ -20,6 +20,7 @@ package org.jclouds.softlayer.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.CORE_SPEED;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,9 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.domain.Datacenter;
@@ -50,7 +49,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
    public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
             .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING).put(
-                     VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
+               VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
             .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final Map<String, Credentials> credentialStore;
@@ -75,8 +74,8 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       // builder.imageId(from.imageId + "");
       // TODO make operating system from virtual guest
       // builder.operatingSystem(OperatingSystem.builder()...);
-      // TODO make hardware from virtual guest
-      // builder.hardware(Hardware.builder()...);
+      
+      builder.hardware(getHardware(from));
       builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
 
       // These are null for 'bad' guest orders in the HALTED state.
@@ -104,5 +103,21 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
             return false;
          return input.getId().equals(Integer.toString(dc.getId()));
       }
+   }
+
+   private Hardware getHardware(VirtualGuest from) {
+      HardwareBuilder builder = new HardwareBuilder().id("TODO");
+
+      final double cpus = from.getMaxCpu();
+      if (cpus>0) {
+         builder.processor(new Processor(cpus, CORE_SPEED));
+      }
+
+      final int maxMemory = from.getMaxMemory();
+      if (maxMemory>0) {
+         builder.ram(maxMemory);
+      }
+
+      return builder.build();
    }
 }

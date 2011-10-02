@@ -525,7 +525,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + startCpus;
       result = prime * result + statusId;
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-      result = prime * result + (billingItemId ^ (billingItemId >>> 32));
+      result = prime * result + (getBillingItemId() ^ (getBillingItemId() >>> 32));
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
       result = prime * result + ((powerState == null) ? 0 : powerState.hashCode());
@@ -617,7 +617,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!uuid.equals(other.uuid))
          return false;
-      if (billingItemId != other.billingItemId)
+      if (getBillingItemId() != other.getBillingItemId())
          return false;
       if (operatingSystem == null) {
          if (other.operatingSystem != null)
@@ -646,7 +646,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + ", billingItemId="+billingItemId+", operatingSystem="+operatingSystem+", datacenter="+datacenter
+               + ", uuid=" + uuid + ", billingItemId="+getBillingItemId()+", operatingSystem="+operatingSystem+", datacenter="+datacenter
                + ", powerState="+powerState+"]";
    }
 
