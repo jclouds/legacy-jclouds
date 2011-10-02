@@ -23,7 +23,7 @@ import com.google.inject.Injector;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.softlayer.compute.config.SoftLayerParserModule;
+import org.jclouds.softlayer.config.SoftLayerParserModule;
 import org.jclouds.softlayer.domain.*;
 import org.testng.annotations.Test;
 
