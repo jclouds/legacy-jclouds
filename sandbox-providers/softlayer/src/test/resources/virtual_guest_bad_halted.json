@@ -1,0 +1,4 @@
+{"accountId":93750,"createDate":"2011-09-28T01:52:45-08:00","dedicatedAccountHostOnlyFlag":false,"domain":"jclouds.org","fullyQualifiedDomainName":"foo-ef4.jclouds.org","hostname":"foo-ef4","id":413348,"lastVerifiedDate":null,"maxCpu":null,"maxCpuUnits":"CORE","maxMemory":256,"metricPollDate":null,"modifyDate":null,"privateNetworkOnlyFlag":false,"startCpus":null,"statusId":1001,"globalIdentifier":"9a8b20f0-a758-4c1f-b65b-0e63b791009f","managedResourceFlag":false,"networkVlans":[],"powerState":{
+    "keyName":"HALTED",
+    "name":"Halted"
+}}

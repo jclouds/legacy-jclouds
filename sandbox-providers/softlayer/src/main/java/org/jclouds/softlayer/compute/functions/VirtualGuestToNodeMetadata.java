@@ -36,6 +36,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
 import com.google.common.base.Function;
@@ -85,10 +86,12 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       if (image != null)
          builder.operatingSystem(image.getOperatingSystem());
       builder.hardware(findHardwareForVirtualGuest.apply(from));
-      // TODO get state
-//      builder.state(serverStateToNodeState.get(from.getState()));
-      builder.publicAddresses(ImmutableSet.<String> of(from.getPrimaryIpAddress()));
-      builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
+      builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
+
+      // These are null for 'bad' guest orders in the HALTED state.
+      if (from.getPrimaryIpAddress()!=null)builder.publicAddresses(ImmutableSet.<String> of(from.getPrimaryIpAddress()));
+      if (from.getPrimaryBackendIpAddress()!=null)builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
+
       builder.credentials(credentialStore.get("node#"+ from.getId()));
       return builder.build();
    }
@@ -103,7 +106,8 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
       @Override
       public boolean matches(VirtualGuest from, Hardware input) {
-         return input.getProviderId().equals(from.getId() + "");
+         //return input.getProviderId().equals(from.getId() + "");
+         return false;
       }
    }
 
@@ -132,8 +136,9 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
       @Override
       public boolean matches(VirtualGuest from, Location input) {
-         // TODO determine the price list from the virtual guest which would have the image in it.
-         return false;
+         Datacenter dc = from.getDatacenter();
+         if (dc == null) return false;
+         return input.getId().equals(Integer.toString(dc.getId()));
       }
    }
 }
