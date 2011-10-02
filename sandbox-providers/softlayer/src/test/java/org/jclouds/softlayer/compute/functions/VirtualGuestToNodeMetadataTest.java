@@ -24,14 +24,14 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import com.google.common.collect.Iterables;
+import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata.FindLocationForVirtualGuest;
+import org.jclouds.softlayer.domain.Password;
 import org.jclouds.softlayer.domain.VirtualGuest;
-import org.jclouds.softlayer.parse.ParseVirtualGuestWithNoPasswordTest;
+import org.jclouds.softlayer.parse.*;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -65,11 +65,132 @@ public class VirtualGuestToNodeMetadataTest {
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416696").name("node-246105155").group("node").location(
-               expectedLocation).state(NodeState.PENDING).publicAddresses(ImmutableSet.of("173.192.29.186"))
-               .privateAddresses(ImmutableSet.of("10.37.102.194")).build());
+      assertEquals(node, new NodeMetadataBuilder().ids("416788").name("node1000360500").location(
+            expectedLocation).state(NodeState.PENDING).publicAddresses(ImmutableSet.of("173.192.29.186"))
+            .privateAddresses(ImmutableSet.of("10.37.102.194"))
+            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .build());
 
       // because it wasn't present in the credential store.
       assertEquals(node.getCredentials(), null);
+   }
+
+   @Test
+   public void testApplyWhereVirtualIsBad() throws UnknownHostException {
+
+      // notice if we've already parsed this properly here, we can rely on it.
+      VirtualGuest guest = new ParseBadVirtualGuest().expected();
+
+      // note we are testing when no credentials are here. otherwise would be ("node#416696", new
+      // Credentials("root", "password"))
+      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of();
+
+      // no location here
+      Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of());
+
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
+               new FindLocationForVirtualGuest(locationSupplier));
+
+      NodeMetadata node = parser.apply(guest);
+
+      assertEquals(node, new NodeMetadataBuilder().ids("413348")
+            .name("foo-ef4").group("foo")
+            .state(NodeState.PENDING)
+            .hardware(new HardwareBuilder().id("TODO").ram(256).build())
+            .build());
+
+      // because it wasn't present in the credential store.
+      assertEquals(node.getCredentials(), null);
+   }
+
+   @Test
+   public void testApplyWhereVirtualGuestIsHalted() throws UnknownHostException {
+
+      // notice if we've already parsed this properly here, we can rely on it.
+      VirtualGuest guest = new ParseVirtualGuestHaltedTest().expected();
+
+      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(), 0);
+      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
+      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
+
+      // setup so that we have an expected Location to be parsed from the guest.
+      Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
+      Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(expectedLocation));
+
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
+               new FindLocationForVirtualGuest(locationSupplier));
+
+      NodeMetadata node = parser.apply(guest);
+
+      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
+            expectedLocation).state(NodeState.PENDING).credentials(credentials)
+            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
+            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .build());
+
+      // because it wasn't present in the credential store.
+      assertEquals(node.getCredentials(), credentials);
+   }
+
+   @Test
+   public void testApplyWhereVirtualGuestIsPaused() throws UnknownHostException {
+
+      // notice if we've already parsed this properly here, we can rely on it.
+      VirtualGuest guest = new ParseVirtualGuestPausedTest().expected();
+
+      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(),0);
+      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
+      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
+
+      // setup so that we have an expected Location to be parsed from the guest.
+      Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
+      Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(expectedLocation));
+
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
+               new FindLocationForVirtualGuest(locationSupplier));
+
+      NodeMetadata node = parser.apply(guest);
+
+      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
+            expectedLocation).state(NodeState.SUSPENDED).credentials(credentials)
+            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
+            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .build());
+
+      // because it wasn't present in the credential store.
+      assertEquals(node.getCredentials(), credentials);
+   }
+
+   @Test
+   public void testApplyWhereVirtualGuestIsRunning() throws UnknownHostException {
+
+      // notice if we've already parsed this properly here, we can rely on it.
+      VirtualGuest guest = new ParseVirtualGuestRunningTest().expected();
+
+      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(),0);
+      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
+      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
+
+      // setup so that we have an expected Location to be parsed from the guest.
+      Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
+      Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(expectedLocation));
+
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
+               new FindLocationForVirtualGuest(locationSupplier));
+
+      NodeMetadata node = parser.apply(guest);
+
+      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
+            expectedLocation).state(NodeState.RUNNING).credentials(credentials)
+            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
+            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .build());
+
+      // because it wasn't present in the credential store.
+      assertEquals(node.getCredentials(), credentials);
    }
 }

@@ -20,9 +20,14 @@ package org.jclouds.softlayer.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeClass;
@@ -30,6 +35,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
+
+import java.util.Set;
 
 /**
  * 
@@ -62,6 +69,31 @@ public class SoftLayerExperimentLiveTest {
                   .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
+
+      } finally {
+         if (context != null)
+            context.close();
+      }
+   }
+
+   @Test
+   public void testCreateAndDestoryNode() throws RunNodesException {
+      ComputeServiceContext context = null;
+      try {
+         String identity = checkNotNull(System.getProperty("test.softlayer.identity"), "test.softlayer.identity");
+         String credential = checkNotNull(System.getProperty("test.softlayer.credential"), "test.softlayer.credential");
+
+         context = new ComputeServiceContextFactory().createContext("softlayer", identity, credential, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
+
+         Template template = context.getComputeService().templateBuilder()
+            .locationId("3") // the default (singapore) doesn't work.
+            .build();
+
+         Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup("computeservice",1,template);
+         assertTrue(nodes.size() == 1);
+         NodeMetadata data = Iterables.get(nodes,0);
+         context.getComputeService().destroyNode(data.getId());
 
       } finally {
          if (context != null)
