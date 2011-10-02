@@ -60,7 +60,6 @@ public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient,
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      //install(new SoftLayerParserModule()); TODO Is this needed?
       super.configure();
    }
 
