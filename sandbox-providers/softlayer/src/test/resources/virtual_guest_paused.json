@@ -1,0 +1,89 @@
+{"accountId":93750,"createDate":"2011-10-01T06:10:38-08:00","dedicatedAccountHostOnlyFlag":true,"domain":"me.org","fullyQualifiedDomainName":"node-1928752820.me.org","hostname":"node-1928752820","id":416591,"lastVerifiedDate":null,"maxCpu":1,"maxCpuUnits":"CORE","maxMemory":1024,"metricPollDate":"2011-10-01T09:36:00-08:00","modifyDate":"2011-10-01T10:45:44-08:00","privateNetworkOnlyFlag":false,"startCpus":1,"statusId":1001,"uuid":"754c011b-7e80-8185-7e5a-c6424873c509","datacenter":{
+    "id":3,
+    "longName":"Dallas",
+    "name":"dal01"
+},"globalIdentifier":"0f10b863-f6b3-49a3-a2b9-9b0fe956a912","managedResourceFlag":false,"networkVlans":[
+    {
+        "accountId":93750,
+        "id":144615,
+        "modifyDate":"2011-09-30T11:35:27-08:00",
+        "networkVrfId":null,
+        "primarySubnetId":171267,
+        "vlanNumber":1673
+    },
+    {
+        "accountId":93750,
+        "id":144616,
+        "modifyDate":"2011-09-30T11:35:30-08:00",
+        "networkVrfId":null,
+        "primarySubnetId":329652,
+        "vlanNumber":1622
+    }
+],"operatingSystem":{
+    "hardwareId":null,
+    "id":913636,
+    "manufacturerLicenseInstance":"",
+    "passwords":[
+        {
+            "createDate":"2011-10-01T06:12:33-08:00",
+            "id":728987,
+            "modifyDate":"2011-10-01T06:12:33-08:00",
+            "password":"XKL4cHym",
+            "port":null,
+            "softwareId":913636,
+            "username":"root",
+            "software":{
+                "hardwareId":null,
+                "id":913636,
+                "manufacturerLicenseInstance":"",
+                "passwords":[
+                    {
+                        "createDate":"2011-10-01T06:12:33-08:00",
+                        "id":728987,
+                        "modifyDate":"2011-10-01T06:12:33-08:00",
+                        "password":"XKL4cHym",
+                        "port":null,
+                        "softwareId":913636,
+                        "username":"root",
+                        "software":null
+                    }
+                ],
+                "softwareLicense":{
+                    "id":427,
+                    "softwareDescriptionId":408,
+                    "softwareDescription":{
+                        "controlPanel":0,
+                        "id":408,
+                        "manufacturer":"Ubuntu",
+                        "name":"Ubuntu ",
+                        "operatingSystem":1,
+                        "requiredUser":"root",
+                        "upgradeSwDescId":null,
+                        "version":"8.04-64 Minimal for CCI",
+                        "virtualLicense":0,
+                        "virtualizationPlatform":0
+                    }
+                }
+            }
+        }
+    ],
+    "softwareLicense":{
+        "id":427,
+        "softwareDescriptionId":408,
+        "softwareDescription":{
+            "controlPanel":0,
+            "id":408,
+            "manufacturer":"Ubuntu",
+            "name":"Ubuntu ",
+            "operatingSystem":1,
+            "requiredUser":"root",
+            "upgradeSwDescId":null,
+            "version":"8.04-64 Minimal for CCI",
+            "virtualLicense":0,
+            "virtualizationPlatform":0
+        }
+    }
+},"powerState":{
+    "keyName":"PAUSED",
+    "name":"Paused"
+},"primaryBackendIpAddress":"10.37.102.197","primaryIpAddress":"173.192.29.189"}

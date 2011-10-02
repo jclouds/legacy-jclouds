@@ -18,12 +18,12 @@
  */
 package org.jclouds.softlayer.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.CaseFormat;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import com.google.common.base.CaseFormat;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The virtual guest data type presents the structure in which all virtual guests will be presented.
@@ -76,6 +76,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       private String primaryIpAddress;
       private BillingItemVirtualGuest billingItem;
       private OperatingSystem operatingSystem;
+      private Datacenter datacenter;
+      private PowerState powerState;
 
       public Builder id(int id) {
          this.id = id;
@@ -187,12 +189,22 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
          return this;
       }
 
+      public Builder datacenter(Datacenter datacenter) {
+         this.datacenter = datacenter;
+         return this;
+      }
+
+      public Builder powerState(PowerState powerState) {
+         this.powerState = powerState;
+         return this;
+      }
+
       public VirtualGuest build() {
          return new VirtualGuest(accountId, createDate, dedicatedAccountHostOnly, domain,
             fullyQualifiedDomainName, hostname, id, lastVerifiedDate, maxCpu,
             maxCpuUnits, maxMemory, metricPollDate, modifyDate, notes,
             privateNetworkOnly, startCpus, statusId, uuid, primaryBackendIpAddress,
-            primaryIpAddress,billingItem,operatingSystem);
+            primaryIpAddress,billingItem,operatingSystem,datacenter,powerState);
       }
 
       public static Builder fromVirtualGuest(VirtualGuest in) {
@@ -218,8 +230,9 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                                  .primaryBackendIpAddress(in.getPrimaryBackendIpAddress())
                                  .primaryIpAddress(in.getPrimaryIpAddress())
                                  .billingItem(in.getBillingItem())
-                                 .operatingSystem(in.getOperatingSystem());
-
+                                 .operatingSystem(in.getOperatingSystem())
+                                 .datacenter(in.getDatacenter())
+                                 .powerState(in.getPowerState());
       }
    }
 
@@ -272,7 +285,9 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    private BillingItemVirtualGuest billingItem;
    private OperatingSystem operatingSystem;
-
+   private Datacenter datacenter;
+   private PowerState powerState;
+   
    // for deserializer
    VirtualGuest() {
 
@@ -282,7 +297,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             String fullyQualifiedDomainName, String hostname, int id, Date lastVerifiedDate, int maxCpu,
             String maxCpuUnits, int maxMemory, Date metricPollDate, Date modifyDate, String notes,
             boolean privateNetworkOnly, int startCpus, int statusId, String uuid, String primaryBackendIpAddress,
-            String primaryIpAddress,BillingItemVirtualGuest billingItem, OperatingSystem operatingSystem) {
+            String primaryIpAddress,BillingItemVirtualGuest billingItem, OperatingSystem operatingSystem, Datacenter datacenter, PowerState powerState) {
       this.accountId = accountId;
       this.createDate = createDate;
       this.dedicatedAccountHostOnly = dedicatedAccountHostOnly;
@@ -305,6 +320,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       this.primaryIpAddress = primaryIpAddress;
       this.billingItem = billingItem;
       this.operatingSystem = operatingSystem;
+      this.datacenter = datacenter;
+      this.powerState = powerState;
    }
 
    @Override
@@ -469,6 +486,21 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       return operatingSystem;
    }
 
+   /**
+    * @return The guest's datacenter
+    */
+   public Datacenter getDatacenter() {
+      return datacenter;
+   }
+
+   /**
+    * @return The current power state of a virtual guest.
+    */
+   public PowerState getPowerState() {
+      return powerState;
+   }
+
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -495,6 +527,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
       result = prime * result + ((billingItem == null) ? 0 : billingItem.hashCode());
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
+      result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
+      result = prime * result + ((powerState == null) ? 0 : powerState.hashCode());
       return result;
    }
 
@@ -593,6 +627,16 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
             return false;
       } else if (!operatingSystem.equals(other.operatingSystem))
          return false;
+      if (datacenter == null) {
+         if (other.datacenter != null)
+            return false;
+      } else if (!datacenter.equals(other.datacenter))
+         return false;
+      if (powerState == null) {
+         if (other.powerState != null)
+            return false;
+      } else if (!powerState.equals(other.powerState))
+         return false;
       return true;
    }
 
@@ -605,7 +649,8 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
                + ", metricPollDate=" + metricPollDate + ", modifyDate=" + modifyDate + ", notes=" + notes
                + ", primaryBackendIpAddress=" + primaryBackendIpAddress + ", primaryIpAddress=" + primaryIpAddress
                + ", privateNetworkOnly=" + privateNetworkOnly + ", startCpus=" + startCpus + ", statusId=" + statusId
-               + ", uuid=" + uuid + ", billingItem="+billingItem+", operatingSystem="+operatingSystem+"]";
+               + ", uuid=" + uuid + ", billingItem="+billingItem+", operatingSystem="+operatingSystem+", datacenter="+datacenter
+               + ", powerState="+powerState+"]";
    }
 
 }
