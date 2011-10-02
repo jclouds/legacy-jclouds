@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -215,26 +216,46 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
      TemplateOptions options = client.templateOptions();
 
      try {
-        Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+        Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 2, options);
         NodeMetadata first = Iterables.get(nodes, 0);
-        String startedId = Iterables.getOnlyElement(nodes).getProviderId();
+        NodeMetadata second = Iterables.get(nodes, 1);
 
-        AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
+        String startedId1 = Iterables.get(nodes, 0).getProviderId();
+        String startedId2 = Iterables.get(nodes, 1).getProviderId();
 
-        String expectedSecurityGroupName = "jclouds#" + group + "#" + instance.getRegion();
-        assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of(expectedSecurityGroupName));
+        AWSRunningInstance instance1 = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId1));
+        AWSRunningInstance instance2 = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId2));
 
-        Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(instance.getRegion(), expectedSecurityGroupName);
+        String instanceRegion = null;
+        if(instance1.getRegion() == instance2.getRegion()){
+            instanceRegion = instance1.getRegion();
+        }
+        assertNotNull(instanceRegion, "Nodes are not in the same region");
+
+        Set<String> instanceGroupIds = null;
+        if(instance1.getGroupIds().size() == instance2.getGroupIds().size()){
+            instanceGroupIds = instance1.getGroupIds();
+        }
+        assertNotNull(instanceGroupIds, "Nodes group Ids are not the samee");
+
+        String expectedSecurityGroupName = "jclouds#" + group + "#" + instanceRegion;
+        assertEquals(Sets.newTreeSet(instanceGroupIds), ImmutableSortedSet.<String> of(expectedSecurityGroupName));
+
+        Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
         assertEquals(securityGroups.size(), 1);
+
+        client.destroyNode(second.getId());
+
+        Set<SecurityGroup> securityGroupsAfterDestroySecond = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
+        assertEquals(securityGroupsAfterDestroySecond.size(), 1);
 
         client.destroyNode(first.getId());
 
-        Set<SecurityGroup> securityGroupsPostDestroy = securityGroupClient.describeSecurityGroupsInRegion(instance.getRegion(), expectedSecurityGroupName);
-        assertEquals(securityGroupsPostDestroy, new HashSet());
+        Set<SecurityGroup> securityGroupsPostDestroyAll = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
+        assertEquals(securityGroupsPostDestroyAll, new HashSet());
 
      } finally {
         client.destroyNodesMatching(NodePredicates.inGroup(group));
-
      }
   }
 }
