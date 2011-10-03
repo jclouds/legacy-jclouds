@@ -130,7 +130,7 @@ public class ProductOrder {
 
    public ProductOrder(int packageId, String location, Iterable<ProductItemPrice> prices, Iterable<VirtualGuest> virtualGuest, int quantity, boolean useHourlyPricing) {
       this.packageId = packageId;
-      this.location = checkNotNull(emptyToNull(location),"location cannot be null or empty:"+location);
+      this.location = location;
       this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
       this.virtualGuests = ImmutableSet.<VirtualGuest> copyOf(checkNotNull(virtualGuest, "virtualGuest"));
       this.quantity = quantity;

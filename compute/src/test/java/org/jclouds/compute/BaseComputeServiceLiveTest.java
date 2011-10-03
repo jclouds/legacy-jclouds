@@ -717,7 +717,7 @@ public abstract class BaseComputeServiceLiveTest {
          long time = currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
-         assert node.getState() != NodeState.RUNNING;
+         assert node.getState() != NodeState.RUNNING : node;
          long duration = (currentTimeMillis() - time) / 1000;
          assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                   duration, nonBlockDurationSeconds);

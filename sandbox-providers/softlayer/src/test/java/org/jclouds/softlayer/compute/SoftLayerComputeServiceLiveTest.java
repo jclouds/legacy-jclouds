@@ -43,6 +43,7 @@ import static org.testng.Assert.assertEquals;
 public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public SoftLayerComputeServiceLiveTest() {
       provider = "softlayer";
+      group = "soft-layer";
    }
 
    @Override
@@ -57,33 +58,7 @@ public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    }
 
    @Override
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
-      super.checkNodes(nodes, tag);
-      for (NodeMetadata node : nodes) {
-         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
-      }
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testReboot", expectedExceptions = UnsupportedOperationException.class)
-   public void testSuspendResume() throws Exception {
-      super.testSuspendResume();
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
-   @Override
-   public void testGetNodesWithDetails() throws Exception {
-      super.testGetNodesWithDetails();
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
-   @Override
-   public void testListNodes() throws Exception {
-      super.testListNodes();
-   }
-
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
-   @Override
-   public void testDestroyNodes() {
-      super.testDestroyNodes();
+   public void testOptionToNotBlock() {
+      // start call is blocking anyway.
    }
 }
