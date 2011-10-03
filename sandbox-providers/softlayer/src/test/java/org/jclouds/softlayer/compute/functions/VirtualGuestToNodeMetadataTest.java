@@ -61,14 +61,17 @@ public class VirtualGuestToNodeMetadataTest {
                .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier));
+               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416788").name("node1000360500").location(
-            expectedLocation).state(NodeState.PENDING).publicAddresses(ImmutableSet.of("173.192.29.186"))
-            .privateAddresses(ImmutableSet.of("10.37.102.194"))
-            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+      assertEquals(node, new NodeMetadataBuilder().ids("416788")
+            .name("node1000360500").hostname("node1000360500")
+            .location(expectedLocation).state(NodeState.PENDING)
+            .publicAddresses(ImmutableSet.of("173.192.29.186")).privateAddresses(ImmutableSet.of("10.37.102.194"))
+            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
             .build());
 
       // because it wasn't present in the credential store.
@@ -90,14 +93,16 @@ public class VirtualGuestToNodeMetadataTest {
                .<Location> of());
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier));
+               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
       assertEquals(node, new NodeMetadataBuilder().ids("413348")
-            .name("foo-ef4").group("foo")
+            .name("foo-ef4").hostname("foo-ef4").group("foo")
             .state(NodeState.PENDING)
-            .hardware(new HardwareBuilder().id("TODO").ram(256).build())
+            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
             .build());
 
       // because it wasn't present in the credential store.
@@ -120,14 +125,17 @@ public class VirtualGuestToNodeMetadataTest {
                .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier));
+               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
-            expectedLocation).state(NodeState.PENDING).credentials(credentials)
+      assertEquals(node, new NodeMetadataBuilder().ids("416700")
+            .name("node1703810489").hostname("node1703810489")
+            .location(expectedLocation).state(NodeState.PENDING).credentials(credentials)
             .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
             .build());
 
       // because it wasn't present in the credential store.
@@ -150,14 +158,17 @@ public class VirtualGuestToNodeMetadataTest {
                .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier));
+               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
-            expectedLocation).state(NodeState.SUSPENDED).credentials(credentials)
+      assertEquals(node, new NodeMetadataBuilder().ids("416700")
+            .name("node1703810489").hostname("node1703810489")
+            .location(expectedLocation).state(NodeState.SUSPENDED).credentials(credentials)
             .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
             .build());
 
       // because it wasn't present in the credential store.
@@ -180,17 +191,44 @@ public class VirtualGuestToNodeMetadataTest {
                .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier));
+               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700").name("node1703810489").location(
-            expectedLocation).state(NodeState.RUNNING).credentials(credentials)
+      assertEquals(node, new NodeMetadataBuilder().ids("416700")
+            .name("node1703810489").hostname("node1703810489")
+            .location(expectedLocation).state(NodeState.RUNNING).credentials(credentials)
             .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new HardwareBuilder().id("TODO").processor(new Processor(1,2.0)).ram(1042).build())
+            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
             .build());
 
       // because it wasn't present in the credential store.
       assertEquals(node.getCredentials(), credentials);
+   }
+
+   private static class GetHardwareForVirtualGuestMock extends VirtualGuestToNodeMetadata.GetHardwareForVirtualGuest {
+      public GetHardwareForVirtualGuestMock() {
+         super(null);
+      }
+
+      @Override
+      public Hardware getHardware(VirtualGuest guest) {
+         return new HardwareBuilder().id("mocked hardware").build();
+      }
+   }
+
+   private static class GetImageForVirtualGuestMock extends VirtualGuestToNodeMetadata.GetImageForVirtualGuest {
+      public GetImageForVirtualGuestMock() {
+         super(null);
+      }
+
+      @Override
+      public Image getImage(VirtualGuest guest) {
+         return new ImageBuilder().id("123").description("mocked image")
+               .operatingSystem(OperatingSystem.builder().description("foo os").build())
+               .build();
+      }
    }
 }

@@ -28,18 +28,25 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.*;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.softlayer.predicates.ProductItemPredicates;
 
 /**
  * @author Adrian Cole
@@ -54,12 +61,19 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
    private final Map<String, Credentials> credentialStore;
    private final FindLocationForVirtualGuest findLocationForVirtualGuest;
+   private final GetHardwareForVirtualGuest getHardwareForVirtualGuest;
+   private final GetImageForVirtualGuest getImageForVirtualGuest;
 
    @Inject
    VirtualGuestToNodeMetadata(Map<String, Credentials> credentialStore,
-            FindLocationForVirtualGuest findLocationForVirtualGuest) {
+            FindLocationForVirtualGuest findLocationForVirtualGuest,
+            GetHardwareForVirtualGuest getHardwareForVirtualGuest,
+            GetImageForVirtualGuest getImageForVirtualGuest
+            ) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
+      this.getHardwareForVirtualGuest = checkNotNull(getHardwareForVirtualGuest, "getHardwareForVirtualGuest");
+      this.getImageForVirtualGuest = checkNotNull(getImageForVirtualGuest, "getImageForVirtualGuest");
    }
 
    @Override
@@ -68,14 +82,19 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
       builder.name(from.getHostname());
+      builder.hostname(from.getHostname());
       builder.location(findLocationForVirtualGuest.apply(from));
       builder.group(parseGroupFromName(from.getHostname()));
-      // TODO determine image id (product price)from virtual guest
-      // builder.imageId(from.imageId + "");
-      // TODO make operating system from virtual guest
-      // builder.operatingSystem(OperatingSystem.builder()...);
-      
-      builder.hardware(getHardware(from));
+
+      Image image = getImageForVirtualGuest.getImage(from);
+      if (image!=null) {
+         builder.imageId(image.getId());
+         builder.operatingSystem(image.getOperatingSystem());
+      }
+
+      Hardware hardware = getHardwareForVirtualGuest.getHardware(from);
+      if (hardware!=null) builder.hardware(hardware);
+
       builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
 
       // These are null for 'bad' guest orders in the HALTED state.
@@ -105,19 +124,53 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       }
    }
 
-   private Hardware getHardware(VirtualGuest from) {
-      HardwareBuilder builder = new HardwareBuilder().id("TODO");
+   @Singleton
+   public static class GetHardwareForVirtualGuest {
 
-      final double cpus = from.getMaxCpu();
-      if (cpus>0) {
-         builder.processor(new Processor(cpus, CORE_SPEED));
+      private SoftLayerClient client;
+
+      @Inject
+      public GetHardwareForVirtualGuest(SoftLayerClient client) {
+         this.client = client;
       }
 
-      final int maxMemory = from.getMaxMemory();
-      if (maxMemory>0) {
-         builder.ram(maxMemory);
+      public Hardware getHardware(VirtualGuest guest) {
+         // 'bad' orders have no start cpu's and cause the order lookup to fail.
+         if (guest.getStartCpus()<1) return null;
+         try {
+            ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+            Iterable<ProductItem> items = Iterables.transform(order.getPrices(),ProductItems.item());
+            return new ProductItemsToHardware().apply(Sets.newLinkedHashSet(items));
+         } catch (HttpResponseException e) {
+            //For singapore
+            return null;
+         }
       }
-
-      return builder.build();
    }
+
+   @Singleton
+   public static class GetImageForVirtualGuest {
+
+      private SoftLayerClient client;
+
+      @Inject
+      public GetImageForVirtualGuest(SoftLayerClient client) {
+         this.client = client;
+      }
+
+      public Image getImage(VirtualGuest guest) {
+         // 'bad' orders have no start cpu's and cause the order lookup to fail.
+         if (guest.getStartCpus()<1) return null;
+         try {
+            ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+            Iterable<ProductItem> items = Iterables.transform(order.getPrices(),ProductItems.item());
+            ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
+            return new ProductItemToImage().apply(os);
+         } catch (HttpResponseException e) {
+            //For singapore
+            return null;
+         }
+      }
+   }
+
 }

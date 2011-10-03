@@ -133,4 +133,15 @@ public interface VirtualGuestAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ProductOrderReceipt> orderVirtualGuest(@BinderParam(ProductOrderToJson.class)ProductOrder order);
 
+   /**
+    * Throws an Internal Server Error if called on bad orders (mapped to HttpResponseException)
+    * @see VirtualGuestClient#getOrderTemplate
+    * @throws org.jclouds.http.HttpResponseException if called with a 'bad' order.
+    */
+   @GET
+   @Path("SoftLayer_Virtual_Guest/{id}/getOrderTemplate/MONTHLY.json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<ProductOrder> getOrderTemplate(@PathParam("id") long id);
+
 }

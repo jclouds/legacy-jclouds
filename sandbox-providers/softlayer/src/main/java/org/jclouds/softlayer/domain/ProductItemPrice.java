@@ -18,7 +18,13 @@
  */
 package org.jclouds.softlayer.domain;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
+
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The SoftLayer_Product_Item_Price data type contains general information
@@ -44,6 +50,8 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
       private long itemId = -1;
       private Float recurringFee;
       private Float hourlyRecurringFee;
+      private ProductItem item;
+      private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
 
       public Builder id(int id) {
          this.id = id;
@@ -65,8 +73,23 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
          return this;
       }
 
+      public Builder item(ProductItem item) {
+         this.item = item;
+         return this;
+      }
+
+      public Builder category(ProductItemCategory categories) {
+         this.categories.add(checkNotNull(categories, "categories"));
+         return this;
+      }
+
+      public Builder categories(Iterable<ProductItemCategory> categories) {
+         this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
+         return this;
+      }
+
       public ProductItemPrice build() {
-         return new ProductItemPrice(id, itemId, recurringFee, hourlyRecurringFee);
+         return new ProductItemPrice(id, itemId, recurringFee, hourlyRecurringFee, item, categories);
       }
 
       public static Builder fromPrice(ProductItemPrice in) {
@@ -79,17 +102,21 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
    private long itemId = -1;
    private Float recurringFee;
    private Float hourlyRecurringFee;
-
+   private ProductItem item;
+   private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
+   
    // for deserializer
    ProductItemPrice() {
 
    }
 
-   public ProductItemPrice(int id, long itemId, Float recurringFee, Float hourlyRecurringFee) {
+   public ProductItemPrice(int id, long itemId, Float recurringFee, Float hourlyRecurringFee, ProductItem item, Iterable<ProductItemCategory> categories) {
       this.id = id;
       this.itemId = itemId;
       this.recurringFee = recurringFee;
       this.hourlyRecurringFee = hourlyRecurringFee;
+      this.item = item;
+      this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
    }
 
    @Override
@@ -130,10 +157,26 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
       return hourlyRecurringFee;
    }
 
+   /**
+    *
+    * @return An item's associated item categories.
+    */
+   public Set<ProductItemCategory> getCategories() {
+      return categories;
+   }
+
+   /**
+    * @return The product item a price is tied to.
+    */
+   public ProductItem getItem() {
+      return item;
+   }
+
    public Builder toBuilder() {
       return Builder.fromPrice(this);
    }
 
+   //TODO: Add category and item (may break tests).
    @Override
    public String toString() {
       return "[id=" + id + ", itemId=" + itemId + ", recurringFee=" + recurringFee + ", hourlyRecurringFee="
