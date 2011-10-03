@@ -36,10 +36,9 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Converts a ProductOrder into a json string
- * valid for placing an order via the softlayer api
- * The String is set into the payload of the HttpRequest
- *
+ * Converts a ProductOrder into a json string valid for placing an order via the softlayer api The
+ * String is set into the payload of the HttpRequest
+ * 
  * @author Jason King
  */
 public class ProductOrderToJson implements Binder {
@@ -53,7 +52,7 @@ public class ProductOrderToJson implements Binder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      checkNotNull(input,"order");
+      checkNotNull(input, "order");
       ProductOrder order = ProductOrder.class.cast(input);
       request.setPayload(buildJson(order));
       return request;
@@ -61,34 +60,34 @@ public class ProductOrderToJson implements Binder {
 
    /**
     * Builds a Json string suitable for sending to the softlayer api
+    * 
     * @param order
     * @return
     */
    String buildJson(ProductOrder order) {
 
-      Iterable<Price> prices = Iterables.transform(order.getPrices(),
-            new Function<ProductItemPrice,Price>() {
-               @Override
-               public Price apply(ProductItemPrice productItemPrice) {
-                  return new Price(productItemPrice.getId());
-               }
-            });
+      Iterable<Price> prices = Iterables.transform(order.getPrices(), new Function<ProductItemPrice, Price>() {
+         @Override
+         public Price apply(ProductItemPrice productItemPrice) {
+            return new Price(productItemPrice.getId());
+         }
+      });
 
       Iterable<HostnameAndDomain> hosts = Iterables.transform(order.getVirtualGuests(),
-            new Function<VirtualGuest,HostnameAndDomain>() {
-               @Override
-               public HostnameAndDomain apply(VirtualGuest virtualGuest) {
-                  return new HostnameAndDomain(virtualGuest.getHostname(),virtualGuest.getDomain());
-               }
-            });
+               new Function<VirtualGuest, HostnameAndDomain>() {
+                  @Override
+                  public HostnameAndDomain apply(VirtualGuest virtualGuest) {
+                     return new HostnameAndDomain(virtualGuest.getHostname(), virtualGuest.getDomain());
+                  }
+               });
 
-      OrderData data = new OrderData(order.getPackageId(),order.getLocation(),
-                                     Sets.newLinkedHashSet(prices),Sets.newLinkedHashSet(hosts),
-                                     order.getQuantity(),order.getUseHourlyPricing());
+      OrderData data = new OrderData(order.getPackageId(), order.getLocation(), Sets.newLinkedHashSet(prices), Sets
+               .newLinkedHashSet(hosts), order.getQuantity(), order.getUseHourlyPricing());
 
-      return json.toJson(ImmutableMap.of("parameters", ImmutableList.<OrderData>of(data)));
+      return json.toJson(ImmutableMap.of("parameters", ImmutableList.<OrderData> of(data)));
    }
 
+   @SuppressWarnings("unused")
    private static class OrderData {
       private String complexType = "SoftLayer_Container_Product_Order_Virtual_Guest";
       private long packageId = -1;
@@ -98,30 +97,31 @@ public class ProductOrderToJson implements Binder {
       private long quantity;
       private boolean useHourlyPricing;
 
-      public OrderData( long packageId, String location,
-                        Set<Price> prices,Set<HostnameAndDomain> virtualGuests,
-                        long quantity, boolean  useHourlyPricing ) {
+      public OrderData(long packageId, String location, Set<Price> prices, Set<HostnameAndDomain> virtualGuests,
+               long quantity, boolean useHourlyPricing) {
          this.packageId = packageId;
          this.location = location;
          this.prices = prices;
          this.virtualGuests = virtualGuests;
          this.quantity = quantity;
          this.useHourlyPricing = useHourlyPricing;
-
       }
+
    }
 
+   @SuppressWarnings("unused")
    private static class HostnameAndDomain {
       private String hostname;
       private String domain;
 
-      public HostnameAndDomain(String hostname,String domain) {
+      public HostnameAndDomain(String hostname, String domain) {
          this.hostname = hostname;
          this.domain = domain;
       }
 
    }
 
+   @SuppressWarnings("unused")
    private static class Price {
       private long id;
 

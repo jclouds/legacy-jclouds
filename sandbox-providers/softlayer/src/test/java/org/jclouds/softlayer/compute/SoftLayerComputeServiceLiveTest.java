@@ -18,20 +18,15 @@
  */
 package org.jclouds.softlayer.compute;
 
-import com.google.inject.Module;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.RestContext;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-import static org.testng.Assert.assertEquals;
+import com.google.inject.Module;
 
 /**
  * 

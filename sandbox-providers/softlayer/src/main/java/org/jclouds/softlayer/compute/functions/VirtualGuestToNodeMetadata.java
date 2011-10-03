@@ -20,7 +20,6 @@ package org.jclouds.softlayer.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.CORE_SPEED;
 
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +27,13 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.*;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpResponseException;
@@ -41,12 +42,14 @@ import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
+import org.jclouds.softlayer.predicates.ProductItemPredicates;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.softlayer.predicates.ProductItemPredicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
@@ -56,7 +59,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
    public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
             .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING).put(
-               VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
+                     VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
             .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final Map<String, Credentials> credentialStore;
@@ -67,9 +70,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Inject
    VirtualGuestToNodeMetadata(Map<String, Credentials> credentialStore,
             FindLocationForVirtualGuest findLocationForVirtualGuest,
-            GetHardwareForVirtualGuest getHardwareForVirtualGuest,
-            GetImageForVirtualGuest getImageForVirtualGuest
-            ) {
+            GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
       this.getHardwareForVirtualGuest = checkNotNull(getHardwareForVirtualGuest, "getHardwareForVirtualGuest");
@@ -87,13 +88,14 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       builder.group(parseGroupFromName(from.getHostname()));
 
       Image image = getImageForVirtualGuest.getImage(from);
-      if (image!=null) {
+      if (image != null) {
          builder.imageId(image.getId());
          builder.operatingSystem(image.getOperatingSystem());
       }
 
       Hardware hardware = getHardwareForVirtualGuest.getHardware(from);
-      if (hardware!=null) builder.hardware(hardware);
+      if (hardware != null)
+         builder.hardware(hardware);
 
       builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
 
@@ -136,13 +138,14 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
       public Hardware getHardware(VirtualGuest guest) {
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
-         if (guest.getStartCpus()<1) return null;
+         if (guest.getStartCpus() < 1)
+            return null;
          try {
             ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
-            Iterable<ProductItem> items = Iterables.transform(order.getPrices(),ProductItems.item());
+            Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
             return new ProductItemsToHardware().apply(Sets.newLinkedHashSet(items));
          } catch (HttpResponseException e) {
-            //Shouldn't happen any more - was blowing up in Singapore
+            // Shouldn't happen any more - was blowing up in Singapore
             return null;
          }
       }
@@ -160,14 +163,15 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
       public Image getImage(VirtualGuest guest) {
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
-         if (guest.getStartCpus()<1) return null;
+         if (guest.getStartCpus() < 1)
+            return null;
          try {
             ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
-            Iterable<ProductItem> items = Iterables.transform(order.getPrices(),ProductItems.item());
+            Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
             ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
             return new ProductItemToImage().apply(os);
          } catch (HttpResponseException e) {
-            //Shouldn't happen any more - was blowing up in Singapore
+            // Shouldn't happen any more - was blowing up in Singapore
             return null;
          }
       }
