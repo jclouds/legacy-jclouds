@@ -176,11 +176,11 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
       return Builder.fromPrice(this);
    }
 
-   //TODO: Add category and item (may break tests).
+   //TODO: Add category and item (breaks unit tests that compare toString()).
    @Override
    public String toString() {
       return "[id=" + id + ", itemId=" + itemId + ", recurringFee=" + recurringFee + ", hourlyRecurringFee="
-            + hourlyRecurringFee + "]";
+            + hourlyRecurringFee + ", item="+item+", categories="+categories+"]";
    }
 
    @Override
