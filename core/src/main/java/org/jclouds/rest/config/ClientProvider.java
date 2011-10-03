@@ -35,6 +35,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 /**
+ * ClientProvider makes the primary interface for the provider context. ex. {@code
+ * context.getProviderSpecificContext().getApi()} is created by ClientProvider, which is a singleton
  * 
  * @author Adrian Cole
  */
@@ -47,8 +49,7 @@ public class ClientProvider<S, A> implements Provider<S> {
    private final Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   ClientProvider(Class<S> syncClientType, Class<A> asyncClientType,
-            Map<Class<?>, Class<?>> sync2Async) {
+   ClientProvider(Class<S> syncClientType, Class<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.sync2Async = sync2Async;

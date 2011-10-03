@@ -132,6 +132,6 @@ public class OperatingSystem implements Comparable<OperatingSystem> {
 
    @Override
    public String toString() {
-      return "OperatingSystem [id=" + id + ", passwords=" + passwords + "]";
+      return "[id=" + id + ", passwords=" + passwords + "]";
    }
 }

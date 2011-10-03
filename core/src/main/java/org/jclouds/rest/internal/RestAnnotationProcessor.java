@@ -46,9 +46,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -77,7 +77,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
@@ -87,6 +86,7 @@ import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
@@ -135,6 +135,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
@@ -144,12 +145,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -920,12 +921,12 @@ public class RestAnnotationProcessor<T> {
    };
 
    public GeneratedHttpRequest<T> decorateRequest(GeneratedHttpRequest<T> request) throws NegativeArraySizeException,
-         ExecutionException {
+            ExecutionException {
       OUTER: for (Entry<Integer, Set<Annotation>> entry : concat(//
-            filterValues(methodToIndexOfParamToBinderParamAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)
-                  .entrySet(), //
-            filterValues(methodToIndexOfParamToWrapWithAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)
-                  .entrySet())) {
+               filterValues(methodToIndexOfParamToBinderParamAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)
+                        .entrySet(), //
+               filterValues(methodToIndexOfParamToWrapWithAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)
+                        .entrySet())) {
          boolean shouldBreak = false;
          Annotation annotation = Iterables.get(entry.getValue(), 0);
          Binder binder;
@@ -933,7 +934,7 @@ public class RestAnnotationProcessor<T> {
             binder = injector.getInstance(BinderParam.class.cast(annotation).value());
          else
             binder = injector.getInstance(BindToJsonPayloadWrappedWith.Factory.class).create(
-                  WrapWith.class.cast(annotation).value());
+                     WrapWith.class.cast(annotation).value());
          if (request.getArgs().size() >= entry.getKey() + 1 && request.getArgs().get(entry.getKey()) != null) {
             Object input;
             Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
@@ -959,6 +960,27 @@ public class RestAnnotationProcessor<T> {
             }
             if (shouldBreak)
                break OUTER;
+         } else {
+            // either arg is null, or request.getArgs().size() < entry.getKey() + 1
+            // in either case, we require that null be allowed
+            // (first, however, let's make sure we have enough args on the actual method)
+            if (entry.getKey() >= request.getJavaMethod().getParameterAnnotations().length) {
+               // not known whether this happens
+               throw new IllegalArgumentException("Argument index " + (entry.getKey() + 1)
+                        + " is out of bounds for method " + request.getJavaMethod());
+            }
+
+            if (request.getJavaMethod().isVarArgs()
+                     && entry.getKey() + 1 == request.getJavaMethod().getParameterTypes().length)
+               // allow null/missing for var args
+               continue OUTER;
+
+            Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
+            for (Annotation a : annotations) {
+               if (Nullable.class.isAssignableFrom(a.annotationType()))
+                  continue OUTER;
+            }
+            Preconditions.checkNotNull(null, request.getJavaMethod().getName() + " parameter " + (entry.getKey() + 1));
          }
       }
 
@@ -1093,7 +1115,9 @@ public class RestAnnotationProcessor<T> {
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
                options.filename(Strings2.replaceTokens(param.filename(), iterable));
-            Part part = Part.create(param.name(), newPayload(args[entry.getKey()]), options);
+            Object arg = args[entry.getKey()];
+            Preconditions.checkNotNull(arg, param.name());
+            Part part = Part.create(param.name(), newPayload(arg), options);
             parts.add(part);
          }
       }
@@ -1200,7 +1224,9 @@ public class RestAnnotationProcessor<T> {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               paramValue = args[entry.getKey()].toString();
+               Object pvo = args[entry.getKey()];
+               Preconditions.checkNotNull(pvo, paramKey);
+               paramValue = pvo.toString();
             }
             formParamValues.put(paramKey, paramValue);
          }

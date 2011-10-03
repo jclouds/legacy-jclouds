@@ -36,6 +36,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 
 /**
+ * CreateClientForCaller is parameterized, so clients it creates aren't singletons. For example,
+ * CreateClientForCaller satisfies a call like this:
+ * {@code context.getProviderSpecificContext().getApi().getOrgClientForName(name)}
  * 
  * @author Adrian Cole
  */
@@ -57,8 +60,7 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
    public Object load(ClassMethodArgs from) throws ExecutionException {
       Class<?> syncClass = from.getMethod().getReturnType();
       Class<?> asyncClass = sync2Async.get(syncClass);
-      checkState(asyncClass != null, "configuration error, sync class " + syncClass
-               + " not mapped to an async class");
+      checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.get(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
       try {

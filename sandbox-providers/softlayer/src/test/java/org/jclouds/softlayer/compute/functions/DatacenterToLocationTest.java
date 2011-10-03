@@ -28,7 +28,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,24 +40,14 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, groups = "unit")
 public class DatacenterToLocationTest {
 
-   private DatacenterToLocation function;
-
-   @BeforeMethod
-   public void setup() {
-      function = new DatacenterToLocation(new JustProvider(ImmutableSet.<String>of(), "softlayer", URI.create("foo")));
-   }
+   static DatacenterToLocation function = new DatacenterToLocation(new JustProvider(ImmutableSet.<String> of(), "softlayer",
+            URI.create("foo")));;
 
    @Test
    public void testDatacenterToLocation() {
-      Address address = Address.builder().country("US")
-                                         .state("TX")
-                                         .description("This is Texas!")
-                                         .build();
+      Address address = Address.builder().country("US").state("TX").description("This is Texas!").build();
 
-      Datacenter datacenter = Datacenter.builder().id(1)
-                                                  .longName("Texas Datacenter")
-                                                  .locationAddress(address)
-                                                  .build();
+      Datacenter datacenter = Datacenter.builder().id(1).longName("Texas Datacenter").locationAddress(address).build();
 
       Location location = function.apply(datacenter);
 
@@ -70,9 +59,7 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testGetIso3166CodeNoCountryAndState() {
-      Datacenter datacenter = Datacenter.builder().id(1)
-                                                  .longName("Nowhere")
-                                                  .build();
+      Datacenter datacenter = Datacenter.builder().id(1).longName("Nowhere").build();
 
       Location location = function.apply(datacenter);
 
@@ -83,14 +70,9 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testGetIso3166CodeCountryOnly() {
-      Address address = Address.builder().country("US")
-                                         .description("This is North America!")
-                                         .build();
+      Address address = Address.builder().country("US").description("This is North America!").build();
 
-      Datacenter datacenter = Datacenter.builder().id(1)
-                                                  .longName("Nowhere")
-                                                  .locationAddress(address)
-                                                  .build();
+      Datacenter datacenter = Datacenter.builder().id(1).longName("Nowhere").locationAddress(address).build();
 
       Location location = function.apply(datacenter);
 
@@ -102,15 +84,10 @@ public class DatacenterToLocationTest {
 
    @Test
    public void testGetIso3166CodeWhitespaceTrimmer() {
-      Address address = Address.builder().country(" US ")
-                                         .state("  TX  ")
-                                         .description("This is spaced out Texas")
-                                         .build();
+      Address address = Address.builder().country(" US ").state("  TX  ").description("This is spaced out Texas")
+               .build();
 
-      Datacenter datacenter = Datacenter.builder().id(1)
-                                                  .longName("Nowhere")
-                                                  .locationAddress(address)
-                                                  .build();
+      Datacenter datacenter = Datacenter.builder().id(1).longName("Nowhere").locationAddress(address).build();
 
       Location location = function.apply(datacenter);
 

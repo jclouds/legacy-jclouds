@@ -18,6 +18,8 @@
  */
 package org.jclouds.eucalyptus.compute;
 
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
@@ -69,5 +71,9 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    public void testDestroyNodes() {
       super.testDestroyNodes();
    }
-
+   
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("ubuntu");
+   }
 }

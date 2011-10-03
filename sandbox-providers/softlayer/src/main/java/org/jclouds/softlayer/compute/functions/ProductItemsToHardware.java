@@ -48,7 +48,7 @@ import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
 @Singleton
 public class ProductItemsToHardware implements Function<Set<ProductItem>, Hardware> {
 
-   private static final double CORE_SPEED = 2.0;
+   static final double CORE_SPEED = 2.0;
 
    @Override
    public Hardware apply(Set<ProductItem> items) {

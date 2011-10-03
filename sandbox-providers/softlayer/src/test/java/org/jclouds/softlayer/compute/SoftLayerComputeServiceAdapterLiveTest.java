@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
@@ -55,7 +56,8 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void setupClient() {
       super.setupClient();
       adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
-            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME);
+            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME,
+            new SoftLayerComputeServiceAdapter.VirtualGuestHasLoginDetailsPresent(context.getApi()),60*60*1000);
    }
 
    @Test
@@ -66,7 +68,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
-      String name = "foo-ef4";
+      String name = "node"+new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder()
             .locationId("3") // the default (singapore) doesn't work.
             .build();
@@ -87,7 +89,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
    protected void doConnectViaSsh(VirtualGuest guest, Credentials creds) {
       SshClient ssh = computeContext.utils().sshFactory()
-            .create(new IPSocket(guest.getPrimaryBackendIpAddress(), 22), creds);
+            .create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
