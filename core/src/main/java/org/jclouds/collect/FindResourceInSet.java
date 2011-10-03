@@ -62,7 +62,7 @@ public abstract class FindResourceInSet<F, T> implements Function<F, T> {
 
          });
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a match in set for %s", from);
+         logger.trace("could not find a match in set for %s", from);
       }
       return null;
    }
