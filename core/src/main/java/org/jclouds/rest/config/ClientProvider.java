@@ -63,10 +63,9 @@ public class ClientProvider<S, A> implements Provider<S> {
                new TypeLiteral<Cache<ClassMethodArgs, Object>>() {
                }, Names.named("sync")));
       try {
-         final SyncProxy syncProxy = new SyncProxy(syncClientType, client,
-                  delegateMap, sync2Async);
-         injector.injectMembers(syncProxy);
-         return (S) SyncProxy.proxy(syncClientType, syncProxy);
+         return (S) SyncProxy.proxy(syncClientType, client, delegateMap, sync2Async,
+                 injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
+               }, Names.named("TIMEOUTS"))));
       } catch (Exception e) {
          Throwables.propagate(e);
          assert false : "should have propagated";

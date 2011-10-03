@@ -36,19 +36,17 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.Constants.PROPERTY_PROVIDER;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.*;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -72,10 +70,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -115,6 +109,23 @@ public class RestContextBuilder<S, A> {
             if (entry.getValue() != null)
                builder.put(entry.getKey().toString(), entry.getValue().toString());
          return LinkedHashMultimap.create(builder.build());
+      }
+
+      @Provides
+      @Singleton
+      @Named("TIMEOUTS")
+      protected Map<String, Long> timeouts() {
+         final ImmutableMap.Builder<String, Long> builder = ImmutableMap.<String, Long> builder();
+         for (final Entry<Object, Object> entry : properties.entrySet()) {
+            final String key = String.valueOf(entry.getKey());
+            if (key.startsWith(PROPERTY_TIMEOUTS_PREFIX) && entry.getValue() != null) {
+               try {
+                  final Long val = Long.valueOf(String.valueOf(entry.getValue()));
+                  builder.put(key.replaceFirst(PROPERTY_TIMEOUTS_PREFIX, ""), val);
+               } catch (final Throwable t) {}
+            }
+         }
+         return builder.build();
       }
 
       @Override

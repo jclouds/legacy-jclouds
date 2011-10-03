@@ -19,7 +19,6 @@
 package org.jclouds.concurrent.internal;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -55,9 +54,12 @@ import com.google.inject.ProvisionException;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException, SecurityException,
+   public static <T> T proxy(Class<T> clazz, Object async,
+         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap,
+         Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
+              new SyncProxy(clazz, async, delegateMap, sync2Async, timeouts));
    }
 
    private final Object delegate;
@@ -70,15 +72,9 @@ public class SyncProxy implements InvocationHandler {
    private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
 
    @Inject
-   public void setProperties(@Named("CONSTANTS") Multimap<String, String> props) {
-       for (final Method method : timeoutMap.keySet()) {
-             overrideTimeout(declaring, method, props);
-       }
-   }
-
-   @Inject
-   public SyncProxy(Class<?> declaring, Object async,
-         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
+   private SyncProxy(Class<?> declaring, Object async,
+         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
+           Class<?>> sync2Async, final Map<String, Long> timeouts)
          throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;
       this.delegate = async;
@@ -100,20 +96,23 @@ public class SyncProxy implements InvocationHandler {
                throw new IllegalArgumentException(String.format(
                      "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
             if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
-               if (method.isAnnotationPresent(Timeout.class)) {
-                  Timeout methodTimeout = method.getAnnotation(Timeout.class);
-                  long methodNanos = convertToNanos(methodTimeout);
-                  timeoutMap.put(method, methodNanos);
-               } else {
-                  timeoutMap.put(method, typeNanos);
-               }
-
+               timeoutMap.put(method, getTimeout(method, typeNanos, timeouts));
                methodMap.put(method, delegatedMethod);
             } else {
                syncMethodMap.put(method, delegatedMethod);
             }
          }
       }
+   }
+
+   private Long getTimeout(Method method, long typeNanos, final Map<String,Long> timeouts) {
+      Long timeout = overrideTimeout(method, timeouts);
+      if (timeout == null && method.isAnnotationPresent(Timeout.class)) {
+         Timeout methodTimeout = method.getAnnotation(Timeout.class);
+         timeout = convertToNanos(methodTimeout);
+      }
+      return timeout != null ? timeout : typeNanos;
+
    }
 
    static long convertToNanos(Timeout timeout) {
@@ -151,26 +150,16 @@ public class SyncProxy implements InvocationHandler {
    }
 
    // override timeout by values configured in properties(in ms)
-   private void overrideTimeout(Class<?> declaring, Method method, Multimap<String, String> constants) {
-      if (constants == null) {
-         return;
+   private Long overrideTimeout(final Method method, final Map<String, Long> timeouts) {
+      if (timeouts == null) {
+         return null;
       }
-      final String classTimeouts = PROPERTY_TIMEOUTS_PREFIX + declaring.getSimpleName();
-      String strTimeout = Iterables.getFirst(constants.get(classTimeouts + "." + method.getName()), null);
-      if (strTimeout == null) {
-         strTimeout = Iterables.getFirst(constants.get(classTimeouts), null);
+      final String className = declaring.getSimpleName();
+      Long timeout = timeouts.get(className + "." + method.getName());
+      if (timeout == null) {
+         timeout = timeouts.get(className);
       }
-      if (strTimeout != null) {
-         long timeout = 0l;
-         try {
-            timeout = Long.valueOf(strTimeout);
-         } catch (final Throwable t) {
-             timeout = 0l;
-         }
-         if (timeout > 0l) {
-            timeoutMap.put(method, TimeUnit.NANOSECONDS.convert(timeout, TimeUnit.MILLISECONDS));
-         }
-      }
+      return timeout != null ? TimeUnit.MILLISECONDS.toNanos(timeout) : null;
    }
 
    @Override
