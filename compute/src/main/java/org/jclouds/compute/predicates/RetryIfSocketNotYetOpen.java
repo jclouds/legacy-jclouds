@@ -88,7 +88,9 @@ public class RetryIfSocketNotYetOpen implements Predicate<IPSocket> {
    @Override
    public boolean apply(IPSocket socket) {
       logger.debug(">> blocking on socket %s for %d %s", socket, timeoutValue, timeoutUnits);
-      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, timeoutValue, 1, timeoutUnits);
+      // Specify a retry period of 1s, expressed in the same time units.
+      long period = timeoutUnits.convert(1, TimeUnit.SECONDS);
+      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, timeoutValue, period, timeoutUnits);
       boolean passed = tester.apply(socket);
       if (passed)
          logger.debug("<< socket %s opened", socket);
