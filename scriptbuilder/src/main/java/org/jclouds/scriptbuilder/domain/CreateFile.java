@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -37,18 +38,18 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class AppendFile implements Statement {
+public class CreateFile implements Statement {
    public static final String MARKER = "END_OF_FILE";
 
    final String path;
    final Iterable<String> lines;
    final String marker;
 
-   public AppendFile(String path, Iterable<String> lines) {
+   public CreateFile(String path, Iterable<String> lines) {
       this(path, lines, MARKER);
    }
 
-   public AppendFile(String path, Iterable<String> lines, String marker) {
+   public CreateFile(String path, Iterable<String> lines, String marker) {
       this.path = checkNotNull(path, "path");
       this.lines = checkNotNull(lines, "lines");
       this.marker = checkNotNull(marker, "marker");
@@ -89,22 +90,29 @@ public class AppendFile implements Statement {
       return new StatementList(statements).render(family);
    }
 
-   protected void hereFile(String path, StringBuilder builder) {
-      builder.append("cat >> ").append(path).append(" <<'").append(marker).append("'\n");
+   private void hereFile(String path, StringBuilder builder) {
+      builder.append("cat > ").append(path).append(" <<'").append(marker).append("'\n");
       for (String line : lines) {
          builder.append(line).append("\n");
       }
       builder.append(marker).append("\n");
    }
 
-   protected Statement appendToFile(String line, String path, OsFamily family) {
+   private Statement appendToFile(String line, String path, OsFamily family) {
       String quote = "";
       if (!ShellToken.VQ.to(family).equals("")) {
          quote = "'";
       } else {
          line = escapeVarTokens(line, family);
       }
-      return interpret(String.format("echo %s%s%s >>%s{lf}", quote, line, quote, path));
+      return interpret(addSpaceToEnsureWeDontAccidentallyRedirectFd(String.format("echo %s%s%s>>%s{lf}", quote, line,
+               quote, path)));
+   }
+
+   public static final Pattern REDIRECT_FD_PATTERN = Pattern.compile(".*[0-2]>>.*");
+
+   static String addSpaceToEnsureWeDontAccidentallyRedirectFd(String line) {
+      return REDIRECT_FD_PATTERN.matcher(line).matches() ? line.replace(">>", " >>") : line;
    }
 
 }

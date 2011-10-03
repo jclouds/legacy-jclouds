@@ -18,7 +18,7 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -31,21 +31,21 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
- * @author Adrian Cole
+ * @author Karel Vervaeke
  */
 @Test(groups = "unit")
-public class AppendFileTest {
-   Statement statement = appendFile("{root}etc{fs}chef{fs}client.rb", ImmutableList.of("log_level :info",
+public class CreateOrOverwriteFileTest {
+   Statement statement = createOrOverwriteFile("{root}etc{fs}chef{fs}client.rb", ImmutableList.of("log_level :info",
             "log_location STDOUT", String.format("chef_server_url \"%s\"", "http://localhost:4000")));
 
    public void testUNIX() throws IOException {
       assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb_append." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    public void testWINDOWS() throws IOException {
       assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb_append." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
 }
