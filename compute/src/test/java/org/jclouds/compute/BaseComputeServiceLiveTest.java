@@ -145,6 +145,7 @@ public abstract class BaseComputeServiceLiveTest {
       setServiceDefaults();
       if (group == null)
          group = checkNotNull(provider, "provider");
+      // groups need to work with hyphens in them, so let's make sure there is one!
       if (group.indexOf('-') == -1)
          group = group + "-";
       setupCredentials();
