@@ -38,6 +38,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -87,7 +88,7 @@ public class ParseProductOrderTest extends BaseItemParserTest<ProductOrder> {
       ProductOrder expects = expected();
       Function<HttpResponse, ProductOrder> parser = parser(injector());
       ProductOrder response = parser.apply(new HttpResponse(200, "ok", payload()));
-      compare(expects, response);
+      assertEquals(response,expects);
       hasOs(response);
    }
 

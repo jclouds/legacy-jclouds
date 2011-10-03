@@ -71,7 +71,7 @@ public class ProductItems {
    /**
      * Creates a function to get the ProductItem for the ProductItemPrice.
      * Copies the category information from the price to the item if necessary
-     * // TODO: This method needs unit testing.
+     * The ProductItemPrices must have ProductItems.
      */
     public static Function<ProductItemPrice,ProductItem> item() {
         return new Function<ProductItemPrice,ProductItem>() {

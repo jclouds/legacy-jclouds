@@ -215,7 +215,7 @@ public class VirtualGuestToNodeMetadataTest {
 
       @Override
       public Hardware getHardware(VirtualGuest guest) {
-         return new HardwareBuilder().id("mocked hardware").build();
+         return new HardwareBuilder().ids("mocked hardware").build();
       }
    }
 
@@ -226,7 +226,7 @@ public class VirtualGuestToNodeMetadataTest {
 
       @Override
       public Image getImage(VirtualGuest guest) {
-         return new ImageBuilder().id("123").description("mocked image")
+         return new ImageBuilder().ids("123").description("mocked image")
                .operatingSystem(OperatingSystem.builder().description("foo os").build())
                .build();
       }

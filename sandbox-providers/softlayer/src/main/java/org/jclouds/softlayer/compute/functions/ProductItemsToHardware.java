@@ -63,7 +63,7 @@ public class ProductItemsToHardware implements Function<Set<ProductItem>, Hardwa
       final float volumeSize = ProductItems.capacity().apply(volumeItem);
 
       return new HardwareBuilder()
-                  .id(hardwareId)
+                  .ids(hardwareId)
                   .processors(ImmutableList.of(new Processor(cores, CORE_SPEED)))
                   .ram(ram)
                   .volumes(ImmutableList.<Volume> of(new VolumeImpl(volumeSize, true, false)))
