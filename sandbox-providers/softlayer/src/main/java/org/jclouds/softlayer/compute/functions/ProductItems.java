@@ -21,9 +21,11 @@ package org.jclouds.softlayer.compute.functions;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 public class ProductItems {
 
@@ -62,6 +64,27 @@ public class ProductItems {
             public ProductItemPrice apply(ProductItem productItem) {
                 if(productItem.getPrices().size()<1) throw new NoSuchElementException("ProductItem has no prices:"+productItem);
                 return Iterables.get(productItem.getPrices(), 0);
+            }
+        };
+    }
+
+   /**
+     * Creates a function to get the ProductItem for the ProductItemPrice.
+     * Copies the category information from the price to the item if necessary
+     * The ProductItemPrices must have ProductItems.
+     */
+    public static Function<ProductItemPrice,ProductItem> item() {
+        return new Function<ProductItemPrice,ProductItem>() {
+            @Override
+            public ProductItem apply(ProductItemPrice productItemPrice) {
+               Set<ProductItemCategory> categories = productItemPrice.getCategories();
+               ProductItem item = productItemPrice.getItem();
+               ProductItem.Builder builder = ProductItem.Builder.fromProductItem(productItemPrice.getItem());
+               if( item.getCategories().size()==0 && categories.size() != 0) {
+                  builder.categories(categories);
+               }
+
+               return builder.build();
             }
         };
     }

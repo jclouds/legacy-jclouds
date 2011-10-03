@@ -20,15 +20,14 @@ package org.jclouds.softlayer.compute.functions;
 
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.jclouds.softlayer.compute.functions.ProductItems.capacity;
-import static org.jclouds.softlayer.compute.functions.ProductItems.description;
-import static org.jclouds.softlayer.compute.functions.ProductItems.price;
+import static org.jclouds.softlayer.compute.functions.ProductItems.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -40,11 +39,14 @@ import static org.testng.Assert.assertNull;
 @Test(groups = "unit")
 public class ProductItemsTest {
 
+   private ProductItemCategory category;
    private ProductItemPrice price;
    private ProductItem item;
 
    @BeforeMethod
    public void setup() {
+
+       category = ProductItemCategory.builder().id(1).categoryCode("category").build();
 
        price = ProductItemPrice.builder().id(1).build();
 
@@ -54,6 +56,7 @@ public class ProductItemsTest {
                                    .price(price)
                                    .build();
    }
+
    @Test
    public void testCapacity() {
        assertEquals(capacity().apply(item), 2.0f);
@@ -93,4 +96,48 @@ public class ProductItemsTest {
       ProductItem noPriceItem = ProductItem.builder().id(1).build();
       price().apply(noPriceItem);
    }
+   
+   @Test
+   public void testItemCallGetsCategory() {
+      ProductItemPrice price = ProductItemPrice.builder().id(1)
+                                                         .category(category)
+                                                         .item(item)
+                                                         .build();
+      ProductItem newItem = item().apply(price);
+      assertEquals(newItem.getCategories(), ImmutableSet.of(category));
+   }
+
+   @Test
+   public void testItemCallNoCategoryOnPrice() {
+
+      ProductItem item1 = ProductItem.Builder.fromProductItem(item)
+            .categories(ImmutableSet.of(category)).build();
+
+      ProductItemPrice price = ProductItemPrice.builder().id(1)
+                                                         .item(item1)
+                                                         .build();
+      ProductItem newItem = item().apply(price);
+      assertEquals(newItem.getCategories(), ImmutableSet.of(category));
+   }
+
+   @Test
+   public void testItemCallCategoryExists() {
+
+      ProductItemCategory category2 = ProductItemCategory.builder()
+            .id(12)
+            .categoryCode("new category")
+            .build();
+
+      ProductItem item1 = ProductItem.Builder.fromProductItem(item)
+            .categories(ImmutableSet.of(category2)).build();
+
+      ProductItemPrice price = ProductItemPrice.builder().id(1)
+                                                         .category(category)
+                                                         .item(item1)
+                                                         .build();
+      ProductItem newItem = item().apply(price);
+      assertEquals(newItem.getCategories(), ImmutableSet.of(category2));
+   }
+
+
 }

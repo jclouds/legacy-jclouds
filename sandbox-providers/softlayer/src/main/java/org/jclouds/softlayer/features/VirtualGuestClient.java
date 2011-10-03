@@ -18,13 +18,13 @@
  */
 package org.jclouds.softlayer.features;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.VirtualGuest;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to VirtualGuest.
@@ -109,4 +109,16 @@ public interface VirtualGuestClient {
     * @see <a href="http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder" />
     */
    ProductOrderReceipt orderVirtualGuest(ProductOrder order);
+
+   /**
+    * Obtain an order container that is ready to be sent to the orderVirtualGuest method.
+    * This container will include all services that the selected computing instance has.
+    * If desired you may remove prices which were returned.
+    * @see <a href=" @see <a href="http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder" />
+    * @param id
+    *          The id of the existing Virtual Guest
+    * @return
+    *          The ProductOrder used to create the VirtualGust
+    */
+   ProductOrder getOrderTemplate(long id);
 }

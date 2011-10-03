@@ -71,7 +71,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
                               .build();
 
       return new ImageBuilder()
-            .id(imageId().apply(productItem))
+            .ids(imageId().apply(productItem))
             .description(productItem.getDescription())
             .operatingSystem(os)
             .build();
