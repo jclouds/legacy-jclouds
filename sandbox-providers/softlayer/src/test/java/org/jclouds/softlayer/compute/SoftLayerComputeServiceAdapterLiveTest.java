@@ -69,9 +69,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "node"+new Random().nextInt();
-      Template template = computeContext.getComputeService().templateBuilder()
-            .locationId("3") // the default (singapore) doesn't work.
-            .build();
+      Template template = computeContext.getComputeService().templateBuilder().build();
       
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
