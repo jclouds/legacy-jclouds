@@ -142,7 +142,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
             Iterable<ProductItem> items = Iterables.transform(order.getPrices(),ProductItems.item());
             return new ProductItemsToHardware().apply(Sets.newLinkedHashSet(items));
          } catch (HttpResponseException e) {
-            //For singapore
+            //Shouldn't happen any more - was blowing up in Singapore
             return null;
          }
       }
@@ -167,7 +167,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
             ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
             return new ProductItemToImage().apply(os);
          } catch (HttpResponseException e) {
-            //For singapore
+            //Shouldn't happen any more - was blowing up in Singapore
             return null;
          }
       }
