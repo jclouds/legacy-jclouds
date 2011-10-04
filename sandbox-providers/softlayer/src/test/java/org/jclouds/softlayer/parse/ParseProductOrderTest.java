@@ -18,11 +18,14 @@
  */
 package org.jclouds.softlayer.parse;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -34,12 +37,11 @@ import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.predicates.ProductItemPredicates;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -99,15 +101,7 @@ public class ParseProductOrderTest extends BaseItemParserTest<ProductOrder> {
    }
 
    protected Injector injector() {
-      return Guice.createInjector(new SoftLayerParserModule(), new GsonModule() {
-
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-            super.configure();
-         }
-
-      });
+      return Guice.createInjector(new SoftLayerParserModule(), new GsonModule());
    }
 
 }

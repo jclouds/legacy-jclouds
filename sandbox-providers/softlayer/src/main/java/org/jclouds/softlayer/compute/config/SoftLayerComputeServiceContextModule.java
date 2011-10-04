@@ -36,7 +36,6 @@ import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
-import org.jclouds.softlayer.config.SoftLayerParserModule;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
@@ -60,7 +59,6 @@ public class SoftLayerComputeServiceContextModule extends
    @Override
    protected void configure() {
       super.configure();
-      install(new SoftLayerParserModule());
       bind(new TypeLiteral<ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter>>() {})
             .to(SoftLayerComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<VirtualGuest, NodeMetadata>>() {})

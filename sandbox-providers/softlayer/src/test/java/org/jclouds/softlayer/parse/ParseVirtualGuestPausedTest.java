@@ -64,15 +64,7 @@ public class ParseVirtualGuestPausedTest extends BaseItemParserTest<VirtualGuest
    }
 
    protected Injector injector() {
-      return Guice.createInjector(new SoftLayerParserModule(), new GsonModule() {
-
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-            super.configure();
-         }
-
-      });
+      return Guice.createInjector(new SoftLayerParserModule(), new GsonModule());
    }
 
 }

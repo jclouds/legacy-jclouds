@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.OperatingSystem;
 import org.jclouds.softlayer.domain.PowerState;
@@ -37,7 +39,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
+import com.google.inject.Provides;
 
 /**
  * 
@@ -105,10 +107,15 @@ public class SoftLayerParserModule extends AbstractModule {
       }
    }
 
+   @Provides
+   @Singleton
+   public Map<Type, Object> provideCustomAdapterBindings() {
+      return ImmutableMap.<Type, Object> of(VirtualGuest.class, new VirtualGuestAdapter());
+   }
+
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Map<Type, Object>>() {
-      }).toInstance(ImmutableMap.<Type, Object> of(VirtualGuest.class, new VirtualGuestAdapter()));
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
    }
 
 }
