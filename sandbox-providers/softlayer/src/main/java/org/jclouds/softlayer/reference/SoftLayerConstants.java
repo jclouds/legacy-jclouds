@@ -18,38 +18,41 @@
  */
 package org.jclouds.softlayer.reference;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.softlayer.domain.ProductItemPrice;
-
-import java.util.Set;
-
 /**
  * Configuration properties and constants used in SoftLayer connections.
  * 
  * @author Adrian Cole
  */
 public interface SoftLayerConstants {
+
    /**
     * Name of the product package corresponding to cloud servers
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME = "jclouds.softlayer.virtualguest.package-name";
-   
-   
+
+   /**
+    * pattern where last group matches core speed
+    */
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX = "jclouds.softlayer.virtualguest.cpu-regex";
+
+   /**
+    * Uplink port speed for new guests (10, 100, 1000)
+    */
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED = "jclouds.softlayer.virtualguest.port-speed";
+
+   /**
+    * Default Boot Disk type (SAN, LOCAL)
+    */
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE = "jclouds.softlayer.virtualguest.disk0-type";
+
    /**
     * number of milliseconds to wait for an order to arrive on the api.
     */
    public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY = "jclouds.softlayer.virtualguest.order-delay";
 
-   public static final Set<ProductItemPrice> DEFAULT_VIRTUAL_GUEST_PRICES = ImmutableSet.<ProductItemPrice>builder()
-           .add(ProductItemPrice.builder().id(1639).build()) // 100 GB (SAN)
-           .add(ProductItemPrice.builder().id(21).build()) // 1 IP Address
-           .add(ProductItemPrice.builder().id(55).build()) // Host Ping
-           .add(ProductItemPrice.builder().id(58).build()) // Automated Notification
-           .add(ProductItemPrice.builder().id(1800).build()) // 0 GB Bandwidth
-           .add(ProductItemPrice.builder().id(57).build()) // Email and Ticket
-           .add(ProductItemPrice.builder().id(274).build()) // 1000 Mbps Public & Private Networks
-           .add(ProductItemPrice.builder().id(905).build()) // Reboot / Remote Console
-           .add(ProductItemPrice.builder().id(418).build()) // Nessus Vulnerability Assessment & Reporting
-           .add(ProductItemPrice.builder().id(420).build()) // Unlimited SSL VPN Users & 1 PPTP VPN User per account
-           .build();
+   /**
+    * standard prices for all new guests.
+    */
+   public static final String PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES = "jclouds.softlayer.virtualguest.prices";
+
 }

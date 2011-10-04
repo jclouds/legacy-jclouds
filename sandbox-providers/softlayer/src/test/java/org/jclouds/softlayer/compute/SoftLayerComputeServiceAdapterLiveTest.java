@@ -18,25 +18,22 @@
  */
 package org.jclouds.softlayer.compute;
 
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
-import org.jclouds.softlayer.features.ProductPackageClientLiveTest;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -45,6 +42,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.net.InetAddresses;
+import com.google.inject.Guice;
 
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerComputeServiceAdapterLiveTest")
 public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
@@ -55,9 +53,8 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       super.setupClient();
-      adapter = new SoftLayerComputeServiceAdapter(context.getApi(),
-            ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME,
-            new SoftLayerComputeServiceAdapter.VirtualGuestHasLoginDetailsPresent(context.getApi()),60*60*1000);
+      adapter = Guice.createInjector(module, new Log4JLoggingModule())
+               .getInstance(SoftLayerComputeServiceAdapter.class);
    }
 
    @Test
@@ -68,12 +65,12 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
-      String name = "node"+new Random().nextInt();
+      String name = "node" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
-      
+
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
-      
+
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
       guest = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
       assertEquals(guest.getHostname(), name);
@@ -86,8 +83,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, Credentials creds) {
-      SshClient ssh = computeContext.utils().sshFactory()
-            .create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
+      SshClient ssh = computeContext.utils().sshFactory().create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -103,15 +99,12 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
    @Test
    public void testListHardwareProfiles() {
-      Iterable<Set<ProductItem>> profiles = adapter.listHardwareProfiles();
+      Iterable<Iterable<ProductItem>> profiles = adapter.listHardwareProfiles();
       assertFalse(Iterables.isEmpty(profiles));
 
-      for (Set<ProductItem> profile : profiles) {
+      for (Iterable<ProductItem> profile : profiles) {
          // CPU, RAM and Volume
-         assertEquals(profile.size(), 3);
-         ProductItem cpuItem = Iterables.getOnlyElement(Iterables.filter(profile, units("PRIVATE_CORE")));
-         ProductItem ramItem = Iterables.getOnlyElement(Iterables.filter(profile, categoryCode("ram")));
-         assertEquals(cpuItem.getCapacity(), ramItem.getCapacity());
+         assertEquals(Iterables.size(profile), 3);
       }
    }
 

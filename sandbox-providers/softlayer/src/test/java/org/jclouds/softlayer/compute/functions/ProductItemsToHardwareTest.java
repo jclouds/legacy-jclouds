@@ -18,24 +18,30 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import static com.google.inject.name.Names.bindProperties;
+import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.hardwareId;
+import static org.testng.AssertJUnit.assertEquals;
+
+import java.util.List;
+import java.util.Properties;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.softlayer.SoftLayerPropertiesBuilder;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
-import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.hardwareId;
-import static org.testng.AssertJUnit.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 
 /**
  * Tests {@code ProductItemsToHardware}
- *
+ * 
  * @author Jason King
  */
 @Test(groups = "unit")
@@ -48,46 +54,41 @@ public class ProductItemsToHardwareTest {
       ProductItem item3 = ProductItem.builder().price(ProductItemPrice.builder().id(789).build()).build();
 
       String id = hardwareId().apply(ImmutableList.of(item1, item2, item3));
-      assertEquals("123,456,789",id);
+      assertEquals("123,456,789", id);
    }
 
    @Test
    public void testHardware() {
-      ProductItem cpuItem = ProductItem.builder()
-                               .id(1)
-                               .description("2 cores")
-                               .units("PRIVATE_CORE")
-                               .capacity(2F)
-                               .price(ProductItemPrice.builder().id(123).build())
-                               .build();
-      
-      ProductItem ramItem = ProductItem.builder()
-                              .id(2)
-                              .description("2GB ram")
-                              .capacity(2F)
-                              .category(ProductItemCategory.builder().categoryCode("ram").build())
-                              .price(ProductItemPrice.builder().id(456).build())
-                              .build();
+      ProductItem cpuItem = ProductItem.builder().id(1).description("2 x 2.0 GHz Cores").units("PRIVATE_CORE")
+               .capacity(2F).price(ProductItemPrice.builder().id(123).build()).build();
 
-      ProductItem volumeItem = ProductItem.builder()
-                                  .id(3)
-                                  .description("100 GB (SAN)")
-                                  .capacity(100F)
-                                  .price(ProductItemPrice.builder().id(789).build())
-                                  .build();
+      ProductItem ramItem = ProductItem.builder().id(2).description("2GB ram").capacity(2F).category(
+               ProductItemCategory.builder().categoryCode("ram").build()).price(
+               ProductItemPrice.builder().id(456).build()).build();
 
-      Hardware hardware = new ProductItemsToHardware().apply(ImmutableSet.of(cpuItem,ramItem,volumeItem));
+      ProductItem volumeItem = ProductItem.builder().id(3).description("100 GB (SAN)").capacity(100F).price(
+               ProductItemPrice.builder().id(789).build()).category(
+               ProductItemCategory.builder().categoryCode("guest_disk0").build()).build();
 
-      assertEquals("123,456,789",hardware.getId());
+      Hardware hardware = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bindProperties(binder(), new SoftLayerPropertiesBuilder(new Properties()).build());
+         }
+
+      }).getInstance(ProductItemsToHardware.class).apply(ImmutableSet.of(cpuItem, ramItem, volumeItem));
+
+      assertEquals("123,456,789", hardware.getId());
 
       List<? extends Processor> processors = hardware.getProcessors();
-      assertEquals(1,processors.size());
-      assertEquals(2.0,processors.get(0).getCores());
+      assertEquals(1, processors.size());
+      assertEquals(2.0, processors.get(0).getCores());
 
       assertEquals(2, hardware.getRam());
 
       List<? extends Volume> volumes = hardware.getVolumes();
-      assertEquals(1,volumes.size());
-      assertEquals(100F,volumes.get(0).getSize());
+      assertEquals(1, volumes.size());
+      assertEquals(100F, volumes.get(0).getSize());
    }
 }

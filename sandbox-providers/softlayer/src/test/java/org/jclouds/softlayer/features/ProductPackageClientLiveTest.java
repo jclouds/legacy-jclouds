@@ -43,9 +43,11 @@ import static org.testng.Assert.*;
 public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    /**
-    * Name of the package used for ordering virtual guests.
-    * For real this is passed in using the property
-    * @{code org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME}
+    * Name of the package used for ordering virtual guests. For real this is passed in using the
+    * property
+    * 
+    * @{code org.jclouds.softlayer.reference.SoftLayerConstants.
+    *        PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME}
     */
    public static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
 
@@ -56,7 +58,8 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       accountClient = context.getApi().getAccountClient();
 
       // This is used several times, so cache to speed up the test.
-      cloudServerPackageId = Iterables.find(accountClient.getActivePackages(),named(CLOUD_SERVER_PACKAGE_NAME)).getId();
+      cloudServerPackageId = Iterables.find(accountClient.getActivePackages(), named(CLOUD_SERVER_PACKAGE_NAME))
+               .getId();
       cloudServerProductPackage = client.getProductPackage(cloudServerPackageId);
    }
 
@@ -107,7 +110,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assertEquals(datacenters.size(), expected.size());
       assertTrue(datacenters.containsAll(expected));
 
-      for(Datacenter dataCenter: datacenters) {
+      for (Datacenter dataCenter : datacenters) {
          Address address = dataCenter.getLocationAddress();
          assertNotNull(address);
          checkAddress(address);
@@ -116,37 +119,42 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    @Test
    public void testGetOneGBRamPrice() {
-       //Predicate p = Predicates.and(ProductItemPredicates.categoryCode("ram"),ProductItemPredicates.capacity(1.0f));
-       Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
-               Predicates.and(categoryCode("ram"), capacity(1.0f)));
+      // Predicate p =
+      // Predicates.and(ProductItemPredicates.categoryCode("ram"),ProductItemPredicates.capacity(1.0f));
+      Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(
+               categoryCode("ram"), capacity(1.0f)));
 
-       // capacity is key in GB (1Gb = 1.0f)
-       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
+      // capacity is key in GB (1Gb = 1.0f)
+      Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
-       ProductItemPrice price = ProductItems.price().apply(ramToProductItem.get(1.0f));
-       assert new Integer(1644).equals(price.getId());
+      ProductItemPrice price = ProductItems.price().apply(ramToProductItem.get(1.0f));
+      assert new Integer(1644).equals(price.getId());
    }
 
    @Test
    public void testGetTwoCPUCoresPrice() {
-       // If use ProductItemPredicates.categoryCode("guest_core") get duplicate capacities (units = PRIVATE_CORE and N/A)
-       Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
+      // If use ProductItemPredicates.categoryCode("guest_core") get duplicate capacities (units =
+      // PRIVATE_CORE and N/A)
+      Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(
+               units("PRIVATE_CORE"), capacity(2.0f)));
 
-       // number of cores is the key
-       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
+      // number of cores is the key
+      Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
 
-       ProductItemPrice price = ProductItems.price().apply(coresToProductItem.get(2.0f));
-       assert new Integer(1963).equals(price.getId());
+      ProductItemPrice price = ProductItems.price().apply(coresToProductItem.get(2.0f));
+      assert new Integer(1963).equals(price.getId());
    }
 
    @Test
    public void testGetUbuntuPrice() {
-       Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(), categoryCode("os"));
+      Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(),
+               categoryCode("os"));
 
-       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
+      Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
 
-       ProductItemPrice price = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
-       assert new Integer(1693).equals(price.getId());
+      ProductItemPrice price = ProductItems.price().apply(
+               osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
+      assert new Integer(1693).equals(price.getId());
    }
 
    private void checkProductItem(ProductItem item) {
@@ -178,17 +186,17 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    }
 
    private void checkAddress(Address address) {
-      assert address.getId() >0 : address;
+      assert address.getId() > 0 : address;
       assert address.getCountry() != null : address;
       if (!address.getCountry().equals("SG"))
          assert address.getState() != null : address;
    }
 
    private void checkCategories(Set<ProductItemCategory> categories) {
-       for( ProductItemCategory category: categories ) {
-           assert category.getId() >0 : category;
-           assert category.getName() != null : category;
-           assert category.getCategoryCode() != null : category;
-       }
+      for (ProductItemCategory category : categories) {
+         assert category.getId() > 0 : category;
+         assert category.getName() != null : category;
+         assert category.getCategoryCode() != null : category;
+      }
    }
 }

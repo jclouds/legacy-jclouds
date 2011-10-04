@@ -18,73 +18,101 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCodeMatches;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 
-import javax.inject.Singleton;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
- * Converts a set of ProductItems to Hardware.
- * All cores have a speed of 2.0Ghz
- * The Hardware Id will be a comma separated list containing the price ids:
- * cpus,ram,volume
- *
+ * Converts a set of ProductItems to Hardware. All cores have a speed of 2.0Ghz The Hardware Id will
+ * be a comma separated list containing the price ids: cpus,ram,volume
+ * 
  * @author Jason King
  */
 @Singleton
-public class ProductItemsToHardware implements Function<Set<ProductItem>, Hardware> {
+public class ProductItemsToHardware implements Function<Iterable<ProductItem>, Hardware> {
 
-   static final double CORE_SPEED = 2.0;
+   private final Pattern cpuRegex;
+   private final Pattern categoryCodeMatches;
+
+   @Inject
+   public ProductItemsToHardware(@Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex) {
+      this(Pattern.compile(checkNotNull(cpuRegex, "cpuRegex")), Pattern.compile("guest_disk[0-9]"));
+   }
+
+   public ProductItemsToHardware(Pattern cpuRegex, Pattern categoryCodeMatches) {
+      this.cpuRegex = checkNotNull(cpuRegex, "cpuRegex");
+      this.categoryCodeMatches = checkNotNull(categoryCodeMatches, "categoryCodeMatches");
+   }
 
    @Override
-   public Hardware apply(Set<ProductItem> items) {
+   public Hardware apply(Iterable<ProductItem> items) {
 
-      ProductItem coresItem = getOnlyElement(filter(items, units("PRIVATE_CORE")));
+      ProductItem coresItem = getOnlyElement(filter(items, matches(cpuRegex)));
       ProductItem ramItem = getOnlyElement(filter(items, categoryCode("ram")));
-      ProductItem volumeItem = getOnlyElement(filter(items, matches(SoftLayerComputeServiceAdapter.SAN_DESCRIPTION_REGEX)));
+      ProductItem volumeItem = get(filter(items, categoryCode("guest_disk0")), 0);
 
-      final String hardwareId = hardwareId().apply(ImmutableList.of(coresItem, ramItem, volumeItem));
-      final double cores = ProductItems.capacity().apply(coresItem).doubleValue();
-      final int ram = ProductItems.capacity().apply(ramItem).intValue();
-      final float volumeSize = ProductItems.capacity().apply(volumeItem);
+      String hardwareId = hardwareId().apply(ImmutableList.of(coresItem, ramItem, volumeItem));
+      double cores = ProductItems.capacity().apply(coresItem).doubleValue();
+      Matcher cpuMatcher = cpuRegex.matcher(coresItem.getDescription());
+      double coreSpeed = (cpuMatcher.matches()) ? Double.parseDouble(cpuMatcher.group(cpuMatcher.groupCount())) : 2.0;
+      int ram = ProductItems.capacity().apply(ramItem).intValue();
 
-      return new HardwareBuilder()
-                  .ids(hardwareId)
-                  .processors(ImmutableList.of(new Processor(cores, CORE_SPEED)))
-                  .ram(ram)
-                  .volumes(ImmutableList.<Volume> of(new VolumeImpl(volumeSize, true, false)))
-                  .build();
+      return new HardwareBuilder().ids(hardwareId).processors(ImmutableList.of(new Processor(cores, coreSpeed))).ram(
+               ram).volumes(
+               Iterables.transform(filter(items, categoryCodeMatches(categoryCodeMatches)),
+                        new Function<ProductItem, Volume>() {
+
+                           @Override
+                           public Volume apply(ProductItem arg0) {
+                              float volumeSize = ProductItems.capacity().apply(arg0);
+                              return new VolumeImpl(
+                                       arg0.getId() + "",
+                                       arg0.getDescription().indexOf("SAN") != -1 ? Volume.Type.SAN : Volume.Type.LOCAL,
+                                       volumeSize, null, categoryCode("guest_disk0").apply(arg0), false);
+                           }
+                        })).build();
    }
 
    /**
     * Generates a hardwareId based on the priceId's of the items in the list
+    * 
     * @return comma separated list of priceid's
     */
-   public static Function<List<ProductItem>,String> hardwareId() {
-      return new Function<List<ProductItem>,String>() {
+   public static Function<List<ProductItem>, String> hardwareId() {
+      return new Function<List<ProductItem>, String>() {
          @Override
          public String apply(List<ProductItem> productItems) {
             StringBuilder builder = new StringBuilder();
-            for(ProductItem item:productItems) {
+            for (ProductItem item : productItems) {
                ProductItemPrice price = ProductItems.price().apply(item);
-               builder.append(price.getId())
-                      .append(",");
+               builder.append(price.getId()).append(",");
             }
-            return builder.toString().substring(0,builder.lastIndexOf(","));
+            return builder.toString().substring(0, builder.lastIndexOf(","));
          }
       };
    }

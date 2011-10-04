@@ -18,37 +18,54 @@
  */
 package org.jclouds.softlayer.compute.strategy;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.softlayer.SoftLayerClient;
-import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
-import org.jclouds.softlayer.domain.*;
-import org.jclouds.softlayer.features.AccountClient;
-import org.jclouds.softlayer.features.ProductPackageClient;
-import org.jclouds.softlayer.reference.SoftLayerConstants;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
-import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.get;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.capacity;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
+import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.Password;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductOrderReceipt;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.VirtualGuest;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and the jclouds
@@ -57,28 +74,40 @@ import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
  */
 @Singleton
 public class SoftLayerComputeServiceAdapter implements
-         ComputeServiceAdapter<VirtualGuest, Set<ProductItem>, ProductItem, Datacenter> {
+         ComputeServiceAdapter<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter> {
 
-   public static final String SAN_DESCRIPTION_REGEX = ".*GB \\(SAN\\).*";
-   private static final Float BOOT_VOLUME_CAPACITY = 100F;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
    private final SoftLayerClient client;
-   private final String virtualGuestPackageName;
+   private final Supplier<ProductPackage> productPackageSupplier;
    private final RetryablePredicate<VirtualGuest> loginDetailsTester;
    private final long guestLoginDelay;
+   private final Pattern cpuPattern;
+   private final Pattern disk0Type;
+   private final float portSpeed;
+   private final Iterable<ProductItemPrice> prices;
 
    @Inject
    public SoftLayerComputeServiceAdapter(SoftLayerClient client,
-            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName,
             VirtualGuestHasLoginDetailsPresent virtualGuestHasLoginDetailsPresent,
-            @Named(SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY) long guestLoginDelay)  {
+            @Memoized Supplier<ProductPackage> productPackageSupplier, Iterable<ProductItemPrice> prices,
+            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex,
+            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE) String disk0Type,
+            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED) float portSpeed,
+            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY) long guestLoginDelay) {
       this.client = checkNotNull(client, "client");
-      this.virtualGuestPackageName = checkNotNull(virtualGuestPackageName, "virtualGuestPackageName");
+      this.guestLoginDelay = guestLoginDelay;
+      this.productPackageSupplier = checkNotNull(productPackageSupplier, "productPackageSupplier");
       checkArgument(guestLoginDelay > 500, "guestOrderDelay must be in milliseconds and greater than 500");
-      this.guestLoginDelay =guestLoginDelay;
-
       this.loginDetailsTester = new RetryablePredicate<VirtualGuest>(virtualGuestHasLoginDetailsPresent,
                guestLoginDelay);
+      this.cpuPattern = Pattern.compile(checkNotNull(cpuRegex, "cpuRegex"));
+      this.prices = checkNotNull(prices, "prices");
+      this.portSpeed = portSpeed;
+      checkArgument(portSpeed > 0, "portSpeed must be greater than zero, often 10, 100, 1000, 10000");
+      this.disk0Type = Pattern.compile(".*" + checkNotNull(disk0Type, "disk0Type") + ".*");
    }
 
    @Override
@@ -87,34 +116,38 @@ public class SoftLayerComputeServiceAdapter implements
       checkNotNull(template, "template was null");
       checkNotNull(template.getOptions(), "template options was null");
       checkArgument(template.getOptions().getClass().isAssignableFrom(SoftLayerTemplateOptions.class),
-            "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
-            .getClass());
-      
+               "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
+                        .getClass());
+
       String domainName = template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName();
 
       VirtualGuest newGuest = VirtualGuest.builder().domain(domainName).hostname(name).build();
 
-      ProductOrder order = ProductOrder.builder().packageId(getProductPackage().getId()).location(
+      ProductOrder order = ProductOrder.builder().packageId(productPackageSupplier.get().getId()).location(
                template.getLocation().getId()).quantity(1).useHourlyPricing(true).prices(getPrices(template))
                .virtualGuest(newGuest).build();
 
+      logger.debug(">> ordering new virtualGuest domain(%s) hostname(%s)", domainName, name);
       ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);
-      VirtualGuest result = Iterables.get(productOrderReceipt.getOrderDetails().getVirtualGuests(), 0);
+      VirtualGuest result = get(productOrderReceipt.getOrderDetails().getVirtualGuests(), 0);
+      logger.trace("<< virtualGuest(%s)", result.getId());
 
+      logger.debug(">> awaiting login details for virtualGuest(%s)", result.getId());
       boolean orderInSystem = loginDetailsTester.apply(result);
+      logger.trace("<< virtualGuest(%s) complete(%s)", result.getId(), orderInSystem);
 
-      checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result, Long.toString(guestLoginDelay));
+      checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result, Long
+               .toString(guestLoginDelay));
       result = client.getVirtualGuestClient().getVirtualGuest(result.getId());
 
-      Password pw = Iterables.get(result.getOperatingSystem().getPasswords(),0);
+      Password pw = get(result.getOperatingSystem().getPasswords(), 0);
       Credentials credentials = new Credentials(pw.getUsername(), pw.getPassword());
       credentialStore.put("node#" + result.getId(), credentials);
       return result;
    }
 
-
    private Iterable<ProductItemPrice> getPrices(Template template) {
-      Set<ProductItemPrice> result = Sets.newLinkedHashSet();
+      Builder<ProductItemPrice> result = ImmutableSet.<ProductItemPrice> builder();
 
       int imageId = Integer.parseInt(template.getImage().getId());
       result.add(ProductItemPrice.builder().id(imageId).build());
@@ -124,46 +157,31 @@ public class SoftLayerComputeServiceAdapter implements
          int id = Integer.parseInt(hardwareId);
          result.add(ProductItemPrice.builder().id(id).build());
       }
-
-      result.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
-
-      return result;
+      ProductItem uplinkItem = find(productPackageSupplier.get().getItems(), and(capacity(portSpeed),
+               categoryCode("port_speed")));
+      result.add(get(uplinkItem.getPrices(), 0));
+      result.addAll(prices);
+      return result.build();
    }
 
    @Override
-   public Iterable<Set<ProductItem>> listHardwareProfiles() {
-      ProductPackage productPackage = getProductPackage();
+   public Iterable<Iterable<ProductItem>> listHardwareProfiles() {
+      ProductPackage productPackage = productPackageSupplier.get();
       Set<ProductItem> items = productPackage.getItems();
-
-      Iterable<ProductItem> cpuItems = Iterables.filter(items, units("PRIVATE_CORE"));
-      Iterable<ProductItem> ramItems = Iterables.filter(items, categoryCode("ram"));
-      Iterable<ProductItem> sanItems = Iterables.filter(items, Predicates.and(matches(SAN_DESCRIPTION_REGEX),
-               categoryCode("one_time_charge")));
-
-      Map<Float, ProductItem> cpuMap = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
-      Map<Float, ProductItem> ramMap = Maps.uniqueIndex(ramItems, ProductItems.capacity());
-      Map<Float, ProductItem> sanMap = Maps.uniqueIndex(sanItems, ProductItems.capacity());
-
-      final ProductItem bootVolume = sanMap.get(BOOT_VOLUME_CAPACITY);
-      assert bootVolume != null : "Boot volume capacity not found:" + BOOT_VOLUME_CAPACITY + ", available:" + sanItems;
-
-      Set<Set<ProductItem>> result = Sets.newLinkedHashSet();
-      for (Map.Entry<Float, ProductItem> coresEntry : cpuMap.entrySet()) {
-         Float cores = coresEntry.getKey();
-         ProductItem ramItem = ramMap.get(cores);
-         // Amount of RAM and number of cores must match.
-         if (ramItem == null)
-            continue;
-
-         result.add(ImmutableSet.of(coresEntry.getValue(), ramItem, bootVolume));
+      Builder<Iterable<ProductItem>> result = ImmutableSet.<Iterable<ProductItem>> builder();
+      for (ProductItem cpuItem : filter(items, matches(cpuPattern))) {
+         for (ProductItem ramItem : filter(items, categoryCode("ram"))) {
+            for (ProductItem sanItem : filter(items, and(matches(disk0Type), categoryCode("guest_disk0")))) {
+               result.add(ImmutableSet.of(cpuItem, ramItem, sanItem));
+            }
+         }
       }
-
-      return result;
+      return result.build();
    }
 
    @Override
    public Iterable<ProductItem> listImages() {
-      return Iterables.filter(getProductPackage().getItems(), categoryCode("os"));
+      return filter(productPackageSupplier.get().getItems(), categoryCode("os"));
    }
 
    @Override
@@ -173,15 +191,7 @@ public class SoftLayerComputeServiceAdapter implements
 
    @Override
    public Iterable<Datacenter> listLocations() {
-      return getProductPackage().getDatacenters();
-   }
-
-   private ProductPackage getProductPackage() {
-      AccountClient accountClient = client.getAccountClient();
-      ProductPackageClient productPackageClient = client.getProductPackageClient();
-
-      ProductPackage p = Iterables.find(accountClient.getActivePackages(), named(virtualGuestPackageName));
-      return productPackageClient.getProductPackage(p.getId());
+      return productPackageSupplier.get().getDatacenters();
    }
 
    @Override
@@ -197,8 +207,10 @@ public class SoftLayerComputeServiceAdapter implements
          return;
 
       if (guest.getBillingItemId() == -1)
-         return;
+         throw new IllegalStateException(String.format("no billing item for guest(%s) so we cannot cancel the order",
+                  id));
 
+      logger.debug(">> canceling service for guest(%s) billingItem(%s)", id, guest.getBillingItemId());
       client.getVirtualGuestClient().cancelService(guest.getBillingItemId());
    }
 
@@ -232,7 +244,8 @@ public class SoftLayerComputeServiceAdapter implements
          VirtualGuest newGuest = client.getVirtualGuestClient().getVirtualGuest(guest.getId());
          boolean hasBackendIp = newGuest.getPrimaryBackendIpAddress() != null;
          boolean hasPrimaryIp = newGuest.getPrimaryIpAddress() != null;
-         boolean hasPasswords = newGuest.getOperatingSystem()!=null && newGuest.getOperatingSystem().getPasswords().size() > 0;
+         boolean hasPasswords = newGuest.getOperatingSystem() != null
+                  && newGuest.getOperatingSystem().getPasswords().size() > 0;
 
          return hasBackendIp && hasPrimaryIp && hasPasswords;
       }

@@ -36,7 +36,6 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
@@ -49,7 +48,6 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
@@ -129,25 +127,24 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Singleton
    public static class GetHardwareForVirtualGuest {
 
-      private SoftLayerClient client;
+      private final SoftLayerClient client;
+      private final Function<Iterable<ProductItem>, Hardware> productItemsToHardware;
 
       @Inject
-      public GetHardwareForVirtualGuest(SoftLayerClient client) {
-         this.client = client;
+      public GetHardwareForVirtualGuest(SoftLayerClient client,
+               Function<Iterable<ProductItem>, Hardware> productItemsToHardware) {
+         this.client = checkNotNull(client, "client");
+         this.productItemsToHardware = checkNotNull(productItemsToHardware, "productItemsToHardware");
+
       }
 
       public Hardware getHardware(VirtualGuest guest) {
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         try {
-            ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
-            Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
-            return new ProductItemsToHardware().apply(Sets.newLinkedHashSet(items));
-         } catch (HttpResponseException e) {
-            // Shouldn't happen any more - was blowing up in Singapore
-            return null;
-         }
+         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
+         return productItemsToHardware.apply(items);
       }
    }
 
@@ -165,15 +162,10 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         try {
-            ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
-            Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
-            ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
-            return new ProductItemToImage().apply(os);
-         } catch (HttpResponseException e) {
-            // Shouldn't happen any more - was blowing up in Singapore
-            return null;
-         }
+         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
+         ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
+         return new ProductItemToImage().apply(os);
       }
    }
 

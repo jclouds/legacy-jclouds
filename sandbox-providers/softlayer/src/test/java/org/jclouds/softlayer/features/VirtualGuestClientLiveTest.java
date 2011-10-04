@@ -18,23 +18,36 @@
  */
 package org.jclouds.softlayer.features;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.domain.*;
-import org.jclouds.softlayer.reference.SoftLayerConstants;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.capacity;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
+import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
-import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
-import static org.testng.Assert.*;
+import org.jclouds.softlayer.compute.functions.ProductItems;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductOrder;
+import org.jclouds.softlayer.domain.ProductOrderReceipt;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.VirtualGuest;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.inject.Guice;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualGuestClient}
@@ -66,70 +79,69 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       }
    }
 
-   @Test(enabled = false)
+   @Test(enabled = false, groups = "live")
    public void testCancelAndPlaceOrder() {
 
-     // This method was not working needs testing out.
+      // This method was not working needs testing out.
 
       // TODO: Should also check if there are active transactions before trying to cancel.
       // objectMask: virtualGuests.activeTransaction
-      for( VirtualGuest guest: client.listVirtualGuests()) {
+      for (VirtualGuest guest : client.listVirtualGuests()) {
          if (guest.getHostname().startsWith(TEST_HOSTNAME_PREFIX)) {
-            if(guest.getBillingItemId()!=-1) {
+            if (guest.getBillingItemId() != -1) {
                client.cancelService(guest.getBillingItemId());
             }
          }
       }
 
-      int pkgId = Iterables.find(context.getApi().getAccountClient().getActivePackages(),named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
+      int pkgId = Iterables.find(context.getApi().getAccountClient().getActivePackages(),
+               named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
       ProductPackage productPackage = context.getApi().getProductPackageClient().getProductPackage(pkgId);
 
-      Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(),
-            Predicates.and(categoryCode("ram"), capacity(2.0f)));
+      Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(), Predicates.and(categoryCode("ram"),
+               capacity(2.0f)));
 
-       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
+      Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
 
-       ProductItemPrice ramPrice = ProductItems.price().apply(ramToProductItem.get(2.0f));
+      ProductItemPrice ramPrice = ProductItems.price().apply(ramToProductItem.get(2.0f));
 
-       Iterable<ProductItem> cpuItems = Iterables.filter(productPackage.getItems(), Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
-       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
+      Iterable<ProductItem> cpuItems = Iterables.filter(productPackage.getItems(), Predicates.and(
+               units("PRIVATE_CORE"), capacity(2.0f)));
+      Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
 
-       ProductItemPrice cpuPrice = ProductItems.price().apply(coresToProductItem.get(2.0f));
+      ProductItemPrice cpuPrice = ProductItems.price().apply(coresToProductItem.get(2.0f));
 
-       Iterable<ProductItem> operatingSystems = Iterables.filter(productPackage.getItems(), categoryCode("os"));
-       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
-       ProductItemPrice osPrice = ProductItems.price().apply(osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
+      Iterable<ProductItem> operatingSystems = Iterables.filter(productPackage.getItems(), categoryCode("os"));
+      Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
+      ProductItemPrice osPrice = ProductItems.price().apply(
+               osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
-       Set<ProductItemPrice> prices = Sets.<ProductItemPrice>newLinkedHashSet();
-       prices.addAll(SoftLayerConstants.DEFAULT_VIRTUAL_GUEST_PRICES);
-       prices.add(ramPrice);
-       prices.add(cpuPrice);
-       prices.add(osPrice);
+      Builder<ProductItemPrice> prices = ImmutableSet.<ProductItemPrice> builder();
+      prices.addAll(Guice.createInjector(module).getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
+      })));
+      prices.add(ramPrice);
+      prices.add(cpuPrice);
+      prices.add(osPrice);
 
-       VirtualGuest guest = VirtualGuest.builder().domain("jclouds.org")
-                                                 .hostname(TEST_HOSTNAME_PREFIX+new Random().nextInt())
-                                                 .build();
+      VirtualGuest guest = VirtualGuest.builder().domain("jclouds.org").hostname(
+               TEST_HOSTNAME_PREFIX + new Random().nextInt()).build();
 
-       ProductOrder order = ProductOrder.builder()
-                                       .packageId(pkgId)
-                                       .quantity(1)
-                                       .useHourlyPricing(true)
-                                       .prices(prices)
-                                       .virtualGuest(guest)
-                                       .build();
+      ProductOrder order = ProductOrder.builder().packageId(pkgId).quantity(1).useHourlyPricing(true).prices(
+               prices.build()).virtualGuest(guest).build();
 
-       ProductOrderReceipt receipt = context.getApi().getVirtualGuestClient().orderVirtualGuest(order);
-       ProductOrder order2 = receipt.getOrderDetails();
-       VirtualGuest result = Iterables.get(order2.getVirtualGuests(), 0);
+      ProductOrderReceipt receipt = context.getApi().getVirtualGuestClient().orderVirtualGuest(order);
+      ProductOrder order2 = receipt.getOrderDetails();
+      VirtualGuest result = Iterables.get(order2.getVirtualGuests(), 0);
 
-       ProductOrder order3 = context.getApi().getVirtualGuestClient().getOrderTemplate(result.getId());
+      ProductOrder order3 = context.getApi().getVirtualGuestClient().getOrderTemplate(result.getId());
 
-       assertEquals(order.getPrices(),order3.getPrices());
-       assertNotNull(receipt);
+      assertEquals(order.getPrices(), order3.getPrices());
+      assertNotNull(receipt);
    }
 
    private void checkVirtualGuest(VirtualGuest vg) {
-      if (vg.getBillingItemId()==-1) return;//Quotes and shutting down guests
+      if (vg.getBillingItemId() == -1)
+         return;// Quotes and shutting down guests
 
       assert vg.getAccountId() > 0 : vg;
       assert vg.getCreateDate() != null : vg;
