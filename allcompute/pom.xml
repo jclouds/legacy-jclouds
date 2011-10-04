@@ -170,5 +170,10 @@
             <artifactId>go2cloud-jhb1</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>softlayer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -63,5 +63,6 @@
         <module>greenhousedata-element-vcloud</module>
         <module>aws-cloudwatch</module>
         <module>go2cloud-jhb1</module>
+        <module>softlayer</module>
     </modules>
 </project>
