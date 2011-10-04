@@ -132,12 +132,12 @@ public class AWSKeyPairClientLiveTest {
          NodeMetadata first = get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
+         assert first.getCredentials().credential == null : first;
 
          AWSRunningInstance instance = getInstance(instanceClient, first.getProviderId());
 
          assert instance.getSpotInstanceRequestId() != null : instance;
          assertEquals(instance.getKeyName(), "jclouds#" + group);
-         assertEquals(first.getCredentials().credential, null);
 
          Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
                   .runScriptOnNodesMatching(
