@@ -53,11 +53,6 @@ See http://code.google.com/p/jclouds for details."
            [java.security DigestOutputStream MessageDigest]
            com.google.common.collect.ImmutableSet))
 
-(try
-  (require '[clojure.contrib.io :as io])
-  (catch Exception e
-    (require '[clojure.contrib.duck-streams :as io])))
-
 (defn blobstore
   "Create a logged in context.
 Options for communication style

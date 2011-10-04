@@ -30,7 +30,6 @@ Current supported providers are:
 Here's an example of getting some compute configuration from rackspace:
 
   (use 'org.jclouds.compute)
-  (use 'clojure.contrib.pprint)
 
   (def provider \"cloudservers\")
   (def provider-identity \"username\")
@@ -57,10 +56,7 @@ webserver:
   (create-node \"webserver\" compute)
 
 See http://code.google.com/p/jclouds for details."
-  (:use org.jclouds.core
-        (clojure.contrib logging core))
-  (:require
-   [clojure.contrib.condition :as condition])
+  (:use org.jclouds.core (clojure.core incubator))
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
@@ -73,13 +69,6 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.compute.predicates
             NodePredicates]
            [com.google.common.collect ImmutableSet]))
-
-(try
- (use '[clojure.contrib.reflect :only [get-field]])
- (catch Exception e
-   (use '[clojure.contrib.java-utils
-          :only [wall-hack-field]
-          :rename {wall-hack-field get-field}])))
 
 (defmacro deprecate-fwd [old-name new-name] `(defn ~old-name {:deprecated "beta-9"} [& args#] (apply ~new-name args#)))
 
@@ -455,19 +444,15 @@ Options correspond to TemplateBuilder methods."
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]
       (when-not (known-template-options option)
-        (condition/raise
-         :type :invalid-template-builder-option
-         :message (format "Invalid template builder option : %s" option)))
+        (throw (Exception. (format "Invalid template builder option : %s" option))))
       ;; apply template builder options
       (try
         (apply-option builder template-map option value)
         (catch Exception e
-            (condition/raise
-             :type :invalid-template-builder
-             :message (format
+            (throw (Exception. (format
                        "Problem applying template builder %s with value %s: %s"
                        option (pr-str value) (.getMessage e))
-             :cause e))))
+                    e)))))
     (let [template (.build builder)
           template-options (.getOptions template)]
       (doseq [[option value] options]
@@ -475,10 +460,9 @@ Options correspond to TemplateBuilder methods."
         (try
           (apply-option template-options options-map option value)
           (catch Exception e
-            (condition/raise
-             :type :invalid-template-option
-             :message (format
+            (throw (Exception.
+                    (format
                        "Problem applying template option %s with value %s: %s"
                        option (pr-str value) (.getMessage e))
-             :cause e))))
+                    e)))))
       template)))

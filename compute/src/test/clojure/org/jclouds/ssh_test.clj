@@ -19,7 +19,7 @@
 
 (ns org.jclouds.ssh-test
   (:require
-   [clojure.contrib.logging :as logging])
+   [clojure.tools.logging :as logging])
   (:import
    org.jclouds.ssh.SshClient
    org.jclouds.domain.Credentials
