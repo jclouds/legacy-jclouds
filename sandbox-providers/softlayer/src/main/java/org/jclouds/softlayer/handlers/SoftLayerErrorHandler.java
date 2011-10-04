@@ -20,14 +20,12 @@ package org.jclouds.softlayer.handlers;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
@@ -43,27 +41,29 @@ import com.google.common.io.Closeables;
  */
 @Singleton
 public class SoftLayerErrorHandler implements HttpErrorHandler {
-   @Resource
-   protected Logger logger = Logger.NULL;
 
    public void handleError(HttpCommand command, HttpResponse response) {
       // it is important to always read fully and close streams
       String message = parseMessage(response);
       Exception exception = message != null ? new HttpResponseException(command, response, message)
-            : new HttpResponseException(command, response);
+               : new HttpResponseException(command, response);
       try {
          message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-               response.getStatusLine());
+                  response.getStatusLine());
          switch (response.getStatusCode()) {
-         case 401:
-         case 403:
-            exception = new AuthorizationException(message, exception);
-            break;
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               exception = new ResourceNotFoundException(message, exception);
-            }
-            break;
+            case 401:
+            case 403:
+               exception = new AuthorizationException(message, exception);
+               break;
+            case 404:
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  exception = new ResourceNotFoundException(message, exception);
+               }
+               break;
+            case 500:
+               if (message != null && message.indexOf("Unable to determine package for") != -1) {
+                  exception = new ResourceNotFoundException(message, exception);
+               }
          }
       } finally {
          if (response.getPayload() != null)

@@ -118,7 +118,7 @@ public interface VirtualGuestClient {
     * @param id
     *          The id of the existing Virtual Guest
     * @return
-    *          The ProductOrder used to create the VirtualGust
+    *          The ProductOrder used to create the VirtualGust or null if not available
     */
    ProductOrder getOrderTemplate(long id);
 }

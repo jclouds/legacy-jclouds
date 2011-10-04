@@ -143,6 +143,8 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          if (guest.getStartCpus() < 1)
             return null;
          ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         if (order == null)
+            return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
          return productItemsToHardware.apply(items);
       }
@@ -163,6 +165,8 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          if (guest.getStartCpus() < 1)
             return null;
          ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         if (order == null)
+            return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
          ProductItem os = Iterables.find(items, ProductItemPredicates.categoryCode("os"));
          return new ProductItemToImage().apply(os);
