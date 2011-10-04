@@ -56,11 +56,6 @@ See http://code.google.com/p/jclouds for details."
            com.google.common.collect.ImmutableSet
            org.jclouds.encryption.internal.JCECrypto))
 
-(try
-  (require '[clojure.contrib.io :as io])
-  (catch Exception e
-    (require '[clojure.contrib.duck-streams :as io])))
-
 (def ^{:private true}
      crypto-impl
      ;; BouncyCastle might not be present. Try to load it, but fall back to
@@ -77,11 +72,6 @@ See http://code.google.com/p/jclouds for details."
 ;; Payload support for creating Blobs.
 ;;
 
-(def ^{:doc "Type object for a Java primitive byte array, for use in the
-             PayloadSource protocol."
-      :private true}
-     byte-array-type (class (make-array Byte/TYPE 0)))
-
 (defprotocol PayloadSource
   "Various types can have PayloadSource extended onto them so that they are
    easily coerced into a Payload."
@@ -92,8 +82,6 @@ See http://code.google.com/p/jclouds for details."
   (payload [p] p)
   java.io.InputStream
   (payload [is] (Payloads/newInputStreamPayload is))
-  byte-array-type
-  (payload [ba] (Payloads/newByteArrayPayload ba))
   String
   (payload [s] (Payloads/newStringPayload s))
   java.io.File
@@ -105,6 +93,13 @@ See http://code.google.com/p/jclouds for details."
            (StreamingPayload. (reify org.jclouds.io.WriteTo
                                      (writeTo [this output-stream]
                                               (func output-stream))))))
+
+;; something in clojure 1.3 (namespaces?) does not like a private type called byte-array-type, 
+;; so we refer to (class (make-array ...)) directly; and it only parses if it is its own block, 
+;; hence separating it from the above
+(extend-protocol PayloadSource
+  (class (make-array Byte/TYPE 0))
+  (payload [ba] (Payloads/newByteArrayPayload ba)))
 
 (defn blobstore
   "Create a logged in context.
