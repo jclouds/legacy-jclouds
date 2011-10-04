@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -141,6 +143,23 @@ public class AWSUtils {
       Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
       for (int i = 0; i < values.length; i++) {
          builder.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase() + "s[" + i + "]"));
+      }
+      ImmutableMultimap<String, String> forms = builder.build();
+      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+   }
+
+   public static <R extends HttpRequest> R indexMapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Map<?,?>, "this binder is only valid for Map<?,?>: "
+            + input.getClass());
+      Map<?,?> map = (Map<?,?>) input;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      int i = 1;
+      for (Map.Entry<?,?> e : map.entrySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(e.getKey().toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+         if (e.getValue() != null) {
+	         builder.put(prefix + "." + i + "." + valueSuffix, e.getValue().toString());
+         }
+         i++;
       }
       ImmutableMultimap<String, String> forms = builder.build();
       return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
