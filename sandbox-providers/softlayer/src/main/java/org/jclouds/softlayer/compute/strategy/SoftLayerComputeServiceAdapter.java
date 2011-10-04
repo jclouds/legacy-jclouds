@@ -65,6 +65,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
@@ -186,7 +187,18 @@ public class SoftLayerComputeServiceAdapter implements
 
    @Override
    public Iterable<VirtualGuest> listNodes() {
-      return client.getVirtualGuestClient().listVirtualGuests();
+      return Iterables.filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>(){
+
+         @Override
+         public boolean apply(VirtualGuest arg0) {
+            boolean hasBillingItem = arg0.getBillingItemId() != -1;
+            if (hasBillingItem)
+               return true;
+            logger.trace("guest invalid, as it has no billing item %s", arg0);
+            return false;
+         }
+         
+      });
    }
 
    @Override
