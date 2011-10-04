@@ -497,8 +497,8 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
-         assert node.getProviderId() != null;
-         assert node.getLocation() != null;
+         assert node.getProviderId() != null : node;
+         assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
       }
    }
