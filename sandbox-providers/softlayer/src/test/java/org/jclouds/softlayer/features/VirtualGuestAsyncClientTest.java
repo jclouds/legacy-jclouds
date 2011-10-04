@@ -78,7 +78,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
 
       assertRequestLineEquals(
             httpRequest,
-            "GET https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/1234.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter%3BvirtualGuests.billingItem HTTP/1.1");
+            "GET https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/1234.json?objectMask=powerState%3BnetworkVlans%3BoperatingSystem.passwords%3Bdatacenter%3BbillingItem HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

@@ -48,7 +48,7 @@ import java.util.Set;
 @Path("/v{jclouds.api-version}")
 public interface VirtualGuestAsyncClient {
    public static String LIST_GUEST_MASK = "virtualGuests.powerState;virtualGuests.networkVlans;virtualGuests.operatingSystem.passwords;virtualGuests.datacenter;virtualGuests.billingItem";
-   public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter;virtualGuests.billingItem";
+   public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter;billingItem";
 
    /**
     * @see VirtualGuestClient#listVirtualGuests
