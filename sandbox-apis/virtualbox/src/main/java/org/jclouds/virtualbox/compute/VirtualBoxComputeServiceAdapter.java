@@ -78,6 +78,9 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
 	@Override
 	public Iterable<IMachine> listImages() {
+		for (IMachine iMachine : manager.getVBox().getMachines()) {
+		System.out.println(iMachine.getName());	
+		}
 		return manager.getVBox().getMachines();
 	}
 

@@ -35,8 +35,15 @@ import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.experiment.TestUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.INATEngine;
+import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 //TODO should it be a live test?
@@ -59,17 +66,26 @@ public class IsoToIMachineTest {
 		VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
 		IVirtualBox vBox = createNiceMock(IVirtualBox.class);
 		IMachine vm = createNiceMock(IMachine.class);
+		IMedium hd = createNiceMock(IMedium.class);
+		INetworkAdapter iNetworkAdapter = createNiceMock(INetworkAdapter.class);
+		INATEngine inatEngine = createNiceMock(INATEngine.class);
+		IProgress iProgress = createNiceMock(IProgress.class);
+
 		ISession session = createNiceMock(ISession.class);
 		expect(vbm.getVBox()).andReturn(vBox).anyTimes();
 		expect(vbm.getSessionObject()).andReturn(session).anyTimes();
 		expect(vBox.findMachine(vmName)).andReturn(vm).anyTimes();
-		expect(
-				vBox.createMachine(settingsFile, vmName, osTypeId, vmId,
+		expect(vBox.createMachine(settingsFile, vmName, osTypeId, vmId,
 						forceOverwrite)).andReturn(vm).anyTimes();
 		expect(vm.getName()).andReturn(vmName).anyTimes();
-		// expect(vm.lockMachine(session, LockType.Write)).and
+		expect(vm.getNetworkAdapter(new Long(0))).andReturn(iNetworkAdapter).anyTimes();
+		expect(iNetworkAdapter.getNatDriver()).andReturn(inatEngine).anyTimes();
+		expect(vBox.createHardDisk(diskFormat, adminDisk)).andReturn(hd).anyTimes();
+		expect(vm.launchVMProcess(session, "gui", "")).andReturn(iProgress).anyTimes();
 		expect(session.getMachine()).andReturn(vm).anyTimes();
-		replay(vbm, vBox, vm, session);
+		expect(vm.getState()).andReturn(MachineState.Running).anyTimes();
+
+		replay(vbm, vBox, vm, session, hd, iNetworkAdapter, iProgress);
 
 		ComputeServiceContext context = TestUtils
 				.computeServiceForLocalhostAndGuest();

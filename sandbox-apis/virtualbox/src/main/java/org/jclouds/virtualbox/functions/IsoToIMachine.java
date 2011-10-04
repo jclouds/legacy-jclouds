@@ -103,9 +103,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
 		machine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
 		mutable.addStorageController(controllerIDE, StorageBus.IDE);
-		// assertEquals(manager.getVBox().findMachine(vmName).getStorageControllers().size(),
-		// 1);
-
 		mutable.saveSettings();
 
 		// CONTROLLER
@@ -123,15 +120,13 @@ public class IsoToIMachine implements Function<String, IMachine> {
 				new Long(MediumVariant.STANDARD.ordinal()));
 		mutable.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
 		mutable.saveSettings();
-		assertEquals(hd.getId().equals(""), false);
-
+		
 		// NIC
 		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(
 				NetworkAttachmentType.NAT);
-		machine.getNetworkAdapter(new Long(0))
-				.getNatDriver()
-				.addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1", 2222,
-						"", 22);
+		
+		
+		machine.getNetworkAdapter(new Long(0)).getNatDriver().addRedirect("guestssh", NATProtocol.TCP, "127.0.0.1", 2222, "", 22);
 		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
 		mutable.saveSettings();
 
@@ -146,8 +141,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
 		try {
 			sendKeyboardSequence(VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		}
 
 		session.unlockMachine();
