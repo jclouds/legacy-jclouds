@@ -23,7 +23,6 @@
   org.jclouds.ec2.elastic-ip
   (:require (org.jclouds [compute :as compute])
     [org.jclouds.ec2.ebs :as ebs])
-  (:use (clojure.contrib def core))
   (:import org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain PublicIpInstanceIdPair)))
 
