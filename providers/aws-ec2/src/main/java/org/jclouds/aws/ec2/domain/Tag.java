@@ -18,7 +18,12 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
+
+import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * @see <a href= "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TagSetItemType.html" />
@@ -31,7 +36,7 @@ public class Tag implements Comparable<Tag> {
 
     public static class Builder {
         private String resourceId;
-        private String resourceType;
+        private ResourceType resourceType;
         private String key;
         private String value;
 
@@ -47,7 +52,7 @@ public class Tag implements Comparable<Tag> {
             return this;
         }
 
-        public Builder resourceType(String resourceType) {
+        public Builder resourceType(ResourceType resourceType) {
             this.resourceType = resourceType;
             return this;
         }
@@ -68,11 +73,11 @@ public class Tag implements Comparable<Tag> {
     }
 
     private final String resourceId;
-    private final String resourceType;
+    private final ResourceType resourceType;
     private final String key;
     private final String value;
 
-    public Tag(String resourceId, String resourceType, String key, String value) {
+    public Tag(String resourceId, ResourceType resourceType, String key, String value) {
         this.resourceId = checkNotNull(resourceId, "resourceId");
         this.resourceType = checkNotNull(resourceType, "resourceType");
         this.key = checkNotNull(key, "key");
@@ -83,7 +88,7 @@ public class Tag implements Comparable<Tag> {
         return resourceId;
     }
 
-    public String getResourceType() {
+    public ResourceType getResourceType() {
         return resourceType;
     }
 
@@ -97,18 +102,17 @@ public class Tag implements Comparable<Tag> {
 
     @Override
     public int compareTo(Tag t) {
-        return key.compareTo(t.key);
+        return ComparisonChain.start()
+                .compare(resourceId, t.resourceId)
+                .compare(resourceType, t.resourceType)
+                .compare(key, t.key)
+                .compare(value, t.value)
+                .result();
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-        result = prime * result + ((resourceType == null) ? 0 : resourceType.hashCode());
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hashCode(resourceId, resourceType, key, value);
     }
 
     @Override

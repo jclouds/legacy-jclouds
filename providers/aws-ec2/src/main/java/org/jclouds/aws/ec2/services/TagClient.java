@@ -18,15 +18,16 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.domain.TagFilter;
+import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Provides Tag services for EC2. For more information, refer to the Amazon EC2
@@ -45,12 +46,12 @@ public interface TagClient {
     *           IDs of the resources to tag.
     * @param tags
     *           The tags to create.
-    * @see #describeTagsInRegion(String, Collection)
-    * @see #deleteTagsInRegion(String, Collection, Map)
+    * @see #describeTagsInRegion(String, Multimap)
+    * @see #deleteTagsInRegion(String, Iterable, Map)
     * 
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html" />
     */
-    void createTagsInRegion(@Nullable String region, Collection<String> resourceIds, Map<String, String> tags);
+    void createTagsInRegion(@Nullable String region, Iterable<String> resourceIds, Map<String, String> tags);
    
    /**
     * Deletes tags.
@@ -62,12 +63,12 @@ public interface TagClient {
     * @param tags
     *           The tags to delete.
     * 
-    * @see #describeTagsInRegion(String, Collection)
-    * @see #createTagsInRegion(String, Collection, Map)
+    * @see #describeTagsInRegion(String, Multimap)
+    * @see #createTagsInRegion(String, Iterable, Map)
     * 
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html" />
     */
-   void deleteTagsInRegion(@Nullable String region, Collection<String> resourceIds, Map<String, String> tags);
+   void deleteTagsInRegion(@Nullable String region, Iterable<String> resourceIds, Map<String, String> tags);
 
    /**
     * Returns filtered information about tags.
@@ -77,9 +78,9 @@ public interface TagClient {
     * @param filters
     *           A collection of filters to apply before selecting the tags.
     * 
-    * @see #deleteTagsInRegion(String, Collection, Map)
-    * @see #createTagsInRegion(String, Collection, Map)
+    * @see #deleteTagsInRegion(String, Iterable, Map)
+    * @see #createTagsInRegion(String, Iterable, Map)
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html" />
     */
-   Set<Tag> describeTagsInRegion(@Nullable String region, Collection<TagFilter> filters);
+   Set<Tag> describeTagsInRegion(@Nullable String region, Multimap<TagFilters.FilterName, ?> filters);
 }

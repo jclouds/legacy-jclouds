@@ -18,163 +18,268 @@
  */
 package org.jclouds.aws.ec2.util;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import static com.google.common.base.Preconditions.*;
 
-import org.jclouds.aws.ec2.domain.TagFilter;
-import org.jclouds.aws.ec2.domain.TagFilter.FilterName;
-import org.jclouds.aws.ec2.domain.TagFilter.ResourceType;
-
-import com.google.common.collect.Maps;
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 /**
  * @author grkvlt@apache.org
  */
 public class TagFilters {
-    protected final FilterName name;
-    protected final Collection<String> values;
+    public static enum FilterName {
+        KEY,
+        RESOURCE_ID,
+        RESOURCE_TYPE,
+        VALUE;
 
-    protected TagFilters(FilterName name, Collection<String> values) {
-        this.name = name;
-        this.values = values != null ? values : Sets.<String>newHashSet();
-    }
-
-    public static Multimap<String, String> buildFormParametersForIndex(int index, TagFilter filter) {
-        Map<String, String> headers = Maps.newLinkedHashMap();
-        headers.put(String.format("Filter.%d.Name", index), filter.getName().value());
-        int i = 0;
-        for (String value : filter.getValues()) {
-            headers.put(String.format("Filter.%d.Value.%d", index, ++i), value);
-        }
-        return Multimaps.forMap(headers);
-    }
-
-    public static StringTagFilter key() {
-        return new StringTagFilter(FilterName.KEY);
-    }
-
-    public static StringTagFilter resourceId() {
-        return new StringTagFilter(FilterName.RESOURCE_ID);
-    }
-
-    public static ResourceTypeTagFilter resourceType() {
-        return new ResourceTypeTagFilter();
-    }
-
-    public static NamedTagFilter value() {
-        return new StringTagFilter(FilterName.VALUE);
-    }
-
-    public static class NamedTagFilter extends TagFilters {
-        public NamedTagFilter(FilterName name) {
-            super(name, null);
+        public String value() {
+            return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
         }
 
-        public TagFilter filter() {
-            return new TagFilter(name, values);
+        @Override
+        public String toString() {
+            return value();
+        }
+
+        public static FilterName fromValue(String name) {
+            try {
+                return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(name, "name")));
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
     }
 
-    public static class StringTagFilter extends NamedTagFilter {
-        public StringTagFilter(FilterName name) {
-            super(name);
+    public static enum ResourceType {
+        CUSTOMER_GATEWAY,
+        DHCP_OPTIONS,
+        IMAGE,
+        INSTANCE,
+        INTERNET_GATEWAY,
+        NETWORK_ACL,
+        RESERVED_INSTANCES,
+        ROUTE_TABLE,
+        SECURITY_GROUP,
+        SNAPSHOT,
+        SPOT_INSTANCES_REQUEST,
+        SUBNET,
+        VOLUME,
+        VPC,
+        VPN_CONNECTION,
+        VPN_GATEWAY;
+
+        public String value() {
+            return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
         }
 
-        public StringTagFilter exact(String value) {
-            return value(value);
+        @Override
+        public String toString() {
+            return value();
         }
 
-        public StringTagFilter contains(String value) {
-            return value(String.format("*%s*", value));
-        }
-
-        public StringTagFilter value(String value) {
-            this.values.add(value);
-            return this;
-        }
-
-        public StringTagFilter values(String... values) {
-            this.values.addAll(Arrays.asList(values));
-            return this;
+        public static ResourceType fromValue(String name) {
+            try {
+                return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(name, "name")));
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
     }
 
-    public static class ResourceTypeTagFilter extends NamedTagFilter {
-        public ResourceTypeTagFilter() {
-            super(FilterName.RESOURCE_TYPE);
-        }
+    protected final ImmutableSetMultimap.Builder<FilterName, Object> map;
 
-        public ResourceTypeTagFilter resourceType(ResourceType resourceType) {
-            values.add(resourceType.value());
-            return this;
-        }
+    protected TagFilters() {
+        map = ImmutableSetMultimap.<FilterName, Object>builder();
+    }
 
-        public ResourceTypeTagFilter customerGateway() {
-            return resourceType(ResourceType.CUSTOMER_GATEWAY);
-        }
+    public static TagFilters filters() {
+        return new TagFilters();
+    }
 
-        public ResourceTypeTagFilter dhcpOptions() {
-            return resourceType(ResourceType.DHCP_OPTIONS);
-        }
+    public Multimap<FilterName, Object> build() {
+        return map.build();
+    }
 
-        public ResourceTypeTagFilter image() {
-            return resourceType(ResourceType.IMAGE);
-        }
+    public TagFilters resourceId(String resourceId) {
+        map.put(FilterName.RESOURCE_ID, resourceId);
+        return this;
+    }
 
-        public ResourceTypeTagFilter instance() {
-            return resourceType(ResourceType.INSTANCE);
-        }
+    public TagFilters key(String key) {
+        map.put(FilterName.KEY, key);
+        return this;
+    }
 
-        public ResourceTypeTagFilter internetGateway() {
-            return resourceType(ResourceType.INTERNET_GATEWAY);
-        }
+    public TagFilters keys(String...keys) {
+        map.putAll(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
+        return this;
+    }
 
-        public ResourceTypeTagFilter networkAcl() {
-            return resourceType(ResourceType.NETWORK_ACL);
-        }
+    public TagFilters keys(Iterable<String> keys) {
+        map.putAll(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
+        return this;
+    }
 
-        public ResourceTypeTagFilter reservedInstance() {
-            return resourceType(ResourceType.RESERVED_INSTANCES);
-        }
+    public TagFilters value(String value) {
+        map.put(FilterName.VALUE, value);
+        return this;
+    }
 
-        public ResourceTypeTagFilter routeTable() {
-            return resourceType(ResourceType.ROUTE_TABLE);
-        }
+    public TagFilters values(String...values) {
+        map.putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
+        return this;
+    }
 
-        public ResourceTypeTagFilter securityGroup() {
-            return resourceType(ResourceType.SECURITY_GROUP);
-        }
+    public TagFilters values(Iterable<String> values) {
+        map.putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
+        return this;
+    }
 
-        public ResourceTypeTagFilter snapshot() {
-            return resourceType(ResourceType.SNAPSHOT);
-        }
+    public TagFilters keyContains(String key) {
+        return key(String.format("*%s*", key));
+    }
 
-        public ResourceTypeTagFilter instancesRequest() {
-            return resourceType(ResourceType.SPOT_INSTANCES_REQUEST);
-        }
+    public TagFilters valueContains(String value) {
+        return value(String.format("*%s*", value));
+    }
 
-        public ResourceTypeTagFilter subnet() {
-            return resourceType(ResourceType.SUBNET);
-        }
+    public TagFilters resourceIdContains(String value) {
+        return resourceId(String.format("*%s*", value));
+    }
 
-        public ResourceTypeTagFilter volume() {
-            return resourceType(ResourceType.VOLUME);
-        }
+    public TagFilters keyStartsWith(String key) {
+        return key(String.format("%s*", key));
+    }
 
-        public ResourceTypeTagFilter vpc() {
-            return resourceType(ResourceType.VPC);
-        }
+    public TagFilters valueStartsWith(String value) {
+        return value(String.format("%s*", value));
+    }
 
-        public ResourceTypeTagFilter vpnConnection() {
-            return resourceType(ResourceType.VPN_CONNECTION);
-        }
+    public TagFilters resourceIdStartsWith(String value) {
+        return resourceId(String.format("%s*", value));
+    }
 
-        public ResourceTypeTagFilter vpnGateway() {
-            return resourceType(ResourceType.VPN_GATEWAY);
-        }
+    public TagFilters keyEndsWith(String key) {
+        return key(String.format("*%s", key));
+    }
+
+    public TagFilters valueEndsWith(String value) {
+        return value(String.format("*%s", value));
+    }
+
+    public TagFilters resourceIdEndsWith(String value) {
+        return resourceId(String.format("*%s", value));
+    }
+
+    public TagFilters keyValuePair(String key, String value) {
+        return key(key).value(value);
+    }
+
+    public TagFilters keyValueSet(String key, Iterable<String> values) {
+        return key(key).values(values);
+    }
+
+    public TagFilters keyValueSet(String key, String...values) {
+        return key(key).values(values);
+    }
+
+    public TagFilters anyKey() {
+        return key("*");
+    }
+
+    public TagFilters anyValue() {
+        return value("*");
+    }
+
+    public TagFilters anyResourceId() {
+        return resourceId("*");
+    }
+
+    public TagFilters anyResourceType() {
+        map.put(FilterName.RESOURCE_TYPE, "*");
+        return this;
+    }
+
+    public TagFilters customerGateway() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.CUSTOMER_GATEWAY);
+        return this;
+    }
+
+    public TagFilters dhcpOptions() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.DHCP_OPTIONS);
+        return this;
+    }
+
+    public TagFilters image() {
+         map.put(FilterName.RESOURCE_TYPE, ResourceType.IMAGE);
+        return this;
+    }
+
+    public TagFilters instance() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.INSTANCE);
+        return this;
+    }
+
+    public TagFilters internetGateway() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.INTERNET_GATEWAY);
+        return this;
+    }
+
+    public TagFilters networkAcl() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.NETWORK_ACL);
+        return this;
+    }
+
+    public TagFilters reservedInstance() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.RESERVED_INSTANCES);
+        return this;
+    }
+
+    public TagFilters routeTable() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.ROUTE_TABLE);
+        return this;
+    }
+
+    public TagFilters securityGroup() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.SECURITY_GROUP);
+        return this;
+    }
+
+    public TagFilters snapshot() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.SNAPSHOT);
+        return this;
+    }
+
+    public TagFilters instancesRequest() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.SPOT_INSTANCES_REQUEST);
+        return this;
+    }
+
+    public TagFilters subnet() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.SUBNET);
+        return this;
+    }
+
+    public TagFilters volume() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.VOLUME);
+        return this;
+    }
+
+    public TagFilters vpc() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPC);
+        return this;
+    }
+
+    public TagFilters vpnConnection() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPN_CONNECTION);
+        return this;
+    }
+
+    public TagFilters vpnGateway() {
+        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPN_GATEWAY);
+        return this;
     }
 }

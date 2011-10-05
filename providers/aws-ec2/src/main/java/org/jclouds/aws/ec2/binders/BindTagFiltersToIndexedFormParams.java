@@ -20,27 +20,19 @@ package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.*;
 
-import org.jclouds.aws.ec2.domain.TagFilter;
-import org.jclouds.aws.ec2.util.TagFilters;
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Multimap;
 
 /**
  * @author grkvlt@apache.org
  */
 public class BindTagFiltersToIndexedFormParams implements Binder {
-    @SuppressWarnings("unchecked")
     @Override
     public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-        checkArgument(checkNotNull(input, "input") instanceof Iterable, "this binder is only valid for Iterable<TagFilter>");
-        Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
-        int index = 1;
-        for (TagFilter filter : (Iterable<TagFilter>) input)
-            headers.putAll(TagFilters.buildFormParametersForIndex(index++, filter));
-        return ModifyRequest.putFormParams(request, headers.build());
+        checkArgument(checkNotNull(input, "input") instanceof Multimap, "this binder is only valid for Multimap<Filtername, ?>");
+        return AWSUtils.indexMultimapToFormValuesWithPrefix(request, "Filter", "Name", "Value", input);
     }
 }

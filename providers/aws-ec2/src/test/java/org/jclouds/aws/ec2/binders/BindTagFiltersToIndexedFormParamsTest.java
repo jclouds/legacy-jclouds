@@ -25,12 +25,13 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
-import org.jclouds.aws.ec2.domain.TagFilter;
-import org.jclouds.aws.ec2.domain.TagFilter.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters;
+import org.jclouds.aws.ec2.util.TagFilters.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -46,22 +47,50 @@ public class BindTagFiltersToIndexedFormParamsTest {
 
    public void testResourceTypeWithValues() {
       HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
-      request = binder.bindToRequest(request, ImmutableList.builder().add(new TagFilter(FilterName.RESOURCE_TYPE,
-              ImmutableList.<String>builder().add(TagFilter.ResourceType.VPN_GATEWAY.value()).add(TagFilter.ResourceType.INTERNET_GATEWAY.value()).build())).build());
+      request = binder.bindToRequest(request, ImmutableSetMultimap.<FilterName, ResourceType>builder().put(FilterName.RESOURCE_TYPE, ResourceType.VPN_GATEWAY).put(FilterName.RESOURCE_TYPE, ResourceType.INTERNET_GATEWAY).build());
       assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=resource-type&Filter.1.Value.1=vpn-gateway&Filter.1.Value.2=internet-gateway");
    }
 
-   public void testKeyWithValues() {
+   public void testMultipleKeys() {
       HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
-      request = binder.bindToRequest(request, ImmutableList.builder().add(new TagFilter(FilterName.KEY,
-              ImmutableList.<String>builder().add("one").add("two").build())).build());
+      request = binder.bindToRequest(request, ImmutableSetMultimap.<FilterName, String>builder().put(FilterName.KEY, "one").put(FilterName.KEY, "two").build());
       assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=one&Filter.1.Value.2=two");
    }
 
-   public void testKeyWithoutValues() {
+   public void testkeyWithValue() {
       HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
-      request = binder.bindToRequest(request, ImmutableList.builder().add(new TagFilter(FilterName.KEY, ImmutableList.<String>of())).build());
-      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key");
+      request = binder.bindToRequest(request, ImmutableSetMultimap.<FilterName, String>builder().put(FilterName.KEY, "one").put(FilterName.VALUE, "alpha").build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=one&Filter.2.Name=value&Filter.2.Value.1=alpha");
+   }
+
+   public void testAnyKey() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, ImmutableSetMultimap.<FilterName, String>builder().put(FilterName.KEY, "*").build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=%2A");
+   }
+
+   public void testResourceTypeWithValuesBuilder() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, TagFilters.filters().vpnGateway().internetGateway().build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=resource-type&Filter.1.Value.1=vpn-gateway&Filter.1.Value.2=internet-gateway");
+   }
+
+   public void testMultipleKeysBuilder() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, TagFilters.filters().key("one").key("two").build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=one&Filter.1.Value.2=two");
+   }
+
+   public void testkeyWithValueBuilder() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, TagFilters.filters().keyValuePair("one", "alpha").build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=one&Filter.2.Name=value&Filter.2.Value.1=alpha");
+   }
+
+   public void testAnyKeyBuilder() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, TagFilters.filters().anyKey().build());
+      assertEquals(request.getPayload().getRawContent(), "Filter.1.Name=key&Filter.1.Value.1=%2A");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

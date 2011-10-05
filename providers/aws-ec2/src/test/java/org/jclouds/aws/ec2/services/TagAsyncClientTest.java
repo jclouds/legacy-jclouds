@@ -20,11 +20,9 @@ package org.jclouds.aws.ec2.services;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Map;
 
-import org.jclouds.aws.ec2.domain.TagFilter;
-import org.jclouds.aws.ec2.domain.TagFilter.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters.FilterName;
 import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -36,19 +34,20 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TagsAsyncClient}
  * 
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "TagsAsyncClientTest")
 public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient> {
-
    public void testDeleteTags() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("deleteTagsInRegion", String.class, Collection.class, Map.class);
+      Method method = TagAsyncClient.class.getMethod("deleteTagsInRegion", String.class, Iterable.class, Map.class);
       HttpRequest request = processor.createRequest(method, null, ImmutableList.<String>builder().add("xxx").build(), ImmutableMap.<String, String>builder().put("yyy", "zzz").build());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -64,7 +63,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
    }
 
    public void testCreateTags() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("createTagsInRegion", String.class, Collection.class, Map.class);
+      Method method = TagAsyncClient.class.getMethod("createTagsInRegion", String.class, Iterable.class, Map.class);
       HttpRequest request = processor.createRequest(method, null, ImmutableList.<String>builder().add("xxx").build(), ImmutableMap.<String, String>builder().put("yyy", "zzz").build());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -80,8 +79,8 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
    }
 
    public void testDescribeTags() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Collection.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.<TagFilter>of());
+      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Multimap.class);
+      HttpRequest request = processor.createRequest(method, null, ImmutableMultimap.<FilterName, Object>of());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -96,9 +95,8 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
    }
 
    public void testDescribeTagsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Collection.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.builder().add(new TagFilter(FilterName.KEY,
-              ImmutableList.<String>builder().add("one").add("two").build())).build());
+      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Multimap.class);
+      HttpRequest request = processor.createRequest(method, null, ImmutableMultimap.builder().put(FilterName.KEY, "one").put(FilterName.KEY, "two").build());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -117,5 +115,4 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
       return new TypeLiteral<RestAnnotationProcessor<TagAsyncClient>>() {
       };
    }
-
 }

@@ -30,8 +30,8 @@ import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.domain.TagFilter;
-import org.jclouds.aws.ec2.domain.TagFilter.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -44,6 +44,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -110,7 +111,7 @@ public class TagClientLiveTest {
       cleanupTag(testGroup, "test-key");
       try {
          client.createTagsInRegion(null, ImmutableList.<String>builder().add(testGroup).build(), ImmutableMap.<String, String>builder().put("test-key", "test-value").build());
-         checkTag(testGroup, TagFilter.ResourceType.SECURITY_GROUP.value(), "test-key", "test-value");
+         checkTag(testGroup, ResourceType.SECURITY_GROUP, "test-key", "test-value");
       } finally {
 	     cleanupTag(testGroup, "test-key");
       }
@@ -124,12 +125,12 @@ public class TagClientLiveTest {
       }
    }
 
-   protected void checkTag(String resourceId, String resourceType, String key, String value) {
-      Set<Tag> results = client.describeTagsInRegion(null, ImmutableList.<TagFilter>builder()
-              .add(new TagFilter(FilterName.RESOURCE_ID, ImmutableList.<String>builder().add(resourceId).build()))
-              .add(new TagFilter(FilterName.RESOURCE_TYPE, ImmutableList.<String>builder().add(resourceType).build()))
-              .add(new TagFilter(FilterName.KEY, ImmutableList.<String>builder().add(key).build()))
-              .add(new TagFilter(FilterName.VALUE, ImmutableList.<String>builder().add(value).build()))
+   protected void checkTag(String resourceId, ResourceType resourceType, String key, String value) {
+      Set<Tag> results = client.describeTagsInRegion(null, ImmutableMultimap.<FilterName,Object>builder()
+              .put(FilterName.RESOURCE_ID, resourceId)
+              .put(FilterName.RESOURCE_TYPE, resourceType)
+              .put(FilterName.KEY, key)
+              .put(FilterName.VALUE, value)
               .build());
       assertNotNull(results);
       assertEquals(results.size(), 1);

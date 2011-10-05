@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.xml;
 
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.domain.TagFilter;
+import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.http.functions.ParseSax;
 
 /**
@@ -29,12 +29,12 @@ public class TagsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<T
     private StringBuilder currentText = new StringBuilder();
 
     private String resourceId;
-    private TagFilter.ResourceType resourceType;
+    private ResourceType resourceType;
     private String key;
     private String value;
 
     public Tag getResult() {
-        Tag returnVal = new Tag(resourceId, resourceType.value(), key, value);
+        Tag returnVal = new Tag(resourceId, resourceType, key, value);
         return returnVal;
     }
 
@@ -42,7 +42,7 @@ public class TagsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<T
         if (qName.equals("resourceId")) {
             this.resourceId = currentText.toString().trim();
         } else if (qName.equals("resourceType")) {
-            resourceType = TagFilter.ResourceType.fromValue(currentText.toString().trim());
+            resourceType = ResourceType.fromValue(currentText.toString().trim());
         } else if (qName.equals("key")) {
             key = currentText.toString().trim();
         } else if (qName.equals("value")) {

@@ -20,8 +20,6 @@ package org.jclouds.aws.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.*;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +31,7 @@ import org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.domain.TagFilter;
+import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.javax.annotation.Nullable;
@@ -48,6 +46,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -60,28 +59,28 @@ import com.google.common.util.concurrent.ListenableFuture;
 @VirtualHost
 public interface TagAsyncClient {
     /**
-     * @see TagClient#createTagsInRegion(String, Collection, Map)
+     * @see TagClient#createTagsInRegion(String, Iterable, Map)
      */
     @POST
     @Path("/")
     @FormParams(keys = ACTION, values = "CreateTags")
     ListenableFuture<Void> createTagsInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindResourceIdsToIndexedFormParams.class) Collection<String> resourceIds,
+            @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds,
             @BinderParam(BindTagsToIndexedFormParams.class) Map<String, String> tags);
 
     /**
-     * @see TagClient#deleteTagsInRegion(String, Collection, Map)
+     * @see TagClient#deleteTagsInRegion(String, Iterable, Map)
      */
     @POST
     @Path("/")
     @FormParams(keys = ACTION, values = "DeleteTags")
     @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
     ListenableFuture<Void> deleteTagsInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindResourceIdsToIndexedFormParams.class) Collection<String> resourceIds,
+            @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds,
             @BinderParam(BindTagsToIndexedFormParams.class) Map<String, String> tags);
 
     /**
-     * @see TagClient#describeTagsInRegion(String, Collection)
+     * @see TagClient#describeTagsInRegion(String, Multimap)
      */
     @POST
     @Path("/")
@@ -89,5 +88,5 @@ public interface TagAsyncClient {
     @XMLResponseParser(DescribeTagsResponseHandler.class)
     @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
     ListenableFuture<? extends Set<Tag>> describeTagsInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindTagFiltersToIndexedFormParams.class) Collection<TagFilter> filters);
+            @BinderParam(BindTagFiltersToIndexedFormParams.class) Multimap<TagFilters.FilterName, ?> filters);
 }
