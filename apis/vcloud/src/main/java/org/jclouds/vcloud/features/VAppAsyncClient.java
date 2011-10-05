@@ -214,6 +214,7 @@ public interface VAppAsyncClient {
     * @see VAppClient#deleteVApp
     */
    @DELETE
+   @Consumes(TASK_XML)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI href);
