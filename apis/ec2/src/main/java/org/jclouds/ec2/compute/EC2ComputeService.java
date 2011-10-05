@@ -23,7 +23,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -109,20 +109,20 @@ public class EC2ComputeService extends BaseComputeService {
       this.securityGroupMap = securityGroupMap;
    }
 
+   /**
+    * @throws IllegalStateException If fails to delete security because it's in use by existing VMs
+    */
    @VisibleForTesting
    void deleteSecurityGroup(String region, String group) {
+      checkNotEmpty(region, "region");
       checkNotEmpty(group, "group");
       String groupName = String.format("jclouds#%s#%s", group, region);
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
-         try {
-            ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
-            // TODO: test this clear happens
-            securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
-            logger.debug("<< deleted securityGroup(%s)", groupName);
-         } catch (IllegalStateException e) {
-            logger.debug("<< inUse securityGroup(%s)", groupName);
-         }
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+         // TODO: test this clear happens
+         securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
+         logger.debug("<< deleted securityGroup(%s)", groupName);
       }
    }
 
@@ -183,13 +183,9 @@ public class EC2ComputeService extends BaseComputeService {
     * clean implicit keypairs and security groups.
     */
     @Override
-   public NodeMetadata destroyNode(String id) {
-      NodeMetadata destroyedNode = super.destroyNode(id);
-      Set<NodeMetadata> nodeMetadata = new HashSet<NodeMetadata>();
-      nodeMetadata.add(destroyedNode);
-
-      cleanUpIncidentalResourcesOfDeadNodes(nodeMetadata);
-      return destroyedNode ;
+   public void destroyNode(String id) {
+      NodeMetadata destroyedNode = doDestroyNode(id);
+      cleanUpIncidentalResourcesOfDeadNodes(Collections.singleton(destroyedNode));
    }
 
    /**
@@ -215,8 +211,21 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    protected void cleanUpIncidentalResources(Entry<String, String> regionGroup){
-      deleteKeyPair(regionGroup.getKey(), regionGroup.getValue());
-      deleteSecurityGroup(regionGroup.getKey(), regionGroup.getValue());
+      // For issue #445, try to delete security groups first: ec2 throws exception if in use, but
+      // deleting a key pair does not.
+      // This is "belt-and-braces" because deleteKeyPair also does extractIdsFromInstances & usingKeyPairAndNotDead
+      // for us to check if any instances are using the key-pair before we delete it. 
+      // There is (probably?) still a race if someone is creating instances at the same time as deleting them: 
+      // we may delete the key-pair just when the node-being-created was about to rely on the incidental 
+      // resources existing.
+      try {
+         logger.debug(">> deleting incidentalResources(%s @ %s)", regionGroup.getKey(), regionGroup.getValue());
+         deleteSecurityGroup(regionGroup.getKey(), regionGroup.getValue());
+         deleteKeyPair(regionGroup.getKey(), regionGroup.getValue());
+         logger.debug("<< deleted incidentalResources(%s @ %s)", regionGroup.getKey(), regionGroup.getValue());
+      } catch (IllegalStateException e) {
+         logger.debug("<< inUse incidentalResources(%s @ %s)", regionGroup.getKey(), regionGroup.getValue());
+      }
    }
 
    /**

@@ -254,8 +254,8 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public NodeMetadata destroyNode(final String id) {
-      return doDestroyNode(id);
+   public void destroyNode(final String id) {
+      doDestroyNode(id);
    }
 
    protected NodeMetadata doDestroyNode(final String id) {

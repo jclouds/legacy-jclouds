@@ -21,8 +21,8 @@ package org.jclouds.aws.ec2.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
@@ -204,9 +204,12 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    }
 
   @Test
-  public void testSecurityGroupGetsDestroyedAfterInstanceIsDestroyed() throws Exception {
+  public void testIncidentalResourcesGetCleanedUpAfterInstanceIsDestroyed() throws Exception {
      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
               .getSecurityGroupServices();
+
+     KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+                             .getKeyPairServices();
 
      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
               .getInstanceServices();
@@ -220,39 +223,43 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
         NodeMetadata first = Iterables.get(nodes, 0);
         NodeMetadata second = Iterables.get(nodes, 1);
 
-        String startedId1 = Iterables.get(nodes, 0).getProviderId();
-        String startedId2 = Iterables.get(nodes, 1).getProviderId();
+        String instanceId1 = Iterables.get(nodes, 0).getProviderId();
+        String instanceId2 = Iterables.get(nodes, 1).getProviderId();
 
-        AWSRunningInstance instance1 = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId1));
-        AWSRunningInstance instance2 = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId2));
-
-        String instanceRegion = null;
-        if(instance1.getRegion() == instance2.getRegion()){
-            instanceRegion = instance1.getRegion();
-        }
-        assertNotNull(instanceRegion, "Nodes are not in the same region");
-
-        Set<String> instanceGroupIds = null;
-        if(instance1.getGroupIds().size() == instance2.getGroupIds().size()){
-            instanceGroupIds = instance1.getGroupIds();
-        }
-        assertNotNull(instanceGroupIds, "Nodes group Ids are not the samee");
-
-        String expectedSecurityGroupName = "jclouds#" + group + "#" + instanceRegion;
-        assertEquals(Sets.newTreeSet(instanceGroupIds), ImmutableSortedSet.<String> of(expectedSecurityGroupName));
-
-        Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
+        AWSRunningInstance instance1 = AWSRunningInstance.class.cast(getInstance(instanceClient, instanceId1));
+        AWSRunningInstance instance2 = AWSRunningInstance.class.cast(getInstance(instanceClient, instanceId2));
+        
+        String region = instance1.getRegion();
+        String expectedKeyPairName = instance1.getKeyName();
+        String expectedSecurityGroupName = "jclouds#" + group + "#" + region;
+        
+        assertNotNull(instance1.getRegion());
+        assertNotNull(instance1.getKeyName());
+        assertEquals(instance1.getRegion(), instance2.getRegion(), "Nodes are not in the same region");
+        assertEquals(instance1.getKeyName(), instance2.getKeyName(), "Nodes do not have same key-pair name");
+        assertEquals(instance1.getGroupIds(), instance2.getGroupIds(), "Nodes are not in the same group");
+        assertEquals(instance1.getGroupIds(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
+        
+        Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
+        Set<KeyPair> keyPairs = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
         assertEquals(securityGroups.size(), 1);
-
-        client.destroyNode(second.getId());
-
-        Set<SecurityGroup> securityGroupsAfterDestroySecond = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
-        assertEquals(securityGroupsAfterDestroySecond.size(), 1);
+        assertEquals(Iterables.get(securityGroups, 0).getName(), expectedSecurityGroupName);
+        assertEquals(keyPairs.size(), 1);
+        assertEquals(Iterables.get(keyPairs, 0).getKeyName(), expectedKeyPairName);
 
         client.destroyNode(first.getId());
 
-        Set<SecurityGroup> securityGroupsPostDestroyAll = securityGroupClient.describeSecurityGroupsInRegion(instanceRegion, expectedSecurityGroupName);
-        assertEquals(securityGroupsPostDestroyAll, new HashSet());
+        Set<SecurityGroup> securityGroupsAfterDestroyFirst = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
+        Set<KeyPair> keyPairsAfterDestroyFirst = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
+        assertEquals(securityGroupsAfterDestroyFirst, securityGroups);
+        assertEquals(keyPairsAfterDestroyFirst, keyPairs);
+
+        client.destroyNode(second.getId());
+
+        Set<SecurityGroup> securityGroupsAfterDestroyAll = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
+        Set<KeyPair> keyPairsAfterDestroyAll = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
+        assertEquals(securityGroupsAfterDestroyAll, Collections.emptySet());
+        assertEquals(keyPairsAfterDestroyAll, Collections.emptySet());
 
      } finally {
         client.destroyNodesMatching(NodePredicates.inGroup(group));
