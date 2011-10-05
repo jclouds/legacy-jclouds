@@ -616,6 +616,7 @@ public interface VCloudAsyncClient {
     */
    @Deprecated
    @DELETE
+   @Consumes(TASK_XML)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI id);
