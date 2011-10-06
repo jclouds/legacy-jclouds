@@ -25,14 +25,12 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCodeMatches;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
-import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
@@ -56,51 +54,59 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ProductItemsToHardware implements Function<Iterable<ProductItem>, Hardware> {
 
-   private final Pattern cpuRegex;
-   private final Pattern categoryCodeMatches;
+   private static final String GUEST_DISK_CATEGORY_REGEX =  "guest_disk[0-9]";
+   private static final String FIRST_GUEST_DISK = "guest_disk0";
+   private static final String STORAGE_AREA_NETWORK = "SAN";
+
+   private static final String RAM_CATEGORY = "ram";
+
+   private static final String CPU_DESCRIPTION_REGEX = "(Private )?[0-9]+ x ([.0-9]+) GHz Core[s]?";
+   private static final double DEFAULT_CORE_SPEED = 2.0;
+
+   private final Pattern cpuDescriptionRegex;
+   private final Pattern diskCategoryRegex;
 
    @Inject
-   public ProductItemsToHardware(@Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex) {
-      this(Pattern.compile(checkNotNull(cpuRegex, "cpuRegex")), Pattern.compile("guest_disk[0-9]"));
+   public ProductItemsToHardware() {
+      this(Pattern.compile(CPU_DESCRIPTION_REGEX), Pattern.compile(GUEST_DISK_CATEGORY_REGEX));
    }
 
-   public ProductItemsToHardware(Pattern cpuRegex, Pattern categoryCodeMatches) {
-      this.cpuRegex = checkNotNull(cpuRegex, "cpuRegex");
-      this.categoryCodeMatches = checkNotNull(categoryCodeMatches, "categoryCodeMatches");
+   public ProductItemsToHardware(Pattern cpuDescriptionRegex, Pattern diskCategoryRegex) {
+      this.cpuDescriptionRegex = checkNotNull(cpuDescriptionRegex, "cpuDescriptionRegex");
+      this.diskCategoryRegex = checkNotNull(diskCategoryRegex, "diskCategoryRegex");
    }
 
    @Override
    public Hardware apply(Iterable<ProductItem> items) {
 
-      ProductItem coresItem = getOnlyElement(filter(items, matches(cpuRegex)));
-      ProductItem ramItem = getOnlyElement(filter(items, categoryCode("ram")));
-      ProductItem volumeItem = get(filter(items, categoryCode("guest_disk0")), 0);
+      ProductItem coresItem = getOnlyElement(filter(items, matches(cpuDescriptionRegex)));
+      ProductItem ramItem = getOnlyElement(filter(items, categoryCode(RAM_CATEGORY)));
+      ProductItem volumeItem = get(filter(items, categoryCode(FIRST_GUEST_DISK)), 0);
 
       String hardwareId = hardwareId().apply(ImmutableList.of(coresItem, ramItem, volumeItem));
       double cores = ProductItems.capacity().apply(coresItem).doubleValue();
-      Matcher cpuMatcher = cpuRegex.matcher(coresItem.getDescription());
-      double coreSpeed = (cpuMatcher.matches()) ? Double.parseDouble(cpuMatcher.group(cpuMatcher.groupCount())) : 2.0;
+      Matcher cpuMatcher = cpuDescriptionRegex.matcher(coresItem.getDescription());
+      double coreSpeed = (cpuMatcher.matches()) ? Double.parseDouble(cpuMatcher.group(cpuMatcher.groupCount())) : DEFAULT_CORE_SPEED;
       int ram = ProductItems.capacity().apply(ramItem).intValue();
 
       return new HardwareBuilder().ids(hardwareId).processors(ImmutableList.of(new Processor(cores, coreSpeed))).ram(
                ram).volumes(
-               Iterables.transform(filter(items, categoryCodeMatches(categoryCodeMatches)),
+                  Iterables.transform(filter(items, categoryCodeMatches(diskCategoryRegex)),
                         new Function<ProductItem, Volume>() {
-
                            @Override
-                           public Volume apply(ProductItem arg0) {
-                              float volumeSize = ProductItems.capacity().apply(arg0);
+                           public Volume apply(ProductItem item) {
+                              float volumeSize = ProductItems.capacity().apply(item);
                               return new VolumeImpl(
-                                       arg0.getId() + "",
-                                       arg0.getDescription().indexOf("SAN") != -1 ? Volume.Type.SAN : Volume.Type.LOCAL,
-                                       volumeSize, null, categoryCode("guest_disk0").apply(arg0), false);
+                                       item.getId() + "",
+                                       item.getDescription().indexOf(STORAGE_AREA_NETWORK) != -1 ? Volume.Type.SAN : Volume.Type.LOCAL,
+                                       volumeSize, null, categoryCode(FIRST_GUEST_DISK).apply(item), false);
                            }
                         })).build();
    }
 
    /**
     * Generates a hardwareId based on the priceId's of the items in the list
-    * 
+    *
     * @return comma separated list of priceid's
     */
    public static Function<List<ProductItem>, String> hardwareId() {
