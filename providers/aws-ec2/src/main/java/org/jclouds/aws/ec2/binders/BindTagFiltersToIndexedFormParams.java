@@ -20,11 +20,11 @@ package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.util.Map;
+
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-
-import com.google.common.collect.Multimap;
 
 /**
  * @author grkvlt@apache.org
@@ -32,7 +32,7 @@ import com.google.common.collect.Multimap;
 public class BindTagFiltersToIndexedFormParams implements Binder {
     @Override
     public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-        checkArgument(checkNotNull(input, "input") instanceof Multimap, "this binder is only valid for Multimap<Filtername, ?>");
-        return AWSUtils.indexMultimapToFormValuesWithPrefix(request, "Filter", "Name", "Value", input);
+        checkArgument(checkNotNull(input, "input") instanceof Map<?,?>, "this binder is only valid for Map<?, Iterable<?>>");
+        return AWSUtils.indexMapOfIterableToFormValuesWithPrefix(request, "Filter", "Name", "Value", input);
     }
 }

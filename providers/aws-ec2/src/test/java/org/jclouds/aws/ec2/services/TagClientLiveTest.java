@@ -30,7 +30,7 @@ import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.util.TagFilters.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -44,7 +44,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -126,12 +125,7 @@ public class TagClientLiveTest {
    }
 
    protected void checkTag(String resourceId, ResourceType resourceType, String key, String value) {
-      Set<Tag> results = client.describeTagsInRegion(null, ImmutableMultimap.<FilterName,Object>builder()
-              .put(FilterName.RESOURCE_ID, resourceId)
-              .put(FilterName.RESOURCE_TYPE, resourceType)
-              .put(FilterName.KEY, key)
-              .put(FilterName.VALUE, value)
-              .build());
+      Set<Tag> results = client.describeTagsInRegion(null, TagFilters.filters().resourceId(resourceId).resourceType(resourceType).keyValuePair(key, value).build());
       assertNotNull(results);
       assertEquals(results.size(), 1);
       Tag tag = Iterables.getOnlyElement(results);

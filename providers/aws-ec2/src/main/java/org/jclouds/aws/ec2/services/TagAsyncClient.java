@@ -31,7 +31,7 @@ import org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.util.TagFilters;
+import org.jclouds.aws.ec2.util.TagFilters.FilterName;
 import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.javax.annotation.Nullable;
@@ -46,7 +46,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
-import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -80,7 +79,7 @@ public interface TagAsyncClient {
             @BinderParam(BindTagsToIndexedFormParams.class) Map<String, String> tags);
 
     /**
-     * @see TagClient#describeTagsInRegion(String, Multimap)
+     * @see TagClient#describeTagsInRegion(String, Map)
      */
     @POST
     @Path("/")
@@ -88,5 +87,5 @@ public interface TagAsyncClient {
     @XMLResponseParser(DescribeTagsResponseHandler.class)
     @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
     ListenableFuture<? extends Set<Tag>> describeTagsInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindTagFiltersToIndexedFormParams.class) Multimap<TagFilters.FilterName, ?> filters);
+            @BinderParam(BindTagFiltersToIndexedFormParams.class) Map<FilterName, Iterable<?>> filters);
 }

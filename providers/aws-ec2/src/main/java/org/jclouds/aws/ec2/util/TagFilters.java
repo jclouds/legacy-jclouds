@@ -20,10 +20,14 @@ package org.jclouds.aws.ec2.util;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.util.Map;
+
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * @author grkvlt@apache.org
@@ -89,52 +93,52 @@ public class TagFilters {
         }
     }
 
-    protected final ImmutableSetMultimap.Builder<FilterName, Object> map;
+    protected final Map<FilterName, Iterable<?>> map;
 
     protected TagFilters() {
-        map = ImmutableSetMultimap.<FilterName, Object>builder();
+        map = Maps.<FilterName, Iterable<?>>newLinkedHashMap();
     }
 
     public static TagFilters filters() {
         return new TagFilters();
     }
 
-    public Multimap<FilterName, Object> build() {
-        return map.build();
+    public Map<FilterName, Iterable<?>> build() {
+        return ImmutableMap.copyOf(map);
     }
 
     public TagFilters resourceId(String resourceId) {
-        map.put(FilterName.RESOURCE_ID, resourceId);
+        put(FilterName.RESOURCE_ID, resourceId);
         return this;
     }
 
     public TagFilters key(String key) {
-        map.put(FilterName.KEY, key);
+        put(FilterName.KEY, key);
         return this;
     }
 
     public TagFilters keys(String...keys) {
-        map.putAll(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
+        put(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
         return this;
     }
 
     public TagFilters keys(Iterable<String> keys) {
-        map.putAll(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
+        putAll(FilterName.KEY, ImmutableSet.<String>copyOf(keys));
         return this;
     }
 
     public TagFilters value(String value) {
-        map.put(FilterName.VALUE, value);
+        put(FilterName.VALUE, value);
         return this;
     }
 
     public TagFilters values(String...values) {
-        map.putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
+        putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
         return this;
     }
 
     public TagFilters values(Iterable<String> values) {
-        map.putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
+        putAll(FilterName.VALUE, ImmutableSet.<String>copyOf(values));
         return this;
     }
 
@@ -187,99 +191,125 @@ public class TagFilters {
     }
 
     public TagFilters anyKey() {
-        return key("*");
+        putAll(FilterName.KEY, ImmutableSet.<String>of());
+        return this;
     }
 
     public TagFilters anyValue() {
-        return value("*");
+        putAll(FilterName.VALUE, ImmutableSet.<String>of());
+        return this;
     }
 
     public TagFilters anyResourceId() {
-        return resourceId("*");
+        putAll(FilterName.RESOURCE_TYPE, ImmutableSet.<String>of());
+        return this;
     }
 
     public TagFilters anyResourceType() {
-        map.put(FilterName.RESOURCE_TYPE, "*");
+        putAll(FilterName.RESOURCE_TYPE, ImmutableSet.<ResourceType>of());
+        return this;
+    }
+
+    public TagFilters resourceType(ResourceType resourceType) {
+        put(FilterName.RESOURCE_TYPE, resourceType);
         return this;
     }
 
     public TagFilters customerGateway() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.CUSTOMER_GATEWAY);
+        put(FilterName.RESOURCE_TYPE, ResourceType.CUSTOMER_GATEWAY);
         return this;
     }
 
     public TagFilters dhcpOptions() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.DHCP_OPTIONS);
+        put(FilterName.RESOURCE_TYPE, ResourceType.DHCP_OPTIONS);
         return this;
     }
 
     public TagFilters image() {
-         map.put(FilterName.RESOURCE_TYPE, ResourceType.IMAGE);
+         put(FilterName.RESOURCE_TYPE, ResourceType.IMAGE);
         return this;
     }
 
     public TagFilters instance() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.INSTANCE);
+        put(FilterName.RESOURCE_TYPE, ResourceType.INSTANCE);
         return this;
     }
 
     public TagFilters internetGateway() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.INTERNET_GATEWAY);
+        put(FilterName.RESOURCE_TYPE, ResourceType.INTERNET_GATEWAY);
         return this;
     }
 
     public TagFilters networkAcl() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.NETWORK_ACL);
+        put(FilterName.RESOURCE_TYPE, ResourceType.NETWORK_ACL);
         return this;
     }
 
     public TagFilters reservedInstance() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.RESERVED_INSTANCES);
+        put(FilterName.RESOURCE_TYPE, ResourceType.RESERVED_INSTANCES);
         return this;
     }
 
     public TagFilters routeTable() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.ROUTE_TABLE);
+        put(FilterName.RESOURCE_TYPE, ResourceType.ROUTE_TABLE);
         return this;
     }
 
     public TagFilters securityGroup() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.SECURITY_GROUP);
+        put(FilterName.RESOURCE_TYPE, ResourceType.SECURITY_GROUP);
         return this;
     }
 
     public TagFilters snapshot() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.SNAPSHOT);
+        put(FilterName.RESOURCE_TYPE, ResourceType.SNAPSHOT);
         return this;
     }
 
     public TagFilters instancesRequest() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.SPOT_INSTANCES_REQUEST);
+        put(FilterName.RESOURCE_TYPE, ResourceType.SPOT_INSTANCES_REQUEST);
         return this;
     }
 
     public TagFilters subnet() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.SUBNET);
+        put(FilterName.RESOURCE_TYPE, ResourceType.SUBNET);
         return this;
     }
 
     public TagFilters volume() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.VOLUME);
+        put(FilterName.RESOURCE_TYPE, ResourceType.VOLUME);
         return this;
     }
 
     public TagFilters vpc() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPC);
+        put(FilterName.RESOURCE_TYPE, ResourceType.VPC);
         return this;
     }
 
     public TagFilters vpnConnection() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPN_CONNECTION);
+        put(FilterName.RESOURCE_TYPE, ResourceType.VPN_CONNECTION);
         return this;
     }
 
     public TagFilters vpnGateway() {
-        map.put(FilterName.RESOURCE_TYPE, ResourceType.VPN_GATEWAY);
+        put(FilterName.RESOURCE_TYPE, ResourceType.VPN_GATEWAY);
         return this;
+    }
+    
+    private void put(FilterName key, Object value) {
+        putAll(key, Sets.newHashSet(value));
+    }
+
+    private void putAll(FilterName key, Iterable<?> values) {
+        if (values == null || Iterables.isEmpty(values)) {
+            // If we add an empty or null set of values, replace the value in the map entirely
+            map.put(key, ImmutableSet.of());
+        } else {
+            // Add the values, to a new set if required
+            if (!map.containsKey(key)) {
+                map.put(key, Sets.newHashSet());
+            }
+            Iterable<?> entries = map.get(key);
+            map.put(key, Iterables.concat(entries, values));
+        }
     }
 }

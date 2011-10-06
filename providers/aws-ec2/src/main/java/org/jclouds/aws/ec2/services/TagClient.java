@@ -23,11 +23,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.aws.ec2.util.TagFilters;
+import org.jclouds.aws.ec2.util.TagFilters.FilterName;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Provides Tag services for EC2. For more information, refer to the Amazon EC2
@@ -46,7 +44,7 @@ public interface TagClient {
     *           IDs of the resources to tag.
     * @param tags
     *           The tags to create.
-    * @see #describeTagsInRegion(String, Multimap)
+    * @see #describeTagsInRegion(String, Map)
     * @see #deleteTagsInRegion(String, Iterable, Map)
     * 
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html" />
@@ -63,7 +61,7 @@ public interface TagClient {
     * @param tags
     *           The tags to delete.
     * 
-    * @see #describeTagsInRegion(String, Multimap)
+    * @see #describeTagsInRegion(String, Map)
     * @see #createTagsInRegion(String, Iterable, Map)
     * 
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html" />
@@ -82,5 +80,5 @@ public interface TagClient {
     * @see #createTagsInRegion(String, Iterable, Map)
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html" />
     */
-   Set<Tag> describeTagsInRegion(@Nullable String region, Multimap<TagFilters.FilterName, ?> filters);
+   Set<Tag> describeTagsInRegion(@Nullable String region, Map<FilterName, Iterable<?>> filters);
 }

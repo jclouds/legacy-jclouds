@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.jclouds.aws.ec2.util.TagFilters.FilterName;
+import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -34,8 +34,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -79,8 +77,8 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
    }
 
    public void testDescribeTags() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Multimap.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableMultimap.<FilterName, Object>of());
+      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Map.class);
+      HttpRequest request = processor.createRequest(method, null, TagFilters.filters().build());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -95,8 +93,8 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
    }
 
    public void testDescribeTagsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Multimap.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableMultimap.builder().put(FilterName.KEY, "one").put(FilterName.KEY, "two").build());
+      Method method = TagAsyncClient.class.getMethod("describeTagsInRegion", String.class, Map.class);
+      HttpRequest request = processor.createRequest(method, null, TagFilters.filters().key("one").key("two").build());
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
