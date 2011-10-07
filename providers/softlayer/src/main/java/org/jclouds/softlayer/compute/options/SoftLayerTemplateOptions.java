@@ -21,6 +21,8 @@ package org.jclouds.softlayer.compute.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
@@ -31,12 +33,13 @@ import com.google.common.net.InternetDomainName;
 /**
  * Contains options supported by the
  * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} and
- * {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)} operations on the
- * <em>gogrid</em> provider.
+ * {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)}
+ * operations on the <em>gogrid</em> provider.
  * 
- * <h2>Usage</h2> The recommended way to instantiate a {@link SoftLayerTemplateOptions} object is to
- * statically import {@code SoftLayerTemplateOptions.*} and invoke a static creation method followed
- * by an instance mutator (if needed):
+ * <h2>Usage</h2> The recommended way to instantiate a
+ * {@link SoftLayerTemplateOptions} object is to statically import
+ * {@code SoftLayerTemplateOptions.*} and invoke a static creation method
+ * followed by an instance mutator (if needed):
  * <p>
  * 
  * <pre>
@@ -69,8 +72,8 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    }
 
    /**
-    * will replace the default domain used when ordering virtual guests. Note this needs to contain
-    * a public suffix!
+    * will replace the default domain used when ordering virtual guests. Note
+    * this needs to contain a public suffix!
     * 
     * @see VirtualGuestClient#orderVirtualGuest
     * @see InternetDomainName#hasPublicSuffix
@@ -78,7 +81,7 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    public TemplateOptions domainName(String domainName) {
       checkNotNull(domainName, "domainName was null");
       checkArgument(InternetDomainName.from(domainName).hasPublicSuffix(), "domainName %s has no public suffix",
-               domainName);
+            domainName);
       this.domainName = domainName;
       return this;
    }
@@ -144,11 +147,19 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#withMetadata()
+       * @see TemplateOptions#userMetadata(Map)
        */
-      public static SoftLayerTemplateOptions withMetadata() {
+      public static SoftLayerTemplateOptions userMetadata(Map<String, String> userMetadata) {
          SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
-         return SoftLayerTemplateOptions.class.cast(options.withMetadata());
+         return SoftLayerTemplateOptions.class.cast(options.userMetadata(userMetadata));
+      }
+
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static SoftLayerTemplateOptions userMetadata(String key, String value) {
+         SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
+         return SoftLayerTemplateOptions.class.cast(options.userMetadata(key, value));
       }
    }
 
@@ -222,10 +233,18 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    }
 
    /**
-    * @see TemplateOptions#withMetadata()
+    * {@inheritDoc}
     */
    @Override
-   public SoftLayerTemplateOptions withMetadata() {
-      return SoftLayerTemplateOptions.class.cast(super.withMetadata());
+   public SoftLayerTemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return SoftLayerTemplateOptions.class.cast(super.userMetadata(userMetadata));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public SoftLayerTemplateOptions userMetadata(String key, String value) {
+      return SoftLayerTemplateOptions.class.cast(super.userMetadata(key, value));
    }
 }

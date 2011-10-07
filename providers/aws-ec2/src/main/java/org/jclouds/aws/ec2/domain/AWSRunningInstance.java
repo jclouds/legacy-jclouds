@@ -56,7 +56,19 @@ public class AWSRunningInstance extends RunningInstance {
       private String spotInstanceRequestId;
       private String vpcId;
       private Map<String, String> securityGroupIdToNames = Maps.newLinkedHashMap();
+      private Map<String, String> tags = Maps.newLinkedHashMap();
 
+      public Builder tags(Map<String, String> tags) {
+         this.tags = ImmutableMap.copyOf(checkNotNull(tags, "tags"));
+         return this;
+      }
+
+      public Builder tag(String key, String value) {
+         if (key != null && value != null)
+            this.tags.put(key, value);
+         return this;
+      }
+      
       public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
          this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames,
                "securityGroupIdToNames"));
@@ -231,7 +243,7 @@ public class AWSRunningInstance extends RunningInstance {
                instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
-               spotInstanceRequestId, vpcId);
+               spotInstanceRequestId, vpcId, tags);
       }
 
    }
@@ -247,6 +259,7 @@ public class AWSRunningInstance extends RunningInstance {
    @Nullable
    private final String vpcId;
    private final Map<String, String> securityGroupIdToNames;
+   private final Map<String, String> tags;
 
    protected AWSRunningInstance(String region, Map<String, String> securityGroupIdToNames, String amiLaunchIndex,
          String dnsName, String imageId, String instanceId, InstanceState instanceState, String instanceType,
@@ -254,7 +267,7 @@ public class AWSRunningInstance extends RunningInstance {
          String virtualizationType, String platform, String privateDnsName, String privateIpAddress, String ramdiskId,
          String reason, RootDeviceType rootDeviceType, String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices,
          MonitoringState monitoringState, String placementGroup, Iterable<String> productCodes, String subnetId,
-         String spotInstanceRequestId, String vpcId) {
+         String spotInstanceRequestId, String vpcId, Map<String, String> tags) {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
             instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType, platform,
             privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName, ebsBlockDevices);
@@ -266,6 +279,7 @@ public class AWSRunningInstance extends RunningInstance {
       this.vpcId = vpcId;
       this.securityGroupIdToNames = ImmutableMap.<String, String> copyOf(checkNotNull(securityGroupIdToNames,
             "securityGroupIdToNames"));
+      this.tags = ImmutableMap.<String, String> copyOf(checkNotNull(tags, "tags"));
    }
 
    public Map<String, String> getSecurityGroupIdToNames() {
@@ -317,6 +331,13 @@ public class AWSRunningInstance extends RunningInstance {
       return subnetId;
    }
 
+   /**
+    * tags that are present in the instance
+    */
+   public Map<String, String> getTags() {
+      return tags;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -326,6 +347,7 @@ public class AWSRunningInstance extends RunningInstance {
       result = prime * result + ((spotInstanceRequestId == null) ? 0 : spotInstanceRequestId.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       result = prime * result + ((vpcId == null) ? 0 : vpcId.hashCode());
+      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       return result;
    }
 
@@ -363,6 +385,11 @@ public class AWSRunningInstance extends RunningInstance {
             return false;
       } else if (!vpcId.equals(other.vpcId))
          return false;
+      if (tags == null) {
+         if (other.tags != null)
+            return false;
+      } else if (!tags.equals(other.tags))
+         return false;
       return true;
    }
 
@@ -375,7 +402,8 @@ public class AWSRunningInstance extends RunningInstance {
             + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName=" + rootDeviceName
             + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices + ", monitoringState="
             + monitoringState + ", placementGroup=" + placementGroup + ", productCodes=" + productCodes
-            + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId + ", vpcId=" + vpcId + "]";
+            + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId + ", vpcId=" + vpcId
+            + ", tags=" + tags + "]";
    }
 
 }

@@ -18,6 +18,9 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -27,6 +30,8 @@ import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
@@ -42,11 +47,36 @@ import com.google.inject.Provider;
 public class AWSDescribeInstancesResponseHandler extends
       BaseAWSReservationHandler<Set<Reservation<? extends RunningInstance>>> {
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
+   private boolean inTagSet;
+   private String key;
+   private String value;
 
    @Inject
    AWSDescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
          Provider<AWSRunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
+   }
+
+   @Override
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      super.startElement(uri, localName, qName, attrs);
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = true;
+      }
+   }
+
+   @Override
+   public void endElement(String uri, String name, String qName) {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+      } else if (inTagSet) {
+         if (equalsOrSuffix(qName, "key")) {
+            key = currentOrNull(currentText);
+         } else if (equalsOrSuffix(qName, "value")) {
+            value = currentOrNull(currentText);
+         }
+      }
+      super.endElement(uri, name, qName);
    }
 
    @Override
@@ -62,11 +92,15 @@ public class AWSDescribeInstancesResponseHandler extends
    protected void inItem() {
       if (endOfReservationItem()) {
          reservations.add(super.newReservation());
+      } else if (inTagSet) {
+         builder.tag(key, value);
+         key = null;
+         value = null;
       } else {
          super.inItem();
       }
    }
-   
+
    protected boolean endOfInstanceItem() {
       return itemDepth == 2 && inInstancesSet;
    }

@@ -18,9 +18,10 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.collect.Iterables.*;
-import static org.testng.Assert.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Properties;
 import java.util.Set;
@@ -53,7 +54,7 @@ import com.google.inject.Module;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class TagClientLiveTest {
 
    private TagClient client;

@@ -52,6 +52,7 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -72,6 +73,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
+
+   // normal ec2 does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesResolveCorrectly() {

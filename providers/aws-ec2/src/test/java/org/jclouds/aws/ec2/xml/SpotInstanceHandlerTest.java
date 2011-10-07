@@ -108,10 +108,11 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .launchedAvailabilityZone("us-east-1b")
             .launchSpecification(
                   LaunchSpecification.builder().imageId("ami-8e1fece7")
-                        .securityGroupIdToName("sg-83e1c4eb", "jclouds#adriancole-ec2unssh#us-east-1").instanceType("t1.micro")
-                        .monitoringEnabled(false).keyName("jclouds#adriancole-ec2unssh").build())
+                        .securityGroupIdToName("sg-83e1c4eb", "jclouds#adriancole-ec2unssh#us-east-1")
+                        .instanceType("t1.micro").monitoringEnabled(false).keyName("jclouds#adriancole-ec2unssh")
+                        .build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-07-29T05:27:39.000Z"))
-            .productDescription("Linux/UNIX").build();
+            .productDescription("Linux/UNIX").tag("Name", "ec2-o").build();
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
       addDefaultRegionToHandler(handler);
       SpotInstanceRequest result = factory.create(handler).parse(is);

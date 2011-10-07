@@ -19,9 +19,12 @@
 package org.jclouds.rimuhosting.miro.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Ivan Meredith
@@ -38,6 +41,13 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
       group = "rimuhosting.jclouds";
    }
 
+   // rimuhosting does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
    @Override
    protected JschSshClientModule getSshModule() {
       return new JschSshClientModule();

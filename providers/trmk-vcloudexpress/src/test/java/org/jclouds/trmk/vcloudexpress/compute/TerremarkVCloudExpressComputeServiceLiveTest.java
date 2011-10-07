@@ -35,12 +35,14 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * 
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true)
 public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public TerremarkVCloudExpressComputeServiceLiveTest() {
       provider = "trmk-vcloudexpress";
@@ -59,7 +61,14 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
       assert image.getDefaultCredentials().credential != null : image;
       return template;
    }
-
+   
+   // terremark does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
    @Override
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {

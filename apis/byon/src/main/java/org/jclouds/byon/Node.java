@@ -20,10 +20,13 @@ package org.jclouds.byon;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -48,6 +51,7 @@ public class Node {
       private int loginPort = 22;
       private String group;
       private Set<String> tags = ImmutableSet.of();
+      private Map<String, String> metadata = ImmutableMap.<String, String>of();
       private String username;
       private String credential;
       private URI credentialUrl;
@@ -117,7 +121,12 @@ public class Node {
          this.tags = ImmutableSet.copyOf(tags);
          return this;
       }
-
+      
+      public Builder metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.copyOf(metadata);
+         return this;
+      }
+      
       public Builder username(String username) {
          this.username = username;
          return this;
@@ -140,13 +149,14 @@ public class Node {
 
       public Node build() {
          return new Node(id, name, description, hostname, locationId, osArch, osFamily, osDescription, osVersion,
-                  os64Bit, loginPort, group, tags, username, credential, credentialUrl, sudoPassword);
+                  os64Bit, loginPort, group, tags, metadata, username, credential, credentialUrl, sudoPassword);
       }
    }
 
    public Node(String id, String name, String description, String hostname, String locationId, String osArch,
-            String osFamily, String osDescription, String osVersion, boolean os64Bit, int loginPort, String group,
-            Iterable<String> tags, String username, String credential, URI credentialUrl, String sudoPassword) {
+         String osFamily, String osDescription, String osVersion, boolean os64Bit, int loginPort, String group,
+         Iterable<String> tags, Map<String, String> metadata, String username, String credential, URI credentialUrl,
+         String sudoPassword) {
       this.id = id;
       this.name = name;
       this.description = description;
@@ -160,6 +170,7 @@ public class Node {
       this.loginPort = loginPort;
       this.group = group;
       this.tags = ImmutableSet.copyOf(tags);
+      this.metadata = ImmutableMap.copyOf(metadata);
       this.username = username;
       this.credential = credential;
       this.credentialUrl = credentialUrl;
@@ -179,6 +190,7 @@ public class Node {
    private final boolean os64Bit;
    private final String group;
    private final Set<String> tags;
+   private final Map<String, String> metadata;
    private final String username;
    private final String credential;
    private final URI credentialUrl;
@@ -239,6 +251,10 @@ public class Node {
       return tagSet;
    }
 
+   public Map<String, String> getMetadata() {
+      return Maps.newLinkedHashMap(this.metadata);
+   }
+
    public String getUsername() {
       return username;
    }
@@ -269,12 +285,12 @@ public class Node {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
-               "locationId", locationId).add("hostname", hostname).add("osArch", osArch).add("osFamily", osFamily).add(
-               "osDescription", osDescription).add("osVersion", osVersion).add("os64Bit", os64Bit).add("group", group)
-               .add("loginPort", loginPort).add("tags", tags).add("username", username).add("hasCredential",
-                        credential != null || credentialUrl != null).add("hasSudoPassword", sudoPassword != null)
-               .toString();
+      return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description)
+            .add("locationId", locationId).add("hostname", hostname).add("osArch", osArch).add("osFamily", osFamily)
+            .add("osDescription", osDescription).add("osVersion", osVersion).add("os64Bit", os64Bit)
+            .add("group", group).add("loginPort", loginPort).add("tags", tags).add("metadata", metadata)
+            .add("username", username).add("hasCredential", credential != null || credentialUrl != null)
+            .add("hasSudoPassword", sudoPassword != null).toString();
    }
 
 }

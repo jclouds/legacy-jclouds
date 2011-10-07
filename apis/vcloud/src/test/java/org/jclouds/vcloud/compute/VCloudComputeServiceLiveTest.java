@@ -32,6 +32,7 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -40,7 +41,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true)
 public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public VCloudComputeServiceLiveTest() {
@@ -51,7 +52,14 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-
+   
+   // vcloud does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(setupRestProperties())

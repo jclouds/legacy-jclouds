@@ -19,18 +19,19 @@
 package org.jclouds.cloudservers.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
-import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.cloudservers.domain.Server;
 
 import com.google.common.base.Function;
 
@@ -53,8 +54,9 @@ public class CloudServersCreateNodeWithGroupEncodedIntoName implements CreateNod
 
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
-      Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer
-               .parseInt(template.getHardware().getProviderId()));
+      Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()),
+            Integer.parseInt(template.getHardware().getProviderId()),
+            withMetadata(template.getOptions().getUserMetadata()));
       credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
       return serverToNodeMetadata.apply(from);
    }

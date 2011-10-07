@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.compute.options;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
@@ -164,11 +165,19 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#withDetails
+       * @see TemplateOptions#userMetadata(Map)
        */
-      public static VCloudTemplateOptions withDetails() {
+      public static VCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
          VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.withMetadata());
+         return VCloudTemplateOptions.class.cast(options.userMetadata(userMetadata));
+      }
+
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static VCloudTemplateOptions userMetadata(String key, String value) {
+         VCloudTemplateOptions options = new VCloudTemplateOptions();
+         return VCloudTemplateOptions.class.cast(options.userMetadata(key, value));
       }
 
    }
@@ -270,11 +279,19 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * @see TemplateOptions#withMetadata
+    * {@inheritDoc}
     */
    @Override
-   public VCloudTemplateOptions withMetadata() {
-      return VCloudTemplateOptions.class.cast(super.withMetadata());
+   public VCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return VCloudTemplateOptions.class.cast(super.userMetadata(userMetadata));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public VCloudTemplateOptions userMetadata(String key, String value) {
+      return VCloudTemplateOptions.class.cast(super.userMetadata(key, value));
    }
 
    @Override
@@ -317,7 +334,7 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
             + ", ipAddressAllocationMode=" + ipAddressAllocationMode + ", inboundPorts="
             + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
             + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-            + ", metadata/details: " + includeMetadata + "]";
+            + ", userMetadata: " + userMetadata + "]";
    }
 
 }

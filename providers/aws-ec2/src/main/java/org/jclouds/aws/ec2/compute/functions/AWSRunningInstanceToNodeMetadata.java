@@ -48,8 +48,8 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
 
    @Inject
    protected AWSRunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
-            Map<String, Credentials> credentialStore, Supplier<Cache<RegionAndName, ? extends Image>> imageMap,
-            @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
+         Map<String, Credentials> credentialStore, Supplier<Cache<RegionAndName, ? extends Image>> imageMap,
+         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
       super(instanceToNodeState, credentialStore, imageMap, locations, hardware);
    }
 
@@ -66,4 +66,8 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
          builder.credentials(creds);
    }
 
+   @Override
+   protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
+      return super.buildInstance(instance, builder).userMetadata(AWSRunningInstance.class.cast(instance).getTags());
+   }
 }

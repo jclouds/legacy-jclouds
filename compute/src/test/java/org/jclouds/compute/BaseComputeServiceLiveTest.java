@@ -50,11 +50,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -96,6 +96,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
@@ -531,7 +532,8 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
-         assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
+         assert context.getCredentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
+               + "node#" + node.getId();
       }
    }
 
@@ -595,12 +597,16 @@ public abstract class BaseComputeServiceLiveTest {
       }
 
       try {
+         ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
          long startSeconds = currentTimeMillis();
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080).blockOnPort(22,
-                  300)));
+         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
+               inboundPorts(22, 8080).blockOnPort(22, 300)
+                     .userMetadata(userMetadata)));
          final String nodeId = node.getId();
          long createSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
+         checkUserMetadataInNodeEquals(node, userMetadata);
+         
          getAnonymousLogger().info(
                   format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
 
@@ -656,11 +662,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    }
 
-   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
-   public void testTemplateOptions() throws Exception {
-      TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = client.templateBuilder().smallest().options(options).build();
-      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
+            userMetadata, node);
    }
 
    public void testListImages() throws Exception {

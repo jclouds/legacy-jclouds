@@ -32,6 +32,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 
 /**
@@ -50,6 +51,12 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
       return new SshjSshClientModule();
    }
 
+   // deltacloud does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<DeltacloudClient, DeltacloudAsyncClient> tmContext = new ComputeServiceContextFactory()

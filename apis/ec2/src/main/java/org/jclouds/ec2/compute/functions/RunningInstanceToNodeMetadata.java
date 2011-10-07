@@ -89,6 +89,11 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       if (instance == null || instance.getId() == null)
          return null;
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder = buildInstance(instance, builder);
+      return builder.build();
+   }
+
+   protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       builder.providerId(instance.getId());
       builder.id(instance.getRegion() + "/" + instance.getId());
       String group = getGroupForInstance(instance);
@@ -116,8 +121,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       } catch (UncheckedExecutionException e) {
          logger.debug("error getting image for %s: %s", regionAndName, e);
       }
-
-      return builder.build();
+      return builder;
    }
 
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {

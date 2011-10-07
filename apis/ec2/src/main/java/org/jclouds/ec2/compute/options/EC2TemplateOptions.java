@@ -23,9 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
-
-import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
@@ -35,6 +34,7 @@ import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.UnmapDeviceNamed;
 import org.jclouds.io.Payload;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
@@ -42,11 +42,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the "ec2" provider.
- * <h2>
- * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is to statically import
- * EC2TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
- * needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on
+ * the "ec2" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is
+ * to statically import EC2TemplateOptions.* and invoke a static creation method
+ * followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.EC2TemplateOptions.Builder.*;
@@ -292,13 +292,20 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       }
 
       /**
-       * @see TemplateOptions#withDetails
+       * @see TemplateOptions#userMetadata(Map)
        */
-      public static EC2TemplateOptions withDetails() {
+      public static EC2TemplateOptions userMetadata(Map<String, String> userMetadata) {
          EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.withMetadata());
+         return EC2TemplateOptions.class.cast(options.userMetadata(userMetadata));
       }
 
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static EC2TemplateOptions userMetadata(String key, String value) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.userMetadata(key, value));
+      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -374,14 +381,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     * {@inheritDoc}
     */
    @Override
-   public EC2TemplateOptions withMetadata() {
-      return EC2TemplateOptions.class.cast(super.withMetadata());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public EC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       return EC2TemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
    }
@@ -427,15 +426,32 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    /**
-    * @return groupNames the user specified to run instances with, or zero length set to create an
-    *         implicit group
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return EC2TemplateOptions.class.cast(super.userMetadata(userMetadata));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions userMetadata(String key, String value) {
+      return EC2TemplateOptions.class.cast(super.userMetadata(key, value));
+   }
+
+   /**
+    * @return groupNames the user specified to run instances with, or zero
+    *         length set to create an implicit group
     */
    public Set<String> getGroups() {
       return groupNames;
    }
 
    /**
-    * @return keyPair to use when running the instance or null, to generate a keypair.
+    * @return keyPair to use when running the instance or null, to generate a
+    *         keypair.
     */
    public String getKeyPair() {
       return keyPair;

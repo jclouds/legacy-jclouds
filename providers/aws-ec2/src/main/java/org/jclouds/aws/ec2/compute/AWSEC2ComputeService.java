@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.compute;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,12 +35,16 @@ import org.jclouds.Constants;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
@@ -62,9 +67,12 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -91,7 +99,8 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
-         Cache<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+         Cache<RegionAndName, KeyPair> credentialsMap,
+         @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
          @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
@@ -102,6 +111,50 @@ public class AWSEC2ComputeService extends EC2ComputeService {
       this.ec2Client = ec2Client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;
+   }
+
+   @Override
+   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, final Template template)
+         throws RunNodesException {
+      Set<? extends NodeMetadata> nodes = super.createNodesInGroup(group, count, template);
+      // tags from spot requests do not propagate to running instances
+      // automatically
+      if (templateWasASpotRequestWithUserMetadata(template)) {
+         addTagsToNodesFromUserMetadataInTemplate(nodes, template);
+         nodes = addUserMetadataFromTemplateOptionsToNodes(template, nodes);
+      }
+      return nodes;
+   }
+
+   protected void addTagsToNodesFromUserMetadataInTemplate(Set<? extends NodeMetadata> nodes, final Template template) {
+      String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+      ec2Client.getTagServices().createTagsInRegion(region, transform(nodes, new Function<NodeMetadata, String>() {
+
+         @Override
+         public String apply(NodeMetadata arg0) {
+            return arg0.getProviderId();
+         }
+
+      }), template.getOptions().getUserMetadata());
+   }
+
+   protected boolean templateWasASpotRequestWithUserMetadata(final Template template) {
+      return template.getOptions().getUserMetadata().size() > 0
+            && AWSEC2TemplateOptions.class.cast(template.getOptions()).getSpotPrice() != null;
+   }
+
+   protected Set<? extends NodeMetadata> addUserMetadataFromTemplateOptionsToNodes(final Template template,
+         Set<? extends NodeMetadata> nodes) {
+      nodes = ImmutableSet.copyOf(Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
+
+         @Override
+         public NodeMetadata apply(NodeMetadata arg0) {
+            return NodeMetadataBuilder.fromNodeMetadata(arg0).userMetadata(template.getOptions().getUserMetadata())
+                  .build();
+         }
+
+      }));
+      return nodes;
    }
 
    @VisibleForTesting

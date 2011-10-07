@@ -85,6 +85,7 @@ public class NodeToNodeMetadataTest {
             .loginPort(loginPort)
             .hostname("cluster-" + id + ".mydomain.com")
             .location(location)
+            .userMetadata(ImmutableMap.of("Name", "foo"))
             .state(NodeState.RUNNING)
             .operatingSystem(
                   OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")

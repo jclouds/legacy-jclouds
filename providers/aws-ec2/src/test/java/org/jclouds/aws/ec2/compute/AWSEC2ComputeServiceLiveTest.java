@@ -48,6 +48,7 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
@@ -66,8 +67,15 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       group = "ec2";
    }
 
+   // aws-ec2 supports userMetadata
    @Override
-   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
+            userMetadata, node);
+   }
+   
+   @Override
+   @Test(dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
@@ -84,6 +92,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       Date before = new Date();
 
+      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+
+      options.userMetadata(userMetadata);
       options.as(AWSEC2TemplateOptions.class).enableMonitoring();
       options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
@@ -113,6 +124,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
+
+         checkUserMetadataInNodeEquals(first, userMetadata);
+
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
 
@@ -159,46 +173,4 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       }
 
    }
-
-   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
-   public void testSubnetId() throws Exception {
-
-      String subnetId = System.getProperty("test.subnetId");
-      if (subnetId == null) {
-         // Skip test and return
-         return;
-      }
-
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
-
-      String group = this.group + "g";
-
-      TemplateOptions options = client.templateOptions();
-
-      options.as(AWSEC2TemplateOptions.class).subnetId(subnetId).spotPrice(0.3f);
-
-      String startedId = null;
-      String nodeId = null;
-      try {
-
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
-
-         NodeMetadata first = Iterables.get(nodes, 0);
-         assert first.getCredentials() != null : first;
-         assert first.getCredentials().identity != null : first;
-
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
-         nodeId = Iterables.getOnlyElement(nodes).getId();
-
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
-
-         assertEquals(instance.getSubnetId(), subnetId);
-
-      } finally {
-         if (nodeId != null)
-            client.destroyNode(nodeId);
-      }
-   }
-
 }
