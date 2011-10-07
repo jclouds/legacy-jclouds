@@ -42,6 +42,7 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
@@ -76,11 +77,7 @@ public class CloudSigmaComputeServiceContextModule
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      // until there is a way to query by drive info that can suggest which
-      // drives are ssh boot
-      return template.imageId("f3c7c665-cd54-4a78-8fd2-7ec2f028cf29").minRam(1024);
-      // return
-      // template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).minRam(1024);
+      return template.osFamily(OsFamily.UBUNTU).imageNameMatches(".*automated SSH Access.*");
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })

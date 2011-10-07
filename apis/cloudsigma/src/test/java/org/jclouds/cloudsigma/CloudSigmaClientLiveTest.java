@@ -78,11 +78,12 @@ public class CloudSigmaClientLiveTest {
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
    protected String vncPassword = "Il0veVNC";
+   protected String bootDrive = "f3c7c665-cd54-4a78-8fd2-7ec2f028cf29";
    protected CloudSigmaClient client;
    protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> context;
    protected Predicate<IPSocket> socketTester;
 
-   protected String provider = "cloudsigma-zrh";
+   protected String provider = "cloudsigma";
    protected String identity;
    protected String credential;
    protected String endpoint;
@@ -460,7 +461,7 @@ public class CloudSigmaClientLiveTest {
 
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
-      drive = client.cloneDrive("f3c7c665-cd54-4a78-8fd2-7ec2f028cf29", drive.getName(),
+      drive = client.cloneDrive(bootDrive, drive.getName(),
             new CloneDriveOptions().size(driveSize));
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));

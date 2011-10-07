@@ -28,16 +28,16 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>cloudsigma-zrh</artifactId>
+    <artifactId>cloudsigma-lvs</artifactId>
     <name>jclouds CloudSigma provider</name>
-    <description>ComputeService binding to the CloudSigma datacenter in Zürich</description>
+    <description>ComputeService binding to the CloudSigma datacenter in SuperNAP Las Vegas</description>
     <packaging>bundle</packaging>
 
     <properties>
-        <test.cloudsigma-zrh.endpoint>https://api.cloudsigma.com</test.cloudsigma-zrh.endpoint>
-        <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
-        <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
-        <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
+        <test.cloudsigma-lvs.endpoint>https://api.lvs.cloudsigma.com</test.cloudsigma-lvs.endpoint>
+        <test.cloudsigma-lvs.apiversion>1.0</test.cloudsigma-lvs.apiversion>
+        <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
+        <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
     </properties>
 
     <dependencies>
@@ -99,20 +99,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.cloudsigma-zrh.endpoint</name>
-                                            <value>${test.cloudsigma-zrh.endpoint}</value>
+                                            <name>test.cloudsigma-lvs.endpoint</name>
+                                            <value>${test.cloudsigma-lvs.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma-zrh.apiversion</name>
-                                            <value>${test.cloudsigma-zrh.apiversion}</value>
+                                            <name>test.cloudsigma-lvs.apiversion</name>
+                                            <value>${test.cloudsigma-lvs.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma-zrh.identity</name>
-                                            <value>${test.cloudsigma-zrh.identity}</value>
+                                            <name>test.cloudsigma-lvs.identity</name>
+                                            <value>${test.cloudsigma-lvs.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma-zrh.credential</name>
-                                            <value>${test.cloudsigma-zrh.credential}</value>
+                                            <name>test.cloudsigma-lvs.credential</name>
+                                            <value>${test.cloudsigma-lvs.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

@@ -96,6 +96,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudsigma</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>trmk-vcloudexpress</artifactId>
             <version>${project.version}</version>
@@ -163,6 +168,11 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>cloudsigma-zrh</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudsigma-lvs</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

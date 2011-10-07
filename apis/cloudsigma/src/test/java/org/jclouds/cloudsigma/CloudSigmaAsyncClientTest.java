@@ -651,6 +651,8 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
 
    @Override
    public RestContextSpec<CloudSigmaClient, CloudSigmaAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec("cloudsigma-zrh", "foo", "bar", new Properties());
+      Properties props = new Properties();
+      props.setProperty("cloudsigma.endpoint", "https://api.cloudsigma.com");
+      return new RestContextFactory().createContextSpec("cloudsigma", "foo", "bar", props);
    }
 }

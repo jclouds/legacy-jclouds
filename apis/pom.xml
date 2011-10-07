@@ -47,5 +47,6 @@
        <module>atmos</module>
        <module>nova</module>
        <module>cloudwatch</module>
+       <module>cloudsigma</module>
     </modules>
 </project>

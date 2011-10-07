@@ -38,11 +38,11 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+@Test(groups = "live", testName = "CloudSigmaLasVegasTemplateBuilderLiveTest")
+public class CloudSigmaLasVegasTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public CloudSigmaTemplateBuilderLiveTest() {
-      provider = "cloudsigma-zrh";
+   public CloudSigmaLasVegasTemplateBuilderLiveTest() {
+      provider = "cloudsigma-lvs";
    }
 
    @Override
@@ -51,22 +51,20 @@ public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return input.version.equals("11.04") || (input.version.equals("10.04") && !input.is64Bit)
-                        || (input.version.equals("10.10") && input.is64Bit) || input.version.equals("");
-               case SOLARIS:
-                  return !input.is64Bit;
-               case DEBIAN:
-                  return input.is64Bit;
-               case CENTOS:
-                  return input.version.equals("5.0") || input.version.equals("")
-                           || (input.version.matches("5.[5]") && input.is64Bit);
-               case WINDOWS:
-                  return input.version.equals("2008 R2")
-                           || (input.version.equals("2008") && !input.is64Bit) || input.version.equals("")
-                           || (input.version.equals("2003"));
-               default:
-                  return false;
+            case UBUNTU:
+               return (input.version.equals("11.04") && input.is64Bit)
+                     || (input.version.equals("10.04") && !input.is64Bit) || input.version.equals("");
+            case SOLARIS:
+               return false;
+            case DEBIAN:
+               return false;
+            case CENTOS:
+               return input.version.equals("") || (input.version.equals("6.0") && !input.is64Bit)
+                     || (input.version.equals("5.5") && input.is64Bit);
+            case WINDOWS:
+               return ((input.version.equals("2008 R2") || input.version.equals("2003") || input.version.equals("")) && input.is64Bit);
+            default:
+               return false;
             }
          }
 
@@ -76,14 +74,15 @@ public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getId(), "af8bfee4-d249-4d91-b157-b01ee1ce1943");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("CH-ZH");
+      return ImmutableSet.<String> of("US-NV");
    }
 }

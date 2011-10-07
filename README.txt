@@ -15,13 +15,13 @@ check out our examples site! https://github.com/jclouds/jclouds-examples
 
 our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), deltacloud,
                           cloudservers-uk, vcloud (generic), ec2 (generic), byon, nova,
-                          trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
-                          cloudsigma-zrh, elasticstack(generic), go2cloud-jhb1,
+                          trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic)
+                          cloudsigma-zrh, elasticstack(generic), go2cloud-jhb1, cloudsigma-lvs,
                           bluelock-vcloud-zone01, stratogen-vcloud-mycloud, rimuhosting,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
-                          greenhousedata-element-vcloud, softlayer
+                          greenhousedata-element-vcloud, softlayer, cloudsigma (generic)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers

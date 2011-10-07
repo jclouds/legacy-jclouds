@@ -35,6 +35,7 @@
         <module>gogrid</module>
         <module>slicehost</module>
         <module>cloudsigma-zrh</module>
+        <module>cloudsigma-lvs</module>
         <module>azureblob</module>
         <module>aws-s3</module>
         <module>aws-ec2</module>

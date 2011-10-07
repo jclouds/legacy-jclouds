@@ -18,35 +18,17 @@
  */
 package org.jclouds.cloudsigma.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
-import com.google.inject.Module;
-
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-   public CloudSigmaComputeServiceLiveTest() {
+@Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichComputeServiceLiveTest")
+public class CloudSigmaZurichComputeServiceLiveTest extends CloudSigmaComputeServiceLiveTest {
+
+   public CloudSigmaZurichComputeServiceLiveTest() {
       provider = "cloudsigma-zrh";
    }
 
-   @Override
-   protected Module getSshModule() {
-      return new SshjSshClientModule();
-   }
-   
-   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
-      // hostname is not predictable based on node metadata
-      assert execResponse.getOutput().trim().equals("ubuntu");
-   }
-   
-   @Override
-   public void testOptionToNotBlock() {
-      // start call has to block until we have a pool of reserved pre-cloned drives.
-   }
 }
