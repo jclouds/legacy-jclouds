@@ -37,7 +37,7 @@ public class TransientBlobStorePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost/transient");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost");
       properties.setProperty(PROPERTY_API_VERSION, "1");
       properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
       properties.setProperty(PROPERTY_USER_THREADS, "0");

@@ -48,12 +48,16 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    private BlobRequestSigner signer;
    private Provider<BlobBuilder> blobFactory;
+   private final String endPoint = "http://localhost:8080";
+   private final String containerName = "container";
+   private final String blobName = "blob";
+   private final String fullUrl = String.format("%s/%s/%s", endPoint, containerName, blobName);
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      HttpRequest request = signer.signGetBlob("container", "name");
+      HttpRequest request = signer.signGetBlob(containerName, blobName);
 
-      assertRequestLineEquals(request, "GET http://localhost/container/name HTTP/1.1");
+      assertRequestLineEquals(request, "GET " + fullUrl + " HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -62,9 +66,9 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    public void testSignRemoveBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      HttpRequest request = signer.signRemoveBlob("container", "name");
+      HttpRequest request = signer.signRemoveBlob(containerName, blobName);
 
-      assertRequestLineEquals(request, "DELETE http://localhost/container/name HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE " + fullUrl + " HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -73,14 +77,14 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      Blob blob = blobFactory.get().name("name").forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 })
+      Blob blob = blobFactory.get().name(blobName).forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 })
                .contentType("text/plain").build();
 
       assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), new byte[] { 0, 2, 4, 8 });
 
-      HttpRequest request = signer.signPutBlob("container", blob);
+      HttpRequest request = signer.signPutBlob(containerName, blob);
 
-      assertRequestLineEquals(request, "PUT http://localhost/container/name HTTP/1.1");
+      assertRequestLineEquals(request, "PUT " + fullUrl + " HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
@@ -91,14 +95,14 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    public void testSignPutBlobWithGenerate() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Blob blob = blobFactory.get().name("name").payload("foo").calculateMD5().contentType("text/plain").build();
+      Blob blob = blobFactory.get().name(blobName).payload("foo").calculateMD5().contentType("text/plain").build();
 
       assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), new byte[] { -84, -67, 24, -37, 76, -62, -8,
                92, -19, -17, 101, 79, -52, -60, -92, -40 });
 
-      HttpRequest request = signer.signPutBlob("container", blob);
+      HttpRequest request = signer.signPutBlob(containerName, blob);
 
-      assertRequestLineEquals(request, "PUT http://localhost/container/name HTTP/1.1");
+      assertRequestLineEquals(request, "PUT " + fullUrl + " HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 3\nContent-MD5: rL0Y20zC+Fzt72VPzMSk2A==\nContent-Type: text/plain\n");
@@ -121,7 +125,9 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("transient", "identity", "credential", new Properties());
+      Properties properties = new Properties();
+      properties.setProperty("transient.endpoint", endPoint);
+      return new RestContextFactory().createContextSpec("transient", "identity", "credential", properties);
    }
 
    @Override
