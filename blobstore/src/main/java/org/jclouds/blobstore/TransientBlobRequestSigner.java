@@ -31,6 +31,7 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.location.Provider;
 
 /**
  * 
@@ -41,23 +42,25 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
 
    private final BasicAuthentication basicAuth;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
+   private final String endpoint;
 
    @Inject
-   public TransientBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions) {
+   public TransientBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions, @Provider URI endpoint) {
       this.basicAuth = checkNotNull(basicAuth, "basicAuth");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
+      this.endpoint = endpoint.toString();
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name) {
-      HttpRequest request = new HttpRequest("GET", URI.create(String.format("http://localhost/%s/%s", container, name)));
+      HttpRequest request = new HttpRequest("GET", URI.create(String.format("%s/%s/%s", endpoint, container, name)));
       return basicAuth.filter(request);
    }
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(
-               URI.create(String.format("http://localhost/%s/%s", container, blob.getMetadata().getName()))).payload(
+               URI.create(String.format("%s/%s/%s", endpoint, container, blob.getMetadata().getName()))).payload(
                blob.getPayload()).headers(
                HttpUtils.getContentHeadersFromMetadata(blob.getMetadata().getContentMetadata())).build();
       return basicAuth.filter(request);
@@ -65,7 +68,7 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signRemoveBlob(String container, String name) {
-      HttpRequest request = new HttpRequest("DELETE", URI.create(String.format("http://localhost/%s/%s", container,
+      HttpRequest request = new HttpRequest("DELETE", URI.create(String.format("%s/%s/%s", endpoint, container,
                name)));
       return basicAuth.filter(request);
    }
@@ -73,7 +76,7 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
    @Override
    public HttpRequest signGetBlob(String container, String name, GetOptions options) {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(
-               URI.create(String.format("http://localhost/%s/%s", container, name))).headers(
+               URI.create(String.format("%s/%s/%s", endpoint, container, name))).headers(
                blob2HttpGetOptions.apply(options).buildRequestHeaders()).build();
       return basicAuth.filter(request);
    }
