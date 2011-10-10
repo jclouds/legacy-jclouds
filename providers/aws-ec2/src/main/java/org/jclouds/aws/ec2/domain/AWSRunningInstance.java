@@ -31,6 +31,7 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -64,8 +65,8 @@ public class AWSRunningInstance extends RunningInstance {
       }
 
       public Builder tag(String key, String value) {
-         if (key != null && value != null)
-            this.tags.put(key, value);
+         if (key != null)
+            this.tags.put(key, Strings.nullToEmpty(value));
          return this;
       }
       

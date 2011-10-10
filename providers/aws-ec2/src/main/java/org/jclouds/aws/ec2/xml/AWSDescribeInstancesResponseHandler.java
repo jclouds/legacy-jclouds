@@ -53,7 +53,7 @@ public class AWSDescribeInstancesResponseHandler extends
 
    @Inject
    AWSDescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
-         Provider<AWSRunningInstance.Builder> builderProvider) {
+         Provider<AWSRunningInstance.Builder> builderProvider, TagSetHandler tagSetHandler) {
       super(dateService, defaultRegion, builderProvider);
    }
 

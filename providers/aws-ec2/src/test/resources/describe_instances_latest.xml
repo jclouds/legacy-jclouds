@@ -66,6 +66,10 @@
                            <key>Name</key>
                            <value>ec2-o</value>
                        </item>
+                       <item>
+                           <key>Empty</key>
+                           <value />
+                       </item>
                     </tagSet>                    
                 </item>
                 <item>
