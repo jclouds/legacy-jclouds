@@ -112,7 +112,11 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
                         .instanceType("t1.micro").monitoringEnabled(false).keyName("jclouds#adriancole-ec2unssh")
                         .build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-07-29T05:27:39.000Z"))
-            .productDescription("Linux/UNIX").tag("Name", "ec2-o").build();
+            .productDescription("Linux/UNIX")
+            .tag("Name", "ec2-o")
+            .tag("Spot", "spot-value")
+            .tag("Empty", "")
+            .build();
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
       addDefaultRegionToHandler(handler);
       SpotInstanceRequest result = factory.create(handler).parse(is);

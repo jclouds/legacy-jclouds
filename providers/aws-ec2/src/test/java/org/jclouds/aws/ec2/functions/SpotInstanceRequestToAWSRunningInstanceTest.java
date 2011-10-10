@@ -33,8 +33,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SpotInstanceRequestToAWSRunningInstanceTest")
 public class SpotInstanceRequestToAWSRunningInstanceTest {
 
@@ -53,13 +52,18 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
                         .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
                         .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
-            .productDescription("Linux/UNIX").tag("foo", "bar").build();
+            .productDescription("Linux/UNIX")
+            .tag("foo", "bar")
+            .tag("empty", "")
+            .build();
 
       assertEquals(
             new SpotInstanceRequestToAWSRunningInstance().apply(input),
             AWSRunningInstance.builder().region("us-east-1").instanceId("sir-228e6406")
                   .spotInstanceRequestId("sir-228e6406").instanceState(InstanceState.PENDING).imageId("ami-595a0a1c")
-                  .groupId("default").instanceType("m1.large").tag("foo", "bar")
+                  .groupId("default").instanceType("m1.large")
+                  .tag("foo", "bar")
+                  .tag("empty", "")
                   .monitoringState(MonitoringState.PENDING).build());
    }
 

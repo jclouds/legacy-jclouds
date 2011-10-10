@@ -18,8 +18,9 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
-import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+import static org.jclouds.util.SaxUtils.*;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -43,16 +45,17 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    protected final Builder builder;
    protected boolean inLaunchSpecification;
    protected final LaunchSpecificationHandler launchSpecificationHandler;
-   private boolean inTagSet;
-   private String key;
-   private String value;
+   protected boolean inTagSet;
+   protected final TagSetHandler tagSetHandler;
 
    @Inject
    public SpotInstanceHandler(DateService dateService, @Region String defaultRegion,
-         LaunchSpecificationHandler launchSpecificationHandler, SpotInstanceRequest.Builder builder) {
+         LaunchSpecificationHandler launchSpecificationHandler, TagSetHandler tagSetHandler,
+         SpotInstanceRequest.Builder builder) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
       this.launchSpecificationHandler = launchSpecificationHandler;
+      this.tagSetHandler = tagSetHandler;
       this.builder = builder;
    }
 
@@ -67,37 +70,37 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
       }
    }
 
-   public void startElement(String uri, String name, String qName, Attributes attrs) {
+   @Override
+   public void startElement(String uri, String name, String qName, Attributes attrs) throws SAXException {
       if (equalsOrSuffix(qName, "launchSpecification")) {
          inLaunchSpecification = true;
       } else if (equalsOrSuffix(qName, "tagSet")) {
          inTagSet = true;
       }
-      if (inLaunchSpecification)
-         launchSpecificationHandler.startElement(uri, name, qName, attrs);
+      if (inLaunchSpecification) {
+          launchSpecificationHandler.startElement(uri, name, qName, attrs);
+      } else if (inTagSet) {
+          tagSetHandler.startElement(uri, name, qName, attrs);
+      }
    }
 
-   public void endElement(String uri, String name, String qName) {
+   @Override
+   public void endElement(String uri, String name, String qName) throws SAXException {
       if (equalsOrSuffix(qName, "tagSet")) {
          inTagSet = false;
+         builder.tags(tagSetHandler.getResult());
       } else if (inTagSet) {
-         if (equalsOrSuffix(qName, "key")) {
-            key = currentOrNull(currentText);
-         } else if (equalsOrSuffix(qName, "value")) {
-            value = currentOrNull(currentText);
-         }
+          tagSetHandler.endElement(uri, name, qName);
       }
+
       if (qName.equals("launchSpecification")) {
          inLaunchSpecification = false;
          builder.launchSpecification(launchSpecificationHandler.getResult());
-      } else if (qName.equals("item") && inTagSet) {
-         builder.tag(key, value);
-         key = null;
-         value = null;
-      }
-      if (inLaunchSpecification) {
+      } else if (inLaunchSpecification) {
          launchSpecificationHandler.endElement(uri, name, qName);
-      } else if (qName.equals("spotInstanceRequestId")) {
+      }
+
+      if (qName.equals("spotInstanceRequestId")) {
          builder.id(currentOrNull(currentText));
       } else if (qName.equals("instanceId")) {
          builder.instanceId(currentOrNull(currentText));
@@ -133,10 +136,14 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
       currentText = new StringBuilder();
    }
 
+   @Override
    public void characters(char ch[], int start, int length) {
-      if (inLaunchSpecification)
-         launchSpecificationHandler.characters(ch, start, length);
-      else
+      if (inLaunchSpecification) {
+           launchSpecificationHandler.characters(ch, start, length);
+      } else if (inTagSet) {
+           tagSetHandler.characters(ch, start, length);
+      } else {
          currentText.append(ch, start, length);
+      }
    }
 }
