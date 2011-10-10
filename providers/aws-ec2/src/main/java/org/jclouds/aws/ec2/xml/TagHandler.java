@@ -21,11 +21,12 @@ package org.jclouds.aws.ec2.xml;
 import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.http.functions.ParseSax;
+import org.xml.sax.SAXException;
 
 /**
  * @author grkvlt@apache.org
  */
-public class TagsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Tag> {
+public class TagHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Tag> {
     private StringBuilder currentText = new StringBuilder();
 
     private String resourceId;
@@ -38,7 +39,7 @@ public class TagsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<T
         return returnVal;
     }
 
-    public void endElement(String uri, String name, String qName) {
+    public void endElement(String uri, String name, String qName) throws SAXException {
         if (qName.equals("resourceId")) {
             this.resourceId = currentText.toString().trim();
         } else if (qName.equals("resourceType")) {

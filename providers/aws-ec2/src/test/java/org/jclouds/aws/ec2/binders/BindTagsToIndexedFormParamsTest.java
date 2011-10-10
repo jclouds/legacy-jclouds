@@ -48,6 +48,12 @@ public class BindTagsToIndexedFormParamsTest {
       assertEquals(request.getPayload().getRawContent(), "Tag.1.Key=one&Tag.1.Value=alpha&Tag.2.Key=two&Tag.2.Value=beta");
    }
 
+   public void testEmpty() {
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, ImmutableMap.<String, String>builder().put("empty", "").build());
+      assertEquals(request.getPayload().getRawContent(), "Tag.1.Key=empty&Tag.1.Value=");
+   }
+
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeArray() {
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));

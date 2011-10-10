@@ -18,56 +18,64 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.Set;
+import java.util.Map;
 
-import javax.inject.Inject;
-
-import org.jclouds.aws.ec2.domain.Tag;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author grkvlt@apache.org
  */
-public class DescribeTagsResponseHandler extends ParseSax.HandlerWithResult<Set<Tag>> {
-    private Set<Tag> tags = Sets.newLinkedHashSet();
-    private final TagHandler tagHandler;
+public class TagSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Map<String, String>> {
+    private StringBuilder currentText = new StringBuilder();
 
-    @Inject
-    public DescribeTagsResponseHandler(TagHandler tagHandler) {
-        this.tagHandler = tagHandler;
+    private ImmutableMap.Builder<String, String> result;
+    private boolean inItem = false;
+    private String key;
+    private String value;
+
+    public TagSetHandler() {
+        super();
+        this.result = ImmutableMap.<String, String>builder();
     }
 
-    public Set<Tag> getResult() {
-        return tags;
-    }
-
-    @Override
-    public HandlerWithResult<Set<Tag>> setContext(HttpRequest request) {
-        tagHandler.setContext(request);
-        return super.setContext(request);
+    public Map<String, String> getResult() {
+        return result.build();
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (!qName.equals("item"))
-            tagHandler.startElement(uri, localName, qName, attributes);
+        if (qName.equals("item")) {
+            inItem = true;
+            key = null;
+            value = null;
+        }
+        currentText = new StringBuilder();
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("item")) {
-            tags.add(tagHandler.getResult());
+            inItem = false;
+            if (key != null) {
+	            result.put(key, Strings.nullToEmpty(value));
+            }
         }
-        tagHandler.endElement(uri, localName, qName);
+        if (inItem) {
+	        if (qName.equals("key")) {
+	            key = currentText.toString().trim();
+	        } else if (qName.equals("value")) {
+	            value = currentText.toString().trim();
+	        }
+        }
     }
 
+    @Override
     public void characters(char ch[], int start, int length) {
-        tagHandler.characters(ch, start, length);
+        currentText.append(ch, start, length);
     }
 }

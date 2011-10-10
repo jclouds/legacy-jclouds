@@ -109,11 +109,15 @@ public class TagClientLiveTest {
    @Test
    void test() {
       cleanupTag(testGroup, "test-key");
+      cleanupTag(testGroup, "empty-key");
       try {
          client.createTagsInRegion(null, ImmutableList.<String>builder().add(testGroup).build(), ImmutableMap.<String, String>builder().put("test-key", "test-value").build());
          checkTag(testGroup, ResourceType.SECURITY_GROUP, "test-key", "test-value");
+         client.createTagsInRegion(null, ImmutableList.<String>builder().add(testGroup).build(), ImmutableMap.<String, String>builder().put("empty-key", "").build());
+         checkTag(testGroup, ResourceType.SECURITY_GROUP, "empty-key", "");
       } finally {
 	     cleanupTag(testGroup, "test-key");
+	     cleanupTag(testGroup, "empty-key");
       }
    }
 

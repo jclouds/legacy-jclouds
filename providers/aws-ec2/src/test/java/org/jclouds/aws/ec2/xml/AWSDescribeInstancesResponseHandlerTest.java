@@ -69,17 +69,30 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
 
    public void testWhenRunning() throws UnknownHostException {
 
-      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
-            defaultRegion, ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(new AWSRunningInstance.Builder()
-                  .region(defaultRegion).groupId("adriancole.ec2ingress").amiLaunchIndex("0")
-                  .dnsName("ec2-174-129-81-68.compute-1.amazonaws.com").imageId("ami-82e4b5c7")
-                  .instanceId("i-0799056f").instanceState(InstanceState.RUNNING).instanceType(InstanceType.M1_SMALL)
-                  .ipAddress("174.129.81.68").kernelId("aki-a71cf9ce").keyName("adriancole.ec21")
-                  .launchTime(dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"))
-                  .monitoringState(MonitoringState.DISABLED).availabilityZone("us-east-1c")
-                  .virtualizationType("paravirtual").privateDnsName("ip-10-243-42-70.ec2.internal")
-                  .privateIpAddress("10.243.42.70").ramdiskId("ari-a51cf9cc")
-                  .rootDeviceType(RootDeviceType.INSTANCE_STORE).build()), "993194456877", null, "r-a3c508cb"));
+      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(
+              new Reservation<AWSRunningInstance>(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(
+                      new AWSRunningInstance.Builder()
+                          .region(defaultRegion)
+                          .groupId("adriancole.ec2ingress")
+                          .amiLaunchIndex("0")
+                          .dnsName("ec2-174-129-81-68.compute-1.amazonaws.com")
+                          .imageId("ami-82e4b5c7")
+                          .instanceId("i-0799056f")
+                          .instanceState(InstanceState.RUNNING)
+                          .instanceType(InstanceType.M1_SMALL)
+                          .ipAddress("174.129.81.68")
+                          .kernelId("aki-a71cf9ce")
+                          .keyName("adriancole.ec21")
+                          .launchTime(dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"))
+                          .monitoringState(MonitoringState.DISABLED)
+                          .availabilityZone("us-east-1c")
+                          .virtualizationType("paravirtual")
+                          .privateDnsName("ip-10-243-42-70.ec2.internal")
+                          .privateIpAddress("10.243.42.70")
+                          .ramdiskId("ari-a51cf9cc")
+                          .rootDeviceType(RootDeviceType.INSTANCE_STORE)
+                          .build()),
+                  "993194456877", null, "r-a3c508cb"));
 
       Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_running.xml");
 
@@ -87,7 +100,6 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
    }
 
    public void testWhenRunningLatest() throws UnknownHostException {
-
       Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
             defaultRegion, ImmutableSet.of("jclouds#ec2-s#us-east-1"), ImmutableSet.of(
                   new AWSRunningInstance.Builder()
@@ -108,6 +120,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                         .ipAddress("174.129.173.155")
                         .securityGroupIdToName("sg-ef052b86", "jclouds#zkclustertest#us-east-1")
                         .tag("Name", "ec2-o")
+                        .tag("Empty", "")
                         .rootDeviceType(RootDeviceType.EBS)
                         .rootDeviceName("/dev/sda1")
                         .device(

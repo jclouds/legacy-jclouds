@@ -26,6 +26,7 @@ import java.util.Map;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -89,8 +90,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       }
 
       public Builder tag(String key, String value) {
-         if (key != null && value != null)
-            this.tags.put(key, value);
+         if (key != null)
+            this.tags.put(key, Strings.nullToEmpty(value));
          return this;
       }
       public Builder availabilityZoneGroup(String availabilityZoneGroup) {
