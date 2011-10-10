@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtualbox.experiment.settings;
+package org.jclouds.virtualbox.settings;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -18,47 +18,27 @@
  */
 package org.jclouds.virtualbox.experiment;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
+import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.Credentials;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.virtualbox.compute.LoadMachineFromVirtualBox;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheLoader;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 public class TestUtils {
-   public static ComputeServiceContext computeServiceForLocalhost() throws IOException {
-
-      String hostId = System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
-      Node host = Node.builder().id(hostId)
-              .name(System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID))
-              .hostname(System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOSTNAME))
-              .osFamily(OsFamily.LINUX.toString())
-              .osDescription(System.getProperty("os.name"))
-              .osVersion(System.getProperty("os.version"))
-              .group("ssh")
-              .username(System.getProperty("user.name"))
-              .credentialUrl(privateKeyFile())
-              .build();
-
-      final Map<String, Node> nodeMap = ImmutableMap.<String, Node>builder().put(hostId, host).build();
-      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
-              new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
-   }
 
    public static ComputeServiceContext computeServiceForLocalhostAndGuest() throws IOException {
 
@@ -86,6 +66,38 @@ public class TestUtils {
               .build();
 
       final Map<String, Node> nodeMap = ImmutableMap.<String, Node>builder().put("host", host).put("guest", guest).build();
+      return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
+              new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
+   }
+
+   public static ComputeServiceContext computeServiceForLocalhostAndGuest(String hostId, String hostname, String guestId, String guestHostname,
+                                                                          Credentials guestLogin) throws IOException {
+
+      Node host = Node.builder().id(hostId)
+              .name("host installing virtualbox")
+              .hostname(hostname)
+              .osFamily(OsFamily.LINUX.toString())
+              .osDescription(System.getProperty("os.name"))
+              .osVersion(System.getProperty("os.version"))
+              .group("ssh")
+              .username(System.getProperty("user.name"))
+              .credentialUrl(privateKeyFile())
+              .build();
+      Node guest = Node.builder().id(guestId)
+              .name("new guest")
+              .hostname(guestHostname)
+              .loginPort(2222)
+              .osFamily(OsFamily.UBUNTU.toString())
+              .osDescription("ubuntu/11.04")
+              .osVersion(System.getProperty("11.04"))
+              .group("jclouds-linux-image")
+              .username(guestLogin.identity)
+              .sudoPassword(guestLogin.credential)
+              .credential(guestLogin.credential)
+              .build();
+
+
+      final Map<String, Node> nodeMap = ImmutableMap.<String, Node>builder().put(hostId, host).put(guestId, guest).build();
       return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module>of(
               new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(), new CacheNodeStoreModule(nodeMap)));
    }

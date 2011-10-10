@@ -29,6 +29,8 @@ package org.jclouds.virtualbox.config;
  */
 public interface VirtualBoxConstants {
 
+   public static final String VIRTUALBOX_IMAGE_PREFIX = "jclouds-image-";
+
    public static final String VIRTUALBOX_PRESEED_URL = "jclouds.virtualbox.preseedurl";
 
    public static final String VIRTUALBOX_SNAPSHOT_DESCRIPTION = "jclouds.virtualbox.snapshotDescription";

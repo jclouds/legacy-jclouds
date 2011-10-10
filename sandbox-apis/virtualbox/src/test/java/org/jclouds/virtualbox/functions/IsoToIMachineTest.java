@@ -22,80 +22,73 @@
 package org.jclouds.virtualbox.functions;
 
 /**
- * @author Andrea Turli
+ * @author Andrea Turli, Mattias Holmqvist
  */
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.experiment.TestUtils;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.domain.Credentials;
+import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.INATEngine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.NATProtocol;
-import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-//TODO should it be a live test?
-@Test(groups = "unit")
-public class IsoToIMachineTest {
+import java.util.Set;
 
-	private String settingsFile = "";
-	private boolean forceOverwrite = true;
-	private String vmId = null;
-	private String osTypeId = null;
-	private String controllerIDE = "test-IDE";
-	private String diskFormat = "";
-	private String adminDisk = "testAdmin.vdi";
-	private String guestId = "guestId";
-	private String hostId = "hostId";
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.*;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertTrue;
 
-	@Test
-	public void testConvert() throws Exception {
-		String vmName = "virtualbox-iso-to-machine-test";
-		VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
-		IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-		IMachine vm = createNiceMock(IMachine.class);
-		IMedium hd = createNiceMock(IMedium.class);
-		INetworkAdapter iNetworkAdapter = createNiceMock(INetworkAdapter.class);
-		INATEngine inatEngine = createNiceMock(INATEngine.class);
-		IProgress iProgress = createNiceMock(IProgress.class);
+@Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineTest")
+public class IsoToIMachineTest extends BaseVirtualBoxClientLiveTest {
 
-		ISession session = createNiceMock(ISession.class);
-		expect(vbm.getVBox()).andReturn(vBox).anyTimes();
-		expect(vbm.getSessionObject()).andReturn(session).anyTimes();
-		expect(vBox.findMachine(vmName)).andReturn(vm).anyTimes();
-		expect(vBox.createMachine(settingsFile, vmName, osTypeId, vmId,
-						forceOverwrite)).andReturn(vm).anyTimes();
-		expect(vm.getName()).andReturn(vmName).anyTimes();
-		expect(vm.getNetworkAdapter(new Long(0))).andReturn(iNetworkAdapter).anyTimes();
-		expect(iNetworkAdapter.getNatDriver()).andReturn(inatEngine).anyTimes();
-		expect(vBox.createHardDisk(diskFormat, adminDisk)).andReturn(hd).anyTimes();
-		expect(vm.launchVMProcess(session, "gui", "")).andReturn(iProgress).anyTimes();
-		expect(session.getMachine()).andReturn(vm).anyTimes();
-		expect(vm.getState()).andReturn(MachineState.Running).anyTimes();
+   private String settingsFile = null;
+   private boolean forceOverwrite = true;
+   private String vmId = "jclouds-image-1";
+   private String osTypeId = "";
+   private String controllerIDE = "IDE Controller";
+   private String diskFormat = "";
+   private String adminDisk = "testadmin.vdi";
+   private String guestId = "guest";
+   private String hostId = "host";
 
-		replay(vbm, vBox, vm, session, hd, iNetworkAdapter, iProgress);
+   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
 
-		ComputeServiceContext context = TestUtils
-				.computeServiceForLocalhostAndGuest();
-		IMachine iMachine = new IsoToIMachine(vbm, adminDisk, diskFormat,
-				settingsFile, vmName, osTypeId, vmId, forceOverwrite,
-				controllerIDE, context, hostId, guestId)
-				.apply(VirtualBoxConstants.VIRTUALBOX_DISTRO_ISO_NAME);
+   @BeforeGroups(groups = { "live" })
+   public void setUp() throws Exception {
+      identity = "toor";
+      credential = "password";
+   }
 
-		assertEquals(iMachine.getName(), vmName);
+   @Test
+   public void testCreateImageMachineFromIso() throws Exception {
 
-	}
+      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
+      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+      IMachine imageMachine = new IsoToIMachine(manager,
+              adminDisk,
+              diskFormat,
+              settingsFile,
+              vmName,
+              osTypeId,
+              vmId,
+              forceOverwrite,
+              controllerIDE,
+              localHostContext,
+              hostId,
+              guestId,
+              new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+
+      IMachineToImage iMachineToImage = new IMachineToImage(manager);
+      Image newImage = iMachineToImage.apply(imageMachine);
+      Set<? extends Image> images = context.getComputeService().listImages();
+
+      assertTrue(any(images, equalTo(newImage)));
+
+   }
 
 }

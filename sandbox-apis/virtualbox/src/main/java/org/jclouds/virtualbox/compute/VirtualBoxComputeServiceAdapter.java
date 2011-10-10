@@ -22,17 +22,23 @@
 package org.jclouds.virtualbox.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -78,10 +84,14 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
 	@Override
 	public Iterable<IMachine> listImages() {
-		for (IMachine iMachine : manager.getVBox().getMachines()) {
-		System.out.println(iMachine.getName());	
-		}
-		return manager.getVBox().getMachines();
+      final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
+         @Override
+         public boolean apply(@Nullable IMachine iMachine) {
+            return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
+         }
+      };
+      return filter(manager.getVBox().getMachines(), imagePredicate);
+//		return manager.getVBox().getMachines();
 	}
 
 	@SuppressWarnings("unchecked")
