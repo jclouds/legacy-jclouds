@@ -18,6 +18,9 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
+import static com.google.common.base.Predicates.*;
+import static com.google.common.collect.Maps.*;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +42,7 @@ import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -68,6 +72,9 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
 
    @Override
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
-      return super.buildInstance(instance, builder).userMetadata(AWSRunningInstance.class.cast(instance).getTags());
+      Map<String, String> tags = AWSRunningInstance.class.cast(instance).getTags();
+      return super.buildInstance(instance, builder)
+              .tags(filterValues(tags, in(ImmutableSet.<String>of(""))).keySet())
+              .userMetadata(filterValues(tags, not(in(ImmutableSet.<String>of("")))));
    }
 }

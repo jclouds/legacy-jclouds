@@ -137,7 +137,8 @@ public class AWSRunningInstanceToNodeMetadataTest {
                   .imageId("us-east-1/ami-63be790a")
                   .id("us-east-1/i-911444f0")
                   .providerId("i-911444f0")
-                  .userMetadata(ImmutableMap.of("Name", "foo", "Empty", "")).build().toString());
+                  .tags(ImmutableSet.of("Empty"))
+                  .userMetadata(ImmutableMap.of("Name", "foo")).build().toString());
       assertEquals(
               parser.apply(Iterables.get(contents, 1)), 
               new NodeMetadataBuilder()
