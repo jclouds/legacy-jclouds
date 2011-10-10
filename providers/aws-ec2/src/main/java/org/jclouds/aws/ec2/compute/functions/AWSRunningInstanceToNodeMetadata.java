@@ -42,7 +42,6 @@ import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -74,7 +73,7 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       Map<String, String> tags = AWSRunningInstance.class.cast(instance).getTags();
       return super.buildInstance(instance, builder)
-              .tags(filterValues(tags, in(ImmutableSet.<String>of(""))).keySet())
-              .userMetadata(filterValues(tags, not(in(ImmutableSet.<String>of("")))));
+              .tags(filterValues(tags, equalTo("")).keySet())
+              .userMetadata(filterValues(tags, not(equalTo(""))));
    }
 }
