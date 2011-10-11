@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.*;
+
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
@@ -40,7 +42,6 @@ public class TagSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult
 
     public TagSetHandler() {
         super();
-        this.result = ImmutableMap.<String, String>builder();
     }
 
     public Map<String, String> getResult() {
@@ -49,7 +50,9 @@ public class TagSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (qName.equals("item")) {
+        if (equalsOrSuffix(qName, "tagSet")) {
+	        result = ImmutableMap.<String, String>builder();
+        } else if (qName.equals("item")) {
             inItem = true;
             key = null;
             value = null;
@@ -67,9 +70,9 @@ public class TagSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult
         }
         if (inItem) {
 	        if (qName.equals("key")) {
-	            key = currentText.toString().trim();
+	            key = currentOrNull(currentText);
 	        } else if (qName.equals("value")) {
-	            value = currentText.toString().trim();
+	            value = currentOrNull(currentText);
 	        }
         }
     }
