@@ -60,7 +60,7 @@ Here's an example of creating and running a small linux node in the group webser
   See http://code.google.com/p/jclouds for details.
   "
   (:use org.jclouds.core
-    (org.jclouds predicate) (clojure.core incubator))
+    (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
     java.util.Properties
     [org.jclouds.domain Location]

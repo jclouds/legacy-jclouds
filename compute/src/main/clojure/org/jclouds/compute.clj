@@ -56,7 +56,8 @@ webserver:
   (create-node \"webserver\" compute)
 
 See http://code.google.com/p/jclouds for details."
-  (:use org.jclouds.core (clojure.core incubator))
+  (:use org.jclouds.core
+    (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
