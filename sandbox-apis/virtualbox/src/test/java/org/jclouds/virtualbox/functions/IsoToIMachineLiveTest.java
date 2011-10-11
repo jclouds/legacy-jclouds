@@ -25,26 +25,24 @@ package org.jclouds.virtualbox.functions;
  * @author Andrea Turli, Mattias Holmqvist
  */
 
-import com.google.common.collect.Iterables;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Credentials;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.Set;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.*;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertTrue;
-
-@Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineTest")
-public class IsoToIMachineTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineLiveTest")
+public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private String settingsFile = null;
    private boolean forceOverwrite = true;
