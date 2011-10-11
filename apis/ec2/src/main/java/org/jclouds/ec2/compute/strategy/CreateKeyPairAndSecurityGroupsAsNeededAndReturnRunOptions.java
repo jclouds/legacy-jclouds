@@ -21,7 +21,6 @@ package org.jclouds.ec2.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -52,18 +51,15 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 @Singleton
 public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    @VisibleForTesting
-   public final Map<RegionAndName, KeyPair> knownKeys;
-   @VisibleForTesting
    public final Cache<RegionAndName, KeyPair> credentialsMap;
    @VisibleForTesting
    public final Cache<RegionAndName, String> securityGroupMap;
    protected final Provider<RunInstancesOptions> optionsProvider;
 
    @Inject
-   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> knownKeys, Cache<RegionAndName, KeyPair> credentialsMap,
+   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Cache<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap, 
          Provider<RunInstancesOptions> optionsProvider) {
-      this.knownKeys = checkNotNull(knownKeys, "knownKeys");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
@@ -122,8 +118,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
                   .keyMaterial(options.getOverridingCredentials().credential).build();
             
             RegionAndName key = new RegionAndName(region, keyPairName);
-            knownKeys.put(key, keyPair);
-            credentialsMap.invalidate(key);
+            credentialsMap.asMap().put(key, keyPair);
          }
       }
       

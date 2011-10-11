@@ -26,7 +26,6 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -53,66 +52,31 @@ public class RegionAndIdToImageTest {
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
-      Map<RegionAndName, Image> knownImages  = createMock(Map.class);
-      
+
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
-      expect(knownImages.containsKey(new RegionAndName("region", "ami"))).andReturn(false);
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andReturn(image);
 
-      replay(knownImages);
       replay(caller);
       replay(image);
       replay(parser);
       replay(client);
 
-      RegionAndIdToImage function = new RegionAndIdToImage(knownImages, parser, caller);
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
       assertEquals(function.load(new RegionAndName("region", "ami")), image);
 
       verify(caller);
       verify(image);
       verify(image);
-      verify(knownImages);
       verify(client);
 
    }
 
-   @SuppressWarnings("unchecked")
-   @Test
-   public void testApplyWhenFoundDoesntCallClient() throws ExecutionException {
-
-      EC2ImageParser parser = createMock(EC2ImageParser.class);
-      EC2Client caller = createMock(EC2Client.class);
-      AMIClient client = createMock(AMIClient.class);
-      Map<RegionAndName, Image> knownImages  = createMock(Map.class);
-      
-      Image image = createNiceMock(Image.class);
-
-      expect(knownImages.containsKey(new RegionAndName("region", "ami"))).andReturn(true);
-      expect(knownImages.get(new RegionAndName("region", "ami"))).andReturn(image);
-
-      replay(knownImages);
-      replay(caller);
-      replay(image);
-      replay(parser);
-      replay(client);
-
-      RegionAndIdToImage function = new RegionAndIdToImage(knownImages, parser, caller);
-
-      assertEquals(function.load(new RegionAndName("region", "ami")), image);
-
-      verify(caller);
-      verify(image);
-      verify(image);
-      verify(knownImages);
-      verify(client);
-
-   }
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = ExecutionException.class)
    public void testApplyNotFoundMakesExecutionException() throws ExecutionException {
@@ -120,13 +84,11 @@ public class RegionAndIdToImageTest {
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
-      Map<RegionAndName, Image> knownImages  = createMock(Map.class);
-      
+
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
-      expect(knownImages.containsKey(new RegionAndName("region", "ami"))).andReturn(false);
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andThrow(new ResourceNotFoundException());
@@ -134,17 +96,15 @@ public class RegionAndIdToImageTest {
       replay(caller);
       replay(image);
       replay(parser);
-      replay(knownImages);
       replay(client);
 
-      RegionAndIdToImage function = new RegionAndIdToImage(knownImages, parser, caller);
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
       assertEquals(function.load(new RegionAndName("region", "ami")), null);
 
       verify(caller);
       verify(image);
       verify(parser);
-      verify(knownImages);
       verify(client);
 
    }
@@ -156,30 +116,26 @@ public class RegionAndIdToImageTest {
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
-      Map<RegionAndName, Image> knownImages  = createMock(Map.class);
 
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
-      expect(knownImages.containsKey(new RegionAndName("region", "ami"))).andReturn(false);
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(Set.class.cast(images));
       expect(parser.apply(ec2Image)).andThrow(new NoSuchElementException());
 
       replay(caller);
       replay(image);
-      replay(knownImages);
       replay(parser);
       replay(client);
 
-      RegionAndIdToImage function = new RegionAndIdToImage(knownImages, parser, caller);
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
       assertEquals(function.load(new RegionAndName("region", "ami")), null);
 
       verify(caller);
       verify(image);
-      verify(knownImages);
       verify(parser);
       verify(client);
 

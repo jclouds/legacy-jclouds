@@ -21,8 +21,6 @@ package org.jclouds.aws.ec2.compute.strategy;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.or;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -66,14 +64,14 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    final Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair;
 
    @Inject
-   public CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> knownKeys,
-         Cache<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
-         Provider<RunInstancesOptions> optionsProvider,
-         @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
-         CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded,
-         Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair) {
-      super(knownKeys, credentialsMap, securityGroupMap, optionsProvider);
+   public CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(
+            Cache<RegionAndName, KeyPair> credentialsMap,
+            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+            Provider<RunInstancesOptions> optionsProvider,
+            @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
+            CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded,
+            Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair) {
+      super(credentialsMap, securityGroupMap, optionsProvider);
       this.placementGroupMap = placementGroupMap;
       this.createPlacementGroupIfNeeded = createPlacementGroupIfNeeded;
       this.importExistingKeyPair = importExistingKeyPair;
@@ -119,15 +117,15 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    @Override
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       RegionAndName key = new RegionAndName(region, group);
-      KeyPair pair = knownKeys.get(key);
-      if (pair != null)
-         return pair.getKeyName();
+      KeyPair pair;
+      if (credentialsMap.asMap().containsKey(key))
+         return credentialsMap.getUnchecked(key).getKeyName();
       if (and(hasPublicKeyMaterial, or(doesntNeedSshAfterImportingPublicKey, hasLoginCredential)).apply(options)) {
          pair = importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group, options.getPublicKey()));
          options.dontAuthorizePublicKey();
          if (hasLoginCredential.apply(options))
             pair = pair.toBuilder().keyMaterial(options.getOverridingCredentials().credential).build();
-         knownKeys.put(key, pair);
+         credentialsMap.asMap().put(key, pair);
       } else {
          if (hasPublicKeyMaterial.apply(options)) {
             logger.warn("to avoid creating temporary keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");

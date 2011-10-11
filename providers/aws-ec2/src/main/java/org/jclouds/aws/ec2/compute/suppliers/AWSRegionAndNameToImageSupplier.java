@@ -25,7 +25,6 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -66,7 +65,6 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Map<RegionAndName, Image> knownImages;
    private final CacheLoader<RegionAndName, Image> regionAndIdToImage;
    private final Set<String> clusterComputeIds;
    private final CallForImages.Factory factory;
@@ -77,11 +75,10 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
    private final Iterable<String> clusterRegions;
    private final String ccAmiQuery;
 
-
    @Inject
    protected AWSRegionAndNameToImageSupplier(@Region Set<String> regions,
             @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
-            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, Map<RegionAndName, Image> knownImages, CacheLoader<RegionAndName, Image> regionAndIdToImage,
+            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, CacheLoader<RegionAndName, Image> regionAndIdToImage,
             CallForImages.Factory factory, @ClusterCompute Set<String> clusterComputeIds,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.factory = factory;
@@ -89,8 +86,7 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
       this.amiQuery = amiQuery;
       this.clusterRegions = Splitter.on(',').split(clusterRegions);
       this.ccAmiQuery = ccAmiQuery;
-      this.knownImages = knownImages;
-      this.regionAndIdToImage=regionAndIdToImage;
+      this.regionAndIdToImage = regionAndIdToImage;
       this.clusterComputeIds = clusterComputeIds;
       this.executor = executor;
    }
@@ -121,8 +117,9 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
          Throwables.propagate(e);
          return null;
       }
-      knownImages.clear();
-      knownImages.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
+
+      cache.asMap().putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
          @Override
          public RegionAndName apply(Image from) {
@@ -130,12 +127,7 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
          }
 
       }));
-      logger.debug("<< images(%d)", knownImages.size());
-      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
-      // seed the cache
-      for (RegionAndName image : knownImages.keySet()){
-         cache.getUnchecked(image);
-      }
+      logger.debug("<< images(%d)", cache.asMap().size());
       return cache;
    }
 

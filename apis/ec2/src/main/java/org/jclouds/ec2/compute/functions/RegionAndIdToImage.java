@@ -20,7 +20,6 @@ package org.jclouds.ec2.compute.functions;
 
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -44,21 +43,17 @@ public class RegionAndIdToImage extends CacheLoader<RegionAndName, Image> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Map<RegionAndName, Image> knownImages;
    private final EC2ImageParser parser;
    private final EC2Client sync;
 
    @Inject
-   public RegionAndIdToImage(Map<RegionAndName, Image> knownImages, EC2ImageParser parser, EC2Client sync) {
-      this.knownImages = knownImages;
+   public RegionAndIdToImage(EC2ImageParser parser, EC2Client sync) {
       this.parser = parser;
       this.sync = sync;
    }
 
    @Override
    public Image load(RegionAndName key) throws ExecutionException{
-      if (knownImages.containsKey(key))
-         return knownImages.get(key);
       try {
          org.jclouds.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
                .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));

@@ -62,7 +62,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -138,13 +137,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    
    @Provides
    @Singleton
-   // keys that we know about.
-   protected Map<RegionAndName, KeyPair> knownKeys(){
-      return Maps.newConcurrentMap();
-   }
-   
-   @Provides
-   @Singleton
    @Named("SECURITY")
    protected Cache<RegionAndName, String> securityGroupMap(CacheLoader<RegionAndName, String> in) {
       return CacheBuilder.newBuilder().build(in);
@@ -156,13 +148,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    protected Predicate<RegionAndName> securityGroupEventualConsistencyDelay(SecurityGroupPresent in,
          @Named(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
       return new RetryablePredicate<RegionAndName>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
-   }
-
-   @Provides
-   @Singleton
-   // keys that we know about.
-   protected Map<RegionAndName, Image> knownImages(){
-      return Maps.newConcurrentMap();
    }
    
 }

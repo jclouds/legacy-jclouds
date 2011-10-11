@@ -20,8 +20,6 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,25 +46,16 @@ public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
    protected final Supplier<String> randomSuffix;
-   protected final Map<RegionAndName, KeyPair> knownKeys;
 
    @Inject
-   public CreateUniqueKeyPair(Map<RegionAndName, KeyPair> knownKeys, EC2Client ec2Client, Supplier<String> randomSuffix) {
-      this.knownKeys = knownKeys;
+   public CreateUniqueKeyPair(EC2Client ec2Client, Supplier<String> randomSuffix) {
       this.ec2Client = ec2Client;
       this.randomSuffix = randomSuffix;
    }
 
    @Override
    public KeyPair load(RegionAndName from) {
-      if (knownKeys.containsKey(from)){
-         return knownKeys.get(from);
-      } else {
-         KeyPair keyPair = createNewKeyPairInRegion(from.getRegion(), from.getName());
-         knownKeys.put(new RegionAndName(from.getRegion(), keyPair.getKeyName()), keyPair);
-         knownKeys.put(from, keyPair);
-         return keyPair;
-      }
+      return createNewKeyPairInRegion(from.getRegion(), from.getName());
    }
 
    @VisibleForTesting

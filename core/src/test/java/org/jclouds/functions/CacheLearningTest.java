@@ -64,13 +64,18 @@ public class CacheLearningTest {
       assertEquals(cache.asMap().keySet().size(), 0);
       assertEquals(cache.asMap().size(), 0);
 
-      try {
-         cache.asMap().put("foo", "bar");
-         assertEquals(cache.get("foo"), "bar");
-         assert false : "I suppose this works now! Go hunt for invalidate calls!";
-      } catch (UnsupportedOperationException e) {
-      }
+      // check insert behind
+      cache.asMap().put("foo", "bar");
+      assertEquals(cache.get("foo"), "bar");
 
+      assertEquals(cache.asMap().keySet().size(), 1);
+      assertEquals(cache.asMap().size(), 1);
+      
+      // check delete behind invalidates
+      cache.asMap().remove("foo");
+      assertEquals(cache.asMap().keySet().size(), 0);
+      assertEquals(cache.asMap().size(), 0);
+      
       try {
          cache.get("exception");
          assert false : "expected checked exception in loader to rethrow as ExecutionException";

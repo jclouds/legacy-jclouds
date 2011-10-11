@@ -24,9 +24,8 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -49,8 +48,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
@@ -66,23 +65,22 @@ public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndNam
    private final DescribeImagesParallel describer;
    private final String[] amiOwners;
    private final EC2ImageParser parser;
-   private final Map<RegionAndName, Image> knownImages;
    private final CacheLoader<RegionAndName, Image> regionAndIdToImage;
 
    @Inject
    protected RegionAndNameToImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
-         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, EC2ImageParser parser,
-         Map<RegionAndName, Image> knownImages, CacheLoader<RegionAndName, Image> regionAndIdToImage) {
+         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, EC2ImageParser parser, CacheLoader<RegionAndName, Image> regionAndIdToImage) {
       this.regions = regions;
       this.describer = describer;
       this.amiOwners = amiOwners;
       this.parser = parser;
-      this.knownImages = knownImages;
       this.regionAndIdToImage = regionAndIdToImage;
    }
 
    @Override
    public Cache<RegionAndName, ? extends Image> get() {
+      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
+
       if (amiOwners.length == 0) {
          logger.debug(">> no owners specified, skipping image parsing");
       } else {
@@ -93,8 +91,8 @@ public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndNam
 
          Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates
                   .notNull()));
-         knownImages.clear();
-         knownImages.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+
+         cache.asMap().putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
             @Override
             public RegionAndName apply(Image from) {
@@ -102,12 +100,7 @@ public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndNam
             }
 
          }));
-         logger.debug("<< images(%d)", knownImages.size());
-      }
-      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
-      // seed the cache
-      for (RegionAndName image : knownImages.keySet()) {
-         cache.getUnchecked(image);
+         logger.debug("<< images(%d)",  cache.asMap().size());
       }
       return cache;
    }
