@@ -741,7 +741,7 @@ public class FilesystemAsyncBlobStoreTest {
         String containerName = "container";
         String blobName = "blob";
         URI endPoint = new URI("http", "localhost",
-                String.format("/%s/%s", containerName, blobName),
+                String.format("/transient/%s/%s", containerName, blobName),
                 /*fragment=*/ null);
         BlobRequestSigner signer = context.getSigner();
         HttpRequest request;
