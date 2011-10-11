@@ -46,7 +46,7 @@ public interface Constants {
     * <p/>
     * Limits the amount of connections per context.
     */
-   public static final String PROPERTY_MAX_CONNECTIONS_PER_CONTEXT = "jclouds.max-connections-per_context";
+   public static final String PROPERTY_MAX_CONNECTIONS_PER_CONTEXT = "jclouds.max-connections-per-context";
 
    /**
     * Integer property. default (0)
