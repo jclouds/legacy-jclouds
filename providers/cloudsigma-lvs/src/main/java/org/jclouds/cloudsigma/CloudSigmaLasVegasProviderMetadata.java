@@ -93,7 +93,7 @@ public class CloudSigmaLasVegasProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://lvs.cloudsigma.com/en/platform-details/the-api");
+      return URI.create("http://cloudsigma.com/en/platform-details/the-api");
    }
 
    /**

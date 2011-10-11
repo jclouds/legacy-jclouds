@@ -70,7 +70,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see CloudSigmaClient
- * @see <a href="TODO: insert URL of provider documentation" />
+ * @see <a href="http://cloudsigma.com/en/platform-details/the-api" />
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
