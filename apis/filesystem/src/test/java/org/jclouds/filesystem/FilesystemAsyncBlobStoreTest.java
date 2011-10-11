@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -38,11 +40,13 @@ import java.util.Set;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -53,6 +57,8 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -89,7 +95,7 @@ public class FilesystemAsyncBlobStoreTest {
         // create context for filesystem container
         Properties prop = new Properties();
         prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
-        context = (BlobStoreContext) new BlobStoreContextFactory().createContext(PROVIDER, prop);
+        context = (BlobStoreContext) new BlobStoreContextFactory().createContext(PROVIDER, "identity", "credential", Collections.EMPTY_LIST, prop);
         // create a container in the default location
         blobStore = context.getBlobStore();
 
@@ -728,6 +734,44 @@ public class FilesystemAsyncBlobStoreTest {
         getOptionsFragment.range(4, 6);
         Blob blobFragment = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsFragment);
         Assert.assertEquals("efg", IOUtils.toString(blobFragment.getPayload().getInput()));
+    }
+
+    /** Test that BlobRequestSigner creates expected URIs.  */
+    public void testBlobRequestSigner() throws Exception {
+        String containerName = "container";
+        String blobName = "blob";
+        URI endPoint = new URI("http", "localhost",
+                String.format("/%s/%s", containerName, blobName),
+                /*fragment=*/ null);
+        BlobRequestSigner signer = context.getSigner();
+        HttpRequest request;
+        HttpRequest expected;
+
+        request = signer.signGetBlob(containerName, blobName);
+        expected = HttpRequest.builder()
+                .method("GET")
+                .endpoint(endPoint)
+                .headers(request.getHeaders())
+                .build();
+        assertEquals(expected, request);
+
+        request = signer.signRemoveBlob(containerName, blobName);
+        expected = HttpRequest.builder()
+                .method("DELETE")
+                .endpoint(endPoint)
+                .headers(request.getHeaders())
+                .build();
+        assertEquals(expected, request);
+
+        Blob blob = blobStore.blobBuilder(blobName).forSigning().build();
+        request = signer.signPutBlob(containerName, blob);
+        expected = HttpRequest.builder()
+                .method("PUT")
+                .endpoint(endPoint)
+                .headers(request.getHeaders())
+                .payload(new PhantomPayload())
+                .build();
+        assertEquals(expected, request);
     }
 
     // public void testInvalidBlobKey() {
