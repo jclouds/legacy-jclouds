@@ -18,31 +18,15 @@
  */
 package org.jclouds.cloudsigma;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 import org.jclouds.Constants;
-import org.jclouds.cloudsigma.domain.ClaimType;
-import org.jclouds.cloudsigma.domain.CreateDriveRequest;
-import org.jclouds.cloudsigma.domain.DriveData;
-import org.jclouds.cloudsigma.domain.DriveInfo;
-import org.jclouds.cloudsigma.domain.DriveStatus;
-import org.jclouds.cloudsigma.domain.DriveType;
-import org.jclouds.cloudsigma.domain.IDEDevice;
-import org.jclouds.cloudsigma.domain.Model;
-import org.jclouds.cloudsigma.domain.ProfileInfo;
-import org.jclouds.cloudsigma.domain.Server;
-import org.jclouds.cloudsigma.domain.ServerInfo;
-import org.jclouds.cloudsigma.domain.ServerStatus;
-import org.jclouds.cloudsigma.domain.StaticIPInfo;
-import org.jclouds.cloudsigma.domain.VLANInfo;
+import org.jclouds.cloudsigma.domain.*;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
@@ -60,13 +44,15 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Module;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests behavior of {@code CloudSigmaClient}
@@ -273,11 +259,9 @@ public class CloudSigmaClientLiveTest {
          vlan = client.getVLANInfo(vlan.getUuid());
          assertEquals(vlan.getName(), prefix);
 
-         vlan = client.renameVLAN(vlan.getUuid(), prefix + "2");
-         // test that rename didn't work :)
-         assertEquals(vlan.getName(), prefix);
-         vlan = client.getVLANInfo(vlan.getUuid());
-         assertEquals(vlan.getName(), prefix);
+         String prefix2 = prefix + "2";
+         vlan = client.renameVLAN(vlan.getUuid(), prefix2);
+         assertEquals(vlan.getName(),prefix2);
       } finally {
          client.destroyVLAN(id);
       }
