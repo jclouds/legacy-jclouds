@@ -33,7 +33,7 @@
     <description>vCloud implementation targeted to Dunkel</description>
 
     <properties>
-        <test.dunkel-vcd.endpoint>https://vdc.dunkel.de/api</test.dunkel-vcd.endpoint>
+        <test.dunkel-vcd.endpoint>https://vcd.dunkel.de/api</test.dunkel-vcd.endpoint>
         <test.dunkel-vcd.apiversion>1.0</test.dunkel-vcd.apiversion>
         <test.dunkel-vcd.identity>FIXME_IDENTITY</test.dunkel-vcd.identity>
         <test.dunkel-vcd.credential>FIXME_CREDENTIAL</test.dunkel-vcd.credential>
