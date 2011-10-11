@@ -360,11 +360,12 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(final Location location, final String name) {
-      if (!getContainerToBlobs().containsKey(name)) {
-         getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
-         getContainerToLocation().put(name, location != null ? location : defaultLocation.get());
+      if (getContainerToBlobs().containsKey(name)) {
+         return immediateFuture(Boolean.FALSE);
       }
-      return immediateFuture(getContainerToBlobs().containsKey(name));
+      getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
+      getContainerToLocation().put(name, location != null ? location : defaultLocation.get());
+      return immediateFuture(Boolean.TRUE);
    }
 
    /**
