@@ -18,6 +18,13 @@
  */
 package org.jclouds.softlayer.domain;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * 
  * @author Adrian Cole
@@ -34,6 +41,7 @@ public class Datacenter implements Comparable<Datacenter> {
       private String name;
       private String longName;
       private Address locationAddress;
+      private Set<Region> regions = Sets.newLinkedHashSet();
 
       public Builder id(int id) {
          this.id = id;
@@ -55,12 +63,24 @@ public class Datacenter implements Comparable<Datacenter> {
          return this;
       }
 
+      public Builder region(Region regions) {
+         this.regions.add(checkNotNull(regions, "regions"));
+         return this;
+      }
+
+      public Builder regions(Iterable<Region> regions) {
+         this.regions = ImmutableSet.<Region> copyOf(checkNotNull(regions, "regions"));
+         return this;
+      }
+
       public Datacenter build() {
-         return new Datacenter(id, name, longName, locationAddress);
+         return new Datacenter(id, name, longName, locationAddress, regions);
       }
 
       public static Builder fromDatacenter(Datacenter in) {
-         return Datacenter.builder().id(in.getId()).name(in.getName()).longName(in.getLongName()).locationAddress(in.getLocationAddress());
+         return Datacenter.builder().id(in.getId()).name(in.getName())
+               .longName(in.getLongName()).locationAddress(in.getLocationAddress())
+               .regions(in.getRegions());
       }
    }
 
@@ -68,17 +88,18 @@ public class Datacenter implements Comparable<Datacenter> {
    private String name;
    private String longName;
    private Address locationAddress;
-
+   private Set<Region> regions = Sets.newLinkedHashSet();
    // for deserializer
    Datacenter() {
 
    }
 
-   public Datacenter(int id, String name, String longName, Address locationAddress) {
+   public Datacenter(int id, String name, String longName, Address locationAddress, Iterable<Region> regions) {
       this.id = id;
       this.name = name;
       this.longName = longName;
       this.locationAddress = locationAddress;
+      this.regions = ImmutableSet.<Region> copyOf(checkNotNull(regions, "regions"));
    }
 
    @Override
@@ -114,6 +135,16 @@ public class Datacenter implements Comparable<Datacenter> {
       return locationAddress;
    }
 
+   /**
+    * A location can be a member of 1 or more regions.
+    * Sometimes the list of regions is empty, for example as a new Datacenter is being added.
+    * The list of regions usually contains one with keyName=FIRST_AVAILABLE which should be ignored.
+    * @return The regions to which a location belongs.
+    */
+   public Set<Region> getRegions() {
+      return regions;
+   }
+
    public Builder toBuilder() {
       return Builder.fromDatacenter(this);
    }
@@ -142,7 +173,7 @@ public class Datacenter implements Comparable<Datacenter> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + name + ", state=" + longName + "], locationAddress=" + locationAddress + "]";
+      return "[id=" + id + ", country=" + name + ", state=" + longName + "], locationAddress=" + locationAddress + ", regions="+regions+"]";
    }
    
    
