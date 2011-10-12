@@ -38,11 +38,13 @@ import org.jclouds.aws.ec2.compute.suppliers.AWSRegionAndNameToImageSupplier;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.config.EC2BindComputeSuppliersByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
@@ -71,7 +73,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       install(new EC2BindComputeSuppliersByClass());
       bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
       bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
-            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
+               CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
       bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
       bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
@@ -89,18 +91,30 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Provides
    @Singleton
    protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Cache<RegionAndName, ? extends Image>>(
-            authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
-               @Override
-               public Cache<RegionAndName, ? extends Image> get() {
-                  return supplier.get();
-               }
-            });
+               authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
+                  @Override
+                  public Cache<RegionAndName, ? extends Image> get() {
+                     return supplier.get();
+                  }
+               });
    }
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(AMZN_LINUX).os64Bit(true);
+   }
+
+   /**
+    * With amazon linux 2011.09, ssh starts after package updates, which slows the boot process and
+    * runs us out of ssh retries (context property {@code "jclouds.ssh.max-retries"}).
+    * 
+    * @see <a href="http://aws.amazon.com/amazon-linux-ami/latest-release-notes/" />
+    * @see AWSEC2PropertiesBuilder#defaultProperties
+    */
+   @Override
+   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+      return options.as(EC2TemplateOptions.class).userData("#cloud-config\nrepo_upgrade: none\n".getBytes());
    }
 }

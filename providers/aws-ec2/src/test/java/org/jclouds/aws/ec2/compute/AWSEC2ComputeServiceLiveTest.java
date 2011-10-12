@@ -78,7 +78,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Override
    @Test(dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
-      //note that this is sensitive to regions that quickly fill spot requests
+      // note that this is sensitive to regions that quickly fill spot requests
       String region = "eu-west-1";
       
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
@@ -137,8 +137,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assert first.getCredentials().identity != null : first;
 
          startedId = Iterables.getOnlyElement(nodes).getProviderId();
-
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
+         
+         AWSRunningInstance instance = AWSRunningInstance.class.cast(Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
+                  .describeInstancesInRegion(region, startedId))));
 
          assertEquals(instance.getKeyName(), group);
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
@@ -160,8 +161,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
                   + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + group + "#" + instance.getRegion()));
+         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
+                  .getRegion(), "jclouds#" + group + "#" + instance.getRegion()));
+         
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair

@@ -65,7 +65,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class AWSKeyPairClientLiveTest {
 
    private AWSKeyPairClient client;
@@ -120,7 +120,7 @@ public class AWSKeyPairClientLiveTest {
 
       TemplateOptions options = computeContext.getComputeService().templateOptions();
 
-      options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
+      options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class);
 
       ComputeServiceContext noSshContext = null;
       try {
