@@ -53,7 +53,7 @@ public interface DatacenterAsyncClient {
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/Datacenters.json")
-   @QueryParams(keys = "objectMask", values = "locationAddress")
+   @QueryParams(keys = "objectMask", values = "locationAddress;regions")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Datacenter>> listDatacenters();
@@ -63,7 +63,7 @@ public interface DatacenterAsyncClient {
     */
    @GET
    @Path("/SoftLayer_Location_Datacenter/{id}.json")
-   @QueryParams(keys = "objectMask", values = "locationAddress")
+   @QueryParams(keys = "objectMask", values = "locationAddress;regions")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Datacenter> getDatacenter(@PathParam("id") long id);

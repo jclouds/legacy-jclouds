@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.Region;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -61,6 +62,7 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
    @Test
    public void testListDatacentersContent() {
       Builder<Datacenter> builder = ImmutableSet.<Datacenter> builder();
+      builder.add(Datacenter.builder().id(265592).name("ams01").longName("Amsterdam 1").build());
       builder.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
       builder.add(Datacenter.builder().id(18171).name("sea01").longName("Seattle").build());
       builder.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
@@ -91,6 +93,12 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert dc.getId() > 0 : dc;
       assert dc.getName() != null : dc;
       assert dc.getLongName() != null : dc;
+      for( Region region: dc.getRegions()) checkRegion(region);
+   }
+
+   private void checkRegion(Region region) {
+      assert !region.getDescription().isEmpty() : region;
+      assert !region.getKeyname().isEmpty() : region;
    }
 
    private void checkAddress(Address address) {

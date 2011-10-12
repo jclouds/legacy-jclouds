@@ -39,7 +39,7 @@ import static org.testng.Assert.*;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", sequential = true)
 public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    /**
@@ -183,6 +183,12 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert datacenter.getId() > 0 : datacenter;
       assert datacenter.getName() != null : datacenter;
       assert datacenter.getLongName() != null : datacenter;
+      for( Region region: datacenter.getRegions()) checkRegion(region);
+   }
+
+   private void checkRegion(Region region) {
+      assert !region.getDescription().isEmpty() : region;
+      assert !region.getKeyname().isEmpty() : region;
    }
 
    private void checkAddress(Address address) {
