@@ -31,6 +31,7 @@ import org.jclouds.cloudwatch.CloudWatchAsyncClient;
 import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
@@ -77,6 +78,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Override
    @Test(dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
+      //note that this is sensitive to regions that quickly fill spot requests
+      String region = "eu-west-1";
+      
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
 
@@ -100,19 +104,19 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(null, group, group);
+         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(region, group, group);
          
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, groupId,
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(region, groupId,
                IpPermissions.permit(IpProtocol.TCP).port(22));
 
          options.as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
+         KeyPair result = keyPairClient.createKeyPairInRegion(region, group);
          options.as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
          
          // pass in the private key, so that we can run a script with it
@@ -122,7 +126,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // an arbitrary command to run
          options.runScript(Statements.exec("find /usr"));
          
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+         Template template = client.templateBuilder().locationId(region).options(options).build();
+         
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata first = Iterables.get(nodes, 0);
 
          checkUserMetadataInNodeEquals(first, userMetadata);
@@ -166,10 +172,10 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(region, group).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(region, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
       }
 
    }

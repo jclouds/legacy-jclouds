@@ -110,7 +110,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(null, securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
@@ -159,7 +159,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
             assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
             assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(null, securityGroupClient, keyPairClient, group);
       }
    }
 
@@ -242,20 +242,20 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient,
-            String group) throws InterruptedException {
+   protected void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
+            KeyPairClient keyPairClient, String group) throws InterruptedException {
       try {
-         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
+         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(region))
             if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {
-               securityGroupClient.deleteSecurityGroupInRegion(null, secgroup.getName());
+               securityGroupClient.deleteSecurityGroupInRegion(region, secgroup.getName());
             }
       } catch (Exception e) {
 
       }
       try {
-         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
+         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(region))
             if (pair.getKeyName().startsWith("jclouds#" + group) || pair.getKeyName().equals(group)) {
-               keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
+               keyPairClient.deleteKeyPairInRegion(region, pair.getKeyName());
             }
       } catch (Exception e) {
 
