@@ -94,6 +94,12 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
   [kw]
   (symbol (camelize-mixed kw)))
 
+(defmacro memfn-apply
+  "Expands into a function that takes one argument,"
+  [fn-name & args]
+  `(fn [target# [~@args]]
+     ((memfn ~fn-name ~@args) target# ~@args)))
+
 (defmacro kw-memfn
   "Expands into code that creates a function that expects to be passed an
    object and any args, and calls the instance method corresponding to
