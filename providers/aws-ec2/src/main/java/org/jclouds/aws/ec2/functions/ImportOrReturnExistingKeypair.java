@@ -69,12 +69,12 @@ public class ImportOrReturnExistingKeypair implements Function<RegionNameAndPubl
          try {
             keyPair = ec2Client.getKeyPairServices().importKeyPairInRegion(region, "jclouds#" + group,
                   publicKeyMaterial);
-            logger.debug("<< imported keyPair(%s) fingerprint(%s)", keyPair.getKeyName(), keyPair.getKeyFingerprint());
+            logger.debug("<< imported keyPair(%s)", keyPair);
          } catch (IllegalStateException e) {
             keyPair = Iterables.getFirst(
                   ec2Client.getKeyPairServices().describeKeyPairsInRegion(region, "jclouds#" + group), null);
             if (keyPair != null)
-               logger.debug("<< retrieved existing keyPair(%s) fingerprint(%s)", keyPair.getKeyName(), keyPair.getKeyFingerprint());
+               logger.debug("<< retrieved existing keyPair(%s)", keyPair);
          }
       return keyPair;
    }
