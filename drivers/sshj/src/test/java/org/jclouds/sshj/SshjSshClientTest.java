@@ -18,8 +18,10 @@
  */
 package org.jclouds.sshj;
 
+import static com.google.inject.name.Names.bindProperties;
+
 import java.io.IOException;
-import java.net.UnknownHostException;
+import java.util.Properties;
 
 import net.schmizz.sshj.common.SSHException;
 import net.schmizz.sshj.connection.ConnectionException;
@@ -27,6 +29,7 @@ import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
@@ -34,6 +37,7 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -48,15 +52,26 @@ public class SshjSshClientTest {
    protected SshjSshClient ssh;
 
    @BeforeTest
-   public void setupSsh() throws UnknownHostException {
+   public void setupSsh() {
       ssh = createClient();
    }
 
-   protected SshjSshClient createClient() throws UnknownHostException {
-      Injector i = Guice.createInjector(module());
+   protected SshjSshClient createClient() {
+      return createClient(new Properties());
+   }
+
+   protected SshjSshClient createClient(final Properties props) {
+      Injector i = Guice.createInjector(module(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bindProperties(binder(), props);
+         }
+
+      }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
       SshjSshClient ssh = SshjSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
-            "username", "password")));
+               "username", "password")));
       return ssh;
    }
 
@@ -75,10 +90,17 @@ public class SshjSshClientTest {
       assert !ssh.shouldRetry(new IOException("channel %s is not open", new NullPointerException()));
    }
 
-   public void testOnlyRetryAuthWhenSet() throws UnknownHostException {
+   public void testOnlyRetryAuthWhenSet() {
       SshjSshClient ssh1 = createClient();
       assert !ssh1.shouldRetry(new AuthorizationException("problem", null));
       ssh1.retryAuth = true;
+      assert ssh1.shouldRetry(new AuthorizationException("problem", null));
+   }
+
+   public void testOnlyRetryAuthWhenSetViaProperties() {
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retry-auth", "true");
+      SshjSshClient ssh1 = createClient(props);
       assert ssh1.shouldRetry(new AuthorizationException("problem", null));
    }
 
@@ -89,10 +111,11 @@ public class SshjSshClientTest {
 
    public void testCausalChainHasMessageContaining() {
       assert ssh.causalChainHasMessageContaining(
-            new SSHException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(
-            " End of IO Stream Read");
+               new SSHException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(
+               " End of IO Stream Read");
       assert ssh.causalChainHasMessageContaining(
-            new SSHException("Session.connect: java.net.SocketException: Connection reset")).apply("java.net.Socket");
+               new SSHException("Session.connect: java.net.SocketException: Connection reset"))
+               .apply("java.net.Socket");
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
 }
