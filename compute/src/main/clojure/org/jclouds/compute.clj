@@ -399,8 +399,8 @@ See http://code.google.com/p/jclouds for details."
      ;; aws ec2 options
      :map-ephemeral-device-to-device-name])
    {:map-ebs-snapshot-to-device-name
-    (kw-memfn-apply :map-ebs-snapshot-to-device-name
-                    device-name snapshot-id size-in-gib delete-on-termination)
+    (memfn-apply mapEBSSnapshotToDeviceName
+                 device-name snapshot-id size-in-gib delete-on-termination)
     :map-new-volume-to-device-name
     (kw-memfn-apply :map-new-volume-to-device-name
                     device-name size-in-gib delete-on-termination)}))
