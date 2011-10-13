@@ -98,15 +98,15 @@ public class CryptoStreams {
    }
 
    /**
-    * Computes and returns the MAC value for a supplied input stream. The mac object is reset when
-    * this method returns successfully.
+    * Computes and returns the MAC value for a supplied input stream. The mac
+    * object is reset when this method returns successfully.
     * 
     * @param supplier
     *           the input stream factory
     * @param mac
     *           the mac object
-    * @return the result of {@link Mac#doFinal()} after updating the mac object with all of the
-    *         bytes in the stream and encoding in Base64
+    * @return the result of {@link Mac#doFinal()} after updating the mac object
+    *         with all of the bytes in the stream and encoding in Base64
     * @throws IOException
     *            if an I/O error occurs
     */
@@ -115,20 +115,20 @@ public class CryptoStreams {
    }
 
    /**
-    * Computes and returns the Digest value for a supplied input stream. The digest object is reset
-    * when this method returns successfully.
+    * Computes and returns the Digest value for a supplied input stream. The
+    * digest object is reset when this method returns successfully.
     * 
     * @param supplier
     *           the input stream factory
     * @param md
     *           the digest object
-    * @return the result of {@link MessageDigest#digest()} after updating the digest object with all
-    *         of the bytes in the stream
+    * @return the result of {@link MessageDigest#digest()} after updating the
+    *         digest object with all of the bytes in the stream
     * @throws IOException
     *            if an I/O error occurs
     */
    public static byte[] digest(InputSupplier<? extends InputStream> supplier, final MessageDigest md)
-            throws IOException {
+         throws IOException {
       return com.google.common.io.ByteStreams.readBytes(supplier, new ByteProcessor<byte[]>() {
          public boolean processBytes(byte[] buf, int off, int len) {
             md.update(buf, off, len);
@@ -142,14 +142,15 @@ public class CryptoStreams {
    }
 
    /**
-    * Computes and returns the MD5 value for a supplied input stream. A digest object is created and
-    * disposed of at runtime, consider using {@link #digest} to be more efficient.
+    * Computes and returns the MD5 value for a supplied input stream. A digest
+    * object is created and disposed of at runtime, consider using
+    * {@link #digest} to be more efficient.
     * 
     * @param supplier
     *           the input stream factory
     * 
-    * @return the result of {@link MessageDigest#digest()} after updating the md5 object with all of
-    *         the bytes in the stream
+    * @return the result of {@link MessageDigest#digest()} after updating the
+    *         md5 object with all of the bytes in the stream
     * @throws IOException
     *            if an I/O error occurs
     */
@@ -162,35 +163,40 @@ public class CryptoStreams {
       }
    }
 
-   public static byte[] md5(byte[] in) throws IOException {
-      return md5(ByteStreams.newInputStreamSupplier(in));
+   public static byte[] md5(byte[] in) {
+      try {
+         return md5(ByteStreams.newInputStreamSupplier(in));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
 
    /**
-    * Computes and returns the MAC value for a supplied input stream. The mac object is reset when
-    * this method returns successfully.
+    * Computes and returns the MAC value for a supplied input stream. The mac
+    * object is reset when this method returns successfully.
     * 
     * @param supplier
     *           the input stream factory
     * @param mac
     *           the mac object
-    * @return the result of {@link Mac#doFinal()} after updating the mac object with all of the
-    *         bytes in the stream
+    * @return the result of {@link Mac#doFinal()} after updating the mac object
+    *         with all of the bytes in the stream
     * @throws IOException
     *            if an I/O error occurs
     */
    public static byte[] mac(InputSupplier<? extends InputStream> supplier, final Mac mac) throws IOException {
       return com.google.common.io.ByteStreams.readBytes(checkNotNull(supplier, "supplier"),
-               new ByteProcessor<byte[]>() {
-                  public boolean processBytes(byte[] buf, int off, int len) {
-                     mac.update(buf, off, len);
-                     return true;
-                  }
+            new ByteProcessor<byte[]>() {
+               public boolean processBytes(byte[] buf, int off, int len) {
+                  mac.update(buf, off, len);
+                  return true;
+               }
 
-                  public byte[] getResult() {
-                     return mac.doFinal();
-                  }
-               });
+               public byte[] getResult() {
+                  return mac.doFinal();
+               }
+            });
    }
 
    /**
@@ -206,20 +212,21 @@ public class CryptoStreams {
    public static String base64Encode(InputSupplier<? extends InputStream> supplier) throws IOException {
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       return com.google.common.io.ByteStreams.readBytes(InputSuppliers.base64Encoder(supplier),
-               new ByteProcessor<String>() {
-                  public boolean processBytes(byte[] buf, int off, int len) {
-                     out.write(buf, off, len);
-                     return true;
-                  }
+            new ByteProcessor<String>() {
+               public boolean processBytes(byte[] buf, int off, int len) {
+                  out.write(buf, off, len);
+                  return true;
+               }
 
-                  public String getResult() {
-                     return new String(out.toByteArray(), Charsets.UTF_8);
-                  }
-               });
+               public String getResult() {
+                  return new String(out.toByteArray(), Charsets.UTF_8);
+               }
+            });
    }
 
    /**
-    * Computes and returns the unencoded value for an input stream which is encoded in Base64.
+    * Computes and returns the unencoded value for an input stream which is
+    * encoded in Base64.
     * 
     * @param supplier
     *           the input stream factory
@@ -231,21 +238,21 @@ public class CryptoStreams {
    public static byte[] base64Decode(InputSupplier<? extends InputStream> supplier) throws IOException {
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       return com.google.common.io.ByteStreams.readBytes(InputSuppliers.base64Decoder(supplier),
-               new ByteProcessor<byte[]>() {
-                  public boolean processBytes(byte[] buf, int off, int len) {
-                     out.write(buf, off, len);
-                     return true;
-                  }
+            new ByteProcessor<byte[]>() {
+               public boolean processBytes(byte[] buf, int off, int len) {
+                  out.write(buf, off, len);
+                  return true;
+               }
 
-                  public byte[] getResult() {
-                     return out.toByteArray();
-                  }
-               });
+               public byte[] getResult() {
+                  return out.toByteArray();
+               }
+            });
    }
 
    final static byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5',
-            (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
-            (byte) 'f' };
+         (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
+         (byte) 'f' };
 
    /**
     * Computes and returns the hex value for a supplied input stream.
@@ -281,7 +288,8 @@ public class CryptoStreams {
    }
 
    /**
-    * Computes and returns the unencoded value for an input stream which is encoded in hex.
+    * Computes and returns the unencoded value for an input stream which is
+    * encoded in hex.
     * 
     * @param supplier
     *           the input stream factory
