@@ -25,9 +25,11 @@ import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.any;
+import static org.jclouds.crypto.SshKeys.fingerprint;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -48,6 +50,7 @@ import net.schmizz.sshj.xfer.InMemorySourceFile;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.crypto.Pems;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -92,7 +95,8 @@ public class SshjSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
-
+   private final String toString;
+   
    @Inject(optional = true)
    @Named("jclouds.ssh.max-retries")
    @VisibleForTesting
@@ -135,6 +139,13 @@ public class SshjSshClient implements SshClient {
       this.timeoutMillis = timeout;
       this.password = password;
       this.privateKey = privateKey;
+      if (privateKey == null) {
+         this.toString = String.format("%s@%s:%d", username, host, port);
+      } else {
+         RSAPrivateCrtKeySpec key = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(new String(privateKey));
+         String fingerPrint = fingerprint(key.getPublicExponent(), key.getModulus());
+         this.toString = String.format("%s:[%s]@%s:%d", username, fingerPrint, host, port);
+      }
    }
 
    @Override
@@ -391,7 +402,7 @@ public class SshjSshClient implements SshClient {
 
    @Override
    public String toString() {
-      return String.format("%s@%s:%d", username, host, port);
+      return toString ;
    }
 
    @PreDestroy
