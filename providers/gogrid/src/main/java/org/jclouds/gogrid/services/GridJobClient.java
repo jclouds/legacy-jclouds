@@ -45,6 +45,7 @@ public interface GridJobClient {
     * 
     * @return jobs found by request
     */
+   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    Set<Job> getJobList(GetJobListOptions... options);
 
    /**
