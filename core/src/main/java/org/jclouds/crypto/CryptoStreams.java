@@ -140,7 +140,38 @@ public class CryptoStreams {
          }
       });
    }
+   
+   /**
+    * Computes and returns the SHA1 value for a supplied input stream. A digest
+    * object is created and disposed of at runtime, consider using
+    * {@link #digest} to be more efficient.
+    * 
+    * @param supplier
+    *           the input stream factory
+    * 
+    * @return the result of {@link MessageDigest#digest()} after updating the
+    *         sha1 object with all of the bytes in the stream
+    * @throws IOException
+    *            if an I/O error occurs
+    */
+   public static byte[] sha1(InputSupplier<? extends InputStream> supplier) throws IOException {
+      try {
+         return digest(supplier, MessageDigest.getInstance("SHA1"));
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+         return null;
+      }
+   }
 
+   public static byte[] sha1(byte[] in) {
+      try {
+         return sha1(ByteStreams.newInputStreamSupplier(in));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return null;
+      }
+   }
+   
    /**
     * Computes and returns the MD5 value for a supplied input stream. A digest
     * object is created and disposed of at runtime, consider using

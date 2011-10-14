@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
+import static org.jclouds.crypto.SshKeys.*;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -58,8 +59,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
 
    @Inject
    public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Cache<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap, 
-         Provider<RunInstancesOptions> optionsProvider) {
+            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+            Provider<RunInstancesOptions> optionsProvider) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
@@ -83,10 +84,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
             instanceOptions.withUserData(userData);
 
          Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions())
-               .getBlockDeviceMappings();
+                  .getBlockDeviceMappings();
          if (blockDeviceMappings.size() > 0) {
             checkState("ebs".equals(template.getImage().getUserMetadata().get("rootDeviceType")),
-                  "BlockDeviceMapping only available on ebs boot");
+                     "BlockDeviceMapping only available on ebs boot");
             instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
          }
       }
@@ -102,30 +103,32 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       String keyPairName = null;
       boolean shouldAutomaticallyCreateKeyPair = true;
-      
+
       if (options instanceof EC2TemplateOptions) {
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
             shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
-                  .shouldAutomaticallyCreateKeyPair();
+                     .shouldAutomaticallyCreateKeyPair();
       }
-      
+
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          keyPairName = createOrImportKeyPair(region, group, options);
       } else if (keyPairName != null) {
          if (options.getOverridingCredentials() != null && options.getOverridingCredentials().credential != null) {
-            KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).keyFingerprint("//TODO")
-                  .keyMaterial(options.getOverridingCredentials().credential).build();
-            
+            String pem = options.getOverridingCredentials().credential;
+            KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).fingerprint(
+                     fingerprintPrivateKey(pem)).sha1OfPrivateKey(sha1PrivateKey(pem)).keyMaterial(pem).build();
             RegionAndName key = new RegionAndName(region, keyPairName);
             credentialsMap.asMap().put(key, keyPair);
          }
       }
-      
+
       if (options.getRunScript() != null) {
          RegionAndName regionAndName = new RegionAndName(region, keyPairName);
-         String message = String.format("no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
-                  regionAndName);
+         String message = String
+                  .format(
+                           "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+                           regionAndName);
          // test to see if this is in cache.
          try {
             credentialsMap.getUnchecked(regionAndName);
@@ -152,14 +155,14 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
-      
+
          if (userSpecifiedTheirOwnGroups(options)) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
-                  false);
+                     false);
             groups.addAll(EC2TemplateOptions.class.cast(options).getGroups());
          } else {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup,
-                  options.getInboundPorts(), true);
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, options
+                     .getInboundPorts(), true);
          }
          // this will create if not yet exists.
          securityGroupMap.getUnchecked(regionNameAndIngessRulesForMarkerGroup);

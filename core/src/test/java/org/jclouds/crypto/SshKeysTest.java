@@ -20,7 +20,9 @@ package org.jclouds.crypto;
 
 import static org.jclouds.crypto.SshKeys.fingerprint;
 import static org.jclouds.crypto.SshKeys.generate;
+import static org.jclouds.crypto.SshKeys.privateKeyHasFingerprint;
 import static org.jclouds.crypto.SshKeys.privateKeyMatchesPublicKey;
+import static org.jclouds.crypto.SshKeys.privateKeyHasSha1;
 import static org.jclouds.crypto.SshKeys.publicKeySpecFromOpenSSH;
 import static org.testng.Assert.assertEquals;
 
@@ -45,6 +47,7 @@ import org.testng.annotations.Test;
 public class SshKeysTest {
 
    String expectedFingerprint = "2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9";
+   String expectedSha1 = "c8:01:34:c0:3c:8c:91:ac:e1:da:cf:72:15:d7:f2:e5:99:5b:28:d4";
 
    @Test
    public void testCanReadRsaAndCompareFingerprintOnPublicRSAKey() throws IOException {
@@ -60,6 +63,32 @@ public class SshKeysTest {
       RSAPrivateCrtKeySpec key = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
       String fingerPrint = fingerprint(key.getPublicExponent(), key.getModulus());
       assertEquals(fingerPrint, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesFingerprintTyped() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec privateKey = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      assert privateKeyHasFingerprint(privateKey, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesFingerprintString() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      assert privateKeyHasFingerprint(privKey, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesSha1Typed() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec privateKey = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      assert privateKeyHasSha1(privateKey, expectedSha1);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesSha1String() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      assert privateKeyHasSha1(privKey, expectedSha1);
    }
 
    @Test
@@ -90,7 +119,7 @@ public class SshKeysTest {
    @Test
    public void testEncodeAsOpenSSH() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
       String encoded = SshKeys.encodeAsOpenSSH((RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(
-            SshKeys.publicKeySpecFromOpenSSH(Payloads.newPayload(getClass().getResourceAsStream("/test.pub")))));
+               SshKeys.publicKeySpecFromOpenSSH(Payloads.newPayload(getClass().getResourceAsStream("/test.pub")))));
       assertEquals(encoded, Strings2.toStringAndClose(getClass().getResourceAsStream("/test.pub")).trim());
    }
 

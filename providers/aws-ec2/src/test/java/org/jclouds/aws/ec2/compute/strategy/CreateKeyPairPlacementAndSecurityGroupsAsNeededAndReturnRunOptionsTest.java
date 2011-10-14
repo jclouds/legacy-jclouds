@@ -23,6 +23,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.keyPair;
+import static org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest.CREDENTIALS;
+import static org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest.KEYPAIR;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
@@ -471,10 +473,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       expect(backing.containsKey(new RegionAndName(region, group))).andReturn(false);
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getPublicKey()).andReturn(null).times(2);
-      expect(options.getOverridingCredentials()).andReturn(new Credentials(null, "MyRsa")).atLeastOnce();
-      expect(
-               backing.put(new RegionAndName(region, userSuppliedKeyPair), KeyPair.builder().region(region).keyName(
-                        userSuppliedKeyPair).keyFingerprint("//TODO").keyMaterial("MyRsa").build())).andReturn(null);
+      expect(options.getOverridingCredentials()).andReturn(CREDENTIALS).atLeastOnce();
+      expect(backing.put(new RegionAndName(region, userSuppliedKeyPair), KEYPAIR)).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
       expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
 
@@ -504,17 +504,19 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // create mocks
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
       AWSEC2TemplateOptions options = keyPair(group).authorizePublicKey("ssh-rsa").overrideCredentialsWith(
-               new Credentials("foo", "private"));
-      KeyPair keyPair = new KeyPair(region, group, "//TODO", null);
+               new Credentials("foo", CREDENTIALS.credential));
+      KeyPair keyPair = new KeyPair(region, group, "//TODO", null, null);
       ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
 
       // setup expectations
       expect(strategy.credentialsMap.asMap()).andReturn(backing).atLeastOnce();
       expect(backing.containsKey(new RegionAndName(region, group))).andReturn(false);
-      expect(strategy.importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group, "private")))
-               .andReturn(keyPair);
-      expect(backing.put(new RegionAndName(region, group), keyPair.toBuilder().keyMaterial("private").build()))
-               .andReturn(null);
+      expect(
+               strategy.importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group,
+                        CREDENTIALS.credential))).andReturn(keyPair);
+      expect(
+               backing.put(new RegionAndName(region, group), keyPair.toBuilder().keyMaterial(CREDENTIALS.credential)
+                        .build())).andReturn(null);
 
       // replay mocks
       replay(backing);
@@ -539,7 +541,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // create mocks
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
 
-      KeyPair keyPair = new KeyPair(region, "jclouds#" + group, "fingerprint", null);
+      KeyPair keyPair = new KeyPair(region, "jclouds#" + group, "fingerprint", null, null);
 
       ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
 

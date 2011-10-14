@@ -31,12 +31,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
@@ -52,8 +54,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -68,36 +70,38 @@ import com.google.common.io.InputSupplier;
 public class SshKeys {
 
    /**
-    * Executes {@link Pems#publicKeySpecFromOpenSSH(InputSupplier)} on the
-    * string which was OpenSSH Base64 Encoded {@code id_rsa.pub}
+    * Executes {@link Pems#publicKeySpecFromOpenSSH(InputSupplier)} on the string which was OpenSSH
+    * Base64 Encoded {@code id_rsa.pub}
     * 
     * @param idRsaPub
     *           formatted {@code ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB...}
     * @see Pems#publicKeySpecFromOpenSSH(InputSupplier)
     */
-   public static RSAPublicKeySpec publicKeySpecFromOpenSSH(String idRsaPub) throws IOException {
-      return publicKeySpecFromOpenSSH(InputSuppliers.of(idRsaPub));
+   public static RSAPublicKeySpec publicKeySpecFromOpenSSH(String idRsaPub) {
+      try {
+         return publicKeySpecFromOpenSSH(InputSuppliers.of(idRsaPub));
+      } catch (IOException e) {
+         propagate(e);
+         return null;
+      }
    }
 
    /**
-    * Returns {@link RSAPublicKeySpec} which was OpenSSH Base64 Encoded
-    * {@code id_rsa.pub}
+    * Returns {@link RSAPublicKeySpec} which was OpenSSH Base64 Encoded {@code id_rsa.pub}
     * 
     * @param supplier
-    *           the input stream factory, formatted
-    *           {@code ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB...}
+    *           the input stream factory, formatted {@code ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB...}
     * 
-    * @return the {@link RSAPublicKeySpec} which was OpenSSH Base64 Encoded
-    *         {@code id_rsa.pub}
+    * @return the {@link RSAPublicKeySpec} which was OpenSSH Base64 Encoded {@code id_rsa.pub}
     * @throws IOException
     *            if an I/O error occurs
     */
    public static RSAPublicKeySpec publicKeySpecFromOpenSSH(InputSupplier<? extends InputStream> supplier)
-         throws IOException {
+            throws IOException {
       InputStream stream = supplier.getInput();
       Iterable<String> parts = Splitter.on(' ').split(Strings2.toStringAndClose(stream));
       checkArgument(Iterables.size(parts) >= 2 && "ssh-rsa".equals(Iterables.get(parts, 0)),
-            "bad format, should be: ssh-rsa AAAAB3...");
+               "bad format, should be: ssh-rsa AAAAB3...");
       stream = new ByteArrayInputStream(Base64.decode(Iterables.get(parts, 1)));
       String marker = new String(readLengthFirst(stream));
       checkArgument("ssh-rsa".equals(marker), "looking for marker ssh-rsa but got %s", marker);
@@ -132,8 +136,7 @@ public class SshKeys {
    }
 
    /**
-    * return a "public" -> rsa public key, "private" -> its corresponding
-    * private key
+    * return a "public" -> rsa public key, "private" -> its corresponding private key
     */
    public static Map<String, String> generate() {
       try {
@@ -177,39 +180,142 @@ public class SshKeys {
     *           RSA private key in PEM format
     * @param publicKeyOpenSSH
     *           RSA public key in OpenSSH format
-    * @return true if the keypair are matches
+    * @return true if the keypairs match
     */
    public static boolean privateKeyMatchesPublicKey(String privateKeyPEM, String publicKeyOpenSSH) {
-      try {
-         KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
-         checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
+      KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
+      checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
                "incorrect format expected RSAPrivateCrtKeySpec was %s", privateKeySpec);
-         return privateKeyMatchesPublicKey(RSAPrivateCrtKeySpec.class.cast(privateKeySpec),
+      return privateKeyMatchesPublicKey(RSAPrivateCrtKeySpec.class.cast(privateKeySpec),
                publicKeySpecFromOpenSSH(publicKeyOpenSSH));
-      } catch (IOException e) {
-         propagate(e);
-         return false;
-      }
    }
 
    /**
-    * @return true if the keypair are matches
+    * @return true if the keypairs match
     */
    public static boolean privateKeyMatchesPublicKey(RSAPrivateCrtKeySpec privateKey, RSAPublicKeySpec publicKey) {
       return privateKey.getPublicExponent().equals(publicKey.getPublicExponent())
-            && privateKey.getModulus().equals(publicKey.getModulus());
+               && privateKey.getModulus().equals(publicKey.getModulus());
    }
 
    /**
-    * Create a fingerprint per the following <a
-    * href="http://tools.ietf.org/html/draft-friedl-secsh-fingerprint-00"
-    * >spec</a>
+    * @return true if the keypair has the same fingerprint as supplied
+    */
+   public static boolean privateKeyHasFingerprint(RSAPrivateCrtKeySpec privateKey, String fingerprint) {
+      return fingerprint(privateKey.getPublicExponent(), privateKey.getModulus()).equals(fingerprint);
+   }
+
+   /**
+    * @param privateKeyPEM
+    *           RSA private key in PEM format
+    * @param fingerprint
+    *           ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    * @return true if the keypair has the same fingerprint as supplied
+    */
+   public static boolean privateKeyHasFingerprint(String privateKeyPEM, String fingerprint) {
+      KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
+      checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
+               "incorrect format expected RSAPrivateCrtKeySpec was %s", privateKeySpec);
+      return privateKeyHasFingerprint(RSAPrivateCrtKeySpec.class.cast(privateKeySpec), fingerprint);
+   }
+
+   /**
+    * @param privateKeyPEM
+    *           RSA private key in PEM format
+    * @return fingerprint ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    */
+   public static String fingerprintPrivateKey(String privateKeyPEM) {
+      KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
+      checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
+               "incorrect format expected RSAPrivateCrtKeySpec was %s", privateKeySpec);
+      RSAPrivateCrtKeySpec certKeySpec = RSAPrivateCrtKeySpec.class.cast(privateKeySpec);
+      return fingerprint(certKeySpec.getPublicExponent(), certKeySpec.getModulus());
+   }
+
+   /**
+    * @return true if the keypair has the same SHA1 fingerprint as supplied
+    */
+   public static boolean privateKeyHasSha1(RSAPrivateCrtKeySpec privateKey, String fingerprint) {
+      return sha1(privateKey).equals(fingerprint);
+   }
+
+   /**
+    * @param privateKeyPEM
+    *           RSA private key in PEM format
+    * @param sha1HexColonDelimited
+    *           ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    * @return true if the keypair has the same fingerprint as supplied
+    */
+   public static boolean privateKeyHasSha1(String privateKeyPEM, String sha1HexColonDelimited) {
+      KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
+      checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
+               "incorrect format expected RSAPrivateCrtKeySpec was %s", privateKeySpec);
+      return privateKeyHasSha1(RSAPrivateCrtKeySpec.class.cast(privateKeySpec), sha1HexColonDelimited);
+   }
+
+   /**
+    * @param privateKeyPEM
+    *           RSA private key in PEM format
+    * @return sha1HexColonDelimited ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    */
+   public static String sha1PrivateKey(String privateKeyPEM) {
+      KeySpec privateKeySpec = privateKeySpec(privateKeyPEM);
+      checkArgument(privateKeySpec instanceof RSAPrivateCrtKeySpec,
+               "incorrect format expected RSAPrivateCrtKeySpec was %s", privateKeySpec);
+      RSAPrivateCrtKeySpec certKeySpec = RSAPrivateCrtKeySpec.class.cast(privateKeySpec);
+      return sha1(certKeySpec);
+   }
+
+   /**
+    * Create a SHA-1 digest of the DER encoded private key.
     * 
     * @param publicExponent
     * @param modulus
     * 
-    * @return hex fingerprint ex.
-    *         {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    * @return hex sha1HexColonDelimited ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    */
+   public static String sha1(RSAPrivateCrtKeySpec privateKey) {
+      try {
+         String sha1 = Joiner.on(":").join(
+                  Splitter.fixedLength(2).split(
+                           hex(CryptoStreams.sha1(KeyFactory.getInstance("RSA").generatePrivate(privateKey)
+                                    .getEncoded()))));
+         return sha1;
+      } catch (InvalidKeySpecException e) {
+         propagate(e);
+         return null;
+      } catch (NoSuchAlgorithmException e) {
+         propagate(e);
+         return null;
+      }
+   }
+
+   /**
+    * @return true if the keypair has the same fingerprint as supplied
+    */
+   public static boolean publicKeyHasFingerprint(RSAPublicKeySpec publicKey, String fingerprint) {
+      return fingerprint(publicKey.getPublicExponent(), publicKey.getModulus()).equals(fingerprint);
+   }
+
+   /**
+    * @param publicKeyOpenSSH
+    *           RSA public key in OpenSSH format
+    * @param fingerprint
+    *           ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    * @return true if the keypair has the same fingerprint as supplied
+    */
+   public static boolean publicKeyHasFingerprint(String publicKeyOpenSSH, String fingerprint) {
+      return publicKeyHasFingerprint(publicKeySpecFromOpenSSH(publicKeyOpenSSH), fingerprint);
+   }
+
+   /**
+    * Create a fingerprint per the following <a
+    * href="http://tools.ietf.org/html/draft-friedl-secsh-fingerprint-00" >spec</a>
+    * 
+    * @param publicExponent
+    * @param modulus
+    * 
+    * @return hex fingerprint ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
     */
    public static String fingerprint(BigInteger publicExponent, BigInteger modulus) {
       byte[] keyBlob = keyBlob(publicExponent, modulus);

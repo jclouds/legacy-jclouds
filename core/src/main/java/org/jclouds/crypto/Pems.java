@@ -316,7 +316,7 @@ public class Pems {
    }
 
    // TODO find a way to do this without using bouncycastle
-   static byte[] getEncoded(RSAPrivateCrtKey key) {
+   public static byte[] getEncoded(RSAPrivateCrtKey key) {
       RSAPrivateKeyStructure keyStruct = new RSAPrivateKeyStructure(key.getModulus(), key.getPublicExponent(),
             key.getPrivateExponent(), key.getPrimeP(), key.getPrimeQ(), key.getPrimeExponentP(),
             key.getPrimeExponentQ(), key.getCrtCoefficient());

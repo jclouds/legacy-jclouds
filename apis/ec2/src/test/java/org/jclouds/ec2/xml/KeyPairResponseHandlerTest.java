@@ -23,8 +23,10 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.jclouds.crypto.SshKeys;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -37,51 +39,53 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "KeyPairResponseHandlerTest")
 public class KeyPairResponseHandlerTest extends BaseEC2HandlerTest {
-   public void testApplyInputStream() {
+   public void testApplyInputStream() throws IOException {
 
       InputStream is = getClass().getResourceAsStream("/create_keypair.xml");
 
-      KeyPair expected = new KeyPair(
-               defaultRegion,
-               "gsg-keypair",
-               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f",
+      KeyPair expected = KeyPair.builder().region(defaultRegion).keyName("adriancole-ec21").sha1OfPrivateKey(
+               "13:36:74:b9:56:bb:07:96:c0:19:ab:00:7f:9f:06:d2:16:a0:45:32").keyMaterial(
                "-----BEGIN RSA PRIVATE KEY-----\n"
-                        + "MIIEoQIBAAKCAQBuLFg5ujHrtm1jnutSuoO8Xe56LlT+HM8v/xkaa39EstM3/aFxTHgElQiJLChp\n"
-                        + "HungXQ29VTc8rc1bW0lkdi23OH5eqkMHGhvEwqa0HWASUMll4o3o/IX+0f2UcPoKCOVUR+jx71Sg\n"
-                        + "5AU52EQfanIn3ZQ8lFW7Edp5a3q4DhjGlUKToHVbicL5E+g45zfB95wIyywWZfeW/UUF3LpGZyq/\n"
-                        + "ebIUlq1qTbHkLbCC2r7RTn8vpQWp47BGVYGtGSBMpTRP5hnbzzuqj3itkiLHjU39S2sJCJ0TrJx5\n"
-                        + "i8BygR4s3mHKBj8l+ePQxG1kGbF6R4yg6sECmXn17MRQVXODNHZbAgMBAAECggEAY1tsiUsIwDl5\n"
-                        + "91CXirkYGuVfLyLflXenxfI50mDFms/mumTqloHO7tr0oriHDR5K7wMcY/YY5YkcXNo7mvUVD1pM\n"
-                        + "ZNUJs7rw9gZRTrf7LylaJ58kOcyajw8TsC4e4LPbFaHwS1d6K8rXh64o6WgW4SrsB6ICmr1kGQI7\n"
-                        + "3wcfgt5ecIu4TZf0OE9IHjn+2eRlsrjBdeORi7KiUNC/pAG23I6MdDOFEQRcCSigCj+4/mciFUSA\n"
-                        + "SWS4dMbrpb9FNSIcf9dcLxVM7/6KxgJNfZc9XWzUw77Jg8x92Zd0fVhHOux5IZC+UvSKWB4dyfcI\n"
-                        + "tE8C3p9bbU9VGyY5vLCAiIb4qQKBgQDLiO24GXrIkswF32YtBBMuVgLGCwU9h9HlO9mKAc2m8Cm1\n"
-                        + "jUE5IpzRjTedc9I2qiIMUTwtgnw42auSCzbUeYMURPtDqyQ7p6AjMujp9EPemcSVOK9vXYL0Ptco\n"
-                        + "xW9MC0dtV6iPkCN7gOqiZXPRKaFbWADp16p8UAIvS/a5XXk5jwKBgQCKkpHi2EISh1uRkhxljyWC\n"
-                        + "iDCiK6JBRsMvpLbc0v5dKwP5alo1fmdR5PJaV2qvZSj5CYNpMAy1/EDNTY5OSIJU+0KFmQbyhsbm\n"
-                        + "rdLNLDL4+TcnT7c62/aH01ohYaf/VCbRhtLlBfqGoQc7+sAc8vmKkesnF7CqCEKDyF/dhrxYdQKB\n"
-                        + "gC0iZzzNAapayz1+JcVTwwEid6j9JqNXbBc+Z2YwMi+T0Fv/P/hwkX/ypeOXnIUcw0Ih/YtGBVAC\n"
-                        + "DQbsz7LcY1HqXiHKYNWNvXgwwO+oiChjxvEkSdsTTIfnK4VSCvU9BxDbQHjdiNDJbL6oar92UN7V\n"
-                        + "rBYvChJZF7LvUH4YmVpHAoGAbZ2X7XvoeEO+uZ58/BGKOIGHByHBDiXtzMhdJr15HTYjxK7OgTZm\n"
-                        + "gK+8zp4L9IbvLGDMJO8vft32XPEWuvI8twCzFH+CsWLQADZMZKSsBasOZ/h1FwhdMgCMcY+Qlzd4\n"
-                        + "JZKjTSu3i7vhvx6RzdSedXEMNTZWN4qlIx3kR5aHcukCgYA9T+Zrvm1F0seQPbLknn7EqhXIjBaT\n"
-                        + "P8TTvW/6bdPi23ExzxZn7KOdrfclYRph1LHMpAONv/x2xALIf91UB+v5ohy1oDoasL0gij1houRe\n"
-                        + "2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n"
-                        + "-----END RSA PRIVATE KEY-----");
+                        + "MIIEowIBAAKCAQEA0CbFlhSdbMdad2ux2BVqk6Ut5fLKb0CdbqubGcEBfwsSz9Rp4Ile76P90MpV\n"
+                        + "W1BGKL5V4MO+flG6dZnRWPVmgrNVyDTmEsALiMGjfEwbACEZ1A8C6mPa36wWO7MlxuyMjg8OczTB\n"
+                        + "EXnHNDpxE5a6KowJtzFlmgjHk2Y+Q42UIqPx47lQUv5bdMDCnfNNomSzTVRjOZLUkDja+ybCKdux\n"
+                        + "gqTsuInhuBRMx+wxff8Z43ECdJV6UPoXK3der1dlZunxGCFkCeYq0kCX7FZ7PV35X744jqhD8P+7\n"
+                        + "y5prO4W+M3DWgChUx0OlbDbSHtDVlcfdbj/+4AKYKU6rQOqh+4DPDQIDAQABAoIBAHjQuEiXKJSV\n"
+                        + "1U2RZcVtENInws9AL/2I/Jfa5Qh6vTqXG9EjklywfzkK72x7tDVvD3ngmAoAs5WwLFDL+fXvYhOk\n"
+                        + "sbql8ZCahVdYRWME7XsSu2IZYHDZipXe1XzLS7b9X8uos5Ns4E8bZuNKtI1RJDdD1vPMqRNR2z0T\n"
+                        + "0Dn3eC7t+t+t7PWaK5AXu2ot7DoOeG1QhqJbwd5pMkIn2ydBILytgmDk/2P3EtJGePIJIeQBicmw\n"
+                        + "Z0KrJFa/K2cC8AtmMJUoZMo+mh1yemDbDLCZW30PjFHbZtcszS2cydAgq/HDFkZynvZG0zhbx/To\n"
+                        + "jzcNza1AyypYwOwb2/9/ulXZp0UCgYEA+QFgWDfYLH2zwjU5b6e0UbIyd/X/yRZ+L8lOEBd0Bbu8\n"
+                        + "qO3txaDbwi7o2mG7pJENHJ3u62CHjgTGDNW9V9Q8eNoGtj3uHvMvi7FdDEK8B6izdZyR7hmZmQ/5\n"
+                        + "MIldelyiGZlz1KBSoy4FsCpA7hV7cI6H6x+Im24NxG90/wd/EgMCgYEA1f+cUyUisIO3yKOCf0hQ\n"
+                        + "aL289q2//F2cbvBxtki6I8JzTg1H3oTO2WVrXQeCA3a/yiuRUatgGH4mxrpCF6byVJyqrEWAj4kU\n"
+                        + "uTbhMgIYhLGoaF1e+vMirCRXUXox0i5X976ASzHn64V9JSd1B+UbKfpcFTYYnChmrRDzmhKN1a8C\n"
+                        + "gYBTvIHAyO7ab18/BRUOllAOVSWhr8lXv0eqHEEzKh/rOaoFCRY3qpOcZpgJsGogumK1Z+sLnoeX\n"
+                        + "W8WaVVp6KbY4UeGF8aedItyvVnLbB6ohzTqkZ4Wvk05S6cs75kXYO0SL5U3NiCiiFXz2NA9nwTOk\n"
+                        + "s1nD2PPgiQ76Kx0mEkhKLwKBgFhHEJqv+AZu37Kx2NRe5WS/2KK9/DPD/hM5tv7mM3sq7Nvm2J3v\n"
+                        + "lVDS6J5AyZ5aLzXcER9qncKcz6wtC7SsFs1Wr4VPSoBroRPikrVJbgnXK8yZr+O/xq7Scv7WdJTq\n"
+                        + "rzkw6cWbObvLnltkUn/GQBVqBPBvF2nbtLdyBbuqKb5bAoGBAI1+aoJnvXEXxT4UHrMkQcY0eXRz\n"
+                        + "3UdbzJmtjMW9CR6l9s11mV6PcZP4qnODp3nd6a+lPeL3wVYQ47DsTJ/Bx5dI17zA5mU57n6mV0a3\n"
+                        + "DbSoPKSdaKTQdo2THnVE9P9sPKZWueAcsE4Yw/qcTjoxrtUnAH/AXN250v0tkKIOvMhu\n"
+                        + "-----END RSA PRIVATE KEY-----").build();
 
       KeyPairResponseHandler handler = injector.getInstance(KeyPairResponseHandler.class);
       addDefaultRegionToHandler(handler);
       KeyPair result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
+
+      assert SshKeys.privateKeyHasSha1(result.getKeyMaterial(), result.getSha1OfPrivateKey());
+      assert SshKeys.privateKeyHasFingerprint(result.getKeyMaterial(), result.getFingerprint());
+
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }
