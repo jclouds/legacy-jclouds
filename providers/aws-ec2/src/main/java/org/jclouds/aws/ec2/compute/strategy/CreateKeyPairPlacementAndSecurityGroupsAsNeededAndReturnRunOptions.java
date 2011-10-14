@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute.strategy;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.or;
 
+import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,7 +54,7 @@ import com.google.common.cache.Cache;
  */
 @Singleton
 public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions extends
-      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
+         CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -65,13 +67,13 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
    @Inject
    public CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(
-            Cache<RegionAndName, KeyPair> credentialsMap,
+            Function<RegionAndName, KeyPair> makeKeyPair, ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
             Provider<RunInstancesOptions> optionsProvider,
             @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
             CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded,
             Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair) {
-      super(credentialsMap, securityGroupMap, optionsProvider);
+      super(makeKeyPair, credentialsMap, securityGroupMap, optionsProvider);
       this.placementGroupMap = placementGroupMap;
       this.createPlacementGroupIfNeeded = createPlacementGroupIfNeeded;
       this.importExistingKeyPair = importExistingKeyPair;
@@ -79,10 +81,11 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
    public AWSRunInstancesOptions execute(String region, String group, Template template) {
       AWSRunInstancesOptions instanceOptions = AWSRunInstancesOptions.class
-            .cast(super.execute(region, group, template));
+               .cast(super.execute(region, group, template));
 
       String placementGroupName = template.getHardware().getId().startsWith("cc") ? createNewPlacementGroupUnlessUserSpecifiedOtherwise(
-            region, group, template.getOptions()) : null;
+               region, group, template.getOptions())
+               : null;
 
       if (placementGroupName != null)
          instanceOptions.inPlacementGroup(placementGroupName);
@@ -101,7 +104,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          placementGroupName = AWSEC2TemplateOptions.class.cast(options).getPlacementGroup();
          if (placementGroupName == null)
             shouldAutomaticallyCreatePlacementGroup = AWSEC2TemplateOptions.class.cast(options)
-                  .shouldAutomaticallyCreatePlacementGroup();
+                     .shouldAutomaticallyCreatePlacementGroup();
       }
       if (placementGroupName == null && shouldAutomaticallyCreatePlacementGroup) {
          // placementGroupName must be unique within an account per
@@ -118,17 +121,16 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       RegionAndName key = new RegionAndName(region, group);
       KeyPair pair;
-      if (credentialsMap.asMap().containsKey(key))
-         return credentialsMap.getUnchecked(key).getKeyName();
       if (and(hasPublicKeyMaterial, or(doesntNeedSshAfterImportingPublicKey, hasLoginCredential)).apply(options)) {
          pair = importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group, options.getPublicKey()));
          options.dontAuthorizePublicKey();
          if (hasLoginCredential.apply(options))
             pair = pair.toBuilder().keyMaterial(options.getOverridingCredentials().credential).build();
-         credentialsMap.asMap().put(key, pair);
+         credentialsMap.put(key, pair);
       } else {
          if (hasPublicKeyMaterial.apply(options)) {
-            logger.warn("to avoid creating temporary keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");
+            logger
+                     .warn("to avoid creating temporary keys in aws-ec2, use templateOption overrideLoginCredentialWith(id_rsa)");
          }
          return super.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options);
       }
@@ -165,8 +167,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    @Override
    protected boolean userSpecifiedTheirOwnGroups(TemplateOptions options) {
       return options instanceof AWSEC2TemplateOptions
-            && AWSEC2TemplateOptions.class.cast(options).getGroupIds().size() > 0
-            || super.userSpecifiedTheirOwnGroups(options);
+               && AWSEC2TemplateOptions.class.cast(options).getGroupIds().size() > 0
+               || super.userSpecifiedTheirOwnGroups(options);
    }
 
    @Override

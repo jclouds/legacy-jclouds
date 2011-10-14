@@ -20,6 +20,7 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -43,12 +44,12 @@ import com.google.common.cache.CacheLoader;
  */
 @Singleton
 public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
-   private final Cache<RegionAndName, KeyPair> credentialsMap;
+   private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
 
    @Inject
-   CredentialsForInstance(Cache<RegionAndName, KeyPair> credentialsMap,
+   CredentialsForInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
          PopulateDefaultLoginCredentialsForImageStrategy credentialProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");

@@ -84,7 +84,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).to(CreateSecurityGroupIfNeeded.class);
-      bind(new TypeLiteral<CacheLoader<RegionAndName, KeyPair>>() {
+      bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<Function<RegionNameAndPublicKeyMaterial, KeyPair>>() {
       }).to(ImportOrReturnExistingKeypair.class);

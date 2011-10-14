@@ -233,6 +233,16 @@ public class SshKeys {
    }
 
    /**
+    * @param publicKeyOpenSSH
+    *           RSA public key in OpenSSH format
+    * @return fingerprint ex. {@code 2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9}
+    */
+   public static String fingerprintPublicKey(String publicKeyOpenSSH) {
+      RSAPublicKeySpec publicKeySpec = publicKeySpecFromOpenSSH(publicKeyOpenSSH);
+      return fingerprint(publicKeySpec.getPublicExponent(), publicKeySpec.getModulus());
+   }
+
+   /**
     * @return true if the keypair has the same SHA1 fingerprint as supplied
     */
    public static boolean privateKeyHasSha1(RSAPrivateCrtKeySpec privateKey, String fingerprint) {

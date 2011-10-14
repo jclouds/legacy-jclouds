@@ -60,7 +60,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -399,13 +398,11 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(Maps.<RegionAndName, KeyPair> newConcurrentMap());
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getPublicKey()).andReturn(null).times(2);
       expect(options.getOverridingCredentials()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andThrow(
-               new NullPointerException());
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(false);
 
       // replay mocks
       replay(options);
@@ -433,12 +430,11 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(Maps.<RegionAndName, KeyPair> newConcurrentMap());
       expect(options.getPublicKey()).andReturn(null).times(2);
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getOverridingCredentials()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
 
       // replay mocks
       replay(options);
@@ -454,8 +450,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       verifyStrategy(strategy);
    }
 
-   @SuppressWarnings("unchecked")
-   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsSpecified() {
+   public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_ImportPublicKeyWhenOptionIsSet() {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
@@ -466,22 +461,20 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       KeyPair keyPair = createMock(KeyPair.class);
 
-      ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
-
-      // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(backing).atLeastOnce();
-      expect(backing.containsKey(new RegionAndName(region, group))).andReturn(false);
-      expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
-      expect(options.getPublicKey()).andReturn(null).times(2);
+      // we specify we have a public key we want to use for authentication
+      expect(options.getPublicKey()).andReturn("ssh-rsa").times(2);
       expect(options.getOverridingCredentials()).andReturn(CREDENTIALS).atLeastOnce();
-      expect(backing.put(new RegionAndName(region, userSuppliedKeyPair), KEYPAIR)).andReturn(null);
+
+      // Here, we import the keypair and place it into the cache
+      expect(strategy.importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group, "ssh-rsa")))
+               .andReturn(KEYPAIR);
+      expect(options.dontAuthorizePublicKey()).andReturn(options);
+      expect(strategy.credentialsMap.put(new RegionAndName(region, group), KEYPAIR)).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
-      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, userSuppliedKeyPair))).andReturn(keyPair);
 
       // replay mocks
       replay(options);
       replay(keyPair);
-      replay(backing);
       replayStrategy(strategy);
 
       // run
@@ -490,11 +483,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // verify mocks
       verify(options);
       verify(keyPair);
-      verify(backing);
       verifyStrategy(strategy);
    }
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySuppliedAndAddsCredentialToMapWhenOverridingCredsAreSet() {
       // setup constants
@@ -506,31 +497,25 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       AWSEC2TemplateOptions options = keyPair(group).authorizePublicKey("ssh-rsa").overrideCredentialsWith(
                new Credentials("foo", CREDENTIALS.credential));
       KeyPair keyPair = new KeyPair(region, group, "//TODO", null, null);
-      ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(backing).atLeastOnce();
-      expect(backing.containsKey(new RegionAndName(region, group))).andReturn(false);
       expect(
                strategy.importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group,
                         CREDENTIALS.credential))).andReturn(keyPair);
       expect(
-               backing.put(new RegionAndName(region, group), keyPair.toBuilder().keyMaterial(CREDENTIALS.credential)
-                        .build())).andReturn(null);
+               strategy.credentialsMap.put(new RegionAndName(region, group), keyPair.toBuilder().keyMaterial(
+                        CREDENTIALS.credential).build())).andReturn(null);
 
       // replay mocks
-      replay(backing);
       replayStrategy(strategy);
 
       // run
       assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options), group);
 
       // verify mocks
-      verify(backing);
       verifyStrategy(strategy);
    }
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySupplied() {
       // setup constants
@@ -543,24 +528,18 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
 
       KeyPair keyPair = new KeyPair(region, "jclouds#" + group, "fingerprint", null, null);
 
-      ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
-
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(backing).atLeastOnce();
-      expect(backing.containsKey(new RegionAndName(region, group))).andReturn(false);
       expect(strategy.importExistingKeyPair.apply(new RegionNameAndPublicKeyMaterial(region, group, "ssh-rsa")))
                .andReturn(keyPair);
-      expect(backing.put(new RegionAndName(region, group), keyPair)).andReturn(null);
+      expect(strategy.credentialsMap.put(new RegionAndName(region, group), keyPair)).andReturn(null);
 
       // replay mocks
-      replay(backing);
       replayStrategy(strategy);
 
       // run
       assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options), "jclouds#" + group);
 
       // verify mocks
-      verify(backing);
       verifyStrategy(strategy);
    }
 
@@ -578,10 +557,10 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(Maps.<RegionAndName, KeyPair> newConcurrentMap());
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.shouldAutomaticallyCreateKeyPair()).andReturn(shouldAutomaticallyCreateKeyPair);
-      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, group))).andReturn(keyPair);
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, group))).andReturn(true);
+      expect(strategy.credentialsMap.get(new RegionAndName(region, group))).andReturn(keyPair);
       expect(options.getPublicKey()).andReturn(null).times(2);
       expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
       expect(options.getRunScript()).andReturn(null);
@@ -601,7 +580,6 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       verifyStrategy(strategy);
    }
 
-   @SuppressWarnings("unchecked")
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_returnsExistingKeyIfAlreadyPresent() {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
@@ -612,18 +590,18 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
       AWSEC2TemplateOptions options = createMock(AWSEC2TemplateOptions.class);
       KeyPair keyPair = createMock(KeyPair.class);
-      ConcurrentMap<RegionAndName, KeyPair> backing = createMock(ConcurrentMap.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(backing);
-      expect(backing.containsKey(new RegionAndName(region, group))).andReturn(true);
-      expect(strategy.credentialsMap.getUnchecked(new RegionAndName(region, group))).andReturn(keyPair);
-      expect(keyPair.getKeyName()).andReturn(systemGeneratedKeyPairName).atLeastOnce();
+      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getRunScript()).andReturn(Statements.exec("echo hello"));
+      expect(options.getPublicKey()).andReturn(null).times(2);
+      expect(options.getKeyPair()).andReturn(systemGeneratedKeyPairName);
+      expect(strategy.credentialsMap.containsKey(new RegionAndName(region, systemGeneratedKeyPairName)))
+               .andReturn(true);
 
       // replay mocks
       replay(options);
       replay(keyPair);
-      replay(backing);
       replayStrategy(strategy);
 
       // run
@@ -633,7 +611,6 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // verify mocks
       verify(options);
       verify(keyPair);
-      verify(backing);
       verifyStrategy(strategy);
    }
 
@@ -651,7 +628,6 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.asMap()).andReturn(Maps.<RegionAndName, KeyPair> newConcurrentMap());
       expect(options.getPublicKey()).andReturn(null).times(2);
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
       expect(options.getRunScript()).andReturn(null);
@@ -937,6 +913,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
    }
 
    private void verifyStrategy(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {
+      verify(strategy.makeKeyPair);
       verify(strategy.credentialsMap);
       verify(strategy.securityGroupMap);
       verify(strategy.placementGroupMap);
@@ -946,17 +923,20 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
 
    @SuppressWarnings("unchecked")
    private CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions setupStrategy() {
-      Cache<RegionAndName, KeyPair> credentialsMap = createMock(Cache.class);
+      Function<RegionAndName, KeyPair> makeKeyPair = createMock(Function.class);
+      ConcurrentMap<RegionAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
       Cache<RegionAndName, String> securityGroupMap = createMock(Cache.class);
       Cache<RegionAndName, String> placementGroupMap = createMock(Cache.class);
       Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair = createMock(Function.class);
       CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded = createMock(CreatePlacementGroupIfNeeded.class);
 
-      return new CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(credentialsMap, securityGroupMap,
-               OPTIONS_PROVIDER, placementGroupMap, createPlacementGroupIfNeeded, importExistingKeyPair);
+      return new CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(makeKeyPair, credentialsMap,
+               securityGroupMap, OPTIONS_PROVIDER, placementGroupMap, createPlacementGroupIfNeeded,
+               importExistingKeyPair);
    }
 
    private void replayStrategy(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {
+      replay(strategy.makeKeyPair);
       replay(strategy.credentialsMap);
       replay(strategy.securityGroupMap);
       replay(strategy.placementGroupMap);

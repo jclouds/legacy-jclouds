@@ -22,8 +22,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -99,7 +100,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
-         Cache<RegionAndName, KeyPair> credentialsMap,
+         ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
          @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {

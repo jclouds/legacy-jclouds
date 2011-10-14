@@ -32,15 +32,15 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.cache.CacheLoader;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
+public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -54,7 +54,7 @@ public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
    }
 
    @Override
-   public KeyPair load(RegionAndName from) {
+   public KeyPair apply(RegionAndName from) {
       return createNewKeyPairInRegion(from.getRegion(), from.getName());
    }
 
@@ -67,7 +67,7 @@ public class CreateUniqueKeyPair extends CacheLoader<RegionAndName, KeyPair> {
       while (keyPair == null) {
          try {
             keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, getNextName(region, group));
-            logger.debug("<< created keyPair(%s) fingerprint(%s)", keyPair.getKeyName(), keyPair.getKeyFingerprint());
+            logger.debug("<< created keyPair(%s)", keyPair);
          } catch (IllegalStateException e) {
 
          }

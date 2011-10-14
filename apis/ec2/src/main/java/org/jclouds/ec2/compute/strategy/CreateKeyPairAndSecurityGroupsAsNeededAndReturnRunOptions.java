@@ -18,10 +18,14 @@
  */
 package org.jclouds.ec2.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +34,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
-import static org.jclouds.crypto.SshKeys.*;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -40,10 +43,10 @@ import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * 
@@ -52,15 +55,20 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 @Singleton
 public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    @VisibleForTesting
-   public final Cache<RegionAndName, KeyPair> credentialsMap;
+   public Function<RegionAndName, KeyPair> makeKeyPair;
+   @VisibleForTesting
+   public final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    @VisibleForTesting
    public final Cache<RegionAndName, String> securityGroupMap;
-   protected final Provider<RunInstancesOptions> optionsProvider;
+   @VisibleForTesting
+   public final Provider<RunInstancesOptions> optionsProvider;
 
    @Inject
-   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Cache<RegionAndName, KeyPair> credentialsMap,
+   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Function<RegionAndName, KeyPair> makeKeyPair,
+            ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
             Provider<RunInstancesOptions> optionsProvider) {
+      this.makeKeyPair = checkNotNull(makeKeyPair, "makeKeyPair");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
@@ -119,31 +127,36 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
             KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).fingerprint(
                      fingerprintPrivateKey(pem)).sha1OfPrivateKey(sha1PrivateKey(pem)).keyMaterial(pem).build();
             RegionAndName key = new RegionAndName(region, keyPairName);
-            credentialsMap.asMap().put(key, keyPair);
+            credentialsMap.put(key, keyPair);
          }
       }
 
       if (options.getRunScript() != null) {
          RegionAndName regionAndName = new RegionAndName(region, keyPairName);
-         String message = String
-                  .format(
-                           "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
-                           regionAndName);
-         // test to see if this is in cache.
-         try {
-            credentialsMap.getUnchecked(regionAndName);
-         } catch (NullPointerException nex) {
-            throw new IllegalArgumentException(message, nex);
-         } catch (UncheckedExecutionException nex) {
-            throw new IllegalArgumentException(message, nex);
-         }
+         checkArgument(
+                  credentialsMap.containsKey(regionAndName),
+                  "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+                  regionAndName);
       }
       return keyPairName;
    }
 
    // base EC2 driver currently does not support key import
    protected String createOrImportKeyPair(String region, String group, TemplateOptions options) {
-      return credentialsMap.getUnchecked(new RegionAndName(region, group)).getKeyName();
+      RegionAndName regionAndGroup = new RegionAndName(region, group);
+      KeyPair keyPair;
+      // make sure that we don't request multiple keys simultaneously
+      synchronized (credentialsMap) {
+         // if there is already a keypair for the group specified, use it
+         if (credentialsMap.containsKey(regionAndGroup))
+            return credentialsMap.get(regionAndGroup).getKeyName();
+
+         // otherwise create a new keypair and key it under the group and also the regular keyname
+         keyPair = makeKeyPair.apply(new RegionAndName(region, group));
+         credentialsMap.put(regionAndGroup, keyPair);
+      }
+      credentialsMap.put(new RegionAndName(region, keyPair.getKeyName()), keyPair);
+      return keyPair.getKeyName();
    }
 
    @VisibleForTesting

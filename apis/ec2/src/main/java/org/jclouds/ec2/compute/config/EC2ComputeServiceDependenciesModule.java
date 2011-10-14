@@ -22,6 +22,7 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURI
 
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -62,7 +63,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -97,7 +100,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).to(CreateSecurityGroupIfNeeded.class);
-      bind(new TypeLiteral<CacheLoader<RegionAndName, KeyPair>>() {
+      bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
@@ -131,8 +134,8 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Cache<RegionAndName, KeyPair> keypairMap(CacheLoader<RegionAndName, KeyPair> in) {
-      return CacheBuilder.newBuilder().build(in);
+   protected ConcurrentMap<RegionAndName, KeyPair> keypairMap(Injector i) {
+      return Maps.newConcurrentMap();
    }
    
    @Provides

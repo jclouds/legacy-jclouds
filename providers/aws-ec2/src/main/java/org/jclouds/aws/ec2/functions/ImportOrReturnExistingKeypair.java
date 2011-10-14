@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.crypto.SshKeys.fingerprintPublicKey;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -68,14 +69,23 @@ public class ImportOrReturnExistingKeypair implements Function<RegionNameAndPubl
       while (keyPair == null)
          try {
             keyPair = ec2Client.getKeyPairServices().importKeyPairInRegion(region, "jclouds#" + group,
-                  publicKeyMaterial);
+                     publicKeyMaterial);
+            keyPair = addFingerprintToKeyPair(publicKeyMaterial, keyPair);
             logger.debug("<< imported keyPair(%s)", keyPair);
          } catch (IllegalStateException e) {
-            keyPair = Iterables.getFirst(
-                  ec2Client.getKeyPairServices().describeKeyPairsInRegion(region, "jclouds#" + group), null);
-            if (keyPair != null)
+            keyPair = Iterables.getFirst(ec2Client.getKeyPairServices().describeKeyPairsInRegion(region,
+                     "jclouds#" + group), null);
+            if (keyPair != null) {
+               keyPair = addFingerprintToKeyPair(publicKeyMaterial, keyPair);
                logger.debug("<< retrieved existing keyPair(%s)", keyPair);
+            }
          }
+      return keyPair;
+   }
+
+   public KeyPair addFingerprintToKeyPair(String publicKeyMaterial, KeyPair keyPair) {
+      // add in the fingerprint as it makes correlating keys in ssh logs possible
+      keyPair = keyPair.toBuilder().fingerprint(fingerprintPublicKey(publicKeyMaterial)).build();
       return keyPair;
    }
 

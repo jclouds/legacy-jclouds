@@ -130,10 +130,11 @@ public class AWSKeyPairClientLiveTest {
          Set<? extends NodeMetadata> nodes = noSshContext.getComputeService().createNodesInGroup(group, 1, options);
 
          NodeMetadata first = get(nodes, 0);
-         // credentials should be present as this is the default user from the image
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
-         assert first.getCredentials().credential != null : first;
+         // credentials should not be present as the import public key call doesn't have access to
+         // the related private key
+         assert first.getCredentials().credential == null : first;
 
          AWSRunningInstance instance = getInstance(instanceClient, first.getProviderId());
 
