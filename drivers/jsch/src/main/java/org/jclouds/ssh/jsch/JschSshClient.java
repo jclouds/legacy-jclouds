@@ -25,6 +25,8 @@ import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.any;
+import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,6 +92,7 @@ public class JschSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
+   private final String toString;
 
    @Inject(optional = true)
    @Named("jclouds.ssh.max-retries")
@@ -131,6 +134,14 @@ public class JschSshClient implements SshClient {
       this.timeout = timeout;
       this.password = password;
       this.privateKey = privateKey;
+      if ( privateKey==null ) {
+          this.toString = String.format("%s:password@%s:%d", username, host, port);
+      } else {
+          String fingerPrint = fingerprintPrivateKey(new String(privateKey));
+          String sha1 = sha1PrivateKey(new String(privateKey));
+          this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
+                 port);
+      }
    }
 
    @Override
@@ -182,7 +193,7 @@ public class JschSshClient implements SshClient {
 
       @Override
       public String toString() {
-         return String.format("Session(%s)", JschSshClient.this.toString());
+         return String.format("Session(timeout=%d)", timeout);
       }
    };
 
@@ -237,7 +248,7 @@ public class JschSshClient implements SshClient {
 
       @Override
       public String toString() {
-         return "ChannelSftp(" + JschSshClient.this.toString() + ")";
+         return "ChannelSftp()";
       }
    };
 
@@ -263,7 +274,7 @@ public class JschSshClient implements SshClient {
 
       @Override
       public String toString() {
-         return "Payload(" + JschSshClient.this.toString() + ")[" + path + "]";
+         return "Payload(path=[" + path + "])";
       }
    };
 
@@ -301,7 +312,7 @@ public class JschSshClient implements SshClient {
 
       @Override
       public String toString() {
-         return "Put(" + JschSshClient.this.toString() + ")[" + path + "]";
+         return "Put(path=[" + path + "])";
       }
    };
 
@@ -354,7 +365,7 @@ public class JschSshClient implements SshClient {
 
    @Override
    public String toString() {
-      return String.format("%s@%s:%d", username, host, port);
+      return toString;
    }
 
    @PreDestroy
@@ -389,7 +400,7 @@ public class JschSshClient implements SshClient {
 
          @Override
          public String toString() {
-            return "ChannelExec(" + JschSshClient.this.toString() + ")";
+            return "ChannelExec()";
          }
       };
 
@@ -437,7 +448,7 @@ public class JschSshClient implements SshClient {
 
       @Override
       public String toString() {
-         return "ExecResponse(" + JschSshClient.this.toString() + ")[" + command + "]";
+         return "ExecResponse(command=[" + command + "])";
       }
    }
 

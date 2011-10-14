@@ -21,6 +21,7 @@ package org.jclouds.ssh.jsch.config;
 import java.net.UnknownHostException;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
@@ -39,7 +40,7 @@ public class JschSshClientModuleTest {
 
    public void testConfigureBindsClient() throws UnknownHostException {
 
-      Injector i = Guice.createInjector(new JschSshClientModule());
+      Injector i = Guice.createInjector(new JschSshClientModule(), new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
       SshClient connection = factory.create(new IPSocket("localhost", 22), new Credentials("username", "password"));
       assert connection instanceof JschSshClient;
