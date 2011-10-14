@@ -30,6 +30,7 @@ import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -58,6 +59,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -71,6 +73,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("unchecked")
 public class SshjSshClient implements SshClient {
 
    private final class CloseFtpChannelOnCloseInputStream extends ProxyInputStream {
@@ -115,7 +118,7 @@ public class SshjSshClient implements SshClient {
    @Named("jclouds.ssh.retry-predicate")
    // NOTE cannot retry io exceptions, as SSHException is a part of the chain
    private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectionException.class),
-            instanceOf(TransportException.class));
+            instanceOf(ConnectException.class), instanceOf(TransportException.class));
 
    @Resource
    @Named("jclouds.ssh")
@@ -222,11 +225,21 @@ public class SshjSshClient implements SshClient {
                logger.warn(from, "<< (%s) error closing connection", toString());
             }
             if (i + 1 == sshRetries) {
+               logger.error(from, "<< " + errorMessage + ": out of retries %d", sshRetries);
                throw propagate(from, errorMessage);
+            } else if (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null) {
+               logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
+               disconnect();
+               backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
+               connect();
+               continue;
             } else if (shouldRetry(from)) {
                logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
                continue;
+            } else {
+               logger.error(from, "<< " + errorMessage + ": exception not retryable");
+               throw propagate(from, errorMessage);
             }
          }
       }

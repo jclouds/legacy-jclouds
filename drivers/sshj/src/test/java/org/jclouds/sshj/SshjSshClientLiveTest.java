@@ -127,7 +127,7 @@ public class SshjSshClientLiveTest {
       temp.deleteOnExit();
       SshClient client = setupClient();
       client.put(temp.getAbsolutePath(), Payloads.newStringPayload("rabbit"));
-      Payload input = setupClient().get(temp.getAbsolutePath());
+      Payload input = client.get(temp.getAbsolutePath());
       String contents = Strings2.toStringAndClose(input.getInput());
       assertEquals(contents, "rabbit");
    }
@@ -138,8 +138,9 @@ public class SshjSshClientLiveTest {
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 
-   public void testExecHostname() throws IOException {
-      ExecResponse response = setupClient().exec("hostname");
+   public void testExecHostname() throws IOException, InterruptedException {
+      SshClient client = setupClient();
+      ExecResponse response = client.exec("hostname");
       assertEquals(response.getError(), "");
       assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
                : sshHost);
