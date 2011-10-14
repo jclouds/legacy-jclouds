@@ -139,8 +139,9 @@ public class SpotInstanceClientLiveTest {
          for (Spot spot : spots) {
             assert spot.getSpotPrice() > 0 : spots;
             assertEquals(spot.getRegion(), region);
-            assert in(ImmutableSet.of("Linux/UNIX", "SUSE Linux", "Windows", "Windows (Amazon VPC)")).apply(
-                     spot.getProductDescription()) : spot;
+            assert in(
+                     ImmutableSet.of("Linux/UNIX", "Linux/UNIX (Amazon VPC)", "SUSE Linux", "SUSE Linux (Amazon VPC)",
+                              "Windows", "Windows (Amazon VPC)")).apply(spot.getProductDescription()) : spot;
             assert in(
                      ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small",
                               "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(

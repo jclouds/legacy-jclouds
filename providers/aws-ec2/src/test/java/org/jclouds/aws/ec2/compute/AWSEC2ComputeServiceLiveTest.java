@@ -106,6 +106,8 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       try {
          cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
 
+         Thread.sleep(3000);// eventual consistency if deletes actually occurred.
+         
          // create a security group that allows ssh in so that our scripts later
          // will work
          String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(region, group, group);
