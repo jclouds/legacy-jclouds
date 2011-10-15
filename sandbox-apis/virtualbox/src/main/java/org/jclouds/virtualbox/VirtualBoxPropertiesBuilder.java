@@ -70,6 +70,9 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       
       // TODO: Add more properties and use the wired properties from test code.
       properties.put(VirtualBoxConstants.VIRTUALBOX_DISTRO_ISO_NAME, "ubuntu-11.04-server-i386.iso");
+      
+      properties.put(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
+
       return properties;
    }
 }
