@@ -150,11 +150,11 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       String zone = getZoneFromLocationOrNull(template.getLocation());
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
                group, template);
-      return createNodesInRegionAndZone(region, zone, count, template, instanceOptions);
+      return createNodesInRegionAndZone(region, zone, group, count, template, instanceOptions);
    }
 
-   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, int count,
-            Template template, RunInstancesOptions instanceOptions) {
+   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, String group,
+            int count, Template template, RunInstancesOptions instanceOptions) {
       int countStarted = 0;
       int tries = 0;
       Iterable<? extends RunningInstance> started = ImmutableSet.<RunningInstance> of();

@@ -131,6 +131,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
             new NodeMetadataBuilder()
                   .state(NodeState.RUNNING)
                   .group("zkclustertest")
+                  .name("foo")
                   .hostname("ip-10-212-81-7")
                   .privateAddresses(ImmutableSet.of("10.212.81.7"))
                   .publicAddresses(ImmutableSet.of("174.129.173.155"))

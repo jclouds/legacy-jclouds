@@ -133,6 +133,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata first = Iterables.get(nodes, 0);
 
+         //Name metadata should turn into node.name
+         assertEquals(first.getName(), group);
+         
          checkUserMetadataInNodeEquals(first, userMetadata);
 
          assert first.getCredentials() != null : first;

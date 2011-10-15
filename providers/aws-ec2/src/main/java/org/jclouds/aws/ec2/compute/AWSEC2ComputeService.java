@@ -18,8 +18,10 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +35,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
@@ -72,6 +75,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -84,74 +88,90 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    private final Cache<RegionAndName, String> placementGroupMap;
    private final Predicate<PlacementGroup> placementGroupDeleted;
    private final AWSEC2Client ec2Client;
+   private final AWSEC2AsyncClient aclient;
+   private final boolean generateInstanceNames;
 
    @Inject
    protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
-         RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
-         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
-         ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
-         @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
-         @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy,
+            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
+            SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
+            PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
+            ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
+            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+            @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
+            @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
-            templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
-            initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess, persistNodeCredentials, timeouts,
-            executor, ec2Client, credentialsMap, securityGroupMap);
+               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
+               stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
+               nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess, persistNodeCredentials,
+               timeouts, executor, ec2Client, credentialsMap, securityGroupMap);
       this.ec2Client = ec2Client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;
+      this.generateInstanceNames = generateInstanceNames;
+      this.aclient = checkNotNull(aclient, "aclient");
    }
 
    @Override
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, final Template template)
-         throws RunNodesException {
+            throws RunNodesException {
       Set<? extends NodeMetadata> nodes = super.createNodesInGroup(group, count, template);
       // tags from spot requests do not propagate to running instances
       // automatically
       if (templateWasASpotRequestWithUserMetadata(template)) {
-         addTagsToNodesFromUserMetadataInTemplate(nodes, template);
-         nodes = addUserMetadataFromTemplateOptionsToNodes(template, nodes);
+         addTagsToNodesFromUserMetadataInTemplate(nodes, group, template);
+         nodes = addUserMetadataFromTemplateOptionsToNodes(template, group, nodes);
       }
       return nodes;
    }
 
-   protected void addTagsToNodesFromUserMetadataInTemplate(Set<? extends NodeMetadata> nodes, final Template template) {
+   protected void addTagsToNodesFromUserMetadataInTemplate(Set<? extends NodeMetadata> nodes, String group,
+            final Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
-      ec2Client.getTagServices().createTagsInRegion(region, transform(nodes, new Function<NodeMetadata, String>() {
+      if (template.getOptions().getUserMetadata().size() > 0 || generateInstanceNames) {
+         for (String id : transform(nodes, new Function<NodeMetadata, String>() {
 
-         @Override
-         public String apply(NodeMetadata arg0) {
-            return arg0.getProviderId();
-         }
+            @Override
+            public String apply(NodeMetadata arg0) {
+               return arg0.getProviderId();
+            }
 
-      }), template.getOptions().getUserMetadata());
+         }))
+            aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id),
+                     metadataForId(id, group, template.getOptions().getUserMetadata()));
+      }
+   }
+
+   private Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
+      return generateInstanceNames && !metadata.containsKey("Name") ? ImmutableMap.<String, String> builder().putAll(
+               metadata).put("Name", id.replaceAll(".*-", group + "-")).build() : metadata;
    }
 
    protected boolean templateWasASpotRequestWithUserMetadata(final Template template) {
       return template.getOptions().getUserMetadata().size() > 0
-            && AWSEC2TemplateOptions.class.cast(template.getOptions()).getSpotPrice() != null;
+               && AWSEC2TemplateOptions.class.cast(template.getOptions()).getSpotPrice() != null;
    }
 
    protected Set<? extends NodeMetadata> addUserMetadataFromTemplateOptionsToNodes(final Template template,
-         Set<? extends NodeMetadata> nodes) {
+            final String group, Set<? extends NodeMetadata> nodes) {
       nodes = ImmutableSet.copyOf(Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
 
          @Override
          public NodeMetadata apply(NodeMetadata arg0) {
-            return NodeMetadataBuilder.fromNodeMetadata(arg0).userMetadata(template.getOptions().getUserMetadata())
-                  .build();
+            Map<String, String> md = metadataForId(arg0.getProviderId(), group, template.getOptions().getUserMetadata());
+            return NodeMetadataBuilder.fromNodeMetadata(arg0).name(md.get("Name")).userMetadata(md).build();
          }
 
       }));
@@ -169,9 +189,9 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             logger.debug(">> deleting placementGroup(%s)", placementGroup);
             try {
                ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, placementGroup);
-               checkState(
-                     placementGroupDeleted.apply(new PlacementGroup(region, placementGroup, "cluster", State.PENDING)),
-                     String.format("placementGroup region(%s) name(%s) failed to delete", region, placementGroup));
+               checkState(placementGroupDeleted.apply(new PlacementGroup(region, placementGroup, "cluster",
+                        State.PENDING)), String.format("placementGroup region(%s) name(%s) failed to delete", region,
+                        placementGroup));
                placementGroupMap.invalidate(new RegionAndName(region, placementGroup));
                logger.debug("<< deleted placementGroup(%s)", placementGroup);
             } catch (IllegalStateException e) {

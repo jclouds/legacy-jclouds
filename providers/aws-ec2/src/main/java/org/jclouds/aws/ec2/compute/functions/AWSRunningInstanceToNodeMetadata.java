@@ -72,8 +72,7 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    @Override
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       Map<String, String> tags = AWSRunningInstance.class.cast(instance).getTags();
-      return super.buildInstance(instance, builder)
-              .tags(filterValues(tags, equalTo("")).keySet())
-              .userMetadata(filterValues(tags, not(equalTo(""))));
+      return super.buildInstance(instance, builder).name(tags.get("Name")).tags(
+               filterValues(tags, equalTo("")).keySet()).userMetadata(filterValues(tags, not(equalTo(""))));
    }
 }

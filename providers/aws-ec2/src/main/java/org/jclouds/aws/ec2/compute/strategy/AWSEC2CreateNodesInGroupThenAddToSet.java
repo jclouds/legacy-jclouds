@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.predicates.AWSEC2InstancePresent;
@@ -51,6 +53,8 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -66,58 +70,70 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    @VisibleForTesting
    final AWSEC2Client client;
    final SpotInstanceRequestToAWSRunningInstance spotConverter;
+   final AWSEC2AsyncClient aclient;
+   final boolean generateInstanceNames;
 
    @Inject
    protected AWSEC2CreateNodesInGroupThenAddToSet(
-         AWSEC2Client client,
-         Provider<TemplateBuilder> templateBuilderProvider,
-         CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
-         AWSEC2InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-         Cache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
-         ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
+            AWSEC2Client client,
+            AWSEC2AsyncClient aclient,
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            Provider<TemplateBuilder> templateBuilderProvider,
+            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+            AWSEC2InstancePresent instancePresent,
+            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+            Cache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
       super(client, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, instancePresent,
-            runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
+               runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
       this.client = checkNotNull(client, "client");
+      this.aclient = checkNotNull(aclient, "aclient");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
+      this.generateInstanceNames = generateInstanceNames;
    }
 
-   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, int count,
-         Template template, RunInstancesOptions instanceOptions) {
+   @Override
+   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, String group,
+            int count, Template template, RunInstancesOptions instanceOptions) {
       Float spotPrice = getSpotPriceOrNull(template.getOptions());
       if (spotPrice != null) {
          LaunchSpecification spec = AWSRunInstancesOptions.class.cast(instanceOptions).getLaunchSpecificationBuilder()
-               .imageId(template.getImage().getProviderId()).availabilityZone(zone).build();
+                  .imageId(template.getImage().getProviderId()).availabilityZone(zone).build();
          RequestSpotInstancesOptions options = AWSEC2TemplateOptions.class.cast(template.getOptions()).getSpotOptions();
          if (logger.isDebugEnabled())
             logger.debug(">> requesting %d spot instances region(%s) price(%f) spec(%s) options(%s)", count, region,
-                  spotPrice, spec, options);
+                     spotPrice, spec, options);
 
-         return addTagsToInstancesInRegion(
-               template.getOptions().getUserMetadata(),
-               transform(
-                     client.getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice, count, spec,
-                           options), spotConverter), region);
+         return addTagsToInstancesInRegion(template.getOptions().getUserMetadata(), transform(client
+                  .getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice, count, spec, options),
+                  spotConverter), region, group);
       } else {
-         return addTagsToInstancesInRegion(template.getOptions().getUserMetadata(),
-               super.createNodesInRegionAndZone(region, zone, count, template, instanceOptions), region);
+         return addTagsToInstancesInRegion(template.getOptions().getUserMetadata(), super.createNodesInRegionAndZone(
+                  region, zone, group, count, template, instanceOptions), region, group);
       }
 
    }
 
    public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(Map<String, String> metadata,
-         Iterable<? extends RunningInstance> iterable, String region) {
-      if (metadata.size() > 0) {
-         client.getTagServices().createTagsInRegion(region,
-               transform(iterable, new Function<RunningInstance, String>() {
+            Iterable<? extends RunningInstance> iterable, String region, String group) {
+      if (metadata.size() > 0 || generateInstanceNames) {
+         for (String id : transform(iterable, new Function<RunningInstance, String>() {
 
-                  @Override
-                  public String apply(RunningInstance arg0) {
-                     return arg0.getId();
-                  }
+            @Override
+            public String apply(RunningInstance arg0) {
+               return arg0.getId();
+            }
 
-               }), metadata);
+         }))
+            aclient.getTagServices()
+                     .createTagsInRegion(region, ImmutableSet.of(id), metadataForId(id, group, metadata));
       }
       return iterable;
+   }
+
+   private Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
+      return generateInstanceNames && !metadata.containsKey("Name") ? ImmutableMap.<String, String> builder().putAll(
+               metadata).put("Name", id.replaceAll(".*-", group + "-")).build() : metadata;
    }
 
    private Float getSpotPriceOrNull(TemplateOptions options) {
