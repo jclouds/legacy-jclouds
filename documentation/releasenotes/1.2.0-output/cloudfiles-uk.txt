@@ -1,0 +1,600 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudfiles-uk:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds CloudFiles UK provider 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudfiles-uk ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ cloudfiles-uk ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudfiles-uk ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudfiles-uk ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudfiles-uk ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudfiles-uk ---
+[INFO] Compiling 11 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ cloudfiles-uk ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+[pool-2-thread-3] Test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 28ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 16ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 42ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 128ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.481 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ cloudfiles-uk ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudfiles-uk ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudfiles-uk ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudfiles-uk ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ cloudfiles-uk ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+unable to delete container adriancole-blobstore8, ignoring...
+org.jclouds.http.HttpResponseException: Error parsing input
+[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Sat, 15 Oct 2011 17:23:36 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[tx2a09a75486d146dea6b56554859b9fa2], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:71)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:46)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: com.google.gson.JsonParseException: The JsonDeserializer org.jclouds.json.config.GsonModule$Iso8601DateAdapter@2abbaa16 failed to deserialize json object "2011-07-28T19:59:51" given the type class java.util.Date
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:64)
+	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
+	at com.google.gson.JsonObjectDeserializationVisitor.visitFieldUsingCustomHandler(JsonObjectDeserializationVisitor.java:117)
+	at com.google.gson.ReflectingFieldNavigator.visitFieldsReflectively(ReflectingFieldNavigator.java:63)
+	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:120)
+	at com.google.gson.JsonDeserializationContextDefault.fromJsonObject(JsonDeserializationContextDefault.java:76)
+	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:54)
+	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:663)
+	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:624)
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
+	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
+	at com.google.gson.JsonDeserializationVisitor.visitUsingCustomHandler(JsonDeserializationVisitor.java:80)
+	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:101)
+	at com.google.gson.JsonDeserializationContextDefault.fromJsonArray(JsonDeserializationContextDefault.java:67)
+	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:52)
+	at com.google.gson.Gson.fromJson(Gson.java:551)
+	at com.google.gson.Gson.fromJson(Gson.java:498)
+	at com.google.gson.Gson.fromJson(Gson.java:467)
+	at com.google.gson.Gson.fromJson(Gson.java:417)
+	at org.jclouds.json.internal.GsonWrapper.fromJson(GsonWrapper.java:47)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:86)
+	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:81)
+	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:55)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:66)
+	... 7 more
+Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:175)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:156)
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
+	... 30 more
+Caused by: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at java.text.DateFormat.parse(DateFormat.java:337)
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:141)
+	... 33 more
+unable to delete container adriancole-blobstore8, ignoring...
+org.jclouds.http.HttpResponseException: Error parsing input
+[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Sat, 15 Oct 2011 17:26:16 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[tx013db05113cb4712a96351271dbb25b4], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:71)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:46)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: com.google.gson.JsonParseException: The JsonDeserializer org.jclouds.json.config.GsonModule$Iso8601DateAdapter@2abbaa16 failed to deserialize json object "2011-07-28T19:59:51" given the type class java.util.Date
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:64)
+	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
+	at com.google.gson.JsonObjectDeserializationVisitor.visitFieldUsingCustomHandler(JsonObjectDeserializationVisitor.java:117)
+	at com.google.gson.ReflectingFieldNavigator.visitFieldsReflectively(ReflectingFieldNavigator.java:63)
+	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:120)
+	at com.google.gson.JsonDeserializationContextDefault.fromJsonObject(JsonDeserializationContextDefault.java:76)
+	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:54)
+	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:663)
+	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:624)
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
+	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
+	at com.google.gson.JsonDeserializationVisitor.visitUsingCustomHandler(JsonDeserializationVisitor.java:80)
+	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:101)
+	at com.google.gson.JsonDeserializationContextDefault.fromJsonArray(JsonDeserializationContextDefault.java:67)
+	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:52)
+	at com.google.gson.Gson.fromJson(Gson.java:551)
+	at com.google.gson.Gson.fromJson(Gson.java:498)
+	at com.google.gson.Gson.fromJson(Gson.java:467)
+	at com.google.gson.Gson.fromJson(Gson.java:417)
+	at org.jclouds.json.internal.GsonWrapper.fromJson(GsonWrapper.java:47)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:86)
+	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:81)
+	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:55)
+	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:66)
+	... 7 more
+Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:175)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:156)
+	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
+	... 30 more
+Caused by: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at java.text.DateFormat.parse(DateFormat.java:337)
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:141)
+	... 33 more
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore9, adriancole-blobstore10]
+Starting test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 6194ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 8026ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 6485ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 5319ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 50551ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 35071ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 86330ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 23042ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 12681ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 31110ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 15779ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 14186ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 250596ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9934ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 15367ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 17823ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 18367ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9006ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 226912ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9994ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 13308ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 4585ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 62228ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+*** allocated new container adriancole-blobstore2...
+ >> creating container in location [id=cloudfiles-uk, scope=PROVIDER, description=https://lon.auth.api.rackspacecloud.com, parent=null, iso3166Codes=[GB-SLG], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore212...
+[pool-4-thread-1] Test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 8830ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+location [id=cloudfiles-uk, scope=PROVIDER, description=https://lon.auth.api.rackspacecloud.com, parent=null, iso3166Codes=[GB-SLG], metadata={}]
+Starting test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5496ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 9548ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 9655ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5611ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6071ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 80721ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 10839ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 9925ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5018ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4529ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6849ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4384ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 784ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 3202ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 45906ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 73491ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 14036ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 14162ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8353ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6531ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 11357ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 32183ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6296ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 7251ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6884ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 7252ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Oct 15, 2011 10:49:28 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(8,java.util.concurrent.FutureTask@2295aedf) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:28 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(7,java.util.concurrent.FutureTask@2c21a44e) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:29 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(1,java.util.concurrent.FutureTask@79e776cc) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:31 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(3,java.util.concurrent.FutureTask@733e4c83) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:32 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(9,java.util.concurrent.FutureTask@60fc2528) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:36 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(5,java.util.concurrent.FutureTask@229c61d3) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:37 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(2,java.util.concurrent.FutureTask@51d77a8e) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:39 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(4,java.util.concurrent.FutureTask@3b4768cc) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Oct 15, 2011 10:49:39 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(0,java.util.concurrent.FutureTask@508f83a9) with executor java.util.concurrent.ThreadPoolExecutor@110bc436
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:161)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:146)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Starting test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest)
+*** allocated new container adriancole-blobstore0...
+*** allocated new container adriancole-blobstore014...
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest) succeeded: 12871ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 7203ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 5953ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 5695ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 7330ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest)
+[pool-4-thread-1] Test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest) succeeded: 15786ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 1570ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 6290ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 7745ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 15070ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 12029ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[pool-4-thread-1] Test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 9465ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7272ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 48240ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 13384ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 25180ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 23509ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 11532ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 14560ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 9910ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 9364ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 361053ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7857ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 12526ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 2803ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2292ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2804ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore1...
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 21371ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore3...
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 10697ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 103402ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 104462ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 31940ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 66425ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 30418ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 46304ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 53426ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 5881ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+Starting test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 23770ms
+Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
+Tests run: 89, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2,782.45 sec
+
+Results :
+
+Tests run: 89, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-install-plugin:2.3:install (default-install) @ cloudfiles-uk ---
+[INFO] Installing /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.2.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.2.0-SNAPSHOT/cloudfiles-uk-1.2.0-SNAPSHOT.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.2.0-SNAPSHOT/cloudfiles-uk-1.2.0-SNAPSHOT.pom
+[INFO] Installing /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.2.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.2.0-SNAPSHOT/cloudfiles-uk-1.2.0-SNAPSHOT-sources.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.2.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.2.0-SNAPSHOT/cloudfiles-uk-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ cloudfiles-uk ---
+[INFO] Installing org/jclouds/provider/cloudfiles-uk/1.2.0-SNAPSHOT/cloudfiles-uk-1.2.0-SNAPSHOT.jar
+[INFO] Writing OBR metadata
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 46:45.763s
+[INFO] Finished at: Sat Oct 15 11:09:06 PDT 2011
+[INFO] Final Memory: 18M/125M
+[INFO] ------------------------------------------------------------------------
