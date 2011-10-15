@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
 public class SudoAwareInitManager {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
+   protected Logger computeLogger = Logger.NULL;
    protected NodeMetadata node;
    protected final InitBuilder init;
    protected final boolean runAsRoot;
@@ -68,7 +68,7 @@ public class SudoAwareInitManager {
    public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
       if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
          ssh.disconnect();
-         logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
+         computeLogger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
          ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(null).credentials(
                   input.getAdminCredentials()).build());
          ssh.connect();
@@ -79,19 +79,24 @@ public class SudoAwareInitManager {
       ExecResponse returnVal;
       String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
-      if (logger.isTraceEnabled())
-         logger.trace("<< %s[%s]", action, returnVal);
+      if (computeLogger.isTraceEnabled())
+         computeLogger.trace("<< %s[%s]", action, returnVal);
+      else if ("status".equals(action))
+         computeLogger.trace("<< %s(%d)", action, returnVal.getExitCode());
       else
-         logger.debug("<< %s(%d)", action, returnVal.getExitCode());
+         computeLogger.debug("<< %s(%d)", action, returnVal.getExitCode());
       return returnVal;
    }
 
    public ExecResponse runCommand(String command) {
-      ExecResponse returnVal;
-      logger.debug(">> running [%s] as %s@%s", command.replace(node.getAdminPassword() != null ? node
-               .getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh.getHostAddress());
-      returnVal = ssh.exec(command);
-      return returnVal;
+      String statement = String.format(">> running [%s] as %s@%s", command.replace(
+               node.getAdminPassword() != null ? node.getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh
+               .getHostAddress());
+      if (command.endsWith("status"))
+         computeLogger.trace(statement);
+      else
+         computeLogger.debug(statement);
+      return ssh.exec(command);
    }
 
    @VisibleForTesting
