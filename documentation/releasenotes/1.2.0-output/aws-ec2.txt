@@ -1,0 +1,1580 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:aws-ec2:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds Amazon EC2 provider 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ aws-ec2 ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ aws-ec2 ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ aws-ec2 ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ aws-ec2 ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ aws-ec2 ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ aws-ec2 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ aws-ec2 ---
+[INFO] Compiling 84 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ aws-ec2 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 21 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ aws-ec2 ---
+[INFO] Compiling 47 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ aws-ec2 ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testParseRightScaleImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest)
+Starting test testParseAlesticCanonicalImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest)
+Starting test testParseAmznImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest)
+Starting test testParseCCImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest)
+Starting test testParseVostokImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest)
+[pool-2-thread-3] Test testParseAmznImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest) succeeded: 578ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testParseVostokImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest) succeeded: 408ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testLaunchGroupStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testParseCCImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest) succeeded: 588ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testInstanceTypeStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-1] Test testParseAlesticCanonicalImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest) succeeded: 805ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testLaunchGroupStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 58ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testTo(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-2] Test testParseRightScaleImage(org.jclouds.aws.ec2.compute.strategy.AWSEC2ImageParserTest) succeeded: 888ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testFromNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-2] Test testFromNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testLaunchGroup(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testTo(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 11ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testAvailabilityZoneGroupNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-2] Test testLaunchGroup(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 5ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testAvailabilityZoneGroupStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-2] Test testAvailabilityZoneGroupStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testInstanceType(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-3] Test testAvailabilityZoneGroupNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 6ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testToNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-5] Test testInstanceTypeStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 120ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testInstanceType(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 85ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testFromStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+Starting test testInstanceTypeNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testInstanceTypeNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testFrom(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testFrom(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testAvailabilityZoneGroup(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testAvailabilityZoneGroup(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testAssignability(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testAssignability(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testLaunchGroupNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testLaunchGroupNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testToStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest)
+[pool-2-thread-4] Test testToStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testWithMonitoringEnabled(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-4] Test testWithMonitoringEnabled(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 3ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testWithSecurityGroupNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-4] Test testWithSecurityGroupNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testWithSecurityGroupIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-4] Test testWithSecurityGroupIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testWithSecurityGroupIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Starting test testWithKernelIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithKernelIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testNullWithVirtualName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testNullWithVirtualName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testWithSubnetId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithSubnetId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testWithUserDataStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Starting test testWithUserData(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testToNPE(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 38ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testWithSecurityGroupId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithSecurityGroupId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testWithKeyNameStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithKeyNameStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testWithMonitoringEnabledStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithMonitoringEnabledStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testWithInstanceTypeStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithInstanceTypeStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testWithRamdisk(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithRamdisk(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testWithBlockDeviceMappingNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithBlockDeviceMappingNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testWithBlockDeviceMapping(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithUserData(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 6ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testWithBlockDeviceMappingStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithBlockDeviceMappingStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testWithKernelIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithKernelIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 27ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testNullWithRamdisk(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testNullWithRamdisk(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testWithInstanceTypeNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithInstanceTypeNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testWithInstanceType(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithInstanceType(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testNullWithSecurityGroup(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testNullWithSecurityGroup(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testWithKeyNameNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testWithKeyNameNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testWithUserDataStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 78ms
+Starting test testNullWithSecurityGroupId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testFromStatic(org.jclouds.aws.ec2.options.RequestSpotInstancesOptionsTest) succeeded: 130ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testWithSecurityGroupStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testNullWithSecurityGroupId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 7ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testWithSecurityGroupIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 117ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testWithBlockDeviceMapping(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 79ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testAssignability(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Starting test testNullWithAdditionalInfo(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-4] Test testAssignability(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testWithSubnetIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testWithSecurityGroupStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 3ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testWithUserDataEmpty(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithUserDataEmpty(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testNullWithMonitoringEnabled(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testNullWithMonitoringEnabled(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testWithRamdiskNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Starting test testNullWithKeyName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-4] Test testNullWithKeyName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testNullWithUserData(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-5] Test testNullWithAdditionalInfo(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 20ms
+Starting test testWithKeyName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testWithRamdiskStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testWithKeyName(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 25ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testNullWithInstanceType(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testNullWithInstanceType(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testNullWithBlockDeviceMapping(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testNullWithBlockDeviceMapping(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testWithSubnetIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testWithSubnetIdNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testWithKernelId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-3] Test testWithKernelId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testWithSubnetIdStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 104ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testNullWithUserData(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 85ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testWithSecurityGroup(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testWithRamdiskNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 87ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testWithRamdiskStatic(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 13ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testWithUserDataNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+Starting test testNullWithSubnetId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-2] Test testWithUserDataNPE(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testWithSecurityGroup(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 21ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testNullWithKernelId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest)
+[pool-2-thread-1] Test testNullWithKernelId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test test(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest)
+Starting test testMustBeArray(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest)
+Starting test testNullIsBad(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest)
+Starting test testinboundPorts(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-5] Test testNullWithSubnetId(org.jclouds.aws.ec2.options.AWSRunInstancesOptionsTest) succeeded: 27ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testauthorizePublicKeyBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testinboundPorts(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 5ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testsecurityGroupsIterableBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testMustBeArray(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest) succeeded: 16ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsIterable(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsIterable(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testinstallPrivateKeyStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testinstallPrivateKeyStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testMonitoringEnabledDefault(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testMonitoringEnabledDefault(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testinstallPrivateKeyBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testinstallPrivateKeyBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testnoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testnoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testsecurityGroupsVarArgsEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupsVarArgsEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsVarArgs(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsVarArgs(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testkeyPairBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testkeyPairBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testauthorizePublicKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testauthorizePublicKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testNullkeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testNullkeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testNoKeyPairAndKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testNoKeyPairAndKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testDefaultOpen22(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testDefaultOpen22(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testNullblockOnPort(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testNullblockOnPort(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test testkeyPairAndNoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testkeyPairAndNoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsVarArgsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsVarArgsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testDefaultGroupIdsVarArgsEmpty(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testDefaultGroupIdsVarArgsEmpty(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsIterableBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsIterableBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsIterableEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsIterableEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testsecurityGroupsVarArgs(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupsVarArgs(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test testinboundPortsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testinboundPortsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testblockOnPort(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testblockOnPort(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsVarArgsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupIdsVarArgsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+Starting test testnoKeyPairStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testnoKeyPairStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
+Starting test testsecurityGroupsIterableStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testsecurityGroupsIterableStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
+Starting test testblockOnPortStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testblockOnPortStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
+Starting test testinstallPrivateKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testinstallPrivateKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
+Starting test testNullauthorizePublicKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-3] Test testNullauthorizePublicKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
+Starting test testEnableMonitoringStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testNullIsBad(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest) succeeded: 29ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testsecurityGroupIdsVarArgsEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testsecurityGroupIdsVarArgsEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
+Starting test testinboundPortsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testinboundPortsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Starting test testinstallPrivateKeyNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testinstallPrivateKeyNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
+Starting test testkeyPairNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testkeyPairNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
+Starting test testFalsenoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testFalsenoKeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
+Starting test testMonitoringEnabled(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testMonitoringEnabled(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
+Starting test testkeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testkeyPair(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
+Starting test testkeyPairStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testkeyPairStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
+Starting test testauthorizePublicKeyStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testauthorizePublicKeyStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
+Starting test testsecurityGroupsIterable(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-4] Test testsecurityGroupsIterable(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testsecurityGroupsIterableBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 23ms
+Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
+Starting test testblockOnPortBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-5] Test testauthorizePublicKeyBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 36ms
+Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testEnableMonitoringStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 23ms
+Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
+Starting test testsecurityGroupsVarArgsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+Starting test testsecurityGroupIdsIterableStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testsecurityGroupsVarArgsStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
+Starting test testsecurityGroupsIterableEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testsecurityGroupsIterableEmptyNotOk(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
+Starting test testDefaultGroupsVarArgsEmpty(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testDefaultGroupsVarArgsEmpty(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
+Starting test testsecurityGroupsVarArgsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testsecurityGroupsVarArgsBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
+Starting test testNullinstallPrivateKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testNullinstallPrivateKey(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
+Starting test testauthorizePublicKeyNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest)
+[pool-2-thread-2] Test testauthorizePublicKeyNPE(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testblockOnPortBadFormat(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 21ms
+Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
+Starting test testMultimapFilters(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-1] Test test(org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParamsTest) succeeded: 80ms
+Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testsecurityGroupIdsIterableStatic(org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptionsTest) succeeded: 18ms
+Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
+Starting test testExecutableByNPE(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+Starting test testMultipleOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-4] Test testMultipleOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
+Starting test testMapFiltersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testMultimapFilters(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 4ms
+Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
+Starting test testOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
+Starting test testOwnersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testOwnersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
+Starting test testMultimapFiltersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testMultimapFiltersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
+Starting test testNullImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testNullImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
+Starting test testImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testExecutableByNPE(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 7ms
+Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
+Starting test testNullExecutableBy(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-3] Test testNullExecutableBy(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
+Starting test testExecutableByStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-3] Test testExecutableByStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
+Starting test testImageIdsStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-3] Test testImageIdsStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
+Starting test testAssignability(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-3] Test testAssignability(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
+Starting test testNullOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-3] Test testNullOwners(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 129, failed: 0, skipped: 0.
+Starting test testApplyWithBlockDeviceMappings(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest)
+Starting test testMultipleImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-1] Test testMultipleImageIds(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 130, failed: 0, skipped: 0.
+Starting test testApplyWithUserData(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest)
+Starting test testMapFilters(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+Starting test testExecutableBy(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest)
+[pool-2-thread-2] Test testExecutableBy(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 131, failed: 0, skipped: 0.
+Starting test testApplyWithSecurityId(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest)
+[pool-2-thread-2] Test testApplyWithSecurityId(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 132, failed: 0, skipped: 0.
+Starting test testAnyKeyBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-2] Test testAnyKeyBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 3ms
+Test suite progress: tests succeeded: 133, failed: 0, skipped: 0.
+Starting test testKeyWithValueBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-5] Test testMapFilters(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 42ms
+Test suite progress: tests succeeded: 134, failed: 0, skipped: 0.
+Starting test testMustBeArray(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-1] Test testApplyWithUserData(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest) succeeded: 63ms
+Test suite progress: tests succeeded: 135, failed: 0, skipped: 0.
+Starting test testAnyKey(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-1] Test testAnyKey(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 136, failed: 0, skipped: 0.
+Starting test testkeyWithValue(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-4] Test testMapFiltersStatic(org.jclouds.aws.ec2.options.AWSDescribeImagesOptionsTest) succeeded: 93ms
+Test suite progress: tests succeeded: 137, failed: 0, skipped: 0.
+Starting test testMultipleKeys(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-4] Test testMultipleKeys(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 138, failed: 0, skipped: 0.
+Starting test testMultipleResourceTypesBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-3] Test testApplyWithBlockDeviceMappings(org.jclouds.aws.ec2.binders.BindLaunchSpecificationToFormParamsTest) succeeded: 73ms
+Test suite progress: tests succeeded: 139, failed: 0, skipped: 0.
+Starting test testMultipleResourceTypes(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+[pool-2-thread-4] Test testMultipleResourceTypesBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 140, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testMultipleResourceTypes(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 0ms
+Starting test testNullIsBad(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+Test suite progress: tests succeeded: 141, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testNullIsBad(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 142, failed: 0, skipped: 0.
+Starting test testMultipleKeysBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest)
+Starting test testApplyWithIllegalStateExceptionRetriesWhenExistingKeyNotFound(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest)
+[pool-2-thread-3] Test testMultipleKeysBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 143, failed: 0, skipped: 0.
+Starting test testApplyWithIllegalStateExceptionReturnsExistingKey(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest)
+[pool-2-thread-5] Test testMustBeArray(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 26ms
+Test suite progress: tests succeeded: 144, failed: 0, skipped: 0.
+Starting test testApply(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest)
+[pool-2-thread-2] Test testKeyWithValueBuilder(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 52ms
+Test suite progress: tests succeeded: 145, failed: 0, skipped: 0.
+Starting test testDescription(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testDescription(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 146, failed: 0, skipped: 0.
+Starting test testDescriptionNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-1] Test testkeyWithValue(org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParamsTest) succeeded: 26ms
+Test suite progress: tests succeeded: 147, failed: 0, skipped: 0.
+Starting test testToStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testDescriptionNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 15ms
+Test suite progress: tests succeeded: 148, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testToStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 149, failed: 0, skipped: 0.
+Starting test testFromNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testFromNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 150, failed: 0, skipped: 0.
+Starting test testToNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testToNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 151, failed: 0, skipped: 0.
+Starting test testDescriptionStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testDescriptionStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 152, failed: 0, skipped: 0.
+Starting test testFrom(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testFrom(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 7ms
+Test suite progress: tests succeeded: 153, failed: 0, skipped: 0.
+Starting test testAssignability(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+Starting test testFromStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testFromStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 154, failed: 0, skipped: 0.
+Starting test testInstanceTypeNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testInstanceTypeNPE(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 155, failed: 0, skipped: 0.
+Starting test testInstanceType(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testInstanceType(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 156, failed: 0, skipped: 0.
+Starting test testTo(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testTo(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 157, failed: 0, skipped: 0.
+Starting test testInstanceTypeStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest)
+[pool-2-thread-2] Test testInstanceTypeStatic(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 158, failed: 0, skipped: 0.
+Starting test test(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest)
+[pool-2-thread-1] Test testAssignability(org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptionsTest) succeeded: 7ms
+Test suite progress: tests succeeded: 159, failed: 0, skipped: 0.
+Starting test testMustBeArray(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest)
+[pool-2-thread-2] Test test(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest) succeeded: 11ms
+Test suite progress: tests succeeded: 160, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testMustBeArray(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 161, failed: 0, skipped: 0.
+Starting test testEmpty(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest)
+Starting test testNullIsBad(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest)
+[pool-2-thread-1] Test testNullIsBad(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 162, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testEmpty(org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParamsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 163, failed: 0, skipped: 0.
+Starting test testDisallowedMarkersIllegalArgument(org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64Test)
+Starting test testAllowedMarkers(org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64Test)
+[pool-2-thread-1] Test testDisallowedMarkersIllegalArgument(org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64Test) succeeded: 0ms
+Test suite progress: tests succeeded: 164, failed: 0, skipped: 0.
+Starting test test2Nodes(org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadataTest)
+[pool-2-thread-2] Test testAllowedMarkers(org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64Test) succeeded: 27ms
+Test suite progress: tests succeeded: 165, failed: 0, skipped: 0.
+[pool-2-thread-1] Test test2Nodes(org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadataTest) succeeded: 105ms
+Test suite progress: tests succeeded: 166, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testApplyWithIllegalStateExceptionReturnsExistingKey(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest) succeeded: 221ms
+Test suite progress: tests succeeded: 167, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testApply(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest) succeeded: 221ms
+Test suite progress: tests succeeded: 168, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testApplyWithIllegalStateExceptionRetriesWhenExistingKeyNotFound(org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypairTest) succeeded: 241ms
+Test suite progress: tests succeeded: 169, failed: 0, skipped: 0.
+Starting test testInRestProperties(org.jclouds.aws.ec2.AWSEC2ProviderTest)
+Starting test testWithId(org.jclouds.aws.ec2.AWSEC2ProviderTest)
+Starting test testAllContains(org.jclouds.aws.ec2.AWSEC2ProviderTest)
+[pool-3-thread-2] Test testWithId(org.jclouds.aws.ec2.AWSEC2ProviderTest) succeeded: 20ms
+Test suite progress: tests succeeded: 170, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testAllContains(org.jclouds.aws.ec2.AWSEC2ProviderTest) succeeded: 30ms
+Test suite progress: tests succeeded: 171, failed: 0, skipped: 0.
+Starting test testOfTypeContains(org.jclouds.aws.ec2.AWSEC2ProviderTest)
+[pool-3-thread-4] Test testOfTypeContains(org.jclouds.aws.ec2.AWSEC2ProviderTest) succeeded: 2ms
+Test suite progress: tests succeeded: 172, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testInRestProperties(org.jclouds.aws.ec2.AWSEC2ProviderTest) succeeded: 50ms
+Test suite progress: tests succeeded: 173, failed: 0, skipped: 0.
+Starting test testRequestSpotInstance(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+Starting test testDescribeSpotInstanceRequests(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+Starting test testDescribeSpotPriceHistoryArgs(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+Starting test testDescribeSpotPriceHistory(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)Starting test testRequestSpotInstancesOptions(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+
+[pool-4-thread-5] Test testDescribeSpotPriceHistory(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 39ms
+Test suite progress: tests succeeded: 174, failed: 0, skipped: 0.
+Starting test testDescribeSpotInstanceRequestsArgs(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+[pool-4-thread-3] Test testDescribeSpotPriceHistoryArgs(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 67ms
+Test suite progress: tests succeeded: 175, failed: 0, skipped: 0.
+Starting test testCancelSpotInstanceRequests(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest)
+[pool-4-thread-5] Test testDescribeSpotInstanceRequestsArgs(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 58ms
+Test suite progress: tests succeeded: 176, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testRequestSpotInstance(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 186ms
+Test suite progress: tests succeeded: 177, failed: 0, skipped: 0.
+[pool-4-thread-4] Test testRequestSpotInstancesOptions(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 115ms
+Test suite progress: tests succeeded: 178, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testDescribeSpotInstanceRequests(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 176ms
+Test suite progress: tests succeeded: 179, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testCancelSpotInstanceRequests(org.jclouds.aws.ec2.services.SpotInstanceAsyncClientTest) succeeded: 26ms
+Test suite progress: tests succeeded: 180, failed: 0, skipped: 0.
+Starting test testAsync(org.jclouds.aws.ec2.AWSEC2AsyncClientTest)
+Starting test testSync(org.jclouds.aws.ec2.AWSEC2AsyncClientTest)
+[pool-5-thread-1] Test testSync(org.jclouds.aws.ec2.AWSEC2AsyncClientTest) succeeded: 1589ms
+Test suite progress: tests succeeded: 181, failed: 0, skipped: 0.
+[pool-5-thread-2] Test testAsync(org.jclouds.aws.ec2.AWSEC2AsyncClientTest) succeeded: 1621ms
+Test suite progress: tests succeeded: 182, failed: 0, skipped: 0.
+Starting test testDeleteSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+[pool-6-thread-1] Test testDeleteSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 183, failed: 0, skipped: 0.
+Starting test testRevokeSecurityGroupIpPermissions(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+[pool-6-thread-2] Test testRevokeSecurityGroupIpPermissions(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 184, failed: 0, skipped: 0.
+Starting test testCreateSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+[pool-6-thread-3] Test testCreateSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 185, failed: 0, skipped: 0.
+Starting test testAuthorizeSecurityGroupIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+[pool-6-thread-4] Test testAuthorizeSecurityGroupIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 186, failed: 0, skipped: 0.
+Starting test testDescribeSecurityGroupsArgs(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+Starting test testDescribeSecurityGroups(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+Starting test testAuthorizeSecurityGroupIpPermissions(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+[pool-6-thread-4] Test testDescribeSecurityGroupsArgs(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 9ms
+Starting test testRevokeSecurityGroupIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest)
+Test suite progress: tests succeeded: 187, failed: 0, skipped: 0.
+[pool-6-thread-5] Test testRevokeSecurityGroupIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 188, failed: 0, skipped: 0.
+[pool-6-thread-3] Test testDescribeSecurityGroups(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 19ms
+Test suite progress: tests succeeded: 189, failed: 0, skipped: 0.
+[pool-6-thread-2] Test testAuthorizeSecurityGroupIpPermissions(org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClientTest) succeeded: 12ms
+Test suite progress: tests succeeded: 190, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandlerTest)
+[pool-7-thread-1] Test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandlerTest) succeeded: 153ms
+Test suite progress: tests succeeded: 191, failed: 0, skipped: 0.
+Starting test testConvertImageSyntax(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest)
+Starting test testConvertImageSyntaxWhenBlank(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest)
+Starting test testConvertCCImageSyntax(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest)
+Oct 15, 2011 10:00:55 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldImageKey
+WARNING: Property jclouds.ec2.ami-owners is deprecated, please use new syntax: jclouds.ec2.ami-query=owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine
+Oct 15, 2011 10:00:55 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldCCImageKey
+WARNING: Property jclouds.ec2.cc-amis is deprecated, please use new syntax: jclouds.ec2.cc-ami-query=image-id=ami-321eed5b,ami-7ea24a17
+[pool-8-thread-2] Test testConvertImageSyntax(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 192, failed: 0, skipped: 0.
+[pool-8-thread-3] Test testConvertCCImageSyntax(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest) succeeded: 27ms
+Test suite progress: tests succeeded: 193, failed: 0, skipped: 0.
+Starting test testConvertImageSyntaxWhenStar(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest)
+Oct 15, 2011 10:00:55 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldImageKey
+WARNING: Property jclouds.ec2.ami-owners is deprecated, please use new syntax: jclouds.ec2.ami-query=
+[pool-8-thread-1] Test testConvertImageSyntaxWhenBlank(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest) succeeded: 28ms
+Test suite progress: tests succeeded: 194, failed: 0, skipped: 0.
+[pool-8-thread-4] Test testConvertImageSyntaxWhenStar(org.jclouds.aws.ec2.AWSEC2PropertiesBuilderTest) succeeded: 1ms
+Test suite progress: tests succeeded: 195, failed: 0, skipped: 0.
+Oct 15, 2011 10:00:55 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldImageKey
+WARNING: Property jclouds.ec2.ami-owners is deprecated, please use new syntax: jclouds.ec2.ami-query=state=available;image-type=machine
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribeReservedInstancesOfferingResponseHandlerTest)
+[pool-9-thread-1] Test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribeReservedInstancesOfferingResponseHandlerTest) succeeded: 13ms
+Test suite progress: tests succeeded: 196, failed: 0, skipped: 0.
+Starting test testCreateImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-1] Test testCreateImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 197, failed: 0, skipped: 0.
+Starting test testResetLaunchPermissionsOnImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testRegisterImageBackedByEBSOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-3] Test testResetLaunchPermissionsOnImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 198, failed: 0, skipped: 0.
+Starting test testDescribeImages(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-3] Test testDescribeImages(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 199, failed: 0, skipped: 0.
+Starting test testGetLaunchPermissionForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-1] Test testRegisterImageBackedByEBSOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 200, failed: 0, skipped: 0.
+Starting test testDescribeImagesOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testRegisterImageFromManifest(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testGetProductCodesForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testRemoveProductCodesFromImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-3] Test testGetLaunchPermissionForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 201, failed: 0, skipped: 0.
+[pool-10-thread-5] Test testGetProductCodesForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 7ms
+Test suite progress: tests succeeded: 202, failed: 0, skipped: 0.
+Starting test testAddProductCodesToImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-5] Test testAddProductCodesToImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 203, failed: 0, skipped: 0.
+Starting test testRegisterImageFromManifestOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-1] Test testDescribeImagesOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 16ms
+Test suite progress: tests succeeded: 204, failed: 0, skipped: 0.
+Starting test testGetBlockDeviceMappingsForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-5] Test testRegisterImageFromManifestOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 205, failed: 0, skipped: 0.
+[pool-10-thread-2] Test testRegisterImageFromManifest(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 17ms
+Test suite progress: tests succeeded: 206, failed: 0, skipped: 0.
+Starting test testRegisterImageBackedByEBS(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-2] Test testRegisterImageBackedByEBS(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 207, failed: 0, skipped: 0.
+Starting test testCreateImageOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testRemoveLaunchPermissionsFromImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+Starting test testAddLaunchPermissionsToImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-1] Test testGetBlockDeviceMappingsForImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 13ms
+Test suite progress: tests succeeded: 208, failed: 0, skipped: 0.
+Starting test testDeregisterImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest)
+[pool-10-thread-1] Test testDeregisterImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 209, failed: 0, skipped: 0.
+[pool-10-thread-4] Test testRemoveProductCodesFromImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 23ms
+Test suite progress: tests succeeded: 210, failed: 0, skipped: 0.
+[pool-10-thread-2] Test testCreateImageOptions(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 211, failed: 0, skipped: 0.
+[pool-10-thread-3] Test testRemoveLaunchPermissionsFromImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 65ms
+Test suite progress: tests succeeded: 212, failed: 0, skipped: 0.
+[pool-10-thread-5] Test testAddLaunchPermissionsToImage(org.jclouds.aws.ec2.services.AWSAMIAsyncClientTest) succeeded: 66ms
+Test suite progress: tests succeeded: 213, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandlerTest)
+[pool-11-thread-1] Test testApplyInputStream(org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandlerTest) succeeded: 9ms
+Test suite progress: tests succeeded: 214, failed: 0, skipped: 0.
+Starting test testApplyInputStream1(org.jclouds.aws.ec2.xml.SpotInstanceHandlerTest)
+[pool-12-thread-1] Test testApplyInputStream1(org.jclouds.aws.ec2.xml.SpotInstanceHandlerTest) succeeded: 5ms
+Test suite progress: tests succeeded: 215, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.SpotInstanceHandlerTest)
+[pool-12-thread-2] Test testApplyInputStream(org.jclouds.aws.ec2.xml.SpotInstanceHandlerTest) succeeded: 5ms
+Test suite progress: tests succeeded: 216, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.ProductCodesHandlerTest)
+[pool-13-thread-1] Test testApplyInputStream(org.jclouds.aws.ec2.xml.ProductCodesHandlerTest) succeeded: 6ms
+Test suite progress: tests succeeded: 217, failed: 0, skipped: 0.
+Starting test testCreatePlacementGroupDefault(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest)
+[pool-14-thread-1] Test testCreatePlacementGroupDefault(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 218, failed: 0, skipped: 0.
+Starting test testDeletePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest)
+[pool-14-thread-2] Test testDeletePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 219, failed: 0, skipped: 0.
+Starting test testDescribePlacementGroupsArgs(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest)
+Starting test testDescribePlacementGroups(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest)
+Starting test testCreatePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest)
+[pool-14-thread-3] Test testDescribePlacementGroupsArgs(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest) succeeded: 34ms
+Test suite progress: tests succeeded: 220, failed: 0, skipped: 0.
+[pool-14-thread-4] Test testDescribePlacementGroups(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest) succeeded: 51ms
+Test suite progress: tests succeeded: 221, failed: 0, skipped: 0.
+[pool-14-thread-5] Test testCreatePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupAsyncClientTest) succeeded: 26ms
+Test suite progress: tests succeeded: 222, failed: 0, skipped: 0.
+Starting test testEBS(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest)
+[pool-15-thread-1] Test testEBS(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest) succeeded: 9ms
+Test suite progress: tests succeeded: 223, failed: 0, skipped: 0.
+Starting test testWhenRunningLatest(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest)
+[pool-15-thread-2] Test testWhenRunningLatest(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest) succeeded: 13ms
+Test suite progress: tests succeeded: 224, failed: 0, skipped: 0.
+Starting test testParseNoNPE(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest)
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest)
+Starting test testWhenRunning(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest)
+[pool-15-thread-5] Test testWhenRunning(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest) succeeded: 7ms
+Test suite progress: tests succeeded: 225, failed: 0, skipped: 0.
+[pool-15-thread-4] Test testApplyInputStream(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest) succeeded: 83ms
+Test suite progress: tests succeeded: 226, failed: 0, skipped: 0.
+[pool-15-thread-3] Test testParseNoNPE(org.jclouds.aws.ec2.xml.AWSDescribeInstancesResponseHandlerTest) succeeded: 109ms
+Test suite progress: tests succeeded: 227, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_ImportPublicKeyWhenOptionIsSet(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_ImportPublicKeyWhenOptionIsSet(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 194ms
+Test suite progress: tests succeeded: 228, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_doesntCreateAKeyPairAndReturnsNullWhenToldNotTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_doesntCreateAKeyPairAndReturnsNullWhenToldNotTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 111ms
+Test suite progress: tests succeeded: 229, failed: 0, skipped: 0.
+Starting test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_reusesKeyWhenToldTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_reusesKeyWhenToldTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 166ms
+Test suite progress: tests succeeded: 230, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_createsNewKeyPairAndReturnsItsNameWhenNoPublicKeySupplied(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_createsNewKeyPairAndReturnsItsNameWhenNoPublicKeySupplied(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 231, failed: 0, skipped: 0.
+Starting test testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenPortsAreSpecifiedWhenDoesntExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenPortsAreSpecifiedWhenDoesntExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 2ms
+Test suite progress: tests succeeded: 232, failed: 0, skipped: 0.
+Starting test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExistAndAcceptsUserSuppliedGroupIds(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExistAndAcceptsUserSuppliedGroupIds(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 8ms
+Test suite progress: tests succeeded: 233, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySupplied(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySupplied(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 234, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySuppliedAndAddsCredentialToMapWhenOverridingCredsAreSet(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_importsKeyPairAndUnsetsTemplateInstructionWhenPublicKeySuppliedAndAddsCredentialToMapWhenOverridingCredsAreSet(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 3ms
+Test suite progress: tests succeeded: 235, failed: 0, skipped: 0.
+Starting test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_createsNewPlacementGroupAndReturnsItsNameByDefault(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_createsNewPlacementGroupAndReturnsItsNameByDefault(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 236, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsAlreadyInMap(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptAndCredentialsAlreadyInMap(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 237, failed: 0, skipped: 0.
+Starting test testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesntExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesntExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 238, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptButNoCredentials(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_reusesKeyWhenToldToWithRunScriptButNoCredentials(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 239, failed: 0, skipped: 0.
+Starting test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_returnsExistingKeyIfAlreadyPresent(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewKeyPairUnlessUserSpecifiedOtherwise_returnsExistingKeyIfAlreadyPresent(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 240, failed: 0, skipped: 0.
+Starting test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExistAndAcceptsUserSuppliedGroups(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExistAndAcceptsUserSuppliedGroups(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 241, failed: 0, skipped: 0.
+Starting test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExist(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 242, failed: 0, skipped: 0.
+Starting test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_doesntCreateAPlacementGroupAndReturnsNullWhenToldNotTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest)
+[pool-16-thread-1] Test testCreateNewPlacementGroupUnlessUserSpecifiedOtherwise_doesntCreateAPlacementGroupAndReturnsNullWhenToldNotTo(org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 243, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.MonitoringStateHandlerTest)
+[pool-17-thread-1] Test testApplyInputStream(org.jclouds.aws.ec2.xml.MonitoringStateHandlerTest) succeeded: 7ms
+Test suite progress: tests succeeded: 244, failed: 0, skipped: 0.
+Starting test testMonitorInstances(org.jclouds.aws.ec2.services.MonitoringAsyncClientTest)
+[pool-18-thread-1] Test testMonitorInstances(org.jclouds.aws.ec2.services.MonitoringAsyncClientTest) succeeded: 20ms
+Test suite progress: tests succeeded: 245, failed: 0, skipped: 0.
+Starting test testUnmonitorInstances(org.jclouds.aws.ec2.services.MonitoringAsyncClientTest)
+[pool-18-thread-2] Test testUnmonitorInstances(org.jclouds.aws.ec2.services.MonitoringAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 246, failed: 0, skipped: 0.
+Starting test testDescribeKeyPairs(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest)
+Starting test testDeleteKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest)
+[pool-19-thread-2] Test testDeleteKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 247, failed: 0, skipped: 0.
+[pool-19-thread-1] Test testDescribeKeyPairs(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest) succeeded: 44ms
+Test suite progress: tests succeeded: 248, failed: 0, skipped: 0.
+Starting test testImportKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest)
+Starting test testCreateKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest)
+Starting test testDescribeKeyPairsArgs(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest)
+[pool-19-thread-3] Test testImportKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest) succeeded: 30ms
+Test suite progress: tests succeeded: 249, failed: 0, skipped: 0.
+[pool-19-thread-4] Test testCreateKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest) succeeded: 18ms
+Test suite progress: tests succeeded: 250, failed: 0, skipped: 0.
+[pool-19-thread-5] Test testDescribeKeyPairsArgs(org.jclouds.aws.ec2.services.AWSKeyPairAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 251, failed: 0, skipped: 0.
+Starting test testCreateTags(org.jclouds.aws.ec2.services.TagAsyncClientTest)
+Starting test testDescribeTags(org.jclouds.aws.ec2.services.TagAsyncClientTest)
+Starting test testDescribeTagsArgs(org.jclouds.aws.ec2.services.TagAsyncClientTest)
+Starting test testDeleteTags(org.jclouds.aws.ec2.services.TagAsyncClientTest)
+[pool-20-thread-2] Test testDeleteTags(org.jclouds.aws.ec2.services.TagAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 252, failed: 0, skipped: 0.
+[pool-20-thread-1] Test testCreateTags(org.jclouds.aws.ec2.services.TagAsyncClientTest) succeeded: 20ms
+Test suite progress: tests succeeded: 253, failed: 0, skipped: 0.
+[pool-20-thread-4] Test testDescribeTagsArgs(org.jclouds.aws.ec2.services.TagAsyncClientTest) succeeded: 23ms
+Test suite progress: tests succeeded: 254, failed: 0, skipped: 0.
+[pool-20-thread-3] Test testDescribeTags(org.jclouds.aws.ec2.services.TagAsyncClientTest) succeeded: 26ms
+Test suite progress: tests succeeded: 255, failed: 0, skipped: 0.
+Starting test testConvert(org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstanceTest)
+[pool-21-thread-1] Test testConvert(org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstanceTest) succeeded: 1ms
+Test suite progress: tests succeeded: 256, failed: 0, skipped: 0.
+Starting test testConvertWhenNotOpenReturnsNull(org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstanceTest)
+[pool-21-thread-2] Test testConvertWhenNotOpenReturnsNull(org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstanceTest) succeeded: 1ms
+Test suite progress: tests succeeded: 257, failed: 0, skipped: 0.
+Starting test testSetInstanceTypeForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testDescribeInstancesArgs(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-1] Test testSetInstanceTypeForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 258, failed: 0, skipped: 0.
+Starting test testSetBlockDeviceMappingForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testGetRamdiskForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testSetUserDataForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testStartInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testGetRamdiskForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 46ms
+Test suite progress: tests succeeded: 259, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testDescribeInstancesArgs(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 56ms
+Test suite progress: tests succeeded: 260, failed: 0, skipped: 0.
+Starting test testSetRamdiskForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-1] Test testStartInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 32ms
+Test suite progress: tests succeeded: 261, failed: 0, skipped: 0.
+Starting test testDescribeInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-3] Test testSetRamdiskForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 262, failed: 0, skipped: 0.
+Starting test testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-3] Test testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 263, failed: 0, skipped: 0.
+Starting test testGetUserDataForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testRebootInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-3] Test testGetUserDataForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 264, failed: 0, skipped: 0.
+Starting test testRunInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-1] Test testDescribeInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 265, failed: 0, skipped: 0.
+Starting test testSetApiTerminationDisabledForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testRebootInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 266, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testRunInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 267, failed: 0, skipped: 0.
+Starting test testRunInstancesOptions(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-1] Test testSetApiTerminationDisabledForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 268, failed: 0, skipped: 0.
+Starting test testGetDisableApiTerminationForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testTerminateInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testRunInstancesOptions(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 27ms
+Test suite progress: tests succeeded: 269, failed: 0, skipped: 0.
+Starting test testGetInstanceInitiatedShutdownBehaviorForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-3] Test testTerminateInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 20ms
+Test suite progress: tests succeeded: 270, failed: 0, skipped: 0.
+Starting test testGetBlockDeviceMappingForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testGetInstanceInitiatedShutdownBehaviorForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 271, failed: 0, skipped: 0.
+Starting test testGetKernelForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testGetKernelForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 272, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testGetBlockDeviceMappingForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 273, failed: 0, skipped: 0.
+Starting test testStopInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+Starting test testGetRootDeviceNameForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testStopInstances(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 274, failed: 0, skipped: 0.
+Starting test testSetKernelForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-4] Test testSetKernelForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 275, failed: 0, skipped: 0.
+Starting test testGetInstanceTypeForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest)
+[pool-22-thread-1] Test testGetDisableApiTerminationForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 34ms
+Test suite progress: tests succeeded: 276, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testGetRootDeviceNameForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 7ms
+Test suite progress: tests succeeded: 277, failed: 0, skipped: 0.
+[pool-22-thread-4] Test testGetInstanceTypeForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 278, failed: 0, skipped: 0.
+[pool-22-thread-5] Test testSetUserDataForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 264ms
+Test suite progress: tests succeeded: 279, failed: 0, skipped: 0.
+[pool-22-thread-2] Test testSetBlockDeviceMappingForInstanceInRegion(org.jclouds.aws.ec2.services.AWSInstanceAsyncClientTest) succeeded: 268ms
+Test suite progress: tests succeeded: 280, failed: 0, skipped: 0.
+Starting test testDescribe(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest)
+[pool-23-thread-1] Test testDescribe(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest) succeeded: 10ms
+Test suite progress: tests succeeded: 281, failed: 0, skipped: 0.
+Starting test testRequest(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest)
+Starting test testParseNoNPE(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest)
+[pool-23-thread-2] Test testRequest(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest) succeeded: 5ms
+Test suite progress: tests succeeded: 282, failed: 0, skipped: 0.
+Starting test testParseTags(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest)
+[pool-23-thread-3] Test testParseNoNPE(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest) succeeded: 5ms
+Test suite progress: tests succeeded: 283, failed: 0, skipped: 0.
+[pool-23-thread-4] Test testParseTags(org.jclouds.aws.ec2.xml.SpotInstancesHandlerTest) succeeded: 8ms
+Test suite progress: tests succeeded: 284, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDoesntNPE(org.jclouds.aws.ec2.xml.AWSRunInstancesResponseHandlerTest)
+[pool-24-thread-1] Test testApplyInputStreamDoesntNPE(org.jclouds.aws.ec2.xml.AWSRunInstancesResponseHandlerTest) succeeded: 3ms
+Test suite progress: tests succeeded: 285, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.aws.ec2.xml.AWSRunInstancesResponseHandlerTest)
+[pool-24-thread-2] Test testApplyInputStream(org.jclouds.aws.ec2.xml.AWSRunInstancesResponseHandlerTest) succeeded: 5ms
+Test suite progress: tests succeeded: 286, failed: 0, skipped: 0.
+Tests run: 286, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.665 sec
+
+Results :
+
+Tests run: 286, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ aws-ec2 ---
+
+Testing org.jclouds.aws.ec2-test
+
+Ran 2 tests containing 2 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ aws-ec2 ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ aws-ec2 ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/aws-ec2-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ aws-ec2 ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ aws-ec2 ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/aws-ec2-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ aws-ec2 ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test setServiceDefaults(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test setServiceDefaults(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+Oct 15, 2011 10:01:37 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=t1.micro, providerId=t1.micro, name=null, processors=[[cores=1.0, speed=1.0]], ram=630, volumes=[], supportsImage=And(requiresRootDeviceType(ebs),Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]]
+Oct 15, 2011 10:01:37 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=cc1.4xlarge, providerId=cc1.4xlarge, name=null, processors=[[cores=4.0, speed=4.0], [cores=4.0, speed=4.0]], ram=23552, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=840.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=840.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,requiresVirtualizationType(hvm),idIn([us-east-1/ami-0601f16f, us-east-1/ami-015e9d68, us-east-1/ami-e7cd018e, us-east-1/ami-3e08fa57, us-east-1/ami-1f2de176, us-east-1/ami-c50cc0ac, us-east-1/ami-eb8f4c82, us-east-1/ami-df4183b6, us-east-1/ami-3720ed5e, us-east-1/ami-f1589598, us-east-1/ami-ed35f384, us-east-1/ami-70da2319, us-east-1/ami-c134f6a8, us-east-1/ami-09d11d60, us-east-1/ami-8bf935e2, us-east-1/ami-1cad5275, us-east-1/ami-321eed5b, us-east-1/ami-58906c31, us-east-1/ami-b79754de, us-east-1/ami-02b14b6b, us-east-1/ami-724ab91b, us-east-1/ami-5130fc38, us-east-1/ami-5af40933, us-east-1/ami-8d08c4e4, us-east-1/ami-5b12de32, us-east-1/ami-bff539d6, us-east-1/ami-8d25e8e4, us-east-1/ami-1cae5375, us-east-1/ami-d170bdb8, us-east-1/ami-9d8548f4, us-east-1/ami-edc30f84, us-east-1/ami-3657a55f, us-east-1/ami-c7f331ae, us-east-1/ami-3d16da54]),ALWAYS_TRUE), tags=[]]
+Oct 15, 2011 10:01:37 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=m2.4xlarge, providerId=m2.4xlarge, name=null, processors=[[cores=8.0, speed=3.25]], ram=70041, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=840.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=840.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 10249ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+Starting test testAuthorizeSecurityGroupIngressIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testAuthorizeSecurityGroupIngressIpPermission(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 11008ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testAuthorizeSecurityGroupIngressCidr(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testAuthorizeSecurityGroupIngressCidr(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 5337ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testAuthorizeSecurityGroupIngressSourceGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testAuthorizeSecurityGroupIngressSourceGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 10556ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testAuthorizeSecurityGroupIngressSourcePort(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testAuthorizeSecurityGroupIngressSourcePort(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 5288ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testCreateSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testCreateSecurityGroup(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 4305ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testDescribe(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest)
+[pool-2-thread-1] Test testDescribe(org.jclouds.aws.ec2.services.AWSSecurityGroupClientLiveTest) succeeded: 7190ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testCreateKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest)
+[pool-2-thread-1] Test testCreateKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest) succeeded: 3659ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testDescribeAWSKeyPairs(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest)
+[pool-2-thread-1] Test testDescribeAWSKeyPairs(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest) succeeded: 3752ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testImportKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest)
+[pool-2-thread-1] Test testImportKeyPair(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest) succeeded: 3169ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testNoSsh(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest)
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[pool-2-thread-1] Test testNoSsh(org.jclouds.aws.ec2.services.AWSKeyPairClientLiveTest) succeeded: 113792ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testDescribeImageBadId(org.jclouds.aws.ec2.services.AMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImageBadId(org.jclouds.aws.ec2.services.AMIClientLiveTest) succeeded: 450ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testDescribeImageNotExists(org.jclouds.aws.ec2.services.AMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImageNotExists(org.jclouds.aws.ec2.services.AMIClientLiveTest) succeeded: 444ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testDescribeImages(org.jclouds.aws.ec2.services.AMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImages(org.jclouds.aws.ec2.services.AMIClientLiveTest) succeeded: 83945ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testDescribeImagesCC(org.jclouds.aws.ec2.services.AMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImagesCC(org.jclouds.aws.ec2.services.AMIClientLiveTest) succeeded: 12667ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testDescribeImageBadId(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImageBadId(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest) succeeded: 1053ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testDescribeImageNotExists(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImageNotExists(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest) succeeded: 454ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testDescribeImages(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest)
+[pool-2-thread-1] Test testDescribeImages(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest) succeeded: 125832ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testGetLaunchPermissionForImage(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest)
+[pool-2-thread-1] Test testGetLaunchPermissionForImage(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest) succeeded: 443ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testGetProductCodesForImage(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest)
+[pool-2-thread-1] Test testGetProductCodesForImage(org.jclouds.aws.ec2.services.AWSAMIClientLiveTest) succeeded: 478ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testDescribeInstances(org.jclouds.aws.ec2.services.AWSInstanceClientLiveTest)
+[pool-2-thread-1] Test testDescribeInstances(org.jclouds.aws.ec2.services.AWSInstanceClientLiveTest) succeeded: 4764ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testCreatePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest)
+[pool-2-thread-1] Test testCreatePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest) succeeded: 2655ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testDescribe(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest)
+[pool-2-thread-1] Test testDescribe(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest) succeeded: 3853ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testStartCCInstance(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest)
+[pool-2-thread-1] Test testStartCCInstance(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest) succeeded: 121296ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test test(org.jclouds.aws.ec2.services.TagClientLiveTest)
+[pool-2-thread-1] Test test(org.jclouds.aws.ec2.services.TagClientLiveTest) succeeded: 1905ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testCreateSpotInstance(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest)
+435533
+[pool-2-thread-1] Test testCreateSpotInstance(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest) succeeded: 440457ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testDescribeSpotPriceHistoryInRegion(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest)
+[pool-2-thread-1] Test testDescribeSpotPriceHistoryInRegion(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest) succeeded: 5958ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testDescribeSpotRequestsInRegion(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest)
+[pool-2-thread-1] Test testDescribeSpotRequestsInRegion(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest) succeeded: 3228ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testAmazonLinuxInstanceStore(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testAmazonLinuxInstanceStore(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6495ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testDefaultTemplateBuilder(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testFastestTemplateBuilder(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testFastestTemplateBuilder(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 15ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanUseImageIdAndhardwareIdAndAZ(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[id=m2.2xlarge, providerId=m2.2xlarge, name=null, processors=[[cores=4.0, speed=3.25]], ram=35020, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=840.0, device=/dev/sdb, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageIdAndhardwareIdAndAZ(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testTemplateBuilderM1SMALLWithDescription(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderM1SMALLWithDescription(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 53ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testTemplateBuilderMicro(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderMicro(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithLessRegions(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[id=m1.large, providerId=m1.large, name=null, processors=[[cores=2.0, speed=2.0]], ram=7680, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testTemplateBuilderWithLessRegions(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4839ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithNoOwnersParsesImageOnDemand(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[id=m1.large, providerId=m1.large, name=null, processors=[[cores=2.0, speed=2.0]], ram=7680, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testTemplateBuilderWithNoOwnersParsesImageOnDemand(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3835ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithNoOwnersParsesImageOnDemandDeprecated(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+Oct 15, 2011 10:18:32 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldImageKey
+WARNING: Property jclouds.ec2.ami-owners is deprecated, please use new syntax: jclouds.ec2.ami-query=
+Oct 15, 2011 10:18:32 AM org.jclouds.aws.ec2.AWSEC2PropertiesBuilder warnAndReplaceIfUsingOldCCImageKey
+WARNING: Property jclouds.ec2.cc-amis is deprecated, please use new syntax: jclouds.ec2.cc-ami-query=
+[id=m1.large, providerId=m1.large, name=null, processors=[[cores=2.0, speed=2.0]], ram=7680, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testTemplateBuilderWithNoOwnersParsesImageOnDemandDeprecated(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3865ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testUbuntuInstanceStoreGoesM1Small(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testUbuntuInstanceStoreGoesM1Small(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 22ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+smallest [id=t1.micro, providerId=t1.micro, name=null, processors=[[cores=1.0, speed=1.0]], ram=630, volumes=[], supportsImage=And(requiresRootDeviceType(ebs),Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]]
+fastest [id=cc1.4xlarge, providerId=cc1.4xlarge, name=null, processors=[[cores=4.0, speed=4.0], [cores=4.0, speed=4.0]], ram=23552, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=840.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=840.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,requiresVirtualizationType(hvm),idIn([us-east-1/ami-0601f16f, us-east-1/ami-015e9d68, us-east-1/ami-e7cd018e, us-east-1/ami-3e08fa57, us-east-1/ami-1f2de176, us-east-1/ami-c50cc0ac, us-east-1/ami-eb8f4c82, us-east-1/ami-df4183b6, us-east-1/ami-3720ed5e, us-east-1/ami-f1589598, us-east-1/ami-ed35f384, us-east-1/ami-70da2319, us-east-1/ami-c134f6a8, us-east-1/ami-09d11d60, us-east-1/ami-8bf935e2, us-east-1/ami-1cad5275, us-east-1/ami-321eed5b, us-east-1/ami-58906c31, us-east-1/ami-b79754de, us-east-1/ami-02b14b6b, us-east-1/ami-724ab91b, us-east-1/ami-5130fc38, us-east-1/ami-5af40933, us-east-1/ami-8d08c4e4, us-east-1/ami-5b12de32, us-east-1/ami-bff539d6, us-east-1/ami-8d25e8e4, us-east-1/ami-1cae5375, us-east-1/ami-d170bdb8, us-east-1/ami-9d8548f4, us-east-1/ami-edc30f84, us-east-1/ami-3657a55f, us-east-1/ami-c7f331ae, us-east-1/ami-3d16da54]),ALWAYS_TRUE), tags=[]]
+biggest [id=m2.4xlarge, providerId=m2.4xlarge, name=null, processors=[[cores=8.0, speed=3.25]], ram=70041, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=840.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=840.0, device=/dev/sdc, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 16ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testFromTemplate(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+location [id=ap-northeast-1, scope=REGION, description=ap-northeast-1, parent=aws-ec2, iso3166Codes=[JP-13], metadata={}]
+location [id=eu-west-1, scope=REGION, description=eu-west-1, parent=aws-ec2, iso3166Codes=[IE], metadata={}]
+location [id=us-east-1, scope=REGION, description=us-east-1, parent=aws-ec2, iso3166Codes=[US-VA], metadata={}]
+location [id=us-west-1, scope=REGION, description=us-west-1, parent=aws-ec2, iso3166Codes=[US-CA], metadata={}]
+location [id=ap-southeast-1, scope=REGION, description=ap-southeast-1, parent=aws-ec2, iso3166Codes=[SG], metadata={}]
+location [id=ap-northeast-1a, scope=ZONE, description=ap-northeast-1a, parent=ap-northeast-1, iso3166Codes=[JP-13], metadata={}]
+location [id=ap-northeast-1b, scope=ZONE, description=ap-northeast-1b, parent=ap-northeast-1, iso3166Codes=[JP-13], metadata={}]
+location [id=eu-west-1a, scope=ZONE, description=eu-west-1a, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+location [id=eu-west-1b, scope=ZONE, description=eu-west-1b, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+location [id=eu-west-1c, scope=ZONE, description=eu-west-1c, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+location [id=us-east-1a, scope=ZONE, description=us-east-1a, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+location [id=us-east-1b, scope=ZONE, description=us-east-1b, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+location [id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+location [id=us-east-1d, scope=ZONE, description=us-east-1d, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+location [id=us-west-1a, scope=ZONE, description=us-west-1a, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+location [id=us-west-1b, scope=ZONE, description=us-west-1b, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+location [id=us-west-1c, scope=ZONE, description=us-west-1c, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+location [id=ap-southeast-1a, scope=ZONE, description=ap-southeast-1a, parent=ap-southeast-1, iso3166Codes=[SG], metadata={}]
+location [id=ap-southeast-1b, scope=ZONE, description=ap-southeast-1b, parent=ap-southeast-1, iso3166Codes=[SG], metadata={}]
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 12ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 14ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 24ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 13ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 17ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 17ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
+<< problem applying options to node(us-west-1/i-3da6167a): 
+java.lang.RuntimeException: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+	at com.google.common.base.Throwables.propagate(Throwables.java:156)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:61)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:101)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:301)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:93)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:191)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:59)
+	... 8 more
+Caused by: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:414)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:231)
+	at org.jclouds.sshj.SshjSshClient.exec(SshjSshClient.java:496)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runCommand(SudoAwareInitManager.java:99)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runAction(SudoAwareInitManager.java:81)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:80)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:76)
+	at org.jclouds.predicates.RetryablePredicate.apply(RetryablePredicate.java:70)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:114)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	... 5 more
+Caused by: net.schmizz.sshj.connection.ConnectionException: Read timed out
+	at net.schmizz.sshj.connection.ConnectionException$1.chain(ConnectionException.java:32)
+	at net.schmizz.sshj.connection.ConnectionException$1.chain(ConnectionException.java:26)
+	at net.schmizz.concurrent.Promise.deliverError(Promise.java:95)
+	at net.schmizz.concurrent.Event.deliverError(Event.java:72)
+	at net.schmizz.concurrent.ErrorDeliveryUtil.alertEvents(ErrorDeliveryUtil.java:34)
+	at net.schmizz.sshj.connection.channel.AbstractChannel.notifyError(AbstractChannel.java:239)
+	at net.schmizz.sshj.connection.channel.direct.SessionChannel.notifyError(SessionChannel.java:250)
+	at net.schmizz.sshj.common.ErrorNotifiable$Util.alertAll(ErrorNotifiable.java:35)
+	at net.schmizz.sshj.connection.ConnectionImpl.notifyError(ConnectionImpl.java:250)
+	at net.schmizz.sshj.transport.TransportImpl.die(TransportImpl.java:578)
+	at net.schmizz.sshj.transport.Reader.run(Reader.java:79)
+Caused by: net.schmizz.sshj.common.SSHException: Read timed out
+	at net.schmizz.sshj.common.SSHException$1.chain(SSHException.java:56)
+	at net.schmizz.sshj.common.SSHException$1.chain(SSHException.java:49)
+	at net.schmizz.sshj.transport.TransportImpl.die(TransportImpl.java:572)
+	... 1 more
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.read(SocketInputStream.java:129)
+	at net.schmizz.sshj.transport.Reader.run(Reader.java:68)
+[pool-2-thread-2] Test testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 123, failed: 1, skipped: 0.
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+<< problem applying options to node(us-east-1/i-9c7276fc): 
+org.jclouds.rest.AuthorizationException: (ec2-user:password@107.22.39.30:22) (ec2-user:password@107.22.39.30:22) error acquiring SSHClient(timeout=60000): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:244)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:255)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:195)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:171)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:220)
+	... 9 more
+Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
+	... 17 more
+[pool-2-thread-2] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 132254ms
+Test suite progress: tests succeeded: 124, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testCorrectAuthException(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 11535ms
+Test suite progress: tests succeeded: 125, failed: 1, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 9240ms
+Test suite progress: tests succeeded: 126, failed: 1, skipped: 0.
+Starting test testCreateTwoNodesWithRunScript(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testCreateTwoNodesWithRunScript(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 82070ms
+Test suite progress: tests succeeded: 127, failed: 1, skipped: 0.
+Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+Oct 15, 2011 10:23:40 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: creating another node based on existing nodes' location: [id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+[pool-2-thread-2] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 74804ms
+Test suite progress: tests succeeded: 128, failed: 1, skipped: 0.
+Starting test testCredentialsCache(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testCredentialsCache(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 4385ms
+Test suite progress: tests succeeded: 129, failed: 1, skipped: 0.
+Starting test testGet(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testGet(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 11416ms
+Test suite progress: tests succeeded: 130, failed: 1, skipped: 0.
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-northeast-1, scope=REGION, description=ap-northeast-1, parent=aws-ec2, iso3166Codes=[JP-13], metadata={}]
+Starting test testGetAssignableLocations(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 21ms
+Test suite progress: tests succeeded: 131, failed: 1, skipped: 0.
+Starting test testImagesCache(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testImagesCache(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 132, failed: 1, skipped: 0.
+Starting test testListImages(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testListImages(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 133, failed: 1, skipped: 0.
+Starting test testListSizes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testListSizes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 134, failed: 1, skipped: 0.
+Starting test testOptionToNotBlock(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=eu-west-1, scope=REGION, description=eu-west-1, parent=aws-ec2, iso3166Codes=[IE], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-east-1, scope=REGION, description=us-east-1, parent=aws-ec2, iso3166Codes=[US-VA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-west-1, scope=REGION, description=us-west-1, parent=aws-ec2, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-southeast-1, scope=REGION, description=ap-southeast-1, parent=aws-ec2, iso3166Codes=[SG], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-northeast-1a, scope=ZONE, description=ap-northeast-1a, parent=ap-northeast-1, iso3166Codes=[JP-13], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-northeast-1b, scope=ZONE, description=ap-northeast-1b, parent=ap-northeast-1, iso3166Codes=[JP-13], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=eu-west-1a, scope=ZONE, description=eu-west-1a, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=eu-west-1b, scope=ZONE, description=eu-west-1b, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=eu-west-1c, scope=ZONE, description=eu-west-1c, parent=eu-west-1, iso3166Codes=[IE], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-east-1a, scope=ZONE, description=us-east-1a, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-east-1b, scope=ZONE, description=us-east-1b, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-east-1d, scope=ZONE, description=us-east-1d, parent=us-east-1, iso3166Codes=[US-VA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-west-1a, scope=ZONE, description=us-west-1a, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-west-1b, scope=ZONE, description=us-west-1b, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=us-west-1c, scope=ZONE, description=us-west-1c, parent=us-west-1, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-southeast-1a, scope=ZONE, description=ap-southeast-1a, parent=ap-southeast-1, iso3166Codes=[SG], metadata={}]
+Oct 15, 2011 10:25:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=ap-southeast-1b, scope=ZONE, description=ap-southeast-1b, parent=ap-southeast-1, iso3166Codes=[SG], metadata={}]
+[pool-2-thread-2] Test testOptionToNotBlock(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 12090ms
+Test suite progress: tests succeeded: 135, failed: 1, skipped: 0.
+Starting test testReboot(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testReboot(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 16827ms
+Test suite progress: tests succeeded: 136, failed: 1, skipped: 0.
+Starting test testSuspendResume(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testSuspendResume(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 410514ms
+Test suite progress: tests succeeded: 137, failed: 1, skipped: 0.
+Starting test testGetNodesWithDetails(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testGetNodesWithDetails(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 3344ms
+Test suite progress: tests succeeded: 138, failed: 1, skipped: 0.
+Starting test testListNodes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testListNodes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 1753ms
+Test suite progress: tests succeeded: 139, failed: 1, skipped: 0.
+Starting test testDestroyNodes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testDestroyNodes(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 50150ms
+Test suite progress: tests succeeded: 140, failed: 1, skipped: 0.
+Starting test testTemplateMatch(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testTemplateMatch(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 141, failed: 1, skipped: 0.
+Starting test testImagesResolveCorrectly(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testImagesResolveCorrectly(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 6ms
+Test suite progress: tests succeeded: 142, failed: 1, skipped: 0.
+Starting test testMapEBS(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+[pool-2-thread-2] Test testMapEBS(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 92406ms
+Test suite progress: tests succeeded: 143, failed: 1, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+Oct 15, 2011 10:35:47 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(us-east-1/i-2c04004c) os([name=null, family=amzn-linux, version=2011.09.1, arch=paravirtual, is64Bit=true, description=amazon/amzn-ami-2011.09.1.x86_64-ebs]) in 52s
+Oct 15, 2011 10:37:05 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(us-east-1/i-2c04004c) with java full version "1.6.0_20-b20" in 61s
+Oct 15, 2011 10:37:22 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(us-east-1/i-2c04004c) [backgroundProcessSeconds=9, socketOpenMilliseconds=15321, reportedStartupTimeMilliseconds=5143]
+Oct 15, 2011 10:37:30 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(us-east-1/i-2c04004c) [backgroundProcessSeconds=2, socketOpenMilliseconds=3810, reportedStartupTimeMilliseconds=3018]
+[pool-2-thread-2] Test testCreateAndRunAService(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest) succeeded: 198723ms
+Test suite progress: tests succeeded: 144, failed: 1, skipped: 0.
+Tests run: 145, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2,227.303 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)
+
+Tests run: 145, Failures: 1, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 37:53.314s
+[INFO] Finished at: Sat Oct 15 10:38:22 PDT 2011
+[INFO] Final Memory: 20M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project aws-ec2: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/aws-ec2/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
