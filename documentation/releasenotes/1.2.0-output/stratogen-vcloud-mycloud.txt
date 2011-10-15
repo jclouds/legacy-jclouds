@@ -1,0 +1,599 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:stratogen-vcloud-mycloud:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds StratoGen vCloud MyCloud provider 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ stratogen-vcloud-mycloud ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ stratogen-vcloud-mycloud ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ stratogen-vcloud-mycloud ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ stratogen-vcloud-mycloud ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ stratogen-vcloud-mycloud ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ stratogen-vcloud-mycloud ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ stratogen-vcloud-mycloud ---
+[INFO] Compiling 5 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ stratogen-vcloud-mycloud ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/src/test/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ stratogen-vcloud-mycloud ---
+[INFO] Compiling 12 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ stratogen-vcloud-mycloud ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testInRestProperties(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest)
+Starting test testAllContains(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest)
+Starting test testWithId(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest)
+Starting test testOfTypeContains(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest)
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest) succeeded: 68ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testAllContains(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest) succeeded: 69ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testWithId(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest) succeeded: 111ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.stratogen.vcloud.mycloud.StratoGenVCloudMyCloudProviderTest) succeeded: 233ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.682 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ stratogen-vcloud-mycloud ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ stratogen-vcloud-mycloud ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ stratogen-vcloud-mycloud ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/stratogen-vcloud-mycloud-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ stratogen-vcloud-mycloud ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ stratogen-vcloud-mycloud ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/stratogen-vcloud-mycloud-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ stratogen-vcloud-mycloud ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+Starting test testFindCatalogIsWriteable(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudCatalogClientLiveTest)
+Starting test testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)
+Starting test testCaptureVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)
+Starting test testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-1] Test testFindCatalogIsWriteable(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudCatalogClientLiveTest) succeeded: 18330ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testGetCatalog(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudCatalogClientLiveTest)
+[pool-2-thread-1] Test testGetCatalog(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudCatalogClientLiveTest) succeeded: 2462ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testGetVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppClientLiveTest)
+[pool-2-thread-1] Test testGetVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppClientLiveTest) succeeded: 4078ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testCatalog(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testCatalog(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 1.
+Starting test testDefaultTasksList(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testDefaultTasksList(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 2.
+Starting test testDefaultVDC(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testDefaultVDC(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 3.
+Starting test testFindCatalogItem(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testFindCatalogItem(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 4.
+Starting test testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 5.
+Starting test testGetCatalogItem(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetCatalogItem(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 6.
+Starting test testGetOrgNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetOrgNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 7.
+Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 8.
+Starting test testGetTask(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetTask(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 9.
+Starting test testGetThumbnailOfVm(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetThumbnailOfVm(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 10.
+Starting test testGetVApp(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetVApp(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 11.
+Starting test testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 12.
+Starting test testGetVDCNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetVDCNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 13.
+Starting test testGetVm(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testGetVm(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 14.
+Starting test testListOrgs(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testListOrgs(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 15.
+Starting test testOrg(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testOrg(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 16.
+Starting test testPropertiesCanOverrideDefaultCatalog(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testPropertiesCanOverrideDefaultCatalog(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 17.
+Starting test testPropertiesCanOverrideDefaultNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testPropertiesCanOverrideDefaultNetwork(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 18.
+Starting test testPropertiesCanOverrideDefaultOrg(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testPropertiesCanOverrideDefaultOrg(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 19.
+Starting test testPropertiesCanOverrideDefaultVDC(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+[pool-2-thread-1] Test testPropertiesCanOverrideDefaultVDC(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 20.
+Starting test testListOrgs(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudOrgClientLiveTest)
+[pool-2-thread-1] Test testListOrgs(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudOrgClientLiveTest) succeeded: 4919ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 20.
+smallest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+fastest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+biggest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+[pool-2-thread-5] Test testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 39323ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 20.
+Starting test testFromTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testFromTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 20.
+Starting test testGetAssignableLocations(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+location [id=https://vcd.stratogen.net/api/v1.0/vdc/1935300128, scope=ZONE, description=jClouds, parent=https://vcd.stratogen.net/api/v1.0/org/600106772, iso3166Codes=[], metadata={}]
+[pool-2-thread-5] Test testGetAssignableLocations(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCanFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCanFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCanUseImageId(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 20.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 20.
+Starting test testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-5] Test testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 89, failed: 0, skipped: 20.
+Oct 15, 2011 1:34:22 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+Oct 15, 2011 1:34:22 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+Oct 15, 2011 1:34:22 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+[pool-2-thread-4] Test testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 39428ms
+Test suite progress: tests succeeded: 90, failed: 0, skipped: 20.
+INFO: biggest [id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[pool-2-thread-3] Test testCaptureVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest) succeeded: 309055ms
+Test suite progress: tests succeeded: 91, failed: 0, skipped: 20.
+Starting test testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)
+<< problem applying options to node(https://vcd.stratogen.net/api/v1.0/vApp/vapp-2045741663): 
+org.jclouds.rest.AuthorizationException: (root:password@212.54.128.45:22) (root:password@212.54.128.45:22) error acquiring SSHClient(timeout=60000): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:244)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:255)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:195)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:171)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:220)
+	... 9 more
+Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
+	... 17 more
+[pool-2-thread-2] Test testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest) failed.
+Test suite progress: tests succeeded: 91, failed: 1, skipped: 20.
+Starting test testGetThumbnailOfVm(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)
+[pool-2-thread-2] Test testGetThumbnailOfVm(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest) succeeded: 3763ms
+Test suite progress: tests succeeded: 92, failed: 1, skipped: 20.
+Starting test testGetVm(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)
+[pool-2-thread-2] Test testGetVm(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest) succeeded: 4282ms
+Test suite progress: tests succeeded: 93, failed: 1, skipped: 20.
+[pool-2-thread-4] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 404285ms
+Test suite progress: tests succeeded: 94, failed: 1, skipped: 20.
+Starting test testCorrectAuthException(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testCorrectAuthException(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 1852ms
+Test suite progress: tests succeeded: 95, failed: 1, skipped: 20.
+Starting test testCreateAndRunAService(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-3] Test testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest) succeeded: 141693ms
+Test suite progress: tests succeeded: 96, failed: 1, skipped: 20.
+Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)
+[pool-2-thread-3] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest) failed.
+Test suite progress: tests succeeded: 96, failed: 2, skipped: 20.
+Starting test testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)
+[pool-2-thread-3] Test testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest) succeeded: 51903ms
+Test suite progress: tests succeeded: 97, failed: 2, skipped: 20.
+Oct 15, 2011 1:44:20 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(https://vcd.stratogen.net/api/v1.0/vApp/vapp-37091569) os([osType=UBUNTU_64, arch=null, description=Ubuntu Linux (64-bit), family=ubuntu, is64Bit=true, name=Ubuntu 64-Bit, version=]) in 190s
+Oct 15, 2011 1:49:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(https://vcd.stratogen.net/api/v1.0/vApp/vapp-37091569) with java full version "1.6.0_22-b22" in 276s
+Oct 15, 2011 1:49:12 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(https://vcd.stratogen.net/api/v1.0/vApp/vapp-37091569) [backgroundProcessSeconds=8, socketOpenMilliseconds=8993, reportedStartupTimeMilliseconds=2090]
+Oct 15, 2011 1:49:25 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(https://vcd.stratogen.net/api/v1.0/vApp/vapp-37091569) [backgroundProcessSeconds=4, socketOpenMilliseconds=5211, reportedStartupTimeMilliseconds=1977]
+[pool-2-thread-4] Test testCreateAndRunAService(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 512898ms
+Test suite progress: tests succeeded: 98, failed: 2, skipped: 20.
+Starting test testCreateTwoNodesWithRunScript(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testCreateTwoNodesWithRunScript(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 302263ms
+Test suite progress: tests succeeded: 99, failed: 2, skipped: 20.
+Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+Oct 15, 2011 1:54:53 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: creating another node based on existing nodes' location: [id=https://vcd.stratogen.net/api/v1.0/vdc/1935300128, scope=ZONE, description=jClouds, parent=https://vcd.stratogen.net/api/v1.0/org/600106772, iso3166Codes=[], metadata={}]
+[pool-2-thread-4] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 290660ms
+Test suite progress: tests succeeded: 100, failed: 2, skipped: 20.
+Starting test testCredentialsCache(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testCredentialsCache(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 115ms
+Test suite progress: tests succeeded: 101, failed: 2, skipped: 20.
+Starting test testGet(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testGet(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 12306ms
+Test suite progress: tests succeeded: 102, failed: 2, skipped: 20.
+Starting test testGetAssignableLocations(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+Oct 15, 2011 1:59:47 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=https://vcd.stratogen.net/api/v1.0/vdc/1935300128, scope=ZONE, description=jClouds, parent=https://vcd.stratogen.net/api/v1.0/org/600106772, iso3166Codes=[], metadata={}]
+[pool-2-thread-4] Test testGetAssignableLocations(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 29ms
+Test suite progress: tests succeeded: 103, failed: 2, skipped: 20.
+Starting test testImagesCache(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testImagesCache(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 9331ms
+Test suite progress: tests succeeded: 104, failed: 2, skipped: 20.
+Starting test testListImages(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testListImages(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 105, failed: 2, skipped: 20.
+Starting test testListSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testListSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 16011ms
+Test suite progress: tests succeeded: 106, failed: 2, skipped: 20.
+Starting test testOptionToNotBlock(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testOptionToNotBlock(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 145404ms
+Test suite progress: tests succeeded: 107, failed: 2, skipped: 20.
+Starting test testReboot(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testReboot(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 48104ms
+Test suite progress: tests succeeded: 108, failed: 2, skipped: 20.
+Starting test testSuspendResume(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testSuspendResume(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 117615ms
+Test suite progress: tests succeeded: 109, failed: 2, skipped: 20.
+Starting test testTemplateMatch(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testTemplateMatch(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 110, failed: 2, skipped: 20.
+Starting test setServiceDefaults(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test setServiceDefaults(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 111, failed: 2, skipped: 20.
+Starting test testTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[id=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, providerId=https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826, name=Ubuntu server 11.04 64bit no GUI (base), processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-378242826), tags=[]]
+[pool-2-thread-4] Test testTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 112, failed: 2, skipped: 20.
+Starting test testGetNodesWithDetails(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testGetNodesWithDetails(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 4813ms
+Test suite progress: tests succeeded: 113, failed: 2, skipped: 20.
+Starting test testListNodes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[id=https://vcd.stratogen.net/api/v1.0/vApp/vapp-1022215731, providerId=https://vcd.stratogen.net/api/v1.0/vApp/vapp-1022215731, name=director--d42, processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vApp/vapp-1022215731), tags=[]]
+[id=https://vcd.stratogen.net/api/v1.0/vApp/vapp-1032959358, providerId=https://vcd.stratogen.net/api/v1.0/vApp/vapp-1032959358, name=director--24e, processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vApp/vapp-1032959358), tags=[]]
+[id=https://vcd.stratogen.net/api/v1.0/vApp/vapp-463682102, providerId=https://vcd.stratogen.net/api/v1.0/vApp/vapp-463682102, name=director--b69, processors=[[cores=1.0, speed=1.0]], ram=1024, volumes=[[id=0, type=LOCAL, size=50.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://vcd.stratogen.net/api/v1.0/vApp/vapp-463682102), tags=[]]
+[pool-2-thread-4] Test testListNodes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 21236ms
+Test suite progress: tests succeeded: 114, failed: 2, skipped: 20.
+Starting test testDestroyNodes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testDestroyNodes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 14687ms
+Test suite progress: tests succeeded: 115, failed: 2, skipped: 20.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 5056ms
+Test suite progress: tests succeeded: 116, failed: 2, skipped: 20.
+Starting test testAssignability(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)
+[pool-2-thread-4] Test testAssignability(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest) succeeded: 192ms
+Test suite progress: tests succeeded: 117, failed: 2, skipped: 20.
+Tests run: 141, Failures: 3, Errors: 0, Skipped: 21, Time elapsed: 1,984.172 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  setupClient(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest)
+  testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)
+  testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)
+
+Tests run: 141, Failures: 3, Errors: 0, Skipped: 21
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 33:32.886s
+[INFO] Finished at: Sat Oct 15 14:06:35 PDT 2011
+[INFO] Final Memory: 21M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project stratogen-vcloud-mycloud: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/stratogen-vcloud-mycloud/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
