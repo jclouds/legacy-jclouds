@@ -31,7 +31,7 @@ import org.jclouds.softlayer.domain.ProductPackage;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ProductPackageClient {
 
    /**
