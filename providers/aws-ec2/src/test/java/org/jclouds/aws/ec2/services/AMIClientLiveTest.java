@@ -133,7 +133,7 @@ public class AMIClientLiveTest {
    }
 
    public void testDescribeImagesCC() {
-      Set<? extends Image> twoResults = client.describeImagesInRegion(Region.US_EAST_1, filters(
+      Set<? extends Image> ccResults = client.describeImagesInRegion(Region.US_EAST_1, filters(
                ImmutableMultimap.<String, String> builder()//
                         .put("virtualization-type", "hvm")//
                         .put("architecture", "x86_64")//
@@ -143,8 +143,8 @@ public class AMIClientLiveTest {
                         .put("image-type", "machine")//
                         .put("root-device-type", "ebs")//
                         .build()).ownedBy("137112412989", "099720109477"));
-      assertNotNull(twoResults);
-      assertEquals(twoResults.size(), 35);
+      assertNotNull(ccResults);
+      assert (ccResults.size() >= 34) : ccResults;
    }
 
    @Test(enabled = false)
