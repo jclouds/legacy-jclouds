@@ -20,12 +20,14 @@ package org.jclouds.softlayer.compute;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 
 /**
@@ -50,6 +52,13 @@ public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest 
       @SuppressWarnings("unused")
       RestContext<SoftLayerClient, SoftLayerAsyncClient> tmContext = new ComputeServiceContextFactory()
             .createContext(provider, identity, credential).getProviderSpecificContext();
+   }
+   
+   // softlayer does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
    }
 
    @Override
