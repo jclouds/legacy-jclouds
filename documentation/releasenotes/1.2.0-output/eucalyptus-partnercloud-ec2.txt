@@ -1,0 +1,468 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:eucalyptus-partnercloud-ec2:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds Eucalyptus Partner Cloud EC2 provider 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ eucalyptus-partnercloud-ec2 ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ eucalyptus-partnercloud-ec2 ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ eucalyptus-partnercloud-ec2 ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Compiling 5 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/src/test/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testInRestProperties(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest)
+Starting test testWithId(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest)
+Starting test testAllContains(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest)
+[pool-2-thread-3] Test testAllContains(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest) succeeded: 75ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testOfTypeContains(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest)
+[pool-2-thread-2] Test testWithId(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest) succeeded: 125ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest) succeeded: 31ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.epc.EucalyptusPartnerCloudEC2ProviderTest) succeeded: 177ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testParseEucalyptusImage(org.jclouds.epc.compute.strategy.EucalyptusPartnerCloudReviseParsedImageTest)
+[pool-3-thread-1] Test testParseEucalyptusImage(org.jclouds.epc.compute.strategy.EucalyptusPartnerCloudReviseParsedImageTest) succeeded: 814ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.501 sec
+
+Results :
+
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ eucalyptus-partnercloud-ec2 ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ eucalyptus-partnercloud-ec2 ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/eucalyptus-partnercloud-ec2-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/eucalyptus-partnercloud-ec2-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ eucalyptus-partnercloud-ec2 ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testCompareSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+smallest [id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]]
+fastest [id=c1.xlarge, providerId=c1.xlarge, name=null, processors=[[cores=8.0, speed=2.5]], ram=7168, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdd, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sde, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+biggest [id=c1.xlarge, providerId=c1.xlarge, name=null, processors=[[cores=8.0, speed=2.5]], ram=7168, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdd, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sde, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 840ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testFromTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+location [id=Eucalyptus, scope=REGION, description=Eucalyptus, parent=eucalyptus-partnercloud-ec2, iso3166Codes=[US-CA], metadata={}]
+location [id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}]
+location [id=xen-cluster, scope=ZONE, description=xen-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 42ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 81ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 110ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 15ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 14ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 42ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 16ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 59ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 25ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 12ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testDefaultTemplateBuilder(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest) succeeded: 66ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test setServiceDefaults(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+Oct 15, 2011 11:30:04 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]]
+Oct 15, 2011 11:30:04 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=c1.xlarge, providerId=c1.xlarge, name=null, processors=[[cores=8.0, speed=2.5]], ram=7168, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdd, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sde, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+Oct 15, 2011 11:30:04 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=c1.xlarge, providerId=c1.xlarge, name=null, processors=[[cores=8.0, speed=2.5]], ram=7168, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=420.0, device=/dev/sdb, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdc, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sdd, durable=false, isBootDevice=false], [id=null, type=LOCAL, size=420.0, device=/dev/sde, durable=false, isBootDevice=false]], supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,is64Bit()), tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 177ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 5525ms
+Test suite progress: tests succeeded: 88, failed: 1, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 179ms
+Test suite progress: tests succeeded: 89, failed: 1, skipped: 0.
+Starting test testCreateTwoNodesWithRunScript(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 89, failed: 2, skipped: 0.
+[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 89, failed: 2, skipped: 1.
+Oct 15, 2011 11:40:26 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=Eucalyptus, scope=REGION, description=Eucalyptus, parent=eucalyptus-partnercloud-ec2, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 11:40:26 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}]
+Oct 15, 2011 11:40:26 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=xen-cluster, scope=ZONE, description=xen-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}]
+[pool-2-thread-1] Test testCredentialsCache(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 89, failed: 2, skipped: 2.
+[pool-2-thread-1] Test testGet(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 89, failed: 2, skipped: 3.
+Starting test testGetAssignableLocations(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 90, failed: 2, skipped: 3.
+Starting test testImagesCache(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testImagesCache(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 91, failed: 2, skipped: 3.
+Starting test testListImages(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testListImages(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 92, failed: 2, skipped: 3.
+Starting test testListSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testListSizes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 93, failed: 2, skipped: 3.
+Starting test testOptionToNotBlock(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 93, failed: 3, skipped: 3.
+[pool-2-thread-1] Test testReboot(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 93, failed: 3, skipped: 4.
+Starting test testTemplateMatch(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testTemplateMatch(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 94, failed: 3, skipped: 4.
+Starting test testExtendedOptionsAndLogin(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testExtendedOptionsAndLogin(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 94, failed: 4, skipped: 4.
+Starting test testImagesResolveCorrectly(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testImagesResolveCorrectly(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 95, failed: 4, skipped: 4.
+Starting test testMapEBS(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testMapEBS(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 4.
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 5.
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 6.
+[pool-2-thread-1] Test testListNodes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 7.
+[pool-2-thread-1] Test testDestroyNodes(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 8.
+Starting test testCreateAndRunAService(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 96, failed: 5, skipped: 8.
+Tests run: 109, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 649.357 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+  testCreateTwoNodesWithRunScript(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+  testOptionToNotBlock(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+  testExtendedOptionsAndLogin(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+  testCreateAndRunAService(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)
+
+Tests run: 109, Failures: 5, Errors: 0, Skipped: 8
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 11:15.419s
+[INFO] Finished at: Sat Oct 15 11:40:38 PDT 2011
+[INFO] Final Memory: 20M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project eucalyptus-partnercloud-ec2: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/eucalyptus-partnercloud-ec2/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
