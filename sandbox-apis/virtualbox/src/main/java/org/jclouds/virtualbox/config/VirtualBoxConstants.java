@@ -24,7 +24,7 @@ package org.jclouds.virtualbox.config;
 /**
  * Configuration properties used for interacting with VirtualBox instances.
  *
- * @author Mattias Holmqvist
+ * @author Mattias Holmqvist, Andrea Turli
  * 
  */
 public interface VirtualBoxConstants {
@@ -54,4 +54,6 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_HOST_ID = "jclouds.virtualbox.hostid";
 
    public static final String VIRTUALBOX_DISTRO_ISO_NAME = "jclouds.virtualbox.distroisoname";
+
+   public static final String VIRTUALBOX_JETTY_PORT = "jclouds.virtualbox.jetty.port";
 }

@@ -47,6 +47,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -120,6 +121,7 @@ public class SetupVirtualBoxForLiveTest {
 
    @BeforeSuite
    public void setupClient() throws Exception {
+	   logger().info("\n\n\n\nSetting up Virtualbox environment");
       context = TestUtils.computeServiceForLocalhostAndGuest();
       setupCredentials();
       setupConfigurationProperties();

@@ -21,23 +21,29 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import com.google.common.base.Function;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.ByteStreams.copy;
+import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.*;
-import java.net.URI;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.ByteStreams.copy;
-import static com.google.common.io.Closeables.closeQuietly;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist

@@ -34,11 +34,13 @@ import javax.inject.Inject;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -90,8 +92,13 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
             return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
          }
       };
+      IMachineToImage fn = new IMachineToImage(manager);
+
+      for (IMachine imachine : filter(manager.getVBox().getMachines(), imagePredicate)) {
+          Image image = fn.apply(imachine);
+          System.out.println(image.getVersion());
+      } 
       return filter(manager.getVBox().getMachines(), imagePredicate);
-//		return manager.getVBox().getMachines();
 	}
 
 	@SuppressWarnings("unchecked")
