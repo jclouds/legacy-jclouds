@@ -31,6 +31,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete;
@@ -53,7 +54,6 @@ import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -83,25 +83,26 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
       }).to(TemplateOptionsToStatement.class);
 
-      install(new FactoryModuleBuilder()
-            .implement(RunScriptOnNode.class, Names.named("direct"), RunScriptOnNodeUsingSsh.class)
-            .implement(RunScriptOnNode.class, Names.named("blocking"),
-                  RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class)
-            .implement(RunScriptOnNode.class, Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class)
-            .build(RunScriptOnNodeFactoryImpl.Factory.class));
+      install(new FactoryModuleBuilder().implement(RunScriptOnNodeUsingSsh.class, Names.named("direct"),
+               RunScriptOnNodeUsingSsh.class).implement(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class,
+               Names.named("blocking"), RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class).implement(
+               RunScriptOnNodeAsInitScriptUsingSsh.class, Names.named("nonblocking"),
+               RunScriptOnNodeAsInitScriptUsingSsh.class).build(RunScriptOnNodeFactoryImpl.Factory.class));
 
       install(new PersistNodeCredentialsModule());
 
       bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
 
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
-      }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class)
-            .implement(new TypeLiteral<Function<NodeMetadata, Void>>() {
-            }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class)
-            .build(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
+      }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).implement(
+               new TypeLiteral<Function<NodeMetadata, Void>>() {
+               }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
+               CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
 
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<RunScriptOnNode>>() {
       }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
+
+      install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
    }
 
    @Singleton
@@ -110,13 +111,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       static interface Factory {
 
          @Named("direct")
-         RunScriptOnNode exec(NodeMetadata node, Statement script, RunScriptOptions options);
+         RunScriptOnNodeUsingSsh exec(NodeMetadata node, Statement script, RunScriptOptions options);
 
          @Named("blocking")
-         RunScriptOnNode backgroundAndBlockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+         RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete backgroundAndBlockOnComplete(NodeMetadata node,
+                  Statement script, RunScriptOptions options);
 
          @Named("nonblocking")
-         RunScriptOnNode background(NodeMetadata node, Statement script, RunScriptOptions options);
+         RunScriptOnNodeAsInitScriptUsingSsh background(NodeMetadata node, Statement script, RunScriptOptions options);
       }
 
       private final Factory factory;
@@ -132,18 +134,18 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
          checkNotNull(runScript, "runScript");
          checkNotNull(options, "options");
          return !options.shouldWrapInInitScript() ? factory.exec(node, runScript, options) : (options
-               .shouldBlockOnComplete() ? factory.backgroundAndBlockOnComplete(node, runScript, options) : factory
-               .background(node, runScript, options));
+                  .shouldBlockOnComplete() ? factory.backgroundAndBlockOnComplete(node, runScript, options) : factory
+                  .background(node, runScript, options));
       }
 
       @Override
-      public RunScriptOnNode create(NodeMetadata node, String script) {
-         return create(node, Statements.exec(checkNotNull(script, "script")));
-      }
-
-      @Override
-      public RunScriptOnNode create(NodeMetadata node, Statement script) {
-         return create(node, script, RunScriptOptions.NONE);
+      public BlockUntilInitScriptStatusIsZeroThenReturnOutput submit(NodeMetadata node, Statement script,
+               RunScriptOptions options) {
+         checkNotNull(node, "node");
+         checkNotNull(script, "script");
+         checkNotNull(options, "options");
+         options.shouldWrapInInitScript();
+         return factory.backgroundAndBlockOnComplete(node, script, options).init().future();
       }
    }
 
@@ -173,8 +175,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    }
 
    /**
-    * supplies how the tag is encoded into the name. A string of hex characters
-    * is the last argument and tag is the first
+    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
+    * and tag is the first
     */
    @Provides
    @Named("NAMING_CONVENTION")
@@ -209,14 +211,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Image>> imageSupplier) {
+            final Supplier<Set<? extends Image>> imageSupplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
-            seconds, new Supplier<Set<? extends Image>>() {
-               @Override
-               public Set<? extends Image> get() {
-                  return imageSupplier.get();
-               }
-            });
+               seconds, new Supplier<Set<? extends Image>>() {
+                  @Override
+                  public Set<? extends Image> get() {
+                     return imageSupplier.get();
+                  }
+               });
    }
 
    @Provides
@@ -243,14 +245,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
+            final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException,
-            seconds, new Supplier<Set<? extends Hardware>>() {
-               @Override
-               public Set<? extends Hardware> get() {
-                  return hardwareSupplier.get();
-               }
-            });
+               seconds, new Supplier<Set<? extends Hardware>>() {
+                  @Override
+                  public Set<? extends Hardware> get() {
+                     return hardwareSupplier.get();
+                  }
+               });
    }
 
    @Provides

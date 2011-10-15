@@ -99,6 +99,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -570,7 +571,7 @@ public class BaseComputeService implements ComputeService {
       }
       return goodNodes;
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -578,7 +579,7 @@ public class BaseComputeService implements ComputeService {
    public ExecResponse runScriptOnNode(String id, String runScript) {
       return runScriptOnNode(id, runScript, RunScriptOptions.NONE);
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -586,7 +587,7 @@ public class BaseComputeService implements ComputeService {
    public ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options) {
       return runScriptOnNode(id, Statements.exec(checkNotNull(runScript, "runScript")), options);
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -594,7 +595,7 @@ public class BaseComputeService implements ComputeService {
    public ExecResponse runScriptOnNode(String id, Statement runScript) {
       return runScriptOnNode(id, runScript, RunScriptOptions.NONE);
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -610,6 +611,32 @@ public class BaseComputeService implements ComputeService {
       node = updateNodeWithCredentialsIfPresent(node, options);
       ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
       persistNodeCredentials.ifAdminAccess(runScript).apply(node);
+      return response;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<ExecResponse> submitScriptOnNode(String id, final Statement runScript,
+            RunScriptOptions options) {
+      NodeMetadata node = this.getNodeMetadata(id);
+      if (node == null)
+         throw new NoSuchElementException(id);
+      if (node.getState() != NodeState.RUNNING)
+         throw new IllegalStateException("node " + id
+                  + " needs to be running before executing a script on it. current state: " + node.getState());
+      initAdminAccess.visit(runScript);
+      final NodeMetadata node1 = updateNodeWithCredentialsIfPresent(node, options);
+      ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node, runScript, options);
+      response.addListener(new Runnable() {
+
+         @Override
+         public void run() {
+            persistNodeCredentials.ifAdminAccess(runScript).apply(node1);
+         }
+
+      }, executor);
       return response;
    }
 
@@ -642,7 +669,7 @@ public class BaseComputeService implements ComputeService {
       }
       return node;
    }
-   
+
    private final class TransformNodesIntoInitializedScriptRunners implements
             Function<NodeMetadata, Future<RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;

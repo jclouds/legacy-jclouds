@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.jclouds.compute.callables.ScriptStillRunningException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
@@ -32,11 +33,14 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -333,23 +337,46 @@ public interface ComputeService {
     *            if the node is not found
     * @throws IllegalStateException
     *            if the node is not in running state
+    * @throws ScriptStillRunningException
+    *            if the script was still running after {@link Timeouts#scriptComplete}
     * 
     * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     * @see org.jclouds.scriptbuilder.domain.Statements
     */
    ExecResponse runScriptOnNode(String id, Statement runScript, RunScriptOptions options);
-
+   
+   /**
+    * Run the script on a specific node in the background, typically as {@code nohup}
+    * 
+    * @param id
+    *           node the script is to be executed on
+    * @param runScript
+    *           statement containing the script to run
+    * @param options
+    *           nullable options to how to run the script, whether to override credentials
+    * @return map with node identifiers and corresponding responses
+    * @throws NoSuchElementException
+    *            if the node is not found
+    * @throws IllegalStateException
+    *            if the node is not in running state
+    * 
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.scriptbuilder.domain.Statements
+    */
+   @Beta
+   ListenableFuture<ExecResponse> submitScriptOnNode(String id, Statement runScript, RunScriptOptions options);
+   
    /**
     * @see #runScriptOnNode(String, Statement, RunScriptOptions)
     */
    ExecResponse runScriptOnNode(String id, Statement runScript);
-   
+
    /**
     * @see #runScriptOnNode(String, Statement, RunScriptOptions)
     * @see org.jclouds.scriptbuilder.domain.Statements#exec
     */
    ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options);
-   
+
    /**
     * @see #runScriptOnNode(String, String, RunScriptOptions)
     */
