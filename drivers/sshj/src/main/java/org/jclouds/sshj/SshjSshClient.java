@@ -31,6 +31,7 @@ import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -118,7 +119,8 @@ public class SshjSshClient implements SshClient {
    @Named("jclouds.ssh.retry-predicate")
    // NOTE cannot retry io exceptions, as SSHException is a part of the chain
    private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectionException.class),
-            instanceOf(ConnectException.class), instanceOf(TransportException.class));
+            instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
+            instanceOf(TransportException.class));
 
    @Resource
    @Named("jclouds.ssh")

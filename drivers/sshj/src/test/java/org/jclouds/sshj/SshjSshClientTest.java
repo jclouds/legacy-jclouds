@@ -22,6 +22,7 @@ import static com.google.inject.name.Names.bindProperties;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.Properties;
 
 import net.schmizz.sshj.common.SSHException;
@@ -86,6 +87,7 @@ public class SshjSshClientTest {
    }
 
    public void testExceptionClassesRetry() {
+      assert ssh.shouldRetry(new SocketTimeoutException("connect timed out"));
       assert ssh.shouldRetry(new TransportException("socket closed"));
       assert ssh.shouldRetry(new ConnectionException("problem"));
       assert ssh.shouldRetry(new ConnectException("Connection refused"));
