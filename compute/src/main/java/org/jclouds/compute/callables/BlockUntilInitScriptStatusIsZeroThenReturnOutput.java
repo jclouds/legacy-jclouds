@@ -72,15 +72,14 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
             final ScriptStatusReturnsZero stateRunning, @Assisted final SudoAwareInitManager commandRunner) {
       this.commandRunner = checkNotNull(commandRunner, "commandRunner");
       this.userThreads = checkNotNull(userThreads, "userThreads");
-      // arbitrarily high value, but Long.MAX_VALUE doesn't work!
       this.notRunningAnymore = new RetryablePredicate<String>(new Predicate<String>() {
 
          @Override
          public boolean apply(String arg0) {
             return commandRunner.runAction(arg0).getOutput().trim().equals("");
          }
-
-      }, TimeUnit.DAYS.toMillis(1)) {
+         // arbitrarily high value, but Long.MAX_VALUE doesn't work!
+      }, TimeUnit.DAYS.toMillis(365)) {
          /**
           * make sure we stop the retry loop if someone cancelled the future, this keeps threads
           * from being consumed on dead tasks
@@ -128,7 +127,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    @Override
    protected void interruptTask() {
       logger.debug("<< cancelled(%s)", commandRunner.getStatement().getInstanceName());
-      commandRunner.runAction("stop");
+      commandRunner.refreshAndRunAction("stop");
       shouldCancel = true;
       super.interruptTask();
    }
@@ -190,7 +189,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
       try {
          return super.get(timeout, unit);
       } catch (TimeoutException e) {
-         throw new ScriptStillRunningException(e.getMessage(), this);
+         throw new ScriptStillRunningException(timeout, unit, this);
       }
    }
 

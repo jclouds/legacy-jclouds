@@ -110,7 +110,7 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       return new InitBuilder(name, path, path, Collections.<String, String> emptyMap(), Collections.singleton(script));
    }
 
-   public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
+   protected void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
       if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
          ssh.disconnect();
          logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
@@ -121,9 +121,6 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       }
    }
 
-   /**
-    * ssh client is initialized through this call.
-    */
    protected ExecResponse doCall() {
       try {
          ssh.put(initFile, init.render(OsFamily.UNIX));

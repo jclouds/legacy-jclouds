@@ -19,6 +19,7 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -26,16 +27,16 @@ import javax.inject.Named;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
-import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -45,6 +46,7 @@ public class SudoAwareInitManager {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger computeLogger = Logger.NULL;
+   protected Logger logger = Logger.NULL;
    protected NodeMetadata node;
    protected final InitBuilder init;
    protected final boolean runAsRoot;
@@ -65,42 +67,44 @@ public class SudoAwareInitManager {
       return this;
    }
 
-   public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
-      if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
-         ssh.disconnect();
-         computeLogger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
-         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(null).credentials(
-                  input.getAdminCredentials()).build());
+   public ExecResponse refreshAndRunAction(String action) {
+      checkState(ssh != null, "please call init() before invoking call");
+      try {
          ssh.connect();
+         return runAction(action);
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
       }
    }
 
    public ExecResponse runAction(String action) {
       ExecResponse returnVal;
-      String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
+      String command = (runAsRoot && Predicates.in(ImmutableSet.of("start", "stop", "run")).apply(action)) ? execScriptAsRoot(action)
+               : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
-      if (computeLogger.isTraceEnabled())
+      if ("status".equals(action))
+         logger.trace("<< %s(%d)", action, returnVal.getExitCode());
+      else if (computeLogger.isTraceEnabled())
          computeLogger.trace("<< %s[%s]", action, returnVal);
-      else if ("status".equals(action))
-         computeLogger.trace("<< %s(%d)", action, returnVal.getExitCode());
       else
          computeLogger.debug("<< %s(%d)", action, returnVal.getExitCode());
       return returnVal;
    }
 
-   public ExecResponse runCommand(String command) {
+   ExecResponse runCommand(String command) {
       String statement = String.format(">> running [%s] as %s@%s", command.replace(
                node.getAdminPassword() != null ? node.getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh
                .getHostAddress());
       if (command.endsWith("status"))
-         computeLogger.trace(statement);
+         logger.trace(statement);
       else
          computeLogger.debug(statement);
       return ssh.exec(command);
    }
 
    @VisibleForTesting
-   public String execScriptAsRoot(String action) {
+   String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
          command = "./" + init.getInstanceName() + " " + action;

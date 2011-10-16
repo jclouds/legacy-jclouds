@@ -19,30 +19,40 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.compute.domain.ExecResponse;
+
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ScriptStillRunningException extends TimeoutException implements
-         Supplier<BlockUntilInitScriptStatusIsZeroThenReturnOutput> {
+public class ScriptStillRunningException extends TimeoutException implements Supplier<ListenableFuture<ExecResponse>> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -7265376839848564663L;
 
-   private final BlockUntilInitScriptStatusIsZeroThenReturnOutput delegate;
+   private final ListenableFuture<ExecResponse> delegate;
 
-   public ScriptStillRunningException(String message, BlockUntilInitScriptStatusIsZeroThenReturnOutput delegate) {
+   public ScriptStillRunningException(long timeout, TimeUnit unit, ListenableFuture<ExecResponse> delegate) {
+      this(format("time up waiting %ds for %s to complete."
+               + " call get() on this exception to get access to the task in progress", TimeUnit.SECONDS.convert(
+               timeout, unit), delegate), delegate);
+   }
+
+   public ScriptStillRunningException(String message, ListenableFuture<ExecResponse> delegate) {
       super(checkNotNull(message, "message"));
       this.delegate = checkNotNull(delegate, "delegate");
    }
 
    @Override
-   public BlockUntilInitScriptStatusIsZeroThenReturnOutput get() {
+   public ListenableFuture<ExecResponse> get() {
       return delegate;
    }
 
