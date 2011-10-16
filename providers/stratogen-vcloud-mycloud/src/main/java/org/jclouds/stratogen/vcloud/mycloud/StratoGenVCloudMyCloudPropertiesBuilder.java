@@ -36,7 +36,7 @@ public class StratoGenVCloudMyCloudPropertiesBuilder extends VCloudPropertiesBui
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://mycloud.stratogen.net/api");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://vcd.stratogen.net/api");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "Direct Internet");
       return properties;
    }

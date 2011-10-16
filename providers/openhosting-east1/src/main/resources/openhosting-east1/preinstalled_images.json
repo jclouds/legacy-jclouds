@@ -1,9 +1,23 @@
 [
   {
       "uuid": "1fc52c4b-f08d-4f9f-8821-7fdd073a32d6",
-      "description": "CentOS Linux 5.5",
+      "description": "CentOS Linux 5.5 64",
       "osFamily": "CENTOS",
       "osVersion": "5.5",
+      "size": "3"
+  },
+  {
+      "uuid": "4d67096a-c2b5-4be7-9716-d4b2f9e2d4b5",
+      "description": "CentOS Linux 5.6 64",
+      "osFamily": "CENTOS",
+      "osVersion": "5.6",
+      "size": "3"
+  },
+  {
+      "uuid": "61e04f61-a39e-494f-bcf6-b17d3eba0df7",
+      "description": "CentOS Linux 5.7 64",
+      "osFamily": "CENTOS",
+      "osVersion": "5.7",
       "size": "3"
   },
   {
@@ -14,10 +28,24 @@
       "size": "1"
   },
   {
-      "uuid": "8067ee3c-e9a5-48a7-a3a7-8c158ce039db",
-      "description": "Ubuntu Linux 10.10",
-      "osFamily": "UBUNTU",
-      "osVersion": "10.10",
+      "uuid": "13658a54-4086-47a4-89cb-ae21da7afb0c",
+      "description": "Debian Linux 6 (Squeeze) 64",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
       "size": "1"
+  },
+  {
+      "uuid": "8023b089-7b0e-4fcb-8016-01e82f2a9716",
+      "description": "Ubuntu 10.04.3 LTS (lucid) Server 64",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.04",
+      "size": "1"
+  },
+  {
+      "uuid": "d7826937-a160-4f70-ab5a-7ee9d78f7404",
+      "description": "Windows 2008 R2 Standard Edition",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "10"
   }
 ]
