@@ -162,7 +162,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true);
+      return template.osFamily(UBUNTU).osVersionMatches("1[012].[01][04]").os64Bit(true);
    }
 
    /**
