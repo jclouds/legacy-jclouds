@@ -54,9 +54,9 @@ public class ServerloveManchesterTemplateBuilderLiveTest extends BaseTemplateBui
                case UBUNTU:
                   return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
                case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
                case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.equals("5.7")) && input.is64Bit;
                case WINDOWS:
                   return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
                default:

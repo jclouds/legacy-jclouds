@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.stratogen-vcloud-mycloud.endpoint>https://mycloud.stratogen.net/api</test.stratogen-vcloud-mycloud.endpoint>
+        <test.stratogen-vcloud-mycloud.endpoint>https://vcd.stratogen.net/api</test.stratogen-vcloud-mycloud.endpoint>
         <test.stratogen-vcloud-mycloud.apiversion>1.0</test.stratogen-vcloud-mycloud.apiversion>
         <test.stratogen-vcloud-mycloud.identity>FIXME_IDENTITY</test.stratogen-vcloud-mycloud.identity>
         <test.stratogen-vcloud-mycloud.credential>FIXME_CREDENTIAL</test.stratogen-vcloud-mycloud.credential>
