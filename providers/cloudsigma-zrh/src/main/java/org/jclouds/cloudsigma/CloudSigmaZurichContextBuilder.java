@@ -16,19 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudsigma;
 
-import org.testng.annotations.Test;
+import java.util.List;
+import java.util.Properties;
+
+import org.jclouds.cloudsigma.compute.config.CloudSigmaZurichComputeServiceContextModule;
+
+import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichClientLiveTest")
-public class CloudSigmaZurichClientLiveTest extends CloudSigmaClientLiveTest {
-   public CloudSigmaZurichClientLiveTest() {
-      provider = "cloudsigma-zrh";
-      bootDrive = "f3c7c665-cd54-4a78-8fd2-7ec2f028cf29";
+public class CloudSigmaZurichContextBuilder extends CloudSigmaContextBuilder  {
+
+   public CloudSigmaZurichContextBuilder(Properties props) {
+      super(props);
    }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudSigmaZurichComputeServiceContextModule());
+   }
+
 }
