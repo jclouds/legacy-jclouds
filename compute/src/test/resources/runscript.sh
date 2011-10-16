@@ -44,13 +44,15 @@ function forget {
    findPid $INSTANCE_NAME
    [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
       echo $INSTANCE_NAME already running pid [$FOUND_PID]
+      return 1;
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
-      sleep 1
-      findPid $INSTANCE_NAME
-      [ -n "$FOUND_PID" ] || abort "$INSTANCE_NAME did not start"
+      RETURN=$?
+      # this is generally followed by findPid, so we shouldn't exit 
+      # immediately as the proc may not have registered in ps, yet
+      test $RETURN && sleep 1
+      return $RETURN;
    }
-   return 0
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
@@ -80,7 +82,7 @@ grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 apt-get update -qq
 which curl || apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes openjdk-7-jdk||apt-get install -f -y -qq --force-yes openjdk-6-jdk
+apt-get install -f -y -qq --force-yes openjdk-6-jdk
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
 
 END_OF_SCRIPT
