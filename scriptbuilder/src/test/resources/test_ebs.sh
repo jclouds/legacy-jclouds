@@ -47,13 +47,15 @@ function forget {
    findPid $INSTANCE_NAME
    [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
       echo $INSTANCE_NAME already running pid [$FOUND_PID]
+      return 1;
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
-      sleep 1
-      findPid $INSTANCE_NAME
-      [ -n "$FOUND_PID" ] || abort "$INSTANCE_NAME did not start"
+      RETURN=$?
+      # this is generally followed by findPid, so we shouldn't exit 
+      # immediately as the proc may not have registered in ps, yet
+      test $RETURN && sleep 1
+      return $RETURN;
    }
-   return 0
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
