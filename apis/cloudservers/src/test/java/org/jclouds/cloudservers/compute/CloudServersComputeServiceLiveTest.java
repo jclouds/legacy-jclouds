@@ -40,7 +40,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CloudServersComputeServiceLiveTest")
 public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";
@@ -54,12 +54,12 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<CloudServersClient, CloudServersAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
-      super.checkNodes(nodes, tag);
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String task) throws IOException {
+      super.checkNodes(nodes, group, task);
       for (NodeMetadata node : nodes) {
          assertEquals(node.getLocation().getScope(), LocationScope.HOST);
       }

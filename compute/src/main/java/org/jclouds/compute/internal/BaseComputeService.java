@@ -628,7 +628,7 @@ public class BaseComputeService implements ComputeService {
                   + " needs to be running before executing a script on it. current state: " + node.getState());
       initAdminAccess.visit(runScript);
       final NodeMetadata node1 = updateNodeWithCredentialsIfPresent(node, options);
-      ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node, runScript, options);
+      ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node1, runScript, options);
       response.addListener(new Runnable() {
 
          @Override
@@ -663,8 +663,13 @@ public class BaseComputeService implements ComputeService {
                   : new Credentials.Builder<Credentials>();
          if (options.getOverridingCredentials().identity != null)
             builder.identity(options.getOverridingCredentials().identity);
-         if (options.getOverridingCredentials().credential != null)
+         if (options.getOverridingCredentials().credential != null) {
+            // custom credentials are related to the input
+            builder = options.getOverridingCredentials().toBuilder();
+            Credentials cred = builder.build();
+            builder.identity(cred.identity);
             builder.credential(options.getOverridingCredentials().credential);
+         }
          node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
       }
       return node;

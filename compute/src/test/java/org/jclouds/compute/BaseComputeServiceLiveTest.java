@@ -264,21 +264,11 @@ public abstract class BaseComputeServiceLiveTest {
          OperatingSystem os = node.getOperatingSystem();
 
          // test bad password
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
-                     runningInGroup(group), "echo $USER", wrapInInitScript(false).runAsRoot(false)
-                              .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
-            assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
-         } catch (AssertionError e) {
-            throw e;
-         } catch (RunScriptOnNodesException e) {
-            assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
-                     + " not authexception!";
-         }
+         tryBadPassword(group, good);
 
          runScriptWithCreds(group, os, good);
 
-         checkNodes(nodes, group);
+         checkNodes(nodes, group, "runScriptWithCreds");
 
          // test adding AdminAccess later changes the default boot user, in this case to foo
          ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), AdminAccess.builder()
@@ -288,6 +278,11 @@ public abstract class BaseComputeServiceLiveTest {
 
          assert response.getExitCode() == 0 : node.getId() + ": " + response;
 
+         node = client.getNodeMetadata(node.getId());
+         // test that the node updated to the correct admin user!
+         assertEquals(node.getCredentials().identity, "foo");
+         assert node.getCredentials().credential != null : nodes;
+         
          weCanCancelTasks(node);
 
          assert response.getExitCode() == 0 : node.getId() + ": " + response;
@@ -302,9 +297,23 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    @Test(enabled = false)
+   protected void tryBadPassword(String group, Credentials good) throws AssertionError {
+      try {
+         Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(runningInGroup(group),
+                  "echo I put a bad password", wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(
+                           new Credentials(good.identity, "romeo")));
+         assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+      } catch (AssertionError e) {
+         throw e;
+      } catch (RunScriptOnNodesException e) {
+         assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
+                  + " not authexception!";
+      }
+   }
+
+   @Test(enabled = false)
    public void weCanCancelTasks(NodeMetadata node) throws InterruptedException, ExecutionException {
-      ListenableFuture<ExecResponse> future;
-      future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"), nameTask("sleeper"));
+      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"), nameTask("sleeper").runAsRoot(false));
       ExecResponse response = null;
       try {
          response = future.get(1, TimeUnit.MILLISECONDS);
@@ -326,7 +335,7 @@ public abstract class BaseComputeServiceLiveTest {
          }
       }
    }
-   
+
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
       assert execResponse.getOutput().trim().equals(node1.getHostname()) : node1 + ": " + execResponse;
    }
@@ -357,7 +366,7 @@ public abstract class BaseComputeServiceLiveTest {
          throw e;
       }
       assertEquals(nodes.size(), 2);
-      checkNodes(nodes, group);
+      checkNodes(nodes, group, "bootstrap");
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
       // credentials aren't always the same
@@ -423,7 +432,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
       assertEquals(nodes.size(), 1);
-      checkNodes(nodes, group);
+      checkNodes(nodes, group, "bootstrap");
       NodeMetadata node = Iterables.getOnlyElement(nodes);
       if (existingLocationIsAssignable)
          assertEquals(node.getLocation(), existingLocation);
@@ -446,7 +455,7 @@ public abstract class BaseComputeServiceLiveTest {
                .nameTask("runScriptWithCreds"));
    }
 
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String taskName) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getProviderId());
          assertNotNull(node.getGroup());
@@ -459,7 +468,7 @@ public abstract class BaseComputeServiceLiveTest {
          if (node.getCredentials().identity != null) {
             assertNotNull(node.getCredentials().identity);
             assertNotNull(node.getCredentials().credential);
-            sshPing(node);
+            sshPing(node, taskName);
          }
       }
    }
@@ -806,10 +815,10 @@ public abstract class BaseComputeServiceLiveTest {
       assert getCores(fastest) >= getCores(smallest) : format("%s ! >= %s", fastest, smallest);
    }
 
-   private void sshPing(NodeMetadata node) throws IOException {
+   private void sshPing(NodeMetadata node, String taskName) throws IOException {
       for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
          try {
-            doCheckJavaIsInstalledViaSsh(node);
+            doCheckJavaIsInstalledViaSsh(node, taskName);
             return;
          } catch (SshException e) {
             try {
@@ -821,7 +830,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
+   protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node, String taskName) throws IOException {
       SshClient ssh = context.utils().sshForNode().apply(node);
       try {
          ssh.connect();
@@ -829,7 +838,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
          assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
-                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
+                  + ssh.exec("cat /tmp/" + taskName + "/stdout.log /tmp/" + taskName + "/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();

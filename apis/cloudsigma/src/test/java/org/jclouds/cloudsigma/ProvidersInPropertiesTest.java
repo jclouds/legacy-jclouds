@@ -35,13 +35,13 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedProviders() {
       Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "cloudsigma-zrh") : providers;
+      assert Iterables.contains(providers, "cloudsigma") : providers;
    }
 
    @Test
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "cloudsigma-zrh") : providers;
+      assert Iterables.contains(providers, "cloudsigma") : providers;
    }
 
 }

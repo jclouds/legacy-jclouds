@@ -40,7 +40,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true, testName = "DeltacloudComputeServiceLiveTest")
 public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public DeltacloudComputeServiceLiveTest() {
       provider = "deltacloud";
@@ -55,8 +55,9 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
    @Override
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
+               "node userMetadata did not match %s %s", userMetadata, node);
    }
+
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<DeltacloudClient, DeltacloudAsyncClient> tmContext = new ComputeServiceContextFactory()
@@ -64,8 +65,8 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
    }
 
    @Override
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
-      super.checkNodes(nodes, tag);
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String task) throws IOException {
+      super.checkNodes(nodes, group, task);
       for (NodeMetadata node : nodes) {
          assertEquals(node.getLocation().getScope(), LocationScope.ZONE);
       }
