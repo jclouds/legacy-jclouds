@@ -102,7 +102,7 @@ public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-FL");
+      return ImmutableSet.<String> of("US-FL", "US-VA", "NL-NH", "BR-SP");
    }
 
 }

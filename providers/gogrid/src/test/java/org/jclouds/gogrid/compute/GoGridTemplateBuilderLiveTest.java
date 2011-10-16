@@ -80,6 +80,6 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-CA", "US-VA");
+      return ImmutableSet.<String> of("US-CA", "US-VA", "BR-SP");
    }
 }
