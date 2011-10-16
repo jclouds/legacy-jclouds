@@ -16,19 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.cloudsigma.compute.config;
 
-package org.jclouds.cloudsigma;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.TemplateBuilder;
 
-import org.testng.annotations.Test;
+import com.google.inject.Injector;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichClientLiveTest")
-public class CloudSigmaZurichClientLiveTest extends CloudSigmaClientLiveTest {
-   public CloudSigmaZurichClientLiveTest() {
-      provider = "cloudsigma-zrh";
-      bootDrive = "f3c7c665-cd54-4a78-8fd2-7ec2f028cf29";
+public class CloudSigmaZurichComputeServiceContextModule extends CloudSigmaComputeServiceContextModule {
+
+   // 11.04 image doesn't work.
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageNameMatches(".*automated SSH Access.*");
    }
 }
