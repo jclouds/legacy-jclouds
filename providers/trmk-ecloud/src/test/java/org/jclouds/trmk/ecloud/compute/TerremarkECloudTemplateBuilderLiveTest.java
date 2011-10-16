@@ -90,6 +90,6 @@ public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderL
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-FL", "NL-NH");
+      return ImmutableSet.<String> of("US-FL", "US-VA", "NL-NH", "BR-SP");
    }
 }

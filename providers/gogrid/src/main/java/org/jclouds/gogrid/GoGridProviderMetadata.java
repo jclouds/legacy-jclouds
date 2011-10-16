@@ -27,8 +27,8 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for GoGrid.
- *
+ * Implementation of @ link org.jclouds.types.ProviderMetadata} for GoGrid.
+ * 
  * @author Adrian Cole
  */
 public class GoGridProviderMetadata extends BaseProviderMetadata {
@@ -88,6 +88,7 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
    public URI getConsole() {
       return URI.create("https://my.gogrid.com/gogrid");
    }
+
    /**
     * {@inheritDoc}
     */
@@ -109,7 +110,7 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA","US-VA");
+      return ImmutableSet.of("US-CA", "US-VA", "BR-SP");
    }
 
 }
