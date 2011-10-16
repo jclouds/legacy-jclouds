@@ -19,6 +19,7 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.concurrent.TimeUnit;
 
@@ -65,8 +66,8 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends Ru
 
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput future() {
       ExecResponse returnVal = super.doCall();
-      if (returnVal.getExitCode() != 0)
-         logger.warn("task: %s had non-zero exit status: %s", init.getInstanceName(), returnVal);
+      checkState(returnVal.getExitCode() == 0, String.format("task: %s had non-zero exit status: %s", init
+               .getInstanceName(), returnVal));
       return statusFactory.create(this).init();
    }
 
