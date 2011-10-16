@@ -51,7 +51,8 @@ public class RimuHostingTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return input.version.matches("^[89].*") || input.version.equals("11.10");
+                  return input.version.matches("^[89].*") || input.version.equals("11.10")
+                           || input.version.equals("12.04");
                case DEBIAN:
                   return false;
                case CENTOS:
