@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 145, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2,227.302 sec <<< FAILURE!
-testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 62.274 sec  <<< FAILURE!
+Tests run: 147, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1,995.285 sec <<< FAILURE!
+testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 236.375 sec  <<< FAILURE!
 org.jclouds.compute.RunScriptOnNodesException: error runScript on filtered nodes options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=false, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
 Execution failures:
 0 error[s]
 Node failures:
-1) RuntimeException on node us-west-1/i-3da6167a:
-java.lang.RuntimeException: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+1) RuntimeException on node us-west-1/i-b31aaaf4:
+java.lang.RuntimeException: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) error acquiring ExecResponse(command=[./runScriptWithCreds status]): Read timed out
 	at com.google.common.base.Throwables.propagate(Throwables.java:156)
-	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:61)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
 	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:101)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
@@ -19,23 +19,23 @@ java.lang.RuntimeException: java.util.concurrent.ExecutionException: org.jclouds
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+Caused by: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) error acquiring ExecResponse(command=[./runScriptWithCreds status]): Read timed out
 	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
 	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:301)
 	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:93)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:191)
-	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:59)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:190)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:60)
 	... 8 more
-Caused by: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+Caused by: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) error acquiring ExecResponse(command=[./runScriptWithCreds status]): Read timed out
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:414)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:231)
 	at org.jclouds.sshj.SshjSshClient.exec(SshjSshClient.java:496)
-	at org.jclouds.compute.callables.SudoAwareInitManager.runCommand(SudoAwareInitManager.java:99)
-	at org.jclouds.compute.callables.SudoAwareInitManager.runAction(SudoAwareInitManager.java:81)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:80)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:76)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runCommand(SudoAwareInitManager.java:103)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runAction(SudoAwareInitManager.java:85)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:79)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:75)
 	at org.jclouds.predicates.RetryablePredicate.apply(RetryablePredicate.java:70)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:114)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:113)
 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
 	... 5 more
 Caused by: net.schmizz.sshj.connection.ConnectionException: Read timed out
@@ -61,7 +61,7 @@ Caused by: java.net.SocketTimeoutException: Read timed out
 	at net.schmizz.sshj.transport.Reader.run(Reader.java:68)
 1 error[s]
 	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:570)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:445)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:454)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin(AWSEC2ComputeServiceLiveTest.java:175)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -83,23 +83,23 @@ Caused by: java.net.SocketTimeoutException: Read timed out
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+Caused by: java.util.concurrent.ExecutionException: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) error acquiring ExecResponse(command=[./runScriptWithCreds status]): Read timed out
 	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
 	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:301)
 	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:93)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:191)
-	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:59)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:190)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:60)
 	... 8 more
-Caused by: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) (ubuntu:rsa[fingerprint(37:1c:1a:ab:9f:73:cc:f7:8a:19:d4:85:9b:17:43:42),sha1(da:64:1c:ed:54:c8:50:d7:76:7b:35:7b:84:ec:45:c9:ae:04:05:dd)]@50.18.87.173:22) error acquiring ExecResponse(command=[sudo ./runScriptWithCreds status]): Read timed out
+Caused by: org.jclouds.ssh.SshException: (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) (ubuntu:rsa[fingerprint(d3:e3:e3:77:6d:45:53:c8:8c:1d:16:df:46:7b:13:4a),sha1(3a:45:0a:c2:69:c5:cf:bd:6c:a9:29:3a:81:b1:af:68:2c:cc:6e:2e)]@50.18.75.30:22) error acquiring ExecResponse(command=[./runScriptWithCreds status]): Read timed out
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:414)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:231)
 	at org.jclouds.sshj.SshjSshClient.exec(SshjSshClient.java:496)
-	at org.jclouds.compute.callables.SudoAwareInitManager.runCommand(SudoAwareInitManager.java:99)
-	at org.jclouds.compute.callables.SudoAwareInitManager.runAction(SudoAwareInitManager.java:81)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:80)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:76)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runCommand(SudoAwareInitManager.java:103)
+	at org.jclouds.compute.callables.SudoAwareInitManager.runAction(SudoAwareInitManager.java:85)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:79)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$1.apply(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:75)
 	at org.jclouds.predicates.RetryablePredicate.apply(RetryablePredicate.java:70)
-	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:114)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:113)
 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
 	... 5 more
 Caused by: net.schmizz.sshj.connection.ConnectionException: Read timed out
@@ -125,7 +125,7 @@ Caused by: java.net.SocketTimeoutException: Read timed out
 	at net.schmizz.sshj.transport.Reader.run(Reader.java:68)
 1 error[s]
 	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:570)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:445)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:454)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin(AWSEC2ComputeServiceLiveTest.java:175)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
