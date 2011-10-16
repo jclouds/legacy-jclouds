@@ -181,9 +181,10 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
 
       fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      System.out.println(fastestTemplate.getImage());
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
