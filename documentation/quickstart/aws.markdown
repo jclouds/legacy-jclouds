@@ -22,7 +22,7 @@ import static
 
 // get a context with amazon that offers the portable BlobStore API
 BlobStoreContext context = new BlobStoreContextFactory().
-			createContext("aws-s3", accesskeyid, secretkey);
+                     createContext("aws-s3", accesskeyid, secretkey);
 
 // create a container in the default location
 BlobStore blobStore = context.getBlobStore();
@@ -33,10 +33,10 @@ Blob blob = blobStore.newBlob("test");
 blob.setPayload("test data");
 blobStore.putBlob(bucket, blob);
 
-// when you need access to s3-specific features, 
+// when you need access to s3-specific features,
 // use the provider-specific context
-S3Client s3Client = 
-	S3Client.class.cast(context.getProviderSpecificContext().getApi());
+AWSS3Client s3Client =
+     AWSS3Client.class.cast(context.getProviderSpecificContext().getApi());
 
 // make the object world readable
 String publicReadWriteObjectKey = "public-read-write-acl";
@@ -47,24 +47,22 @@ object.setPayload("hello world");
 s3Client.putObject(bucket, object, withAcl(CannedAccessPolicy.PUBLIC_READ));
 
 context.close();
-
 {% endhighlight %}
 
 ## Using EC2
 
 {% highlight java %}
-
 // get a context with ec2 that offers the portable ComputeService API
-ComputeServiceContext context = 
-		new ComputeServiceContextFactory().createContext("aws-ec2", 
-								accesskeyid,
-								secretkey, 
-								ImmutableSet.<Module> of(new Log4JLoggingModule(), 
-								new JschSshClientModule()));
+ComputeServiceContext context =
+                new ComputeServiceContextFactory().createContext("aws-ec2",
+                                                                accesskeyid,
+                                                                secretkey,
+                                                                ImmutableSet.<Module> of(new Log4JLoggingModule(),
+                                                                new SshjSshClientModule()));
 
 // here's an example of the portable api
-Set<? extends Location> locations = 
-	context.getComputeService().listAssignableLocations();
+Set<? extends Location> locations =
+        context.getComputeService().listAssignableLocations();
 
 Set<? extends Image> images = context.getComputeService().listImages();
 
@@ -72,16 +70,16 @@ Set<? extends Image> images = context.getComputeService().listImages();
 Template template = context.getComputeService().templateBuilder().osFamily(OsFamily.CENTOS).build();
 
 // specify your own groups which already have the correct rules applied
-template.getOptions().as(EC2TemplateOptions.class).securityGroups(group1);
+template.getOptions().as(AWSEC2TemplateOptions.class).securityGroups(group1);
 
 // specify your own keypair for use in creating nodes
-template.getOptions().as(EC2TemplateOptions.class).keyPair(keyPair);
+template.getOptions().as(AWSEC2TemplateOptions.class).keyPair(keyPair);
 
 // run a couple nodes accessible via group
-Set<? extends NodeMetadata> nodes = context.getComputeService().runNodesInGroup("webserver", 2, template);
+Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup("webserver", 2, template);
 
 // when you need access to very ec2-specific features, use the provider-specific context
-EC2Client ec2Client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
+AWSEC2Client ec2Client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
 // ex. to get an ip and associate it with a node
 NodeMetadata node = Iterables.get(nodes, 0);
