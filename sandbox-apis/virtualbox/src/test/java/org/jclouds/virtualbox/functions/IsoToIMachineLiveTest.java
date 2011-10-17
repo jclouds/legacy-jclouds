@@ -30,6 +30,8 @@ import static com.google.common.collect.Iterables.any;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
@@ -66,7 +68,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testCreateImageMachineFromIso() throws Exception {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+	  ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
       IMachine imageMachine = new IsoToIMachine(manager,
               adminDisk,
               diskFormat,

@@ -69,9 +69,10 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
    @Singleton
    protected VirtualBoxManager createInstance(@Provider URI endpoint, @Named(Constants.PROPERTY_IDENTITY) String identity,
            @Named(Constants.PROPERTY_CREDENTIAL) String credential) {
+	   
 	   VirtualBoxManager manager = VirtualBoxManager.createInstance("");
        manager.connect(endpoint.toASCIIString(), identity, credential);
-       return manager;
+		return manager;
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })

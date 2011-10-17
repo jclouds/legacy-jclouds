@@ -56,4 +56,11 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_DISTRO_ISO_NAME = "jclouds.virtualbox.distroisoname";
 
    public static final String VIRTUALBOX_JETTY_PORT = "jclouds.virtualbox.jetty.port";
+
+   public static final String VIRTUALBOX_JETTY_BASE_RESOURCE = "jclouds.virtualbox.jetty.baseresource";
+
+   public static final String VIRTUALBOX_WEBSERVER_IDENTITY = "jclouds.virtualbox.webserver.identity";
+
+   public static final String VIRTUALBOX_WEBSERVER_CREDENTIAL = "jclouds.virtualbox.webserver.credential";
+
 }

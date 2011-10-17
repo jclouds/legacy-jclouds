@@ -42,12 +42,16 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.functions.StartVBoxIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -74,6 +78,11 @@ public class SetupVirtualBoxForLiveTest {
    private String majorVersion;
    private URI vboxDmg;
    private String vboxVersionName;
+   private String basebaseResource;
+   private String port;
+  
+   private String vboxWebServerCredential;
+   private String vboxWebServerIdentity;
 
    public void setupCredentials() {
       endpoint = URI.create(System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/"));
@@ -100,28 +109,14 @@ public class SetupVirtualBoxForLiveTest {
       vboxDmg = URI.create(System.getProperty("test." + provider + ".vboxDmg",
                "http://download.virtualbox.org/virtualbox/4.1.2/VirtualBox-4.1.2-73507-OSX.dmg"));
       vboxVersionName = System.getProperty("test" + provider + ".vboxVersionName", "VirtualBox-4.1.2-73507-OSX.dmg");
-   }
-
-   public void configureJettyServer() throws Exception {
-      Server server = new Server(8080);
-
-      ResourceHandler resource_handler = new ResourceHandler();
-      resource_handler.setDirectoriesListed(true);
-      resource_handler.setWelcomeFiles(new String[] { "index.html" });
-
-      resource_handler.setResourceBase(".");
-      logger().info("serving " + resource_handler.getBaseResource());
-
-      HandlerList handlers = new HandlerList();
-      handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
-      server.setHandler(handlers);
-
-      server.start();
+      basebaseResource = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_BASE_RESOURCE, ".");
+      port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
+      vboxWebServerIdentity = System.getProperty(VirtualBoxConstants.VIRTUALBOX_WEBSERVER_IDENTITY, "toor");
+      vboxWebServerCredential = System.getProperty(VirtualBoxConstants.VIRTUALBOX_WEBSERVER_CREDENTIAL, "12345");
    }
 
    @BeforeSuite
    public void setupClient() throws Exception {
-	   logger().info("\n\n\n\nSetting up Virtualbox environment");
       context = TestUtils.computeServiceForLocalhostAndGuest();
       setupCredentials();
       setupConfigurationProperties();
@@ -130,9 +125,13 @@ public class SetupVirtualBoxForLiveTest {
 
       installVbox();
       checkVboxVersionExpected();
-      if (!new InetSocketAddressConnect().apply(new IPSocket(endpoint.getHost(), endpoint.getPort())))
-         startupVboxWebServer();
-      configureJettyServer();
+      new StartVBoxIfNotAlreadyRunning(context, hostId, new Credentials(vboxWebServerIdentity, vboxWebServerCredential));
+      new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
+   }
+   
+   @AfterSuite
+   public void stopVboxWebServer() throws IOException {
+      runScriptOnNode(hostId, "pidof vboxwebsrv | xargs kill");
    }
 
    public void installVbox() throws Exception {
@@ -159,25 +158,6 @@ public class SetupVirtualBoxForLiveTest {
       assertEquals(runScriptOnNode(hostId, "VBoxManage -version").getOutput().trim(), apiVersion);
    }
 
-   /**
-    * 
-    * @param command
-    *           absolute path to command. For ubuntu 10.04: /usr/bin/vboxwebsrv
-    * @throws IOException
-    * @throws InterruptedException
-    */
-   public void startupVboxWebServer() {
-      logger().debug("disabling password access");
-      runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false).wrapInInitScript(false));
-      logger().debug("starting vboxwebsrv");
-      String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
-      if (isOSX(hostId))
-         vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && " + vboxwebsrv;
-
-      runScriptOnNode(hostId, vboxwebsrv, runAsRoot(false).wrapInInitScript(false).blockOnPort(endpoint.getPort(), 10)
-               .blockOnComplete(false).nameTask("vboxwebsrv"));
-   }
-
    public boolean isOSX(String id) {
       return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
                "Mac OS X");
@@ -197,11 +177,6 @@ public class SetupVirtualBoxForLiveTest {
          }
       }
       return iso;
-   }
-
-   @AfterSuite
-   public void stopVboxWebServer() throws IOException {
-      runScriptOnNode(guestId, "pidof vboxwebsrv | xargs kill");
    }
 
    public ExecResponse runScriptOnNode(String nodeId, String command, RunScriptOptions options) {
