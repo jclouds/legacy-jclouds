@@ -18,10 +18,6 @@
  */
 package org.jclouds.cloudsigma.compute.config;
 
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.TemplateBuilder;
-
-import com.google.inject.Injector;
 
 /**
  * 
@@ -29,9 +25,4 @@ import com.google.inject.Injector;
  */
 public class CloudSigmaZurichComputeServiceContextModule extends CloudSigmaComputeServiceContextModule {
 
-   // 11.04 image doesn't work.
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageNameMatches(".*automated SSH Access.*");
-   }
 }
