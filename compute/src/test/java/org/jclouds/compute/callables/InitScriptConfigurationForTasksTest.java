@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.callable;
+package org.jclouds.compute.callables;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.callables.InitScriptConfigurationForTasks;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;

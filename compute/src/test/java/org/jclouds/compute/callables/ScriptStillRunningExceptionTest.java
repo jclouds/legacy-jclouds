@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.callable;
+package org.jclouds.compute.callables;
 
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.callables.ScriptStillRunningException;
 import org.jclouds.compute.domain.ExecResponse;
 import org.testng.annotations.Test;
 
