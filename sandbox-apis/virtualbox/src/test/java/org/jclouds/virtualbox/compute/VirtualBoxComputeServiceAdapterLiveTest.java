@@ -108,11 +108,8 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    }
    @Test
    public void testListImages() {
-      IMachineToImage iMachineToImage = new IMachineToImage(getManager());
-
-      Iterable<IMachine> iMachineIterable = adapter.listImages();
-      for (IMachine iMachine : iMachineIterable) {
-         Image image = iMachineToImage.apply(iMachine);
+      Iterable<Image> iMageIterable = adapter.listImages();
+      for (Image image : iMageIterable) {
          System.out.println(image);
       }
       // check state;

@@ -59,7 +59,7 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, IMachine, Location> {
+public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, Image, Location> {
 
    public VirtualBoxComputeServiceContextModule() {
       super(VirtualBoxManager.class, VirtualBoxManager.class);
@@ -79,7 +79,7 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, IMachine, Location>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, Image, Location>>() {
       }).to(VirtualBoxComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
       }).to(IMachineToNodeMetadata.class);
@@ -87,8 +87,12 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
       }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<IMachine, Hardware>>() {
       }).to(IMachineToHardware.class);
+      bind(new TypeLiteral<Function<Image, Image>>() {
+      }).to((Class) IdentityFunction.class);
+      /*
       bind(new TypeLiteral<Function<IMachine, Image>>() {
       }).to(IMachineToImage.class);
+      */
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(OnlyLocationOrFirstZone.class);
    }

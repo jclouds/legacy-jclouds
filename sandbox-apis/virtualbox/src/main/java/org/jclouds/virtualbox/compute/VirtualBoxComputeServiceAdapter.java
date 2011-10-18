@@ -22,25 +22,21 @@
 package org.jclouds.virtualbox.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.JustProvider;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.IMachineToImage;
+import org.jclouds.virtualbox.functions.admin.ImageFromYamlStream;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -58,7 +54,7 @@ import com.google.inject.Singleton;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @Singleton
-public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, IMachine, Location> {
+public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
 
 	private final VirtualBoxManager manager;
    private final JustProvider justProvider;
@@ -85,20 +81,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 	}
 
 	@Override
-	public Iterable<IMachine> listImages() {
-      final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
-         @Override
-         public boolean apply(@Nullable IMachine iMachine) {
-            return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
-         }
-      };
-      IMachineToImage fn = new IMachineToImage(manager);
-
-      for (IMachine imachine : filter(manager.getVBox().getMachines(), imagePredicate)) {
-          Image image = fn.apply(imachine);
-          System.out.println(image.getVersion());
-      } 
-      return filter(manager.getVBox().getMachines(), imagePredicate);
+	public Iterable<Image> listImages() {
+		InputStream is = getClass().getResourceAsStream("/testImages.yaml");
+		ImageFromYamlStream parser = new ImageFromYamlStream();
+	    return parser.apply(is).asMap().values();
 	}
 
 	@SuppressWarnings("unchecked")

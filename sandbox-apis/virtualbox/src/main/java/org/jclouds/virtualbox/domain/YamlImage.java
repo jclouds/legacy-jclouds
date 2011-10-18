@@ -1,5 +1,47 @@
-images:
-    - id: myTestId
+/**
+ *
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ * 
+ * @author Andrea Turli
+ */
+
+package org.jclouds.virtualbox.domain;
+
+import static org.jclouds.virtualbox.functions.IMachineToImage.osFamily;
+
+import java.util.List;
+import java.util.Map;
+
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+/**
+ * Serializes to the following
+ * 
+ * <pre>
+id: myTestId
       name: ubuntu-11.04-server-i386
       description: ubuntu 11.04 server (i386)
       os_arch: x86
@@ -66,3 +108,53 @@ images:
                       # debconf-get-selections --install
                       #Use mirror
                       choose-mirror-bin mirror/http/proxy string
+ * </pre>
+ * 
+ * @author Kelvin Kakugawa
+ * @author Adrian Cole
+ */
+public class YamlImage {
+   public String id;
+   public String name;
+   public String description;
+   public String hostname;
+   public String location_id;
+   public String os_arch;
+   public String os_family;
+   public String os_description;
+   public String os_version;
+   public String iso;
+   public String keystroke_sequence;
+   public String preseed_cfg;
+   public int login_port = 22;
+   public boolean os_64bit;
+   public String group;
+   public List<String> tags = Lists.newArrayList();
+   public Map<String, String> metadata = Maps.newLinkedHashMap();
+   public String username;
+   public String credential;
+   public String credential_url;
+   public String sudo_password;
+
+   public static Function<YamlImage, Image> toImage = new Function<YamlImage, Image>() {
+      @Override
+      public Image apply(YamlImage arg0) {
+         if (arg0 == null)
+            return null;
+         
+         OsFamily family = osFamily().apply(arg0.os_family);
+         OperatingSystem operatingSystem = OperatingSystem.builder()
+                 .description(arg0.os_description)
+                 .family(family)
+                 .version(arg0.os_version)
+                 .is64Bit(arg0.os_64bit)
+                 .build();
+
+         return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description).operatingSystem(operatingSystem).build();
+      }
+   };
+
+   public Image toImage() {
+      return toImage.apply(this);
+   }
+}
