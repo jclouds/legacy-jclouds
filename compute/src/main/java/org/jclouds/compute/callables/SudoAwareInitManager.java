@@ -57,8 +57,8 @@ public class SudoAwareInitManager {
             InitBuilder init) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.runAsRoot = runAsRoot;
-      this.node = node;
-      this.init = init;
+      this.node = checkNotNull(node, "node");
+      this.init = checkNotNull(init, "init");
    }
 
    @PostConstruct

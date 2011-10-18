@@ -44,7 +44,6 @@ import org.jclouds.ssh.SshException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -53,38 +52,28 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager implements RunScriptOnNode {
-   public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
    protected final String initFile;
 
    /**
-    * 
-    * determines the naming convention of init scripts.
-    * 
-    * ex. {@code /tmp/init-%s}
+    * @return the absolute path to the file on disk relating to this task.
     */
-   @Inject(optional = true)
-   @Named(PROPERTY_INIT_SCRIPT_PATTERN)
-   private String initScriptPattern = "/tmp/init-%s";
+   public String getInitFile() {
+      return initFile;
+   }
 
    @AssistedInject
    public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
-            @Assisted NodeMetadata node, @Assisted Statement script, @Assisted RunScriptOptions options) {
-      super(sshFactory, options.shouldRunAsRoot(), checkNotNull(node, "node"), init(script, options.getTaskName()));
-      this.initFile = String.format(initScriptPattern, options.getTaskName());
-   }
-
-   private static InitBuilder init(Statement script, String name) {
-      if (name == null) {
-         if (checkNotNull(script, "script") instanceof InitBuilder)
-            name = InitBuilder.class.cast(script).getInstanceName();
-         else
-            name = "jclouds-script-" + System.currentTimeMillis();
-      }
-      return checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script) : createInitScript(
-               name, script);
+            InitScriptConfigurationForTasks initScriptConfiguration, @Assisted NodeMetadata node,
+            @Assisted Statement script, @Assisted RunScriptOptions options) {
+      super(sshFactory, options.shouldRunAsRoot(), checkNotNull(node, "node"),
+               checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
+                        : createInitScript(checkNotNull(initScriptConfiguration, "initScriptConfiguration"), options
+                                 .getTaskName(), script));
+      this.initFile = String.format(initScriptConfiguration.getInitScriptPattern(), init.getInstanceName());
    }
 
    @Override
@@ -105,9 +94,12 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       }
    }
 
-   public static InitBuilder createInitScript(String name, Statement script) {
-      String path = "/tmp/" + name;
-      return new InitBuilder(name, path, path, Collections.<String, String> emptyMap(), Collections.singleton(script));
+   public static InitBuilder createInitScript(InitScriptConfigurationForTasks config, String name, Statement script) {
+      if (name == null) {
+         name = "jclouds-script-" + config.getAnonymousTaskSuffixSupplier().get();
+      }
+      return new InitBuilder(name, config.getBasedir() + "/" + name, config.getBasedir() + "/" + name, Collections
+               .<String, String> emptyMap(), Collections.singleton(script));
    }
 
    protected void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {

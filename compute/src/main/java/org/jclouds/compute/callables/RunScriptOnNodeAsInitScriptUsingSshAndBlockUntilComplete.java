@@ -47,9 +47,9 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends Ru
    @Inject
    public RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete(
             BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory statusFactory, Timeouts timeouts,
-            Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node, @Assisted Statement script,
-            @Assisted RunScriptOptions options) {
-      super(sshFactory, node, script, options);
+            Function<NodeMetadata, SshClient> sshFactory, InitScriptConfigurationForTasks initScriptConfiguration,
+            @Assisted NodeMetadata node, @Assisted Statement script, @Assisted RunScriptOptions options) {
+      super(sshFactory, initScriptConfiguration, node, script, options);
       this.statusFactory = checkNotNull(statusFactory, "statusFactory");
       this.timeouts = checkNotNull(timeouts, "timeouts");
    }
