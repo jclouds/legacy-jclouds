@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 134, Failures: 2, Errors: 0, Skipped: 6, Time elapsed: 975.753 sec <<< FAILURE!
-testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)  Time elapsed: 21.358 sec  <<< FAILURE!
+Tests run: 134, Failures: 2, Errors: 0, Skipped: 6, Time elapsed: 977.62 sec <<< FAILURE!
+testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)  Time elapsed: 16.941 sec  <<< FAILURE!
 org.jclouds.http.HttpResponseException: command: POST https://api.lvs.cloudsigma.com/resources/vlan/create HTTP/1.1 failed with response: HTTP/1.1 500 Internal Server Error; content: [Internal server error
 ]
 	at org.jclouds.cloudsigma.handlers.CloudSigmaErrorHandler.handleError(CloudSigmaErrorHandler.java:56)
@@ -84,7 +84,7 @@ org.jclouds.http.HttpResponseException: command: POST https://api.lvs.cloudsigma
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
 
-testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)  Time elapsed: 20.455 sec  <<< FAILURE!
+testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)  Time elapsed: 20.535 sec  <<< FAILURE!
 org.jclouds.http.HttpResponseException: command: POST https://api.lvs.cloudsigma.com/resources/ip/create HTTP/1.1 failed with response: HTTP/1.1 500 Internal Server Error; content: [Internal server error
 ]
 	at org.jclouds.cloudsigma.handlers.CloudSigmaErrorHandler.handleError(CloudSigmaErrorHandler.java:56)
