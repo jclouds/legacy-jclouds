@@ -7,8 +7,8 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.2.0
-our next maintenance version is 1.2.1-SNAPSHOT
+our current version is 1.2.1
+our next maintenance version is 1.2.2-SNAPSHOT
 our dev version is 1.3.0-SNAPSHOT
  
 check out our examples site! https://github.com/jclouds/jclouds-examples

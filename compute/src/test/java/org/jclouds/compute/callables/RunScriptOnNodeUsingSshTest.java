@@ -16,10 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.callable;
+package org.jclouds.compute.callables;
 
-import com.google.common.base.Function;
-import org.jclouds.compute.callables.RunScriptOnNodeUsingSsh;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
+
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
@@ -29,9 +33,7 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.easymock.EasyMock.*;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
+import com.google.common.base.Function;
 
 /**
  * @author Adam Lowe

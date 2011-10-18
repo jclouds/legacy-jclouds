@@ -76,9 +76,9 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
-      assertEquals(defaultTemplate.getImage().getId(), "f3c7c665-cd54-4a78-8fd2-7ec2f028cf29");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getId(), "7fad4fe1-daf3-4cb8-a847-082aae4d8506");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
