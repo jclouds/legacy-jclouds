@@ -22,6 +22,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 /**
  * 
  * @author James Murty
@@ -39,8 +41,15 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    // not supported in swift
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
-      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
-      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
+       String payloadContentDisposition = blob.getPayload().getContentMetadata().getContentDisposition();
+       if (payloadContentDisposition!=null) {
+           assertEquals(contentDisposition, payloadContentDisposition);
+       }
+
+       String blobContentDisposition = blob.getMetadata().getContentMetadata().getContentDisposition();
+       if (payloadContentDisposition!=null) {
+           assertEquals(contentDisposition, blobContentDisposition);
+       }
    }
 
    // not supported in swift
