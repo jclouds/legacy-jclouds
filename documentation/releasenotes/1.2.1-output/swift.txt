@@ -1,0 +1,815 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.api:swift:bundle:1.2.2-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.2-SNAPSHOT (/Users/adriancole/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.2-SNAPSHOT, /Users/adriancole/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jcloud swift api 1.2.2-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ swift ---
+[INFO] Deleting /Users/adriancole/git/1.2.0/jclouds/apis/swift/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ swift ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ swift ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ swift ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ swift ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ swift ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/1.2.0/jclouds/apis/swift/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/1.2.0/jclouds/apis/swift/src/main/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ swift ---
+[INFO] Compiling 42 source files to /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ swift ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/1.2.0/jclouds/apis/swift/src/test/clojure
+[INFO] Copying 2 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ swift ---
+[INFO] Compiling 23 source files to /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ swift ---
+[INFO] Surefire report directory: /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testNullMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testOneOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testAssignability(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-4] Test testAssignability(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 7ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-3] Test testNullMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 24ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 24ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testOneOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 24ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-4] Test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 12ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 25ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Starting test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-1] Test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testTwoOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-3] Test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-4] Test testTwoOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-1] Test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-2] Test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+[pool-2-thread-1] Test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test test404SetsKeyNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+Starting test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+Starting test test404SetsContainerNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+Starting test testReplaceLocalhost(org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeadersTest)
+[pool-2-thread-1] Test testReplaceLocalhost(org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeadersTest) succeeded: 71ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testEtagCaseIssue(org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeadersTest)
+[pool-2-thread-5] Test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 121ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+[pool-2-thread-2] Test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 121ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+[pool-2-thread-4] Test test404SetsContainerNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 121ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+[pool-2-thread-3] Test test404SetsKeyNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 121ms
+Starting test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest)
+Starting test testApplyInputStream(org.jclouds.openstack.swift.domain.internal.ParseObjectInfoListFromJsonResponseTest)
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testEtagCaseIssue(org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeadersTest) succeeded: 126ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest) succeeded: 89ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testApplyInputStream(org.jclouds.openstack.swift.domain.internal.ParseObjectInfoListFromJsonResponseTest) succeeded: 96ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testNullIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testExtendedPropertiesBind(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+[pool-3-thread-5] Test testNullIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 7ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 7ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testMustBeSwiftObject(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testNoNameIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+[pool-3-thread-4] Test testNoNameIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+[pool-3-thread-5] Test testMustBeSwiftObject(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 1ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+[pool-3-thread-2] Test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 12ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 13ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testExtendedPropertiesBind(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 14ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testSignRemoveBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
+Starting test testSignGetBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
+Starting test testSignPutBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
+[pool-4-thread-1] Test testSignRemoveBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 44ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testSignPutBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 44ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testSignGetBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 44ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.245 sec
+
+Results :
+
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ swift ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ swift ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ swift ---
+[INFO] Building jar: /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/swift-1.2.2-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ swift ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ swift ---
+[INFO] Building jar: /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/swift-1.2.2-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ swift ---
+[INFO] Surefire report directory: /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
+Starting test blobNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test blobNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 607ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 846ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 782ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 795ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 733ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1035ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 755ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 764ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 716ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 825ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 788ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 788ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 112ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 525ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+Exception in thread "pool-7-thread-1" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 1, rate: 1086ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-8" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 2, rate: 1100ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-5" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 3, rate: 1104ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-7" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 4, rate: 1107ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-6" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 5, rate: 1108ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-9" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 6, rate: 1119ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-3" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 7, rate: 1133ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-10" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 8, rate: 1385ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-2" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 9, rate: 1521ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+Exception in thread "pool-7-thread-4" java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+ERROR: get constitution, completed: 0/10, errors: 10, rate: 1661ms/op
+java.util.concurrent.ExecutionException: java.lang.AssertionError
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:328)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:315)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:113)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:732)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.AssertionError
+	at org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest.checkContentDisposition(SwiftBlobIntegrationLiveTest.java:42)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:190)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:183)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:477)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:475)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:826)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 10, rate: 1661ms/op
+java.lang.RuntimeException: get constitution, completed: 0/10, errors: 10, rate: 1661ms/op
+	at org.jclouds.concurrent.FutureIterables.awaitCompletion(FutureIterables.java:149)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest.testBigFileGets(BaseBlobIntegrationTest.java:199)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:76)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Starting test testGetIfMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1159ms
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+Starting test testGetIfModifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2443ms
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
+Starting test testGetIfNoneMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1193ms
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
+Starting test testGetIfUnmodifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1160ms
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testGetRange(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testGetRange(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 989ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
+Starting test testMetadata(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testMetadata(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1180ms
+Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
+Starting test testPutFileParallel(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 30544ms
+Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
+Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 2, skipped: 0.
+Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 3, skipped: 0.
+Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 4, skipped: 0.
+Starting test testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 5, skipped: 0.
+Starting test testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest)
+[pool-4-thread-1] Test testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest) succeeded: 5947ms
+Test suite progress: tests succeeded: 22, failed: 5, skipped: 0.
+Starting test testContains(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContains(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1150ms
+Test suite progress: tests succeeded: 23, failed: 5, skipped: 0.
+Starting test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 3529ms
+Test suite progress: tests succeeded: 24, failed: 5, skipped: 0.
+Starting test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1485ms
+Test suite progress: tests succeeded: 25, failed: 5, skipped: 0.
+Starting test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1490ms
+Test suite progress: tests succeeded: 26, failed: 5, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 5142ms
+Test suite progress: tests succeeded: 27, failed: 5, skipped: 0.
+Starting test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1411ms
+Test suite progress: tests succeeded: 28, failed: 5, skipped: 0.
+Starting test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 2332ms
+Test suite progress: tests succeeded: 29, failed: 5, skipped: 0.
+Starting test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1467ms
+Test suite progress: tests succeeded: 30, failed: 5, skipped: 0.
+Starting test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 931ms
+Test suite progress: tests succeeded: 31, failed: 5, skipped: 0.
+Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 12595ms
+Test suite progress: tests succeeded: 32, failed: 5, skipped: 0.
+Starting test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1035ms
+Test suite progress: tests succeeded: 33, failed: 5, skipped: 0.
+Starting test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1164ms
+Test suite progress: tests succeeded: 34, failed: 5, skipped: 0.
+Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 652ms
+Test suite progress: tests succeeded: 35, failed: 5, skipped: 0.
+Starting test testSignGetUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 1100ms
+Test suite progress: tests succeeded: 36, failed: 5, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 813ms
+Test suite progress: tests succeeded: 37, failed: 5, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 602ms
+Test suite progress: tests succeeded: 38, failed: 5, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 1851ms
+Test suite progress: tests succeeded: 39, failed: 5, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 320ms
+Test suite progress: tests succeeded: 40, failed: 5, skipped: 0.
+Starting test containerExists(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerExists(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 475ms
+Test suite progress: tests succeeded: 41, failed: 5, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore4...
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1481ms
+Test suite progress: tests succeeded: 42, failed: 5, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore5...
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 3275ms
+Test suite progress: tests succeeded: 43, failed: 5, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 3921ms
+Test suite progress: tests succeeded: 44, failed: 5, skipped: 0.
+Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 7580ms
+Test suite progress: tests succeeded: 45, failed: 5, skipped: 0.
+Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 2574ms
+Test suite progress: tests succeeded: 46, failed: 5, skipped: 0.
+Starting test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4351ms
+Test suite progress: tests succeeded: 47, failed: 5, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4224ms
+Test suite progress: tests succeeded: 48, failed: 5, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 5181ms
+Test suite progress: tests succeeded: 49, failed: 5, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 5000ms
+Test suite progress: tests succeeded: 50, failed: 5, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 922ms
+Test suite progress: tests succeeded: 51, failed: 5, skipped: 0.
+Starting test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 951ms
+Test suite progress: tests succeeded: 52, failed: 5, skipped: 0.
+Starting test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 865ms
+Test suite progress: tests succeeded: 53, failed: 5, skipped: 0.
+Starting test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1151ms
+Test suite progress: tests succeeded: 54, failed: 5, skipped: 0.
+Starting test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1314ms
+Test suite progress: tests succeeded: 55, failed: 5, skipped: 0.
+Starting test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1162ms
+Test suite progress: tests succeeded: 56, failed: 5, skipped: 0.
+Starting test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 4991ms
+Test suite progress: tests succeeded: 57, failed: 5, skipped: 0.
+Starting test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2675ms
+Test suite progress: tests succeeded: 58, failed: 5, skipped: 0.
+Starting test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1375ms
+Test suite progress: tests succeeded: 59, failed: 5, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1398ms
+Test suite progress: tests succeeded: 60, failed: 5, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1421ms
+Test suite progress: tests succeeded: 61, failed: 5, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1383ms
+Test suite progress: tests succeeded: 62, failed: 5, skipped: 0.
+Starting test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1568ms
+Test suite progress: tests succeeded: 63, failed: 5, skipped: 0.
+Starting test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1645ms
+Test suite progress: tests succeeded: 64, failed: 5, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 4985ms
+Test suite progress: tests succeeded: 65, failed: 5, skipped: 0.
+Starting test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1625ms
+Test suite progress: tests succeeded: 66, failed: 5, skipped: 0.
+Starting test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1860ms
+Test suite progress: tests succeeded: 67, failed: 5, skipped: 0.
+Starting test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1184ms
+Test suite progress: tests succeeded: 68, failed: 5, skipped: 0.
+Starting test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1520ms
+Test suite progress: tests succeeded: 69, failed: 5, skipped: 0.
+Starting test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1084ms
+Test suite progress: tests succeeded: 70, failed: 5, skipped: 0.
+Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 10400ms
+Test suite progress: tests succeeded: 71, failed: 5, skipped: 0.
+Starting test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1046ms
+Test suite progress: tests succeeded: 72, failed: 5, skipped: 0.
+Starting test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 995ms
+Test suite progress: tests succeeded: 73, failed: 5, skipped: 0.
+Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 721ms
+Test suite progress: tests succeeded: 74, failed: 5, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 229ms
+Test suite progress: tests succeeded: 75, failed: 5, skipped: 0.
+Starting test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
+*** allocated new container adriancole-blobstore3...
+ >> creating container in location [id=swift, scope=PROVIDER, description=http://50.16.106.110:8080/auth, parent=null, iso3166Codes=[], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore313...
+[pool-4-thread-1] Test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 1216ms
+Test suite progress: tests succeeded: 76, failed: 5, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
+location [id=swift, scope=PROVIDER, description=http://50.16.106.110:8080/auth, parent=null, iso3166Codes=[], metadata={}]
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 5, skipped: 0.
+Starting test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 200ms
+Test suite progress: tests succeeded: 78, failed: 5, skipped: 0.
+Starting test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1177ms
+Test suite progress: tests succeeded: 79, failed: 5, skipped: 0.
+Starting test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 952ms
+Test suite progress: tests succeeded: 80, failed: 5, skipped: 0.
+Starting test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 2097ms
+Test suite progress: tests succeeded: 81, failed: 5, skipped: 0.
+Starting test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest) failed.
+Test suite progress: tests succeeded: 81, failed: 6, skipped: 0.
+Starting test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1511ms
+Test suite progress: tests succeeded: 82, failed: 6, skipped: 0.
+Starting test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest)
+*** allocated new container adriancole-blobstore1...
+*** allocated new container adriancole-blobstore115...
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest) succeeded: 1094ms
+Test suite progress: tests succeeded: 83, failed: 6, skipped: 0.
+Tests run: 89, Failures: 6, Errors: 0, Skipped: 0, Time elapsed: 226.352 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+  testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+  testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+  testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+  testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+  testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest)
+
+Tests run: 89, Failures: 6, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3:53.785s
+[INFO] Finished at: Wed Oct 19 00:27:09 PDT 2011
+[INFO] Final Memory: 20M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project swift: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/git/1.2.0/jclouds/apis/swift/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
