@@ -14,7 +14,7 @@ title: Reference Index
 * [Using jclouds with Apache Felix OSGi Container](/documentation/reference/osgi)
 * [Pool Design](/documentation/reference/pool-design)
 * [Load Balancer Design](/documentation/reference/load-balancer-design)
-* [Logging in jclouds](/documentation/reference/jclounds-logging)
+* [Logging in jclouds](/documentation/reference/jclouds-logging)
 * [VMWare Integration Approach & Design](/documentation/reference/vmware-integration-design)
 * [Supported Providers](/documentation/reference/supported-providers)
 * [Apps that use JClouds](/documentation/reference/apps-that-use-jclouds)
