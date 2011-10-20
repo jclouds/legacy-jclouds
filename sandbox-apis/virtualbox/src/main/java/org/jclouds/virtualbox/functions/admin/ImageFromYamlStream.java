@@ -1,25 +1,5 @@
 package org.jclouds.virtualbox.functions.admin;
 
-import static com.google.common.base.Preconditions.checkState;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Singleton;
-
-import org.jclouds.byon.Node;
-import org.jclouds.byon.domain.YamlNode;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.virtualbox.domain.YamlImage;
-import org.yaml.snakeyaml.Loader;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.cache.Cache;
@@ -27,6 +7,19 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.virtualbox.domain.YamlImage;
+import org.yaml.snakeyaml.Loader;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+
+import javax.inject.Singleton;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  *
