@@ -76,4 +76,16 @@ public class AdminAccessTest {
    public void testCreateWheelWindowsNotSupported() {
       AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.WINDOWS);
    }
+   
+   @Test(expectedExceptions=IllegalArgumentException.class)
+   //for issue 682
+   public void testRootNotAllowed() throws IOException {
+      TestConfiguration.INSTANCE.reset();
+      try {
+         AdminAccess.builder().adminUsername("root").build().init(TestConfiguration.INSTANCE).render(OsFamily.UNIX);
+      } finally {
+         TestConfiguration.INSTANCE.reset();
+      }
+   }
+
 }

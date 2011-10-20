@@ -35,6 +35,7 @@ import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.ssh.SshStatements;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -344,6 +345,8 @@ public class AdminAccess implements Statement {
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       checkNotNull(config.getAdminUsername(), "adminUsername");
+      Preconditions.checkArgument(!"root".equals(config.getAdminUsername()), "cannot create admin user 'root'; " +
+      		"ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
       checkNotNull(config.getAdminPassword(), "adminPassword");
       checkNotNull(config.getAdminPublicKey(), "adminPublicKey");
       checkNotNull(config.getAdminPrivateKey(), "adminPrivateKey");
