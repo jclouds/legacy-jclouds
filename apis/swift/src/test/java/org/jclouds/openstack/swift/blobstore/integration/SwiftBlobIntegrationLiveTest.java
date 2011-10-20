@@ -38,18 +38,16 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       // not supported in swift
    }
 
-   // not supported in swift
+   // When testing against Swift Server 1.4.4/SWauth 1.0.3 the content dispositions are not null
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
        String payloadContentDisposition = blob.getPayload().getContentMetadata().getContentDisposition();
-       if (payloadContentDisposition!=null) {
-           assertEquals(contentDisposition, payloadContentDisposition);
-       }
+       assert payloadContentDisposition != null : "blob payload contentDisposition should not be null";
+       assertEquals(contentDisposition, payloadContentDisposition);
 
        String blobContentDisposition = blob.getMetadata().getContentMetadata().getContentDisposition();
-       if (payloadContentDisposition!=null) {
-           assertEquals(contentDisposition, blobContentDisposition);
-       }
+       assert blobContentDisposition != null : "blob metadata contentDisposition should not be null";
+       assertEquals(contentDisposition, blobContentDisposition);
    }
 
    // not supported in swift
