@@ -34,23 +34,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.StartVBoxIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeSuite;
 
 import com.google.common.base.Splitter;

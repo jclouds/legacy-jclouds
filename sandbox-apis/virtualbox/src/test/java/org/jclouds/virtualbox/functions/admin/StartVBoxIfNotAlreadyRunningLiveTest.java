@@ -19,10 +19,11 @@
  *
  */
 
-package org.jclouds.virtualbox.functions;
+package org.jclouds.virtualbox.functions.admin;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
+import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;

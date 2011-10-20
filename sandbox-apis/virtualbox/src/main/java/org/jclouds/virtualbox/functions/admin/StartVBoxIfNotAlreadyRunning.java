@@ -19,7 +19,7 @@
  *
  */
 
-package org.jclouds.virtualbox.functions;
+package org.jclouds.virtualbox.functions.admin;
 
 
 import com.google.common.base.Function;
