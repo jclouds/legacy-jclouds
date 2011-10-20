@@ -43,6 +43,13 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
+ * Creates a statement that will add a given user to a machine ("login"), with optional 
+ * password, groups, private key, and authorized keys.
+ * <p>
+ * This is supported on most *nix environments. Not currently supported on Windows.
+ * <p>
+ * Note that some places where this is used may have stricter requirements on the parameters
+ * (for example {@link AdminAccess} requires password and keys).  
  * 
  * @author Adrian Cole
  */
@@ -65,11 +72,13 @@ public class UserAdd implements Statement {
          return this;
       }
 
+      /** the username of the user to add (not the login to use when performing the add) */
       public UserAdd.Builder login(String login) {
          this.login = login;
          return this;
       }
 
+      /** the password to add for the user (not the password to use when logging in to perform the add) */
       public UserAdd.Builder password(String password) {
          this.password = password;
          return this;

@@ -35,6 +35,7 @@ import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.ssh.SshStatements;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -46,17 +47,26 @@ import com.google.inject.ImplementedBy;
  * Controls the administrative access to a node. By default, it will perform the following:
  * 
  * <ul>
- * <li>setup a new admin user which folks should use as opposed to the built-in vcloud account</li>
- * <ul>
- * <li>associate a random password to account</li>
- * <ul>
- * <li>securely ( use sha 512 on client side and literally rewrite the shadow entry, rather than
- * pass password to OS in a script )</li>
+ *   <li>setup a new admin user which folks should use as opposed to any built-in account</li>
+ *   <ul>
+ *     <li>associate a random (or given) password to that account
+ *     <ul>
+ *       <li>securely (using sha 512 on client side and literally rewriting the shadow entry, 
+ *           rather than sending password plaintext to OS in a script)</li>
+ *       <li>but note password access is often blocked in any case, see below</li>
+ *     </ul>
+ *     <li>associate the users' ssh public key with the account for login</li> 
+ *     <li>associate it with the os group wheel</li> 
+ *   </ul> 
+ *   <li>set up sudoers for password-less access to root for this user (shouldGrantSudo)</li>
+ *   <ul>
+ *     <li>creating os group wheel and assigning the new admin user to it</li> 
+ *     <li>create (overwriting) sudoers file to grant root access for wheel members</li>
+ *   </ul>
+ *   <li>reset password for the user logging in (e.g. root, because root password is 
+ *   sometimes known to the provider), securely and randomly as described above (resetLoginPassword)</li>
+ *   <li>lockdown sshd_config for no root login, nor passwords allowed (lockSsh)</li> 
  * </ul>
- * <li>associate the users' ssh public key with the account for login</li> <li>
- * associate it with the os group wheel</li> </ul> <li>create os group wheel</li> <li>add sudoers
- * for nopassword access to root by group wheel</li> <li>reset root password securely</li> <li>
- * lockdown sshd_config for no root login, nor passwords allowed</li> </ul>
  * 
  * @author Adrian Cole
  */
@@ -335,6 +345,8 @@ public class AdminAccess implements Statement {
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       checkNotNull(config.getAdminUsername(), "adminUsername");
+      Preconditions.checkArgument(!"root".equals(config.getAdminUsername()), "cannot create admin user 'root'; " +
+      		"ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
       checkNotNull(config.getAdminPassword(), "adminPassword");
       checkNotNull(config.getAdminPublicKey(), "adminPublicKey");
       checkNotNull(config.getAdminPrivateKey(), "adminPrivateKey");
