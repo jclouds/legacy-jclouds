@@ -22,19 +22,30 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.byon.Node;
 import org.jclouds.byon.domain.YamlNode;
+import org.jclouds.byon.functions.NodesFromYamlStream;
+import org.jclouds.byon.suppliers.NodesParsedFromSupplier;
 import org.jclouds.collect.TransformingMap;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
+import org.jclouds.io.CopyInputStreamIntoSupplier;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.io.InputSupplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -56,6 +67,10 @@ public class YamlNodeStoreModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(new TypeLiteral<Supplier<Cache<String, Node>>>() {
+      }).to(NodesParsedFromSupplier.class);
+      bind(new TypeLiteral<Function<InputStream, Cache<String, Node>>>() {
+      }).to(NodesFromYamlStream.class);
       bind(new TypeLiteral<Function<YamlNode, InputStream>>() {
       }).toInstance(org.jclouds.byon.domain.YamlNode.yamlNodeToInputStream);
       bind(new TypeLiteral<Function<InputStream, YamlNode>>() {
@@ -66,27 +81,37 @@ public class YamlNodeStoreModule extends AbstractModule {
       }).toInstance(org.jclouds.byon.domain.YamlNode.toNode);
       if (backing != null) {
          bind(new TypeLiteral<Map<String, InputStream>>() {
-         }).toInstance(backing);
+         }).annotatedWith(Names.named("yaml")).toInstance(backing);
       } else {
          bind(new TypeLiteral<Map<String, InputSupplier<InputStream>>>() {
-         }).toInstance(BACKING);
+         }).annotatedWith(Names.named("yaml")).toInstance(BACKING);
          bind(new TypeLiteral<Map<String, InputStream>>() {
-         }).to(new TypeLiteral<CopyInputStreamInputSupplierMap>() {
+         }).annotatedWith(Names.named("yaml")).to(new TypeLiteral<YAMLCopyInputStreamInputSupplierMap>() {
          });
+      }
+
+   }
+
+   @Singleton
+   public static class YAMLCopyInputStreamInputSupplierMap extends CopyInputStreamInputSupplierMap {
+      @Inject
+      public YAMLCopyInputStreamInputSupplierMap(@Named("yaml") Map<String, InputSupplier<InputStream>> toMap,
+            CopyInputStreamIntoSupplier putFunction) {
+         super(toMap, putFunction);
       }
    }
 
    @Provides
    @Singleton
-   protected Map<String, Node> provideNodeStore(Map<String, YamlNode> backing,
-            Function<Node, YamlNode> yamlSerializer, Function<YamlNode, Node> yamlDeserializer) {
-      return new TransformingMap<String, YamlNode, Node>(backing, yamlDeserializer, yamlSerializer);
+   protected Cache<String, Node> provideNodeStore(Map<String, YamlNode> backing, Function<Node, YamlNode> yamlSerializer,
+         Function<YamlNode, Node> yamlDeserializer) {
+      return CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(new TransformingMap<String, YamlNode, Node>(backing, yamlDeserializer, yamlSerializer))));
    }
 
    @Provides
    @Singleton
-   protected Map<String, YamlNode> provideYamlStore(Map<String, InputStream> backing,
-            Function<YamlNode, InputStream> yamlSerializer, Function<InputStream, YamlNode> yamlDeserializer) {
+   protected Map<String, YamlNode> provideYamlStore(@Named("yaml") Map<String, InputStream> backing,
+         Function<YamlNode, InputStream> yamlSerializer, Function<InputStream, YamlNode> yamlDeserializer) {
       return new TransformingMap<String, InputStream, YamlNode>(backing, yamlDeserializer, yamlSerializer);
    }
 }

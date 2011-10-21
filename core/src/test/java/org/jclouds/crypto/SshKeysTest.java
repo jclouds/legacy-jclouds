@@ -18,48 +18,109 @@
  */
 package org.jclouds.crypto;
 
+import static org.jclouds.crypto.SshKeys.fingerprint;
+import static org.jclouds.crypto.SshKeys.generate;
+import static org.jclouds.crypto.SshKeys.privateKeyHasFingerprint;
+import static org.jclouds.crypto.SshKeys.privateKeyMatchesPublicKey;
+import static org.jclouds.crypto.SshKeys.privateKeyHasSha1;
+import static org.jclouds.crypto.SshKeys.publicKeySpecFromOpenSSH;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
 import org.jclouds.io.Payloads;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", singleThreaded = true)
+@Test(groups = "unit", singleThreaded = true, testName = "SshKeysTest")
 public class SshKeysTest {
 
-   public static final String SSH_PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJvZkkmoabQopH7yd9Ak2xJ34X21c0xXsJ85xbqOyqzwRmCJVHT2EPUhg6PhiozSok42WDKDjFFZ7B1IbtBM+PWUmlUCJ1r2xfLb6TPJqBkDUCbQ5lxupvmGh4gOBxf54Nrv2zS7QOiaNx870QqG8csHP7Mz7dCo9GQ9XydhNt+z4eNXPM5ToPUHRdHf4g9lmXYCdazZ3SqGdK0dwNS+dFVDQ/jzZjA31WBx45m2k/PQMIoQnlPHlJO5vyTT/O39UAwdBp8tK5Awt3azhku45mm03/+4CxObGKt6p3fvP7xlN0FsnwsSkn6IJe5J+blpSHuLDqjG9OhjYAvnf6MrZR";
-   public static final String SSH_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJvZkkmoabQopH\\n7yd9Ak2xJ34X21c0xXsJ85xbqOyqzwRmCJVHT2EPUhg6PhiozSok42WDKDjFFZ7B\\n1IbtBM+PWUmlUCJ1r2xfLb6TPJqBkDUCbQ5lxupvmGh4gOBxf54Nrv2zS7QOiaNx\\n870QqG8csHP7Mz7dCo9GQ9XydhNt+z4eNXPM5ToPUHRdHf4g9lmXYCdazZ3SqGdK\\n0dwNS+dFVDQ/jzZjA31WBx45m2k/PQMIoQnlPHlJO5vyTT/O39UAwdBp8tK5Awt3\\nazhku45mm03/+4CxObGKt6p3fvP7xlN0FsnwsSkn6IJe5J+blpSHuLDqjG9OhjYA\\nvnf6MrZRAgMBAAECggEBAMDzwHeL/FafS9cFXEVqYJih5y42MbBdeRLJl7DrXoD4\\nQ4K7jtuHhpO6t0VtgvRgVoC1pa/OVo3Z4eANv4cO5N58Tb35aRwaTpKyE+aLPlPR\\nc4IAgJbDrBJUOQeYbBLiNm9sAWbtbyfAaT1iHGDEWJGeCzAlkWik4ugXlZeza13y\\nC4hg2yUymju27nSIWcEfAo7Zmw8CTy32edLGUNq8qu7KYSaocKvf522Kjl5p6cly\\nnd+OhcFA4pSTeKkgjb1dEHw2p4JVX/srHCpySo4ERtHAFyVyTIhsP5GICAq856U5\\nGMSIT1Hja+6q/FEDqT2R32ju62VfQBS2kSfeBlzot6kCgYEA/1p6Xljvn6wrYklQ\\n046E7xp7jlx2yKWnbIjRf5QFpK5Czb53I+mSkQcDF3imaZK+f/xz1OURmGv6phsA\\nFdU+UOdzGki7DYCNuTuz9LhdpIqxGqlcvnvOP9A6ouRGTz45VX2rqUx5A2ou0SPW\\n7ok++JfvRGj4VC1G2005ht90/98CgYEAykBeNHnChXmxRv5ESD28S5ijxFLI5qvG\\nooUIhdVQ2ws7H7bb4Arj4JClu55Y3uOi2uVgPq5Pqy9aLcAALuSJjRQj9+NU9EJS\\nLy1WhBQTRNpTlUshNpg4H5b9sFoMTgz3nrTU24NY73RtoDl19TjiK7O9rTasYlcr\\n36dLejyeT88CgYEAs4vp2OcN7ibABobolyhx3jGvyOTI/MJFm7IEJIFvCmEhRctz\\nuEOms+TLTridwkPVQObAh2Rd39+kySDZCYD8JSTosQWMyKyoeiM5oIv2BBkk+Es3\\nlBQ3bHU8lYaOzW9CHxOTHSJRQI5rxtA9c1H7fg5OxbpNSdrgJJkDJwt+F98CgYEA\\niCBWx58EK+5CQXQ15SGYMJFl+Gd3zLnlEdHUcK+ooiWm/6uFxf/ObIEu616iljJE\\nlGw6ITYVbTSLz6sg9G7hndDmfJvHvDc/NX2gc3lHltoT07IjgqllbO2lhiK1kXrs\\n1ycC9VQscc69UlAacph8scliaskXsYDWiMwC4x0VuMUCgYA/FSHHAXLyBqoFqEpQ\\nRmfgXzUcU/mKEaGRPhAvoAU87Z74mEgaO5Hbv7zmFwWpD4cdW0WybzVv9r5Hs/hS\\n4JGBzx4KPFAygnVeXiftVuM9scycg3RHK907hmlYNZicI7TbUlM5RQ4ngn/LTjXo\\nG+TDTPn3Luw1fvAMEEcdsr9cJw==\\n-----END RSA PRIVATE KEY-----";
+   String expectedFingerprint = "2b:a9:62:95:5b:8b:1d:61:e0:92:f7:03:10:e9:db:d9";
+   String expectedSha1 = "c8:01:34:c0:3c:8c:91:ac:e1:da:cf:72:15:d7:f2:e5:99:5b:28:d4";
 
    @Test
-   public void testCanGenerate() {
-      Map<String, String> map = SshKeys.generate();
-      assert map.get("public").startsWith("ssh-rsa ") : map;
-      assert map.get("private").startsWith("-----BEGIN RSA PRIVATE KEY-----") : map;
+   public void testCanReadRsaAndCompareFingerprintOnPublicRSAKey() throws IOException {
+      String pubKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test.pub"));
+      RSAPublicKeySpec key = SshKeys.publicKeySpecFromOpenSSH(pubKey);
+      String fingerPrint = fingerprint(key.getPublicExponent(), key.getModulus());
+      assertEquals(fingerPrint, expectedFingerprint);
    }
 
    @Test
-   public void testEncodeAsPem() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-      String encoded = SshKeys.encodeAsPem((RSAPrivateCrtKey) KeyFactory.getInstance("RSA").generatePrivate(
-            Pems.privateKeySpec(Payloads.newStringPayload(PemsTest.PRIVATE_KEY))));
-      assertEquals(encoded.replace("\n", "\\n").trim(), SSH_PRIVATE_KEY);
+   public void testCanReadRsaAndCompareFingerprintOnPrivateRSAKey() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec key = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      String fingerPrint = fingerprint(key.getPublicExponent(), key.getModulus());
+      assertEquals(fingerPrint, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesFingerprintTyped() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec privateKey = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      assert privateKeyHasFingerprint(privateKey, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesFingerprintString() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      assert privateKeyHasFingerprint(privKey, expectedFingerprint);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesSha1Typed() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec privateKey = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      assert privateKeyHasSha1(privateKey, expectedSha1);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesSha1String() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      assert privateKeyHasSha1(privKey, expectedSha1);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesPublicKeyTyped() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      RSAPrivateCrtKeySpec privateKey = (RSAPrivateCrtKeySpec) Pems.privateKeySpec(privKey);
+      String pubKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test.pub"));
+      RSAPublicKeySpec publicKey = publicKeySpecFromOpenSSH(pubKey);
+      assert privateKeyMatchesPublicKey(privateKey, publicKey);
+   }
+
+   @Test
+   public void testPrivateKeyMatchesPublicKeyString() throws IOException {
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      String pubKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test.pub"));
+      assert privateKeyMatchesPublicKey(privKey, pubKey);
+   }
+
+   @Test
+   public void testCanGenerate() {
+      Map<String, String> map = generate();
+      assert map.get("public").startsWith("ssh-rsa ") : map;
+      assert map.get("private").startsWith("-----BEGIN RSA PRIVATE KEY-----") : map;
+      assert privateKeyMatchesPublicKey(map.get("private"), map.get("public")) : map;
+
    }
 
    @Test
    public void testEncodeAsOpenSSH() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
       String encoded = SshKeys.encodeAsOpenSSH((RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(
-            Pems.publicKeySpec(Payloads.newStringPayload(PemsTest.PUBLIC_KEY))));
-      assertEquals(encoded, SSH_PUBLIC_KEY);
+               SshKeys.publicKeySpecFromOpenSSH(Payloads.newPayload(getClass().getResourceAsStream("/test.pub")))));
+      assertEquals(encoded, Strings2.toStringAndClose(getClass().getResourceAsStream("/test.pub")).trim());
    }
 
 }

@@ -18,8 +18,6 @@
  */
 package org.jclouds.rest.config;
 
-import java.util.concurrent.ConcurrentMap;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
@@ -42,8 +40,10 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 
 import com.google.common.base.Function;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapMaker;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -77,18 +77,18 @@ public class RestModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected ConcurrentMap<Class<?>, Boolean> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
-      return new MapMaker().makeComputingMap(seedAnnotationCache);
+   protected Cache<Class<?>, Boolean> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
+      return CacheBuilder.newBuilder().build(seedAnnotationCache);
    }
 
    @Provides
    @Singleton
    @Named("async")
-   ConcurrentMap<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
-      return new MapMaker().makeComputingMap(createAsyncClientForCaller);
+   Cache<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
+      return CacheBuilder.newBuilder().build(createAsyncClientForCaller);
    }
 
-   static class CreateAsyncClientForCaller implements Function<ClassMethodArgs, Object> {
+   static class CreateAsyncClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
       private final Injector injector;
       private final AsyncRestClientProxy.Factory factory;
 
@@ -100,7 +100,7 @@ public class RestModule extends AbstractModule {
 
       @SuppressWarnings( { "unchecked", "rawtypes" })
       @Override
-      public Object apply(final ClassMethodArgs from) {
+      public Object load(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
          RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key.get(TypeLiteral.get(Types
@@ -108,8 +108,8 @@ public class RestModule extends AbstractModule {
          // cannot use child injectors due to the super coarse guice lock on
          // Singleton
          util.setCaller(from);
-         ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-                  new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+         Cache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+                  new TypeLiteral<Cache<ClassMethodArgs, Object>>() {
                   }, Names.named("async")));
          AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);

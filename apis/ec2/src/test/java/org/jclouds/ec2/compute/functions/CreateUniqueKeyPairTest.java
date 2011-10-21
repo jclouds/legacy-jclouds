@@ -50,7 +50,7 @@ public class CreateUniqueKeyPairTest {
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#1")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
@@ -58,7 +58,7 @@ public class CreateUniqueKeyPairTest {
 
       CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInRegion("region", "tag"), pair);
+      assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
       verify(keyClient);
@@ -77,9 +77,9 @@ public class CreateUniqueKeyPairTest {
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#1")).andThrow(new IllegalStateException());
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#tag#region#2")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#2")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
@@ -87,11 +87,12 @@ public class CreateUniqueKeyPairTest {
 
       CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInRegion("region", "tag"), pair);
+      assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
       verify(keyClient);
       verify(uniqueIdSupplier);
 
    }
+
 }

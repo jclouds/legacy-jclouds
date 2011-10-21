@@ -10,6 +10,8 @@ nodes:
       group: hadoop
       tags:
           - vanilla
+      metadata:
+          Name: foo          
       username: myUser
       credential_url: classpath:///testkey.txt
       sudo_password: happy bear

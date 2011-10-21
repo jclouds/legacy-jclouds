@@ -21,7 +21,7 @@ package org.jclouds.aws.ec2.services;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.domain.MonitoringState;

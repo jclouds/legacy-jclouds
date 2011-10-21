@@ -42,11 +42,8 @@ import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -54,50 +51,35 @@ import com.google.inject.assistedinject.AssistedInject;
  * 
  * @author Adrian Cole
  */
-public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
-   public static final String PROPERTY_INIT_SCRIPT_PATTERN = "jclouds.compute.init-script-pattern";
+public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager implements RunScriptOnNode {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final Function<NodeMetadata, SshClient> sshFactory;
-   protected NodeMetadata node;
-   protected final InitBuilder init;
-   protected final boolean runAsRoot;
    protected final String initFile;
 
-   protected SshClient ssh;
-
    /**
-    * determines the naming convention of init scripts.
-    * 
-    * ex. {@code /tmp/init-%s}
+    * @return the absolute path to the file on disk relating to this task.
     */
-   @Inject(optional = true)
-   @Named(PROPERTY_INIT_SCRIPT_PATTERN)
-   private String initScriptPattern = "/tmp/init-%s";
+   public String getInitFile() {
+      return initFile;
+   }
 
    @AssistedInject
    public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
-            @Assisted NodeMetadata node, @Assisted Statement script, @Assisted RunScriptOptions options) {
-      this.sshFactory = checkNotNull(sshFactory, "sshFactory");
-      this.node = checkNotNull(node, "node");
-      String name = options.getTaskName();
-      if (name == null) {
-         if (checkNotNull(script, "script") instanceof InitBuilder)
-            name = InitBuilder.class.cast(script).getInstanceName();
-         else
-            name = "jclouds-script-" + System.currentTimeMillis();
-      }
-      this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
-               : createInitScript(name, script);
-      this.initFile = String.format(initScriptPattern, name);
-      this.runAsRoot = options.shouldRunAsRoot();
+            InitScriptConfigurationForTasks initScriptConfiguration, @Assisted NodeMetadata node,
+            @Assisted Statement script, @Assisted RunScriptOptions options) {
+      super(sshFactory, options.shouldRunAsRoot(), checkNotNull(node, "node"),
+               checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
+                        : createInitScript(checkNotNull(initScriptConfiguration, "initScriptConfiguration"), options
+                                 .getTaskName(), script));
+      this.initFile = String.format(initScriptConfiguration.getInitScriptPattern(), init.getInstanceName());
    }
 
-   public static InitBuilder createInitScript(String name, Statement script) {
-      String path = "/tmp/" + name;
-      return new InitBuilder(name, path, path, Collections.<String, String> emptyMap(), Collections.singleton(script));
+   @Override
+   public RunScriptOnNodeAsInitScriptUsingSsh init() {
+      super.init();
+      return this;
    }
 
    @Override
@@ -112,13 +94,15 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       }
    }
 
-   @Override
-   public RunScriptOnNode init() {
-      ssh = sshFactory.apply(node);
-      return this;
+   public static InitBuilder createInitScript(InitScriptConfigurationForTasks config, String name, Statement script) {
+      if (name == null) {
+         name = "jclouds-script-" + config.getAnonymousTaskSuffixSupplier().get();
+      }
+      return new InitBuilder(name, config.getBasedir() + "/" + name, config.getBasedir() + "/" + name, Collections
+               .<String, String> emptyMap(), Collections.singleton(script));
    }
 
-   public void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
+   protected void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
       if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
          ssh.disconnect();
          logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
@@ -129,9 +113,6 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       }
    }
 
-   /**
-    * ssh client is initialized through this call.
-    */
    protected ExecResponse doCall() {
       try {
          ssh.put(initFile, init.render(OsFamily.UNIX));
@@ -165,57 +146,6 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
 
    protected void setupLinkToInitFile() {
       ssh.exec(String.format("ln -fs %s %s", initFile, init.getInstanceName()));
-   }
-
-   protected ExecResponse runAction(String action) {
-      ExecResponse returnVal;
-      String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
-      returnVal = runCommand(command);
-      if (logger.isTraceEnabled())
-         logger.trace("<< %s[%s]", action, returnVal);
-      else
-         logger.debug("<< %s(%d)", action, returnVal.getExitCode());
-      return returnVal;
-   }
-
-   protected ExecResponse runCommand(String command) {
-      ExecResponse returnVal;
-      logger.debug(">> running [%s] as %s@%s", command.replace(node.getAdminPassword() != null ? node
-               .getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh.getHostAddress());
-      returnVal = ssh.exec(command);
-      return returnVal;
-   }
-
-   @VisibleForTesting
-   public String execScriptAsRoot(String action) {
-      String command;
-      if (node.getCredentials().identity.equals("root")) {
-         command = "./" + init.getInstanceName() + " " + action;
-      } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
-      } else {
-         command = "sudo ./" + init.getInstanceName() + " " + action;
-      }
-      return command;
-   }
-
-   protected String execScriptAsDefaultUser(String action) {
-      return "./" + init.getInstanceName() + " " + action;
-   }
-
-   public NodeMetadata getNode() {
-      return node;
-   }
-
-   @Override
-   public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
-            .add("runAsRoot", runAsRoot).toString();
-   }
-
-   @Override
-   public Statement getStatement() {
-      return init;
    }
 
 }

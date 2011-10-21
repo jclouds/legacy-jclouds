@@ -65,7 +65,7 @@ import com.google.inject.Module;
 @Test(groups = "live", singleThreaded = true)
 public class SpotInstanceClientLiveTest {
 
-   private static final int SPOT_DELAY_SECONDS = 300;
+   private static final int SPOT_DELAY_SECONDS = 600;
    private AWSEC2Client client;
    private ComputeServiceContext context;
    private RetryablePredicate<SpotInstanceRequest> activeTester;
@@ -132,14 +132,16 @@ public class SpotInstanceClientLiveTest {
 
    @Test
    void testDescribeSpotPriceHistoryInRegion() {
-      for (final String region : Region.DEFAULT_REGIONS) {
+      for (String region : Region.DEFAULT_REGIONS) {
          Set<Spot> spots = client.getSpotInstanceServices().describeSpotPriceHistoryInRegion(region, from(new Date()));
          assertNotNull(spots);
          assert spots.size() > 0;
          for (Spot spot : spots) {
             assert spot.getSpotPrice() > 0 : spots;
             assertEquals(spot.getRegion(), region);
-            assert in(ImmutableSet.of("Linux/UNIX", "SUSE Linux", "Windows")).apply(spot.getProductDescription()) : spot;
+            assert in(
+                     ImmutableSet.of("Linux/UNIX", "Linux/UNIX (Amazon VPC)", "SUSE Linux", "SUSE Linux (Amazon VPC)",
+                              "Windows", "Windows (Amazon VPC)")).apply(spot.getProductDescription()) : spot;
             assert in(
                      ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small",
                               "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(
@@ -153,19 +155,21 @@ public class SpotInstanceClientLiveTest {
    @Test(enabled = true)
    void testCreateSpotInstance() {
       String launchGroup = PREFIX + "1";
-      for (SpotInstanceRequest request : client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
-               "us-west-1"))
-         if (launchGroup.equals(request.getLaunchGroup()))
-            client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion("us-west-1", request.getId());
+      for (String region : Region.DEFAULT_REGIONS)
+         for (SpotInstanceRequest request : client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+                  region))
+            if (launchGroup.equals(request.getLaunchGroup()))
+               client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(region, request.getId());
+
       start = System.currentTimeMillis();
 
       requests = client.getSpotInstanceServices().requestSpotInstancesInRegion(
                "us-west-1",
-               0.03f,
+               0.09f,
                1,
-               LaunchSpecification.builder().imageId("ami-595a0a1c").instanceType(InstanceType.T1_MICRO).build(),
+               LaunchSpecification.builder().imageId("ami-951945d0").instanceType(InstanceType.M1_SMALL).build(),
                launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(
-                        new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1))).validUntil(
+                        new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2))).validUntil(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(SPOT_DELAY_SECONDS))));
       assertNotNull(requests);
 
@@ -181,13 +185,13 @@ public class SpotInstanceClientLiveTest {
       System.out.println(System.currentTimeMillis() - start);
       spot = refresh(request);
       assert spot.getInstanceId() != null : spot;
-      instance = getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion("us-west-1",
+      instance = getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(spot.getRegion(),
                spot.getInstanceId())));
       assertEquals(instance.getSpotInstanceRequestId(), spot.getId());
    }
 
    public SpotInstanceRequest refresh(SpotInstanceRequest request) {
-      return getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion("us-west-1",
+      return getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(request.getRegion(),
                request.getId()));
    }
 
@@ -201,7 +205,7 @@ public class SpotInstanceClientLiveTest {
          // assert deletedTester.apply(request) : request;
       }
       if (instance != null) {
-         client.getInstanceServices().terminateInstancesInRegion("us-west-1", instance.getId());
+         client.getInstanceServices().terminateInstancesInRegion(instance.getRegion(), instance.getId());
       }
       context.close();
    }

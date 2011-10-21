@@ -88,8 +88,8 @@ public class Throwables2 {
             throw (Exception) throwable;
          }
       }
-      Throwables.throwCause(exception, true);
-      return exception;
+      Throwables.propagateIfPossible(exception.getCause(), Exception.class);
+      throw exception;
    }
 
    public static <T> T propagateAuthorizationOrOriginalException(Exception e) {

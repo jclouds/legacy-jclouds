@@ -20,11 +20,10 @@ package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.Credentials;
-
 
 
 /**

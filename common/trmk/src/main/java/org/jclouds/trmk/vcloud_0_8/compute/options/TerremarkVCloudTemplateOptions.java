@@ -22,16 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.util.Preconditions2;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the
- * "trmk-vcloudexpress" provider. <h2>
- * Usage</h2> The recommended way to instantiate a TerremarkVCloudTemplateOptions object is to
- * statically import TerremarkVCloudTemplateOptions.* and invoke a static creation method followed
+ * Contains options supported in the {@code ComputeService#runNode} operation on
+ * the "trmk-vcloudexpress" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a
+ * TerremarkVCloudTemplateOptions object is to statically import
+ * TerremarkVCloudTemplateOptions.* and invoke a static creation method followed
  * by an instance mutator (if needed):
  * <p/>
  * <code>
@@ -157,13 +159,20 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
       }
 
       /**
-       * @see TemplateOptions#withDetails
+       * @see TemplateOptions#userMetadata(Map)
        */
-      public static TerremarkVCloudTemplateOptions withDetails() {
+      public static TerremarkVCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options.withMetadata());
+         return TerremarkVCloudTemplateOptions.class.cast(options.userMetadata(userMetadata));
       }
 
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static TerremarkVCloudTemplateOptions userMetadata(String key, String value) {
+         TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
+         return TerremarkVCloudTemplateOptions.class.cast(options.userMetadata(key, value));
+      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -178,9 +187,10 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
 
    /**
     * 
-    * special thing is that we do assume if you are passing groups that you have everything you need
-    * already defined. for example, our option inboundPorts normally creates ingress rules
-    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
+    * special thing is that we do assume if you are passing groups that you have
+    * everything you need already defined. for example, our option inboundPorts
+    * normally creates ingress rules accordingly but if we notice you've
+    * specified securityGroups, we do not mess with rules at all
     * 
     * @see TemplateOptions#inboundPorts
     */
@@ -241,15 +251,23 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
    }
 
    /**
-    * @see TemplateOptions#withMetadata
+    * @see TemplateOptions#userMetadata
     */
-   @Override
-   public TerremarkVCloudTemplateOptions withMetadata() {
-      return TerremarkVCloudTemplateOptions.class.cast(super.withMetadata());
+   public TerremarkVCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.userMetadata(userMetadata));
    }
 
    /**
-    * @return keyPair to use when running the instance or null, to generate a keypair.
+    * {@inheritDoc}
+    */
+   @Override
+   public TerremarkVCloudTemplateOptions userMetadata(String key, String value) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.userMetadata(key, value));
+   }
+
+   /**
+    * @return keyPair to use when running the instance or null, to generate a
+    *         keypair.
     */
    public String getSshKeyFingerprint() {
       return keyPair;
@@ -295,7 +313,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
       return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", inboundPorts="
             + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
             + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-            + ", metadata/details: " + includeMetadata + "]";
+            + ", userMetadata: " + userMetadata + "]";
    }
 
 }

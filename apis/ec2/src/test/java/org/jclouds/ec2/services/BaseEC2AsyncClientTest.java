@@ -25,13 +25,17 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.EC2ContextBuilder;
 import org.jclouds.ec2.EC2PropertiesBuilder;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
@@ -42,8 +46,12 @@ import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
@@ -58,6 +66,19 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
       }
 
+      @Provides
+      @Singleton
+      Cache<RegionAndName, Image> provide(){
+         return CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
+
+            @Override
+            public Image load(RegionAndName key) throws Exception {
+               return null;
+            }
+
+         });
+      }
+      
       @Override
       protected String provideTimeStamp(DateService dateService, int expiration) {
          return "2009-11-08T15:54:08.897Z";

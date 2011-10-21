@@ -61,7 +61,7 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
                   return input.version.equals("") && input.is64Bit;
                case CENTOS:
                   return input.version.equals("") || input.version.matches("5.[45]")
-                           || (input.version.equals("5.0") && input.is64Bit);
+                           || (input.version.matches("5.[06]") && input.is64Bit);
                case WINDOWS:
                   return input.version.equals("") || (input.version.equals("2008 SP2") && !input.is64Bit)
                            || input.version.equals("") || (input.version.equals("2008 R2") && input.is64Bit);

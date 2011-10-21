@@ -67,7 +67,7 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
       while (keyPair == null) {
          try {
             keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, getNextName(region, group));
-            logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
+            logger.debug("<< created keyPair(%s)", keyPair);
          } catch (IllegalStateException e) {
 
          }

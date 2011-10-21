@@ -20,7 +20,7 @@ package org.jclouds.trmk.vcloud_0_8.domain;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * an SSH keypair

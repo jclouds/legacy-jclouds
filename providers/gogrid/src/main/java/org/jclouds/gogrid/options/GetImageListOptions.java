@@ -36,29 +36,25 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 public class GetImageListOptions extends BaseHttpRequestOptions {
 
    public GetImageListOptions setType(ServerImageType imageType) {
-      checkState(!queryParameters.containsKey(IMAGE_TYPE_KEY),
-               "Can't have duplicate image type restrictions");
+      checkState(!queryParameters.containsKey(IMAGE_TYPE_KEY), "Can't have duplicate image type restrictions");
       queryParameters.put(IMAGE_TYPE_KEY, imageType.toString());
       return this;
    }
 
    public GetImageListOptions setState(ServerImageState imageState) {
-      checkState(!queryParameters.containsKey(IMAGE_STATE_KEY),
-               "Can't have duplicate image state restrictions");
+      checkState(!queryParameters.containsKey(IMAGE_STATE_KEY), "Can't have duplicate image state restrictions");
       queryParameters.put(IMAGE_STATE_KEY, imageState.toString());
       return this;
    }
 
    public GetImageListOptions onlyPublic() {
-      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY),
-               "Can't have duplicate image visibility restrictions");
+      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY), "Can't have duplicate image visibility restrictions");
       queryParameters.put(IS_PUBLIC_KEY, "true");
       return this;
    }
 
    public GetImageListOptions onlyPrivate() {
-      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY),
-               "Can't have duplicate image visibility restrictions");
+      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY), "Can't have duplicate image visibility restrictions");
       queryParameters.put(IS_PUBLIC_KEY, "false");
       return this;
    }
@@ -70,26 +66,28 @@ public class GetImageListOptions extends BaseHttpRequestOptions {
    }
 
    public GetImageListOptions maxItemsNumber(Integer maxNumber) {
-      checkState(!queryParameters.containsKey(MAX_NUMBER_KEY),
-               "Can't have duplicate parameter of max returned items");
+      checkState(!queryParameters.containsKey(MAX_NUMBER_KEY), "Can't have duplicate parameter of max returned items");
       queryParameters.put(MAX_NUMBER_KEY, maxNumber.toString());
       return this;
    }
 
    public static class Builder {
-      public GetImageListOptions inDatacenter(String datacenterId) {
-         GetImageListOptions getImageListOptions = new GetImageListOptions();
-         return getImageListOptions.inDatacenter(checkNotNull(datacenterId));
+      public static GetImageListOptions maxItems(int maxNumber) {
+         return new GetImageListOptions().maxItemsNumber(maxNumber);
       }
 
-      public GetImageListOptions publicWebServers() {
+      public static GetImageListOptions inDatacenter(String datacenterId) {
+         return new GetImageListOptions().inDatacenter(checkNotNull(datacenterId, "datacenterId"));
+      }
+
+      public static GetImageListOptions publicWebServers() {
          return new GetImageListOptions().setState(ServerImageState.AVAILABLE).setType(
                   ServerImageType.WEB_APPLICATION_SERVER).onlyPublic();
       }
 
-      public GetImageListOptions publicDatabaseServers() {
-         return new GetImageListOptions().setState(ServerImageState.AVAILABLE).setType(
-                  ServerImageType.DATABASE_SERVER).onlyPublic();
+      public static GetImageListOptions publicDatabaseServers() {
+         return new GetImageListOptions().setState(ServerImageState.AVAILABLE).setType(ServerImageType.DATABASE_SERVER)
+                  .onlyPublic();
       }
    }
 

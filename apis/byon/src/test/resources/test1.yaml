@@ -10,6 +10,8 @@ nodes:
       group: hadoop
       tags:
           - vanilla
+      metadata:
+          Name: foo
       username: myUser
       credential: |
                   -----BEGIN RSA PRIVATE KEY-----

@@ -34,6 +34,10 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -65,7 +69,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Singleton
-public class NodesFromYamlStream implements Function<InputStream, Map<String, Node>> {
+public class NodesFromYamlStream implements Function<InputStream, Cache<String, Node>> {
 
    /**
     * Type-safe config class for YAML
@@ -76,7 +80,7 @@ public class NodesFromYamlStream implements Function<InputStream, Map<String, No
    }
 
    @Override
-   public Map<String, Node> apply(InputStream source) {
+   public Cache<String, Node> apply(InputStream source) {
 
       Constructor constructor = new Constructor(Config.class);
 
@@ -87,17 +91,23 @@ public class NodesFromYamlStream implements Function<InputStream, Map<String, No
       TypeDescription configDesc = new TypeDescription(Config.class);
       configDesc.putListPropertyType("nodes", YamlNode.class);
       constructor.addTypeDescription(configDesc);
-      // note that snakeyaml also throws nosuchmethod error when you use the non-deprecated
+      // note that snakeyaml also throws nosuchmethod error when you use the
+      // non-deprecated
       // constructor
       Yaml yaml = new Yaml(new Loader(constructor));
       Config config = (Config) yaml.load(source);
       checkState(config != null, "missing config: class");
       checkState(config.nodes != null, "missing nodes: collection");
 
-      return Maps.uniqueIndex(Iterables.transform(config.nodes, YamlNode.toNode), new Function<Node, String>() {
-         public String apply(Node node) {
-            return node.getId();
-         }
-      });
+      Map<String, Node> backingMap = Maps.uniqueIndex(Iterables.transform(config.nodes, YamlNode.toNode),
+            new Function<Node, String>() {
+               public String apply(Node node) {
+                  return node.getId();
+               }
+            });
+      Cache<String, Node> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(backingMap)));
+      for (String node : backingMap.keySet())
+         cache.getUnchecked(node);
+      return cache;
    }
 }

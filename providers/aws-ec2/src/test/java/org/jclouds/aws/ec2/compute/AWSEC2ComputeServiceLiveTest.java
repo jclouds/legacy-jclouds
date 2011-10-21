@@ -20,13 +20,18 @@ package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.cloudwatch.CloudWatchAsyncClient;
+import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
@@ -38,12 +43,18 @@ import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.util.IpPermissions;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.Module;
 
 /**
  * 
@@ -57,9 +68,19 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       group = "ec2";
    }
 
+   // aws-ec2 supports userMetadata
    @Override
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
+            userMetadata, node);
+   }
+   
+   @Override
+   @Test(dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
+      // note that this is sensitive to regions that quickly fill spot requests
+      String region = "us-west-1";
+      
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
 
@@ -73,26 +94,31 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
-      // Date before = new Date();
+      Date before = new Date();
 
+      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+
+      options.userMetadata(userMetadata);
       options.as(AWSEC2TemplateOptions.class).enableMonitoring();
       options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
 
+         Thread.sleep(3000);// eventual consistency if deletes actually occurred.
+         
          // create a security group that allows ssh in so that our scripts later
          // will work
-         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(null, group, group);
+         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(region, group, group);
          
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, groupId,
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(region, groupId,
                IpPermissions.permit(IpProtocol.TCP).port(22));
 
          options.as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
+         KeyPair result = keyPairClient.createKeyPairInRegion(region, group);
          options.as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
          
          // pass in the private key, so that we can run a script with it
@@ -102,40 +128,47 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // an arbitrary command to run
          options.runScript(Statements.exec("find /usr"));
          
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
+         Template template = client.templateBuilder().locationId(region).options(options).build();
+         
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata first = Iterables.get(nodes, 0);
+
+         //Name metadata should turn into node.name
+         assertEquals(first.getName(), group);
+         
+         checkUserMetadataInNodeEquals(first, userMetadata);
+
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
 
          startedId = Iterables.getOnlyElement(nodes).getProviderId();
-
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
+         
+         AWSRunningInstance instance = AWSRunningInstance.class.cast(Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
+                  .describeInstancesInRegion(region, startedId))));
 
          assertEquals(instance.getKeyName(), group);
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
 
-         // TODO when the cloudwatchclient is finished
 
-         // RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new
-         // RestContextFactory().createContext(
-         // "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
-         //
-         // try {
-         // Set<Datapoint> datapoints =
-         // monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-         // "CPUUtilization", before, new Date(), 60, "Average");
-         // assert datapoints != null;
-         // } finally {
-         // monitoringContext.close();
-         // }
+         RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory()
+                  .createContext("aws-cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+
+         try {
+            Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
+                     "CPUUtilization", before, new Date(), 60, "Average");
+            assert datapoints != null;
+         } finally {
+            monitoringContext.close();
+         }
 
          // make sure we made our dummy group and also let in the user's group
          assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
                   + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + group + "#" + instance.getRegion()));
+         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
+                  .getRegion(), "jclouds#" + group + "#" + instance.getRegion()));
+         
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
@@ -146,53 +179,11 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(region, group).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(region, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
       }
 
    }
-
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testSubnetId() throws Exception {
-
-      String subnetId = System.getProperty("test.subnetId");
-      if (subnetId == null) {
-         // Skip test and return
-         return;
-      }
-
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
-
-      String group = this.group + "g";
-
-      TemplateOptions options = client.templateOptions();
-
-      options.as(AWSEC2TemplateOptions.class).subnetId(subnetId).spotPrice(0.3f);
-
-      String startedId = null;
-      String nodeId = null;
-      try {
-
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
-
-         NodeMetadata first = Iterables.get(nodes, 0);
-         assert first.getCredentials() != null : first;
-         assert first.getCredentials().identity != null : first;
-
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
-         nodeId = Iterables.getOnlyElement(nodes).getId();
-
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(getInstance(instanceClient, startedId));
-
-         assertEquals(instance.getSubnetId(), subnetId);
-
-      } finally {
-         if (nodeId != null)
-            client.destroyNode(nodeId);
-      }
-   }
-
 }

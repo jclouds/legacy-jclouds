@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +34,7 @@ import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.util.Patterns;
 import org.jclouds.util.Strings2;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -61,9 +63,13 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
       String description = postParams.get("description");
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "protocol", protocol, "port", port, "enabled", enabled, "ns", ns));
-      payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
-            : String.format("\n\t<Description>%s</Description>", description));
-      payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("monitor"), getMonitorString(postParams));
+      try {
+         payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
+               : String.format("\n\t<Description>%s</Description>", description));
+         payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("monitor"), getMonitorString(postParams));
+      } catch (ExecutionException e) {
+         Throwables.propagate(e);
+      }
       return stringBinder.bindToRequest(request, payload);
    }
    

@@ -19,14 +19,10 @@
 
 (ns org.jclouds.core
   "Core functionality used across blobstore and compute."
-  (:use clojure.contrib.logging)
+  (:use clojure.tools.logging)
   (:import java.io.File
-           (com.google.common.collect ImmutableSet)))
-
-(try
-  (require '[clojure.contrib.string :as string])
-  (catch Exception e
-    (require '[clojure.contrib.str-utils2 :as string])))
+           (com.google.common.collect ImmutableSet))
+  (:require [clojure.string :as string]))
 
 (def module-lookup
      {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
@@ -73,11 +69,17 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
   (apply
    str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
 
+(defn ^String map-str
+  "Apply f to each element of coll, concatenate all results into a
+  String."
+  [f coll]
+  (apply str (map f coll)))
+
 (defn camelize
   "Takes a string, or anything named, and converts it to camel case
    (capitalised initial component"
   [a]
-  (string/map-str string/capitalize (.split (name a) "-")))
+  (map-str string/capitalize (.split (name a) "-")))
 
 (defn camelize-mixed
   "Takes a string, or anything named, and converts it to mixed camel case
@@ -91,6 +93,12 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
    name"
   [kw]
   (symbol (camelize-mixed kw)))
+
+(defmacro memfn-apply
+  "Expands into a function that takes one argument,"
+  [fn-name & args]
+  `(fn [target# [~@args]]
+     ((memfn ~fn-name ~@args) target# ~@args)))
 
 (defmacro kw-memfn
   "Expands into code that creates a function that expects to be passed an

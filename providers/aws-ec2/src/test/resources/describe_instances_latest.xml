@@ -61,6 +61,16 @@
                     <virtualizationType>paravirtual</virtualizationType>
                     <clientToken/>
                     <hypervisor>xen</hypervisor>
+                    <tagSet>
+                       <item>
+                           <key>Name</key>
+                           <value>ec2-o</value>
+                       </item>
+                       <item>
+                           <key>Empty</key>
+                           <value />
+                       </item>
+                    </tagSet>                    
                 </item>
                 <item>
                     <instanceId>i-931444f2</instanceId>

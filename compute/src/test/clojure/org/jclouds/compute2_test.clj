@@ -23,7 +23,6 @@
   (:require [org.jclouds.ssh-test :as ssh-test])
   (:import
     org.jclouds.compute.domain.OsFamily
-    clojure.contrib.condition.Condition
     java.net.InetAddress
     org.jclouds.scriptbuilder.domain.Statements
     org.jclouds.compute.options.TemplateOptions
@@ -158,4 +157,4 @@ list, Alan Dipert and MeikelBrandmeyer."
            (-> (build-template service {:inbound-ports [22 8080]})
                bean :options bean :inboundPorts))))
     (testing "invalid"
-      (is (thrown? Condition (build-template service {:xx :yy}))))))
+      (is (thrown? Exception (build-template service {:xx :yy}))))))

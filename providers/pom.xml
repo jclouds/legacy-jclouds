@@ -24,7 +24,7 @@
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -35,6 +35,7 @@
         <module>gogrid</module>
         <module>slicehost</module>
         <module>cloudsigma-zrh</module>
+        <module>cloudsigma-lvs</module>
         <module>azureblob</module>
         <module>aws-s3</module>
         <module>aws-ec2</module>
@@ -48,7 +49,6 @@
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
         <module>cloudloadbalancers-us</module>
-        <module>bluelock-vcloud-vcenterprise</module>
         <module>bluelock-vcloud-zone01</module>
         <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
@@ -62,5 +62,8 @@
         <module>skalicloud-sdg-my</module>
         <module>savvis-symphonyvpdc</module>
         <module>greenhousedata-element-vcloud</module>
+        <module>aws-cloudwatch</module>
+        <module>go2cloud-jhb1</module>
+        <module>softlayer</module>
     </modules>
 </project>

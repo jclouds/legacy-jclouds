@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -32,10 +32,8 @@
     <name>jclouds CloudSigma provider</name>
     <description>ComputeService binding to the CloudSigma datacenter in Zürich</description>
     <packaging>bundle</packaging>
-    
+
     <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.cloudsigma-zrh.endpoint>https://api.cloudsigma.com</test.cloudsigma-zrh.endpoint>
         <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
         <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
@@ -44,14 +42,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudsigma</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-sshj</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudsigma</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -74,7 +73,14 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-sshj</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
     <profiles>
         <profile>
             <id>live</id>
@@ -108,10 +114,6 @@
                                             <name>test.cloudsigma-zrh.credential</name>
                                             <value>${test.cloudsigma-zrh.credential}</value>
                                         </property>
-                                        <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
-                                        </property>
                                     </systemProperties>
                                 </configuration>
                             </execution>
@@ -130,7 +132,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.cloudsigma.*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.elastichosts.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>
@@ -139,3 +141,4 @@
     </build>
 
 </project>
+

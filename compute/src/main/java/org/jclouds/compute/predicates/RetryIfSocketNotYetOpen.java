@@ -45,41 +45,61 @@ public class RetryIfSocketNotYetOpen implements Predicate<IPSocket> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    private Logger logger = Logger.NULL;
-
    private final SocketOpen socketTester;
-   private long seconds;
+   private long timeoutValue;
+   private TimeUnit timeoutUnits;
 
-   public RetryIfSocketNotYetOpen seconds(long seconds) {
-      this.seconds = seconds;
-      return this;
+
+   public RetryIfSocketNotYetOpen(SocketOpen socketTester, Logger logger, long timeoutValue, TimeUnit timeoutUnits) {
+      this.socketTester = socketTester;
+      this.logger = logger;
+      this.timeoutValue = timeoutValue;
+      this.timeoutUnits = timeoutUnits;
+   }
+   
+   public RetryIfSocketNotYetOpen(SocketOpen socketTester, Logger logger) {
+      this(socketTester, logger, 0, TimeUnit.MILLISECONDS);
    }
 
    @Inject
    public RetryIfSocketNotYetOpen(SocketOpen socketTester, Timeouts timeouts) {
-      this.socketTester = socketTester;
-      this.seconds = timeouts.portOpen;
+       this(socketTester, Logger.NULL, timeouts.portOpen, TimeUnit.MILLISECONDS);
+   }
+   
+   /** @deprecated in favor of specifying explicit time units */
+   @Deprecated
+   public RetryIfSocketNotYetOpen(SocketOpen socketTester, Logger logger, long seconds) {
+      this(socketTester, logger, seconds, TimeUnit.SECONDS);
    }
 
-   public RetryIfSocketNotYetOpen(SocketOpen socketTester, Logger logger, long seconds) {
-      this.socketTester = socketTester;
-      this.logger = logger;
-      this.seconds = seconds;
+   public RetryIfSocketNotYetOpen milliseconds(long milliseconds) {
+       this.timeoutValue = milliseconds;
+       this.timeoutUnits = TimeUnit.MILLISECONDS;
+       return this;
+   }
+   
+   public RetryIfSocketNotYetOpen seconds(long seconds) {
+      this.timeoutValue = seconds;
+      this.timeoutUnits = TimeUnit.SECONDS;
+      return this;
    }
 
    @Override
    public String toString() {
-      return "retryIfSocketNotYetOpen(" + seconds + ")";
+      return "retryIfSocketNotYetOpen(" + timeoutValue + " "+ timeoutUnits + ")";
    }
 
    @Override
    public boolean apply(IPSocket socket) {
-      logger.debug(">> blocking on socket %s for %d seconds", socket, seconds);
-      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, seconds, 1, TimeUnit.SECONDS);
+      logger.debug(">> blocking on socket %s for %d %s", socket, timeoutValue, timeoutUnits);
+      // Specify a retry period of 1s, expressed in the same time units.
+      long period = timeoutUnits.convert(1, TimeUnit.SECONDS);
+      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, timeoutValue, period, timeoutUnits);
       boolean passed = tester.apply(socket);
       if (passed)
          logger.debug("<< socket %s opened", socket);
       else
-         logger.warn("<< socket %s didn't open after %d seconds", socket, seconds);
+         logger.warn("<< socket %s didn't open after %d %s", socket, timeoutValue, timeoutUnits);
       return passed;
    }
 }

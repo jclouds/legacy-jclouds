@@ -24,12 +24,17 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>        
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-all</artifactId>
     <name>all</name>
     <dependencies>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-cloudwatch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-allloadbalancer</artifactId>

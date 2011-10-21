@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest")
 public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends EucalyptusComputeServiceLiveTest {
 
    public EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest() {
@@ -45,8 +45,4 @@ public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends Euca
       return overrides;
    }
 
-   // test hangs
-   @Override
-   public void testExtendedOptionsAndLogin() throws Exception {
-   }
 }

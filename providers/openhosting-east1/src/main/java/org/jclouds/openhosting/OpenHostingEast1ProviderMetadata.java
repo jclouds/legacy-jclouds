@@ -102,7 +102,7 @@ public class OpenHostingEast1ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA");
+      return ImmutableSet.of("US-FL");
    }
 
 }

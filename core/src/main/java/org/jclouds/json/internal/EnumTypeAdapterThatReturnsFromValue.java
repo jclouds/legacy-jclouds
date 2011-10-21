@@ -20,10 +20,11 @@ package org.jclouds.json.internal;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -46,29 +47,26 @@ public class EnumTypeAdapterThatReturnsFromValue<T extends Enum<T>> implements J
       try {
          return (T) Enum.valueOf((Class<T>) classOfT, json.getAsString());
       } catch (IllegalArgumentException e) {
-         Method converter = classToConvert.get(classOfT);
-         if (converter != null)
-            try {
-               return (T) converter.invoke(null, json.getAsString());
-            } catch (Exception e1) {
-               throw e;
-            }
-         else
+         try {
+            Method converter = classToConvert.get((Class<?>) classOfT);
+            return (T) converter.invoke(null, json.getAsString());
+         } catch (Exception e1) {
             throw e;
+         }
       }
    }
 
-   private final static Map<Class<?>, Method> classToConvert = new MapMaker()
-         .makeComputingMap(new Function<Class<?>, Method>() {
+   private final static Cache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
+         .build(new CacheLoader<Class<?>, Method>() {
 
             @Override
-            public Method apply(Class<?> from) {
+            public Method load(Class<?> from) throws ExecutionException {
                try {
                   Method method = from.getMethod("fromValue", String.class);
                   method.setAccessible(true);
                   return method;
                } catch (Exception e) {
-                  return null;
+                  throw new ExecutionException(e);
                }
             }
 

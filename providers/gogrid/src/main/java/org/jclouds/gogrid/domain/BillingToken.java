@@ -25,70 +25,74 @@ import com.google.common.primitives.Longs;
  */
 public class BillingToken implements Comparable<BillingToken> {
 
-    private long id;
-    private String name;
-    private double price;
+   private long id;
+   private String name;
+   private double price;
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public BillingToken() {
-    }
+   /**
+    * A no-args constructor is required for deserialization
+    */
+   public BillingToken() {
+   }
 
-    public BillingToken(long id, String name, double price) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-    }
+   public BillingToken(long id, String name, double price) {
+      this.id = id;
+      this.name = name;
+      this.price = price;
+   }
 
-    public long getId() {
-        return id;
-    }
+   public long getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public double getPrice() {
-        return price;
-    }
+   public double getPrice() {
+      return price;
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BillingToken other = (BillingToken) obj;
+      if (id != other.id)
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
+         return false;
+      return true;
+   }
 
-        BillingToken that = (BillingToken) o;
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      long temp;
+      temp = Double.doubleToLongBits(price);
+      result = prime * result + (int) (temp ^ (temp >>> 32));
+      return result;
+   }
 
-        if (id != that.id) return false;
-        if (Double.compare(that.price, price) != 0) return false;
-        if (!name.equals(that.name)) return false;
+   @Override
+   public int compareTo(BillingToken o) {
+      return Longs.compare(id, o.getId());
+   }
 
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = (int) (id ^ (id >>> 32));
-        result = 31 * result + name.hashCode();
-        temp = price != +0.0d ? Double.doubleToLongBits(price) : 0L;
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
-
-    @Override
-    public int compareTo(BillingToken o) {
-        return Longs.compare(id, o.getId());
-    }
-
-    @Override
-    public String toString() {
-        return "BillingToken{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
-    }
+   @Override
+   public String toString() {
+      return "BillingToken{" + "id=" + id + ", name='" + name + '\'' + ", price=" + price + '}';
+   }
 }

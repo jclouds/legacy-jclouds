@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.compute;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -55,6 +56,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -96,8 +98,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -125,7 +129,6 @@ public abstract class BaseComputeServiceLiveTest {
    protected String endpoint;
    protected String apiversion;
 
-
    protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
@@ -145,6 +148,7 @@ public abstract class BaseComputeServiceLiveTest {
       setServiceDefaults();
       if (group == null)
          group = checkNotNull(provider, "provider");
+      // groups need to work with hyphens in them, so let's make sure there is one!
       if (group.indexOf('-') == -1)
          group = group + "-";
       setupCredentials();
@@ -249,43 +253,86 @@ public abstract class BaseComputeServiceLiveTest {
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
                   runningInGroup(group), Statements.exec("hostname"),
-                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()){
+                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()) {
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
-         
+
          // test single-node execution
-         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false)
-                  .runAsRoot(false));
+         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false).runAsRoot(
+                  false));
          checkResponseEqualsHostname(response, node);
          OperatingSystem os = node.getOperatingSystem();
-         
+
          // test bad password
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
-                     runningInGroup(group), "echo $USER", wrapInInitScript(false).runAsRoot(false)
-                              .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
-            assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
-         } catch (AssertionError e) {
-            throw e;
-         } catch (RunScriptOnNodesException e) {
-            assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
-                     + " not authexception!";
-         }
+         tryBadPassword(group, good);
 
          runScriptWithCreds(group, os, good);
 
-         checkNodes(nodes, group);
+         checkNodes(nodes, group, "runScriptWithCreds");
 
          // test adding AdminAccess later changes the default boot user, in this case to foo
-         response = client.runScriptOnNode(node.getId(), AdminAccess.builder().adminUsername("foo").build(), nameTask("adminUpdate"));
+         ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), AdminAccess.builder()
+                  .adminUsername("foo").build(), nameTask("adminUpdate"));
+
+         response = future.get(3, TimeUnit.MINUTES);
+
+         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+
+         node = client.getNodeMetadata(node.getId());
+         // test that the node updated to the correct admin user!
+         assertEquals(node.getCredentials().identity, "foo");
+         assert node.getCredentials().credential != null : nodes;
          
-         response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false)
-                  .runAsRoot(false));
-         
+         weCanCancelTasks(node);
+
+         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+
+         response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false).runAsRoot(false));
+
          assert response.getOutput().trim().equals("foo") : node.getId() + ": " + response;
-         
+
       } finally {
          client.destroyNodesMatching(inGroup(group));
+      }
+   }
+
+   @Test(enabled = false)
+   protected void tryBadPassword(String group, Credentials good) throws AssertionError {
+      try {
+         Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(runningInGroup(group),
+                  "echo I put a bad password", wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(
+                           new Credentials(good.identity, "romeo")));
+         assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
+      } catch (AssertionError e) {
+         throw e;
+      } catch (RunScriptOnNodesException e) {
+         assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
+                  + " not authexception!";
+      }
+   }
+
+   @Test(enabled = false)
+   public void weCanCancelTasks(NodeMetadata node) throws InterruptedException, ExecutionException {
+      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"), nameTask("sleeper").runAsRoot(false));
+      ExecResponse response = null;
+      try {
+         response = future.get(1, TimeUnit.MILLISECONDS);
+         assert false : node.getId() + ": " + response;
+      } catch (TimeoutException e) {
+         assert !future.isDone();
+         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+                  .runAsRoot(false));
+         assert !response.getOutput().trim().equals("") : node.getId() + ": " + response;
+         future.cancel(true);
+         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+                  .runAsRoot(false));
+         assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
+         try {
+            future.get();
+            assert false : future;
+         } catch (CancellationException e1) {
+
+         }
       }
    }
 
@@ -319,7 +366,7 @@ public abstract class BaseComputeServiceLiveTest {
          throw e;
       }
       assertEquals(nodes.size(), 2);
-      checkNodes(nodes, group);
+      checkNodes(nodes, group, "bootstrap");
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
       // credentials aren't always the same
@@ -385,7 +432,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
       assertEquals(nodes.size(), 1);
-      checkNodes(nodes, group);
+      checkNodes(nodes, group, "bootstrap");
       NodeMetadata node = Iterables.getOnlyElement(nodes);
       if (existingLocationIsAssignable)
          assertEquals(node.getLocation(), existingLocation);
@@ -405,10 +452,10 @@ public abstract class BaseComputeServiceLiveTest {
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
       return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-            .nameTask("runScriptWithCreds"));
+               .nameTask("runScriptWithCreds"));
    }
 
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group) throws IOException {
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String taskName) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getProviderId());
          assertNotNull(node.getGroup());
@@ -421,7 +468,7 @@ public abstract class BaseComputeServiceLiveTest {
          if (node.getCredentials().identity != null) {
             assertNotNull(node.getCredentials().identity);
             assertNotNull(node.getCredentials().credential);
-            sshPing(node);
+            sshPing(node, taskName);
          }
       }
    }
@@ -459,8 +506,8 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
-      assert metadataSet.size() == 0 : format("nodes left in set: [%s] which didn't match set: [%s]",
-               metadataSet, nodes);
+      assert metadataSet.size() == 0 : format("nodes left in set: [%s] which didn't match set: [%s]", metadataSet,
+               nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -482,8 +529,7 @@ public abstract class BaseComputeServiceLiveTest {
          public boolean apply(NodeMetadata input) {
             boolean returnVal = input.getState() == NodeState.SUSPENDED;
             if (!returnVal)
-               getAnonymousLogger().warning(
-                        format("node %s in state %s%n", input.getId(), input.getState()));
+               getAnonymousLogger().warning(format("node %s in state %s%n", input.getId(), input.getState()));
             return returnVal;
          }
 
@@ -496,8 +542,8 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
-         assert node.getProviderId() != null;
-         assert node.getLocation() != null;
+         assert node.getProviderId() != null : node;
+         assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
       }
    }
@@ -530,7 +576,8 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
-         assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
+         assert context.getCredentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
+                  + "node#" + node.getId();
       }
    }
 
@@ -594,19 +641,24 @@ public abstract class BaseComputeServiceLiveTest {
       }
 
       try {
+         ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
          long startSeconds = currentTimeMillis();
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080).blockOnPort(22,
-                  300)));
+                  300).userMetadata(userMetadata)));
          final String nodeId = node.getId();
          long createSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
-         getAnonymousLogger().info(
-                  format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
+         checkUserMetadataInNodeEquals(node, userMetadata);
+
+         getAnonymousLogger()
+                  .info(
+                           format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(),
+                                    createSeconds));
 
          startSeconds = currentTimeMillis();
 
          // note this is a dependency on the template resolution so we have the right process per
-         // operating system.  moreover, we wish this to run as root, so that it can change ip
+         // operating system. moreover, we wish this to run as root, so that it can change ip
          // tables rules and setup our admin user
          client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
                   nameTask("configure-jboss"));
@@ -614,9 +666,9 @@ public abstract class BaseComputeServiceLiveTest {
          long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
          getAnonymousLogger().info(
-               format("<< configured node(%s) with %s in %ss", nodeId,
-                     client.runScriptOnNode(nodeId, "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
-                     configureSeconds));
+                  format("<< configured node(%s) with %s in %ss", nodeId, client.runScriptOnNode(nodeId,
+                           "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
+                           configureSeconds));
 
          trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
 
@@ -655,11 +707,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    }
 
-   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
-   public void testTemplateOptions() throws Exception {
-      TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = client.templateBuilder().smallest().options(options).build();
-      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
+               userMetadata, node);
    }
 
    public void testListImages() throws Exception {
@@ -717,7 +767,7 @@ public abstract class BaseComputeServiceLiveTest {
          long time = currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
-         assert node.getState() != NodeState.RUNNING;
+         assert node.getState() != NodeState.RUNNING : node;
          long duration = (currentTimeMillis() - time) / 1000;
          assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                   duration, nonBlockDurationSeconds);
@@ -765,10 +815,10 @@ public abstract class BaseComputeServiceLiveTest {
       assert getCores(fastest) >= getCores(smallest) : format("%s ! >= %s", fastest, smallest);
    }
 
-   private void sshPing(NodeMetadata node) throws IOException {
+   private void sshPing(NodeMetadata node, String taskName) throws IOException {
       for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
          try {
-            doCheckJavaIsInstalledViaSsh(node);
+            doCheckJavaIsInstalledViaSsh(node, taskName);
             return;
          } catch (SshException e) {
             try {
@@ -780,7 +830,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
+   protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node, String taskName) throws IOException {
       SshClient ssh = context.utils().sshForNode().apply(node);
       try {
          ssh.connect();
@@ -788,7 +838,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
          assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
-                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
+                  + ssh.exec("cat /tmp/" + taskName + "/stdout.log /tmp/" + taskName + "/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();

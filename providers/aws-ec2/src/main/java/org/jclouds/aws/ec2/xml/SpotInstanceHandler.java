@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.*;
+
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
@@ -27,6 +29,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -40,19 +43,18 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    protected final Builder builder;
    protected boolean inLaunchSpecification;
    protected final LaunchSpecificationHandler launchSpecificationHandler;
+   protected boolean inTagSet;
+   protected final TagSetHandler tagSetHandler;
 
    @Inject
    public SpotInstanceHandler(DateService dateService, @Region String defaultRegion,
-         LaunchSpecificationHandler launchSpecificationHandler, SpotInstanceRequest.Builder builder) {
+         LaunchSpecificationHandler launchSpecificationHandler, TagSetHandler tagSetHandler,
+         SpotInstanceRequest.Builder builder) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
       this.launchSpecificationHandler = launchSpecificationHandler;
+      this.tagSetHandler = tagSetHandler;
       this.builder = builder;
-   }
-
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
    }
 
    public SpotInstanceRequest getResult() {
@@ -66,61 +68,80 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
       }
    }
 
-   public void startElement(String uri, String name, String qName, Attributes attrs) {
-      if (qName.equals("launchSpecification")) {
+   @Override
+   public void startElement(String uri, String name, String qName, Attributes attrs) throws SAXException {
+      if (equalsOrSuffix(qName, "launchSpecification")) {
          inLaunchSpecification = true;
+      } else if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = true;
       }
-      if (inLaunchSpecification)
-         launchSpecificationHandler.startElement(uri, name, qName, attrs);
+      if (inLaunchSpecification) {
+          launchSpecificationHandler.startElement(uri, name, qName, attrs);
+      } else if (inTagSet) {
+          tagSetHandler.startElement(uri, name, qName, attrs);
+      }
    }
 
-   public void endElement(String uri, String name, String qName) {
+   @Override
+   public void endElement(String uri, String name, String qName) throws SAXException {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+         builder.tags(tagSetHandler.getResult());
+      } else if (inTagSet) {
+          tagSetHandler.endElement(uri, name, qName);
+      }
+
       if (qName.equals("launchSpecification")) {
          inLaunchSpecification = false;
          builder.launchSpecification(launchSpecificationHandler.getResult());
-      }
-      if (inLaunchSpecification) {
+      } else if (inLaunchSpecification) {
          launchSpecificationHandler.endElement(uri, name, qName);
-      } else if (qName.equals("spotInstanceRequestId")) {
-         builder.id(currentOrNull());
+      }
+
+      if (qName.equals("spotInstanceRequestId")) {
+         builder.id(currentOrNull(currentText));
       } else if (qName.equals("instanceId")) {
-         builder.instanceId(currentOrNull());
+         builder.instanceId(currentOrNull(currentText));
       } else if (qName.equals("launchedAvailabilityZone")) {
-         builder.launchedAvailabilityZone(currentOrNull());
+         builder.launchedAvailabilityZone(currentOrNull(currentText));
       } else if (qName.equals("availabilityZoneGroup")) {
-         builder.availabilityZoneGroup(currentOrNull());
+         builder.availabilityZoneGroup(currentOrNull(currentText));
       } else if (qName.equals("launchGroup")) {
-         builder.launchGroup(currentOrNull());
+         builder.launchGroup(currentOrNull(currentText));
       } else if (qName.equals("code")) {
-         builder.faultCode(currentOrNull());
+         builder.faultCode(currentOrNull(currentText));
       } else if (qName.equals("message")) {
-         builder.faultMessage(currentOrNull());
+         builder.faultMessage(currentOrNull(currentText));
       } else if (qName.equals("spotPrice")) {
-         String price = currentOrNull();
+         String price = currentOrNull(currentText);
          if (price != null)
             builder.spotPrice(Float.parseFloat(price));
       } else if (qName.equals("type")) {
-         String type = currentOrNull();
+         String type = currentOrNull(currentText);
          if (type != null)
             builder.type(SpotInstanceRequest.Type.fromValue(type));
       } else if (qName.equals("state")) {
-         String state = currentOrNull();
+         String state = currentOrNull(currentText);
          if (state != null)
             builder.state(SpotInstanceRequest.State.fromValue(state));
       } else if (qName.equals("createTime")) {
-         String createTime = currentOrNull();
+         String createTime = currentOrNull(currentText);
          if (createTime != null)
             builder.createTime(dateService.iso8601DateParse(createTime));
       } else if (qName.equals("productDescription")) {
-         builder.productDescription(currentOrNull());
+         builder.productDescription(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }
 
+   @Override
    public void characters(char ch[], int start, int length) {
-      if (inLaunchSpecification)
-         launchSpecificationHandler.characters(ch, start, length);
-      else
+      if (inLaunchSpecification) {
+           launchSpecificationHandler.characters(ch, start, length);
+      } else if (inTagSet) {
+           tagSetHandler.characters(ch, start, length);
+      } else {
          currentText.append(ch, start, length);
+      }
    }
 }

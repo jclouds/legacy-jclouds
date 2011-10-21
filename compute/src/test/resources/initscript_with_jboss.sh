@@ -44,13 +44,15 @@ function forget {
    findPid $INSTANCE_NAME
    [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
       echo $INSTANCE_NAME already running pid [$FOUND_PID]
+      return 1;
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
-      sleep 1
-      findPid $INSTANCE_NAME
-      [ -n "$FOUND_PID" ] || abort "$INSTANCE_NAME did not start"
+      RETURN=$?
+      # this is generally followed by findPid, so we shouldn't exit 
+      # immediately as the proc may not have registered in ps, yet
+      test $RETURN && sleep 1
+      return $RETURN;
    }
-   return 0
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
@@ -101,12 +103,12 @@ grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 apt-get update -qq
 which curl || apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes openjdk-7-jdk||apt-get install -f -y -qq --force-yes openjdk-6-jdk
+apt-get install -f -y -qq --force-yes openjdk-6-jdk
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> $HOME/.bashrc
 iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
 iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
 iptables-save
-curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.jboss.org/jbossas/7.0/jboss-as-7.0.0.Final/jboss-as-web-7.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
 mkdir -p /usr/local/jboss
 mv /usr/local/jboss-*/* /usr/local/jboss
 (cd /usr/local/jboss/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)

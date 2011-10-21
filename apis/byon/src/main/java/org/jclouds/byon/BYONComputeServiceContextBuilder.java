@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.byon.config.BYONComputeServiceContextModule;
+import org.jclouds.byon.config.ConfiguresNodeStore;
+import org.jclouds.byon.config.YamlNodeStoreModule;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -41,6 +45,21 @@ public class BYONComputeServiceContextBuilder extends StandaloneComputeServiceCo
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new BYONComputeServiceContextModule());
+      addNodeStoreModuleIfNotPresent(modules);
    }
 
+   protected void addNodeStoreModuleIfNotPresent(List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresNodeStore.class);
+         }
+
+      })) {
+         addNodeStoreModule(modules);
+      }
+   }
+
+   protected void addNodeStoreModule(List<Module> modules) {
+      modules.add(new YamlNodeStoreModule());
+   }
 }

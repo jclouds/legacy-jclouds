@@ -64,12 +64,20 @@ public class Statements {
    }
 
    public static Statement appendFile(String path, Iterable<String> lines) {
-      return new AppendFile(path, lines);
-   }
+       return new AppendFile(path, lines);
+    }
 
-   public static Statement appendFile(String path, Iterable<String> lines, String marker) {
-      return new AppendFile(path, lines, marker);
-   }
+    public static Statement appendFile(String path, Iterable<String> lines, String marker) {
+       return new AppendFile(path, lines, marker);
+    }
+
+    public static Statement createOrOverwriteFile(String path, Iterable<String> lines) {
+        return new CreateOrOverwriteFile(path, lines);
+     }
+
+     public static Statement createOrOverwriteFile(String path, Iterable<String> lines, String marker) {
+        return new CreateOrOverwriteFile(path, lines, marker);
+     }
 
    public static CreateRunScript createRunScript(String instanceName, Iterable<String> exports, String pwd,
             Iterable<Statement> statements) {// TODO: convert so

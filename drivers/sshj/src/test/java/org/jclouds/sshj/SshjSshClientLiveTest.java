@@ -24,11 +24,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -44,7 +46,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "SshjSshClientLiveTest")
 public class SshjSshClientLiveTest {
    protected static final String sshHost = System.getProperty("test.ssh.host", "localhost");
    protected static final String sshPort = System.getProperty("test.ssh.port", "22");
@@ -57,8 +59,8 @@ public class SshjSshClientLiveTest {
    public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
       int port = Integer.parseInt(sshPort);
       if (sshUser == null
-            || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile.trim().equals("")))
-            || sshUser.trim().equals("")) {
+               || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile.trim()
+                        .equals(""))) || sshUser.trim().equals("")) {
          System.err.println("ssh credentials not present.  Tests will be lame");
          return new SshClient() {
 
@@ -106,12 +108,12 @@ public class SshjSshClientLiveTest {
 
          };
       } else {
-         Injector i = Guice.createInjector(new SshjSshClientModule());
+         Injector i = Guice.createInjector(new SshjSshClientModule(), new SLF4JLoggingModule());
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
          if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-            connection = factory.create(new IPSocket(sshHost, port),
-                  new Credentials(sshUser, Strings2.toStringAndClose(new FileInputStream(sshKeyFile))));
+            connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, Strings2
+                     .toStringAndClose(new FileInputStream(sshKeyFile))));
          } else {
             connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
          }
@@ -125,7 +127,7 @@ public class SshjSshClientLiveTest {
       temp.deleteOnExit();
       SshClient client = setupClient();
       client.put(temp.getAbsolutePath(), Payloads.newStringPayload("rabbit"));
-      Payload input = setupClient().get(temp.getAbsolutePath());
+      Payload input = client.get(temp.getAbsolutePath());
       String contents = Strings2.toStringAndClose(input.getInput());
       assertEquals(contents, "rabbit");
    }
@@ -136,10 +138,12 @@ public class SshjSshClientLiveTest {
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 
-   public void testExecHostname() throws IOException {
-      ExecResponse response = setupClient().exec("hostname");
+   public void testExecHostname() throws IOException, InterruptedException {
+      SshClient client = setupClient();
+      ExecResponse response = client.exec("hostname");
       assertEquals(response.getError(), "");
-      assertEquals(response.getOutput().trim(), sshHost);
+      assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
+               : sshHost);
    }
 
 }

@@ -21,8 +21,8 @@ package org.jclouds.trmk.ecloud.suppliers;
 import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -60,8 +60,7 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
    }
 
    @Override
-   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port,
-            Protocol protocol) {
+   public Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIp(VApp vApp, int port, Protocol protocol) {
       logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getHref(), protocol, port);
       InternetService is = null;
       PublicIpAddress ip = null;
@@ -69,7 +68,8 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
          ip = client.activatePublicIpInVDC(vApp.getVDC().getHref());
       } catch (InsufficientResourcesException e) {
          logger.warn(">> no more ip addresses available, looking for one to re-use");
-         for (PublicIpAddress existingIp : client.getPublicIpsAssociatedWithVDC(vApp.getVDC().getHref())) {
+         Set<PublicIpAddress> publicIps = client.getPublicIpsAssociatedWithVDC(vApp.getVDC().getHref());
+         for (PublicIpAddress existingIp : publicIps) {
             Set<InternetService> services = client.getInternetServicesOnPublicIp(existingIp.getId());
             if (services.size() == 0) {
                ip = existingIp;
@@ -77,8 +77,9 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
             }
          }
          if (ip == null)
-            throw e;
-
+            throw new InsufficientResourcesException(
+                     "no more ip addresses available and existing ips all have services attached: " + publicIps, e
+                              .getCause());
       }
       is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
                withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(), vApp

@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.domain.network.nat;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 

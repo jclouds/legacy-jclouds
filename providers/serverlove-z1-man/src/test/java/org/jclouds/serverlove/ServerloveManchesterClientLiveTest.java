@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class ServerloveManchesterClientLiveTest extends ElasticStackClientLiveTest {
    public ServerloveManchesterClientLiveTest() {
       provider = "serverlove-z1-man";
-      bootDrive = "5f2e0e29-2937-42b9-b362-d2d07eddbdeb";
+      bootDrive = "574a3921-2926-4a61-bdd9-8d9282b32810";
    }
 
    protected Credentials getSshCredentials(Server server) {

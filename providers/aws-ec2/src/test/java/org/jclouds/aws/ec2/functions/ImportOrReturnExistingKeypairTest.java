@@ -22,9 +22,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.crypto.SshKeys.fingerprintPublicKey;
 import static org.testng.Assert.assertEquals;
-
-import java.net.UnknownHostException;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.services.AWSKeyPairClient;
@@ -38,39 +37,42 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ImportOrReturnExistingKeypairTest {
+   private static final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCcm8DjTHg4r72dVhNLQ33XpUyMLr+ph78i4NR3LqF1bXDP0g4xNLcI/GUTQq6g07X8zs7vIWyjoitqBPFSQ2onaZQ6pXQF/QISRQgrN5hEZ+nH5Aw+isdstBeOMWKdYrCJtm6/qWq2+rByyuNbtulazP3H7SqoozSjRSGNQyFNGpmhjGgTbNQftYDwlFq0T9tCSO/+dYF8j79bNIOEmfsCMiqXQ13hD5vGiEgkRm7zIPDUfpOl3ubDzebpRgGTh5kfv2vd3Z665AxQoi6fItvDu80knyphMlC41giIm5YqfPOPG4lR+6aF06p+NKhvOeECNMtRsD9u1kKJD9NqxXhx";
+
+   private static final KeyPair pair = KeyPair.builder().region("region").keyName("jclouds#group").sha1OfPrivateKey(
+            "foo").build();
+   private static final KeyPair pairWithFingerprint = pair.toBuilder().fingerprint(fingerprintPublicKey(PUBLIC_KEY))
+            .build();
+
    @Test
-   public void testApply() throws UnknownHostException {
+   public void testApply() {
       AWSEC2Client client = createMock(AWSEC2Client.class);
       AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
 
-      KeyPair pair = createMock(KeyPair.class);
-
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", "ssh-rsa")).andReturn(pair);
+      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andReturn(pair);
 
       replay(client);
       replay(keyClient);
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
-      assertEquals(parser.importOrReturnExistingKeypair("region", "group", "ssh-rsa"), pair);
+      assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
       verify(keyClient);
    }
 
    @Test
-   public void testApplyWithIllegalStateExceptionReturnsExistingKey() throws UnknownHostException {
+   public void testApplyWithIllegalStateExceptionReturnsExistingKey() {
       AWSEC2Client client = createMock(AWSEC2Client.class);
       AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
 
-      KeyPair pair = createMock(KeyPair.class);
-
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", "ssh-rsa")).andThrow(
-            new IllegalStateException());
+      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+               new IllegalStateException());
       expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.of(pair));
 
       replay(client);
@@ -78,7 +80,8 @@ public class ImportOrReturnExistingKeypairTest {
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
-      assertEquals(parser.importOrReturnExistingKeypair("region", "group", "ssh-rsa"), pair);
+      // enriching to include the ssh fingerprint so that ssh logs are easier to correlate
+      assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
       verify(keyClient);
@@ -86,19 +89,17 @@ public class ImportOrReturnExistingKeypairTest {
    }
 
    @Test
-   public void testApplyWithIllegalStateExceptionRetriesWhenExistingKeyNotFound() throws UnknownHostException {
+   public void testApplyWithIllegalStateExceptionRetriesWhenExistingKeyNotFound() {
       AWSEC2Client client = createMock(AWSEC2Client.class);
       AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
 
-      KeyPair pair = createMock(KeyPair.class);
-
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", "ssh-rsa")).andThrow(
-            new IllegalStateException());
+      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+               new IllegalStateException());
       expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of());
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", "ssh-rsa")).andThrow(
-            new IllegalStateException());
+      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+               new IllegalStateException());
       expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of(pair));
 
       replay(client);
@@ -106,7 +107,7 @@ public class ImportOrReturnExistingKeypairTest {
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
-      assertEquals(parser.importOrReturnExistingKeypair("region", "group", "ssh-rsa"), pair);
+      assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
       verify(keyClient);
