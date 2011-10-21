@@ -35,7 +35,8 @@ import com.google.common.collect.ImmutableMap;
 * 
 * @author Andrea Turli
 */
-public class ImageFromYamlStreamTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "unit")
+public class ImageFromYamlStreamTest {
 	
 	   public static final Image TEST1 = new ImageBuilder()
 	   		   .id("myTestId")

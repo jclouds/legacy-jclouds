@@ -66,7 +66,7 @@ public class IMachineToImageTest {
       assertEquals(image.getDescription(), "my-ubuntu-machine");
       assertEquals(image.getOperatingSystem().getDescription(), linuxDescription);
       assertTrue(image.getOperatingSystem().is64Bit());
-      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.LINUX);
       assertEquals(image.getOperatingSystem().getVersion(), "10.04");
 
    }

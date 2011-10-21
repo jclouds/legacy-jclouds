@@ -76,6 +76,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
          @Override
          public OsFamily apply(String osDescription) {
             if (osDescription.startsWith("linux")) return OsFamily.LINUX;
+            if (osDescription.startsWith("Ubuntu")) return OsFamily.LINUX;
             return OsFamily.UNRECOGNIZED;
          }
       };
@@ -91,7 +92,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
          @Override
          public String apply(String osDescription) {
             OsFamily family = osFamily().apply(osDescription);
-            if (family.equals(OsFamily.UBUNTU))
+            if (family.equals(OsFamily.LINUX))
                return parseVersion(osDescription, UBUNTU);
             else
                return "";

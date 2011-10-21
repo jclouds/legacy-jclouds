@@ -48,7 +48,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private String settingsFile = null;
    private boolean forceOverwrite = true;
-   private String vmId = "jclouds-image-1";
+   private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "";
    private String controllerIDE = "IDE Controller";
    private String diskFormat = "";
@@ -85,6 +85,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager);
       Image newImage = iMachineToImage.apply(imageMachine);
+      //TODO add the description to the cache of the images or serialize to YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
 
       assertTrue(any(images, equalTo(newImage)));
