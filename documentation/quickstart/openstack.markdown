@@ -36,6 +36,7 @@ import org.jclouds.Constants;
 {% highlight java %}
 Properties overrides = new Properties();
 //point the JClouds to the Openstack v 1.1 API endpoint URL
+//for swift version 1.4.4 the URL is of the form: http(s)://ip:port/auth
 overrides.setProperty(Constants.PROPERTY_ENDPOINT, "https://authurl");
 
 / get a context with nova that offers the portable ComputeService api
@@ -108,3 +109,8 @@ on github and scratch that itch yourself.
   * Flavor reference is not returned in servers/details/list output by Openstack 
     (but is returned if the instance details are requested directly in servers/id/details call) and 
     therefore sometimes node metadata does not have the correct hardware info.
+
+* The format of the endpoint URL has changed since version 1.4.4 of swift.
+  It is now of the form: http(s)://ip:port/auth
+  In previous versions 'auth' was not required.
+
