@@ -256,8 +256,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       return lockSessionOnMachineAndApply(manager, type, machineId, new Function<ISession, T>() {
 
          @Override
-         public T apply(ISession arg0) {
-            return function.apply(arg0.getMachine());
+         public T apply(ISession session) {
+            return function.apply(session.getMachine());
          }
 
          @Override
