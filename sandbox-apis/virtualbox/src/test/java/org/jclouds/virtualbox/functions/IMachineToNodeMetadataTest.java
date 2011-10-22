@@ -19,7 +19,9 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
@@ -29,8 +31,7 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 //@Test(groups = "live")
 public class IMachineToNodeMetadataTest {
@@ -49,7 +50,7 @@ public class IMachineToNodeMetadataTest {
       IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
       IMachineToHardware hwParser = new IMachineToHardware(manager);
 
-//      hwParser.apply()
+      // hwParser.apply()
 
    }
 }
