@@ -18,6 +18,10 @@
  */
 package org.jclouds.rest.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.io.Payloads.newStringPayload;
+
 import java.net.URI;
 import java.util.Map;
 
@@ -27,7 +31,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -42,22 +45,25 @@ public class BindMapToStringPayload implements MapBinder {
 
    @Inject
    public BindMapToStringPayload(Provider<UriBuilder> uriBuilders) {
-      this.uriBuilders = uriBuilders;
+      this.uriBuilders = checkNotNull(uriBuilders, "uriBuilders");
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(request);
+      checkNotNull(postParams, "postParams");
+      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
+      checkArgument(r.getJavaMethod().isAnnotationPresent(Payload.class),
+            "method %s must have @Payload annotation to use this binder", r.getJavaMethod());
       String payload = r.getJavaMethod().getAnnotation(Payload.class).value();
       if (postParams.size() > 0) {
          UriBuilder builder = uriBuilders.get();
-         builder.uri(URI.create("http://test/"));
+         builder.uri(URI.create("http://fake/"));
          builder.path(payload);
          URI fake = builder.buildFromMap(postParams);
          payload = fake.getPath().substring(1);
       }
-      return (R) request.toBuilder().payload(Payloads.newStringPayload(payload)).build();
+      return (R) request.toBuilder().payload(newStringPayload(payload)).build();
    }
 
    @Override

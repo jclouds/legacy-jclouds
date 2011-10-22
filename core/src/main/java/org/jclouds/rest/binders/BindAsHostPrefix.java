@@ -44,7 +44,7 @@ public class BindAsHostPrefix implements Binder {
 
    @Inject
    public BindAsHostPrefix(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = uriBuilderProvider;
+      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
    }
 
    @Override

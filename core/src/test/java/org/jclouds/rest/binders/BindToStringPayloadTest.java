@@ -1,0 +1,66 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jclouds.rest.binders;
+
+import static org.testng.Assert.assertEquals;
+
+import java.io.File;
+import java.net.URI;
+
+import org.jclouds.http.HttpRequest;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
+
+/**
+ * Tests behavior of {@code BindToStringPayload}
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "BindToStringPayloadTest")
+public class BindToStringPayloadTest {
+
+   @Test
+   public void testMap() throws SecurityException, NoSuchMethodException {
+      BindToStringPayload binder = new BindToStringPayload();
+
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      request = binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
+      assertEquals(request.getPayload().getRawContent(), "{imageName=foo, serverId=2}");
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/unknown");
+
+   }
+
+   @Test
+   public void testSomethingNotAMap() throws SecurityException, NoSuchMethodException {
+      BindToStringPayload binder = new BindToStringPayload();
+
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      request = binder.bindToRequest(request, new File("foo"));
+      assertEquals(request.getPayload().getRawContent(), "foo");
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/unknown");
+
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNullIsBad() {
+      BindToStringPayload binder = new BindToStringPayload();
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
+   }
+}
