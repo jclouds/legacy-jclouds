@@ -19,15 +19,22 @@
 package org.jclouds.compute.util;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.Map;
 
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.Guice;
 
 /**
  * Test the compute utils.
@@ -37,33 +44,47 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit")
 public class ComputeServiceUtilsTest {
+   Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
+   }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+         .getInstance(Json.class));
 
    @Test
-   public void testParseTagFromName() {
+   public void testParseGroupFromName() {
       assertEquals(parseGroupFromName("gogrid--849"), "gogrid-");
-
    }
+
+   @Test
+   public void testParseVersionOrReturnEmptyStringUbuntu1004() {
+      assertEquals(parseVersionOrReturnEmptyString(OsFamily.UBUNTU, "Ubuntu 10.04", map), "10.04");
+   }
+
+   @Test
+   public void testParseVersionOrReturnEmptyStringUbuntu1104() {
+      assertEquals(parseVersionOrReturnEmptyString(OsFamily.UBUNTU, "ubuntu 11.04 server (i386)", map), "11.04");
+   }
+
    @Test
    public void testExecHttpResponse() {
       HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
-               ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date",
-                        "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
+            ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT",
+                  "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
 
       assertEquals(
-               ComputeServiceUtils.execHttpResponse(request).render(OsFamily.UNIX),
-               "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(bash)\n");
+            ComputeServiceUtils.execHttpResponse(request).render(org.jclouds.scriptbuilder.domain.OsFamily.UNIX),
+            "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(bash)\n");
 
    }
 
    @Test
    public void testTarxzpHttpResponse() {
       HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
-               ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date",
-                        "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
+            ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT",
+                  "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
 
       assertEquals(
-               ComputeServiceUtils.extractTargzIntoDirectory(request, "/stage/").render(OsFamily.UNIX),
-               "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
+            ComputeServiceUtils.extractTargzIntoDirectory(request, "/stage/").render(
+                  org.jclouds.scriptbuilder.domain.OsFamily.UNIX),
+            "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
 
    }
 }
