@@ -42,7 +42,6 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
-import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.MachineState;
@@ -99,7 +98,7 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).os64Bit(false).osVersionMatches("11.04-server");
+      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
    }
 
    @VisibleForTesting

@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrea Turli
  */
 
-@Test(groups = "live")
+@Test(groups = "live", testName = "VirtualBoxTemplateBuilderLiveTest")
 public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
 	   public VirtualBoxTemplateBuilderLiveTest() {
@@ -36,14 +36,7 @@ public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
 		         public boolean apply(OsFamilyVersion64Bit input) {
 		            switch (input.family) {
 		               case UBUNTU:
-		                  return !(input.version.startsWith("11") || input.version.equals("8.04")) && input.is64Bit;
-		               case DEBIAN:
-		                  return !(input.version.equals("6.0")) && input.is64Bit;
-		               case CENTOS:
-		                  return !(input.version.matches("5.[023]") || input.version.equals("8.04")) && input.is64Bit;
-		               case WINDOWS:
-		                  return input.version.equals("2008 SP2") || input.version.equals("")
-		                           || (input.version.equals("2008 R2") && input.is64Bit);
+		                  return input.version.equals("11.04") && !input.is64Bit;
 		               default:
 		                  return false;
 		            }
@@ -54,8 +47,9 @@ public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
 
 		   @Test
 		   public void testTemplateBuilder() {
+		      System.out.println(this.context.getComputeService().listImages());
 		      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
-		      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+		      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
 		      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
 		      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
 		      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

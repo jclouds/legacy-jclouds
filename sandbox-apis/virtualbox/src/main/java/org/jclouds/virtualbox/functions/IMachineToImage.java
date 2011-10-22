@@ -21,7 +21,15 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrUnrecognized;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
+
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -31,77 +39,33 @@ import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Inject;
+import com.google.common.base.Function;
 
-
+@Singleton
 public class IMachineToImage implements Function<IMachine, Image> {
 
-   private static final String UBUNTU = "Ubuntu";
-
-   private VirtualBoxManager virtualboxManager;
+   private final VirtualBoxManager virtualboxManager;
+   private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public IMachineToImage(VirtualBoxManager virtualboxManager) {
-      this.virtualboxManager = virtualboxManager;
+   public IMachineToImage(VirtualBoxManager virtualboxManager, Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.virtualboxManager = checkNotNull(virtualboxManager, "virtualboxManager");
+      this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");
    }
 
    @Override
    public Image apply(@Nullable IMachine from) {
+      if (from == null)
+         return null;
 
       IGuestOSType guestOSType = virtualboxManager.getVBox().getGuestOSType(from.getOSTypeId());
+      OsFamily family = parseOsFamilyOrUnrecognized(guestOSType.getDescription());
+      String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(),
+            osVersionMap);
+      OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)
+            .version(version).is64Bit(guestOSType.getIs64Bit()).build();
 
-      OsFamily family = osFamily().apply(guestOSType.getDescription());
-      OperatingSystem os = OperatingSystem.builder()
-              .description(guestOSType.getDescription())
-              .family(family)
-              .version(osVersion().apply(guestOSType.getDescription()))
-              .is64Bit(guestOSType.getIs64Bit())
-              .build();
-
-      return new ImageBuilder()
-              .id("" + from.getId())
-              .description(from.getDescription())
-              .operatingSystem(os)
-              .build();
+      return new ImageBuilder().id("" + from.getId()).description(from.getDescription()).operatingSystem(os).build();
    }
 
-   /**
-    * Parses the item description to determine the OSFamily
-    *
-    * @return the @see OsFamily or OsFamily.UNRECOGNIZED
-    */
-   public static Function<String, OsFamily> osFamily() {
-
-      return new Function<String, OsFamily>() {
-         @Override
-         public OsFamily apply(String osDescription) {
-            if (osDescription.startsWith("linux")) return OsFamily.LINUX;
-            if (osDescription.startsWith("Ubuntu")) return OsFamily.LINUX;
-            return OsFamily.UNRECOGNIZED;
-         }
-      };
-   }
-
-   /**
-    * Parses the item description to determine the os version
-    *
-    * @return the version, empty if not found
-    */
-   public static Function<String, String> osVersion() {
-      return new Function<String, String>() {
-         @Override
-         public String apply(String osDescription) {
-            OsFamily family = osFamily().apply(osDescription);
-            if (family.equals(OsFamily.LINUX))
-               return parseVersion(osDescription, UBUNTU);
-            else
-               return "";
-         }
-      };
-   }
-
-   private static String parseVersion(String description, String os) {
-      String noOsName = description.replaceFirst(os, "").trim();
-      return noOsName.split(" ")[0];
-   }
 }

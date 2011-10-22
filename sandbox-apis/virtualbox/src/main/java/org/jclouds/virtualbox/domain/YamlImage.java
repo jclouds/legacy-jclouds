@@ -23,7 +23,7 @@
 
 package org.jclouds.virtualbox.domain;
 
-import static org.jclouds.virtualbox.functions.IMachineToImage.osFamily;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrUnrecognized;
 
 import java.util.List;
 import java.util.Map;
@@ -141,8 +141,8 @@ public class YamlImage {
       public Image apply(YamlImage arg0) {
          if (arg0 == null)
             return null;
-         
-         OsFamily family = osFamily().apply(arg0.os_family);
+         OsFamily family = parseOsFamilyOrUnrecognized(arg0.os_family);
+
          OperatingSystem operatingSystem = OperatingSystem.builder()
                  .description(arg0.os_description)
                  .family(family)

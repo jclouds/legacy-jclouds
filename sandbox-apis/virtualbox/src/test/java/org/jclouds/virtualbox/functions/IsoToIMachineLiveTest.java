@@ -30,22 +30,32 @@ import static com.google.common.collect.Iterables.any;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.inject.Guice;
+
 @Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineLiveTest")
 public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
-
+   
+   Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
+   }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+            .getInstance(Json.class));
+   
    private String settingsFile = null;
    private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
@@ -83,7 +93,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
               guestId,
               new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
 
-      IMachineToImage iMachineToImage = new IMachineToImage(manager);
+      IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
       //TODO add the description to the cache of the images or serialize to YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
