@@ -122,9 +122,9 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.setMemorySize(1024l);
-            arg0.saveSettings();
+         public Void apply(IMachine machine) {
+            machine.setMemorySize(1024l);
+            machine.saveSettings();
             return null;
          }
 
@@ -145,10 +145,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
+         public Void apply(IMachine machine) {
             try {
-               arg0.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
-               arg0.saveSettings();
+               machine.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
+               machine.saveSettings();
             } catch (VBoxException e) {
                if (e.getMessage().indexOf("is already attached to port") == -1)
                   throw e;
@@ -167,9 +167,9 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
-            arg0.saveSettings();
+         public Void apply(IMachine machine) {
+            machine.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
+            machine.saveSettings();
             return null;
          }
 
@@ -179,10 +179,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.getNetworkAdapter(0l).setAttachmentType(NAT);
-            arg0.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
-            arg0.getNetworkAdapter(0l).setEnabled(true);
+         public Void apply(IMachine machine) {
+            machine.getNetworkAdapter(0l).setAttachmentType(NAT);
+            machine.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
+            machine.getNetworkAdapter(0l).setEnabled(true);
             return null;
          }
 
@@ -195,8 +195,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
+         public Void apply(IMachine machine) {
+            machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
             return null;
          }
 
