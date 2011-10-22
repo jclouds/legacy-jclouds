@@ -39,10 +39,10 @@ public class AddIDEControllerIfNotExists implements Function<IMachine, Void> {
    }
 
    @Override
-   public Void apply(IMachine arg0) {
+   public Void apply(IMachine machine) {
       try {
-         arg0.addStorageController(controllerName, StorageBus.IDE);
-         arg0.saveSettings();
+         machine.addStorageController(controllerName, StorageBus.IDE);
+         machine.saveSettings();
       } catch (VBoxException e) {
          if (e.getMessage().indexOf("already exists") == -1)
             throw e;
