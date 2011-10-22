@@ -42,6 +42,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
+import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.MachineState;
@@ -84,14 +85,12 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
       }).to(IMachineToNodeMetadata.class);
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
-      bind(new TypeLiteral<Function<IMachine, Hardware>>() {
-      }).to(IMachineToHardware.class);
       bind(new TypeLiteral<Function<Image, Image>>() {
       }).to((Class) IdentityFunction.class);
-      /*
+      bind(new TypeLiteral<Function<IMachine, Hardware>>() {
+      }).to(IMachineToHardware.class);
       bind(new TypeLiteral<Function<IMachine, Image>>() {
       }).to(IMachineToImage.class);
-      */
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(OnlyLocationOrFirstZone.class);
    }
