@@ -19,14 +19,15 @@
 package org.jclouds.location.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 
 import com.google.common.base.Function;
@@ -42,12 +43,13 @@ public class ZoneToEndpoint implements Function<Object, URI> {
 
    @Inject
    public ZoneToEndpoint(@Zone Map<String, URI> zoneToEndpoint) {
-      this.zoneToEndpoint = zoneToEndpoint;
+      this.zoneToEndpoint = checkNotNull(zoneToEndpoint, "zoneToEndpoint");
+      checkArgument(zoneToEndpoint.size() > 0, "no zone name to endpoint mappings configured!");
    }
 
    @Override
    public URI apply(@Nullable Object from) {
-      checkArgument(from != null, "you must specify a zone");
+      checkArgument(from != null && from instanceof String, "you must specify a zone, as a String argument");
       return zoneToEndpoint.get(from);
    }
 }
