@@ -65,7 +65,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       final VirtualBoxManager manager = getManager();
       Function<IMachine, Image> iMachineToImage = new IMachineToImage(manager, osVersionMap);
       adapter = new VirtualBoxComputeServiceAdapter(manager,
-              new JustProvider(ImmutableSet.<String>of(), provider, URI.create(endpoint)), iMachineToImage);
+              new JustProvider(provider, URI.create(endpoint), ImmutableSet.<String>of()), iMachineToImage);
    }
 
    protected VirtualBoxManager getManager() {
