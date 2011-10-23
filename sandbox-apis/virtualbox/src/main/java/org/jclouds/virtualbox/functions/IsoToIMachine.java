@@ -112,8 +112,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       String baseResource = ".";
       Server server = new StartJettyIfNotAlreadyRunning(port).apply(baseResource);
 
-      IMachine vm = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
-      manager.getVBox().registerMachine(vm);
+      IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite, manager).apply(vmName);
 
       String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
       String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
