@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
 
 import static org.virtualbox_4_1.DeviceType.HardDisk;
 
+/**
+ * @author Mattias Holmqvist
+ */
 public class AttachHardDiskToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
 
    private String controllerIDE;

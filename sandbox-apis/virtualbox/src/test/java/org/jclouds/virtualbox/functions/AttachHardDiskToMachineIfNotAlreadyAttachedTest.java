@@ -26,6 +26,9 @@ import org.virtualbox_4_1.*;
 
 import static org.easymock.classextension.EasyMock.*;
 
+/**
+ * @author Mattias Holmqvist
+ */
 @Test(groups = "unit", testName = "AttachHardDiskToMachineIfNotAlreadyAttachedTest")
 public class AttachHardDiskToMachineIfNotAlreadyAttachedTest {
 
