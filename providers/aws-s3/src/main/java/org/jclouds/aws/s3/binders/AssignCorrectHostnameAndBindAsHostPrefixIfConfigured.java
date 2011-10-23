@@ -18,20 +18,17 @@
  */
 package org.jclouds.aws.s3.binders;
 
-import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
-import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
+import static org.jclouds.http.utils.ModifyRequest.endpoint;
 
 import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.binders.BindAsHostPrefix;
 import org.jclouds.s3.Bucket;
@@ -48,10 +45,9 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfigured extends BindAs
 
    @Inject
    public AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(BindAsHostPrefix bindAsHostPrefix,
-         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, RegionToEndpointOrProviderIfNull r2,
-         Provider<UriBuilder> uriBuilderProvider, @Bucket Map<String, String> bucketToRegion) {
-      super(bindAsHostPrefix, isVhostStyle, servicePath, uriBuilderProvider);
+         RegionToEndpointOrProviderIfNull r2, Provider<UriBuilder> uriBuilderProvider,
+         @Bucket Map<String, String> bucketToRegion) {
+      super(bindAsHostPrefix, true, "/", uriBuilderProvider);
       this.bucketToRegion = bucketToRegion;
       this.r2 = r2;
    }
@@ -62,10 +58,8 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfigured extends BindAs
       String region = bucketToRegion.get(bucket);
       if (region != null) {
          URI endpoint = r2.apply(region);
-         request = ModifyRequest.endpoint(
-               request,
-               uriBuilderProvider.get().uri(endpoint).path(request.getEndpoint().getPath())
-                     .replaceQuery(request.getEndpoint().getQuery()).build());
+         request = endpoint(request, uriBuilderProvider.get().uri(endpoint).path(request.getEndpoint().getPath())
+               .replaceQuery(request.getEndpoint().getQuery()).build());
       }
       return super.bindToRequest(request, payload);
    }

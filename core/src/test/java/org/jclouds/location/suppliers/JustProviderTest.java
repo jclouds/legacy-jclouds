@@ -16,31 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.config;
+package org.jclouds.location.suppliers;
 
-import java.util.Set;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
-import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
+import java.net.URI;
 
-import com.google.common.base.Supplier;
-import com.google.inject.TypeLiteral;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
+ * Tests behavior of {@code JustProvider}
  * 
  * @author Adrian Cole
- * 
  */
-public class RegionsLocationModule extends LocationModule {
+@Test(groups = "unit", testName = "JustProviderTest")
+public class JustProviderTest {
 
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).to(RegionToProviderOrJustProvider.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstRegionOptionallyMatchingRegionId.class);
-      super.configure();
+   @Test
+   public void test() throws SecurityException, NoSuchMethodException {
+      JustProvider fn = new JustProvider("servo", URI.create("http://servo"), ImmutableSet.of("US"));
+      assertEquals(
+            fn.get(),
+            ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id("servo").description("http://servo")
+                  .iso3166Codes(ImmutableSet.of("US")).build()));
    }
 
 }

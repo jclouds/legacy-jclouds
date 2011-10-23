@@ -21,6 +21,8 @@ package org.jclouds.cloudloadbalancers.features;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
@@ -40,6 +42,7 @@ import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 
 /**
@@ -50,6 +53,19 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
    @RequiresHttp
    @ConfiguresRestClient
    public static class CloudLoadBalancersRestClientModuleExtension extends CloudLoadBalancersRestClientModule {
+
+      protected void bindRegionsToProvider() {
+         bindRegionsToProvider(Regions.class);
+      }
+
+      static class Regions implements javax.inject.Provider<Map<String, URI>> {
+         @Override
+         public Map<String, URI> get() {
+            return ImmutableMap.<String, URI> of("DFW",
+                  URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234"));
+         }
+      }
+
       @Override
       protected String accountID(Supplier<AuthenticationResponse> in) {
          return "1234";
@@ -79,8 +95,8 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
       super.setupFactory();
       try {
          processor.setCaller(new ClassMethodArgs(CloudLoadBalancersAsyncClient.class,
-                  CloudLoadBalancersAsyncClient.class.getMethod("getLoadBalancerClient", String.class),
-                  new Object[] { Region.DFW }));
+               CloudLoadBalancersAsyncClient.class.getMethod("getLoadBalancerClient", String.class),
+               new Object[] { Region.DFW }));
       } catch (Exception e) {
          Throwables.propagate(e);
       }

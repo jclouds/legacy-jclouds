@@ -56,7 +56,7 @@ public class RimuHostingLocationSupplier extends JustProvider {
    @Inject
    RimuHostingLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
             RimuHostingClient sync, @Iso3166 Map<String, Set<String>> isoCodesById) {
-      super(isoCodes, providerName, endpoint);
+      super(providerName, endpoint, isoCodes);
       this.sync = checkNotNull(sync, "sync");
       this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
    }

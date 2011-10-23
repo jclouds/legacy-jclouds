@@ -21,7 +21,10 @@ package org.jclouds.location.suppliers;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.location.predicates.LocationPredicates.isZone;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -29,9 +32,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
+import org.jclouds.location.functions.ToIdAndScope;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 /**
@@ -41,33 +43,25 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class OnlyLocationOrFirstZone implements Supplier<Location> {
-   @Singleton
-   public static final class IsZone implements Predicate<Location> {
-      @Override
-      public boolean apply(Location input) {
-         return input.getScope() == LocationScope.ZONE;
-      }
-
-      @Override
-      public String toString() {
-         return "isZone()";
-      }
-   }
 
    private final Supplier<Set<? extends Location>> locationsSupplier;
-   private final IsZone isZone;
 
    @Inject
-   OnlyLocationOrFirstZone(@Memoized Supplier<Set<? extends Location>> locationsSupplier, IsZone isZone) {
+   OnlyLocationOrFirstZone(@Memoized Supplier<Set<? extends Location>> locationsSupplier) {
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplierSupplier");
-      this.isZone = checkNotNull(isZone, "isZone");
    }
 
    @Override
    public Location get() {
-      if (locationsSupplier.get().size() == 1)
-         return getOnlyElement(locationsSupplier.get());
-      return find(locationsSupplier.get(), isZone);
+      Set<? extends Location> locations = locationsSupplier.get();
+      if (locations.size() == 1)
+         return getOnlyElement(locations);
+      try {
+         return find(locations, isZone());
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException("none to of the locations are scope ZONE: "
+               + transform(locations, ToIdAndScope.INSTANCE));
+      }
    }
 
 }

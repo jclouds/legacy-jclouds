@@ -40,8 +40,8 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, groups = "unit")
 public class DatacenterToLocationTest {
 
-   static DatacenterToLocation function = new DatacenterToLocation(new JustProvider(ImmutableSet.<String> of(), "softlayer",
-            URI.create("foo")));;
+   static DatacenterToLocation function = new DatacenterToLocation(new JustProvider("softlayer", URI.create("foo"),
+         ImmutableSet.<String> of()));
 
    @Test
    public void testDatacenterToLocation() {
@@ -85,7 +85,7 @@ public class DatacenterToLocationTest {
    @Test
    public void testGetIso3166CodeWhitespaceTrimmer() {
       Address address = Address.builder().country(" US ").state("  TX  ").description("This is spaced out Texas")
-               .build();
+            .build();
 
       Datacenter datacenter = Datacenter.builder().id(1).longName("Nowhere").locationAddress(address).build();
 

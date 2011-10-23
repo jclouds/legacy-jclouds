@@ -50,7 +50,7 @@ public class RegionToProviderOrJustProvider extends JustProvider {
    @Inject
    public RegionToProviderOrJustProvider(@Iso3166 Set<String> isoCodes, @Provider String providerName,
             @Provider URI endpoint, @Region Set<String> regions, @Iso3166 Map<String, Set<String>> isoCodesById) {
-      super(isoCodes, providerName, endpoint);
+      super(providerName, endpoint, isoCodes);
       this.regions = checkNotNull(regions, "regions");
       this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
    }

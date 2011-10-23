@@ -46,7 +46,7 @@ public class JustProvider implements Supplier<Set<? extends Location>> {
    private final Set<String> isoCodes;
 
    @Inject
-   public JustProvider(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint) {
+   public JustProvider(@Provider String providerName, @Provider URI endpoint, @Iso3166 Set<String> isoCodes) {
       this.providerName = checkNotNull(providerName, "providerName");
       this.endpoint = checkNotNull(endpoint, "endpoint");
       this.isoCodes = checkNotNull(isoCodes, "isoCodes");
@@ -54,8 +54,8 @@ public class JustProvider implements Supplier<Set<? extends Location>> {
 
    @Override
    public Set<? extends Location> get() {
-      return ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName).description(
-               endpoint.toASCIIString()).iso3166Codes(isoCodes).build());
+      return ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName)
+            .description(endpoint.toASCIIString()).iso3166Codes(isoCodes).build());
    }
 
 }
