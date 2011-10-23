@@ -109,11 +109,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
    public IMachine apply(@Nullable String isoName) {
 
       String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
-      String basebaseResource = ".";
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
+      String baseResource = ".";
+      Server server = new StartJettyIfNotAlreadyRunning(port).apply(baseResource);
 
-      IMachine vm = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
-      manager.getVBox().registerMachine(vm);
+      IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite, manager).apply(vmName);
 
       String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
       String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
@@ -167,6 +166,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
             machine.getNetworkAdapter(0l).setAttachmentType(NAT);
             machine.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
             machine.getNetworkAdapter(0l).setEnabled(true);
+            machine.saveSettings();
             return null;
          }
 
@@ -181,6 +181,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
          @Override
          public Void apply(IMachine machine) {
             machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
+            machine.saveSettings();
             return null;
          }
 
