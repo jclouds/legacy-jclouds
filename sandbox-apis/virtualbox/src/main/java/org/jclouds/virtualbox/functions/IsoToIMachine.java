@@ -29,11 +29,8 @@ import static org.virtualbox_4_1.AccessMode.ReadOnly;
 import static org.virtualbox_4_1.DeviceType.DVD;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
 import java.io.File;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -139,18 +136,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
               new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, manager));
 
       // NAT
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine machine) {
-            machine.getNetworkAdapter(0l).setAttachmentType(NAT);
-            machine.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
-            machine.getNetworkAdapter(0l).setEnabled(true);
-            machine.saveSettings();
-            return null;
-         }
-
-      });
+      ensureNATNetworkingIsAppliedToMachine(vmName);
 
       String guestAdditionsDvd = workingDir + "/VBoxGuestAdditions_4.1.2.iso";
       final IMedium guestAdditionsDvdMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
@@ -209,6 +195,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
          logger.error(e, "Could not stop Jetty server.");
       }
       return vm;
+   }
+
+   private void ensureNATNetworkingIsAppliedToMachine(String vmName) {
+      lockMachineAndApply(manager, Write, vmName, new AttachNATRedirectRuleToMachine(0l));
    }
 
    private void ensureMachineHasAttachedDistroMedium(String isoName, String workingDir, String controllerIDE) {
