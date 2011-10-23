@@ -214,8 +214,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
 
          @Override
-         public Void apply(ISession arg0) {
-            IProgress powerDownProgress = arg0.getConsole().powerDown();
+         public Void apply(ISession session) {
+            IProgress powerDownProgress = session.getConsole().powerDown();
             powerDownProgress.waitForCompletion(-1);
             return null;
          }
