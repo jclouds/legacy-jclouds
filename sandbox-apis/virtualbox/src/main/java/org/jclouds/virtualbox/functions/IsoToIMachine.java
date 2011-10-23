@@ -166,6 +166,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
             machine.getNetworkAdapter(0l).setAttachmentType(NAT);
             machine.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
             machine.getNetworkAdapter(0l).setEnabled(true);
+            machine.saveSettings();
             return null;
          }
 
