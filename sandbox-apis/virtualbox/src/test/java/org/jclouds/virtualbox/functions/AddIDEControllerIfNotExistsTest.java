@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jclouds.virtualbox.functions;
 
 import static org.easymock.EasyMock.expect;
