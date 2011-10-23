@@ -32,6 +32,9 @@ import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.*;
 
+/**
+ * @author Mattias Holmqvist
+ */
 @Test(groups = "unit", testName = "CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest")
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 

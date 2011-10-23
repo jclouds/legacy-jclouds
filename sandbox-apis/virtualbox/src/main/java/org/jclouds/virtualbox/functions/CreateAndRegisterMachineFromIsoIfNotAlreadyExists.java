@@ -30,6 +30,9 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import javax.annotation.Nullable;
 
+/**
+ * @author Mattias Holmqvist
+ */
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<String, IMachine> {
 
    private String settingsFile;
