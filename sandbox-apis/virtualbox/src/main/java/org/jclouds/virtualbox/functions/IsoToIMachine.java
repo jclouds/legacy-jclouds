@@ -1,23 +1,4 @@
-/*
- * *
- *  * Licensed to jclouds, Inc. (jclouds) under one or more
- *  * contributor license agreements.  See the NOTICE file
- *  * distributed with this work for additional information
- *  * regarding copyright ownership.  jclouds licenses this file
- *  * to you under the Apache License, Version 2.0 (the
- *  * "License"); you may not use this file except in compliance
- *  * with the License.  You may obtain a copy of the License at
- *  *
- *  *   http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing,
- *  * software distributed under the License is distributed on an
- *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  * KIND, either express or implied.  See the License for the
- *  * specific language governing permissions and limitations
- *  * under the License.
- *
- */
+
 
 package org.jclouds.virtualbox.functions;
 
@@ -35,6 +16,7 @@ import static org.virtualbox_4_1.NATProtocol.TCP;
 import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
 import java.io.File;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -51,15 +33,7 @@ import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
-import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -140,14 +114,12 @@ public class IsoToIMachine implements Function<String, IMachine> {
          new File(adminDiskPath).delete();
       }
 
-      final IMedium hd = manager.getVBox().createHardDisk(diskFormat, adminDiskPath);
-      long size = 4L * 1024L * 1024L * 1024L - 4L;
-      IProgress storageCreation = hd.createBaseStorage(size, (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
-      storageCreation.waitForCompletion(-1);
+      // Create hard disk
+      IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
 
       // Attach hard disk to machine
       lockMachineAndApply(manager, Write, vmName,
-              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hd, manager));
+              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, manager));
 
       // NAT
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
