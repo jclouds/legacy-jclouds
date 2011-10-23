@@ -60,7 +60,6 @@ import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MediumVariant;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -141,22 +140,14 @@ public class IsoToIMachine implements Function<String, IMachine> {
          new File(adminDiskPath).delete();
       }
 
-      // Create and attach hard disk
       final IMedium hd = manager.getVBox().createHardDisk(diskFormat, adminDiskPath);
       long size = 4L * 1024L * 1024L * 1024L - 4L;
-      IProgress storageCreation = hd.createBaseStorage(size, (long) MediumVariant.STANDARD.ordinal());
+      IProgress storageCreation = hd.createBaseStorage(size, (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
       storageCreation.waitForCompletion(-1);
 
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine machine) {
-            machine.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
-            machine.saveSettings();
-            return null;
-         }
-
-      });
+      // Attach hard disk to machine
+      lockMachineAndApply(manager, Write, vmName,
+              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hd, manager));
 
       // NAT
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
