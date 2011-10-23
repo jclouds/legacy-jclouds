@@ -181,6 +181,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
          @Override
          public Void apply(IMachine machine) {
             machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
+            machine.saveSettings();
             return null;
          }
 
