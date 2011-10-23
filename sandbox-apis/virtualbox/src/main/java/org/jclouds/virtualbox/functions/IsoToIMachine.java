@@ -105,16 +105,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
 
       // Change RAM
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine machine) {
-            machine.setMemorySize(1024l);
-            machine.saveSettings();
-            return null;
-         }
-
-      });
+      ensureMachineHasMemory(vmName, 1024l);
 
       // IDE Controller
       ensureMachineHasIDEControllerNamed(vmName, controllerIDE);
@@ -128,12 +119,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
          new File(adminDiskPath).delete();
       }
 
-      // Create hard disk
-      IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
-
       // Attach hard disk to machine
-      lockMachineAndApply(manager, Write, vmName,
-              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, manager));
+      ensureMachineHasHardDiskAttached(vmName, adminDiskPath);
 
       // NAT
       ensureNATNetworkingIsAppliedToMachine(vmName);
@@ -195,6 +182,17 @@ public class IsoToIMachine implements Function<String, IMachine> {
          logger.error(e, "Could not stop Jetty server.");
       }
       return vm;
+   }
+
+   private void ensureMachineHasHardDiskAttached(String vmName, String path) {
+      // Create hard disk
+      IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(path);
+      lockMachineAndApply(manager, Write, vmName,
+              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, manager));
+   }
+
+   private void ensureMachineHasMemory(String vmName, final long memorySize) {
+      lockMachineAndApply(manager, Write, vmName, new ApplyMemoryToMachine(memorySize));
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName) {
