@@ -21,30 +21,26 @@
 
 package org.jclouds.virtualbox.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.suppliers.JustProvider;
-import org.jclouds.virtualbox.functions.admin.ImageFromYamlStream;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
-import com.google.common.base.Throwables;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 /**
  * Defines the connection between the
@@ -58,9 +54,11 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    private final VirtualBoxManager manager;
    private final JustProvider justProvider;
+   private Function<IMachine, Image> iMachineToImage;
 
    @Inject
-   public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager, JustProvider justProvider) {
+   public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager, JustProvider justProvider, Function<IMachine, Image> iMachineToImage) {
+      this.iMachineToImage = iMachineToImage;
       this.manager = checkNotNull(manager, "manager");
       this.justProvider = checkNotNull(justProvider, "justProvider");
    }
@@ -81,12 +79,17 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       return manager.getVBox().getMachines();
    }
 
-   @Override
-   public Iterable<Image> listImages() {
-      InputStream is = getClass().getResourceAsStream("/testImages.yaml");
-      ImageFromYamlStream parser = new ImageFromYamlStream();
-      return parser.apply(is).asMap().values();
-   }
+	@Override
+	public Iterable<Image> listImages() {
+      final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
+         @Override
+         public boolean apply(@Nullable IMachine iMachine) {
+            return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
+         }
+      };
+      final Iterable<IMachine> imageMachines = filter(manager.getVBox().getMachines(), imagePredicate);
+      return transform(imageMachines, iMachineToImage);
+	}
 
    @SuppressWarnings("unchecked")
    @Override

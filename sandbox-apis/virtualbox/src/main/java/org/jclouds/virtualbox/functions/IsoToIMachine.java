@@ -87,8 +87,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
    @Inject
    public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat, String settingsFile,
-         String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
-         ComputeServiceContext context, String hostId, String guestId, Credentials credentials) {
+                        String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
+                        ComputeServiceContext context, String hostId, String guestId, Credentials credentials) {
       super();
       this.manager = manager;
       this.adminDisk = adminDisk;
@@ -122,9 +122,9 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.setMemorySize(1024l);
-            arg0.saveSettings();
+         public Void apply(IMachine machine) {
+            machine.setMemorySize(1024l);
+            machine.saveSettings();
             return null;
          }
 
@@ -133,30 +133,14 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // IDE Controller
       ensureMachineHasIDEControllerNamed(vmName, controllerIDE);
 
+      // Distribution medium
+      ensureMachineHasAttachedDistroMedium(isoName, workingDir, controllerIDE);
+
       // DISK
       String adminDiskPath = workingDir + "/" + adminDisk;
       if (new File(adminDiskPath).exists()) {
          new File(adminDiskPath).delete();
       }
-
-      final IMedium distroMedium = manager.getVBox().openMedium(workingDir + "/" + isoName, DVD, ReadOnly,
-            forceOverwrite);
-
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine arg0) {
-            try {
-               arg0.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
-               arg0.saveSettings();
-            } catch (VBoxException e) {
-               if (e.getMessage().indexOf("is already attached to port") == -1)
-                  throw e;
-            }
-            return null;
-         }
-
-      });
 
       // Create and attach hard disk
       final IMedium hd = manager.getVBox().createHardDisk(diskFormat, adminDiskPath);
@@ -167,9 +151,9 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
-            arg0.saveSettings();
+         public Void apply(IMachine machine) {
+            machine.attachDevice(controllerIDE, 0, 1, DeviceType.HardDisk, hd);
+            machine.saveSettings();
             return null;
          }
 
@@ -179,10 +163,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.getNetworkAdapter(0l).setAttachmentType(NAT);
-            arg0.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
-            arg0.getNetworkAdapter(0l).setEnabled(true);
+         public Void apply(IMachine machine) {
+            machine.getNetworkAdapter(0l).setAttachmentType(NAT);
+            machine.getNetworkAdapter(0l).getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
+            machine.getNetworkAdapter(0l).setEnabled(true);
             return null;
          }
 
@@ -190,13 +174,13 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
       String guestAdditionsDvd = workingDir + "/VBoxGuestAdditions_4.1.2.iso";
       final IMedium guestAdditionsDvdMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
-            AccessMode.ReadOnly, forceOverwrite);
+              AccessMode.ReadOnly, forceOverwrite);
 
       lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
 
          @Override
-         public Void apply(IMachine arg0) {
-            arg0.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
+         public Void apply(IMachine machine) {
+            machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
             return null;
          }
 
@@ -246,18 +230,34 @@ public class IsoToIMachine implements Function<String, IMachine> {
       return vm;
    }
 
+   private void ensureMachineHasAttachedDistroMedium(String isoName, String workingDir, String controllerIDE) {
+      final String pathToIsoFile = checkFileExists(workingDir + "/" + isoName);
+      final IMedium distroMedium = manager.getVBox().openMedium(pathToIsoFile, DVD, ReadOnly, forceOverwrite);
+      lockMachineAndApply(manager, Write, vmName,
+              new AttachDistroMediumToMachine(
+                      checkNotNull(controllerIDE, "controllerIDE"),
+                      checkNotNull(distroMedium, "distroMedium")));
+   }
+
+   public static String checkFileExists(String filePath) {
+      if (new File(filePath).exists()) {
+         return filePath;
+      }
+      throw new IllegalStateException("File " + filePath + " does not exist.");
+   }
+
    public void ensureMachineHasIDEControllerNamed(String vmName, String controllerIDE) {
       lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
-            new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
+              new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
    }
 
    public static <T> T lockMachineAndApply(VirtualBoxManager manager, final LockType type, final String machineId,
-         final Function<IMachine, T> function) {
+                                           final Function<IMachine, T> function) {
       return lockSessionOnMachineAndApply(manager, type, machineId, new Function<ISession, T>() {
 
          @Override
-         public T apply(ISession arg0) {
-            return function.apply(arg0.getMachine());
+         public T apply(ISession session) {
+            return function.apply(session.getMachine());
          }
 
          @Override
@@ -270,7 +270,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    public static <T> T lockSessionOnMachineAndApply(VirtualBoxManager manager, LockType type, String machineId,
-         Function<ISession, T> function) {
+                                                    Function<ISession, T> function) {
       try {
          ISession session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
@@ -282,17 +282,17 @@ public class IsoToIMachine implements Function<String, IMachine> {
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
-               type, e.getMessage()), e);
+                 type, e.getMessage()), e);
       }
    }
 
    private String defaultInstallSequence() {
       return "<Esc><Esc><Enter> "
-            + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
-            + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
-            + "fb=false debconf/frontend=noninteractive "
-            + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
-            + "initrd=/install/initrd.gz -- <Enter>";
+              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
+              + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
+              + "fb=false debconf/frontend=noninteractive "
+              + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
+              + "initrd=/install/initrd.gz -- <Enter>";
    }
 
    private void sendKeyboardSequence(String keyboardSequence) {
