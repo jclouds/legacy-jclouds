@@ -52,6 +52,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
 
       final IVirtualBox vBox = manager.getVBox();
       try {
+         vBox.findMachine(vmName);
          throw new IllegalStateException("Machine " + vmName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))

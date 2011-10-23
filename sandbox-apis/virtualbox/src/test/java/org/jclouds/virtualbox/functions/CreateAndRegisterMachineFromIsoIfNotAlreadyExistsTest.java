@@ -83,6 +83,28 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
    }
 
+   @Test(expectedExceptions = VBoxException.class)
+   public void testFailIfOtherVBoxExceptionIsThrown() throws Exception {
+
+      VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
+      IVirtualBox vBox = createNiceMock(IVirtualBox.class);
+      String vmName = "jclouds-image-my-ubuntu-image";
+
+      String errorMessage = "VirtualBox error: Soem other VBox error";
+      VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
+
+      expect(manager.getVBox()).andReturn(vBox).anyTimes();
+
+      vBox.findMachine(vmName);
+      expectLastCall().andThrow(vBoxException);
+
+      replay(manager, vBox);
+
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+
+
+   }
+
    private String anyString() {
       return EasyMock.<String>anyObject();
    }
