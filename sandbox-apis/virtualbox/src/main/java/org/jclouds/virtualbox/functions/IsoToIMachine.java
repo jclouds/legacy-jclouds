@@ -109,11 +109,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
    public IMachine apply(@Nullable String isoName) {
 
       String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
-      String basebaseResource = ".";
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
+      String baseResource = ".";
+      Server server = new StartJettyIfNotAlreadyRunning(port).apply(baseResource);
 
-      IMachine vm = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
-      manager.getVBox().registerMachine(vm);
+      IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite, manager).apply(vmName);
 
       String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
       String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
@@ -182,6 +181,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
          @Override
          public Void apply(IMachine machine) {
             machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
+            machine.saveSettings();
             return null;
          }
 
@@ -214,8 +214,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
 
          @Override
-         public Void apply(ISession arg0) {
-            IProgress powerDownProgress = arg0.getConsole().powerDown();
+         public Void apply(ISession session) {
+            IProgress powerDownProgress = session.getConsole().powerDown();
             powerDownProgress.waitForCompletion(-1);
             return null;
          }
