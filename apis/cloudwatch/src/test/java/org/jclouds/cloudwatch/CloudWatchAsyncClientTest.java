@@ -22,12 +22,15 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
@@ -42,6 +45,7 @@ import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -50,7 +54,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
 public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncClient> {
 
@@ -93,6 +98,19 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
       @Override
       protected void configure() {
          super.configure();
+      }
+
+      protected void bindRegionsToProvider() {
+         bindRegionsToProvider(Regions.class);
+      }
+
+      static class Regions implements javax.inject.Provider<Map<String, URI>> {
+         @Override
+         public Map<String, URI> get() {
+            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+                  Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
+                  URI.create("https://ec2.us-west-1.amazonaws.com"));
+         }
       }
 
       @Override

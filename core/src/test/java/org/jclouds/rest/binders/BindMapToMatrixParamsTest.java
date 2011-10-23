@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 
-import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriBuilder;
 
@@ -31,6 +30,7 @@ import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.util.Providers;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
@@ -45,14 +45,7 @@ public class BindMapToMatrixParamsTest {
    public void testCorrect() throws SecurityException, NoSuchMethodException {
 
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
-      BindMapToMatrixParams binder = new BindMapToMatrixParams(new Provider<UriBuilder>() {
-
-         @Override
-         public UriBuilder get() {
-            return new UriBuilderImpl();
-         }
-
-      });
+      BindMapToMatrixParams binder = new BindMapToMatrixParams(Providers.<UriBuilder> of(new UriBuilderImpl()));
 
       assertEquals(binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2")), HttpRequest
             .builder().method("GET").endpoint(URI.create("http://momma/;imageName=foo;serverId=2")).build());
@@ -61,14 +54,14 @@ public class BindMapToMatrixParamsTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeMap() {
-      BindMapToMatrixParams binder = new BindMapToMatrixParams(null);
+      BindMapToMatrixParams binder = new BindMapToMatrixParams(Providers.<UriBuilder> of(new UriBuilderImpl()));
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.bindToRequest(request, new File("foo"));
    }
 
-   @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
+   @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
-      BindMapToMatrixParams binder = new BindMapToMatrixParams(null);
+      BindMapToMatrixParams binder = new BindMapToMatrixParams(Providers.<UriBuilder> of(new UriBuilderImpl()));
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
       binder.bindToRequest(request, null);
    }

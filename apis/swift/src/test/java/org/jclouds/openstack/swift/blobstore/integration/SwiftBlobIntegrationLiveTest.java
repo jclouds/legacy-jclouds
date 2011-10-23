@@ -22,6 +22,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 /**
  * 
  * @author James Murty
@@ -36,11 +38,12 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       // not supported in swift
    }
 
-   // not supported in swift
+
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
-      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
-      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
+     // This works for Swift Server 1.4.4/SWauth 1.0.3 but was null in previous versions.
+     // TODO: Better testing for the different versions.
+     super.checkContentDisposition(blob,contentDisposition);
    }
 
    // not supported in swift

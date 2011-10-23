@@ -20,10 +20,15 @@ package org.jclouds.location.suppliers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.location.predicates.LocationPredicates.isRegion;
+import static org.jclouds.location.predicates.LocationPredicates.isZone;
+import static org.jclouds.location.predicates.LocationPredicates.isZoneOrRegionWhereRegionIdEquals;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -31,53 +36,27 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.location.Region;
+import org.jclouds.location.functions.ToIdAndScope;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
-   @Singleton
-   public static final class IsRegionAndIdEqualsOrIsZoneParentIdEquals implements Predicate<Location> {
+public class OnlyLocationOrFirstRegionOptionallyMatchingRegionId implements Supplier<Location> {
 
-      private final String region;
-
-      @Inject
-      IsRegionAndIdEqualsOrIsZoneParentIdEquals(@Region String region) {
-         this.region = checkNotNull(region, "region");
-      }
-
-      @Override
-      public boolean apply(Location input) {
-         switch (input.getScope()) {
-            case ZONE:
-               return input.getParent().getId().equals(region);
-            case REGION:
-               return input.getId().equals(region);
-            default:
-               return false;
-         }
-      }
-
-      @Override
-      public String toString() {
-         return "isRegionAndIdEqualsOrIsZoneParentIdEquals(" + region + ")";
-      }
-   }
-
-   private final Injector injector;
+   private final Predicate<Location> locationPredicate;
    private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   OnlyLocationOrFirstZoneOrRegionMatchingRegionId(Injector injector,
-            @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
-      this.injector = checkNotNull(injector, "injector");
+   OnlyLocationOrFirstRegionOptionallyMatchingRegionId(@Nullable @Region String region,
+         @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.locationPredicate = region == null ? Predicates.<Location>or(isZone(), isRegion())
+            : isZoneOrRegionWhereRegionIdEquals(region);
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplier");
    }
 
@@ -87,16 +66,12 @@ public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier
       Set<? extends Location> locations = locationsSupplier.get();
       if (locationsSupplier.get().size() == 1)
          return getOnlyElement(locationsSupplier.get());
-      IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher = null;
       try {
-         String region = injector.getInstance(Key.get(String.class, Region.class));
-         if (region == null)
-            return Iterables.get(locationsSupplier.get(), 0);
-         matcher = injector.getInstance(IsRegionAndIdEqualsOrIsZoneParentIdEquals.class);
-         Location toReturn = Iterables.find(locations, matcher);
+         Location toReturn = Iterables.find(locations, locationPredicate);
          return toReturn.getScope() == LocationScope.REGION ? toReturn : toReturn.getParent();
       } catch (NoSuchElementException e) {
-         throw new IllegalStateException(String.format("region %s not found in %s", matcher, locations));
+         throw new NoSuchElementException(String.format("couldn't find region matching %s in %s", locationPredicate,
+               transform(locations, ToIdAndScope.INSTANCE)));
       }
    }
 }

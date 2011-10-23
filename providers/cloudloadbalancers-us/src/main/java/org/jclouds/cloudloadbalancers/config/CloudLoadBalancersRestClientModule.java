@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudloadbalancers.config;
 
+import static com.google.common.collect.Iterables.get;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +39,13 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 import org.jclouds.location.config.ProvideRegionToURIViaProperties;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
 import org.jclouds.openstack.reference.AuthHeaders;
@@ -48,6 +53,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -64,11 +70,11 @@ import com.google.inject.TypeLiteral;
 @RequiresHttp
 @ConfiguresRestClient
 public class CloudLoadBalancersRestClientModule extends
-         RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
+      RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-            .build();
+         .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+         .build();
 
    public CloudLoadBalancersRestClientModule() {
       super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
@@ -83,8 +89,8 @@ public class CloudLoadBalancersRestClientModule extends
 
       @Inject
       protected ProvideRegionToURIViaPropertiesWithAccountID(Injector injector,
-               @Named("CONSTANTS") Multimap<String, String> constants,
-               @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID) String accountID) {
+            @Named("CONSTANTS") Multimap<String, String> constants,
+            @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID) String accountID) {
          super(injector, constants);
          constants.replaceValues(RackspaceConstants.PROPERTY_ACCOUNT_ID, ImmutableSet.of(accountID));
       }
@@ -118,14 +124,28 @@ public class CloudLoadBalancersRestClientModule extends
       return endpoints.keySet();
    }
 
+   @Provides
+   @Singleton
+   @Nullable
+   @Region
+   protected String getDefaultRegion(@Provider URI uri, @Region Map<String, URI> map, LoggerFactory logFactory) {
+      String region = ImmutableBiMap.copyOf(map).inverse().get(uri);
+      if (region == null && map.size() > 0) {
+         logFactory.getLogger(getClass().getName()).warn(
+               "failed to find region for current endpoint %s in %s; choosing first: %s", uri, map, region);
+         region = get(map.keySet(), 0);
+      }
+      return region;
+   }
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseCloudLoadBalancersErrorFromHttpResponse.class);
+            ParseCloudLoadBalancersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseCloudLoadBalancersErrorFromHttpResponse.class);
+            ParseCloudLoadBalancersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseCloudLoadBalancersErrorFromHttpResponse.class);
+            ParseCloudLoadBalancersErrorFromHttpResponse.class);
    }
 
 }

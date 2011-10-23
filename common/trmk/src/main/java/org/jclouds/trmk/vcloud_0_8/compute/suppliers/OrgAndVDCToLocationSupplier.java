@@ -55,7 +55,7 @@ public class OrgAndVDCToLocationSupplier extends JustProvider {
    OrgAndVDCToLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
             @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
             Supplier<Map<String, ? extends Org>> orgNameToVDCResource, @Iso3166 Map<String, Set<String>> isoCodesById) {
-      super(isoCodes, providerName, endpoint);
+      super(providerName, endpoint, isoCodes);
       this.orgNameToResource = checkNotNull(orgNameToResource, "orgNameToResource");
       this.orgNameToVDCResource = checkNotNull(orgNameToVDCResource, "orgNameToVDCResource");
       this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");

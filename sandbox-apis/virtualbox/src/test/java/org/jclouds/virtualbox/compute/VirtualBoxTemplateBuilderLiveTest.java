@@ -1,3 +1,22 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.jclouds.virtualbox.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
@@ -21,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrea Turli
  */
 
-@Test(groups = "live")
+@Test(groups = "live", testName = "VirtualBoxTemplateBuilderLiveTest")
 public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
 	   public VirtualBoxTemplateBuilderLiveTest() {
@@ -36,14 +55,7 @@ public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
 		         public boolean apply(OsFamilyVersion64Bit input) {
 		            switch (input.family) {
 		               case UBUNTU:
-		                  return !(input.version.startsWith("11") || input.version.equals("8.04")) && input.is64Bit;
-		               case DEBIAN:
-		                  return !(input.version.equals("6.0")) && input.is64Bit;
-		               case CENTOS:
-		                  return !(input.version.matches("5.[023]") || input.version.equals("8.04")) && input.is64Bit;
-		               case WINDOWS:
-		                  return input.version.equals("2008 SP2") || input.version.equals("")
-		                           || (input.version.equals("2008 R2") && input.is64Bit);
+		                  return input.version.equals("11.04") && !input.is64Bit;
 		               default:
 		                  return false;
 		            }
@@ -54,8 +66,9 @@ public class VirtualBoxTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
 
 		   @Test
 		   public void testTemplateBuilder() {
+		      System.out.println(this.context.getComputeService().listImages());
 		      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
-		      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+		      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
 		      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
 		      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
 		      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

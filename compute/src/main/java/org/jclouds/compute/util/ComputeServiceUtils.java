@@ -231,7 +231,14 @@ public class ComputeServiceUtils {
 
       @Override
       public boolean apply(String input) {
+         if ("".equals(input))
+            return false;
          return in.indexOf(input) != -1;
+      }
+
+      @Override
+      public String toString() {
+         return String.format("containsSubString(%s)", in);
       }
    }
 

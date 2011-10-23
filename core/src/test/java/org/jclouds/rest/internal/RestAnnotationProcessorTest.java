@@ -20,7 +20,6 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.reportMatcher;
@@ -55,7 +54,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Qualifier;
@@ -108,6 +106,7 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
@@ -161,7 +160,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -2457,11 +2455,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(form, "x-amz-copy-source=/eggs/robot");
    }
 
-   @SuppressWarnings("unchecked")
-   private <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
-      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(newParameterizedType(
-               RestAnnotationProcessor.class, clazz))));
-   }
 
    DateService dateService = new SimpleDateFormatDateService();
 

@@ -19,7 +19,6 @@
 package org.jclouds.aws.s3;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
@@ -29,6 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
+import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
@@ -45,6 +45,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
+import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
@@ -85,6 +86,26 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    }
 
    @Override
+   public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
+         NoSuchMethodException, IOException {
+
+      Method method = AWSS3AsyncClient.class
+            .getMethod("putObject", String.class, S3Object.class, PutObjectOptions[].class);
+      HttpRequest request = processor.createRequest(method, "bucket",
+            blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB));
+
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/hello HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertPayloadEquals(request, "hello", "text/plain", false);
+
+      assertResponseParserClassEquals(method, request, ParseETagHeader.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   @Override
    public void testGetBucketLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
@@ -111,8 +132,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    @Override
    public void testPutBucketDefault() throws ArrayIndexOutOfBoundsException, SecurityException,
          IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array
-            .newInstance(PutBucketOptions.class, 0).getClass());
+      Method method = AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class,
+            PutBucketOptions[].class);
       HttpRequest request = processor.createRequest(method, (String) null, "bucket");
 
       assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");
@@ -224,8 +245,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
 
    public void testPutBucketEu() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
          NoSuchMethodException, IOException {
-      Method method = AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array
-            .newInstance(PutBucketOptions.class, 0).getClass());
+      Method method = AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class,
+            PutBucketOptions[].class);
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
       assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");

@@ -19,17 +19,16 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Throwables.propagate;
+import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.classextension.EasyMock.createMock;
-import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
-
-import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
@@ -41,6 +40,7 @@ import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
@@ -48,6 +48,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 /**
@@ -155,6 +156,12 @@ public abstract class BaseRestClientTest {
    protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
       assertEquals(RestAnnotationProcessor.createResponseParser(parserFactory, injector, method, request).getClass(),
             parserClass);
+   }
+
+   @SuppressWarnings("unchecked")
+   protected <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
+      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(newParameterizedType(
+            RestAnnotationProcessor.class, clazz))));
    }
 
 }

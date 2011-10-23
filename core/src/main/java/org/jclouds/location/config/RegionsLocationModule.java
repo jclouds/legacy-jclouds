@@ -21,7 +21,7 @@ package org.jclouds.location.config;
 import java.util.Set;
 
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZoneOrRegionMatchingRegionId;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
 import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
 
 import com.google.common.base.Supplier;
@@ -39,7 +39,7 @@ public class RegionsLocationModule extends LocationModule {
       bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
       }).to(RegionToProviderOrJustProvider.class);
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZoneOrRegionMatchingRegionId.class);
+      }).to(OnlyLocationOrFirstRegionOptionallyMatchingRegionId.class);
       super.configure();
    }
 
