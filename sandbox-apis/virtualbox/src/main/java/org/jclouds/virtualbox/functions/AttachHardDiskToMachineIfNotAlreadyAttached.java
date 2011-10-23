@@ -20,32 +20,37 @@
 package org.jclouds.virtualbox.functions;
 
 import com.google.common.base.Function;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.*;
 
 import javax.annotation.Nullable;
+
+import static org.virtualbox_4_1.DeviceType.HardDisk;
 
 /**
  * @author Mattias Holmqvist
  */
-public class AttachDistroMediumToMachine implements Function<IMachine, Void> {
+public class AttachHardDiskToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
 
-   private final String controllerIDE;
-   private final IMedium distroMedium;
+   private String controllerIDE;
+   private IMedium hardDisk;
+   private String adminDiskPath;
+   private String diskFormat;
+   private VirtualBoxManager manager;
 
-   public AttachDistroMediumToMachine(String controllerIDE, IMedium distroMedium) {
+   public AttachHardDiskToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, VirtualBoxManager manager) {
       this.controllerIDE = controllerIDE;
-      this.distroMedium = distroMedium;
+      this.hardDisk = hardDisk;
+      this.manager = manager;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
+
+      // Create and attach hard disk
+      int controllerPort = 0;
+      int device = 1;
       try {
-         int controllerPort = 0;
-         int device = 0;
-         machine.attachDevice(controllerIDE, controllerPort, device, DeviceType.DVD, distroMedium);
+         machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!alreadyAttached(e))
