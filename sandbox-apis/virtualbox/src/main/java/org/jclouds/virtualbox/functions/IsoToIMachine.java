@@ -109,8 +109,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
    public IMachine apply(@Nullable String isoName) {
 
       String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
-      String basebaseResource = ".";
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
+      String baseResource = ".";
+      Server server = new StartJettyIfNotAlreadyRunning(port).apply(baseResource);
 
       IMachine vm = manager.getVBox().createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
       manager.getVBox().registerMachine(vm);
