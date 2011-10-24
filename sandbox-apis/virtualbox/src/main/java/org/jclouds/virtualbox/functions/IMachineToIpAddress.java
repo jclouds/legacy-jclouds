@@ -19,7 +19,11 @@
 
 package org.jclouds.virtualbox.functions;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -31,6 +35,9 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import javax.annotation.Nullable;
 
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 
 /**
  * Get an IP address from an IMachine using arp of the host machine.
@@ -92,14 +99,9 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 	 * @return
 	 */
 	protected String formatMacAddress(String vboxMacAddress, boolean isOSX) {
-		int offset = 0, step = 2;
-		for (int j = 1; j <= 5; j++) {
-			vboxMacAddress = new StringBuffer(vboxMacAddress)
-					.insert(j * step + offset, ":").toString().toLowerCase();
-			offset++;
-		}
-
-		String macAddress = vboxMacAddress;
+		checkNotNull(vboxMacAddress);
+		checkArgument(vboxMacAddress.length()==12);
+		String macAddress = Joiner.on(":").join(Splitter.fixedLength(2).split(vboxMacAddress));
 		if (isOSX) {
 			if (macAddress.contains("00"))
 				macAddress = new StringBuffer(macAddress).delete(
