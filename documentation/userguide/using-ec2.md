@@ -55,7 +55,7 @@ Even refining lists to a set of user ids, using EC2 can be bogged down, parsing 
 
 === Properties to set cluster compute images ==
 Cluster compute images are assigned the following default query, corresponding to the property key constant AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY
-{{{virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs}}}
+
 In order to save time, we only look for cluster compute images in regions that support them.  In order to change the default for this, affect the property PROPERTY_EC2_CC_REGIONS, currently set to "us-east-1"
 
 
