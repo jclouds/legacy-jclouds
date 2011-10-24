@@ -29,28 +29,27 @@ import static org.virtualbox_4_1.DeviceType.HardDisk;
 /**
  * @author Mattias Holmqvist
  */
-public class AttachHardDiskToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
+public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
 
    private String controllerIDE;
    private IMedium hardDisk;
-   private String adminDiskPath;
-   private String diskFormat;
-   private VirtualBoxManager manager;
+   private int controllerPort;
+   private int device;
+   private DeviceType deviceType;
 
-   public AttachHardDiskToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, VirtualBoxManager manager) {
+   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, int controllerPort, int device, DeviceType deviceType) {
       this.controllerIDE = controllerIDE;
       this.hardDisk = hardDisk;
-      this.manager = manager;
+      this.controllerPort = controllerPort;
+      this.device = device;
+      this.deviceType = deviceType;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-
-      // Create and attach hard disk
-      int controllerPort = 0;
-      int device = 1;
+      // Create and attach medium
       try {
-         machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
+         machine.attachDevice(controllerIDE, controllerPort, device, deviceType, hardDisk);
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!alreadyAttached(e))

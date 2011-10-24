@@ -27,6 +27,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 import static org.virtualbox_4_1.AccessMode.ReadOnly;
 import static org.virtualbox_4_1.DeviceType.DVD;
+import static org.virtualbox_4_1.DeviceType.HardDisk;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
 
@@ -105,16 +106,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
 
       // Change RAM
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine machine) {
-            machine.setMemorySize(1024l);
-            machine.saveSettings();
-            return null;
-         }
-
-      });
+      ensureMachineHasMemory(vmName, 1024l);
 
       // IDE Controller
       ensureMachineHasIDEControllerNamed(vmName, controllerIDE);
@@ -132,8 +124,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
 
       // Attach hard disk to machine
-      lockMachineAndApply(manager, Write, vmName,
-              new AttachHardDiskToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, manager));
+      ensureMachineHasHardDiskAttached(vmName, hardDisk);
 
       // NAT
       ensureNATNetworkingIsAppliedToMachine(vmName);
@@ -142,16 +133,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       final IMedium guestAdditionsDvdMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
               AccessMode.ReadOnly, forceOverwrite);
 
-      lockMachineAndApply(manager, Write, vmName, new Function<IMachine, Void>() {
-
-         @Override
-         public Void apply(IMachine machine) {
-            machine.attachDevice(controllerIDE, 1, 1, DeviceType.DVD, guestAdditionsDvdMedium);
-            machine.saveSettings();
-            return null;
-         }
-
-      });
+      // Guest additions
+      ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
 
       IProgress prog = vm.launchVMProcess(manager.getSessionObject(), "gui", "");
       prog.waitForCompletion(-1);
@@ -195,6 +178,20 @@ public class IsoToIMachine implements Function<String, IMachine> {
          logger.error(e, "Could not stop Jetty server.");
       }
       return vm;
+   }
+
+   private void ensureGuestAdditionsMediumIsAttached(String vmName, final IMedium guestAdditionsDvdMedium) {
+      lockMachineAndApply(manager, Write, vmName,
+              new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, guestAdditionsDvdMedium, 1, 1, DeviceType.DVD));
+   }
+
+   private void ensureMachineHasHardDiskAttached(String vmName, IMedium hardDisk) {
+      lockMachineAndApply(manager, Write, vmName,
+              new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, 0, 1, HardDisk));
+   }
+
+   private void ensureMachineHasMemory(String vmName, final long memorySize) {
+      lockMachineAndApply(manager, Write, vmName, new ApplyMemoryToMachine(memorySize));
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName) {
