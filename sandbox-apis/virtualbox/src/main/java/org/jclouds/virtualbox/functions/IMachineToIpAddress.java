@@ -55,11 +55,7 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
 	@Override
 	public String apply(@Nullable IMachine machine) {
-//		final String hostId = System
-//				.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
-      final IVirtualBox vBox = manager.getVBox();
-
-		String macAddress = new FormatVboxMacAddressToShellMacAddress(/*isOSX(hostId)*/ true)
+		String macAddress = new FormatVboxMacAddressToShellMacAddress(isOSX(hostId))
 			.apply(machine.getNetworkAdapter(0l).getMACAddress());
 
 		// TODO: This is both shell-dependent and hard-coded. Needs to be fixed.

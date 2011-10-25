@@ -51,6 +51,8 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
 	      // TODO ensure a vm with bridged NIC is running 
 			IMachine vm = manager.getVBox().findMachine(vmName);
+			
+			// TODO discover the bridged network 
 	      String ipAddress = new IMachineToIpAddress(manager, localContext, hostId).apply(vm);
 	      // TODO assert ip address is ssh-able
 	  }
