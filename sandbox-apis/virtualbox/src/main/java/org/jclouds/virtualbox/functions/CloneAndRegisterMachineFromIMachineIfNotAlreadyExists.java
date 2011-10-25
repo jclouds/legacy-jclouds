@@ -92,6 +92,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       options.add(CloneOptions.Link);
       // TODO assert master has at least a snapshot 
+      try {
+			manager.openMachineSession(master).getConsole().takeSnapshot("test", "desc test");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      manager.getSessionObject().getConsole().takeSnapshot("snapshot-test", "");
       IProgress progress = master.getCurrentSnapshot().getMachine().cloneTo(clonedMachine, CloneMode.MachineState,
                options);
 
