@@ -19,17 +19,15 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 
-import org.jclouds.compute.ComputeService;
+import java.io.IOException;
+
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.domain.Credentials;
+import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 
@@ -38,29 +36,22 @@ import org.virtualbox_4_1.VirtualBoxManager;
  * 
  * @author Andrea Turli
  */
-@Test(groups = "unit")
-public class IMachineToIpAddressTest {
+@Test(groups = "live", singleThreaded = true, testName = "IMachineToIpAddressTest")
+public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 
+   private String hostId = "host";
+	private String guestId = "guest";
+
+   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+   VirtualBoxManager manager;
+	
 	  @Test
-	  public void testFormatMacAddress() {
-	      VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
-	      ComputeService computeService = createNiceMock(ComputeService.class);
-
-	      IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-	      IMachine vm = createNiceMock(IMachine.class);
-	      IGuestOSType guestOsType = createNiceMock(IGuestOSType.class);
-	      String linuxDescription = "Ubuntu 10.04";
-	      expect(vbm.getVBox()).andReturn(vBox).anyTimes();
-
-	      expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
-	      expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
-	      expect(vm.getDescription()).andReturn("my-ubuntu-machine").anyTimes();
-	      expect(guestOsType.getDescription()).andReturn(linuxDescription).anyTimes();
-	      expect(guestOsType.getIs64Bit()).andReturn(true);
-
-	      replay(vbm, computeService, vBox, vm, guestOsType);
-
-			assertEquals(new IMachineToIpAddress(vbm, computeService).formatMacAddress("0800271A9806", false), "8:0:27:1A:98:06");
-
+	  public void testConvert() throws IOException {
+	      manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
+			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+	      // TODO ensure a vm with bridged NIC is running 
+			IMachine vm = manager.getVBox().findMachine(vmName);
+	      String ipAddress = new IMachineToIpAddress(manager, localContext, hostId).apply(vm);
+	      // TODO assert ip address is ssh-able
 	  }
 }

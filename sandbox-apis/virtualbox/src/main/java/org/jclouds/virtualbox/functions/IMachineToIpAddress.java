@@ -19,24 +19,23 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Function;
+import com.google.inject.Inject;
 
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
 
 
 /**
@@ -47,24 +46,28 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
 	private VirtualBoxManager manager;
-	private ComputeService computeService;
+   private ComputeServiceContext context;
+   private String hostId;
 
-	public IMachineToIpAddress(VirtualBoxManager manager,
-			ComputeService computeService) {
+   @Inject
+	public IMachineToIpAddress(VirtualBoxManager manager, ComputeServiceContext context, String hostId) {
 		this.manager = manager;
-		this.computeService = computeService;
+		this.context = context;
+		this.hostId = hostId;
 	}
 
 	@Override
 	public String apply(@Nullable IMachine machine) {
-		final String hostId = System
-				.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
-		boolean isOsX = isOSX(manager.getVBox().findMachine(hostId));
-		String macAddress = formatMacAddress(machine.getNetworkAdapter(0l).getMACAddress(), isOsX);
+//		final String hostId = System
+//				.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
+      final IVirtualBox vBox = manager.getVBox();
+
+		String macAddress = new FormatVboxMacAddressToShellMacAddress(/*isOSX(hostId)*/ true)
+			.apply(machine.getNetworkAdapter(0l).getMACAddress());
 
 		// TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
 		ExecResponse execResponse = runScriptOnNode(hostId,
-				"for i in {1..254} ; do ping -c 1 -t 1 192.168.2.$i & done",
+				"for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done",
 				runAsRoot(false).wrapInInitScript(false));
 		System.out.println(execResponse);
 
@@ -78,46 +81,18 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
 	private ExecResponse runScriptOnNode(String nodeId, String command,
 			RunScriptOptions options) {
-		return computeService.runScriptOnNode(nodeId, command, options);
+		return context.getComputeService().runScriptOnNode(nodeId, command, options);
 	}
 
-	protected boolean isOSX(IMachine machine) {
-		String osTypeId = machine.getOSTypeId();
-		IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
-		return guestOSType.getFamilyDescription().equals("Other");
-	}
-
-	/**
-	 * This should format virtualbox mac address xxyyzzaabbcc into a valid mac address for the different shells
-	 * i.e: bash - 
-	 * $ arp -an
-	 * ? (172.16.1.101) at 14:fe:b5:e2:fd:ba [ether] on eth0
-	 * 
-
-	 * @param vboxMacAddress
-	 * @param hostId
-	 * @return
-	 */
-	protected String formatMacAddress(String vboxMacAddress, boolean isOSX) {
-		checkNotNull(vboxMacAddress);
-		checkArgument(vboxMacAddress.length()==12);
-		String macAddress = Joiner.on(":").join(Splitter.fixedLength(2).split(vboxMacAddress));
-		if (isOSX) {
-			if (macAddress.contains("00"))
-				macAddress = new StringBuffer(macAddress).delete(
-						macAddress.indexOf("00"), macAddress.indexOf("00") + 1)
-						.toString();
-
-			if (macAddress.contains("0"))
-				if (macAddress.indexOf("0") + 1 != ':'
-						&& macAddress.indexOf("0") - 1 != ':')
-					macAddress = new StringBuffer(macAddress).delete(
-							macAddress.indexOf("0"), macAddress.indexOf("0") + 1)
-							.toString();
-		}
-
-		return macAddress;
-
-	}
-
+//	protected boolean isOSX(IMachine machine) {
+//		String osTypeId = machine.getOSTypeId();
+//		IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
+//		return guestOSType.getFamilyDescription().equals("Other");
+//	}
+//	
+	
+   public boolean isOSX(String id) {
+      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
+               "Mac OS X");
+   }
 }
