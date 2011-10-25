@@ -31,6 +31,7 @@ import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -53,27 +54,30 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    private String vmId;
    private boolean forceOverwrite;
    private VirtualBoxManager manager;
+	private String cloneName;
+
 
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(String settingsFile, String osTypeId, String vmId,
-                                                            boolean forceOverwrite, VirtualBoxManager manager) {
+                                                            boolean forceOverwrite, VirtualBoxManager manager,String cloneName) {
       this.settingsFile = settingsFile;
       this.osTypeId = osTypeId;
       this.vmId = vmId;
       this.forceOverwrite = forceOverwrite;
       this.manager = manager;
+		this.cloneName = cloneName;
+
    }
 
    @Override
    public IMachine apply(@Nullable IMachine master) {
-      String instanceName = master.getName() + "_1";
-
+      
       final IVirtualBox vBox = manager.getVBox();
       try {
-         vBox.findMachine(instanceName);
-         throw new IllegalStateException("Machine " + instanceName + " is already registered.");
+         vBox.findMachine(cloneName);
+         throw new IllegalStateException("Machine " + cloneName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
-            return cloneMachine(vBox, instanceName, master);
+            return cloneMachine(vBox, cloneName, master);
          else
             throw e;
       }
@@ -83,10 +87,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       return e.getMessage().indexOf("VirtualBox error: Could not find a registered machine named ") != -1;
    }
 
-   private IMachine cloneMachine(IVirtualBox vBox, String instanceName, IMachine master) {
-      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, instanceName, osTypeId, vmId, forceOverwrite);
+   private IMachine cloneMachine(IVirtualBox vBox, String cloneName, IMachine master) {
+      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, cloneName, osTypeId, vmId, forceOverwrite);
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       options.add(CloneOptions.Link);
+      // TODO assert master has at least a snapshot 
       IProgress progress = master.getCurrentSnapshot().getMachine().cloneTo(clonedMachine, CloneMode.MachineState,
                options);
 

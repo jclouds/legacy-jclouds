@@ -43,17 +43,18 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 	private String guestId = "guest";
 
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
-   VirtualBoxManager manager;
+   private String clonedName = "jclouds-image-virtualbox-machine-to-machine-test_clone";
+   private VirtualBoxManager manager;
 	
 	  @Test
 	  public void testConvert() throws IOException {
 	      manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
 			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
-	      // TODO ensure a vm with bridged NIC is running 
-			IMachine vm = manager.getVBox().findMachine(vmName);
-			
+	      // TODO ensure a vm with bridged NIC is running
+			IMachine master = manager.getVBox().findMachine(vmName);
+			IMachine cloned = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager, clonedName).apply(master);
 			// TODO discover the bridged network 
-	      String ipAddress = new IMachineToIpAddress(manager, localContext, hostId).apply(vm);
+	      String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(cloned);
 	      // TODO assert ip address is ssh-able
 	  }
 	  

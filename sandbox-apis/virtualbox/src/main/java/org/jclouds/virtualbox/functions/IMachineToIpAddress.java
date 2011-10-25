@@ -42,13 +42,11 @@ import com.google.inject.Inject;
  */
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
-	private VirtualBoxManager manager;
    private ComputeServiceContext context;
    private String hostId;
 
    @Inject
-	public IMachineToIpAddress(VirtualBoxManager manager, ComputeServiceContext context, String hostId) {
-		this.manager = manager;
+	public IMachineToIpAddress(ComputeServiceContext context, String hostId) {
 		this.context = context;
 		this.hostId = hostId;
 	}

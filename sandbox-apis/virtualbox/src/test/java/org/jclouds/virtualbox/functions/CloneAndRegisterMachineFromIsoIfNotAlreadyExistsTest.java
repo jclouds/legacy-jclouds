@@ -43,13 +43,13 @@ import static org.easymock.classextension.EasyMock.*;
 @Test(groups = "unit", testName = "CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest")
 public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
-   @Test
+	@Test
    public void testCloneIfNotAlreadyExists() throws Exception {
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
-
+      String cloneName = vmName + "_clone";
       IMachine master = createMock(IMachine.class);
       IMachine createdMachine = createMock(IMachine.class);
 
@@ -62,10 +62,10 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       String errorMessage = errorMessageBuilder.toString();
       VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
 
-      vBox.findMachine(vmName + "_1");
+      vBox.findMachine(cloneName);
       expectLastCall().andThrow(vBoxException);
       
-      expect(vBox.createMachine(anyString(), eq(vmName + "_1"), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
+      expect(vBox.createMachine(anyString(), eq(cloneName), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
       IProgress iProgress = createNiceMock(IProgress.class);
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       options.add(CloneOptions.Link);
@@ -79,7 +79,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox, master, iProgress, iSnapshot);
 
-      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager).apply(master);
+      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager, cloneName).apply(master);
 
       verify(manager, vBox);
    }
@@ -91,16 +91,17 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
-      
+      String cloneName = vmName + "_clone";
+
       IMachine master = createMock(IMachine.class);
       IMachine registeredMachine = createMock(IMachine.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMachine(vmName+"_1")).andReturn(registeredMachine).anyTimes();
+      expect(vBox.findMachine(cloneName)).andReturn(registeredMachine).anyTimes();
 
       replay(manager, vBox);
 
-      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager).apply(master);
+      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager, cloneName).apply(master);
    }
 	
    private String anyString() {
