@@ -196,7 +196,7 @@
                     <plugin>
                         <groupId>net.kindleit</groupId>
                         <artifactId>maven-gae-plugin</artifactId>
-                        <version>0.8.4</version>
+                        <version>0.9.1</version>
                         <configuration>
                             <serverId>google-appengine</serverId>
                             <sdkDir>${appengine.sdk.root}</sdkDir>
