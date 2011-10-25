@@ -78,6 +78,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
@@ -109,6 +110,7 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -775,7 +777,9 @@ public class RestAnnotationProcessor<T> {
    public static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
       if (annotation == null) {
-         if (method.getReturnType().equals(void.class)
+         if (method.isAnnotationPresent(JAXBResponseParser.class)) {
+             return getJAXBParserKeyForMethod(method);
+         } else if (method.getReturnType().equals(void.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
             return Key.get(ReleasePayloadAndReturn.class);
          } else if (method.getReturnType().equals(boolean.class) || method.getReturnType().equals(Boolean.class)
@@ -806,6 +810,13 @@ public class RestAnnotationProcessor<T> {
       Type returnVal = getReturnTypeForMethod(method);
       return getJsonParserKeyForMethodAnType(method, returnVal);
    }
+   
+   @SuppressWarnings("unchecked")
+   public static Key<? extends Function<HttpResponse, ?>> getJAXBParserKeyForMethod(Method method) {
+       Type returnVal = getReturnTypeForMethod(method);
+       Type parserType = Types.newParameterizedType(ParseXMLWithJAXB.class, returnVal);
+       return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
+    }
 
    public static Type getReturnTypeForMethod(Method method) {
       Type returnVal;
