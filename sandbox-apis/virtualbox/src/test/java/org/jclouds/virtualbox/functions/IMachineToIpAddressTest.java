@@ -56,4 +56,6 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 	      String ipAddress = new IMachineToIpAddress(manager, localContext, hostId).apply(vm);
 	      // TODO assert ip address is ssh-able
 	  }
+	  
+	  
 }
