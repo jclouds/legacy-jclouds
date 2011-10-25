@@ -23,12 +23,9 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -83,13 +80,6 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 			RunScriptOptions options) {
 		return context.getComputeService().runScriptOnNode(nodeId, command, options);
 	}
-
-//	protected boolean isOSX(IMachine machine) {
-//		String osTypeId = machine.getOSTypeId();
-//		IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
-//		return guestOSType.getFamilyDescription().equals("Other");
-//	}
-//	
 	
    public boolean isOSX(String id) {
       return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
