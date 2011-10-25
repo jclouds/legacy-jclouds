@@ -19,9 +19,16 @@
 
 package org.jclouds.virtualbox.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.easymock.EasyMock;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CloneMode;
+import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -43,9 +50,11 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
+      IMachine master = createMock(IMachine.class);
       IMachine createdMachine = createMock(IMachine.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
+      expect(master.getName()).andReturn(vmName).anyTimes();
 
       StringBuilder errorMessageBuilder = new StringBuilder();
       errorMessageBuilder.append("VirtualBox error: Could not find a registered machine named ");
@@ -53,19 +62,28 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       String errorMessage = errorMessageBuilder.toString();
       VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
 
-      vBox.findMachine(vmName);
+      vBox.findMachine(vmName + "_1");
       expectLastCall().andThrow(vBoxException);
       
-      expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
-      
+      expect(vBox.createMachine(anyString(), eq(vmName + "_1"), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
+      IProgress iProgress = createNiceMock(IProgress.class);
+      List<CloneOptions> options = new ArrayList<CloneOptions>();
+      options.add(CloneOptions.Link);
+		ISnapshot iSnapshot = createNiceMock(ISnapshot.class);
+		expect(master.getCurrentSnapshot()).andReturn(iSnapshot).anyTimes();
+		expect(iSnapshot.getMachine()).andReturn(master).anyTimes();
+		expect(master.cloneTo(createdMachine, CloneMode.MachineState,
+            options)).andReturn(iProgress).anyTimes();
+		expect(iProgress.getCompleted()).andReturn(true).anyTimes();
       vBox.registerMachine(createdMachine);
 
-      replay(manager, vBox);
+      replay(manager, vBox, master, iProgress, iSnapshot);
 
-      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager).apply(master);
 
       verify(manager, vBox);
    }
+   
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testFailIfMachineIsAlreadyRegistered() throws Exception {
@@ -73,39 +91,18 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
-
+      
+      IMachine master = createMock(IMachine.class);
       IMachine registeredMachine = createMock(IMachine.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMachine(vmName)).andReturn(registeredMachine).anyTimes();
+      expect(vBox.findMachine(vmName+"_1")).andReturn(registeredMachine).anyTimes();
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager).apply(master);
    }
-
-   @Test(expectedExceptions = VBoxException.class)
-   public void testFailIfOtherVBoxExceptionIsThrown() throws Exception {
-
-      VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
-      IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-      String vmName = "jclouds-image-my-ubuntu-image";
-
-      String errorMessage = "VirtualBox error: Soem other VBox error";
-      VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
-
-      expect(manager.getVBox()).andReturn(vBox).anyTimes();
-
-      vBox.findMachine(vmName);
-      expectLastCall().andThrow(vBoxException);
-
-      replay(manager, vBox);
-
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
-
-
-   }
-
+	
    private String anyString() {
       return EasyMock.<String>anyObject();
    }
