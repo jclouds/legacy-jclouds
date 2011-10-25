@@ -29,12 +29,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.xml.XMLParser;
 
 /**
  * Parses XML documents using JAXB.
  * 
  * @author Ignasi Barrera
+ * @see ParseXMLWithJAXB
  */
 @Singleton
 public class JAXBParser implements XMLParser

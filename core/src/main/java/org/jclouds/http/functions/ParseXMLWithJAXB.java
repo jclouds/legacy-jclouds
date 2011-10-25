@@ -23,10 +23,12 @@ import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.xml.bind.JAXBContext;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
@@ -40,6 +42,12 @@ import com.google.inject.TypeLiteral;
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
  * caller.
+ * <p>
+ * {@link JAXBContext} works with {@link Class} objects instead of {@link Type}. This could be a
+ * limitation if we are trying to parse typed collections of objects. However, when using JAXB we
+ * expect to have well formed XML documents with one single root element, so the objects to parse
+ * should not be collections but objects that wrap collections of elements, and that should work
+ * fine.
  * 
  * @author Ignasi Barrera
  */
