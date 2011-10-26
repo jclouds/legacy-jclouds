@@ -62,6 +62,7 @@ import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.CreationException;
@@ -83,7 +84,6 @@ public class FilesystemAsyncBlobStoreTest {
 
     static {
         System.setProperty(LOGGING_CONFIG_KEY, LOGGING_CONFIG_VALUE);
-
     }
 
     private BlobStoreContext context = null;
@@ -117,6 +117,12 @@ public class FilesystemAsyncBlobStoreTest {
             }
             resourceToDelete.remove();
         }
+    }
+
+    @DataProvider
+    public Object[][] ignoreOnWindows() {
+        return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
+                                        : TestUtils.SINGLE_NO_ARG_INVOCATION);
     }
 
     /**
@@ -399,6 +405,7 @@ public class FilesystemAsyncBlobStoreTest {
     /**
      * Test of removeBlob method, with only one blob with a complex path as key
      */
+    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
     public void testRemoveBlob_ComplexBlobKey() throws IOException {
         final String BLOB_KEY = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
         boolean result;
@@ -429,6 +436,7 @@ public class FilesystemAsyncBlobStoreTest {
      * when first blob is removed, not all of its key's path is removed, because
      * it is shared with the second blob's key
      */
+    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
     public void testRemoveBlob_TwoComplexBlobKeys() throws IOException {
         final String BLOB_KEY1 = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
         final String BLOB_KEY2 = TestUtils.createRandomBlobKey("aa/bb/ee/ff/", null);
@@ -702,6 +710,7 @@ public class FilesystemAsyncBlobStoreTest {
         TestUtils.directoryExists(TARGET_CONTAINER_NAME2, false);
     }
 
+    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
     public void testInvalidContainerName() {
         try {
             blobStore.createContainerInLocation(null, "file/system");
@@ -716,23 +725,28 @@ public class FilesystemAsyncBlobStoreTest {
     }
 
     public void testRanges() throws IOException {
+        /*
+         * Using CONTAINER_NAME here breaks tests on Windows because the container
+         * can't be deleted. See http://code.google.com/p/jclouds/issues/detail?id=737
+         */
+        final String containerName = "containerWithRanges";
         String payload = "abcdefgh";
         Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
-        blobStore.putBlob(CONTAINER_NAME, blob);
+        blobStore.putBlob(containerName, blob);
 
         GetOptions getOptionsRangeStartAt = new GetOptions();
         getOptionsRangeStartAt.startAt(1);
-        Blob blobRangeStartAt = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeStartAt);
+        Blob blobRangeStartAt = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeStartAt);
         Assert.assertEquals("bcdefgh", IOUtils.toString(blobRangeStartAt.getPayload().getInput()));
 
         GetOptions getOptionsRangeTail = new GetOptions();
         getOptionsRangeTail.tail(3);
-        Blob blobRangeTail = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeTail);
+        Blob blobRangeTail = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeTail);
         Assert.assertEquals("fgh", IOUtils.toString(blobRangeTail.getPayload().getInput()));
 
         GetOptions getOptionsFragment = new GetOptions();
         getOptionsFragment.range(4, 6);
-        Blob blobFragment = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsFragment);
+        Blob blobFragment = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsFragment);
         Assert.assertEquals("efg", IOUtils.toString(blobFragment.getPayload().getInput()));
     }
 

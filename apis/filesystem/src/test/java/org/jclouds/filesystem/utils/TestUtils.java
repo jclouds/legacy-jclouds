@@ -48,6 +48,12 @@ public class TestUtils {
 
     public static final String TARGET_BASE_DIR = "." + File.separator + "target" + File.separator + "basedir" + File.separator;
 
+    public static final Object[][] NO_INVOCATIONS = new Object[0][0];
+    public static final Object[][] SINGLE_NO_ARG_INVOCATION = new Object[][] { new Object[0] };
+
+    public static boolean isWindowsOs() {
+        return System.getProperty("os.name", "").toLowerCase().contains("windows");
+    }
 
     /**
      * Generate a random blob key simple name (with no path in the key)
