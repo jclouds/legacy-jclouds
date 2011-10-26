@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,6 +47,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * Needed to sign and verify requests and responses.
@@ -66,6 +70,7 @@ public class AWSUtils {
    private final Provider<ErrorHandler> errorHandlerProvider;
    private final String requestId;
    private final String requestToken;
+
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -141,6 +146,62 @@ public class AWSUtils {
       Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
       for (int i = 0; i < values.length; i++) {
          builder.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase() + "s[" + i + "]"));
+      }
+      ImmutableMultimap<String, String> forms = builder.build();
+      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+   }
+
+   public static <R extends HttpRequest> R indexMapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Map<?, ?>, "this binder is only valid for Map<?,?>: " + input.getClass());
+      Map<?, ?> map = (Map<?, ?>) input;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      int i = 1;
+      for (Map.Entry<?, ?> e : map.entrySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(e.getKey().toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+         if (e.getValue() != null) {
+            builder.put(prefix + "." + i + "." + valueSuffix, e.getValue().toString());
+         }
+         i++;
+      }
+      ImmutableMultimap<String, String> forms = builder.build();
+      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <R extends HttpRequest> R indexMultimapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Multimap<?, ?>, "this binder is only valid for Multimap<?,?>: " + input.getClass());
+      Multimap<Object, Object> map = (Multimap<Object, Object>) input;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      int i = 1;
+      for (Object k : map.keySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+         int j = 1;
+         for (Object v : map.get(k)) {
+            builder.put(prefix + "." + i + "." + valueSuffix + "." + j, v.toString());
+            j++;
+         }
+         i++;
+      }
+      ImmutableMultimap<String, String> forms = builder.build();
+      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <R extends HttpRequest> R indexMapOfIterableToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Map<?, ?>, "this binder is only valid for Map<?,Iterable<?>>: " + input.getClass());
+      Map<Object, Iterable<Object>> map = (Map<Object, Iterable<Object>>) input;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      int i = 1;
+      for (Object k : map.keySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+         if (!Iterables.isEmpty(map.get(k))) {
+            int j = 1;
+            for (Object v : map.get(k)) {
+               builder.put(prefix + "." + i + "." + valueSuffix + "." + j, v.toString());
+               j++;
+            }
+         }
+         i++;
       }
       ImmutableMultimap<String, String> forms = builder.build();
       return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);

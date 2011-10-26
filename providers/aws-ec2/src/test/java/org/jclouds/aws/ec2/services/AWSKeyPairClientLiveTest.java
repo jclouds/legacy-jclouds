@@ -65,7 +65,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class AWSKeyPairClientLiveTest {
 
    private AWSKeyPairClient client;
@@ -120,7 +120,7 @@ public class AWSKeyPairClientLiveTest {
 
       TemplateOptions options = computeContext.getComputeService().templateOptions();
 
-      options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
+      options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class);
 
       ComputeServiceContext noSshContext = null;
       try {
@@ -132,12 +132,13 @@ public class AWSKeyPairClientLiveTest {
          NodeMetadata first = get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
+         // credentials should not be present as the import public key call doesn't have access to
+         // the related private key
+         assert first.getCredentials().credential == null : first;
 
          AWSRunningInstance instance = getInstance(instanceClient, first.getProviderId());
 
-         assert instance.getSpotInstanceRequestId() != null : instance;
          assertEquals(instance.getKeyName(), "jclouds#" + group);
-         assertEquals(first.getCredentials().credential, null);
 
          Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
                   .runScriptOnNodesMatching(

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -35,7 +35,7 @@
 
     <properties>
         <test.elastichosts-lon-b.endpoint>https://api.lon-b.elastichosts.com</test.elastichosts-lon-b.endpoint>
-        <test.elastichosts-lon-b.apiversion>1.0</test.elastichosts-lon-b.apiversion>
+        <test.elastichosts-lon-b.apiversion>2.0</test.elastichosts-lon-b.apiversion>
         <test.elastichosts-lon-b.identity>FIXME_IDENTITY</test.elastichosts-lon-b.identity>
         <test.elastichosts-lon-b.credential>FIXME_CREDENTIAL</test.elastichosts-lon-b.credential>
     </properties>

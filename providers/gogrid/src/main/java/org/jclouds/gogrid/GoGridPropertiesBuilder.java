@@ -41,10 +41,11 @@ public class GoGridPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ZONES, "1,2");
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA,US-VA");
+      properties.setProperty(PROPERTY_ZONES, "1,2,3");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA,US-VA,BR-SP");
       properties.setProperty(PROPERTY_ZONE + ".1." + ISO3166_CODES, "US-CA");
       properties.setProperty(PROPERTY_ZONE + ".2." + ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_ZONE + ".3." + ISO3166_CODES, "BR-SP");
       properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.gogrid.com/api");
       properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "1");

@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;

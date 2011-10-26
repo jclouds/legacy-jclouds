@@ -55,7 +55,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Qualifier;
@@ -143,6 +143,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.util.Strings2;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -553,6 +554,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       void post(@Nullable @BinderParam(BindToStringPayload.class) String content);
 
       @POST
+      void postNonnull(@BinderParam(BindToStringPayload.class) String content);
+      
+      @POST
       public void postAsJson(@BinderParam(BindToJsonPayload.class) String content);
 
       @POST
@@ -587,13 +591,48 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertPayloadEquals(request, "data", "application/unknown", false);
    }
 
-   public void testCreatePostRequestNullOk() throws SecurityException, NoSuchMethodException, IOException {
+   public void testCreatePostRequestNullOk1() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("post", String.class);
       HttpRequest request = factory(TestPost.class).createRequest(method);
 
       assertRequestLineEquals(request, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, "application/unknown", false);
+   }
+
+   public void testCreatePostRequestNullOk2() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("post", String.class);
+      HttpRequest request = factory(TestPost.class).createRequest(method, (String) null);
+
+      assertRequestLineEquals(request, "POST http://localhost:9999 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, "application/unknown", false);
+   }
+
+   public void testCreatePostRequestNullNotOk1() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("postNonnull", String.class);
+      try {
+         HttpRequest request = factory(TestPost.class).createRequest(method);
+         Assert
+                  .fail("call should have failed with illegal null parameter, not permitted " + request
+                           + " to be created");
+      } catch (NullPointerException e) {
+         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
+                  "Error message should have referred to 'parameter 1': " + e);
+      }
+   }
+
+   public void testCreatePostRequestNullNotOk2() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("postNonnull", String.class);
+      try {
+         HttpRequest request = factory(TestPost.class).createRequest(method, (String) null);
+         Assert
+                  .fail("call should have failed with illegal null parameter, not permitted " + request
+                           + " to be created");
+      } catch (NullPointerException e) {
+         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
+                  "Error message should have referred to parameter 'parameter 1': " + e);
+      }
    }
 
    public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException, IOException {
@@ -684,6 +723,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                         "----JCLOUDS----\r\n", "multipart/form-data; boundary=--JCLOUDS--", false);
    }
 
+   public void testMultipartWithStringPartNullNotOkay() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestMultipartForm.class.getMethod("withStringPart", String.class);
+      try {
+         GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+               (String)null);
+         Assert.fail("call should have failed with illegal null parameter, not permitted "+httpRequest+" to be created");
+      } catch (NullPointerException e) {
+         Assert.assertTrue(e.toString().indexOf("fooble")>=0, "Error message should have referred to parameter 'fooble': "+e);
+      }
+   }
+
    public void testMultipartWithParamStringPart() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withParamStringPart", String.class, String.class);
       GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
@@ -700,6 +750,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                         "\r\n" + //
                         "foobledata\r\n" + //
                         "----JCLOUDS----\r\n", "multipart/form-data; boundary=--JCLOUDS--", false);
+   }
+
+   public void testMultipartWithParamStringPartNullNotOk() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestMultipartForm.class.getMethod("withParamStringPart", String.class, String.class);
+      try {
+         GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+               null, "foobledata");
+         Assert.fail("call should have failed with illegal null parameter, not permitted "+httpRequest+" to be created");
+      } catch (NullPointerException e) {
+         Assert.assertTrue(e.toString().indexOf("name")>=0, "Error message should have referred to parameter 'name': "+e);
+      }
    }
 
    public void testMultipartWithParamFilePart() throws SecurityException, NoSuchMethodException, IOException {
@@ -2157,7 +2218,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testOneHeader() throws SecurityException, NoSuchMethodException {
+   public void testOneHeader() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("oneHeader", String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot");
@@ -2166,7 +2227,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testOneIntHeader() throws SecurityException, NoSuchMethodException {
+   public void testOneIntHeader() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("oneIntHeader", int.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, 1);
@@ -2175,7 +2236,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testTwoDifferentHeaders() throws SecurityException, NoSuchMethodException {
+   public void testTwoDifferentHeaders() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("twoDifferentHeaders", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot", "egg");
@@ -2185,7 +2246,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testTwoSameHeaders() throws SecurityException, NoSuchMethodException {
+   public void testTwoSameHeaders() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestHeaders.class.getMethod("twoSameHeaders", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
                ImmutableMultimap.<String, String> of().entries(), method, "robot", "egg");
@@ -2228,7 +2289,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @SuppressWarnings("static-access")
    @Test
-   public void testOneEndpointParam() throws SecurityException, NoSuchMethodException {
+   public void testOneEndpointParam() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestEndpointParams.class.getMethod("oneEndpointParam", String.class);
       URI uri = factory(TestEndpointParams.class).getEndpointInParametersOrNull(method, new Object[] { "robot" },
                injector);
@@ -2238,7 +2299,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @SuppressWarnings("static-access")
    @Test
-   public void testTwoDifferentEndpointParams() throws SecurityException, NoSuchMethodException {
+   public void testTwoDifferentEndpointParams() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestEndpointParams.class.getMethod("twoEndpointParams", String.class, String.class);
       URI uri = factory(TestEndpointParams.class).getEndpointInParametersOrNull(method,
                new Object[] { "robot", "egg" }, injector);

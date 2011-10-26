@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.driver</groupId>
@@ -44,6 +44,14 @@
         </repository>
     </repositories>
 
+    <properties>
+        <test.ssh.host>localhost</test.ssh.host>
+        <test.ssh.port>22</test.ssh.port>
+        <test.ssh.username />
+        <test.ssh.password />
+        <test.ssh.keyfile />
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -60,6 +68,17 @@
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-slf4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.30</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -89,4 +108,66 @@
             </plugin>   
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- note that the groups/excluded groups don't work due to some problem
+                                         in surefire or testng. instead, we have to exclude via file path
+                                         <groups>live,integration</groups>
+                                         <excludedGroups>unit,performance</excludedGroups>
+                                    -->
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*LiveTest.java</include>
+                                    </includes>
+                                    <systemProperties>
+                                        <property>
+                                            <name>file.encoding</name>
+                                            <value>UTF-8</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ssh.host</name>
+                                            <value>${test.ssh.host}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ssh.port</name>
+                                            <value>${test.ssh.port}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ssh.username</name>
+                                            <value>${test.ssh.username}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ssh.keyfile</name>
+                                            <value>${test.ssh.keyfile}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ssh.password</name>
+                                            <value>${test.ssh.password}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

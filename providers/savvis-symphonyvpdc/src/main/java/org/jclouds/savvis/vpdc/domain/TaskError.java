@@ -18,7 +18,7 @@
  */
 package org.jclouds.savvis.vpdc.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 

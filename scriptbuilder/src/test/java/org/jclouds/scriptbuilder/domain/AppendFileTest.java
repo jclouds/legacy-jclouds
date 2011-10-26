@@ -40,19 +40,12 @@ public class AppendFileTest {
 
    public void testUNIX() throws IOException {
       assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+               .getResource("client_rb_append." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    public void testWINDOWS() throws IOException {
       assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
-   }
-
-   public void testRedirectGuard() {
-      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
-      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"), "foo0 >>");
-      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"), "foo1 >>");
-      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"), "foo2 >>");
+               .getResource("client_rb_append." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
 }

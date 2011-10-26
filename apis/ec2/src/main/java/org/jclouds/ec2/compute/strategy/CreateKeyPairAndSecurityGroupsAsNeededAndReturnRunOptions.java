@@ -18,12 +18,15 @@
  */
 package org.jclouds.ec2.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -37,9 +40,11 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.options.RunInstancesOptions;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -49,27 +54,24 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 @Singleton
 public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
-
    @VisibleForTesting
-   public final Map<RegionAndName, KeyPair> credentialsMap;
+   public Function<RegionAndName, KeyPair> makeKeyPair;
    @VisibleForTesting
-   public final Map<RegionAndName, String> securityGroupMap;
+   public final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    @VisibleForTesting
-   public final Function<RegionAndName, KeyPair> createUniqueKeyPair;
+   public final Cache<RegionAndName, String> securityGroupMap;
    @VisibleForTesting
-   public final Function<RegionNameAndIngressRules, String> createSecurityGroupIfNeeded;
-   protected final Provider<RunInstancesOptions> optionsProvider;
+   public final Provider<RunInstancesOptions> optionsProvider;
 
    @Inject
-   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Map<RegionAndName, String> securityGroupMap, Function<RegionAndName, KeyPair> createUniqueKeyPair,
-         Function<RegionNameAndIngressRules, String> createSecurityGroupIfNeeded,
-         Provider<RunInstancesOptions> optionsProvider) {
-      this.credentialsMap = credentialsMap;
-      this.securityGroupMap = securityGroupMap;
-      this.createUniqueKeyPair = createUniqueKeyPair;
-      this.createSecurityGroupIfNeeded = createSecurityGroupIfNeeded;
-      this.optionsProvider = optionsProvider;
+   public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Function<RegionAndName, KeyPair> makeKeyPair,
+            ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
+            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+            Provider<RunInstancesOptions> optionsProvider) {
+      this.makeKeyPair = checkNotNull(makeKeyPair, "makeKeyPair");
+      this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
+      this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
+      this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
    }
 
    public RunInstancesOptions execute(String region, String group, Template template) {
@@ -90,10 +92,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
             instanceOptions.withUserData(userData);
 
          Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions())
-               .getBlockDeviceMappings();
+                  .getBlockDeviceMappings();
          if (blockDeviceMappings.size() > 0) {
             checkState("ebs".equals(template.getImage().getUserMetadata().get("rootDeviceType")),
-                  "BlockDeviceMapping only available on ebs boot");
+                     "BlockDeviceMapping only available on ebs boot");
             instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
          }
       }
@@ -109,36 +111,52 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String group, TemplateOptions options) {
       String keyPairName = null;
       boolean shouldAutomaticallyCreateKeyPair = true;
+
       if (options instanceof EC2TemplateOptions) {
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
             shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
-                  .shouldAutomaticallyCreateKeyPair();
+                     .shouldAutomaticallyCreateKeyPair();
       }
+
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          keyPairName = createOrImportKeyPair(region, group, options);
+      } else if (keyPairName != null) {
+         if (options.getOverridingCredentials() != null && options.getOverridingCredentials().credential != null) {
+            String pem = options.getOverridingCredentials().credential;
+            KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).fingerprint(
+                     fingerprintPrivateKey(pem)).sha1OfPrivateKey(sha1PrivateKey(pem)).keyMaterial(pem).build();
+            RegionAndName key = new RegionAndName(region, keyPairName);
+            credentialsMap.put(key, keyPair);
+         }
+      }
+
+      if (options.getRunScript() != null) {
+         RegionAndName regionAndName = new RegionAndName(region, keyPairName);
+         checkArgument(
+                  credentialsMap.containsKey(regionAndName),
+                  "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+                  regionAndName);
       }
       return keyPairName;
    }
 
    // base EC2 driver currently does not support key import
    protected String createOrImportKeyPair(String region, String group, TemplateOptions options) {
-      return createUniqueKeyPairAndPutIntoMap(region, group);
-   }
+      RegionAndName regionAndGroup = new RegionAndName(region, group);
+      KeyPair keyPair;
+      // make sure that we don't request multiple keys simultaneously
+      synchronized (credentialsMap) {
+         // if there is already a keypair for the group specified, use it
+         if (credentialsMap.containsKey(regionAndGroup))
+            return credentialsMap.get(regionAndGroup).getKeyName();
 
-   protected String createUniqueKeyPairAndPutIntoMap(String region, String group) {
-      String keyPairName;
-      RegionAndName regionAndName = new RegionAndName(region, group);
-      KeyPair keyPair = createUniqueKeyPair.apply(regionAndName);
-      keyPairName = keyPair.getKeyName();
-      // get or create incidental resources
-      // TODO race condition. we were using MapMaker, but it doesn't seem to
-      // refresh properly
-      // when
-      // another thread
-      // deletes a key
-      credentialsMap.put(new RegionAndName(regionAndName.getRegion(), keyPairName), keyPair);
-      return keyPairName;
+         // otherwise create a new keypair and key it under the group and also the regular keyname
+         keyPair = makeKeyPair.apply(new RegionAndName(region, group));
+         credentialsMap.put(regionAndGroup, keyPair);
+      }
+      credentialsMap.put(new RegionAndName(region, keyPair.getKeyName()), keyPair);
+      return keyPair.getKeyName();
    }
 
    @VisibleForTesting
@@ -150,20 +168,17 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
-      
+
          if (userSpecifiedTheirOwnGroups(options)) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
-                  false);
+                     false);
             groups.addAll(EC2TemplateOptions.class.cast(options).getGroups());
          } else {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup,
-                  options.getInboundPorts(), true);
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, options
+                     .getInboundPorts(), true);
          }
-
-         if (!securityGroupMap.containsKey(regionNameAndIngessRulesForMarkerGroup)) {
-            securityGroupMap.put(regionNameAndIngessRulesForMarkerGroup,
-                  createSecurityGroupIfNeeded.apply(regionNameAndIngessRulesForMarkerGroup));
-         }
+         // this will create if not yet exists.
+         securityGroupMap.getUnchecked(regionNameAndIngessRulesForMarkerGroup);
       }
       return groups.build();
    }

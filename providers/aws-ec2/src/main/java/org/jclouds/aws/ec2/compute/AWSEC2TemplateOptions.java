@@ -23,9 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.compute.options.TemplateOptions;
@@ -33,6 +32,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.io.Payload;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
@@ -40,11 +40,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the "ec2" provider.
- * <h2>
- * Usage</h2> The recommended way to instantiate a AWSEC2TemplateOptions object is to statically
- * import AWSEC2TemplateOptions.* and invoke a static creation method followed by an instance
- * mutator (if needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on
+ * the "ec2" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a AWSEC2TemplateOptions object
+ * is to statically import AWSEC2TemplateOptions.* and invoke a static creation
+ * method followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.AWSEC2TemplateOptions.Builder.*;
@@ -175,10 +175,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       return groupIds;
    }
 
-   public void setGroupIds(Set<String> groupIds) {
-      this.groupIds = groupIds;
-   }
-
    public static class Builder {
 
       /**
@@ -196,7 +192,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return AWSEC2TemplateOptions.class.cast(options.securityGroupIds(groupNames));
       }
-      
+
       /**
        * @see EC2TemplateOptions#blockDeviceMappings
        */
@@ -209,7 +205,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
        * @see EC2TemplateOptions#mapEBSSnapshotToDeviceName
        */
       public static AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
-               @Nullable Integer sizeInGib, boolean deleteOnTermination) {
+            @Nullable Integer sizeInGib, boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib, deleteOnTermination);
       }
@@ -218,7 +214,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
        * @see EC2TemplateOptions#mapNewVolumeToDeviceName
        */
       public static AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib,
-               boolean deleteOnTermination) {
+            boolean deleteOnTermination) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination);
       }
@@ -345,14 +341,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#withDetails
-       */
-      public static AWSEC2TemplateOptions withDetails() {
-         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return options.withMetadata();
-      }
-
-      /**
        * @see TemplateOptions#spotPrice
        */
       public static AWSEC2TemplateOptions subnetId(String subnetId) {
@@ -375,6 +363,22 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.spotOptions(spotOptions);
       }
+      
+      /**
+       * @see TemplateOptions#userMetadata(Map)
+       */
+      public static AWSEC2TemplateOptions userMetadata(Map<String, String> userMetadata) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return AWSEC2TemplateOptions.class.cast(options.userMetadata(userMetadata));
+      }
+
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static AWSEC2TemplateOptions userMetadata(String key, String value) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return AWSEC2TemplateOptions.class.cast(options.userMetadata(key, value));
+      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -391,6 +395,22 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
+   public AWSEC2TemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return AWSEC2TemplateOptions.class.cast(super.userMetadata(userMetadata));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions userMetadata(String key, String value) {
+      return AWSEC2TemplateOptions.class.cast(super.userMetadata(key, value));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public AWSEC2TemplateOptions keyPair(String keyPair) {
       return AWSEC2TemplateOptions.class.cast(super.keyPair(keyPair));
    }
@@ -401,9 +421,9 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
 
    @Override
    public AWSEC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId, Integer sizeInGib,
-            boolean deleteOnTermination) {
+         boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super.mapEBSSnapshotToDeviceName(deviceName, snapshotId, sizeInGib,
-               deleteOnTermination));
+            deleteOnTermination));
    }
 
    /**
@@ -420,7 +440,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    @Override
    public AWSEC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
       return AWSEC2TemplateOptions.class.cast(super
-               .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
+            .mapNewVolumeToDeviceName(deviceName, sizeInGib, deleteOnTermination));
    }
 
    /**
@@ -534,14 +554,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
-   public AWSEC2TemplateOptions withMetadata() {
-      return AWSEC2TemplateOptions.class.cast(super.withMetadata());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public AWSEC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       return AWSEC2TemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
    }
@@ -587,7 +599,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    }
 
    /**
-    * @return placementGroup to use when running the instance or null, to generate a placementGroup.
+    * @return placementGroup to use when running the instance or null, to
+    *         generate a placementGroup.
     */
    public String getPlacementGroup() {
       return placementGroup;
@@ -681,10 +694,10 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    public String toString() {
 
       return "[groupIds=" + getGroups() + ", keyPair=" + getKeyPair() + ", noKeyPair="
-               + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
-               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
-               + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + ", spotPrice="
-               + spotPrice + ", spotOptions=" + spotOptions + "]";
+            + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
+            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
+            + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + ", spotPrice="
+            + spotPrice + ", spotOptions=" + spotOptions + "]";
    }
 
 }

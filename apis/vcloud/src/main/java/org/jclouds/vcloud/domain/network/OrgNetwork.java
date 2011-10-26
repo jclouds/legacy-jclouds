@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain.network;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;

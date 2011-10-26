@@ -22,8 +22,6 @@ import static com.google.common.collect.Iterables.toArray;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
-import java.util.Map;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,6 +35,7 @@ import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExc
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.inject.Provides;
 
 /**
@@ -59,12 +58,12 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
 
    @Provides
    @Singleton
-   protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
+   protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Cache<RegionAndName, ? extends Image>>(
+               authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
                   @Override
-                  public Map<RegionAndName, ? extends Image> get() {
+                  public Cache<RegionAndName, ? extends Image> get() {
                      return supplier.get();
                   }
                });

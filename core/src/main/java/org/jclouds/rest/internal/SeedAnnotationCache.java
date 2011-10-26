@@ -36,6 +36,7 @@ import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfP
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexesOfOptions;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -48,7 +49,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
 
-import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
@@ -63,7 +64,7 @@ import com.google.inject.Provides;
  */
 
 @Singleton
-public class SeedAnnotationCache implements Function<Class<?>, Boolean> {
+public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -82,7 +83,8 @@ public class SeedAnnotationCache implements Function<Class<?>, Boolean> {
       constants.put(key, value);
    }
 
-   public Boolean apply(Class<?> declaring) {
+   @Override
+   public Boolean load(Class<?> declaring) throws ExecutionException {
       for (Method method : difference(ImmutableSet.copyOf(declaring.getMethods()), ImmutableSet.copyOf(Object.class
                .getMethods()))) {
          if (isHttpMethod(method) || method.isAnnotationPresent(Delegate.class)) {

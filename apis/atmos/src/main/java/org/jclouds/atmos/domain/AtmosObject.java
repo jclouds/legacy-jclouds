@@ -18,7 +18,7 @@
  */
 package org.jclouds.atmos.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.atmos.domain.internal.AtmosObjectImpl.AtmosObjectFactory;
 import org.jclouds.io.PayloadEnclosing;

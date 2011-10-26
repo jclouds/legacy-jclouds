@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.NodeState;
@@ -34,12 +35,14 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
- * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
- * Usage</h2> The recommended way to instantiate a TemplateOptions object is to statically import
- * TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
- * needed):
+ * Contains options supported in the {@code ComputeService#runNodesWithTag}
+ * operation. <h2>
+ * Usage</h2> The recommended way to instantiate a TemplateOptions object is to
+ * statically import TemplateOptions.* and invoke a static creation method
+ * followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.compute.options.TemplateOptions.Builder.*;
@@ -71,8 +74,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          to.authorizePublicKey(this.getPublicKey());
       if (this.getPort() != -1)
          to.blockOnPort(this.getPort(), this.getSeconds());
-      if (this.isIncludeMetadata())
-         to.withMetadata();
+      if (this.getUserMetadata().size() > 0)
+         to.userMetadata(this.getUserMetadata());
       if (this.getTags().size() > 0)
          to.tags(getTags());
       if (!this.shouldBlockUntilRunning())
@@ -267,18 +270,33 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       @Override
-      public boolean isIncludeMetadata() {
-         return delegate.isIncludeMetadata();
-      }
-
-      @Override
       public TemplateOptions runScript(byte[] script) {
          throw new IllegalArgumentException("script is immutable");
       }
 
       @Override
-      public TemplateOptions withMetadata() {
-         throw new IllegalArgumentException("metadata is immutable");
+      public Set<String> getTags() {
+         return delegate.getTags();
+      }
+
+      @Override
+      public TemplateOptions tags(Iterable<String> tags) {
+         throw new IllegalArgumentException("tags are immutable");
+      }
+
+      @Override
+      public TemplateOptions userMetadata(Map<String, String> userMetadata) {
+         throw new IllegalArgumentException("userMetadata is immutable");
+      }
+
+      @Override
+      public TemplateOptions userMetadata(String key, String value) {
+         throw new IllegalArgumentException("userMetadata is immutable");
+      }
+
+      @Override
+      public Map<String, String> getUserMetadata() {
+         return delegate.getUserMetadata();
       }
 
    }
@@ -293,9 +311,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    protected String publicKey;
 
-   protected boolean includeMetadata;
-
    protected boolean blockUntilRunning = true;
+
+   protected Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
    public int[] getInboundPorts() {
       return inboundPorts;
@@ -317,10 +335,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       return publicKey;
    }
 
-   public boolean isIncludeMetadata() {
-      return includeMetadata;
-   }
-   
    /**
     * @see TemplateOptions#blockUntilRunning(boolean)
     */
@@ -334,7 +348,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    /**
     * <p/>
-    * please use alternative that uses the {@link org.jclouds.scriptbuilder.domain.Statement} object
+    * please use alternative that uses the
+    * {@link org.jclouds.scriptbuilder.domain.Statement} object
+    * 
     * @see TemplateOptions#runScript(Statement)
     * @see org.jclouds.io.Payloads
     */
@@ -355,10 +371,10 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return this;
       }
    }
-   
+
    /**
-    * This script will be executed as the root user upon system startup. This script gets a
-    * prologue, so no #!/bin/bash required, path set up, etc
+    * This script will be executed as the root user upon system startup. This
+    * script gets a prologue, so no #!/bin/bash required, path set up, etc
     * 
     */
    public TemplateOptions runScript(Statement script) {
@@ -371,7 +387,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
     */
    public TemplateOptions installPrivateKey(String privateKey) {
       checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
-               "key should start with -----BEGIN RSA PRIVATE KEY-----");
+            "key should start with -----BEGIN RSA PRIVATE KEY-----");
       this.privateKey = privateKey;
       return this;
    }
@@ -442,11 +458,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       return this;
    }
 
-   public TemplateOptions withMetadata() {
-      this.includeMetadata = true;
-      return this;
-   }
-
    public static class Builder extends org.jclouds.compute.options.RunScriptOptions.Builder {
 
       public static TemplateOptions nameTask(String name) {
@@ -506,7 +517,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return options.blockUntilRunning(blockUntilRunning);
       }
 
-      /**
+/**
        * please use alternative that uses the {@link Statement) object
        * 
        * @see TemplateOptions#runScript(Statement)
@@ -535,7 +546,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload} object
+       * please use alternative that uses the {@link org.jclouds.io.Payload}
+       * object
        * 
        * @see org.jclouds.io.Payloads
        * @see #installPrivateKey(Payload)
@@ -556,7 +568,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload} object
+       * please use alternative that uses the {@link org.jclouds.io.Payload}
+       * object
        * 
        * @see org.jclouds.io.Payloads
        * @see #authorizePublicKey(Payload)
@@ -576,9 +589,20 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return options.authorizePublicKey(rsaKey);
       }
 
-      public static TemplateOptions withDetails() {
+      /**
+       * @see TemplateOptions#userMetadata(Map)
+       */
+      public static TemplateOptions userMetadata(Map<String, String> userMetadata) {
          TemplateOptions options = new TemplateOptions();
-         return options.withMetadata();
+         return options.userMetadata(userMetadata);
+      }
+
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static TemplateOptions userMetadata(String key, String value) {
+         TemplateOptions options = new TemplateOptions();
+         return options.userMetadata(key, value);
       }
 
       public static TemplateOptions blockOnComplete(boolean value) {
@@ -591,9 +615,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    @Override
    public String toString() {
       return "[inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-               + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
-               + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds
-               + ", metadata/details: " + includeMetadata + "]";
+            + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
+            + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds + ", userMetadata: "
+            + userMetadata + "]";
    }
 
    /**
@@ -613,14 +637,43 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       return this;
    }
 
+   /**
+    * 
+    * @param userMetadata
+    *           user-defined metadata to assign to this server
+    */
+   public TemplateOptions userMetadata(Map<String, String> userMetadata) {
+      this.userMetadata.putAll(checkNotNull(userMetadata, "userMetadata"));
+      return this;
+   }
+
+   /**
+    * 
+    * @param key
+    *           key to place into the metadata map
+    * @param value
+    *           value to associate with that key
+    */
+   public TemplateOptions userMetadata(String key, String value) {
+      this.userMetadata.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
+      return this;
+   }
+
+   /**
+    * @see #userMetadata(Map)
+    */
+   public Map<String, String> getUserMetadata() {
+      return userMetadata;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + (blockUntilRunning ? 1231 : 1237);
       result = prime * result + Arrays.hashCode(inboundPorts);
-      result = prime * result + (includeMetadata ? 1231 : 1237);
       result = prime * result + port;
+      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
       result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
       result = prime * result + ((script == null) ? 0 : script.hashCode());
@@ -641,7 +694,10 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return false;
       if (!Arrays.equals(inboundPorts, other.inboundPorts))
          return false;
-      if (includeMetadata != other.includeMetadata)
+      if (userMetadata == null) {
+         if (other.userMetadata != null)
+            return false;
+      } else if (!userMetadata.equals(other.userMetadata))
          return false;
       if (port != other.port)
          return false;

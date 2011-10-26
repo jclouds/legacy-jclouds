@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.BlobType;

@@ -23,7 +23,7 @@ import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 

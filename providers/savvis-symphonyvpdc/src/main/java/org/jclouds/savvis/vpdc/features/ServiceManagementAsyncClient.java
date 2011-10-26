@@ -20,7 +20,7 @@ package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

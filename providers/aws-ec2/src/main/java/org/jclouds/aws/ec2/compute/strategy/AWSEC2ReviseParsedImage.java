@@ -27,13 +27,11 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.logging.Logger;
@@ -67,7 +65,6 @@ public class AWSEC2ReviseParsedImage implements ReviseParsedImage {
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Inject

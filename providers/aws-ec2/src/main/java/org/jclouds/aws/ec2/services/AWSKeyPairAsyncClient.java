@@ -21,7 +21,7 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 import static org.jclouds.aws.reference.FormParameters.VERSION;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;

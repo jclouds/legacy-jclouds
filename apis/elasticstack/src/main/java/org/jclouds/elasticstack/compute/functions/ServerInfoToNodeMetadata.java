@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -45,13 +46,16 @@ import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.ServerStatus;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * @author Adrian Cole
@@ -104,18 +108,21 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
             .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
       builder.state(serverStatusToNodeState.get(from.getStatus()));
-      builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
+      builder.publicAddresses(ImmutableSet.<String> of(from.getNics().get(0).getDhcp()));
       builder.privateAddresses(ImmutableSet.<String> of());
-      builder.credentials(credentialStore.get("node#"+ from.getUuid()));
+      builder.credentials(credentialStore.get("node#" + from.getUuid()));
       return builder.build();
    }
 
    @Singleton
    public static final class DeviceToVolume implements Function<Device, Volume> {
-      private final Map<String, DriveInfo> cache;
+      @Resource
+      protected Logger logger = Logger.NULL;
+
+      private final Cache<String, DriveInfo> cache;
 
       @Inject
-      public DeviceToVolume(Map<String, DriveInfo> cache) {
+      public DeviceToVolume(Cache<String, DriveInfo> cache) {
          this.cache = checkNotNull(cache, "cache");
       }
 
@@ -123,27 +130,34 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       public Volume apply(Device input) {
          VolumeBuilder builder = new VolumeBuilder();
          builder.id(input.getId());
-         DriveInfo drive = cache.get(input.getDriveUuid());
-         if (drive != null) {
+         try {
+            DriveInfo drive = cache.getUnchecked(input.getDriveUuid());
             builder.size(drive.getSize() / 1024 / 1024f);
+         } catch (NullPointerException e) {
+            logger.debug("drive %s not found", input.getDriveUuid());
+         } catch (UncheckedExecutionException e) {
+            logger.warn(e, "error finding drive %s: %s", input.getDriveUuid(), e.getMessage());
          }
          return new VolumeBuilder().durable(true).type(Volume.Type.NAS).build();
       }
    }
 
    /**
-    * When we create the boot drive of the server, by convention we set the name to the image it
-    * came from.
+    * When we create the boot drive of the server, by convention we set the name
+    * to the image it came from.
     * 
     * @author Adrian Cole
     * 
     */
    @Singleton
    public static class GetImageIdFromServer implements Function<Server, String> {
-      private final Map<String, DriveInfo> cache;
+      @Resource
+      protected Logger logger = Logger.NULL;
+
+      private final Cache<String, DriveInfo> cache;
 
       @Inject
-      public GetImageIdFromServer(Map<String, DriveInfo> cache) {
+      public GetImageIdFromServer(Cache<String, DriveInfo> cache) {
          this.cache = cache;
       }
 
@@ -154,9 +168,12 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          Device bootDevice = from.getDevices().get(bootDeviceId);
          if (bootDevice != null) {
             try {
-               imageId = cache.get(bootDevice.getDriveUuid()).getName();
+               DriveInfo drive = cache.getUnchecked(bootDevice.getDriveUuid());
+               imageId = drive.getName();
             } catch (NullPointerException e) {
-
+               logger.debug("drive %s not found", bootDevice.getDriveUuid());
+            } catch (UncheckedExecutionException e) {
+               logger.warn(e, "error finding drive %s: %s", bootDevice.getDriveUuid(), e.getMessage());
             }
          }
          return imageId;

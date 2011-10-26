@@ -24,7 +24,6 @@ import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
-import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.ec2.domain.InstanceState;
 import org.testng.annotations.Test;
@@ -40,34 +39,49 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
 
    public void testConvert() {
 
-      SpotInstanceRequest input = SpotInstanceRequest.builder().region("us-east-1").id("sir-228e6406")
-               .spotPrice(0.001f).type(SpotInstanceRequest.Type.ONE_TIME).state(SpotInstanceRequest.State.OPEN)
-               .launchSpecification(
-                        LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupName("default").instanceType(
-                                 "m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true).mapEBSSnapshotToDevice(
-                                 "/dev/sda2", "snap-1ea27576", 1, true).mapEphemeralDeviceToDevice("/dev/sda3", "vre1")
-                                 .monitoringEnabled(false).build()).createTime(
-                        new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
-               .productDescription("Linux/UNIX").build();
+      SpotInstanceRequest input = SpotInstanceRequest
+            .builder()
+            .region("us-east-1")
+            .id("sir-228e6406")
+            .spotPrice(0.001f)
+            .type(SpotInstanceRequest.Type.ONE_TIME)
+            .state(SpotInstanceRequest.State.OPEN)
+            .launchSpecification(
+                  LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupName("default")
+                        .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
+                        .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
+                        .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
+            .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
+            .productDescription("Linux/UNIX")
+            .tag("foo", "bar")
+            .tag("empty", "")
+            .build();
 
-      assertEquals(new SpotInstanceRequestToAWSRunningInstance().apply(input), AWSRunningInstance.builder().region(
-               "us-east-1").instanceId("sir-228e6406").spotInstanceRequestId("sir-228e6406").instanceState(
-               InstanceState.PENDING).imageId("ami-595a0a1c").groupId("default").instanceType("m1.large")
-               .monitoringState(MonitoringState.PENDING).build());
+      assertEquals(
+            new SpotInstanceRequestToAWSRunningInstance().apply(input),
+            AWSRunningInstance.builder().region("us-east-1").instanceId("sir-228e6406")
+                  .spotInstanceRequestId("sir-228e6406").instanceState(InstanceState.PENDING).imageId("ami-595a0a1c")
+                  .groupId("default").instanceType("m1.large")
+                  .tag("foo", "bar")
+                  .tag("empty", "")
+                  .monitoringState(MonitoringState.PENDING).build());
    }
 
    public void testConvertWhenNotOpenReturnsNull() {
 
-      assertEquals(new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder()
-               .region("us-east-1").id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME).state(
-                        SpotInstanceRequest.State.ACTIVE).build()), null);
+      assertEquals(
+            new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder().region("us-east-1")
+                  .id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME).state(SpotInstanceRequest.State.ACTIVE)
+                  .build()), null);
 
-      assertEquals(new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder()
-               .region("us-east-1").id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME).state(
-                        SpotInstanceRequest.State.CANCELLED).build()), null);
+      assertEquals(
+            new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder().region("us-east-1")
+                  .id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME)
+                  .state(SpotInstanceRequest.State.CANCELLED).build()), null);
 
-      assertEquals(new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder()
-               .region("us-east-1").id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME).state(
-                        SpotInstanceRequest.State.UNRECOGNIZED).build()), null);
+      assertEquals(
+            new SpotInstanceRequestToAWSRunningInstance().apply(SpotInstanceRequest.builder().region("us-east-1")
+                  .id("sir-228e6406").type(SpotInstanceRequest.Type.ONE_TIME)
+                  .state(SpotInstanceRequest.State.UNRECOGNIZED).build()), null);
    }
 }

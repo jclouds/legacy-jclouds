@@ -30,11 +30,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -46,6 +41,11 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.InstanceState;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.NullSafeCollections;
 
@@ -53,8 +53,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * @author Adrian Cole
@@ -67,17 +69,17 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    protected final Supplier<Set<? extends Location>> locations;
    protected final Supplier<Set<? extends Hardware>> hardware;
-   protected final Map<RegionAndName, Image> instanceToImage;
+   protected final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
    protected final Map<String, Credentials> credentialStore;
    protected final Map<InstanceState, NodeState> instanceToNodeState;
 
    @Inject
    protected RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
-            Map<String, Credentials> credentialStore, Map<RegionAndName, Image> instanceToImage,
+            Map<String, Credentials> credentialStore, Supplier<Cache<RegionAndName, ? extends Image>> imageMap,
             @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
       this.locations = checkNotNull(locations, "locations");
       this.hardware = checkNotNull(hardware, "hardware");
-      this.instanceToImage = checkNotNull(instanceToImage, "instanceToImage");
+      this.imageMap = checkNotNull(imageMap, "imageMap");
       this.instanceToNodeState = checkNotNull(instanceToNodeState, "instanceToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
    }
@@ -87,6 +89,11 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       if (instance == null || instance.getId() == null)
          return null;
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder = buildInstance(instance, builder);
+      return builder.build();
+   }
+
+   protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       builder.providerId(instance.getId());
       builder.id(instance.getRegion() + "/" + instance.getId());
       String group = getGroupForInstance(instance);
@@ -106,20 +113,15 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       // extract the operating system from the image
       RegionAndName regionAndName = new RegionAndName(instance.getRegion(), instance.getImageId());
       try {
-         Image image = instanceToImage.get(regionAndName);
+         Image image = imageMap.get().getUnchecked(regionAndName);
          if (image != null)
             builder.operatingSystem(image.getOperatingSystem());
       } catch (NullPointerException e) {
-         // The instanceToImage Map may throw NullPointerException (actually subclass
-         // NullOutputException) if the
-         // computing Function returns a null value.
-         //
-         // See the following for more information:
-         // MapMaker.makeComputingMap()
-         // RegionAndIdToImage.apply()
+         logger.debug("image not found for %s: %s", regionAndName, e);
+      } catch (UncheckedExecutionException e) {
+         logger.debug("error getting image for %s: %s", regionAndName, e);
       }
-
-      return builder.build();
+      return builder;
    }
 
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {

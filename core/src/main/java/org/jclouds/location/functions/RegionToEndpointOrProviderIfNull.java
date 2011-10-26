@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

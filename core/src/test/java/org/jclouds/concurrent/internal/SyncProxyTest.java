@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +35,10 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Functions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -74,6 +77,7 @@ public class SyncProxyTest {
       @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
       String take200MillisecondsAndOverride();
 
+      String takeXMillisecondsPropOverride(long ms);
    }
 
    static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -156,14 +160,30 @@ public class SyncProxyTest {
          return take200MillisecondsAndTimeout();
       }
 
+      public ListenableFuture<String> takeXMillisecondsPropOverride(final long ms) {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
+
+            public String call() {
+               try {
+                  Thread.sleep(ms);
+               } catch (InterruptedException e) {
+                  e.printStackTrace();
+               }
+               return "foo";
+            }
+
+         }), executorService);
+      }
+
    }
 
    private Sync sync;
 
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
+      sync = SyncProxy.proxy(Sync.class, new Async(),cache, ImmutableMap.<Class<?>, Class<?>> of(),
+              ImmutableMap.of("Sync.takeXMillisecondsPropOverride", 250L));
       // just to warm up
       sync.string();
    }
@@ -196,6 +216,16 @@ public class SyncProxyTest {
    }
 
    @Test
+   public void testTake200MillisecondsPropOverride() {
+      assertEquals(sync.takeXMillisecondsPropOverride(200), "foo");
+   }
+
+   @Test(expectedExceptions = RuntimeException.class)
+   public void testTake300MillisecondsPropTimeout() {
+      assertEquals(sync.takeXMillisecondsPropOverride(300), "foo");
+   }
+
+   @Test
    public void testToString() {
       assertEquals(sync.toString(), "Sync Proxy for: Async");
    }
@@ -225,8 +255,9 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testWrongTypedException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
             IOException {
-      SyncProxy.proxy(SyncWrongException.class, new SyncProxy(SyncWrongException.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
+      SyncProxy.proxy(SyncWrongException.class,  new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
+              ImmutableMap.<String, Long>of());
    }
 
    private static interface SyncNoTimeOut {
@@ -243,8 +274,31 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testNoTimeOutException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
             IOException {
-      SyncProxy.proxy(SyncNoTimeOut.class, new SyncProxy(SyncNoTimeOut.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
+      SyncProxy.proxy(SyncNoTimeOut.class, new Async(),
+            cache, ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long>of());
    }
 
+
+   @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+   private static interface SyncClassOverride {
+      String getString();
+
+      String newString();
+
+      String getRuntimeException();
+
+      @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
+      String takeXMillisecondsPropOverride(long ms);
+
+   }
+
+   @Test(expectedExceptions = RuntimeException.class)
+   public void testClassOverridePropTimeout() throws Exception {
+      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.<Object>constant(null)));
+      final SyncClassOverride sync2 = SyncProxy.proxy(SyncClassOverride.class, new Async(),
+            cache, ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long>of("SyncClassOverride", 100L));
+
+      assertEquals(sync2.takeXMillisecondsPropOverride(200), "foo");
+   }
 }

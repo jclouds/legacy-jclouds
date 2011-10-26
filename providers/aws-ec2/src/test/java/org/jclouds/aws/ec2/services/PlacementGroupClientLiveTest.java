@@ -23,13 +23,11 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.ComputeTestUtils.setupKeyPair;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -46,11 +44,14 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -74,7 +75,6 @@ public class PlacementGroupClientLiveTest {
    private RetryablePredicate<PlacementGroup> availableTester;
    private RetryablePredicate<PlacementGroup> deletedTester;
    private PlacementGroup group;
-   private Map<String, String> keyPair;
    protected String provider = "aws-ec2";
    protected String identity;
    protected String credential;
@@ -109,7 +109,6 @@ public class PlacementGroupClientLiveTest {
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      keyPair = setupKeyPair();
 
       client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
@@ -168,15 +167,16 @@ public class PlacementGroupClientLiveTest {
 
    public void testStartCCInstance() throws Exception {
 
-      Template template = context.getComputeService().templateBuilder().fastest().osVersionMatches("11.04").build();
+      Template template = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX).build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(template.getImage().getUserMetadata().get("virtualizationType"), "hvm");
       assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");
-
-      template.getOptions().overrideLoginCredentialWith(keyPair.get("private"))
-            .authorizePublicKey(keyPair.get("public")).runScript(buildScript(template.getImage().getOperatingSystem()));
+      
+      template.getOptions().runScript(
+               Statements.newStatementList(AdminAccess.standard(),
+                        buildScript(template.getImage().getOperatingSystem())));
 
       String group = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));

@@ -52,12 +52,14 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
+               case WINDOWS:
+                  return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
                case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.10")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
                case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.matches("[56].0")) && input.is64Bit;
                case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.matches("5.[567]")) && input.is64Bit;
                default:
                   return false;
             }
@@ -70,7 +72,7 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "openhosting-east1");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
@@ -78,6 +80,6 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-VA");
+      return ImmutableSet.<String> of("US-FL");
    }
 }

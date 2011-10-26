@@ -54,7 +54,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;

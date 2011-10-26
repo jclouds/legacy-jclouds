@@ -28,7 +28,7 @@
     </parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
@@ -87,6 +87,18 @@
             </snapshots>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <distributionManagement>
         <repository>
@@ -99,7 +111,7 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <site>
-            <id>jclouds-googlecode-site</id>
+            <id>jclouds-github-pages-site</id>
             <url>${maven.site.url.base}/${project.version}</url>
         </site>
     </distributionManagement>
@@ -178,8 +190,7 @@
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
-        <maven.site.url.base>davs://jclouds.googlecode.com/svn/maven-sites</maven.site.url.base>
-        <maven.wagon.webdav.version>1.0</maven.wagon.webdav.version>
+        <maven.site.url.base>gitsite:git@github.com/jclouds/jclouds-maven-site.git</maven.site.url.base>
         <http.proxyHost />
         <http.proxyPort />
         <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
@@ -225,8 +236,14 @@
         </dependency>
         <dependency>
             <groupId>org.clojure</groupId>
-            <artifactId>clojure-contrib</artifactId>
-            <version>1.2.0</version>
+            <artifactId>tools.logging</artifactId>
+            <version>0.2.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>core.incubator</artifactId>
+            <version>0.1.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -508,9 +525,9 @@ pageTracker._trackPageview();
                     </configuration>
                     <dependencies>
                         <dependency>
-                            <groupId>org.apache.maven.wagon</groupId>
-                            <artifactId>wagon-webdav-jackrabbit</artifactId>
-                            <version>${maven.wagon.webdav.version}</version>
+                            <groupId>org.kathrynhuxtable.maven.wagon</groupId>
+                            <artifactId>wagon-gitsite</artifactId>
+                            <version>0.4-SNAPSHOT</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -678,23 +695,6 @@ pageTracker._trackPageview();
                 </plugins>
             </build> 
         </profile>        
-        <profile>
-            <id>clojure-1.1</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.clojure</groupId>
-                    <artifactId>clojure</artifactId>
-                    <version>1.1.0</version>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>org.clojure</groupId>
-                    <artifactId>clojure-contrib</artifactId>
-                    <version>1.1.0</version>
-                    <optional>true</optional>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>site</id>
             <build>
@@ -916,12 +916,6 @@ pageTracker._trackPageview();
             </build>
         </profile>
         <profile>
-            <id>use-fixed-webdav-wagon</id>
-            <properties>
-                <maven.wagon.webdav.version>1.0-WAGON-319.328</maven.wagon.webdav.version>
-            </properties>
-        </profile>
-        <profile>
             <id>jclouds-project</id>
             <activation>
                 <file>
@@ -933,7 +927,7 @@ pageTracker._trackPageview();
             <!-- Maven generates incorrect links without the <site> declaration here -->
             <distributionManagement>
                 <site>
-                    <id>jclouds-googlecode-site</id>
+                    <id>jclouds-github-pages-site</id>
                     <url>${maven.site.url.base}/${project.version}/${project.artifactId}</url>
                 </site>
             </distributionManagement>

@@ -21,6 +21,7 @@ package org.jclouds.byon.domain;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.jclouds.byon.Node;
 import org.jclouds.util.Strings2;
@@ -34,6 +35,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
@@ -54,6 +56,8 @@ import com.google.common.io.Closeables;
  *       group: hadoop
  *       tags:
  *           - vanilla
+ *       metadata:
+ *           key1: val1
  *       username: kelvin
  *       credential: password_or_rsa
  *         or
@@ -78,6 +82,7 @@ public class YamlNode {
    public boolean os_64bit;
    public String group;
    public List<String> tags = Lists.newArrayList();
+   public Map<String, String> metadata = Maps.newLinkedHashMap();
    public String username;
    public String credential;
    public String credential_url;
@@ -91,7 +96,7 @@ public class YamlNode {
          return Node.builder().id(arg0.id).name(arg0.name).description(arg0.description).locationId(arg0.location_id)
                   .hostname(arg0.hostname).osArch(arg0.os_arch).osFamily(arg0.os_family).osDescription(
                            arg0.os_description).osVersion(arg0.os_version).os64Bit(arg0.os_64bit).group(arg0.group)
-                  .loginPort(arg0.login_port).tags(arg0.tags).username(arg0.username).credential(arg0.credential).credentialUrl(
+                  .loginPort(arg0.login_port).tags(arg0.tags).metadata(arg0.metadata).username(arg0.username).credential(arg0.credential).credentialUrl(
                            arg0.credential_url != null ? URI.create(arg0.credential_url) : null).sudoPassword(
                            arg0.sudo_password).build();
       }
@@ -152,6 +157,8 @@ public class YamlNode {
             prettier.put("group", in.group);
          if (in.tags.size() != 0)
             prettier.put("tags", in.tags);
+         if (in.metadata.size() != 0)
+            prettier.put("metadata", in.metadata);
          if (in.username != null)
             prettier.put("username", in.username);
          if (in.credential != null)
@@ -193,6 +200,7 @@ public class YamlNode {
          yaml.login_port = arg0.getLoginPort();
          yaml.group = arg0.getGroup();
          yaml.tags = ImmutableList.copyOf(arg0.getTags());
+         yaml.metadata = ImmutableMap.copyOf(arg0.getMetadata());
          yaml.username = arg0.getUsername();
          yaml.credential = arg0.getCredential();
          yaml.credential_url = arg0.getCredentialUrl() != null ? arg0.getCredentialUrl().toASCIIString() : null;

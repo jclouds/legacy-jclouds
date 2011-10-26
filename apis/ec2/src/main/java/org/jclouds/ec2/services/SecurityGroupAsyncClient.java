@@ -23,7 +23,7 @@ import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -93,7 +93,7 @@ public interface SecurityGroupAsyncClient {
             @BinderParam(BindGroupNamesToIndexedFormParams.class) String... securityGroupNames);
 
    /**
-    * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@Nullable Region,
+    * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,UserIdGroupPair)
     */
    @POST
@@ -105,7 +105,7 @@ public interface SecurityGroupAsyncClient {
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
    /**
-    * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@Nullable Region,
+    * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
    @POST
@@ -129,7 +129,7 @@ public interface SecurityGroupAsyncClient {
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
    /**
-    * @see SecurityGroupClient#revokeSecurityGroupIngressInRegion(@Nullable Region,
+    * @see SecurityGroupClient#revokeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
    @POST

@@ -55,6 +55,11 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest kw-fn-symbol-test
   (is (= 'aB (kw-fn-symbol :a-b))))
 
+
+(deftest memfn-apply-test
+  (is (= "Ab" ((memfn-apply concat s) "A" ["b"])))
+  (is (= "Ac" ((memfn-apply replace a b) "Ab" ["b" "c"]))))
+
 (deftest kw-memfn-test
   (is (= "a" ((kw-memfn :to-lower-case) "A")))
   (is (= "Ab" ((kw-memfn :concat s) "A" "b")))

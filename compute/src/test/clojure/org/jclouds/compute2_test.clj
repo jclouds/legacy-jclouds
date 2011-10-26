@@ -23,7 +23,6 @@
   (:require [org.jclouds.ssh-test :as ssh-test])
   (:import
     org.jclouds.compute.domain.OsFamily
-    clojure.contrib.condition.Condition
     java.net.InetAddress
     org.jclouds.scriptbuilder.domain.Statements
     org.jclouds.compute.options.TemplateOptions
@@ -128,7 +127,26 @@ list, Alan Dipert and MeikelBrandmeyer."
     (testing "one arg"
       (is (> (-> (build-template service {:min-ram 512})
                  bean :hardware bean :ram)
-             512)))
+             512))
+      (let [credentials (org.jclouds.domain.Credentials. "user" "pwd")
+            f (juxt #(.identity %) #(.credential %))
+            template (build-template
+                      service
+                      {:override-credentials-with credentials})
+            node (create-node service "something" template)]
+        (is (= (-> node bean :credentials f)
+               (f credentials)))
+        (let [identity "fred"
+            f #(.identity %)
+            template (build-template service {:override-login-user-with identity})
+            node (create-node service "something" template)]
+        (is (= (-> node bean :credentials f) identity)))
+        (let [credential "fred"
+              f #(.credential %)
+              template (build-template
+                        service {:override-login-credential-with credential})
+              node (create-node service "something" template)]
+          (is (= (-> node bean :credentials f) credential)))))
     (testing "enumerated"
       (is (= OsFamily/CENTOS
              (-> (build-template service {:os-family :centos})
@@ -139,4 +157,4 @@ list, Alan Dipert and MeikelBrandmeyer."
            (-> (build-template service {:inbound-ports [22 8080]})
                bean :options bean :inboundPorts))))
     (testing "invalid"
-      (is (thrown? Condition (build-template service {:xx :yy}))))))
+      (is (thrown? Exception (build-template service {:xx :yy}))))))

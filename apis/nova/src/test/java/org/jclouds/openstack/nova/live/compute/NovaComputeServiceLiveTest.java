@@ -50,6 +50,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import net.schmizz.sshj.userauth.UserAuthException;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -351,14 +352,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       //TODO .inboundPorts
       //checkHttpGet(node);
    }
-
-   @Test(timeOut = 60000)
-   public void testTemplateOptions() throws Exception {
-      TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = getDefaultTemplateBuilder().smallest().options(options).build();
-      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
-   }
-
+   
    public void testListImages() throws Exception {
       for (Image image : computeService.listImages()) {
          assert image.getProviderId() != null : image;

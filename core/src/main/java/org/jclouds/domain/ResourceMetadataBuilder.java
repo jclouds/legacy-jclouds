@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
@@ -57,7 +58,7 @@ public abstract class ResourceMetadataBuilder<T extends Enum<T>> {
    }
 
    public ResourceMetadataBuilder<T> userMetadata(Map<String, String> userMetadata) {
-      this.userMetadata = checkNotNull(userMetadata, "userMetadata");
+      this.userMetadata = ImmutableMap.copyOf(checkNotNull(userMetadata, "userMetadata"));
       return this;
    }
 }

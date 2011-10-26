@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.rest.RestContext;
@@ -32,10 +33,12 @@ import org.jclouds.servermanager.ServerManager;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
+@Test(groups = "live", enabled = true, singleThreaded = true)
 public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public ServerManagerComputeServiceLiveTest() {
       provider = "servermanager";
@@ -66,6 +69,13 @@ public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveT
       return new JschSshClientModule();
    }
 
+   // servermanager does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<ServerManager, ServerManager> goGridContext = new ComputeServiceContextFactory().createContext(

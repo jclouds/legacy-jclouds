@@ -21,10 +21,14 @@ package org.jclouds.aws.ec2.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -52,6 +56,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       private Type type;
       private Date validFrom;
       private Date validUntil;
+      private Map<String, String> tags = Maps.newLinkedHashMap();
 
       public Builder clear() {
          this.region = null;
@@ -70,6 +75,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          this.type = null;
          this.validFrom = null;
          this.validUntil = null;
+         tags = Maps.newLinkedHashMap();
          return this;
       }
 
@@ -78,6 +84,16 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          return this;
       }
 
+      public Builder tags(Map<String, String> tags) {
+         this.tags = ImmutableMap.copyOf(checkNotNull(tags, "tags"));
+         return this;
+      }
+
+      public Builder tag(String key, String value) {
+         if (key != null)
+            this.tags.put(key, Strings.nullToEmpty(value));
+         return this;
+      }
       public Builder availabilityZoneGroup(String availabilityZoneGroup) {
          this.availabilityZoneGroup = availabilityZoneGroup;
          return this;
@@ -156,7 +172,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       public SpotInstanceRequest build() {
          return new SpotInstanceRequest(region, availabilityZoneGroup, launchedAvailabilityZone, createTime, faultCode,
                faultMessage, instanceId, launchGroup, launchSpecification, productDescription, id, spotPrice, state,
-               type, validFrom, validUntil);
+               type, validFrom, validUntil, tags);
       }
    }
 
@@ -218,11 +234,12 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    private final Type type;
    private final Date validFrom;
    private final Date validUntil;
+   private final Map<String, String> tags;
 
    public SpotInstanceRequest(String region, String availabilityZoneGroup, @Nullable String launchedAvailabilityZone,
          Date createTime, String faultCode, String faultMessage, String instanceId, String launchGroup,
          LaunchSpecification launchSpecification, String productDescription, String id, float spotPrice, State state,
-         Type type, Date validFrom, Date validUntil) {
+         Type type, Date validFrom, Date validUntil, Map<String, String> tags) {
       this.region = checkNotNull(region, "region");
       this.availabilityZoneGroup = availabilityZoneGroup;
       this.launchedAvailabilityZone = launchedAvailabilityZone;
@@ -239,6 +256,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       this.type = checkNotNull(type, "type");
       this.validFrom = validFrom;
       this.validUntil = validUntil;
+      this.tags = ImmutableMap.<String, String> copyOf(checkNotNull(tags, "tags"));
    }
 
    /**
@@ -308,6 +326,13 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       return validUntil;
    }
 
+   /**
+    * tags that are present in the instance
+    */
+   public Map<String, String> getTags() {
+      return tags;
+   }
+   
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -328,6 +353,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((validFrom == null) ? 0 : validFrom.hashCode());
       result = prime * result + ((validUntil == null) ? 0 : validUntil.hashCode());
+      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       return result;
    }
 
@@ -411,6 +437,11 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
             return false;
       } else if (!validUntil.equals(other.validUntil))
          return false;
+      if (tags == null) {
+         if (other.tags != null)
+            return false;
+      } else if (!tags.equals(other.tags))
+         return false;
       return true;
    }
 
@@ -421,7 +452,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
             + faultMessage + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup + ", launchSpecification="
             + launchSpecification + ", productDescription=" + productDescription + ", id=" + id + ", spotPrice="
             + spotPrice + ", state=" + state + ", type=" + type + ", validFrom=" + validFrom + ", validUntil="
-            + validUntil + "]";
+            + validUntil + ", tags=" + tags + "]";
    }
 
    @Override

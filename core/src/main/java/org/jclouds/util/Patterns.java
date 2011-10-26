@@ -20,11 +20,12 @@ package org.jclouds.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 
 /**
  * 
@@ -43,36 +44,38 @@ public class Patterns {
    public static final Pattern _7E_PATTERN = Pattern.compile("%7E");
    public static final Pattern NEWLINE_PATTERN = Pattern.compile("\r?\n");
    public static final Pattern SLASH_PATTERN = Pattern.compile("[/]");
-   public static final Pattern IP_PATTERN = Pattern
-            .compile("b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).)"
-                     + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
+   public static final Pattern IP_PATTERN = Pattern.compile("b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).)"
+         + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
    public static final Pattern LEADING_SLASHES = Pattern.compile("^[/]+");
    public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
    public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
 
-   public final static Map<Character, Pattern> CHAR_TO_ENCODED_PATTERN = new MapMaker()
-            .makeComputingMap(new Function<Character, Pattern>() {
-               public Pattern apply(Character plain) {
-                  try {
-                     String encoded = URLEncoder.encode(plain + "", "UTF-8");
-                     return Pattern.compile(encoded);
-                  } catch (UnsupportedEncodingException e) {
-                     throw new IllegalStateException("Bad encoding on input: " + plain, e);
-                  }
+   public final static Cache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
+         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
+            @Override
+            public Pattern load(Character plain) throws ExecutionException {
+               try {
+                  String encoded = URLEncoder.encode(plain + "", "UTF-8");
+                  return Pattern.compile(encoded);
+               } catch (UnsupportedEncodingException e) {
+                  throw new ExecutionException("Bad encoding on input: " + plain, e);
                }
-            });
+            }
+         });
 
-   public final static Map<Character, Pattern> CHAR_TO_PATTERN = new MapMaker()
-            .makeComputingMap(new Function<Character, Pattern>() {
-               public Pattern apply(Character plain) {
-                  return Pattern.compile(plain + "");
-               }
-            });
+   public final static Cache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
+         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
+            @Override
+            public Pattern load(Character plain) {
+               return Pattern.compile(plain + "");
+            }
+         });
 
-   public final static Map<String, Pattern> TOKEN_TO_PATTERN = new MapMaker()
-            .makeComputingMap(new Function<String, Pattern>() {
-               public Pattern apply(String tokenValue) {
-                  return Pattern.compile("\\{" + tokenValue + "\\}");
-               }
-            });
+   public final static Cache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
+         .<String, Pattern> build(new CacheLoader<String, Pattern>() {
+            @Override
+            public Pattern load(String tokenValue) {
+               return Pattern.compile("\\{" + tokenValue + "\\}");
+            }
+         });
 }

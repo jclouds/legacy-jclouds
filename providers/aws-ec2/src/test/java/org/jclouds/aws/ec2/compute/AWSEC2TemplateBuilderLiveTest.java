@@ -69,7 +69,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                case DEBIAN:
                   return true;
                case CENTOS:
-                  return input.version.matches("5.[42]") || input.version.equals("");
+                  return input.version.matches("5.[246]") || input.version.equals("");
                case WINDOWS:
                   return input.version.matches("200[38]") || input.version.equals("");
                default:
@@ -81,14 +81,14 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilderM1SMALLWithDescription() {
+   public void testTemplateBuilderM1SMALLWithDescriptionPrecise() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-               .osVersionMatches("1[10].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
+               .osVersionMatches("1[012].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
                .build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-      assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(template.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -99,15 +99,15 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    }
 
    @Test
-   public void testUbuntuInstanceStoreGoesM1Small() {
+   public void testUbuntuInstanceStoreGoesM1SmallPrecise() {
 
       Template template = context.getComputeService().templateBuilder()
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE))
-            .osVersionMatches("1[10].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
+            .osVersionMatches("1[012].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
             .build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-      assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(template.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -141,7 +141,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.1");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -157,7 +157,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       Template defaultTemplate = context.getComputeService().templateBuilder().osFamily(OsFamily.AMZN_LINUX)
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.1");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -172,7 +172,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.02.1-beta");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.1");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -181,9 +181,10 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
 
       fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      System.out.println(fastestTemplate.getImage());
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");

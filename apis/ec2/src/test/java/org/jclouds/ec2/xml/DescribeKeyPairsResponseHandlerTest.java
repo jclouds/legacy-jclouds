@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "DescribeKeyPairsResponseHandlerTest")
 public class DescribeKeyPairsResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
@@ -47,10 +47,9 @@ public class DescribeKeyPairsResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/describe_keypairs.xml");
 
       Set<KeyPair> expected = ImmutableSet.of(new KeyPair(defaultRegion, "gsg-keypair",
-               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f", null));
+               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f", null, null));
 
-      DescribeKeyPairsResponseHandler handler = injector
-               .getInstance(DescribeKeyPairsResponseHandler.class);
+      DescribeKeyPairsResponseHandler handler = injector.getInstance(DescribeKeyPairsResponseHandler.class);
       addDefaultRegionToHandler(handler);
       Set<KeyPair> result = factory.create(handler).parse(is);
       assertEquals(result, expected);
@@ -58,7 +57,7 @@ public class DescribeKeyPairsResponseHandlerTest extends BaseEC2HandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of());
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of());
       replay(request);
       handler.setContext(request);
    }

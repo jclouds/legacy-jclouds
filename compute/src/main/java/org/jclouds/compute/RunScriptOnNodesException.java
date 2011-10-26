@@ -23,7 +23,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.createNodeErrorMessag
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;

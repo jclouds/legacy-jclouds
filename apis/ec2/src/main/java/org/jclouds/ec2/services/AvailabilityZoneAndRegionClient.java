@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;

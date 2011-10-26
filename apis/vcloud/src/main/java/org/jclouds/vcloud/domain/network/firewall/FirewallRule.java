@@ -20,7 +20,7 @@ package org.jclouds.vcloud.domain.network.firewall;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * The FirewallRule element defines a single firewall rule.

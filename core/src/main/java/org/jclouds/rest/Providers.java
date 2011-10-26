@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.util.SaxUtils;

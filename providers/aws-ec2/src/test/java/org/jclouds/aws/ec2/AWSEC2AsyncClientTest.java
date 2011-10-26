@@ -52,6 +52,7 @@ public class AWSEC2AsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSEC2Async
       assert syncClient.getSecurityGroupServices() != null;
       assert syncClient.getPlacementGroupServices() != null;
       assert syncClient.getWindowsServices() != null;
+      assert syncClient.getTagServices() != null;
 
    }
 
@@ -66,6 +67,7 @@ public class AWSEC2AsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSEC2Async
       assert asyncClient.getSecurityGroupServices() != null;
       assert asyncClient.getPlacementGroupServices() != null;
       assert asyncClient.getWindowsServices() != null;
+      assert asyncClient.getTagServices() != null;
    }
 
    @Override

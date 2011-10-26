@@ -18,19 +18,23 @@
  */
 package org.jclouds.ssh.jsch;
 
+import static com.google.inject.name.Names.bindProperties;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.util.Properties;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -49,11 +53,20 @@ public class JschSshClientTest {
 
    @BeforeTest
    public void setupSsh() throws UnknownHostException {
-      ssh = createClient();
+      ssh = createClient(new Properties());
    }
 
    protected JschSshClient createClient() throws UnknownHostException {
-      Injector i = Guice.createInjector(module());
+      return createClient(new Properties());
+   }
+
+   protected JschSshClient createClient(final Properties props) throws UnknownHostException {
+       Injector i = Guice.createInjector(module(), new AbstractModule() {
+         @Override
+         protected void configure() {
+            bindProperties(binder(), props);
+         }
+      }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
       JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
             "username", "password")));
@@ -83,6 +96,13 @@ public class JschSshClientTest {
       assert ssh1.shouldRetry(new AuthorizationException("problem", null));
    }
 
+   public void testOnlyRetryAuthWhenSetViaProperties() throws UnknownHostException {
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retry-auth", "true");
+      JschSshClient ssh1 = createClient(props);
+      assert ssh1.shouldRetry(new AuthorizationException("problem", null));
+   }
+
    public void testExceptionMessagesRetry() {
       assert !ssh.shouldRetry(new NullPointerException(""));
       assert !ssh.shouldRetry(new NullPointerException((String) null));
@@ -107,16 +127,4 @@ public class JschSshClientTest {
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
 
-   public void testPrivateKeyWithPassphrase() throws UnknownHostException {
-      Injector i = Guice.createInjector(module());
-      SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      try {
-         JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
-               "username", "-----BEGIN RSA PRIVATE KEY-----\nProc-Type: 4,ENCRYPTED\nDEK-Info: AES-128-CBC,123\n\n123")));
-         ssh.connect();
-         assert false; // this code should never be reached.
-      } catch (SshException e) {
-         // Success!
-      }
-   }
 }

@@ -22,7 +22,6 @@ import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
@@ -43,11 +42,12 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.MapMaker;
 import com.google.common.io.Files;
 import com.google.inject.Module;
 import com.google.inject.Provider;
@@ -67,12 +67,12 @@ public class ComputeTaskUtils {
     *           allows access to the ant project to retrieve default properties needed for compute
     *           providers.
     */
-   static Map<URI, ComputeServiceContext> buildComputeMap(final Provider<Project> projectProvider) {
-      return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext>() {
+   static Cache<URI, ComputeServiceContext> buildComputeMap(final Provider<Project> projectProvider) {
+      return CacheBuilder.newBuilder().build(new CacheLoader<URI, ComputeServiceContext>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public ComputeServiceContext apply(URI from) {
+         public ComputeServiceContext load(URI from) {
             Properties props = getPropertiesFromResource("/rest.properties");
             props.putAll(projectProvider.get().getProperties());
             // adding the properties to the factory will allow us to pass

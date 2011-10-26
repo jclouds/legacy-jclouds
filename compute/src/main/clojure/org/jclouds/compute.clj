@@ -30,7 +30,6 @@ Current supported providers are:
 Here's an example of getting some compute configuration from rackspace:
 
   (use 'org.jclouds.compute)
-  (use 'clojure.contrib.pprint)
 
   (def provider \"cloudservers\")
   (def provider-identity \"username\")
@@ -58,9 +57,7 @@ webserver:
 
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
-        (clojure.contrib logging core))
-  (:require
-   [clojure.contrib.condition :as condition])
+    (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
@@ -73,13 +70,6 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.compute.predicates
             NodePredicates]
            [com.google.common.collect ImmutableSet]))
-
-(try
- (use '[clojure.contrib.reflect :only [get-field]])
- (catch Exception e
-   (use '[clojure.contrib.java-utils
-          :only [wall-hack-field]
-          :rename {wall-hack-field get-field}])))
 
 (defmacro deprecate-fwd [old-name new-name] `(defn ~old-name {:deprecated "beta-9"} [& args#] (apply ~new-name args#)))
 
@@ -396,6 +386,8 @@ See http://code.google.com/p/jclouds for details."
    (make-option-map
     kw-memfn-1arg
     [:run-script :install-private-key :authorize-public-key
+     :override-credentials-with :override-login-user-with
+     :override-login-credential-with
      ;; aws ec2 options
      :spot-price :spot-options :placement-group :subnet-id
      :block-device-mappings :unmapDeviceNamed :security-groups
@@ -407,8 +399,8 @@ See http://code.google.com/p/jclouds for details."
      ;; aws ec2 options
      :map-ephemeral-device-to-device-name])
    {:map-ebs-snapshot-to-device-name
-    (kw-memfn-apply :map-ebs-snapshot-to-device-name
-                    device-name snapshot-id size-in-gib delete-on-termination)
+    (memfn-apply mapEBSSnapshotToDeviceName
+                 device-name snapshot-id size-in-gib delete-on-termination)
     :map-new-volume-to-device-name
     (kw-memfn-apply :map-new-volume-to-device-name
                     device-name size-in-gib delete-on-termination)}))
@@ -453,19 +445,15 @@ Options correspond to TemplateBuilder methods."
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]
       (when-not (known-template-options option)
-        (condition/raise
-         :type :invalid-template-builder-option
-         :message (format "Invalid template builder option : %s" option)))
+        (throw (Exception. (format "Invalid template builder option : %s" option))))
       ;; apply template builder options
       (try
         (apply-option builder template-map option value)
         (catch Exception e
-            (condition/raise
-             :type :invalid-template-builder
-             :message (format
+            (throw (Exception. (format
                        "Problem applying template builder %s with value %s: %s"
                        option (pr-str value) (.getMessage e))
-             :cause e))))
+                    e)))))
     (let [template (.build builder)
           template-options (.getOptions template)]
       (doseq [[option value] options]
@@ -473,10 +461,9 @@ Options correspond to TemplateBuilder methods."
         (try
           (apply-option template-options options-map option value)
           (catch Exception e
-            (condition/raise
-             :type :invalid-template-option
-             :message (format
+            (throw (Exception.
+                    (format
                        "Problem applying template option %s with value %s: %s"
                        option (pr-str value) (.getMessage e))
-             :cause e))))
+                    e)))))
       template)))

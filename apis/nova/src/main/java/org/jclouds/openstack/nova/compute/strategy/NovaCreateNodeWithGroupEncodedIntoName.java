@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
 
 import java.util.Map;
 
@@ -53,7 +54,8 @@ public class NovaCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGro
 
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
-      Server from = client.createServer(name, template.getImage().getId(), template.getHardware().getId());
+      Server from = client.createServer(name, template.getImage().getId(), template.getHardware().getId(),
+            withMetadata(template.getOptions().getUserMetadata()));
       credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
       return serverToNodeMetadata.apply(from);
    }

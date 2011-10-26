@@ -45,6 +45,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -76,41 +80,78 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
 
       ImmutableSet<AWSRunningInstance> contents = ImmutableSet.of(new AWSRunningInstance.Builder()
-               .region(defaultRegion).instanceId("i-911444f0").imageId("ami-63be790a").instanceState(
-                        InstanceState.RUNNING).privateDnsName("ip-10-212-81-7.ec2.internal").dnsName(
-                        "ec2-174-129-173-155.compute-1.amazonaws.com").keyName("jclouds#zkclustertest#us-east-1#23")
-               .amiLaunchIndex("0").instanceType("t1.micro").launchTime(
-                        dateService.iso8601DateParse("2011-08-16T13:40:50.000Z")).availabilityZone("us-east-1c")
-               .kernelId("aki-427d952b").monitoringState(MonitoringState.DISABLED).privateIpAddress("10.212.81.7")
-               .ipAddress("174.129.173.155").securityGroupIdToNames(
-                        ImmutableMap.<String, String> of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
-               .rootDeviceType(RootDeviceType.EBS).rootDeviceName("/dev/sda1").device(
-                        "/dev/sda1",
-                        new BlockDevice("vol-5829fc32", Attachment.Status.ATTACHED, dateService
-                                 .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
-               .virtualizationType("paravirtual").build(),//
-               new AWSRunningInstance.Builder().region(defaultRegion).instanceId("i-931444f2").imageId("ami-63be790a")
-                        .instanceState(InstanceState.RUNNING).privateDnsName("ip-10-212-185-8.ec2.internal").dnsName(
-                                 "ec2-50-19-207-248.compute-1.amazonaws.com").keyName(
-                                 "jclouds#zkclustertest#us-east-1#23").amiLaunchIndex("0").instanceType("t1.micro")
-                        .launchTime(dateService.iso8601DateParse("2011-08-16T13:40:50.000Z")).availabilityZone(
-                                 "us-east-1c").kernelId("aki-427d952b").monitoringState(MonitoringState.DISABLED)
-                        .privateIpAddress("10.212.185.8").ipAddress("50.19.207.248").securityGroupIdToNames(
-                                 ImmutableMap.<String, String> of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
-                        .rootDeviceType(RootDeviceType.EBS).rootDeviceName("/dev/sda1").device(
-                                 "/dev/sda1",
-                                 new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService
-                                          .iso8601DateParse("2011-08-16T13:41:19.000Z"), true)).virtualizationType(
-                                 "paravirtual").build());
+               .region(defaultRegion)
+               .instanceId("i-911444f0")
+               .imageId("ami-63be790a")
+               .instanceState(InstanceState.RUNNING)
+               .privateDnsName("ip-10-212-81-7.ec2.internal")
+               .dnsName("ec2-174-129-173-155.compute-1.amazonaws.com")
+               .keyName("jclouds#zkclustertest#us-east-1#23")
+               .amiLaunchIndex("0")
+               .instanceType("t1.micro")
+               .launchTime(dateService.iso8601DateParse("2011-08-16T13:40:50.000Z"))
+               .availabilityZone("us-east-1c")
+               .kernelId("aki-427d952b")
+               .monitoringState(MonitoringState.DISABLED)
+               .privateIpAddress("10.212.81.7")
+               .ipAddress("174.129.173.155")
+               .securityGroupIdToNames(ImmutableMap.<String, String> of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
+               .rootDeviceType(RootDeviceType.EBS)
+               .rootDeviceName("/dev/sda1")
+               .device("/dev/sda1", new BlockDevice("vol-5829fc32", Attachment.Status.ATTACHED, dateService.iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
+               .virtualizationType("paravirtual")
+               .tag("Name", "foo")
+               .tag("Empty", "")
+               .build(),//
+               new AWSRunningInstance.Builder()
+                        .region(defaultRegion)
+                        .instanceId("i-931444f2")
+                        .imageId("ami-63be790a")
+                        .instanceState(InstanceState.RUNNING)
+                        .privateDnsName("ip-10-212-185-8.ec2.internal")
+                        .dnsName("ec2-50-19-207-248.compute-1.amazonaws.com")
+                        .keyName("jclouds#zkclustertest#us-east-1#23")
+                        .amiLaunchIndex("0")
+                        .instanceType("t1.micro")
+                        .launchTime(dateService.iso8601DateParse("2011-08-16T13:40:50.000Z"))
+                        .availabilityZone("us-east-1c")
+                        .kernelId("aki-427d952b")
+                        .monitoringState(MonitoringState.DISABLED)
+                        .privateIpAddress("10.212.185.8")
+                        .ipAddress("50.19.207.248")
+                        .securityGroupIdToNames(ImmutableMap.<String, String>of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
+                        .rootDeviceType(RootDeviceType.EBS)
+                        .rootDeviceName("/dev/sda1")
+                        .device("/dev/sda1", new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService.iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
+                        .virtualizationType("paravirtual")
+                        .build());
 
-      assertEquals(parser.apply(Iterables.get(contents, 0)), new NodeMetadataBuilder().state(NodeState.RUNNING).group(
-               "zkclustertest").hostname("ip-10-212-81-7").privateAddresses(ImmutableSet.of("10.212.81.7"))
-               .publicAddresses(ImmutableSet.of("174.129.173.155")).imageId("us-east-1/ami-63be790a").id(
-                        "us-east-1/i-911444f0").providerId("i-911444f0").build());
-      assertEquals(parser.apply(Iterables.get(contents, 1)), new NodeMetadataBuilder().state(NodeState.RUNNING).group(
-               "zkclustertest").hostname("ip-10-212-185-8").privateAddresses(ImmutableSet.of("10.212.185.8"))
-               .publicAddresses(ImmutableSet.of("50.19.207.248")).imageId("us-east-1/ami-63be790a").id(
-                        "us-east-1/i-931444f2").providerId("i-931444f2").build());
+      assertEquals(
+            parser.apply(Iterables.get(contents, 0)).toString(),
+            new NodeMetadataBuilder()
+                  .state(NodeState.RUNNING)
+                  .group("zkclustertest")
+                  .name("foo")
+                  .hostname("ip-10-212-81-7")
+                  .privateAddresses(ImmutableSet.of("10.212.81.7"))
+                  .publicAddresses(ImmutableSet.of("174.129.173.155"))
+                  .imageId("us-east-1/ami-63be790a")
+                  .id("us-east-1/i-911444f0")
+                  .providerId("i-911444f0")
+                  .tags(ImmutableSet.of("Empty"))
+                  .userMetadata(ImmutableMap.of("Name", "foo")).build().toString());
+      assertEquals(
+              parser.apply(Iterables.get(contents, 1)), 
+              new NodeMetadataBuilder()
+                  .state(NodeState.RUNNING)
+                  .group("zkclustertest")
+                  .hostname("ip-10-212-185-8")
+                  .privateAddresses(ImmutableSet.of("10.212.185.8"))
+                  .publicAddresses(ImmutableSet.of("50.19.207.248"))
+                  .imageId("us-east-1/ami-63be790a")
+                  .id("us-east-1/i-931444f2")
+                  .providerId("i-931444f2")
+                  .build());
    }
 
    protected AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
@@ -118,7 +159,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
             Map<String, Credentials> credentialStore) {
       Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
 
-      Map<RegionAndName, Image> instanceToImage = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
+      final ImmutableMap<RegionAndName, Image> backing = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
 
          @Override
          public RegionAndName apply(Image from) {
@@ -126,13 +167,23 @@ public class AWSRunningInstanceToNodeMetadataTest {
          }
 
       });
-
+      
+      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
+    
+         @Override
+         public Image load(RegionAndName key) throws Exception {
+            return backing.get(key);
+         }
+         
+      });
+            
+          
       return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
    }
 
    private AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, Map<RegionAndName, Image> instanceToImage) {
+            Map<InstanceState, NodeState> instanceToNodeState, Cache<RegionAndName, ? extends Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -150,7 +201,8 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       };
       AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeState,
-               credentialStore, instanceToImage, locationSupplier, hardwareSupplier);
+            credentialStore, Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
+            locationSupplier, hardwareSupplier);
       return parser;
    }
 

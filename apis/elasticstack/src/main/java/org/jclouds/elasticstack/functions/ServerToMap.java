@@ -23,22 +23,36 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.NIC;
 import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
 public class ServerToMap implements Function<Server, Map<String, String>> {
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @ApiVersion
+   private final String apiVersion;
+
+   @Inject
+   public ServerToMap(@ApiVersion String apiVersion) {
+      this.apiVersion = apiVersion;
+   }
+
    @Override
    public Map<String, String> apply(Server from) {
       checkNotNull(from, "server");
@@ -65,10 +79,17 @@ public class ServerToMap implements Function<Server, Map<String, String>> {
          if (nic.getVlan() != null)
             builder.put("nic:" + nicId + ":vlan", nic.getVlan());
          if (nic.getMac() != null)
-            builder.put("nic:" + nicId + ":mac", nic.getMac());
+            logger.trace("setting mac on network interfaces not supported: %s", nic);
          nicId++;
       }
-      builder.put("vnc:ip", from.getVnc().getIp() == null ? "auto" : from.getVnc().getIp());
+
+      String vncIp = from.getVnc().getIp();
+      if (apiVersion.equals("2.0")) {
+         builder.put("vnc", "auto");
+      } else {
+         builder.put("vnc:ip", vncIp == null ? "auto" : vncIp);
+      }
+
       if (from.getVnc().getPassword() != null)
          builder.put("vnc:password", from.getVnc().getPassword());
       if (from.getVnc().isTls())

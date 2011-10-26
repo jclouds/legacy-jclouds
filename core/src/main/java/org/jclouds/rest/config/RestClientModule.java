@@ -19,7 +19,6 @@
 package org.jclouds.rest.config;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,8 +29,9 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapMaker;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -125,10 +125,10 @@ public class RestClientModule<S, A> extends AbstractModule {
    @Provides
    @Singleton
    @Named("sync")
-   ConcurrentMap<ClassMethodArgs, Object> provideSyncDelegateMap(
+   Cache<ClassMethodArgs, Object> provideSyncDelegateMap(
          CreateClientForCaller createClientForCaller) {
       createClientForCaller.sync2Async = delegates;
-      return new MapMaker().makeComputingMap(createClientForCaller);
+      return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 
 }

@@ -52,7 +52,12 @@ import com.google.inject.Provides;
 /**
  * Configures {@link ExecutorService}.
  * 
- * Note that this uses threads
+ * Note that this uses threads.
+ *  
+ * <p>
+ * This extends the underlying Future to expose a description (the task's toString) and the submission context (stack trace).
+ * The submission stack trace is appended to relevant stack traces on exceptions that are returned,
+ * so the user can see the logical chain of execution (in the executor, and where it was passed to the executor).
  * 
  * @author Adrian Cole
  */
@@ -92,7 +97,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
    static ExecutorService addToStringOnSubmit(ExecutorService executor) {
       if (executor != null) {
-         return new AddToStringOnSubmitExecutorService(executor);
+         return new DescribingExecutorService(executor);
       }
       return executor;
    }
@@ -117,11 +122,11 @@ public class ExecutorServiceModule extends AbstractModule {
    protected void configure() {
    }
 
-   static class AddToStringOnSubmitExecutorService implements ExecutorService {
+   static class DescribingExecutorService implements ExecutorService {
 
       private final ExecutorService delegate;
 
-      public AddToStringOnSubmitExecutorService(ExecutorService delegate) {
+      public DescribingExecutorService(ExecutorService delegate) {
          this.delegate = checkNotNull(delegate, "delegate");
       }
 
@@ -174,18 +179,18 @@ public class ExecutorServiceModule extends AbstractModule {
 
       @Override
       public <T> Future<T> submit(Callable<T> task) {
-         return new AddToStringFuture<T>(delegate.submit(task), task.toString());
+         return new DescribedFuture<T>(delegate.submit(task), task.toString(), getStackTraceHere());
       }
 
       @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Future<?> submit(Runnable task) {
-         return new AddToStringFuture(delegate.submit(task), task.toString());
+         return new DescribedFuture(delegate.submit(task), task.toString(), getStackTraceHere());
       }
 
       @Override
       public <T> Future<T> submit(Runnable task, T result) {
-         return new AddToStringFuture<T>(delegate.submit(task, result), task.toString());
+         return new DescribedFuture<T>(delegate.submit(task, result), task.toString(), getStackTraceHere());
       }
 
       @Override
@@ -210,13 +215,15 @@ public class ExecutorServiceModule extends AbstractModule {
 
    }
 
-   static class AddToStringFuture<T> implements Future<T> {
+   static class DescribedFuture<T> implements Future<T> {
       private final Future<T> delegate;
-      private final String toString;
+      private final String description;
+      private StackTraceElement[] submissionTrace;
 
-      public AddToStringFuture(Future<T> delegate, String toString) {
+      public DescribedFuture(Future<T> delegate, String description, StackTraceElement[] submissionTrace) {
          this.delegate = delegate;
-         this.toString = toString;
+         this.description = description;
+         this.submissionTrace = submissionTrace;
       }
 
       @Override
@@ -226,12 +233,65 @@ public class ExecutorServiceModule extends AbstractModule {
 
       @Override
       public T get() throws InterruptedException, ExecutionException {
-         return delegate.get();
+         try {
+            return delegate.get();
+         } catch (ExecutionException e) {
+            throw ensureCauseHasSubmissionTrace(e);
+         } catch (InterruptedException e) {
+            throw ensureCauseHasSubmissionTrace(e);
+         }
       }
 
       @Override
       public T get(long arg0, TimeUnit arg1) throws InterruptedException, ExecutionException, TimeoutException {
-         return delegate.get(arg0, arg1);
+         try {
+            return delegate.get(arg0, arg1);
+         } catch (ExecutionException e) {
+            throw ensureCauseHasSubmissionTrace(e);
+         } catch (InterruptedException e) {
+            throw ensureCauseHasSubmissionTrace(e);
+         } catch (TimeoutException e) {
+            throw ensureCauseHasSubmissionTrace(e);
+         }
+      }
+
+      /** This method does the work to ensure _if_ a submission stack trace was provided,
+       * it is included in the exception.  most errors are thrown from the frame of the
+       * Future.get call, with a cause that took place in the executor's thread.
+       * We extend the stack trace of that cause with the submission stack trace.
+       * (An alternative would be to put the stack trace as a root cause,
+       * at the bottom of the stack, or appended to all traces, or inserted
+       * after the second cause, etc ... but since we can't change the "Caused by:"
+       * method in Throwable the compromise made here seems best.)
+       */
+      private <ET extends Exception> ET ensureCauseHasSubmissionTrace(ET e) {
+         if (submissionTrace==null) return e;
+         if (e.getCause()==null) {
+            ExecutionException ee = new ExecutionException("task submitted from the following trace", null);
+            e.initCause(ee);
+            return e;
+         }
+         Throwable cause = e.getCause();
+         StackTraceElement[] causeTrace = cause.getStackTrace();
+         boolean causeIncludesSubmissionTrace = submissionTrace.length >= causeTrace.length;
+         for (int i=0; causeIncludesSubmissionTrace && i<submissionTrace.length; i++) {
+            if (!causeTrace[causeTrace.length-1-i].equals(submissionTrace[submissionTrace.length-1-i])) {
+               causeIncludesSubmissionTrace = false;
+            }
+         }
+         
+         if (!causeIncludesSubmissionTrace) {
+            cause.setStackTrace(merge(causeTrace, submissionTrace));
+         }
+         
+         return e;
+      }
+
+      private StackTraceElement[] merge(StackTraceElement[] t1, StackTraceElement[] t2) {
+         StackTraceElement[] t12 = new StackTraceElement[t1.length + t2.length];
+         System.arraycopy(t1, 0, t12, 0, t1.length);
+         System.arraycopy(t2, 0, t12, t1.length, t2.length);
+         return t12;
       }
 
       @Override
@@ -256,7 +316,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
       @Override
       public String toString() {
-         return toString;
+         return description;
       }
 
    }
@@ -302,4 +362,14 @@ public class ExecutorServiceModule extends AbstractModule {
                .setThreadFactory(Executors.defaultThreadFactory()).build());
    }
 
+   /** returns the stack trace at the caller */
+   static StackTraceElement[] getStackTraceHere() {
+      // remove the first two items in the stack trace (because the first one refers to the call to 
+      // Thread.getStackTrace, and the second one is us)
+      StackTraceElement[] fullSubmissionTrace = Thread.currentThread().getStackTrace();
+      StackTraceElement[] cleanedSubmissionTrace = new StackTraceElement[fullSubmissionTrace.length-2];
+      System.arraycopy(fullSubmissionTrace, 2, cleanedSubmissionTrace, 0, cleanedSubmissionTrace.length);
+      return cleanedSubmissionTrace;
+   }
+   
 }

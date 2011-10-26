@@ -20,7 +20,7 @@ package org.jclouds.aws.ec2.services;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.KeyPair;

@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.domain;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;

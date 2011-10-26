@@ -21,12 +21,12 @@ package org.jclouds.gogrid.predicates;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.jclouds.gogrid.options.GetJobListOptions.Builder.latestJobForObjectByName;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.options.GetJobListOptions;
 import org.jclouds.gogrid.services.GridJobClient;
 import org.testng.annotations.Test;
 
@@ -35,33 +35,29 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Oleksiy Yarmula
  */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "ServerLatestJobCompletedTest")
 public class ServerLatestJobCompletedTest {
 
-    @Test
-    public void testPredicate() {
-        final String serverName = "SERVER_NAME";
-        Server server = createMock(Server.class);
-        expect(server.getName()).andStubReturn(serverName);
+   @Test
+   public void testPredicate() {
+      final String serverName = "SERVER_NAME";
+      Server server = createMock(Server.class);
+      expect(server.getName()).andStubReturn(serverName);
 
-        GetJobListOptions jobOptions = new GetJobListOptions.Builder().
-                latestJobForObjectByName(serverName);
+      Job job = createMock(Job.class);
+      expect(job.getCurrentState()).andReturn(JobState.SUCCEEDED);
 
-        Job job = createMock(Job.class);
-        expect(job.getCurrentState()).andReturn(JobState.SUCCEEDED);
+      GridJobClient client = createMock(GridJobClient.class);
+      expect(client.getJobList(latestJobForObjectByName(serverName))).andReturn(ImmutableSet.<Job> of(job));
 
-        GridJobClient client = createMock(GridJobClient.class);
-        expect(client.getJobList(jobOptions)).
-                andReturn(ImmutableSet.<Job>of(job));
+      replay(job);
+      replay(client);
+      replay(server);
 
-        replay(job);
-        replay(client);
-        replay(server);
+      ServerLatestJobCompleted predicate = new ServerLatestJobCompleted(client);
+      assertTrue(predicate.apply(server), "The result of the predicate should've been 'true'");
 
-        ServerLatestJobCompleted predicate = new ServerLatestJobCompleted(client);
-        assertTrue(predicate.apply(server), "The result of the predicate should've been 'true'");
-
-    }
+   }
 
 }
