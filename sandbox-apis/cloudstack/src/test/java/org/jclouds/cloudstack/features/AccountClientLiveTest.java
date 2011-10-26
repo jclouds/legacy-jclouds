@@ -18,21 +18,21 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 /**
  * Tests behavior of {@code AccountClient}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AccountClientLiveTest")
 public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
-   public void testListAccount() throws Exception {
+   public void testListAccounts() throws Exception {
       for (Account securityAccount : client.getAccountClient().listAccounts())
          checkAccount(securityAccount);
    }
