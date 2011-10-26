@@ -777,9 +777,7 @@ public class RestAnnotationProcessor<T> {
    public static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
       if (annotation == null) {
-         if (method.isAnnotationPresent(JAXBResponseParser.class)) {
-             return getJAXBParserKeyForMethod(method);
-         } else if (method.getReturnType().equals(void.class)
+         if (method.getReturnType().equals(void.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
             return Key.get(ReleasePayloadAndReturn.class);
          } else if (method.getReturnType().equals(boolean.class) || method.getReturnType().equals(Boolean.class)
@@ -793,6 +791,9 @@ public class RestAnnotationProcessor<T> {
             return Key.get((Class) IdentityFunction.class);
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
             return getJsonParserKeyForMethod(method);
+         } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_XML)
+                || method.isAnnotationPresent(JAXBResponseParser.class)) {
+            return getJAXBParserKeyForMethod(method);
          } else if (method.getReturnType().equals(String.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
             return Key.get(ReturnStringIf2xx.class);

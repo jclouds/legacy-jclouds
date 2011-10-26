@@ -32,7 +32,6 @@ import static org.jclouds.io.Payloads.newStringPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -2461,9 +2460,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    
    public interface TestJAXBResponseParser {
        @GET
-       @Path("/jaxb")
+       @Path("/jaxb/annotation")
        @JAXBResponseParser
-       public ListenableFuture<TestJAXBDomain> jaxbGet();
+       public ListenableFuture<TestJAXBDomain> jaxbGetWithAnnotation();
+       
+       @GET
+       @Path("/jaxb/header")
+       @Consumes(MediaType.APPLICATION_XML)
+       public ListenableFuture<TestJAXBDomain> jaxbGetWithAcceptHeader();
    }
    
    @XmlRootElement(name = "test")
@@ -2479,9 +2483,20 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
    
    @Test
-   public void testCreateJAXBResponseParser() throws SecurityException, NoSuchMethodException {
+   public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
        RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
-       Method method = TestJAXBResponseParser.class.getMethod("jaxbGet");
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
+       GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser> builder().method("GET")
+                .endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class).javaMethod(method).args(
+                         new Object[] {}).build();
+       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
+       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
+    }
+   
+   @Test
+   public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
+       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
        GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser> builder().method("GET")
                 .endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class).javaMethod(method).args(
                          new Object[] {}).build();
@@ -2491,8 +2506,26 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    
    @SuppressWarnings("unchecked")
    @Test
-   public void testJAXBResponseParser() throws SecurityException, NoSuchMethodException, IOException {
-       Method method = TestJAXBResponseParser.class.getMethod("jaxbGet");
+   public void testJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
+       HttpRequest request = factory(TestJAXBResponseParser.class).createRequest(method);
+
+       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+       // now test that it works!
+
+       Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
+                .createResponseParser(parserFactory, injector, method, request);
+       
+       StringBuffer payload = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+       payload.append("<test><elem>Hello World</elem></test>");
+       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
+       assertEquals(domain.getElem(), "Hello World");
+    }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
        HttpRequest request = factory(TestJAXBResponseParser.class).createRequest(method);
 
        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
