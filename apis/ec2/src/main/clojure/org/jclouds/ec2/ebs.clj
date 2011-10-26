@@ -21,8 +21,8 @@
   #^{:author "Chas Emerick, cemerick@snowtide.com"
      :doc "A clojure binding to the jclouds EBS service interface."}
   org.jclouds.ec2.ebs
+  (:use [clojure.core.incubator :only (-?>)])
   (:require (org.jclouds [compute :as compute]))
-  (:use (clojure.contrib def core))
   (:import org.jclouds.aws.domain.Region
     org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZoneInfo)

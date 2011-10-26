@@ -18,9 +18,6 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
-
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +31,7 @@ import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
+import org.jclouds.aws.ec2.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
@@ -47,7 +45,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
@@ -62,6 +59,9 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -80,15 +80,15 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(ComputeService.class).to(AWSEC2ComputeService.class);
       bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
       }).to(RunningInstanceToNodeMetadata.class);
-      bind(new TypeLiteral<Function<RunningInstance, Credentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
-      bind(new TypeLiteral<Function<RegionNameAndIngressRules, String>>() {
+      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<Function<RegionNameAndPublicKeyMaterial, KeyPair>>() {
       }).to(ImportOrReturnExistingKeypair.class);
-      bind(new TypeLiteral<Function<RegionAndName, Image>>() {
+      bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<AWSEC2Client, AWSEC2AsyncClient>>() {
@@ -116,10 +116,8 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @Provides
    @Singleton
    @Named("PLACEMENT")
-   protected Map<RegionAndName, String> placementGroupMap(CreateSecurityGroupIfNeeded in) {
-      // doesn't seem to clear when someone issues remove(key)
-      // return new MapMaker().makeComputingMap(in);
-      return newLinkedHashMap();
+   protected Cache<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
+      return CacheBuilder.newBuilder().build(in);
    }
 
    @Provides

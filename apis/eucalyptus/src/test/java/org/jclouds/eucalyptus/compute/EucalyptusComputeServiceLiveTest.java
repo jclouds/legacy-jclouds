@@ -18,6 +18,8 @@
  */
 package org.jclouds.eucalyptus.compute;
 
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
@@ -26,7 +28,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "EucalyptusComputeServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "EucalyptusComputeServiceLiveTest")
 public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public EucalyptusComputeServiceLiveTest() {
@@ -45,7 +47,13 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
          // ebs backed not yet available
       }
    }
-
+   
+   @Override
+   @Test(enabled = true)
+   public void testMapEBS() throws Exception {
+      // ebs backed not yet available
+   }
+   
    @Override
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
@@ -63,5 +71,9 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    public void testDestroyNodes() {
       super.testDestroyNodes();
    }
-
+   
+   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
+      // hostname is not predictable based on node metadata
+      assert execResponse.getOutput().trim().equals("ubuntu");
+   }
 }

@@ -25,7 +25,6 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -47,6 +46,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -58,12 +60,12 @@ import com.google.common.util.concurrent.Futures;
  * @author Adrian Cole
  */
 @Singleton
-public class AWSRegionAndNameToImageSupplier implements Supplier<Map<RegionAndName, ? extends Image>> {
+public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAndName, ? extends Image>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Map<RegionAndName, Image> images;
+   private final CacheLoader<RegionAndName, Image> regionAndIdToImage;
    private final Set<String> clusterComputeIds;
    private final CallForImages.Factory factory;
    private final ExecutorService executor;
@@ -76,7 +78,7 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Map<RegionAndNa
    @Inject
    protected AWSRegionAndNameToImageSupplier(@Region Set<String> regions,
             @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
-            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, Map<RegionAndName, Image> images,
+            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, CacheLoader<RegionAndName, Image> regionAndIdToImage,
             CallForImages.Factory factory, @ClusterCompute Set<String> clusterComputeIds,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.factory = factory;
@@ -84,13 +86,13 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Map<RegionAndNa
       this.amiQuery = amiQuery;
       this.clusterRegions = Splitter.on(',').split(clusterRegions);
       this.ccAmiQuery = ccAmiQuery;
-      this.images = images;
+      this.regionAndIdToImage = regionAndIdToImage;
       this.clusterComputeIds = clusterComputeIds;
       this.executor = executor;
    }
 
    @Override
-   public Map<RegionAndName, ? extends Image> get() {
+   public Cache<RegionAndName, ? extends Image> get() {
       Future<Iterable<Image>> normalImages = images(regions, amiQuery, PROPERTY_EC2_AMI_QUERY);
       ImmutableSet<Image> clusterImages;
       try {
@@ -115,8 +117,9 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Map<RegionAndNa
          Throwables.propagate(e);
          return null;
       }
+      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
 
-      images.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+      cache.asMap().putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
          @Override
          public RegionAndName apply(Image from) {
@@ -124,7 +127,8 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Map<RegionAndNa
          }
 
       }));
-      return images;
+      logger.debug("<< images(%d)", cache.asMap().size());
+      return cache;
    }
 
    private Future<Iterable<Image>> images(Iterable<String> regions, String query, String tag) {

@@ -18,10 +18,13 @@
  */
 package org.jclouds.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.KeyPair.Builder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
@@ -33,31 +36,36 @@ import org.jclouds.location.Region;
  * @author Adrian Cole
  */
 public class KeyPairResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<KeyPair> {
+   private final String defaultRegion;
+   private Builder builder;
+
    @Inject
-   @Region
-   String defaultRegion;
+   public KeyPairResponseHandler(@Region String defaultRegion) {
+      this.defaultRegion = defaultRegion;
+      builder = KeyPair.builder().region(defaultRegion);
+   }
+
    private StringBuilder currentText = new StringBuilder();
-   private String keyFingerprint;
-   private String keyMaterial;
-   private String keyName;
 
    public KeyPair getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
-      if (region == null)
-         region = defaultRegion;
-      return new KeyPair(region, keyName, keyFingerprint, keyMaterial);
+      if (region != null)
+         builder.region(region);
+      try {
+         return builder.build();
+      } finally {
+         builder = KeyPair.builder().region(defaultRegion);
+      }
    }
 
    public void endElement(String uri, String name, String qName) {
-
       if (qName.equals("keyFingerprint")) {
-         this.keyFingerprint = currentText.toString().trim();
+         builder.sha1OfPrivateKey(currentOrNull(currentText));
       } else if (qName.equals("keyMaterial")) {
-         this.keyMaterial = currentText.toString().trim();
+         builder.keyMaterial(currentOrNull(currentText));
       } else if (qName.equals("keyName")) {
-         this.keyName = currentText.toString().trim();
+         builder.keyName(currentOrNull(currentText));
       }
-
       currentText = new StringBuilder();
    }
 

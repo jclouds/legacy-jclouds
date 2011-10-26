@@ -20,7 +20,8 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
+import org.jclouds.crypto.SshKeys;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 
@@ -32,8 +33,8 @@ import javax.annotation.Nullable;
 public class KeyPair implements Comparable<KeyPair> {
    @Override
    public String toString() {
-      return "[region=" + region + ", keyName=" + keyName + ", keyFingerprint=" + keyFingerprint + ", keyMaterial?="
-            + (keyMaterial != null) + "]";
+      return "[region=" + region + ", keyName=" + keyName + ", fingerprint=" + fingerprint + ", sha1OfPrivateKey="
+               + sha1OfPrivateKey + ", keyMaterial?=" + (keyMaterial != null) + "]";
    }
 
    public static Builder builder() {
@@ -43,7 +44,8 @@ public class KeyPair implements Comparable<KeyPair> {
    public static class Builder {
       private String region;
       private String keyName;
-      private String keyFingerprint;
+      private String fingerprint;
+      private String sha1OfPrivateKey;
       private String keyMaterial;
 
       public Builder region(String region) {
@@ -56,8 +58,8 @@ public class KeyPair implements Comparable<KeyPair> {
          return this;
       }
 
-      public Builder keyFingerprint(String keyFingerprint) {
-         this.keyFingerprint = keyFingerprint;
+      public Builder sha1OfPrivateKey(String sha1OfPrivateKey) {
+         this.sha1OfPrivateKey = sha1OfPrivateKey;
          return this;
       }
 
@@ -66,27 +68,38 @@ public class KeyPair implements Comparable<KeyPair> {
          return this;
       }
 
+      public Builder fingerprint(String fingerprint) {
+         this.fingerprint = fingerprint;
+         return this;
+      }
+
       public KeyPair build() {
-         return new KeyPair(region, keyName, keyFingerprint, keyMaterial);
+         if (fingerprint == null && keyMaterial != null)
+            fingerprint(SshKeys.fingerprintPrivateKey(keyMaterial));
+         return new KeyPair(region, keyName, sha1OfPrivateKey, keyMaterial, fingerprint);
       }
 
       public static Builder fromKeyPair(KeyPair in) {
-         return new Builder().region(in.getRegion()).keyName(in.getKeyName()).keyFingerprint(in.getKeyFingerprint())
-               .keyMaterial(in.getKeyMaterial());
+         return new Builder().region(in.getRegion()).keyName(in.getKeyName()).sha1OfPrivateKey(in.getKeyFingerprint())
+                  .keyMaterial(in.getKeyMaterial());
       }
    }
 
    private final String region;
    private final String keyName;
-   private final String keyFingerprint;
+   private final String sha1OfPrivateKey;
    @Nullable
    private final String keyMaterial;
+   @Nullable
+   private final String fingerprint;
 
-   public KeyPair(String region, String keyName, String keyFingerprint, @Nullable String keyMaterial) {
+   public KeyPair(String region, String keyName, String sha1OfPrivateKey, @Nullable String keyMaterial,
+            @Nullable String fingerprint) {
       this.region = checkNotNull(region, "region");
       this.keyName = checkNotNull(keyName, "keyName");
-      this.keyFingerprint = checkNotNull(keyFingerprint, "keyFingerprint");
+      this.sha1OfPrivateKey = checkNotNull(sha1OfPrivateKey, "sha1OfPrivateKey");
       this.keyMaterial = keyMaterial;// nullable on list
+      this.fingerprint = fingerprint;// nullable on list
    }
 
    /**
@@ -104,10 +117,30 @@ public class KeyPair implements Comparable<KeyPair> {
    }
 
    /**
-    * A SHA-1 digest of the DER encoded private key.
+    * @see #getSha1OfPrivateKey
     */
+   @Deprecated
    public String getKeyFingerprint() {
-      return keyFingerprint;
+      return sha1OfPrivateKey;
+   }
+
+   /**
+    * A SHA-1 digest of the DER encoded private key.
+    * 
+    * @see SshKeys#sha1
+    */
+   public String getSha1OfPrivateKey() {
+      return sha1OfPrivateKey;
+   }
+
+   /**
+    * fingerprint per the following <a
+    * href="http://tools.ietf.org/html/draft-friedl-secsh-fingerprint-00" >spec</a>
+    * 
+    * @see SshKeys#fingerprint
+    */
+   public String getFingerprint() {
+      return fingerprint;
    }
 
    /**
@@ -128,10 +161,11 @@ public class KeyPair implements Comparable<KeyPair> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((keyFingerprint == null) ? 0 : keyFingerprint.hashCode());
+      result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
       result = prime * result + ((keyMaterial == null) ? 0 : keyMaterial.hashCode());
       result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
+      result = prime * result + ((sha1OfPrivateKey == null) ? 0 : sha1OfPrivateKey.hashCode());
       return result;
    }
 
@@ -144,10 +178,10 @@ public class KeyPair implements Comparable<KeyPair> {
       if (getClass() != obj.getClass())
          return false;
       KeyPair other = (KeyPair) obj;
-      if (keyFingerprint == null) {
-         if (other.keyFingerprint != null)
+      if (fingerprint == null) {
+         if (other.fingerprint != null)
             return false;
-      } else if (!keyFingerprint.equals(other.keyFingerprint))
+      } else if (!fingerprint.equals(other.fingerprint))
          return false;
       if (keyMaterial == null) {
          if (other.keyMaterial != null)
@@ -163,6 +197,11 @@ public class KeyPair implements Comparable<KeyPair> {
          if (other.region != null)
             return false;
       } else if (!region.equals(other.region))
+         return false;
+      if (sha1OfPrivateKey == null) {
+         if (other.sha1OfPrivateKey != null)
+            return false;
+      } else if (!sha1OfPrivateKey.equals(other.sha1OfPrivateKey))
          return false;
       return true;
    }

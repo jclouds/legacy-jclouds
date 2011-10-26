@@ -678,7 +678,7 @@ public class VCloudAsyncClientTest extends BaseVCloudAsyncClientTest<VCloudAsync
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
 
       assertRequestLineEquals(request, "DELETE https://vcenterprise.bluelock.com/api/v1.0/vApp/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

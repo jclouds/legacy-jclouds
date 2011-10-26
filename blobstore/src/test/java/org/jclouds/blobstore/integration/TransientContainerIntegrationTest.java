@@ -21,14 +21,18 @@ package org.jclouds.blobstore.integration;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
+import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -64,5 +68,19 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testDuplicateCreateContainer() {
+      BlobStore blobStore = context.getBlobStore();
+      Location location = null;
+      String container = "container";
+      boolean created;
+
+      created = blobStore.createContainerInLocation(location, container);
+      assertTrue(created);
+
+      created = blobStore.createContainerInLocation(location, container);
+      assertFalse(created);
    }
 }

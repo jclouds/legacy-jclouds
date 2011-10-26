@@ -1,0 +1,117 @@
+{"accountId":93750,"createDate":"2011-10-01T11:47:35-08:00","dedicatedAccountHostOnlyFlag":true,"domain":"me.org","fullyQualifiedDomainName":"node1703810489.me.org","hostname":"node1703810489","id":416700,"lastVerifiedDate":null,"maxCpu":1,"maxCpuUnits":"CORE","maxMemory":1024,"metricPollDate":"2011-10-02T02:32:00-08:00","modifyDate":"2011-10-02T03:18:12-08:00","privateNetworkOnlyFlag":false,"startCpus":1,"statusId":1001,"uuid":"02ddbbba-9225-3d54-6de5-fc603b309dd8","billingItem":{
+    "cancellationDate":null,
+    "categoryCode":"guest_core",
+    "createDate":"2011-10-01T11:48:10-08:00",
+    "currentHourlyCharge":"0",
+    "cycleStartDate":"2011-10-01T11:58:26-08:00",
+    "description":"Private 1 x 2.0 GHz Core",
+    "domainName":"me.org",
+    "hostName":"node1703810489",
+    "hourlyRecurringFee":"0",
+    "hoursUsed":"16",
+    "id":7184019,
+    "laborFee":"0",
+    "laborFeeTaxRate":"0",
+    "lastBillDate":"2011-10-01T11:58:26-08:00",
+    "modifyDate":"2011-10-01T11:58:26-08:00",
+    "nextBillDate":"2011-10-17T21:00:00-08:00",
+    "oneTimeFee":"0",
+    "oneTimeFeeTaxRate":"0",
+    "orderItemId":8021579,
+    "parentId":null,
+    "recurringFee":"0",
+    "recurringFeeTaxRate":"0",
+    "recurringMonths":1,
+    "serviceProviderId":1,
+    "setupFee":"0",
+    "setupFeeTaxRate":"0",
+    "resourceTableId":416700
+},"datacenter":{
+    "id":3,
+    "longName":"Dallas",
+    "name":"dal01"
+},"globalIdentifier":"0ea2db7f-800d-479a-88e0-8e276e500b80","managedResourceFlag":false,"networkVlans":[
+    {
+        "accountId":93750,
+        "id":144615,
+        "modifyDate":"2011-09-30T11:35:27-08:00",
+        "networkVrfId":null,
+        "primarySubnetId":171267,
+        "vlanNumber":1673
+    },
+    {
+        "accountId":93750,
+        "id":144616,
+        "modifyDate":"2011-09-30T11:35:30-08:00",
+        "networkVrfId":null,
+        "primarySubnetId":329652,
+        "vlanNumber":1622
+    }
+],"operatingSystem":{
+    "hardwareId":null,
+    "id":913824,
+    "manufacturerLicenseInstance":"",
+    "passwords":[
+        {
+            "createDate":"2011-10-01T11:48:52-08:00",
+            "id":729122,
+            "modifyDate":"2011-10-01T11:48:52-08:00",
+            "password":"KnJqhC2l",
+            "port":null,
+            "softwareId":913824,
+            "username":"root",
+            "software":{
+                "hardwareId":null,
+                "id":913824,
+                "manufacturerLicenseInstance":"",
+                "passwords":[
+                    {
+                        "createDate":"2011-10-01T11:48:52-08:00",
+                        "id":729122,
+                        "modifyDate":"2011-10-01T11:48:52-08:00",
+                        "password":"KnJqhC2l",
+                        "port":null,
+                        "softwareId":913824,
+                        "username":"root",
+                        "software":null
+                    }
+                ],
+                "softwareLicense":{
+                    "id":427,
+                    "softwareDescriptionId":408,
+                    "softwareDescription":{
+                        "controlPanel":0,
+                        "id":408,
+                        "manufacturer":"Ubuntu",
+                        "name":"Ubuntu ",
+                        "operatingSystem":1,
+                        "requiredUser":"root",
+                        "upgradeSwDescId":null,
+                        "version":"8.04-64 Minimal for CCI",
+                        "virtualLicense":0,
+                        "virtualizationPlatform":0
+                    }
+                }
+            }
+        }
+    ],
+    "softwareLicense":{
+        "id":427,
+        "softwareDescriptionId":408,
+        "softwareDescription":{
+            "controlPanel":0,
+            "id":408,
+            "manufacturer":"Ubuntu",
+            "name":"Ubuntu ",
+            "operatingSystem":1,
+            "requiredUser":"root",
+            "upgradeSwDescId":null,
+            "version":"8.04-64 Minimal for CCI",
+            "virtualLicense":0,
+            "virtualizationPlatform":0
+        }
+    }
+},"powerState":{
+    "keyName":"PAUSED",
+    "name":"Paused"
+},"primaryBackendIpAddress":"10.37.102.195","primaryIpAddress":"173.192.29.187"}

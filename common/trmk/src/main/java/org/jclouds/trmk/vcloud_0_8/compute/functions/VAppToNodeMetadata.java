@@ -64,11 +64,10 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    protected final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
-   protected VAppToNodeMetadata(TerremarkVCloudComputeClient computeClient,
-         Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
-         HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-         FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
-         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+   protected VAppToNodeMetadata(TerremarkVCloudComputeClient computeClient, Map<String, Credentials> credentialStore,
+            Map<Status, NodeState> vAppStatusToNodeState, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
+            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       this.images = checkNotNull(images, "images");
       this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
@@ -89,7 +88,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.location(vdcLocation);
       if (from.getOsType() != null && OSType.fromValue(from.getOsType()) != OSType.UNRECOGNIZED) {
          builder.operatingSystem(new CIMOperatingSystem(OSType.fromValue(from.getOsType()), "", null, from
-               .getOperatingSystemDescription()));
+                  .getOperatingSystemDescription()));
       } else if (from.getOperatingSystemDescription() != null) {
          OperatingSystem.Builder osBuilder = new OperatingSystem.Builder();
          if (from.getOsType() != null)
@@ -105,8 +104,9 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
       String group = parseGroupFromName(from.getName());
-      if (group != null) {
-         builder.group(group);
+      builder.group(group);
+      // node-specific credentials override those from cache based on group
+      if (group != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString())) {
          installCredentialsFromCache(from.getHref(), URI.create(vdcLocation.getParent().getId()), group, builder);
       } else {
          builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
@@ -122,8 +122,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
          credentialStore.put("node#" + nodeId, creds);
       }
       // this is going to need refactoring.. we really need a credential list in
-      // the store per
-      // node.
+      // the store per node.
       String adminPasswordKey = "node#" + nodeId + "#adminPassword";
       if (credentialStore.containsKey(adminPasswordKey)) {
          builder.adminPassword(credentialStore.get(adminPasswordKey).credential);

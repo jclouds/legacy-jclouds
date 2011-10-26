@@ -37,7 +37,7 @@ public class ElasticHostsPeer1LondonPropertiesBuilder extends ElasticStackProper
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB-LND");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.lon-p.elastichosts.com");
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "2.0");
       return properties;
    }
 

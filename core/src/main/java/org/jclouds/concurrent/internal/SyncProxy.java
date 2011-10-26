@@ -26,18 +26,20 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Throwables2;
 
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -52,9 +54,12 @@ import com.google.inject.ProvisionException;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException, SecurityException,
+   public static <T> T proxy(Class<T> clazz, Object async,
+         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap,
+         Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
+              new SyncProxy(clazz, async, delegateMap, sync2Async, timeouts));
    }
 
    private final Object delegate;
@@ -62,13 +67,14 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private final ConcurrentMap<ClassMethodArgs, Object> delegateMap;
+   private final Cache<ClassMethodArgs, Object> delegateMap;
    private final Map<Class<?>, Class<?>> sync2Async;
    private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
 
    @Inject
-   public SyncProxy(Class<?> declaring, Object async,
-         @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
+   private SyncProxy(Class<?> declaring, Object async,
+         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
+           Class<?>> sync2Async, final Map<String, Long> timeouts)
          throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;
       this.delegate = async;
@@ -90,19 +96,23 @@ public class SyncProxy implements InvocationHandler {
                throw new IllegalArgumentException(String.format(
                      "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
             if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
-               if (method.isAnnotationPresent(Timeout.class)) {
-                  Timeout methodTimeout = method.getAnnotation(Timeout.class);
-                  long methodNanos = convertToNanos(methodTimeout);
-                  timeoutMap.put(method, methodNanos);
-               } else {
-                  timeoutMap.put(method, typeNanos);
-               }
+               timeoutMap.put(method, getTimeout(method, typeNanos, timeouts));
                methodMap.put(method, delegatedMethod);
             } else {
                syncMethodMap.put(method, delegatedMethod);
             }
          }
       }
+   }
+
+   private Long getTimeout(Method method, long typeNanos, final Map<String,Long> timeouts) {
+      Long timeout = overrideTimeout(method, timeouts);
+      if (timeout == null && method.isAnnotationPresent(Timeout.class)) {
+         Timeout methodTimeout = method.getAnnotation(Timeout.class);
+         timeout = convertToNanos(methodTimeout);
+      }
+      return timeout != null ? timeout : typeNanos;
+
    }
 
    static long convertToNanos(Timeout timeout) {
@@ -137,6 +147,19 @@ public class SyncProxy implements InvocationHandler {
             throw Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          }
       }
+   }
+
+   // override timeout by values configured in properties(in ms)
+   private Long overrideTimeout(final Method method, final Map<String, Long> timeouts) {
+      if (timeouts == null) {
+         return null;
+      }
+      final String className = declaring.getSimpleName();
+      Long timeout = timeouts.get(className + "." + method.getName());
+      if (timeout == null) {
+         timeout = timeouts.get(className);
+      }
+      return timeout != null ? TimeUnit.MILLISECONDS.toNanos(timeout) : null;
    }
 
    @Override

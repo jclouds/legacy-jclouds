@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -90,7 +89,7 @@ public class AppendFile implements Statement {
       return new StatementList(statements).render(family);
    }
 
-   private void hereFile(String path, StringBuilder builder) {
+   protected void hereFile(String path, StringBuilder builder) {
       builder.append("cat >> ").append(path).append(" <<'").append(marker).append("'\n");
       for (String line : lines) {
          builder.append(line).append("\n");
@@ -98,21 +97,14 @@ public class AppendFile implements Statement {
       builder.append(marker).append("\n");
    }
 
-   private Statement appendToFile(String line, String path, OsFamily family) {
+   protected Statement appendToFile(String line, String path, OsFamily family) {
       String quote = "";
       if (!ShellToken.VQ.to(family).equals("")) {
          quote = "'";
       } else {
          line = escapeVarTokens(line, family);
       }
-      return interpret(addSpaceToEnsureWeDontAccidentallyRedirectFd(String.format("echo %s%s%s>>%s{lf}", quote, line,
-               quote, path)));
-   }
-
-   public static final Pattern REDIRECT_FD_PATTERN = Pattern.compile(".*[0-2]>>.*");
-
-   static String addSpaceToEnsureWeDontAccidentallyRedirectFd(String line) {
-      return REDIRECT_FD_PATTERN.matcher(line).matches() ? line.replace(">>", " >>") : line;
+      return interpret(String.format("echo %s%s%s >>%s{lf}", quote, line, quote, path));
    }
 
 }

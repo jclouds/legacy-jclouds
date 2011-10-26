@@ -42,9 +42,11 @@ import org.jclouds.location.suppliers.JustProvider;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * 
@@ -52,12 +54,12 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 @Singleton
 public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
-   private final Supplier<Map<String, Node>> nodes;
+   private final Supplier<Cache<String, Node>> nodes;
    private final NodeToNodeMetadata converter;
    private final JustProvider locationSupplier;
 
    @Inject
-   public BYONComputeServiceAdapter(Supplier<Map<String, Node>> nodes, NodeToNodeMetadata converter,
+   public BYONComputeServiceAdapter(Supplier<Cache<String, Node>> nodes, NodeToNodeMetadata converter,
             JustProvider locationSupplier) {
       this.nodes = checkNotNull(nodes, "nodes");
       this.converter = checkNotNull(converter, "converter");
@@ -82,14 +84,14 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public Iterable<NodeMetadata> listNodes() {
-      return Iterables.transform(nodes.get().values(), converter);
+      return Iterables.transform(nodes.get().asMap().values(), converter);
    }
 
    @Override
    public Iterable<Location> listLocations() {
       Builder<Location> locations = ImmutableSet.builder();
       Location provider = Iterables.getOnlyElement(locationSupplier.get());
-      Set<String> zones = ImmutableSet.copyOf(Iterables.filter(Iterables.transform(nodes.get().values(),
+      Set<String> zones = ImmutableSet.copyOf(Iterables.filter(Iterables.transform(nodes.get().asMap().values(),
                new Function<Node, String>() {
 
                   @Override
@@ -109,7 +111,13 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public NodeMetadata getNode(String id) {
-      Node node = nodes.get().get(id);
+      
+      Node node = null;
+      try {
+         node = nodes.get().getUnchecked(id);
+      } catch (UncheckedExecutionException e) {
+
+      }
       return node != null ? converter.apply(node) : null;
    }
 

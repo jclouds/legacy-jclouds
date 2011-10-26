@@ -21,7 +21,7 @@ package org.jclouds.providers;
 import java.net.URI;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * The ProviderMetadata interface allows jclouds to provide a plugin framework for gathering cloud
@@ -36,6 +36,7 @@ public interface ProviderMetadata {
    public static final String LOADBALANCER_TYPE = "loadbalancer";
    public static final String TABLE_TYPE = "table";
    public static final String QUEUE_TYPE = "queue";
+   public static final String MONITOR_TYPE = "monitor";
 
    /**
     * 

@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -616,6 +616,7 @@ public interface VCloudAsyncClient {
     */
    @Deprecated
    @DELETE
+   @Consumes(TASK_XML)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI id);

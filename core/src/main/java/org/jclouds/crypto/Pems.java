@@ -38,7 +38,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import net.oauth.signature.pem.PEMReader;
 import net.oauth.signature.pem.PKCS1EncodedKeySpec;
@@ -166,8 +166,13 @@ public class Pems {
     *           private key in pem encoded format.
     * @see Pems#privateKeySpec(InputSupplier)
     */
-   public static KeySpec privateKeySpec(String pem) throws IOException {
-      return privateKeySpec(InputSuppliers.of(pem));
+   public static KeySpec privateKeySpec(String pem) {
+      try {
+         return privateKeySpec(InputSuppliers.of(pem));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
 
    /**
@@ -302,6 +307,8 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
+   // TODO: understand why pem isn't passing SshKeysTest.testCanGenerate where
+   // keys are checked to match.
    public static String pem(PrivateKey key) {
       String marker = key instanceof RSAPrivateCrtKey ? PRIVATE_PKCS1_MARKER : PRIVATE_PKCS8_MARKER;
       return pem(key instanceof RSAPrivateCrtKey ? getEncoded(RSAPrivateCrtKey.class.cast(key)) : key.getEncoded(),
@@ -309,7 +316,7 @@ public class Pems {
    }
 
    // TODO find a way to do this without using bouncycastle
-   static byte[] getEncoded(RSAPrivateCrtKey key) {
+   public static byte[] getEncoded(RSAPrivateCrtKey key) {
       RSAPrivateKeyStructure keyStruct = new RSAPrivateKeyStructure(key.getModulus(), key.getPublicExponent(),
             key.getPrivateExponent(), key.getPrimeP(), key.getPrimeQ(), key.getPrimeExponentP(),
             key.getPrimeExponentQ(), key.getCrtCoefficient());

@@ -20,7 +20,7 @@ package org.jclouds.predicates;
 
 import com.google.common.base.Predicate;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Abstract class that creates a bridge between {@link com.google.common.base.Predicate}

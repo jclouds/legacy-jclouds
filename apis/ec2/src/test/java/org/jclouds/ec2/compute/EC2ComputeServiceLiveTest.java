@@ -47,10 +47,12 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -60,7 +62,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public EC2ComputeServiceLiveTest() {
@@ -71,6 +73,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
+
+   // normal ec2 does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
+   }
+   
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesResolveCorrectly() {
@@ -97,11 +107,10 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       TemplateOptions options = client.templateOptions();
 
       options.as(EC2TemplateOptions.class).securityGroups(group);
-      options.as(EC2TemplateOptions.class).keyPair(group);
 
       String startedId = null;
       try {
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(null, securityGroupClient, keyPairClient, group);
 
          // create a security group that allows ssh in so that our scripts later
          // will work
@@ -110,7 +119,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, group);
-
+         options.as(EC2TemplateOptions.class).keyPair(result.getKeyName());
+         
+         // pass in the private key, so that we can run a script with it
+         assert result.getKeyMaterial() != null : result;
+         options.overrideLoginCredentialWith(result.getKeyMaterial());
+         
+         // an arbitrary command to run
+         options.runScript(Statements.exec("find /usr"));
+         
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
@@ -142,7 +159,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
             assertEquals(keyPairClient.describeKeyPairsInRegion(null, group).size(), 1);
             assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, group).size(), 1);
          }
-         cleanupExtendedStuff(securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(null, securityGroupClient, keyPairClient, group);
       }
    }
 
@@ -225,20 +242,20 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   protected void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient,
-            String group) throws InterruptedException {
+   protected void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
+            KeyPairClient keyPairClient, String group) throws InterruptedException {
       try {
-         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(null))
+         for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(region))
             if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {
-               securityGroupClient.deleteSecurityGroupInRegion(null, secgroup.getName());
+               securityGroupClient.deleteSecurityGroupInRegion(region, secgroup.getName());
             }
       } catch (Exception e) {
 
       }
       try {
-         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
+         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(region))
             if (pair.getKeyName().startsWith("jclouds#" + group) || pair.getKeyName().equals(group)) {
-               keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
+               keyPairClient.deleteKeyPairInRegion(region, pair.getKeyName());
             }
       } catch (Exception e) {
 

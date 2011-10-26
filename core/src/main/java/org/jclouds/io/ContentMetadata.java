@@ -23,7 +23,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 

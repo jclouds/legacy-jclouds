@@ -18,20 +18,21 @@
  */
 package org.jclouds.gogrid.predicates;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
-import org.jclouds.gogrid.domain.Job;
-import org.jclouds.gogrid.domain.JobState;
-import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.options.GetJobListOptions;
-import org.jclouds.gogrid.services.GridJobClient;
-import org.jclouds.logging.Logger;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.gogrid.options.GetJobListOptions.Builder.latestJobForObjectByName;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.gogrid.domain.Job;
+import org.jclouds.gogrid.domain.JobState;
+import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.gogrid.services.GridJobClient;
+import org.jclouds.logging.Logger;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 /**
  * @author Oleksiy Yarmula
@@ -39,23 +40,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class LoadBalancerLatestJobCompleted implements Predicate<LoadBalancer> {
 
-    protected GridJobClient jobClient;
+   protected GridJobClient jobClient;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject
-    public LoadBalancerLatestJobCompleted(GridJobClient jobClient) {
-        this.jobClient = jobClient;
-    }
+   @Inject
+   public LoadBalancerLatestJobCompleted(GridJobClient jobClient) {
+      this.jobClient = jobClient;
+   }
 
-    @Override
-    public boolean apply(LoadBalancer loadBalancer) {
-        checkNotNull(loadBalancer, "Load balancer must be a valid instance");
-        checkNotNull(loadBalancer.getName(), "Load balancer must be a valid name");
-        GetJobListOptions jobOptions = new GetJobListOptions.Builder().
-                latestJobForObjectByName(loadBalancer.getName());
-        Job latestJob = Iterables.getOnlyElement(jobClient.getJobList(jobOptions));
-        return JobState.SUCCEEDED.equals(latestJob.getCurrentState());
-    }
+   @Override
+   public boolean apply(LoadBalancer loadBalancer) {
+      checkNotNull(loadBalancer, "Load balancer must be a valid instance");
+      checkNotNull(loadBalancer.getName(), "Load balancer must be a valid name");
+      Job latestJob = Iterables.getOnlyElement(jobClient.getJobList(latestJobForObjectByName(loadBalancer.getName())));
+      return JobState.SUCCEEDED.equals(latestJob.getCurrentState());
+   }
 }

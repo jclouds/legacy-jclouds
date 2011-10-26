@@ -20,7 +20,7 @@ package org.jclouds.atmos.domain;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.atmos.domain.internal.BoundedLinkedHashSet;
 

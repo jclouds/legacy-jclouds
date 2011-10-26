@@ -20,7 +20,7 @@ package org.jclouds.loadbalancer;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;

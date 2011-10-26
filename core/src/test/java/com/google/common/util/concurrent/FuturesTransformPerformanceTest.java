@@ -67,7 +67,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", enabled = false, sequential = true, testName = "FuturesTransformPerformanceTest")
+@Test(groups = "performance", enabled = false, singleThreaded = true, testName = "FuturesTransformPerformanceTest")
 public class FuturesTransformPerformanceTest {
    private static final int FUDGE = 5;
    private static final int COUNT = 100;
@@ -175,7 +175,7 @@ public class FuturesTransformPerformanceTest {
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", Futures.transform(Futures.makeListenable(simultateIO(), chainExecutor),
+         responses.put(i + "", Futures.transform(JdkFutureAdapters.listenInPoolThread(simultateIO(), chainExecutor),
                   new Function<Long, Long>() {
 
                      @Override

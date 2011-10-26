@@ -25,6 +25,20 @@
             <instanceId>i-ef308e8e</instanceId>
             <createTime>2011-07-29T05:27:39.000Z</createTime>
             <productDescription>Linux/UNIX</productDescription>
+            <tagSet>
+                <item>
+                    <key>Name</key>
+                    <value>ec2-o</value>
+                </item>
+                <item>
+                    <key>Spot</key>
+                    <value>spot-value</value>
+                </item>
+                <item>
+                    <key>Empty</key>
+                    <value />
+                </item>
+            </tagSet>            
             <launchedAvailabilityZone>us-east-1b</launchedAvailabilityZone>
         </item>
     </spotInstanceRequestSet>

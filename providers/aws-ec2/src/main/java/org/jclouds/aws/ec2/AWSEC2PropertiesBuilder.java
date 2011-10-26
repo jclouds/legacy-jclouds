@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
@@ -45,10 +46,11 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       // from stopping->stopped state on an ec2 micro
       properties.setProperty(PROPERTY_TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
-      // authorized key executes after ssh has started
+      // authorized key executes after ssh has started.  
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_EC2_GENERATE_INSTANCE_NAMES, "true");
       properties.putAll(Region.regionProperties());
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // amazon, alestic, canonical, and rightscale

@@ -28,11 +28,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.services.AMIClient;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -46,11 +47,12 @@ public class RegionAndIdToImageTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApply() {
+   public void testApply() throws ExecutionException {
 
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
+
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
@@ -66,22 +68,23 @@ public class RegionAndIdToImageTest {
 
       RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
-      assertEquals(function.apply(new RegionAndName("region", "ami")), image);
+      assertEquals(function.load(new RegionAndName("region", "ami")), image);
 
       verify(caller);
       verify(image);
-      verify(parser);
+      verify(image);
       verify(client);
 
    }
 
    @SuppressWarnings("unchecked")
-   @Test
-   public void testApplyNotFound() {
+   @Test(expectedExceptions = ExecutionException.class)
+   public void testApplyNotFoundMakesExecutionException() throws ExecutionException {
 
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
+
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
@@ -97,7 +100,7 @@ public class RegionAndIdToImageTest {
 
       RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
-      assertEquals(function.apply(new RegionAndName("region", "ami")), null);
+      assertEquals(function.load(new RegionAndName("region", "ami")), null);
 
       verify(caller);
       verify(image);
@@ -107,12 +110,13 @@ public class RegionAndIdToImageTest {
    }
 
    @SuppressWarnings("unchecked")
-   @Test
-   public void testApplyNoSuchElementException() {
+   @Test(expectedExceptions = ExecutionException.class)
+   public void testApplyNoSuchElementExceptionMakesExecutionException() throws ExecutionException {
 
       EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
+
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
@@ -128,7 +132,7 @@ public class RegionAndIdToImageTest {
 
       RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
-      assertEquals(function.apply(new RegionAndName("region", "ami")), null);
+      assertEquals(function.load(new RegionAndName("region", "ami")), null);
 
       verify(caller);
       verify(image);

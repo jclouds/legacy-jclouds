@@ -20,7 +20,7 @@ package org.jclouds.trmk.vcloud_0_8.xml;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;

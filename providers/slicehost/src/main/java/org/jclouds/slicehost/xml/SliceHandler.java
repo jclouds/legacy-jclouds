@@ -20,7 +20,7 @@ package org.jclouds.slicehost.xml;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.slicehost.domain.Slice;

@@ -25,6 +25,7 @@ import org.jclouds.aws.ec2.services.AWSSecurityGroupAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.aws.ec2.services.SpotInstanceAsyncClient;
+import org.jclouds.aws.ec2.services.TagAsyncClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -81,4 +82,10 @@ public interface AWSEC2AsyncClient extends EC2AsyncClient {
     */
    @Delegate
    SpotInstanceAsyncClient getSpotInstanceServices();
+
+   /**
+    * Provides asynchronous access to SpotInstance services.
+    */
+   @Delegate
+   TagAsyncClient getTagServices();
 }

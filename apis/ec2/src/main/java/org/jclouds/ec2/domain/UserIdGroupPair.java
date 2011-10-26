@@ -37,6 +37,12 @@ public class UserIdGroupPair implements Comparable<UserIdGroupPair> {
    }
 
 
+   @Override
+   public String toString() {
+      return "[userId=" + userId + ", groupName=" + groupName + "]";
+   }
+
+
    /**
     * {@inheritDoc}
     */

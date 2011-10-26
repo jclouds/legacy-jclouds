@@ -23,7 +23,7 @@ import static com.google.common.collect.Multimaps.forMap;
 
 import java.util.LinkedHashMap;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.io.Payload;

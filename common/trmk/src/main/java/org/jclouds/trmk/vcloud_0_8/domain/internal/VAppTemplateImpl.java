@@ -20,7 +20,7 @@ package org.jclouds.trmk.vcloud_0_8.domain.internal;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;

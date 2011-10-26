@@ -18,7 +18,7 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;

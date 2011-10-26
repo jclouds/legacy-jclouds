@@ -18,20 +18,24 @@
  */
 package org.jclouds.gogrid.compute.options;
 
+import java.util.Map;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
 
 /**
- * Contains options supported by the {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)}
- * and {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)} operations on
- * the <em>gogrid</em> provider.
+ * Contains options supported by the
+ * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} and
+ * {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)}
+ * operations on the <em>gogrid</em> provider.
  * 
- * <h2>Usage</h2>
- * The recommended way to instantiate a {@link GoGridTemplateOptions} object is to statically
- * import {@code GoGridTemplateOptions.*} and invoke a static creation method followed by an
- * instance mutator (if needed):
+ * <h2>Usage</h2> The recommended way to instantiate a
+ * {@link GoGridTemplateOptions} object is to statically import
+ * {@code GoGridTemplateOptions.*} and invoke a static creation method followed
+ * by an instance mutator (if needed):
  * <p>
+ * 
  * <pre>
  * import static org.jclouds.compute.options.GoGridTemplateOptions.Builder.*;
  * ComputeService client = // get connection
@@ -109,11 +113,19 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#withMetadata()
+       * @see TemplateOptions#userMetadata(Map)
        */
-      public static GoGridTemplateOptions withMetadata() {
+      public static GoGridTemplateOptions userMetadata(Map<String, String> userMetadata) {
          GoGridTemplateOptions options = new GoGridTemplateOptions();
-         return GoGridTemplateOptions.class.cast(options.withMetadata());
+         return GoGridTemplateOptions.class.cast(options.userMetadata(userMetadata));
+      }
+
+      /**
+       * @see TemplateOptions#userMetadata(String, String)
+       */
+      public static GoGridTemplateOptions userMetadata(String key, String value) {
+         GoGridTemplateOptions options = new GoGridTemplateOptions();
+         return GoGridTemplateOptions.class.cast(options.userMetadata(key, value));
       }
    }
 
@@ -187,10 +199,18 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * @see TemplateOptions#withMetadata()
+    * {@inheritDoc}
     */
    @Override
-   public GoGridTemplateOptions withMetadata() {
-      return GoGridTemplateOptions.class.cast(super.withMetadata());
+   public GoGridTemplateOptions userMetadata(Map<String, String> userMetadata) {
+      return GoGridTemplateOptions.class.cast(super.userMetadata(userMetadata));
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public GoGridTemplateOptions userMetadata(String key, String value) {
+      return GoGridTemplateOptions.class.cast(super.userMetadata(key, value));
    }
 }

@@ -20,7 +20,7 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Date;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 

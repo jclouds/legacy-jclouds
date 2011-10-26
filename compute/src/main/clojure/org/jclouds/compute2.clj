@@ -60,10 +60,7 @@ Here's an example of creating and running a small linux node in the group webser
   See http://code.google.com/p/jclouds for details.
   "
   (:use org.jclouds.core
-    (clojure.contrib logging core)
-    (org.jclouds predicate))
-  (:require
-    [clojure.contrib.condition :as condition])
+    (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
     java.util.Properties
     [org.jclouds.domain Location]
@@ -78,13 +75,6 @@ Here's an example of creating and running a small linux node in the group webser
      NodePredicates]
     [com.google.common.collect ImmutableSet])
   )
-
-(try
-  (use '[clojure.contrib.reflect :only [get-field]])
-  (catch Exception e
-    (use '[clojure.contrib.java-utils
-           :only [wall-hack-field]
-           :rename {wall-hack-field get-field}])))
 
 (defn compute-service
   "Create a logged in context."
@@ -349,6 +339,8 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [:run-script :install-private-key :authorize-public-key
+       :override-credentials-with :override-login-user-with
+       :override-login-credential-with
        ;; aws ec2 options
        :spot-price :spot-options :placement-group :subnet-id
        :block-device-mappings :unmapDeviceNamed :security-groups
@@ -405,19 +397,16 @@ Options correspond to TemplateBuilder methods."
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]
       (when-not (known-template-options option)
-        (condition/raise
-          :type :invalid-template-builder-option
-          :message (format "Invalid template builder option : %s" option)))
+        (throw (Exception. (format "Invalid template builder option : %s" option))))
       ;; apply template builder options
       (try
         (apply-option builder template-map option value)
         (catch Exception e
-          (condition/raise
-            :type :invalid-template-builder
-            :message (format
-            "Problem applying template builder %s with value %s: %s"
-            option (pr-str value) (.getMessage e))
-            :cause e))))
+          (throw (Exception. 
+            (format
+              "Problem applying template builder %s with value %s: %s"
+              option (pr-str value) (.getMessage e))
+            e)))))
     (let [template (.build builder)
           template-options (.getOptions template)]
       (doseq [[option value] options]
@@ -425,10 +414,9 @@ Options correspond to TemplateBuilder methods."
         (try
           (apply-option template-options options-map option value)
           (catch Exception e
-            (condition/raise
-              :type :invalid-template-option
-              :message (format
-              "Problem applying template option %s with value %s: %s"
-              option (pr-str value) (.getMessage e))
-              :cause e))))
+            (throw (Exception. 
+              (format
+                "Problem applying template option %s with value %s: %s"
+                option (pr-str value) (.getMessage e))
+              e)))))
       template)))

@@ -1,0 +1,174 @@
+{
+    "Ubuntu-10.04-20110917 pub": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+    
+    "Ubuntu-11.04-20110917 pub": {
+        "family": "UBUNTU",
+        "version": "11.04",
+        "is64Bit": true
+    },
+    
+    "Centos-6.0-20110917 pub": {
+        "family": "CENTOS",
+        "version": "6.0",
+        "is64Bit": true
+    },
+
+    "Centos-5.6-20110917 pub": {
+        "family": "CENTOS",
+        "version": "5.6",
+        "is64Bit": true
+    },
+    
+    "Ubuntu 10.04.1 LTS Desktop Edition 32bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": false
+    },
+    
+    "Ubuntu 10.04 Server Edition Linux 64bit with Plesk": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+
+    "CentOS 5.5 Linux 64bit Preinstalled System": {
+        "family": "CENTOS",
+        "version": "5.5",
+        "is64Bit": true
+    },
+
+    "Windows Server Standard 2008 R2 64bit English": {
+        "family": "WINDOWS",
+        "version": "2008 R2",
+        "is64Bit": true
+    },
+
+    "Ubuntu 10.04 Server Edition Linux 64bit": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+
+    "Windows Server 2008 Standard 32bit English": {
+        "family": "WINDOWS",
+        "version": "2008",
+        "is64Bit": false
+    },
+
+    "Windows Server 2008 Standard 32bit English pub": {
+        "family": "WINDOWS",
+        "version": "2008",
+        "is64Bit": false
+    },
+
+
+    "Fedora 14 Linux 64bit Preinstalled System": {
+        "family": "FEDORA",
+        "version": "",
+        "is64Bit": true
+    },
+
+    "CentOS 5.5 Linux 64bit Preinstalled System with AppFirst Monitoring pub": {
+        "family": "CENTOS",
+        "version": "5.5",
+        "is64Bit": true
+    },
+
+
+    "Ubuntu 10.10 Server Edition LAMP Linux 64bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.10",
+        "is64Bit": true
+    },
+
+    "Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.10",
+        "is64Bit": true
+    },
+
+    "Windows Server Web 2008 R2 64bit English": {
+        "family": "WINDOWS",
+        "version": "2008 R2",
+        "is64Bit": true
+    },
+
+
+    "SQL Server Standard 2008 R2 - Windows Server Standard 2008 R2 - 64bit English": {
+        "family": "WINDOWS",
+        "version": "2008 R2",
+        "is64Bit": true
+    },
+
+
+    "Ubuntu 10.10 Desktop Edition 64bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.10",
+        "is64Bit": true
+    },
+
+    "Ubuntu 10.04 Desktop Edition Linux 64bit Preinstalled System": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+
+    "Debian 5.0 Preinstalled": {
+        "family": "DEBIAN",
+        "version": "5.0",
+        "is64Bit": true
+    },
+
+    "pfSense 2.0 BETA4-20101127-031119 Preinstalled System": {
+        "family": "UNRECOGNIZED",
+        "version": null,
+        "is64Bit": true
+    },
+
+    "FreeBSD 8.1 Preinstalled Base System": {
+        "family": "FREEBSD",
+        "version": "",
+        "is64Bit": true
+    },
+
+    "CentOS 5.5 Linux 64bit Preinstalled System with AppFirst Monitoring": {
+        "family": "CENTOS",
+        "version": "5.5",
+        "is64Bit": true
+    },
+
+    "Fedora 13 Linux 64bit Preinstalled System": {
+        "family": "FEDORA",
+        "version": "",
+        "is64Bit": true
+    },
+
+    "Windows Server 2003 Standard 32bit English": {
+        "family": "WINDOWS",
+        "version": "2003",
+        "is64Bit": false
+    },
+
+    "Windows Server 2003 Standard 64bit English": {
+        "family": "WINDOWS",
+        "version": "2003",
+        "is64Bit": true
+    },
+
+    "Debian 5.0 Preinstalled without X": {
+        "family": "DEBIAN",
+        "version": "5.0",
+        "is64Bit": true
+    },
+
+    "Debian 6.0 No X Minimal Linux 64bit Preinstalled System": {
+        "family": "DEBIAN",
+        "version": "6.0",
+        "is64Bit": true
+    }
+
+}

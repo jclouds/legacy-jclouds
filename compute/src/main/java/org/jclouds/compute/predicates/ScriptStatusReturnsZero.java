@@ -34,21 +34,20 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class ScriptStatusReturnsZero implements
-         Predicate<ScriptStatusReturnsZero.CommandUsingClient> {
+public class ScriptStatusReturnsZero implements Predicate<ScriptStatusReturnsZero.CommandUsingClient> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Override
    public boolean apply(CommandUsingClient commandUsingClient) {
-      logger.trace("looking for [%s] state on %s@%s", commandUsingClient.command,
-               commandUsingClient.client.getUsername(), commandUsingClient.client.getHostAddress());
+      logger.trace("looking for [%s] state on %s@%s", commandUsingClient.command, commandUsingClient.client
+               .getUsername(), commandUsingClient.client.getHostAddress());
       ExecResponse response = refresh(commandUsingClient);
       while (response.getExitCode() == -1)
          response = refresh(commandUsingClient);
-      logger.trace("%s@%s: looking for exit code 0: currently: %s", commandUsingClient.client
-               .getUsername(), commandUsingClient.client.getHostAddress(), response.getExitCode());
+      logger.trace("%s@%s: looking for exit code 0: currently: %s", commandUsingClient.client.getUsername(),
+               commandUsingClient.client.getHostAddress(), response.getExitCode());
       return 0 == response.getExitCode();
    }
 

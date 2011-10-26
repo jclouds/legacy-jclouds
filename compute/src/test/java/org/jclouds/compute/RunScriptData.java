@@ -73,7 +73,7 @@ public class RunScriptData {
                         installJavaAndCurl(os),//
                         authorizePortsInIpTables(22, 8080),//
                         extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",//
-                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.0.Final/jboss-as-web-7.0.0.Final.tar.gz")), "/usr/local"),//
+                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz")), "/usr/local"),//
                         exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
                         exec("chmod -R oug+r+w " + jbossHome),
@@ -132,7 +132,7 @@ public class RunScriptData {
             normalizeHostAndDNSConfig(),//
             exec("apt-get update -qq"),
             exec("which curl || " + aptInstall + " curl"),//
-            exec(aptInstall + " openjdk-7-jdk" + "||" + aptInstall + " openjdk-6-jdk"),//
+            exec(aptInstall + " openjdk-6-jdk"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> $HOME/.bashrc"));
 
    public static String yumInstall = "yum --nogpgcheck -y install";
@@ -140,12 +140,12 @@ public class RunScriptData {
    public static final Statement YUM_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || " + yumInstall + " curl"),//
-            exec(yumInstall + " java-1.7.0-openjdk-devel" + "||" + yumInstall + " java-1.6.0-openjdk-devel"),//
+            exec(yumInstall + " java-1.6.0-openjdk-devel"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
             normalizeHostAndDNSConfig(),//
             exec("which curl || zypper install curl"),//
-            exec("zypper install java-1.7.0-openjdk" + "||" + "zypper install java-1.6.0-openjdk"),//
+            exec("zypper install java-1.6.0-openjdk"),//
             exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
 }

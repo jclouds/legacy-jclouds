@@ -29,7 +29,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.domain.Credentials;

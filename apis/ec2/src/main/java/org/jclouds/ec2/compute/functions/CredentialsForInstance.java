@@ -20,43 +20,45 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CredentialsForInstance implements Function<RunningInstance, Credentials> {
-   private final Map<RegionAndName, KeyPair> credentialsMap;
+public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
+   private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
-   private final Map<RegionAndName, Image> imageForInstance;
+   private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
 
    @Inject
-   CredentialsForInstance(Map<RegionAndName, KeyPair> credentialsMap,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialProvider, Map<RegionAndName, Image> imageForInstance) {
+   CredentialsForInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
+         PopulateDefaultLoginCredentialsForImageStrategy credentialProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
-      this.imageForInstance = imageForInstance;
+      this.imageMap = imageMap;
    }
 
    @Override
-   public Credentials apply(RunningInstance instance) {
+   public Credentials load(RunningInstance instance) throws ExecutionException {
       Credentials credentials = null;// default if no keypair exists
-
       if (instance.getKeyName() != null) {
          credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance));
       }
@@ -64,15 +66,15 @@ public class CredentialsForInstance implements Function<RunningInstance, Credent
    }
 
    @VisibleForTesting
-   String getPrivateKeyOrNull(RunningInstance instance) {
+   String getPrivateKeyOrNull(RunningInstance instance) throws ExecutionException {
       KeyPair keyPair = credentialsMap.get(new RegionAndName(instance.getRegion(), instance.getKeyName()));
       return keyPair != null ? keyPair.getKeyMaterial() : null;
    }
 
    @VisibleForTesting
-   String getLoginAccountFor(RunningInstance from) {
+   String getLoginAccountFor(RunningInstance from) throws ExecutionException {
       return checkNotNull(
-            credentialProvider.execute(imageForInstance.get(new RegionAndName(from.getRegion(), from.getImageId()))),
+            credentialProvider.execute(imageMap.get().get(new RegionAndName(from.getRegion(), from.getImageId()))),
             "login from image: " + from.getImageId()).identity;
    }
 }

@@ -46,7 +46,6 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.Drive;
@@ -62,23 +61,25 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
- * defines the connection between the {@link ElasticStackClient} implementation and the jclouds
- * {@link ComputeService}
+ * defines the connection between the {@link ElasticStackClient} implementation
+ * and the jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class ElasticStackComputeServiceAdapter implements
-         ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
+      ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
    private final ElasticStackClient client;
-   private final ElasticStackAsyncClient aclient;
    private final Predicate<DriveInfo> driveNotClaimed;
    private final Map<String, WellKnownImage> preinstalledImages;
-   private final Map<String, DriveInfo> cache;
+   private final Cache<String, DriveInfo> cache;
    private final JustProvider locationSupplier;
    private final String defaultVncPassword;
    private final ExecutorService executor;
@@ -88,13 +89,11 @@ public class ElasticStackComputeServiceAdapter implements
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ElasticStackComputeServiceAdapter(ElasticStackClient client, ElasticStackAsyncClient aclient,
-            Predicate<DriveInfo> driveNotClaimed,  JustProvider locationSupplier, 
-            Map<String, WellKnownImage> preinstalledImages, Map<String, DriveInfo> cache,
-            @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   public ElasticStackComputeServiceAdapter(ElasticStackClient client, Predicate<DriveInfo> driveNotClaimed,
+         JustProvider locationSupplier, Map<String, WellKnownImage> preinstalledImages, Cache<String, DriveInfo> cache,
+         @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
-      this.aclient = checkNotNull(aclient, "aclient");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.preinstalledImages = checkNotNull(preinstalledImages, "preinstalledImages");
@@ -105,12 +104,12 @@ public class ElasticStackComputeServiceAdapter implements
 
    @Override
    public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-            Map<String, Credentials> credentialStore) {
+         Map<String, Credentials> credentialStore) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
-      
+
       logger.debug(">> creating boot drive bytes(%d)", bootSize);
-      DriveInfo drive = client.createDrive(new Drive.Builder().name(template.getImage().getId()).size(bootSize)
-               .build());
+      DriveInfo drive = client
+            .createDrive(new Drive.Builder().name(template.getImage().getId()).size(bootSize).build());
       logger.debug("<< drive(%s)", drive.getUuid());
 
       logger.debug(">> imaging boot drive source(%s)", template.getImage().getId());
@@ -121,15 +120,16 @@ public class ElasticStackComputeServiceAdapter implements
          client.destroyDrive(drive.getUuid());
          throw new IllegalStateException("could not image drive in time!");
       }
-      cache.put(drive.getUuid(), drive);
 
-      Server toCreate = small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam()).cpu(
-               (int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
+      Server toCreate = small(name, drive.getUuid(), defaultVncPassword).mem(template.getHardware().getRam())
+            .cpu((int) (template.getHardware().getProcessors().get(0).getSpeed())).build();
 
-      ServerInfo from = client.createAndStartServer(toCreate);
+      ServerInfo from = client.createServer(toCreate);
+      client.startServer(from.getUuid());
+      from = client.getServerInfo(from.getUuid());
       // store the credentials so that later functions can use them
-      credentialStore.put("node#"+ from.getUuid(), new Credentials(template.getImage().getDefaultCredentials().identity,
-               from.getVnc().getPassword()));
+      credentialStore.put("node#" + from.getUuid(), new Credentials(
+            template.getImage().getDefaultCredentials().identity, from.getVnc().getPassword()));
       return from;
    }
 
@@ -153,30 +153,40 @@ public class ElasticStackComputeServiceAdapter implements
                   return "sizeLessThanOrEqual(" + size + ")";
                }
 
-            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu))).volumes(
-                     ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
+            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu)))
+                  .volumes(ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
          }
       return hardware.build();
    }
 
    /**
-    * look up the current standard images and do not error out, if they are not found.
+    * look up the current standard images and do not error out, if they are not
+    * found.
     */
    @Override
    public Iterable<DriveInfo> listImages() {
       Iterable<DriveInfo> drives = transformParallel(preinstalledImages.keySet(),
-               new Function<String, Future<DriveInfo>>() {
+            new Function<String, Future<DriveInfo>>() {
 
-                  @Override
-                  public Future<DriveInfo> apply(String input) {
-                     return aclient.getDriveInfo(input);
+               @Override
+               public Future<DriveInfo> apply(String input) {
+                  try {
+                     return Futures.immediateFuture(cache.getUnchecked(input));
+                  } catch (NullPointerException e) {
+                     logger.debug("drive %s not found", input);
+                  } catch (UncheckedExecutionException e) {
+                     logger.warn(e, "error finding drive %s: %s", input, e.getMessage());
                   }
+                  return Futures.immediateFuture(null);
+               }
 
-               }, executor, null, logger, "drives");
-      Iterable<DriveInfo> returnVal = filter(drives, notNull());
-      for (DriveInfo drive : returnVal)
-         cache.put(drive.getUuid(), drive);
-      return returnVal;
+               @Override
+               public String toString() {
+                  return "seedDriveCache()";
+               }
+
+            }, executor, null, logger, "drives");
+      return filter(drives, notNull());
    }
 
    @SuppressWarnings("unchecked")
@@ -184,7 +194,7 @@ public class ElasticStackComputeServiceAdapter implements
    public Iterable<ServerInfo> listNodes() {
       return (Iterable<ServerInfo>) client.listServerInfo();
    }
-   
+
    @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {

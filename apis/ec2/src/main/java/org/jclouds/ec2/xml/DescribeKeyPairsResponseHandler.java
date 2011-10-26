@@ -18,12 +18,15 @@
  */
 package org.jclouds.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.KeyPair.Builder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
@@ -36,16 +39,18 @@ import com.google.common.collect.Sets;
  *      />
  * @author Adrian Cole
  */
-public class DescribeKeyPairsResponseHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<Set<KeyPair>> {
+public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<KeyPair>> {
+   private final String defaultRegion;
+   private Builder builder;
+
    @Inject
-   @Region
-   String defaultRegion;
+   public DescribeKeyPairsResponseHandler(@Region String defaultRegion) {
+      this.defaultRegion = defaultRegion;
+      builder = KeyPair.builder().region(defaultRegion);
+   }
 
    private StringBuilder currentText = new StringBuilder();
    private Set<KeyPair> keyPairs = Sets.newLinkedHashSet();
-   private String keyFingerprint;
-   private String keyName;
 
    public Set<KeyPair> getResult() {
       return keyPairs;
@@ -54,16 +59,19 @@ public class DescribeKeyPairsResponseHandler extends
    public void endElement(String uri, String name, String qName) {
 
       if (qName.equals("keyFingerprint")) {
-         this.keyFingerprint = currentText.toString().trim();
+         builder.sha1OfPrivateKey(currentOrNull(currentText));
       } else if (qName.equals("item")) {
          String region = AWSUtils.findRegionInArgsOrNull(getRequest());
-         if (region == null)
-            region = defaultRegion;
-         keyPairs.add(new KeyPair(region, keyName, keyFingerprint, null));
+         if (region != null)
+            builder.region(region);
+         try {
+            keyPairs.add(builder.build());
+         } finally {
+            builder = KeyPair.builder().region(defaultRegion);
+         }
       } else if (qName.equals("keyName")) {
-         this.keyName = currentText.toString().trim();
+         builder.keyName(currentOrNull(currentText));
       }
-
       currentText = new StringBuilder();
    }
 

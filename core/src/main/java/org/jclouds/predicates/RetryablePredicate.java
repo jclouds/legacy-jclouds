@@ -91,18 +91,18 @@ public class RetryablePredicate<T> implements Predicate<T> {
       return false;
    }
 
-   long nextMaxInterval(long attempt, Date end) {
+   protected long nextMaxInterval(long attempt, Date end) {
       long interval = (period * (long) Math.pow(attempt, 1.5));
       interval = interval > maxPeriod ? maxPeriod : interval;
       long max = end.getTime() - System.currentTimeMillis();
       return (interval > max) ? max : interval;
    }
 
-   boolean before(Date end) {
+   protected boolean before(Date end) {
       return new Date().compareTo(end) <= 1;
    }
 
-   boolean atOrAfter(Date end) {
+   protected boolean atOrAfter(Date end) {
       return new Date().compareTo(end) >= 0;
    }
 }

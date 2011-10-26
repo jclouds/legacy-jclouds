@@ -52,6 +52,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -77,7 +78,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final ComputeUtils utils;
    final InstancePresent instancePresent;
-   final Function<RunningInstance, Credentials> instanceToCredentials;
+   final Cache<RunningInstance, Credentials> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
    final Provider<TemplateBuilder> templateBuilderProvider;
 
@@ -87,7 +88,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            Cache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils) {
       this.client = checkNotNull(client, "client");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
@@ -149,11 +150,11 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       String zone = getZoneFromLocationOrNull(template.getLocation());
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
                group, template);
-      return createNodesInRegionAndZone(region, zone, count, template, instanceOptions);
+      return createNodesInRegionAndZone(region, zone, group, count, template, instanceOptions);
    }
 
-   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, int count,
-            Template template, RunInstancesOptions instanceOptions) {
+   protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, String group,
+            int count, Template template, RunInstancesOptions instanceOptions) {
       int countStarted = 0;
       int tries = 0;
       Iterable<? extends RunningInstance> started = ImmutableSet.<RunningInstance> of();

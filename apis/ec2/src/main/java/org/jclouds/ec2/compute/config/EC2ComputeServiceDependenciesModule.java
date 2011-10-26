@@ -18,10 +18,12 @@
  */
 package org.jclouds.ec2.compute.config;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT;
 
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -39,7 +41,6 @@ import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
@@ -47,17 +48,24 @@ import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -69,11 +77,11 @@ import com.google.inject.TypeLiteral;
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
-                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
-                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-            .build();
+         .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
+         .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING)
+         .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
+         .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+         .build();
 
    @Singleton
    @Provides
@@ -88,13 +96,13 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
       }).to(RunningInstanceToNodeMetadata.class);
-      bind(new TypeLiteral<Function<RunningInstance, Credentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
-      bind(new TypeLiteral<Function<RegionNameAndIngressRules, String>>() {
+      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
-      bind(new TypeLiteral<Function<RegionAndName, Image>>() {
+      bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
@@ -120,25 +128,29 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected final Map<RegionAndName, KeyPair> credentialsMap(Function<RegionAndName, KeyPair> in) {
-      // doesn't seem to clear when someone issues remove(key)
-      // return new MapMaker().makeComputingMap(in);
-      return newLinkedHashMap();
+   protected Cache<RunningInstance, Credentials> credentialsMap(CacheLoader<RunningInstance, Credentials> in) {
+      return CacheBuilder.newBuilder().build(in);
    }
 
    @Provides
    @Singleton
-   @Named("SECURITY")
-   protected final Map<RegionAndName, String> securityGroupMap(Function<RegionNameAndIngressRules, String> in) {
-      // doesn't seem to clear when someone issues remove(key)
-      // return new MapMaker().makeComputingMap(in);
-      return newLinkedHashMap();
+   protected ConcurrentMap<RegionAndName, KeyPair> keypairMap(Injector i) {
+      return Maps.newConcurrentMap();
    }
    
    @Provides
    @Singleton
-   protected Map<RegionAndName, Image> provideImageMap(Function<RegionAndName, Image> regionAndIdToImage) {
-      return new MapMaker().makeComputingMap(regionAndIdToImage);
+   @Named("SECURITY")
+   protected Cache<RegionAndName, String> securityGroupMap(CacheLoader<RegionAndName, String> in) {
+      return CacheBuilder.newBuilder().build(in);
    }
-
+   
+   @Provides
+   @Singleton
+   @Named("SECURITY")
+   protected Predicate<RegionAndName> securityGroupEventualConsistencyDelay(SecurityGroupPresent in,
+         @Named(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+      return new RetryablePredicate<RegionAndName>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
+   }
+   
 }

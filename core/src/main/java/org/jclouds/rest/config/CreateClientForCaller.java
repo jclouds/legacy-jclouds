@@ -21,44 +21,55 @@ package org.jclouds.rest.config;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.inject.Provider;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
 
 /**
+ * CreateClientForCaller is parameterized, so clients it creates aren't singletons. For example,
+ * CreateClientForCaller satisfies a call like this:
+ * {@code context.getProviderSpecificContext().getApi().getOrgClientForName(name)}
  * 
  * @author Adrian Cole
  */
-public class CreateClientForCaller implements Function<ClassMethodArgs, Object> {
-   private final ConcurrentMap<ClassMethodArgs, Object> asyncMap;
-   private final Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap;
+public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+   @Inject
+   Injector injector;
+   private final Cache<ClassMethodArgs, Object> asyncMap;
+   private final Provider<Cache<ClassMethodArgs, Object>> delegateMap;
    Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   CreateClientForCaller(@Named("async") ConcurrentMap<ClassMethodArgs, Object> asyncMap,
-            @Named("sync") Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap) {
+   CreateClientForCaller(@Named("async") Cache<ClassMethodArgs, Object> asyncMap,
+            @Named("sync") Provider<Cache<ClassMethodArgs, Object>> delegateMap) {
       this.asyncMap = asyncMap;
       this.delegateMap = delegateMap;
    }
 
-   public Object apply(ClassMethodArgs from) {
+   @Override
+   public Object load(ClassMethodArgs from) throws ExecutionException {
       Class<?> syncClass = from.getMethod().getReturnType();
       Class<?> asyncClass = sync2Async.get(syncClass);
-      checkState(asyncClass != null, "configuration error, sync class " + syncClass
-               + " not mapped to an async class");
+      checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.get(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
       try {
-         return SyncProxy.proxy(syncClass, new SyncProxy(syncClass, asyncClient, delegateMap.get(),
-                  sync2Async));
+         return SyncProxy.proxy(syncClass, asyncClient, delegateMap.get(), sync2Async,
+                 injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
+                 }, Names.named("TIMEOUTS"))));
       } catch (Exception e) {
          Throwables.propagate(e);
          assert false : "should have propagated";

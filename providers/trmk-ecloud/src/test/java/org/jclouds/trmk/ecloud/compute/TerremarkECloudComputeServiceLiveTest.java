@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
@@ -38,6 +39,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 
 /**
@@ -64,6 +66,13 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
    @Override
    public void setServiceDefaults() {
       group = "te";
+   }
+
+   // terremark does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+            "node userMetadata did not match %s %s", userMetadata, node);
    }
 
    @Override

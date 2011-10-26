@@ -51,9 +51,9 @@ public class DefaultConfiguration implements Configuration {
       @Override
       public Map<String, String> get() {
          try {
-            return ImmutableMap.of("public",
-                  Files.toString(new File(System.getProperty("user.home") + "/.ssh/id_rsa.pub"), UTF_8), "private",
-                  Files.toString(new File(System.getProperty("user.home") + "/.ssh/id_rsa"), UTF_8));
+            return ImmutableMap.of(
+                  "public", Files.toString(new File(System.getProperty("user.home") + "/.ssh/id_rsa.pub"), UTF_8), 
+                  "private", Files.toString(new File(System.getProperty("user.home") + "/.ssh/id_rsa"), UTF_8));
          } catch (IOException e) {
             return SshKeys.generate();
          }

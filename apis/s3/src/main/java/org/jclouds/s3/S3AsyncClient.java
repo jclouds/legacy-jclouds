@@ -23,7 +23,7 @@ import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import javax.annotation.Nullable;
+import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
