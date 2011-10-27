@@ -52,7 +52,7 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
 	      // TODO ensure a vm with bridged NIC is running
 			IMachine master = manager.getVBox().findMachine(vmName);
-			IMachine cloned = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists("", "", "", false, manager, clonedName).apply(master);
+			IMachine cloned = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, localContext, "", "", "", false, clonedName, hostId).apply(master);
 			// TODO discover the bridged network 
 	      String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(cloned);
 	      // TODO assert ip address is ssh-able

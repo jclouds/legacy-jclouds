@@ -20,16 +20,25 @@
 package org.jclouds.virtualbox.functions;
 
 
-import java.io.BufferedReader;
+import static org.virtualbox_4_1.LockType.Write;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.virtualbox.functions.IsoToIMachine.lockMachineAndApply;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.CloneMode;
@@ -45,6 +54,13 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
 
 /**
  * @author Andrea Turli
@@ -55,24 +71,30 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   private VirtualBoxManager manager;
+   private ComputeServiceContext context;
    private String settingsFile;
    private String osTypeId;
    private String vmId;
    private boolean forceOverwrite;
-   private VirtualBoxManager manager;
 	private String cloneName;
+	private String hostId;
 
-
-   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(String settingsFile, String osTypeId, String vmId,
-                                                            boolean forceOverwrite, VirtualBoxManager manager,String cloneName) {
-      this.settingsFile = settingsFile;
-      this.osTypeId = osTypeId;
-      this.vmId = vmId;
-      this.forceOverwrite = forceOverwrite;
-      this.manager = manager;
+	@Inject
+   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
+			VirtualBoxManager manager, ComputeServiceContext context,
+			String settingsFile, String osTypeId, String vmId,
+			boolean forceOverwrite, String cloneName, String hostId) {
+		super();
+		this.manager = manager;
+		this.context = context;
+		this.settingsFile = settingsFile;
+		this.osTypeId = osTypeId;
+		this.vmId = vmId;
+		this.forceOverwrite = forceOverwrite;
 		this.cloneName = cloneName;
-
-   }
+		this.hostId = hostId;
+	}
 
    @Override
    public IMachine apply(@Nullable IMachine master) {
@@ -89,7 +111,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       }
    }
 
-   private boolean machineNotFoundException(VBoxException e) {
+	private boolean machineNotFoundException(VBoxException e) {
       return e.getMessage().indexOf("VirtualBox error: Could not find a registered machine named ") != -1;
    }
 
@@ -119,42 +141,48 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		// network
 		String hostInterface = null;
 		String command = "vboxmanage list bridgedifs";
-		try {
-			Process child = Runtime.getRuntime().exec(command);
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(child.getInputStream()));
-			String line = "";
-			boolean found = false;
 
-			while ((line = bufferedReader.readLine()) != null && !found) {
-				System.out.println("line: " + line);
-				if (line.split(":")[0].contains("Name")) {
-					hostInterface = line.substring(line.indexOf(":") +1);
-				}
-				if (line.split(":")[0].contains("Status") && line.split(":")[1].contains("Up")) {
-					System.out.println("bridge: " + hostInterface.trim());
-					found = true;
+			String content = runScriptOnNode(hostId, command, runAsRoot(false).wrapInInitScript(false)).getOutput();
+			/*
+			Process child = Runtime.getRuntime().exec(command);
+			InputStream stream = child.getInputStream();
+			String content = CharStreams.toString(new InputStreamReader(stream));
+			*/
+			System.out.println(content);
+			List<String> networkInfoBlocks = Lists.newArrayList();
+			for (String s : Splitter.on("\n\n").split(content)) {
+				Iterable<String> block = Iterables.filter(Splitter.on("\n").split(s), new Predicate<String>() {
+					@Override
+					public boolean apply(String arg0) {
+						return arg0.startsWith("Name:") || arg0.startsWith("IPAddress:") || arg0.startsWith("Status:");
+					}
+				});
+				networkInfoBlocks.add(Joiner.on(";").join(block));				
+			}
+			for (String networkInfoBlock : networkInfoBlocks) {
+				if(!networkInfoBlock.isEmpty() && networkInfoBlock.contains("Up")) {
+					Map<String, String> map = Splitter.on(",").withKeyValueSeparator(":").split(networkInfoBlock);
+					for (String key : map.keySet()) {
+						if(key.equals("Name"))
+							hostInterface = map.get(key);
+					}
 				}
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+				
+		// Bridged Network
+      ensureBridgedNetworkingIsAppliedToMachine(cloneName, manager.getVBox().getHost().generateMACAddress(), hostInterface);
 
-		session = manager.getSessionObject();
-		clonedMachine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
-		
-		mutable.getNetworkAdapter(new Long(0)).setAttachmentType(NetworkAttachmentType.Bridged);
-		mutable.getNetworkAdapter(new Long(0)).setAdapterType(NetworkAdapterType.Am79C973);
-		mutable.getNetworkAdapter(new Long(0)).setMACAddress(manager.getVBox().getHost().generateMACAddress());
-		mutable.getNetworkAdapter(new Long(0)).setBridgedInterface(hostInterface.trim());
-		mutable.getNetworkAdapter(new Long(0)).setEnabled(true);
-		mutable.saveSettings();
-		session.unlockMachine();
-      
-      
       IProgress prog = clonedMachine.launchVMProcess(manager.getSessionObject(), "gui", "");
       prog.waitForCompletion(-1);
       return clonedMachine;
    }
+   
+   private void ensureBridgedNetworkingIsAppliedToMachine(String vmName, String macAddress, String hostInterface) {
+      lockMachineAndApply(manager, Write, vmName, new AttachBridgedAdapterToMachine(0l, macAddress, hostInterface));
+   }
+   
+   protected ExecResponse runScriptOnNode(String nodeId, String command, RunScriptOptions options) {
+      return context.getComputeService().runScriptOnNode(nodeId, command, options);
+   }
+   
 }
