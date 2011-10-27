@@ -33,8 +33,6 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-
-
 /**
  * Get an IP address from an IMachine using arp of the host machine.
  * 

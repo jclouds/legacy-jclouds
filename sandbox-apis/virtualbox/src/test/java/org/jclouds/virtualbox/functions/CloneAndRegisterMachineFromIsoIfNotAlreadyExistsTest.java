@@ -42,6 +42,8 @@ import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.*;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.virtualbox_4_1.LockType.Write;
+
 
 /**
  * @author Andrea Turli
@@ -49,9 +51,9 @@ import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocal
 @Test(groups = "unit", testName = "CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest")
 public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
-   private String hostId = "host";
+	private String hostId = "host";
 	private String guestId = "guest";
-	
+
 	/* TODO Create a Test
 	 * 
 		Name:            eth0
@@ -65,7 +67,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 		MediumType:      Ethernet
 		Status:          Up
 		VBoxNetworkName: HostInterfaceNetworking-eth0
-		
+
 		Name:            vbox0
 		GUID:            786f6276-0030-4000-8000-5a3ded993fed
 		Dhcp:            Disabled
@@ -78,85 +80,91 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 		Status:          Down
 		VBoxNetworkName: HostInterfaceNetworking-vbox0
 	 */
-	
+
 	@Test
-   public void testCloneIfNotAlreadyExists() throws Exception {
+	public void testCloneIfNotAlreadyExists() throws Exception {
 		ComputeServiceContext context = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
 
-      VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
-      IVirtualBox vBox = createMock(IVirtualBox.class);
-      ISession iSession = createMock(ISession.class);
-   	IConsole iConsole = createMock(IConsole.class);
+		VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
+		IVirtualBox vBox = createMock(IVirtualBox.class);
+		ISession iSession = createMock(ISession.class);
+		IConsole iConsole = createMock(IConsole.class);
 		IProgress iProgress  = createMock(IProgress.class);
-      IHost iHost = createMock(IHost.class);
+		IHost iHost = createMock(IHost.class);
 
-      String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
-      String cloneName = vmName + "_clone";
-      IMachine master = createMock(IMachine.class);
-      IMachine createdMachine = createMock(IMachine.class);
+		String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+		String cloneName = vmName + "_clone";
+		IMachine master = createMock(IMachine.class);
+		IMachine createdMachine = createMock(IMachine.class);
 
-      expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(master.getName()).andReturn(vmName).anyTimes();
-      
+		expect(manager.getVBox()).andReturn(vBox).anyTimes();
+		expect(master.getName()).andReturn(vmName).anyTimes();
+
 		expect(manager.openMachineSession(master)).andReturn(iSession).anyTimes();
 		expect(iSession.getConsole()).andReturn(iConsole).anyTimes(); 
 		expect(iConsole.takeSnapshot("test", "desc test")).andReturn(iProgress).anyTimes();
-		
+
 		iSession.unlockMachine();
 		expectLastCall().atLeastOnce();
-		
-      StringBuilder errorMessageBuilder = new StringBuilder();
-      errorMessageBuilder.append("VirtualBox error: Could not find a registered machine named ");
-      errorMessageBuilder.append("'jclouds-image-virtualbox-machine-to-machine-test' (0x80BB0001)");
-      String errorMessage = errorMessageBuilder.toString();
-      VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
 
-      vBox.findMachine(cloneName);
-      expectLastCall().andThrow(vBoxException);
-      
-      expect(vBox.createMachine(anyString(), eq(cloneName), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
+		StringBuilder errorMessageBuilder = new StringBuilder();
+		errorMessageBuilder.append("VirtualBox error: Could not find a registered machine named ");
+		errorMessageBuilder.append("'jclouds-image-virtualbox-machine-to-machine-test' (0x80BB0001)");
+		String errorMessage = errorMessageBuilder.toString();
+		VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
+
+		vBox.findMachine(cloneName);
+		expectLastCall().andThrow(vBoxException);
+
+		expect(vBox.createMachine(anyString(), eq(cloneName), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
 		expect(vBox.getHost()).andReturn(iHost).anyTimes();
-		expect(iHost.generateMACAddress()).andReturn("112233445566");
+		expect(iHost.generateMACAddress()).andReturn("112233445566").anyTimes();
 
-      List<CloneOptions> options = new ArrayList<CloneOptions>();
-      options.add(CloneOptions.Link);
+		List<CloneOptions> options = new ArrayList<CloneOptions>();
+		options.add(CloneOptions.Link);
 		ISnapshot iSnapshot = createNiceMock(ISnapshot.class);
 		expect(master.getCurrentSnapshot()).andReturn(iSnapshot).anyTimes();
 		expect(iSnapshot.getMachine()).andReturn(master).anyTimes();
 		expect(master.cloneTo(createdMachine, CloneMode.MachineState,
-            options)).andReturn(iProgress).anyTimes();
+				options)).andReturn(iProgress).anyTimes();
 		expect(iProgress.getCompleted()).andReturn(true).anyTimes();
-      vBox.registerMachine(createdMachine);
+		vBox.registerMachine(createdMachine);
+		expect(vBox.findMachine(vmName)).andReturn(master).atLeastOnce();
+		expect(vBox.findMachine(cloneName)).andReturn(createdMachine).atLeastOnce();
 
-      replay(manager, vBox, master, iProgress, iSnapshot, iConsole, iSession);
+		
+		createdMachine.lockMachine(iSession, Write);
+		expectLastCall().anyTimes();
 
-      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, context, "", "", "", false, cloneName, hostId).apply(master);
+		replay(manager, vBox, master, createdMachine, iProgress, iSnapshot, iConsole, iSession);
 
-      verify(manager, vBox);
-   }
-   
+		new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, context, "", "", "", false, cloneName, hostId).apply(master);
 
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testFailIfMachineIsAlreadyRegistered() throws Exception {
+		verify(manager, vBox);
+	}
+
+
+	@Test(expectedExceptions = IllegalStateException.class)
+	public void testFailIfMachineIsAlreadyRegistered() throws Exception {
 		ComputeServiceContext context = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
 
-      VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
-      IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-      String vmName = "jclouds-image-my-ubuntu-image";
-      String cloneName = vmName + "_clone";
+		VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
+		IVirtualBox vBox = createNiceMock(IVirtualBox.class);
+		String vmName = "jclouds-image-my-ubuntu-image";
+		String cloneName = vmName + "_clone";
 
-      IMachine master = createMock(IMachine.class);
-      IMachine registeredMachine = createMock(IMachine.class);
+		IMachine master = createMock(IMachine.class);
+		IMachine registeredMachine = createMock(IMachine.class);
 
-      expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMachine(cloneName)).andReturn(registeredMachine).anyTimes();
+		expect(manager.getVBox()).andReturn(vBox).anyTimes();
+		expect(vBox.findMachine(cloneName)).andReturn(registeredMachine).anyTimes();
 
-      replay(manager, vBox);
+		replay(manager, vBox);
 
-      new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, context, "", "", "", false, cloneName, hostId).apply(master);
-   }
-	
-   private String anyString() {
-      return EasyMock.<String>anyObject();
-   }
+		new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, context, "", "", "", false, cloneName, hostId).apply(master);
+	}
+
+	private String anyString() {
+		return EasyMock.<String>anyObject();
+	}
 }

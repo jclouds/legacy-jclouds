@@ -28,6 +28,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 
@@ -50,13 +51,14 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 	  public void testConvert() throws IOException {
 	      manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
 			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
-	      // TODO ensure a vm with bridged NIC is running
 			IMachine master = manager.getVBox().findMachine(vmName);
-			IMachine cloned = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, localContext, "", "", "", false, clonedName, hostId).apply(master);
-			// TODO discover the bridged network 
-	      String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(cloned);
+			IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, localContext, "", "", "", false, clonedName, hostId).apply(master);
+			
+			// TODO launch machine + check it is ready
+			IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui", "");
+			prog.waitForCompletion(-1);
+			
+	      String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(clone);
 	      // TODO assert ip address is ssh-able
 	  }
-	  
-	  
 }
