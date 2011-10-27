@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 
 /**
