@@ -18,13 +18,17 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
-
-import static org.easymock.classextension.EasyMock.*;
 
 
 /**

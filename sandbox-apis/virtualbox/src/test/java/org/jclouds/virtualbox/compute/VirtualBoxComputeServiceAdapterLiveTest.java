@@ -19,11 +19,12 @@
 
 package org.jclouds.virtualbox.compute;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.inject.Guice;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+
+import java.net.URI;
+import java.util.Map;
+
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
@@ -44,11 +45,11 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.net.URI;
-import java.util.Map;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {

@@ -19,12 +19,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
-
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.virtualbox_4_1.NATProtocol.TCP;
 import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.INATEngine;
+import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_1.VBoxException;
 
 /**
  * @author Mattias Holmqvist
