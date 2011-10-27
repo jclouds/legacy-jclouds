@@ -31,9 +31,6 @@ import org.virtualbox_4_1.VirtualBoxManager;
 @Test(groups = "live", singleThreaded = true, testName = "CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest")
 public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest extends BaseVirtualBoxClientLiveTest {
 
-	private String hostId = "host";
-	private String guestId = "guest";
-
 	/* TODO Create a Test
 	 * 
 		Name:            eth0
