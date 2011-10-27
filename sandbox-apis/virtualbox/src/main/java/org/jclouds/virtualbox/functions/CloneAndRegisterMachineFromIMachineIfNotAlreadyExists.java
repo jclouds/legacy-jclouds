@@ -141,7 +141,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		bridgedIfs = CharMatcher.is(' ').replaceFrom(bridgedIfs, "");
 		//System.out.println(content);
 		List<String> networkInfoBlocks = Lists.newArrayList();
-		// separate 
+		// separate the different bridge block
 		for (String bridgedIf : Splitter.on(Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfs)) {
 			Iterable<String> block = Iterables.filter(Splitter.on("\n").split(bridgedIf), new Predicate<String>() {
 				@Override
