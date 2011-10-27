@@ -19,9 +19,17 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+
+import java.io.IOException;
+
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.domain.Credentials;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 
 /**
@@ -56,17 +64,47 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest extends BaseVi
 		Status:          Down
 		VBoxNetworkName: HostInterfaceNetworking-vbox0
 	 */
-	
-   @Test
-   public void testCloneMachineFromAnotherMachine() throws Exception {
-      for (Image image : context.getComputeService().listImages()) {
-         System.out.println(image);
-		}
-      // TODO pick one image and clone it with CloneAndRegisterMachineFromIMachineIfNotAlreadyExists
-      // NB: CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the followings:
-      //		- cloning the master
-      //		- register the clone machine
-      //		- ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface);
 
-   }
+	private String settingsFile = null;
+	private boolean forceOverwrite = true;
+	private String vmId = "jclouds-image-iso-1";
+	private String osTypeId = "";
+	private String controllerIDE = "IDE Controller";
+	private String diskFormat = "";
+	private String adminDisk = "testadmin.vdi";
+	private String guestId = "guest";
+	private String hostId = "host";
+
+	private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+
+	@Test
+	public void testCloneMachineFromAnotherMachine() throws IOException  {
+		VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
+		ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+		
+		// TODO this should be idempotent
+		IMachine master = new IsoToIMachine(manager,
+				adminDisk,
+				diskFormat,
+				settingsFile,
+				vmName,
+				osTypeId,
+				vmId,
+				forceOverwrite,
+				controllerIDE,
+				localHostContext,
+				hostId,
+				guestId,
+				new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+		
+		// NB: CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the followings:
+		//		- cloning the master
+		//		- register the clone machine
+		//		- ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface) -> problem in my macosx: all the 
+		//      bridged interfaces are up!!
+		String cloneName = vmName + "_clone";
+		IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists
+		(manager, localHostContext, settingsFile, osTypeId, vmId, forceOverwrite, cloneName, hostId).apply(master);
+
+	}
 }

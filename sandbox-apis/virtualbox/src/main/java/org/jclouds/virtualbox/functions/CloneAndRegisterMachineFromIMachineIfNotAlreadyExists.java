@@ -138,8 +138,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		String command = "vboxmanage list bridgedifs";
 
 		String bridgedIfs = runScriptOnNode(hostId, command, runAsRoot(false).wrapInInitScript(false)).getOutput();
-		bridgedIfs = CharMatcher.is(' ').replaceFrom(bridgedIfs, "");
-		//System.out.println(content);
+		//bridgedIfs = CharMatcher.is(' ').replaceFrom(bridgedIfs, "");
+		System.out.println(bridgedIfs);
 		List<String> networkInfoBlocks = Lists.newArrayList();
 		// separate the different bridge block
 		for (String bridgedIf : Splitter.on(Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfs)) {
@@ -153,10 +153,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		}
 		for (String networkInfoBlock : networkInfoBlocks) {
 			if(!networkInfoBlock.isEmpty() && networkInfoBlock.contains("Up")) {
-				Map<String, String> map = Splitter.on(",").withKeyValueSeparator(":").split(networkInfoBlock);
-				for (String key : map.keySet()) {
-					if(key.equals("Name"))
-						hostInterface = map.get(key).trim();
+				//Map<String, String> map = Splitter.on(",").withKeyValueSeparator(":").split(networkInfoBlock);
+				Iterable<String> map = Splitter.on(",").split(networkInfoBlock);
+				for (String key : map) {
+					if(key.startsWith("Name:"))
+						hostInterface = key.substring("Name:".length()).trim();
 				}
 			}
 		}
@@ -167,6 +168,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		// Bridged Network
 		ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface);
 
+		// TODO maybe need to notify outside about macaddress and network, useful on IMachineToIpAddress
 		return clonedMachine;
 	}
 

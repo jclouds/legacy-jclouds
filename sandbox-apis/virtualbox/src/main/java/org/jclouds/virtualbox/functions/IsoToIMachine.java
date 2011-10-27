@@ -144,7 +144,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // Guest additions
       ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
 
-      IProgress prog = vm.launchVMProcess(manager.getSessionObject(), "gui", "");
+      ISession session = manager.getSessionObject();
+      IProgress prog = vm.launchVMProcess(session, "gui", "");
       prog.waitForCompletion(-1);
       try {
          Thread.sleep(5000);
@@ -166,6 +167,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
             logger.debug("No response from ssh daemon...");
          }
       }
+      
+      session.unlockMachine();
 
       logger.debug("Installation of image complete. Powering down...");
       lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
