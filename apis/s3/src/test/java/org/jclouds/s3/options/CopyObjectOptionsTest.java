@@ -35,7 +35,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 
@@ -155,7 +154,7 @@ public class CopyObjectOptionsTest {
    }
 
    @Test
-   public void testIfETagMatches() throws UnsupportedEncodingException {
+   public void testIfETagMatches() {
       CopyObjectOptions options = new CopyObjectOptions();
       options.ifSourceETagMatches(etag);
       matchesHex(options.getIfMatch());
@@ -168,18 +167,18 @@ public class CopyObjectOptionsTest {
    }
 
    @Test
-   public void testIfETagMatchesStatic() throws UnsupportedEncodingException {
+   public void testIfETagMatchesStatic() {
       CopyObjectOptions options = ifSourceETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testIfETagMatchesNPE() throws UnsupportedEncodingException {
+   public void testIfETagMatchesNPE() {
       ifSourceETagMatches(null);
    }
 
    @Test
-   public void testIfETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatch() {
       CopyObjectOptions options = new CopyObjectOptions();
       options.ifSourceETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
@@ -192,17 +191,17 @@ public class CopyObjectOptionsTest {
    }
 
    @Test
-   public void testIfETagDoesntMatchStatic() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatchStatic() {
       CopyObjectOptions options = ifSourceETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testIfETagDoesntMatchNPE() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatchNPE() {
       ifSourceETagDoesntMatch(null);
    }
 
-   private void matchesHex(String match) throws UnsupportedEncodingException {
+   private void matchesHex(String match) {
       String expected = "\"" + etag + "\"";
       assertEquals(match, expected);
    }
@@ -213,13 +212,13 @@ public class CopyObjectOptionsTest {
 
    }
 
-   public void testIfUnmodifiedAfterETagMatches() throws UnsupportedEncodingException {
+   public void testIfUnmodifiedAfterETagMatches() {
       ifSourceETagMatches(etag).ifSourceUnmodifiedSince(now);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testIfUnmodifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfUnmodifiedAfterETagDoesntMatch() {
       ifSourceETagDoesntMatch(etag).ifSourceUnmodifiedSince(now);
    }
 
@@ -230,49 +229,49 @@ public class CopyObjectOptionsTest {
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testIfModifiedAfterETagMatches() throws UnsupportedEncodingException {
+   public void testIfModifiedAfterETagMatches() {
       ifSourceETagMatches(etag).ifSourceModifiedSince(now);
 
    }
 
-   public void testIfModifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfModifiedAfterETagDoesntMatch() {
       ifSourceETagDoesntMatch(etag).ifSourceModifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testETagMatchesAfterIfModified() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterIfModified() {
       ifSourceModifiedSince(now).ifSourceETagMatches(etag);
 
    }
 
-   public void testETagMatchesAfterIfUnmodified() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterIfUnmodified() {
       ifSourceUnmodifiedSince(now).ifSourceETagMatches(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testETagMatchesAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterETagDoesntMatch() {
       ifSourceETagDoesntMatch(etag).ifSourceETagMatches(etag);
    }
 
-   public void testETagDoesntMatchAfterIfModified() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterIfModified() {
       ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testETagDoesntMatchAfterIfUnmodified() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterIfUnmodified() {
       ifSourceUnmodifiedSince(now).ifSourceETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testETagDoesntMatchAfterETagMatches() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterETagMatches() {
       ifSourceETagMatches(etag).ifSourceETagDoesntMatch(etag);
    }
 
    @Test
-   void testBuildRequestHeadersWhenMetadataNull() throws UnsupportedEncodingException {
+   void testBuildRequestHeadersWhenMetadataNull() {
       CopyObjectOptions options = new CopyObjectOptions();
       options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
 
@@ -281,7 +280,7 @@ public class CopyObjectOptionsTest {
    }
 
    @Test
-   void testBuildRequestHeaders() throws UnsupportedEncodingException {
+   void testBuildRequestHeaders() {
       CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag).overrideMetadataWith(
                goodMeta);
       options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
@@ -310,7 +309,7 @@ public class CopyObjectOptionsTest {
    }
 
    @Test
-   void testBuildRequestHeadersACL() throws UnsupportedEncodingException {
+   void testBuildRequestHeadersACL() {
       CopyObjectOptions options = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ);
       options.setHeaderTag(DEFAULT_AMAZON_HEADERTAG);
 

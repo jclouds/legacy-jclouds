@@ -24,7 +24,6 @@ import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.u
 import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 
 import org.jclouds.http.options.HttpRequestOptions;
@@ -47,7 +46,7 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testPrefix() throws UnsupportedEncodingException {
+   public void testPrefix() {
       ListContainerOptions options = new ListContainerOptions();
       options.withPrefix("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), Collections.singletonList("test"));
@@ -60,7 +59,7 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testOneOptionQueryString() throws UnsupportedEncodingException {
+   public void testOneOptionQueryString() {
       ListContainerOptions options = new ListContainerOptions();
       options.withPrefix("test");
       Multimap<String, String> map = options.buildQueryParameters();
@@ -69,7 +68,7 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testTwoOptionQueryString() throws UnsupportedEncodingException {
+   public void testTwoOptionQueryString() {
       ListContainerOptions options = new ListContainerOptions();
       options.withPrefix("test").maxResults(1);
       Multimap<String, String> map = options.buildQueryParameters();
@@ -79,7 +78,7 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testPrefixAndPathUrlEncodingQueryString() throws UnsupportedEncodingException {
+   public void testPrefixAndPathUrlEncodingQueryString() {
       ListContainerOptions options = new ListContainerOptions();
       options.withPrefix("/cloudfiles/test").underPath("/");
       Multimap<String, String> map = options.buildQueryParameters();
@@ -96,18 +95,18 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testPrefixStatic() throws UnsupportedEncodingException {
+   public void testPrefixStatic() {
       ListContainerOptions options = withPrefix("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testPrefixNPE() throws UnsupportedEncodingException {
+   public void testPrefixNPE() {
       withPrefix(null);
    }
 
    @Test
-   public void testMarker() throws UnsupportedEncodingException {
+   public void testMarker() {
       ListContainerOptions options = new ListContainerOptions();
       options.afterMarker("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), Collections.singletonList("test"));
@@ -120,13 +119,13 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testMarkerStatic() throws UnsupportedEncodingException {
+   public void testMarkerStatic() {
       ListContainerOptions options = afterMarker("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testMarkerNPE() throws UnsupportedEncodingException {
+   public void testMarkerNPE() {
       afterMarker(null);
    }
 
@@ -155,7 +154,7 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testPath() throws UnsupportedEncodingException {
+   public void testPath() {
       ListContainerOptions options = new ListContainerOptions();
       options.underPath("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), Collections.singletonList("test"));
@@ -168,13 +167,13 @@ public class ListContainerOptionsTest {
    }
 
    @Test
-   public void testPathStatic() throws UnsupportedEncodingException {
+   public void testPathStatic() {
       ListContainerOptions options = underPath("test");
       assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testPathNPE() throws UnsupportedEncodingException {
+   public void testPathNPE() {
       underPath(null);
    }
 }

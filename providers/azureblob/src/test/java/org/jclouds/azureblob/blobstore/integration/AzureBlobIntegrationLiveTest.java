@@ -19,7 +19,6 @@
 package org.jclouds.azureblob.blobstore.integration;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -34,7 +33,7 @@ import org.testng.annotations.Test;
 public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
 
    @Override
-   public void testGetIfMatch() throws InterruptedException, UnsupportedEncodingException {
+   public void testGetIfMatch() throws InterruptedException {
       // this currently fails
    }
 

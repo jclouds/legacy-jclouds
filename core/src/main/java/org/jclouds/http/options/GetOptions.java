@@ -21,7 +21,6 @@ package org.jclouds.http.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -161,8 +160,6 @@ public class GetOptions extends BaseHttpRequestOptions {
     * 
     * @param eTag
     *           hash representing the payload
-    * @throws UnsupportedEncodingException
-    *            if there was a problem converting this into an S3 eTag string
     */
    public GetOptions ifETagMatches(String eTag) {
       checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
@@ -190,8 +187,6 @@ public class GetOptions extends BaseHttpRequestOptions {
     * 
     * @param eTag
     *           hash representing the payload
-    * @throws UnsupportedEncodingException
-    *            if there was a problem converting this into an S3 eTag string
     */
    public GetOptions ifETagDoesntMatch(String eTag) {
       checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");

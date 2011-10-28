@@ -24,11 +24,10 @@ import static org.jclouds.s3.options.ListBucketOptions.Builder.maxResults;
 import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 
-import org.jclouds.s3.reference.S3Constants;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.s3.reference.S3Constants;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Multimap;
@@ -47,7 +46,7 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testPrefix() throws UnsupportedEncodingException {
+   public void testPrefix() {
       ListBucketOptions options = new ListBucketOptions();
       options.withPrefix("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), Collections
@@ -61,7 +60,7 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testOneOptionQueryString() throws UnsupportedEncodingException {
+   public void testOneOptionQueryString() {
       ListBucketOptions options = new ListBucketOptions();
       options.withPrefix("test");
       Multimap<String, String> map = options.buildQueryParameters();
@@ -70,7 +69,7 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testTwoOptionQueryString() throws UnsupportedEncodingException {
+   public void testTwoOptionQueryString() {
       ListBucketOptions options = new ListBucketOptions();
       options.withPrefix("test").maxResults(1);
       Multimap<String, String> map = options.buildQueryParameters();
@@ -80,7 +79,7 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testPrefixAndDelimiterUrlEncodingQueryString() throws UnsupportedEncodingException {
+   public void testPrefixAndDelimiterUrlEncodingQueryString() {
       ListBucketOptions options = new ListBucketOptions();
       options.withPrefix("/test").delimiter("/");
       Multimap<String, String> map = options.buildQueryParameters();
@@ -97,19 +96,19 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testPrefixStatic() throws UnsupportedEncodingException {
+   public void testPrefixStatic() {
       ListBucketOptions options = withPrefix("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), Collections
                .singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testPrefixNPE() throws UnsupportedEncodingException {
+   public void testPrefixNPE() {
       withPrefix(null);
    }
 
    @Test
-   public void testMarker() throws UnsupportedEncodingException {
+   public void testMarker() {
       ListBucketOptions options = new ListBucketOptions();
       options.afterMarker("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), Collections
@@ -123,14 +122,14 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testMarkerStatic() throws UnsupportedEncodingException {
+   public void testMarkerStatic() {
       ListBucketOptions options = afterMarker("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), Collections
                .singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testMarkerNPE() throws UnsupportedEncodingException {
+   public void testMarkerNPE() {
       afterMarker(null);
    }
 
@@ -161,7 +160,7 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testDelimiter() throws UnsupportedEncodingException {
+   public void testDelimiter() {
       ListBucketOptions options = new ListBucketOptions();
       options.delimiter("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER), Collections
@@ -176,14 +175,14 @@ public class ListBucketOptionsTest {
    }
 
    @Test
-   public void testDelimiterStatic() throws UnsupportedEncodingException {
+   public void testDelimiterStatic() {
       ListBucketOptions options = delimiter("test");
       assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER), Collections
                .singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testDelimiterNPE() throws UnsupportedEncodingException {
+   public void testDelimiterNPE() {
       delimiter(null);
    }
 }

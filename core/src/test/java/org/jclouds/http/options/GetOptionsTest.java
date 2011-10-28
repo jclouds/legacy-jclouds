@@ -28,7 +28,6 @@ import static org.jclouds.http.options.GetOptions.Builder.tail;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -205,7 +204,7 @@ public class GetOptionsTest {
    }
 
    @Test
-   public void testIfETagMatches() throws UnsupportedEncodingException {
+   public void testIfETagMatches() {
       GetOptions options = new GetOptions();
       options.ifETagMatches(etag);
       matchesHex(options.getIfMatch());
@@ -218,18 +217,18 @@ public class GetOptionsTest {
    }
 
    @Test
-   public void testIfETagMatchesStatic() throws UnsupportedEncodingException {
+   public void testIfETagMatchesStatic() {
       GetOptions options = ifETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testIfETagMatchesNPE() throws UnsupportedEncodingException {
+   public void testIfETagMatchesNPE() {
       ifETagMatches(null);
    }
 
    @Test
-   public void testIfETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatch() {
       GetOptions options = new GetOptions();
       options.ifETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
@@ -242,17 +241,17 @@ public class GetOptionsTest {
    }
 
    @Test
-   public void testIfETagDoesntMatchStatic() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatchStatic() {
       GetOptions options = ifETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testIfETagDoesntMatchNPE() throws UnsupportedEncodingException {
+   public void testIfETagDoesntMatchNPE() {
       ifETagDoesntMatch(null);
    }
 
-   private void matchesHex(String match) throws UnsupportedEncodingException {
+   private void matchesHex(String match) {
       String expected = "\"" + etag + "\"";
       assertEquals(match, expected);
    }
@@ -263,13 +262,13 @@ public class GetOptionsTest {
 
    }
 
-   public void testIfUnmodifiedAfterETagMatches() throws UnsupportedEncodingException {
+   public void testIfUnmodifiedAfterETagMatches() {
       ifETagMatches(etag).ifUnmodifiedSince(now);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testIfUnmodifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfUnmodifiedAfterETagDoesntMatch() {
       ifETagDoesntMatch(etag).ifUnmodifiedSince(now);
    }
 
@@ -280,44 +279,44 @@ public class GetOptionsTest {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testIfModifiedAfterETagMatches() throws UnsupportedEncodingException {
+   public void testIfModifiedAfterETagMatches() {
       ifETagMatches(etag).ifModifiedSince(now);
 
    }
 
-   public void testIfModifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testIfModifiedAfterETagDoesntMatch() {
       ifETagDoesntMatch(etag).ifModifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testETagMatchesAfterIfModified() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterIfModified() {
       ifModifiedSince(now).ifETagMatches(etag);
 
    }
 
-   public void testETagMatchesAfterIfUnmodified() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterIfUnmodified() {
       ifUnmodifiedSince(now).ifETagMatches(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testETagMatchesAfterETagDoesntMatch() throws UnsupportedEncodingException {
+   public void testETagMatchesAfterETagDoesntMatch() {
       ifETagDoesntMatch(etag).ifETagMatches(etag);
    }
 
-   public void testETagDoesntMatchAfterIfModified() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterIfModified() {
       ifModifiedSince(now).ifETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testETagDoesntMatchAfterIfUnmodified() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterIfUnmodified() {
       ifUnmodifiedSince(now).ifETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testETagDoesntMatchAfterETagMatches() throws UnsupportedEncodingException {
+   public void testETagDoesntMatchAfterETagMatches() {
       ifETagMatches(etag).ifETagDoesntMatch(etag);
    }
 

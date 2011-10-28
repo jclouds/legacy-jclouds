@@ -35,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -51,11 +50,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -268,7 +267,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfMatch() throws InterruptedException, UnsupportedEncodingException {
+   public void testGetIfMatch() throws InterruptedException {
       String container = getContainerName();
       try {
 
@@ -291,7 +290,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfNoneMatch() throws InterruptedException, UnsupportedEncodingException {
+   public void testGetIfNoneMatch() throws InterruptedException {
       String container = getContainerName();
       try {
 
@@ -304,7 +303,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          try {
             context.getBlobStore().getBlob(container, name, ifETagDoesntMatch(goodETag));
-            validateContent(container, name);
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 304);
          }

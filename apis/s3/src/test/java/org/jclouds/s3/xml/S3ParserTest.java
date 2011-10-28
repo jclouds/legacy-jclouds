@@ -21,7 +21,6 @@ package org.jclouds.s3.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
@@ -130,7 +129,7 @@ public class S3ParserTest extends PerformanceTest {
 
    public static final String listContainerResult = "<ListContainerHandler xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Name>adrianjbosstest</Name><Prefix></Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>3366</Key><LastModified>2009-03-12T02:00:13.000Z</LastModified><ETag>&quot;9d7bb64e8e18ee34eec06dd2cf37b766&quot;</ETag><Size>136</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListContainerHandler>";
 
-   public void testCanParseListContainerResult() throws HttpException, UnsupportedEncodingException {
+   public void testCanParseListContainerResult() throws HttpException {
       ListBucketResponse container = runParseListContainerResult();
       assert !container.isTruncated();
       assert container.getName().equals("adrianjbosstest");
@@ -161,7 +160,7 @@ public class S3ParserTest extends PerformanceTest {
                Strings2.toInputStream(successfulCopyObject200));
    }
 
-   public void testCanParseCopyObjectResult() throws HttpException, UnsupportedEncodingException {
+   public void testCanParseCopyObjectResult() throws HttpException {
       ObjectMetadata metadata = runParseCopyObjectResult();
       Date expected = new SimpleDateFormatDateService().iso8601DateParse("2009-03-19T13:23:27.000Z");
       assertEquals(metadata.getLastModified(), expected);
