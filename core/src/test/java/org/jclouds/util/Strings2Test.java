@@ -20,8 +20,6 @@ package org.jclouds.util;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -43,7 +41,7 @@ public class Strings2Test {
       assertEquals(Strings2.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
    
-   public void testReplaceTokens() throws UnsupportedEncodingException {
+   public void testReplaceTokens() {
       assertEquals(Strings2.replaceTokens("hello {where}", ImmutableMap.of("where", "world")), "hello world");
    }
 

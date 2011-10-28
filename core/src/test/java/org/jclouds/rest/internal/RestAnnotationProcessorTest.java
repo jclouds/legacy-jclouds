@@ -1485,7 +1485,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoHeader() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoHeader() throws SecurityException, NoSuchMethodException {
       Method oneHeader = TestHeader.class.getMethod("twoHeader", String.class);
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(oneHeader, new Object[] { "robot" })
                .getHeaders();
@@ -1503,7 +1503,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneClassHeader() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneClassHeader() throws SecurityException, NoSuchMethodException {
       Method oneHeader = TestClassHeader.class.getMethod("oneHeader", String.class);
       Multimap<String, String> headers = factory(TestClassHeader.class).createRequest(oneHeader,
                new Object[] { "robot" }).getHeaders();
@@ -1512,7 +1512,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneHeader() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneHeader() throws SecurityException, NoSuchMethodException {
       Method oneHeader = TestHeader.class.getMethod("oneHeader", String.class);
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(oneHeader, new Object[] { "robot" })
                .getHeaders();
@@ -1521,7 +1521,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoHeaders() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoHeaders() throws SecurityException, NoSuchMethodException {
       Method twoHeaders = TestHeader.class.getMethod("twoHeaders", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(twoHeaders,
                new Object[] { "robot", "eggs" }).getHeaders();
@@ -1530,8 +1530,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoHeadersOutOfOrder() throws SecurityException, NoSuchMethodException,
-            UnsupportedEncodingException {
+   public void testBuildTwoHeadersOutOfOrder() throws SecurityException, NoSuchMethodException {
       Method twoHeadersOutOfOrder = TestHeader.class.getMethod("twoHeadersOutOfOrder", String.class, String.class);
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(twoHeadersOutOfOrder,
                new Object[] { "robot", "eggs" }).getHeaders();
@@ -1546,7 +1545,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testQueryInOptions() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testQueryInOptions() throws SecurityException, NoSuchMethodException {
       Method oneQuery = TestQueryReplace.class.getMethod("queryInOptions", String.class, TestReplaceQueryOptions.class);
       String query = factory(TestQueryReplace.class).createRequest(oneQuery,
                new Object[] { "robot", new TestReplaceQueryOptions() }).getEndpoint().getQuery();
@@ -1560,7 +1559,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
    }
 
-   public void testTestMapMatrixParams() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testTestMapMatrixParams() throws SecurityException, NoSuchMethodException {
       Method method = TestMapMatrixParams.class.getMethod("action", String.class, String.class, Map.class);
       HttpRequest request = factory(TestMapMatrixParams.class).createRequest(method,
                new Object[] { "robot", "kill", ImmutableMap.of("death", "slow") });
@@ -1602,7 +1601,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoQuery() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoQuery() throws SecurityException, NoSuchMethodException {
       Method oneQuery = TestQueryReplace.class.getMethod("twoQuery", String.class);
       String query = factory(TestQueryReplace.class).createRequest(oneQuery, new Object[] { "robot" }).getEndpoint()
                .getQuery();
@@ -1618,7 +1617,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneClassQuery() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneClassQuery() throws SecurityException, NoSuchMethodException {
       Method oneQuery = TestClassQuery.class.getMethod("oneQuery", String.class);
       String query = factory(TestClassQuery.class).createRequest(oneQuery, new Object[] { "robot" }).getEndpoint()
                .getQuery();
@@ -1626,7 +1625,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneQuery() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneQuery() throws SecurityException, NoSuchMethodException {
       Method oneQuery = TestQueryReplace.class.getMethod("oneQuery", String.class);
       String query = factory(TestQueryReplace.class).createRequest(oneQuery, new Object[] { "robot" }).getEndpoint()
                .getQuery();
@@ -1634,7 +1633,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoQuerys() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoQuerys() throws SecurityException, NoSuchMethodException {
       Method twoQuerys = TestQueryReplace.class.getMethod("twoQuerys", String.class, String.class);
       String query = factory(TestQueryReplace.class).createRequest(twoQuerys, new Object[] { "robot", "eggs" })
                .getEndpoint().getQuery();
@@ -1642,8 +1641,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoQuerysOutOfOrder() throws SecurityException, NoSuchMethodException,
-            UnsupportedEncodingException {
+   public void testBuildTwoQuerysOutOfOrder() throws SecurityException, NoSuchMethodException {
       Method twoQuerysOutOfOrder = TestQueryReplace.class.getMethod("twoQuerysOutOfOrder", String.class, String.class);
       String query = factory(TestQueryReplace.class).createRequest(twoQuerysOutOfOrder,
                new Object[] { "robot", "eggs" }).getEndpoint().getQuery();
@@ -1657,7 +1655,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testMatrixInOptions() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testMatrixInOptions() throws SecurityException, NoSuchMethodException {
       Method oneMatrix = TestMatrixReplace.class.getMethod("matrixInOptions", String.class,
                TestReplaceMatrixOptions.class);
       String path = factory(TestMatrixReplace.class).createRequest(oneMatrix,
@@ -1699,7 +1697,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoMatrix() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoMatrix() throws SecurityException, NoSuchMethodException {
       Method oneMatrix = TestMatrixReplace.class.getMethod("twoMatrix", String.class);
       String path = factory(TestMatrixReplace.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
                .getPath();
@@ -1716,7 +1714,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneClassMatrix() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneClassMatrix() throws SecurityException, NoSuchMethodException {
       Method oneMatrix = TestClassMatrix.class.getMethod("oneMatrix", String.class);
       String path = factory(TestClassMatrix.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
                .getPath();
@@ -1724,7 +1722,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildOneMatrix() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneMatrix() throws SecurityException, NoSuchMethodException {
       Method oneMatrix = TestMatrixReplace.class.getMethod("oneMatrix", String.class);
       String path = factory(TestMatrixReplace.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
                .getPath();
@@ -1732,7 +1730,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoMatrixs() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoMatrixs() throws SecurityException, NoSuchMethodException {
       Method twoMatrixs = TestMatrixReplace.class.getMethod("twoMatrixs", String.class, String.class);
       String path = factory(TestMatrixReplace.class).createRequest(twoMatrixs, new Object[] { "robot", "eggs" })
                .getEndpoint().getPath();
@@ -1740,8 +1738,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoMatrixsOutOfOrder() throws SecurityException, NoSuchMethodException,
-            UnsupportedEncodingException {
+   public void testBuildTwoMatrixsOutOfOrder() throws SecurityException, NoSuchMethodException {
       Method twoMatrixsOutOfOrder = TestMatrixReplace.class.getMethod("twoMatrixsOutOfOrder", String.class,
                String.class);
       String path = factory(TestMatrixReplace.class).createRequest(twoMatrixsOutOfOrder,
@@ -2380,7 +2377,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoForm() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoForm() throws SecurityException, NoSuchMethodException {
       Method oneForm = TestFormReplace.class.getMethod("twoForm", String.class);
       Object form = factory(TestFormReplace.class).createRequest(oneForm, "robot").getPayload().getRawContent();
       assertEquals(form, "slash=/robot&hyphen=-robot");
@@ -2406,40 +2403,39 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testProvidesWithGeneric() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testProvidesWithGeneric() throws SecurityException, NoSuchMethodException {
       Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).set();
       assertEquals(set, ImmutableSet.of("foo"));
    }
 
    @Test
-   public void testProvidesWithGenericQualified() throws SecurityException, NoSuchMethodException,
-            UnsupportedEncodingException {
+   public void testProvidesWithGenericQualified() throws SecurityException, NoSuchMethodException {
       Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).foo();
       assertEquals(set, ImmutableSet.of("bar"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testProvidesWithGenericQualifiedAuthorizationException() throws SecurityException,
-            NoSuchMethodException, UnsupportedEncodingException {
+            NoSuchMethodException {
       injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).exception();
    }
 
    @Test
-   public void testBuildOneClassForm() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneClassForm() throws SecurityException, NoSuchMethodException {
       Method oneForm = TestClassForm.class.getMethod("oneForm", String.class);
       Object form = factory(TestClassForm.class).createRequest(oneForm, "robot").getPayload().getRawContent();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
    @Test
-   public void testBuildOneForm() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildOneForm() throws SecurityException, NoSuchMethodException {
       Method oneForm = TestFormReplace.class.getMethod("oneForm", String.class);
       Object form = factory(TestFormReplace.class).createRequest(oneForm, "robot").getPayload().getRawContent();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
    @Test
-   public void testBuildTwoForms() throws SecurityException, NoSuchMethodException, UnsupportedEncodingException {
+   public void testBuildTwoForms() throws SecurityException, NoSuchMethodException {
       Method twoForms = TestFormReplace.class.getMethod("twoForms", String.class, String.class);
       Object form = factory(TestFormReplace.class).createRequest(twoForms, "robot", "eggs").getPayload()
                .getRawContent();
@@ -2447,8 +2443,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testBuildTwoFormsOutOfOrder() throws SecurityException, NoSuchMethodException,
-            UnsupportedEncodingException {
+   public void testBuildTwoFormsOutOfOrder() throws SecurityException, NoSuchMethodException {
       Method twoFormsOutOfOrder = TestFormReplace.class.getMethod("twoFormsOutOfOrder", String.class, String.class);
       Object form = factory(TestFormReplace.class).createRequest(twoFormsOutOfOrder, "robot", "eggs").getPayload()
                .getRawContent();

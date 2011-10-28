@@ -30,7 +30,6 @@ import static org.jclouds.s3.reference.S3Headers.COPY_SOURCE_IF_UNMODIFIED_SINCE
 import static org.jclouds.s3.reference.S3Headers.DEFAULT_AMAZON_HEADERTAG;
 import static org.jclouds.s3.reference.S3Headers.METADATA_DIRECTIVE;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -227,7 +226,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @param eTag
     *           hash representing the payload
     */
-   public CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
+   public CopyObjectOptions ifSourceETagMatches(String eTag) {
       checkState(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
       checkState(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifETagMatches()");
       replaceHeader(COPY_SOURCE_IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
@@ -242,10 +241,8 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * 
     * @param eTag
     *           hash representing the payload
-    * @throws UnsupportedEncodingException
-    *            if there was a problem converting this into an S3 eTag string
     */
-   public CopyObjectOptions ifSourceETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
+   public CopyObjectOptions ifSourceETagDoesntMatch(String eTag) {
       checkState(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       Preconditions.checkState(getIfUnmodifiedSince() == null,
                "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
@@ -307,7 +304,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see CopyObjectOptions#ifSourceETagMatches(String)
        */
-      public static CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
+      public static CopyObjectOptions ifSourceETagMatches(String eTag) {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagMatches(eTag);
       }
@@ -315,7 +312,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see CopyObjectOptions#ifSourceETagDoesntMatch(String)
        */
-      public static CopyObjectOptions ifSourceETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
+      public static CopyObjectOptions ifSourceETagDoesntMatch(String eTag) {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagDoesntMatch(eTag);
       }

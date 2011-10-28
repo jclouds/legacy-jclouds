@@ -20,8 +20,6 @@ package org.jclouds.scriptbuilder.util;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
@@ -35,7 +33,7 @@ import com.google.common.collect.ImmutableMap;
 @Test(groups = "unit")
 public class UtilsTest {
 
-   public void testReplaceTokens() throws UnsupportedEncodingException {
+   public void testReplaceTokens() {
       assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),
                "hello world");
    }

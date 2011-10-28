@@ -21,7 +21,6 @@ package org.jclouds.atmos.blobstore.integration;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
@@ -34,13 +33,12 @@ import org.testng.annotations.Test;
 public class AtmosContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
 
    @Override
-   public void testListContainerMaxResults() throws InterruptedException,
-            UnsupportedEncodingException {
+   public void testListContainerMaxResults() throws InterruptedException {
       // Not currently working
    }
 
    @Override
-   public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
+   public void testListContainerMarker() throws InterruptedException {
       // Not currently working https://community.emc.com/thread/100545
    }
    

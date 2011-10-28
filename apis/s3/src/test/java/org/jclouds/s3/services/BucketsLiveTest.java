@@ -28,7 +28,6 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Set;
@@ -36,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
@@ -50,7 +50,6 @@ import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.Payer;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.internal.StubS3AsyncClient;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -332,8 +331,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   public void testListBucketDelimiter() throws InterruptedException, ExecutionException, TimeoutException,
-         UnsupportedEncodingException {
+   public void testListBucketDelimiter() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          String prefix = "apps";
@@ -350,8 +348,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testListBucketPrefix() throws InterruptedException, ExecutionException, TimeoutException,
-         UnsupportedEncodingException {
+   public void testListBucketPrefix() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          String prefix = "apps";
@@ -368,8 +365,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testListBucketMaxResults() throws InterruptedException, ExecutionException, TimeoutException,
-         UnsupportedEncodingException {
+   public void testListBucketMaxResults() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          addAlphabetUnderRoot(bucketName);

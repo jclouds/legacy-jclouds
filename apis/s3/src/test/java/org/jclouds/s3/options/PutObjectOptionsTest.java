@@ -21,8 +21,6 @@ package org.jclouds.s3.options;
 import static org.jclouds.s3.options.PutObjectOptions.Builder.withAcl;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.reference.S3Headers;
 import org.testng.annotations.Test;
@@ -50,7 +48,7 @@ public class PutObjectOptionsTest {
    }
 
    @Test
-   void testBuildRequestHeaders() throws UnsupportedEncodingException {
+   void testBuildRequestHeaders() {
 
       PutObjectOptions options = withAcl(CannedAccessPolicy.AUTHENTICATED_READ);
       options.setHeaderTag(S3Headers.DEFAULT_AMAZON_HEADERTAG);
