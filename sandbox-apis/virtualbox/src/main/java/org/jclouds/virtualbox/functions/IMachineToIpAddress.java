@@ -40,44 +40,46 @@ import com.google.inject.Inject;
  */
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
-	private ComputeServiceContext context;
-	private String hostId;
-	private String network;
+   private ComputeServiceContext context;
+   private String hostId;
+   private String network;
 
-	@Inject
-	public IMachineToIpAddress(ComputeServiceContext context, String hostId, String network) {
-		this.context = context;
-		this.hostId = hostId;
-		this.network = network;
-	}
+   @Inject
+   public IMachineToIpAddress(ComputeServiceContext context, String hostId,
+         String network) {
+      this.context = context;
+      this.hostId = hostId;
+      this.network = network;
+   }
 
-	@Override
-	public String apply(@Nullable IMachine machine) {
-		String macAddress = new FormatVboxMacAddressToShellMacAddress(isOSX(hostId))
-		.apply(machine.getNetworkAdapter(0l).getMACAddress());
+   @Override
+   public String apply(@Nullable IMachine machine) {
+      String macAddress = new FormatVboxMacAddressToShellMacAddress(
+            isOSX(hostId)).apply(machine.getNetworkAdapter(0l).getMACAddress());
 
-		// TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
-		ExecResponse execResponse = runScriptOnNode(hostId,
-				/* "for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done",*/
-				"for i in {1..254} ; do ping -c 1 -t 1 " + network + ".$i & done",
-				runAsRoot(false).wrapInInitScript(false));
-		System.out.println(execResponse);
+      // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
+      ExecResponse execResponse = runScriptOnNode(hostId,
+      /* "for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done", */
+      "for i in {1..254} ; do ping -c 1 -t 1 " + network + ".$i & done",
+            runAsRoot(false).wrapInInitScript(false));
+      System.out.println(execResponse);
 
-		String arpLine = runScriptOnNode(hostId, "arp -an | grep " + macAddress,
-				runAsRoot(false).wrapInInitScript(false)).getOutput();
-		String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1,
-				arpLine.indexOf(")"));
-		System.out.println("IP address " + ipAddress);
-		return ipAddress;
-	}
+      String arpLine = runScriptOnNode(hostId, "arp -an | grep " + macAddress,
+            runAsRoot(false).wrapInInitScript(false)).getOutput();
+      String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1,
+            arpLine.indexOf(")"));
+      System.out.println("IP address " + ipAddress);
+      return ipAddress;
+   }
 
-	private ExecResponse runScriptOnNode(String nodeId, String command,
-			RunScriptOptions options) {
-		return context.getComputeService().runScriptOnNode(nodeId, command, options);
-	}
+   private ExecResponse runScriptOnNode(String nodeId, String command,
+         RunScriptOptions options) {
+      return context.getComputeService().runScriptOnNode(nodeId, command,
+            options);
+   }
 
-	public boolean isOSX(String id) {
-		return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
-				"Mac OS X");
-	}
+   public boolean isOSX(String id) {
+      return context.getComputeService().getNodeMetadata(hostId)
+            .getOperatingSystem().getDescription().equals("Mac OS X");
+   }
 }

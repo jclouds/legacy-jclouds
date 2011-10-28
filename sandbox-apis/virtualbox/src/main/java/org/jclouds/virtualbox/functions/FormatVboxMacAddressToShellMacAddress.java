@@ -28,38 +28,43 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
 /**
- * Transform a string representation of a mac address in a shell readable mac address
- * This should format virtualbox mac address xxyyzzaabbcc into a valid mac address for the different shells
- * i.e: bash - 
- * $ arp -an
- * ? (172.16.1.101) at 14:fe:b5:e2:fd:ba [ether] on eth0
+ * Transform a string representation of a mac address in a shell readable mac
+ * address This should format virtualbox mac address xxyyzzaabbcc into a valid
+ * mac address for the different shells i.e: bash - $ arp -an ? (172.16.1.101)
+ * at 14:fe:b5:e2:fd:ba [ether] on eth0
  * 
  * @author Andrea Turli
  */
-public class FormatVboxMacAddressToShellMacAddress implements Function<String, String> {
-	private boolean isOsX;
+public class FormatVboxMacAddressToShellMacAddress implements
+      Function<String, String> {
+   private boolean isOsX;
 
-	public FormatVboxMacAddressToShellMacAddress(boolean isOsX) {
-		this.isOsX = isOsX;
-	}
+   public FormatVboxMacAddressToShellMacAddress(boolean isOsX) {
+      this.isOsX = isOsX;
+   }
 
-	@Override
-	public String apply(String vboxMacAddress) {
-		checkNotNull(vboxMacAddress);
-		checkArgument(vboxMacAddress.length()==12);
-		String macAddress = Joiner.on(":").join(Splitter.fixedLength(2).split(vboxMacAddress)).toLowerCase();
-		if (isOsX) {
-			macAddress = Joiner.on(":").join(Iterables.transform(Splitter.on(":").split(macAddress), new Function<String, String>() {
-				@Override
-				public String apply(String arg0) {
-					if(arg0.equals("00")) return "0";
-					if(arg0.startsWith("0")) return arg0.substring(1);
+   @Override
+   public String apply(String vboxMacAddress) {
+      checkNotNull(vboxMacAddress);
+      checkArgument(vboxMacAddress.length() == 12);
+      String macAddress = Joiner.on(":")
+            .join(Splitter.fixedLength(2).split(vboxMacAddress)).toLowerCase();
+      if (isOsX) {
+         macAddress = Joiner.on(":").join(
+               Iterables.transform(Splitter.on(":").split(macAddress),
+                     new Function<String, String>() {
+                        @Override
+                        public String apply(String arg0) {
+                           if (arg0.equals("00"))
+                              return "0";
+                           if (arg0.startsWith("0"))
+                              return arg0.substring(1);
 
-					return arg0;
-				}
+                           return arg0;
+                        }
 
-			}));
-		}
-		return macAddress;
-	}
+                     }));
+      }
+      return macAddress;
+   }
 }

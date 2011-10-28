@@ -29,7 +29,6 @@ import org.virtualbox_4_1.INetworkAdapter;
 
 import com.google.common.base.Function;
 
-
 /**
  * @author Andrea Turli
  */
@@ -38,8 +37,9 @@ public class AttachBridgedAdapterToMachine implements Function<IMachine, Void> {
    private long adapterIndex;
    private String macAddress;
    private String hostInterface;
-   
-   public AttachBridgedAdapterToMachine(long adapterSlot, String macAddress, String hostInterface) {
+
+   public AttachBridgedAdapterToMachine(long adapterSlot, String macAddress,
+         String hostInterface) {
       this.adapterIndex = adapterSlot;
       this.macAddress = macAddress;
       this.hostInterface = hostInterface;
@@ -47,13 +47,13 @@ public class AttachBridgedAdapterToMachine implements Function<IMachine, Void> {
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-   	INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterIndex);
-   	networkAdapter.setAttachmentType(Bridged);
-   	networkAdapter.setAdapterType(Am79C973);
-   	networkAdapter.setMACAddress(macAddress);
-   	networkAdapter.setBridgedInterface(hostInterface);
-   	networkAdapter.setEnabled(true);
-   	machine.saveSettings();
-   	return null;
+      INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterIndex);
+      networkAdapter.setAttachmentType(Bridged);
+      networkAdapter.setAdapterType(Am79C973);
+      networkAdapter.setMACAddress(macAddress);
+      networkAdapter.setBridgedInterface(hostInterface);
+      networkAdapter.setEnabled(true);
+      machine.saveSettings();
+      return null;
    }
 }

@@ -39,9 +39,9 @@ import org.virtualbox_4_1.VBoxException;
 public class AttachBridgedAdapterToMachineTest {
 
    private String macAddress;
-	private String hostInterface;
+   private String hostInterface;
 
-	@Test
+   @Test
    public void testApplyNetworkingToNonExistingAdapter() throws Exception {
       Long adapterId = 0l;
       IMachine machine = createMock(IMachine.class);
@@ -49,15 +49,16 @@ public class AttachBridgedAdapterToMachineTest {
 
       expect(machine.getNetworkAdapter(adapterId)).andReturn(networkAdapter);
       networkAdapter.setAttachmentType(Bridged);
-   	networkAdapter.setAdapterType(Am79C973);
-   	networkAdapter.setMACAddress(macAddress);
-   	networkAdapter.setBridgedInterface(hostInterface);
-   	networkAdapter.setEnabled(true);
+      networkAdapter.setAdapterType(Am79C973);
+      networkAdapter.setMACAddress(macAddress);
+      networkAdapter.setBridgedInterface(hostInterface);
+      networkAdapter.setEnabled(true);
       machine.saveSettings();
 
       replay(machine, networkAdapter);
 
-      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface).apply(machine);
+      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
+            .apply(machine);
 
       verify(machine, networkAdapter);
    }
@@ -68,18 +69,20 @@ public class AttachBridgedAdapterToMachineTest {
       IMachine machine = createMock(IMachine.class);
       INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
 
-      String error = "VirtualBox error: Argument slot is invalid " +
-              "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
+      String error = "VirtualBox error: Argument slot is invalid "
+            + "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
 
-      VBoxException invalidSlotException = new VBoxException(createNiceMock(Throwable.class), error);
-      expect(machine.getNetworkAdapter(adapterId)).andThrow(invalidSlotException);
+      VBoxException invalidSlotException = new VBoxException(
+            createNiceMock(Throwable.class), error);
+      expect(machine.getNetworkAdapter(adapterId)).andThrow(
+            invalidSlotException);
 
       replay(machine, networkAdapter);
 
-      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface).apply(machine);
+      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
+            .apply(machine);
 
       verify(machine, networkAdapter);
    }
-
 
 }

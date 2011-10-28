@@ -34,7 +34,6 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-
 /**
  * Get an IP address from an IMachine using arp of the host machine.
  * 
@@ -43,50 +42,51 @@ import org.virtualbox_4_1.VirtualBoxManager;
 @Test(groups = "live", singleThreaded = true, testName = "IMachineToIpAddressTest")
 public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 
-	private String settingsFile = null;
-	private boolean forceOverwrite = true;
-	private String vmId = "jclouds-image-iso-1";
-	private String osTypeId = "";
-	private String controllerIDE = "IDE Controller";
-	private String diskFormat = "";
-	private String adminDisk = "testadmin.vdi";
-	private String guestId = "guest";
-	private String hostId = "host";
-	private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+   private String settingsFile = null;
+   private boolean forceOverwrite = true;
+   private String vmId = "jclouds-image-iso-1";
+   private String osTypeId = "";
+   private String controllerIDE = "IDE Controller";
+   private String diskFormat = "";
+   private String adminDisk = "testadmin.vdi";
+   private String guestId = "guest";
+   private String hostId = "host";
+   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String clonedName = "jclouds-image-virtualbox-machine-to-machine-test_clone";
    private VirtualBoxManager manager;
-	private String network = "192.168.1";
-	
-	  @Test
-	  public void testConvert() throws IOException {
-	      manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+   private String network = "192.168.1";
 
-			VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-			ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
-			
-			// TODO this should be idempotent
-			IMachine master = new IsoToIMachine(manager,
-					adminDisk,
-					diskFormat,
-					settingsFile,
-					vmName,
-					osTypeId,
-					vmId,
-					forceOverwrite,
-					controllerIDE,
-					localHostContext,
-					hostId,
-					guestId,
-					new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+   @Test
+   public void testConvert() throws IOException {
+      manager = (VirtualBoxManager) context.getProviderSpecificContext()
+            .getApi();
+      ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(
+            hostId, "localhost", guestId, "localhost", new Credentials("toor",
+                  "password"));
 
-			IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, localContext, "", "", "", false, clonedName, hostId).apply(master);
-			
-			// TODO launch machine + check it is ready
-			IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui", "");
-			prog.waitForCompletion(-1);
-			
-			String ipAddress = new IMachineToIpAddress(localContext, hostId, network ).apply(clone);
-	      assertTrue(!ipAddress.isEmpty());
-	  }
+      VirtualBoxManager manager = (VirtualBoxManager) context
+            .getProviderSpecificContext().getApi();
+      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
+            hostId, "localhost", guestId, "localhost", new Credentials("toor",
+                  "password"));
+
+      // TODO this should be idempotent
+      IMachine master = new IsoToIMachine(manager, adminDisk, diskFormat,
+            settingsFile, vmName, osTypeId, vmId, forceOverwrite,
+            controllerIDE, localHostContext, hostId, guestId, new Credentials(
+                  "toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+
+      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
+            manager, localContext, "", "", "", false, clonedName, hostId)
+            .apply(master);
+
+      // TODO launch machine + check it is ready
+      IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui",
+            "");
+      prog.waitForCompletion(-1);
+
+      String ipAddress = new IMachineToIpAddress(localContext, hostId, network)
+            .apply(clone);
+      assertTrue(!ipAddress.isEmpty());
+   }
 }
