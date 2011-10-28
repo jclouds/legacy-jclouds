@@ -145,6 +145,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.util.Strings2;
+import org.jclouds.xml.XMLParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -2511,7 +2512,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
        Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
                 .createResponseParser(parserFactory, injector, method, request);
        
-       StringBuffer payload = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+       StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
        payload.append("<test><elem>Hello World</elem></test>");
        TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
        assertEquals(domain.getElem(), "Hello World");
@@ -2529,7 +2530,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
        Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
                 .createResponseParser(parserFactory, injector, method, request);
        
-       StringBuffer payload = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+       StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
        payload.append("<test><elem>Hello World</elem></test>");
        TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
        assertEquals(domain.getElem(), "Hello World");

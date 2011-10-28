@@ -33,6 +33,9 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(JAXBParser.class)
 public interface XMLParser
 {
+    /** The default xml header. */
+    public static final String DEFAULT_XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
+    
     /**
      * Serialize the object into xml. If the object is a generic type, use
      * {@link #toXML(Object, Type)}
