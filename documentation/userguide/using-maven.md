@@ -20,10 +20,107 @@ To obtain jclouds artifacts you need to define the repository, as well as the sp
 	* Non-Windows 64-bit JDK
 	`export MAVEN_OPTS="-Xms128m -Xmx256m"`
 
-## Provider Credentials
+## Dependencies
 
-Provider Credentials are required to run tests that connect to services such as BlobStore or ComputeService.  
-Please add a [maven profile](http://maven.apache.org/guides/introduction/introduction-to-profiles.html) to settings.xml 
+Depending on what you want to do, you may need different dependencies.
+
+### BlobStore
+
+This assumes you are only interested in Basic BlobStore commands, like below:
+
+{% highlight java %}
+BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential);
+Map<String, InputStream> map = context.createInputStreamMap("adrian.home");
+  // do work
+context.close();
+{% endhighlight %}
+
+This also assumes that you do not have heavy-duty needs that warrant connection-pooling or NIO, 
+or that you are in an environment that cannot use them.
+
+In this case, you only need to add the following to your project's dependencies:
+{% highlight xml %}
+<dependency>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-blobstore</artifactId>
+    <version>1.2.1</version>
+</dependency>
+{% endhighlight %}
+Using the above, you will gain access to the provider named `transient`.  Note that this is in-memory.  Typically, you will instead want to add dependencies on a specific provider of resources like those for S3:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jclouds.provider</groupId>
+    <artifactId>aws-s3</artifactId>
+    <version>1.2.1</version>
+</dependency>
+{% endhighlight %}
+
+Noting that you could alternatively ask for all of our supported blobstores using the dependency `jclouds-allblobstore` instead.
+
+Then, you'd substitute the correct credentials and such here:
+{% highlight java %}
+BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", accessKey, secret);
+{% endhighlight %}
+
+### BlobStore from Google App Engine
+
+There is no change to the api, in order to switch your code to use `URLFetchService` from within GAE.  
+However, you do have to configure your connection differently:
+
+{% highlight java %}
+BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential, 
+				ImmutableSet.<Module>of(new AsyncGoogleAppEngineConfigurationModule()));
+{% endhighlight %}
+
+Here are the dependencies needed to use google's UrlFetchService::
+{% highlight xml %}
+<dependency>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-blobstore</artifactId>
+    <version>1.2.1</version>
+</dependency>
+<dependency>
+    <groupId>org.jclouds.driver</groupId>
+    <artifactId>jclouds-gae</artifactId>
+    <version>1.2.1</version>
+</dependency>
+{% endhighlight %}
+
+### Logging
+
+jclouds will by default use JDK logging.  To switch to log4J or slf4j, you have to add a logging module to your configuration code:
+
+{% highlight java %}
+BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential, 
+										ImmutableSet.<Module>of(new Log4JLoggingModule()));
+{% endhighlight %}
+
+Here are the dependencies for BlobStore and log4j logging:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-blobstore</artifactId>
+    <version>1.2.1</version>
+</dependency>
+<dependency>
+    <groupId>org.jclouds.driver</groupId>
+    <artifactId>jclouds-log4j</artifactId>
+    <version>1.2.1</version>
+</dependency>
+{% endhighlight %}
+
+The log categories are set to package names, so plan on assigning `org.jclouds` appropriately in your log4j.xml.
+
+## Testing against real services with the live profile
+By default, running `mvn clean install` will not depend on any external services.  However, we have a live profile that helps with this.  In almost every case, the live profile requires parameters relevant to the account you are testing against.  Here's how to configure these.
+
+### Testing api or provider modules
+
+Credentials and sometimes endpoints are required to run tests that connect to services such as BlobStore or ComputeService. These credentials will be used when you run `mvn -Plive clean install` from the directory containing the provider or api module you are testing.  Note that it isn't currently possible to run a single integration test due to constraints in maven.  If you'd like this to change, please read the [following](http://stackoverflow.com/questions/894737/how-to-run-individual-test-in-the-integration-test-target-in-maven) and escalate to surefire people.
+
+Please add a [maven profile](http://maven.apache.org/guides/introduction/introduction-to-profiles.html) to settings.xml
 so that your credentials can be used for integration tests:
 
 {% highlight xml %}
@@ -60,10 +157,10 @@ Here is an example of a complete _settings.xml_ file you can save to the ~/.m2 d
 </settings>
 {% endhighlight %}
 
-## SSH Credentials
+### Testing SSH drivers
 
-SSH Credentials are required to run tests for SSH extensions.  
-Please add a [maven profile](http://maven.apache.org/guides/introduction/introduction-to-profiles.html) to settings.xml 
+SSH Credentials are required to run tests for SSH extensions.
+Please add a [maven profile](http://maven.apache.org/guides/introduction/introduction-to-profiles.html) to settings.xml
 so that your credentials can be used for integration tests:
 
 {% highlight xml %}
@@ -99,119 +196,4 @@ Here is an example of a complete _settings.xml_ file you can save to the ~/.m2 d
 </settings>
 {% endhighlight %}
 
-## Dependencies
-
-Depending on what you want to do, you may need different dependencies.
-
-### BlobStore
-
-This assumes you are only interested in Basic BlobStore commands, like below:
-
-{% highlight java %}
-BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential);
-Map<String, InputStream> map = context.createInputStreamMap("adrian.home");
-  // do work
-context.close();
-{% endhighlight %}
-
-This also assumes that you do not have heavy-duty needs that warrant connection-pooling or NIO, 
-or that you are in an environment that cannot use them.
-
-In this case, you only need to add the following to your project's dependencies:
-{% highlight xml %}
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-blobstore</artifactId>
-    <version>1.0.0</version>
-</dependency>
-{% endhighlight %}
-Using the above, you will gain access to the provider named `transient`.  Note that this is in-memory.  Typically, you will instead want to add dependencies on a specific provider of resources like those for S3:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.jclouds.provider</groupId>
-    <artifactId>aws-s3</artifactId>
-    <version>1.0.0</version>
-</dependency>
-{% endhighlight %}
-
-Noting that you could alternatively ask for all of our supported blobstores using the dependency `jclouds-allblobstore` instead.
-
-Then, you'd substitute the correct credentials and such here:
-{% highlight java %}
-BlobStoreContext context = new BlobStoreContextFactory().createContext("aws-s3", accessKey, secret);
-{% endhighlight %}
-
-### Non-Blocking BlobStore
-There is no change to the api, in order to switch your code to use ning. 
- However, you do have to configure your connection differently:
-{% highlight java %}
-BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential,
- 											ImmutableSet.<Module>of(new NingHttpCommandExecutorServiceModule()));
-{% endhighlight %}
-
-Here are the dependencies for pooled connections and non-blocking io:
-
-{% highlight java %}
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-blobstore</artifactId>
-    <version>1.0.0</version>
-</dependency>
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-ning</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
-{% endhighlight %}
-
-### BlobStore from Google App Engine
-
-There is no change to the api, in order to switch your code to use `URLFetchService` from within GAE.  
-However, you do have to configure your connection differently:
-
-{% highlight java %}
-BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential, 
-				ImmutableSet.<Module>of(new GoogleAppEngineConfigurationModule()));
-{% endhighlight %}
-
-Here are the dependencies needed to use google's UrlFetchService::
-{% highlight xml %}
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-blobstore</artifactId>
-    <version>1.0.0</version>
-</dependency>
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-gae</artifactId>
-    <version>1.0.0</version>
-</dependency>
-{% endhighlight %}
-
-## Log4J
-
-jclouds-aws will by default use JDK logging.  To switch to log4J, you have to add a logging module to your configuration code:
-
-{% highlight java %}
-BlobStoreContext context = new BlobStoreContextFactory().createContext(provider, identity, credential, 
-										ImmutableSet.<Module>of(new Log4JLoggingModule()));
-{% endhighlight %}
-
-Here are the dependencies for BlobStore and log4j logging:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-blobstore</artifactId>
-    <version>1.0.0</version>
-</dependency>
-<dependency>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-log4j</artifactId>
-    <version>1.0.0</version>
-</dependency>
-{% endhighlight %}
-
-The log categories are set to package names, so plan on assigning `org.jclouds` appropriately in your log4j.xml.
 
