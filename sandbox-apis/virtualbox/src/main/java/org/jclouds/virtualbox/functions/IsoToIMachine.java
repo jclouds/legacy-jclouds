@@ -19,23 +19,8 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
-import static org.virtualbox_4_1.AccessMode.ReadOnly;
-import static org.virtualbox_4_1.DeviceType.DVD;
-import static org.virtualbox_4_1.DeviceType.HardDisk;
-import static org.virtualbox_4_1.LockType.Shared;
-import static org.virtualbox_4_1.LockType.Write;
-
-import java.io.File;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-
+import com.google.common.base.Function;
+import com.google.inject.Inject;
 import org.eclipse.jetty.server.Server;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
@@ -46,12 +31,25 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.*;
 
-import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import java.io.File;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import static org.virtualbox_4_1.AccessMode.ReadOnly;
+import static org.virtualbox_4_1.DeviceType.DVD;
+import static org.virtualbox_4_1.DeviceType.HardDisk;
+import static org.virtualbox_4_1.LockType.Shared;
+import static org.virtualbox_4_1.LockType.Write;
 
 public class IsoToIMachine implements Function<String, IMachine> {
 
@@ -136,13 +134,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // Guest additions
       ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
 
-      IProgress prog = vm.launchVMProcess(manager.getSessionObject(), "gui", "");
-      prog.waitForCompletion(-1);
-      try {
-         Thread.sleep(5000);
-      } catch (InterruptedException e) {
-         propagate(e);
-      }
+      // Launch machine and wait for it to come online
+      ensureMachineIsLaunched(vmName);
 
       String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence());
       sendKeyboardSequence(installKeySequence);
@@ -178,6 +171,10 @@ public class IsoToIMachine implements Function<String, IMachine> {
          logger.error(e, "Could not stop Jetty server.");
       }
       return vm;
+   }
+
+   private void ensureMachineIsLaunched(String vmName) {
+      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, ExecutionType.GUI, ""));
    }
 
    private void ensureGuestAdditionsMediumIsAttached(String vmName, final IMedium guestAdditionsDvdMedium) {
@@ -217,6 +214,21 @@ public class IsoToIMachine implements Function<String, IMachine> {
    public void ensureMachineHasIDEControllerNamed(String vmName, String controllerIDE) {
       lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
               new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
+   }
+
+   private <T> T applyForMachine(VirtualBoxManager manager, final String machineId, final Function<IMachine, T> function) {
+      final IMachine immutableMachine = manager.getVBox().findMachine(machineId);
+      return new Function<IMachine, T>() {
+         @Override
+         public T apply(IMachine machine) {
+            return function.apply(machine);
+         }
+
+         @Override
+         public String toString() {
+            return function.toString();
+         }
+      }.apply(immutableMachine);
    }
 
    public static <T> T lockMachineAndApply(VirtualBoxManager manager, final LockType type, final String machineId,
