@@ -439,7 +439,9 @@ This is so that you can run many tests concurrently, even if your blobstore can 
      returnContainer(container);
    }
  }
-
-The test initializer manages how to run the test in integration (offline expensive tests using the transient provider) vs live (online expensive tests using some other provider).  The test initializer is a legacy object that can probably be replaced with "test.blobstore.provider=aws-s3" or something.  For now, you have to pass it.
 {% endhighlight %}
+
+The test initializer manages how to run the test in integration and live test groups.  Integration tests are offline expensive tests using the transient providers.  Love tests are online expensive tests using some BlobStore provider.  Since live tests are in fact live, you need to pass the same properties you would in any live test, including test.providername.identity and test.providername.credential.
+
+Note that the test initializer is a legacy object that can probably be replaced with "test.blobstore.provider=aws-s3" or something, once we get around to refactoring it out.
 
