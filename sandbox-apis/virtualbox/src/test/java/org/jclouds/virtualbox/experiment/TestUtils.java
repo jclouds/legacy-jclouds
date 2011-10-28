@@ -18,10 +18,11 @@
  */
 package org.jclouds.virtualbox.experiment;
 
-import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.ComputeServiceContext;
@@ -31,12 +32,11 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
+import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 public class TestUtils {
 

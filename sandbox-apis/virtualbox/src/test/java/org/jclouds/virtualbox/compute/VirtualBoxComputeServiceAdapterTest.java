@@ -19,9 +19,17 @@
 
 package org.jclouds.virtualbox.compute;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
-import com.google.inject.Guice;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.testng.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.easymock.EasyMock;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
@@ -37,16 +45,9 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.easymock.classextension.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
+import com.google.inject.Guice;
 
 @Test(groups = "unit")
 public class VirtualBoxComputeServiceAdapterTest {

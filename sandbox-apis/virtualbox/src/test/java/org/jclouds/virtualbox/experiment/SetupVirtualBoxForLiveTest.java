@@ -40,8 +40,8 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 

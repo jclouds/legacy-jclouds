@@ -24,40 +24,43 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
+import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
 
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INATEngine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.VBoxException;
 
 /**
- * @author Mattias Holmqvist
+ * @author Andrea Turli
  */
-@Test(groups = "unit", testName = "AttachNATRedirectRuleToMachineTest")
-public class AttachNATRedirectRuleToMachineTest {
+@Test(groups = "unit", testName = "AttachBridgedAdapterToMachineTest")
+public class AttachBridgedAdapterToMachineTest {
+
+   private String macAddress;
+   private String hostInterface;
 
    @Test
    public void testApplyNetworkingToNonExistingAdapter() throws Exception {
       Long adapterId = 0l;
       IMachine machine = createMock(IMachine.class);
       INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
-      INATEngine natEngine = createMock(INATEngine.class);
 
       expect(machine.getNetworkAdapter(adapterId)).andReturn(networkAdapter);
-      networkAdapter.setAttachmentType(NAT);
-      expect(networkAdapter.getNatDriver()).andReturn(natEngine);
-      natEngine.addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
+      networkAdapter.setAttachmentType(Bridged);
+      networkAdapter.setAdapterType(Am79C973);
+      networkAdapter.setMACAddress(macAddress);
+      networkAdapter.setBridgedInterface(hostInterface);
       networkAdapter.setEnabled(true);
       machine.saveSettings();
 
-      replay(machine, networkAdapter, natEngine);
+      replay(machine, networkAdapter);
 
-      new AttachNATRedirectRuleToMachine(adapterId).apply(machine);
+      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
+            .apply(machine);
 
-      verify(machine, networkAdapter, natEngine);
+      verify(machine, networkAdapter);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -65,20 +68,21 @@ public class AttachNATRedirectRuleToMachineTest {
       Long adapterId = 30l;
       IMachine machine = createMock(IMachine.class);
       INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
-      INATEngine natEngine = createMock(INATEngine.class);
 
-      String error = "VirtualBox error: Argument slot is invalid " +
-              "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
+      String error = "VirtualBox error: Argument slot is invalid "
+            + "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
 
-      VBoxException invalidSlotException = new VBoxException(createNiceMock(Throwable.class), error);
-      expect(machine.getNetworkAdapter(adapterId)).andThrow(invalidSlotException);
+      VBoxException invalidSlotException = new VBoxException(
+            createNiceMock(Throwable.class), error);
+      expect(machine.getNetworkAdapter(adapterId)).andThrow(
+            invalidSlotException);
 
-      replay(machine, networkAdapter, natEngine);
+      replay(machine, networkAdapter);
 
-      new AttachNATRedirectRuleToMachine(adapterId).apply(machine);
+      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
+            .apply(machine);
 
-      verify(machine, networkAdapter, natEngine);
+      verify(machine, networkAdapter);
    }
-
 
 }

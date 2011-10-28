@@ -48,7 +48,15 @@ import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -136,7 +144,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // Guest additions
       ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
 
-      IProgress prog = vm.launchVMProcess(manager.getSessionObject(), "gui", "");
+      ISession session = manager.getSessionObject();
+      IProgress prog = vm.launchVMProcess(session, "gui", "");
       prog.waitForCompletion(-1);
       try {
          Thread.sleep(5000);
@@ -158,6 +167,8 @@ public class IsoToIMachine implements Function<String, IMachine> {
             logger.debug("No response from ssh daemon...");
          }
       }
+      
+      session.unlockMachine();
 
       logger.debug("Installation of image complete. Powering down...");
       lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {

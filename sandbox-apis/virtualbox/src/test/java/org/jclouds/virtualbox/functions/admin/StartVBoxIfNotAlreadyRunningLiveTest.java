@@ -18,17 +18,16 @@
  */
 package org.jclouds.virtualbox.functions.admin;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.domain.Credentials;
-import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.domain.Credentials;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 @Test(groups = "live", singleThreaded = true, testName = "startVBoxIfNotAlreadyRunningLiveTest")
 public class StartVBoxIfNotAlreadyRunningLiveTest {

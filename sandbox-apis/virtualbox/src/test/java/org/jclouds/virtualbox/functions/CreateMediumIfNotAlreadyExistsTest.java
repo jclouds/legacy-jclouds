@@ -19,13 +19,22 @@
 
 package org.jclouds.virtualbox.functions;
 
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
-
 import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertNotSame;
+
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 /**
  * @author Mattias Holmqvist
