@@ -101,6 +101,21 @@ public class ModifyRequest {
       builder.replaceQuery(makeQueryLine(map, null, skips));
       return (R) request.toBuilder().endpoint(builder.build()).build();
    }
+   
+   public static <R extends HttpRequest> R addQueryParams(R request, Multimap<String, String> parameters, UriBuilder builder) {
+       return addQueryParams(request, parameters, builder, request.getSkips());
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <R extends HttpRequest> R addQueryParams(R request,
+       Multimap<String, String> parameters, UriBuilder builder, char... skips) {
+       builder.uri(request.getEndpoint());
+       Multimap<String, String> map =
+           org.jclouds.http.utils.ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery());
+       map.putAll(parameters);
+       builder.replaceQuery(org.jclouds.http.utils.ModifyRequest.makeQueryLine(map, null, skips));
+       return (R) request.toBuilder().endpoint(builder.build()).build();
+   }
 
    public static <R extends HttpRequest> R replaceMatrixParam(R request, String name, Object value, UriBuilder builder) {
       return replaceMatrixParam(request, name, new Object[] { value }, builder);

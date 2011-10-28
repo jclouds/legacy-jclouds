@@ -72,6 +72,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.easymock.IArgumentMatcher;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -91,6 +92,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
@@ -120,6 +122,7 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -142,6 +145,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.util.Strings2;
+import org.jclouds.xml.XMLParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -2449,6 +2453,88 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                .getRawContent();
       assertEquals(form, "x-amz-copy-source=/eggs/robot");
    }
+   
+   public interface TestJAXBResponseParser {
+       @GET
+       @Path("/jaxb/annotation")
+       @JAXBResponseParser
+       public ListenableFuture<TestJAXBDomain> jaxbGetWithAnnotation();
+       
+       @GET
+       @Path("/jaxb/header")
+       @Consumes(MediaType.APPLICATION_XML)
+       public ListenableFuture<TestJAXBDomain> jaxbGetWithAcceptHeader();
+   }
+   
+   @XmlRootElement(name = "test")
+   public static class TestJAXBDomain {
+       private String elem;
+
+       public String getElem() {
+           return elem;
+       }
+       public void setElem(String elem) {
+           this.elem = elem;
+       }
+   }
+   
+   @Test
+   public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
+       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
+       GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser> builder().method("GET")
+                .endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class).javaMethod(method).args(
+                         new Object[] {}).build();
+       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
+       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
+    }
+   
+   @Test
+   public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
+       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
+       GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser> builder().method("GET")
+                .endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class).javaMethod(method).args(
+                         new Object[] {}).build();
+       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
+       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
+    }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
+       HttpRequest request = factory(TestJAXBResponseParser.class).createRequest(method);
+
+       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+       // now test that it works!
+
+       Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
+                .createResponseParser(parserFactory, injector, method, request);
+       
+       StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
+       payload.append("<test><elem>Hello World</elem></test>");
+       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
+       assertEquals(domain.getElem(), "Hello World");
+    }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
+       HttpRequest request = factory(TestJAXBResponseParser.class).createRequest(method);
+
+       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+       // now test that it works!
+
+       Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
+                .createResponseParser(parserFactory, injector, method, request);
+       
+       StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
+       payload.append("<test><elem>Hello World</elem></test>");
+       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
+       assertEquals(domain.getElem(), "Hello World");
+    }
 
 
    DateService dateService = new SimpleDateFormatDateService();
