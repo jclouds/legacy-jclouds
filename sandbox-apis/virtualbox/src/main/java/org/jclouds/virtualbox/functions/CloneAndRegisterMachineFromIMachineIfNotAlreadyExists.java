@@ -26,7 +26,6 @@ import static org.virtualbox_4_1.LockType.Write;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
@@ -38,6 +37,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.domain.BridgedInterface;
 import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
@@ -47,12 +47,10 @@ import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -114,46 +112,68 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		List<CloneOptions> options = new ArrayList<CloneOptions>();
 		options.add(CloneOptions.Link);
 
-		// TODO clean snapshot + cloning
 		ISession session = null;
 		try {
 			session = manager.openMachineSession(master);
 			session.getConsole().takeSnapshot("test", "desc test");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propogate(e);
 		}
 		session.unlockMachine();
 
+		// clone
 		IProgress progress = master.getCurrentSnapshot().getMachine().cloneTo(clonedMachine, CloneMode.MachineState,
 				options);
 
 		if (progress.getCompleted())
 			logger.debug("clone done");
 
+		// registering
 		manager.getVBox().registerMachine(clonedMachine);
-
-		// network
-		String hostInterface = null;
+		
+		// Bridged Network
 		String command = "vboxmanage list bridgedifs";
-
 		String bridgedIfs = runScriptOnNode(hostId, command, runAsRoot(false).wrapInInitScript(false)).getOutput();
-		//bridgedIfs = CharMatcher.is(' ').replaceFrom(bridgedIfs, "");
-		System.out.println(bridgedIfs);
+		String hostInterface = retrieveAvailableBridgedInterfaceInfo(bridgedIfs).getName();
+		checkNotNull(hostInterface);
+		String macAddress = manager.getVBox().getHost().generateMACAddress();
+		ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface);
+
+		// TODO maybe need to notify outside about macaddress and network, useful on IMachineToIpAddress
+		return clonedMachine;
+	}
+
+	/**
+	 * @return hostInterface
+	 */
+	protected static BridgedInterface retrieveAvailableBridgedInterfaceInfo(String bridgedIfs) {
+		List<BridgedInterface> bridgedInterfaces = new ArrayList<BridgedInterface>();
+		String hostInterface = null;
 		List<String> networkInfoBlocks = Lists.newArrayList();
 		// separate the different bridge block
 		for (String bridgedIf : Splitter.on(Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfs)) {
+			
+			/*
 			Iterable<String> block = Iterables.filter(Splitter.on("\n").split(bridgedIf), new Predicate<String>() {
 				@Override
 				public boolean apply(String arg0) {
 					return arg0.startsWith("Name:") || arg0.startsWith("IPAddress:") || arg0.startsWith("Status:");
 				}
 			});
-			networkInfoBlocks.add(Joiner.on(",").join(block));				
+						
+			Iterable<String> block = Splitter.on("\n").split(bridgedIf);
+			networkInfoBlocks.add(Joiner.on(",").join(block));
+			 */
+			if(!bridgedIf.isEmpty())
+				bridgedInterfaces.add(new BridgedInterface(bridgedIf));
 		}
+		for (BridgedInterface bridgedInterface : bridgedInterfaces) {
+			if(bridgedInterface.getStatus().equals("Up"))
+				return bridgedInterface;
+		}
+		/*
 		for (String networkInfoBlock : networkInfoBlocks) {
 			if(!networkInfoBlock.isEmpty() && networkInfoBlock.contains("Up")) {
-				//Map<String, String> map = Splitter.on(",").withKeyValueSeparator(":").split(networkInfoBlock);
 				Iterable<String> map = Splitter.on(",").split(networkInfoBlock);
 				for (String key : map) {
 					if(key.startsWith("Name:"))
@@ -161,15 +181,9 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 				}
 			}
 		}
+		*/
+		return null;
 		
-		checkNotNull(hostInterface);
-		String macAddress = manager.getVBox().getHost().generateMACAddress();
-		
-		// Bridged Network
-		ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface);
-
-		// TODO maybe need to notify outside about macaddress and network, useful on IMachineToIpAddress
-		return clonedMachine;
 	}
 
 	private void ensureBridgedNetworkingIsAppliedToMachine(String vmName, String macAddress, String hostInterface) {
@@ -180,4 +194,10 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		return context.getComputeService().runScriptOnNode(nodeId, command, options);
 	}
 
+   protected <T> T propogate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
+   }
+   
 }

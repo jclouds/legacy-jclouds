@@ -19,7 +19,10 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -40,10 +43,16 @@ import org.virtualbox_4_1.VirtualBoxManager;
 @Test(groups = "live", singleThreaded = true, testName = "IMachineToIpAddressTest")
 public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 
-   private String hostId = "host";
+	private String settingsFile = null;
+	private boolean forceOverwrite = true;
+	private String vmId = "jclouds-image-iso-1";
+	private String osTypeId = "";
+	private String controllerIDE = "IDE Controller";
+	private String diskFormat = "";
+	private String adminDisk = "testadmin.vdi";
 	private String guestId = "guest";
-
-   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+	private String hostId = "host";
+	private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String clonedName = "jclouds-image-virtualbox-machine-to-machine-test_clone";
    private VirtualBoxManager manager;
 	
@@ -51,14 +60,32 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 	  public void testConvert() throws IOException {
 	      manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
 			ComputeServiceContext localContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
-			IMachine master = manager.getVBox().findMachine(vmName);
+
+			VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
+			ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+			
+			// TODO this should be idempotent
+			IMachine master = new IsoToIMachine(manager,
+					adminDisk,
+					diskFormat,
+					settingsFile,
+					vmName,
+					osTypeId,
+					vmId,
+					forceOverwrite,
+					controllerIDE,
+					localHostContext,
+					hostId,
+					guestId,
+					new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+
 			IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, localContext, "", "", "", false, clonedName, hostId).apply(master);
 			
 			// TODO launch machine + check it is ready
 			IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui", "");
 			prog.waitForCompletion(-1);
 			
-	      String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(clone);
-	      // TODO assert ip address is ssh-able
+			String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(clone);
+	      assertTrue(!ipAddress.isEmpty());
 	  }
 }

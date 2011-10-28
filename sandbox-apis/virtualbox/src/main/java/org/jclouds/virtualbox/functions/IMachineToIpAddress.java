@@ -42,11 +42,13 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
    private ComputeServiceContext context;
    private String hostId;
+   private String network;
 
    @Inject
-	public IMachineToIpAddress(ComputeServiceContext context, String hostId) {
+	public IMachineToIpAddress(ComputeServiceContext context, String hostId, String network) {
 		this.context = context;
 		this.hostId = hostId;
+		this.network = network;
 	}
 
 	@Override
@@ -56,7 +58,8 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
 		// TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
 		ExecResponse execResponse = runScriptOnNode(hostId,
-				"for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done",
+				/* "for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done",*/
+				"for i in {1..254} ; do ping -c 1 -t 1 " + network + ".$i & done",
 				runAsRoot(false).wrapInInitScript(false));
 		System.out.println(execResponse);
 
