@@ -39,45 +39,35 @@ import org.jclouds.xml.XMLParser;
  * @see ParseXMLWithJAXB
  */
 @Singleton
-public class JAXBParser implements XMLParser
-{
-    @Override
-    public String toXML(final Object src) throws IOException
-    {
-        return toXML(src, src.getClass());
-    }
+public class JAXBParser implements XMLParser {
+   @Override
+   public String toXML(final Object src) throws IOException {
+      return toXML(src, src.getClass());
+   }
 
-    @Override
-    public <T> String toXML(final Object src, final Class<T> type) throws IOException
-    {
-        try
-        {
-            JAXBContext context = JAXBContext.newInstance(type);
-            Marshaller marshaller = context.createMarshaller();
-            StringWriter writer = new StringWriter();
-            marshaller.marshal(src, writer);
-            return writer.toString();
-        }
-        catch (JAXBException ex)
-        {
-            throw new IOException("Could not marshall object", ex);
-        }
-    }
+   @Override
+   public <T> String toXML(final Object src, final Class<T> type) throws IOException {
+      try {
+         JAXBContext context = JAXBContext.newInstance(type);
+         Marshaller marshaller = context.createMarshaller();
+         StringWriter writer = new StringWriter();
+         marshaller.marshal(src, writer);
+         return writer.toString();
+      } catch (JAXBException ex) {
+         throw new IOException("Could not marshall object", ex);
+      }
+   }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T fromXML(final String xml, final Class<T> type) throws IOException
-    {
-        try
-        {
-            StringReader reader = new StringReader(xml);
-            JAXBContext context = JAXBContext.newInstance(type);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (T) unmarshaller.unmarshal(reader);
-        }
-        catch (Exception ex)
-        {
-            throw new IOException("Could not unmarshall document", ex);
-        }
-    }
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T> T fromXML(final String xml, final Class<T> type) throws IOException {
+      try {
+         StringReader reader = new StringReader(xml);
+         JAXBContext context = JAXBContext.newInstance(type);
+         Unmarshaller unmarshaller = context.createUnmarshaller();
+         return (T) unmarshaller.unmarshal(reader);
+      } catch (Exception ex) {
+         throw new IOException("Could not unmarshall document", ex);
+      }
+   }
 }

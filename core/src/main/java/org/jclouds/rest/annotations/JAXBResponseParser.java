@@ -27,14 +27,13 @@ import java.lang.annotation.Target;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 
 /**
- * Shows the transformer type used to parse XML with the {@link ParseXMLWithJAXB} parser in a
- * HttpResponse.
+ * Shows the transformer type used to parse XML with the
+ * {@link ParseXMLWithJAXB} parser in a HttpResponse.
  * 
  * @author Ignasi Barrera
  */
 @Target(METHOD)
 @Retention(RUNTIME)
-public @interface JAXBResponseParser
-{
+public @interface JAXBResponseParser {
 
 }

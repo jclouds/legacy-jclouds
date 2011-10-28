@@ -40,74 +40,61 @@ import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of type <T> back to the
- * caller.
+ * This object will parse the body of an HttpResponse and return the result of
+ * type <T> back to the caller.
  * <p>
- * {@link JAXBContext} works with {@link Class} objects instead of {@link Type}. This could be a
- * limitation if we are trying to parse typed collections of objects. However, when using JAXB we
- * expect to have well formed XML documents with one single root element, so the objects to parse
- * should not be collections but objects that wrap collections of elements, and that should work
- * fine.
+ * {@link JAXBContext} works with {@link Class} objects instead of {@link Type}.
+ * This could be a limitation if we are trying to parse typed collections of
+ * objects. However, when using JAXB we expect to have well formed XML documents
+ * with one single root element, so the objects to parse should not be
+ * collections but objects that wrap collections of elements, and that should
+ * work fine.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class ParseXMLWithJAXB<T> implements Function<HttpResponse, T>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class ParseXMLWithJAXB<T> implements Function<HttpResponse, T> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    protected XMLParser xml;
+   protected XMLParser xml;
 
-    protected final TypeLiteral<T> type;
+   protected final TypeLiteral<T> type;
 
-    @Inject
-    public ParseXMLWithJAXB(final XMLParser xml, final TypeLiteral<T> type)
-    {
-        this.xml = xml;
-        this.type = type;
-    }
+   @Inject
+   public ParseXMLWithJAXB(final XMLParser xml, final TypeLiteral<T> type) {
+      this.xml = xml;
+      this.type = type;
+   }
 
-    @Override
-    public T apply(final HttpResponse from)
-    {
-        InputStream xml = from.getPayload().getInput();
-        try
-        {
-            return apply(xml);
-        }
-        catch (Exception e)
-        {
-            StringBuffer message = new StringBuffer();
-            message.append("Error parsing input");
-            logger.error(e, message.toString());
-            throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
-        }
-        finally
-        {
-            releasePayload(from);
-        }
-    }
+   @Override
+   public T apply(final HttpResponse from) {
+      InputStream xml = from.getPayload().getInput();
+      try {
+         return apply(xml);
+      } catch (Exception e) {
+         StringBuffer message = new StringBuffer();
+         message.append("Error parsing input");
+         logger.error(e, message.toString());
+         throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
+      } finally {
+         releasePayload(from);
+      }
+   }
 
-    @SuppressWarnings("unchecked")
-    public T apply(final InputStream stream) throws IOException
-    {
-        return (T) apply(stream, type.getRawType());
-    }
+   @SuppressWarnings("unchecked")
+   public T apply(final InputStream stream) throws IOException {
+      return (T) apply(stream, type.getRawType());
+   }
 
-    public <V> V apply(final InputStream stream, final Class<V> type) throws IOException
-    {
-        try
-        {
-            return xml.fromXML(Strings2.toStringAndClose(stream), type);
-        }
-        finally
-        {
-            if (stream != null)
-            {
-                stream.close();
-            }
-        }
-    }
+   public <V> V apply(final InputStream stream, final Class<V> type) throws IOException {
+      try {
+         return xml.fromXML(Strings2.toStringAndClose(stream), type);
+      } finally {
+         if (stream != null) {
+            stream.close();
+         }
+      }
+   }
 
 }

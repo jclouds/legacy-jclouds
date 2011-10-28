@@ -39,55 +39,54 @@ import com.google.common.collect.Multimap;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindToXMLPayloadTest")
-public class BindToXMLPayloadTest
-{
-    XMLParser xml = new JAXBParser();
+public class BindToXMLPayloadTest {
+   XMLParser xml = new JAXBParser();
 
-    @Test
-    public void testBindJAXBObject() throws SecurityException, NoSuchMethodException
-    {
-        BindToXMLPayload binder = new BindToXMLPayload(xml);
-        
-        // Build the object to bind
-        TestJAXBDomain obj = new TestJAXBDomain();
-        obj.setElem("Hello World");
+   @Test
+   public void testBindJAXBObject() throws SecurityException, NoSuchMethodException {
+      BindToXMLPayload binder = new BindToXMLPayload(xml);
 
-        HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
-        request = binder.bindToRequest(request, obj);
-        assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "<test><elem>Hello World</elem></test>");
-        assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
-    }
-    
-    @Test
-    public void testHeaderIsChangedIfNeeded() throws SecurityException, NoSuchMethodException
-    {
-        BindToXMLPayload binder = new BindToXMLPayload(xml);
-        
-        // Build the object to bind
-        TestJAXBDomain obj = new TestJAXBDomain();
-        obj.setElem("Hello World");
+      // Build the object to bind
+      TestJAXBDomain obj = new TestJAXBDomain();
+      obj.setElem("Hello World");
 
-        // Add teh unknown content-type header to verify it is changed by the binder
-        Multimap<String, String> headers = ImmutableMultimap.<String, String> of("Content-type", "application/unknown");
-        HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).headers(headers).build();
-        
-        request = binder.bindToRequest(request, obj);
-        assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "<test><elem>Hello World</elem></test>");
-        assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
-    }
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      request = binder.bindToRequest(request, obj);
+      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER
+            + "<test><elem>Hello World</elem></test>");
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testNullIsBad()
-    {
-        BindToXMLPayload binder = new BindToXMLPayload(xml);
-        binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
-    }
-    
-    @Test(expectedExceptions = BindException.class)
-    public void testInvalidObjectBinding()
-    {
-        BindToXMLPayload binder = new BindToXMLPayload(xml);
-        HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
-        request = binder.bindToRequest(request, new Object());
-    }
+   @Test
+   public void testHeaderIsChangedIfNeeded() throws SecurityException, NoSuchMethodException {
+      BindToXMLPayload binder = new BindToXMLPayload(xml);
+
+      // Build the object to bind
+      TestJAXBDomain obj = new TestJAXBDomain();
+      obj.setElem("Hello World");
+
+      // Add teh unknown content-type header to verify it is changed by the
+      // binder
+      Multimap<String, String> headers = ImmutableMultimap.<String, String> of("Content-type", "application/unknown");
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).headers(headers)
+            .build();
+
+      request = binder.bindToRequest(request, obj);
+      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER
+            + "<test><elem>Hello World</elem></test>");
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNullIsBad() {
+      BindToXMLPayload binder = new BindToXMLPayload(xml);
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
+   }
+
+   @Test(expectedExceptions = BindException.class)
+   public void testInvalidObjectBinding() {
+      BindToXMLPayload binder = new BindToXMLPayload(xml);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      request = binder.bindToRequest(request, new Object());
+   }
 }

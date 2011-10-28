@@ -31,27 +31,23 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(JAXBParser.class)
-public interface XMLParser
-{
-    /** The default xml header. */
-    public static final String DEFAULT_XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
-    
-    /**
-     * Serialize the object into xml. If the object is a generic type, use
-     * {@link #toXML(Object, Type)}
-     */
-    public String toXML(Object src) throws IOException;
+public interface XMLParser {
+   /** The default xml header. */
+   public static final String DEFAULT_XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 
-    /**
-     * Serialize the generic object into xml. If the object is not a generic, use
-     * {@link #toXML(Object, Type)}
-     */
-    public <T> String toXML(Object src, Class<T> type) throws IOException;
+   /**
+    * Serialize the object into xml.
+    */
+   public String toXML(Object src) throws IOException;
 
-    /**
-     * Deserialize the generic object from xml. If the object is not a generic type, use
-     * {@link #fromXML(Object, Class)}
-     */
-    public <T> T fromXML(String xml, Class<T> type) throws IOException;
+   /**
+    * Serialize the object into xml, as the declared type.
+    */
+   public <T> String toXML(Object src, Class<T> type) throws IOException;
+
+   /**
+    * Deserialize the object from xml.
+    */
+   public <T> T fromXML(String xml, Class<T> type) throws IOException;
 
 }

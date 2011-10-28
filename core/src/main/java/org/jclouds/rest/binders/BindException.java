@@ -26,46 +26,39 @@ import org.jclouds.http.HttpRequest;
  * 
  * @author Ignasi Barrera
  */
-public class BindException extends RuntimeException
-{
-    private static final long serialVersionUID = 1L;
+public class BindException extends RuntimeException {
+   private static final long serialVersionUID = 1L;
 
-    private HttpRequest request;
+   private HttpRequest request;
 
-    public BindException(final HttpRequest request)
-    {
-        super();
-        this.request = request;
-    }
+   public BindException(final HttpRequest request) {
+      super();
+      this.request = request;
+   }
 
-    public BindException(final HttpRequest request, final String message)
-    {
-        super(message);
-        this.request = request;
-    }
+   public BindException(final HttpRequest request, final String message) {
+      super(message);
+      this.request = request;
+   }
 
-    public BindException(final HttpRequest request, final Throwable cause)
-    {
-        super(cause.getMessage(), cause);
-        this.request = request;
-    }
+   public BindException(final HttpRequest request, final Throwable cause) {
+      super(cause.getMessage(), cause);
+      this.request = request;
+   }
 
-    public BindException(final HttpRequest request, final String message, final Throwable cause)
-    {
-        super(message, cause);
-        this.request = request;
-    }
+   public BindException(final HttpRequest request, final String message, final Throwable cause) {
+      super(message, cause);
+      this.request = request;
+   }
 
-    @Override
-    public String getMessage()
-    {
-        String msg = "Could not bind object to request" + request + ": ";
-        return msg + super.getMessage();
-    }
+   @Override
+   public String getMessage() {
+      String msg = "Could not bind object to request" + request + ": ";
+      return msg + super.getMessage();
+   }
 
-    public HttpRequest getRequest()
-    {
-        return request;
-    }
+   public HttpRequest getRequest() {
+      return request;
+   }
 
 }

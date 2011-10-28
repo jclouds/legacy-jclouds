@@ -40,39 +40,31 @@ import com.google.common.base.Strings;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindToXMLPayload implements Binder
-{
-    protected final XMLParser xmlParser;
+public class BindToXMLPayload implements Binder {
+   protected final XMLParser xmlParser;
 
-    @Inject
-    public BindToXMLPayload(final XMLParser xmlParser)
-    {
-        this.xmlParser = checkNotNull(xmlParser, "xmlParser");
-    }
+   @Inject
+   public BindToXMLPayload(final XMLParser xmlParser) {
+      this.xmlParser = checkNotNull(xmlParser, "xmlParser");
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        try
-        {
-            String xml = xmlParser.toXML(checkNotNull(input, "input"));
-            request.setPayload(xml);
-            MutableContentMetadata metadata = request.getPayload().getContentMetadata();
-            if (contentTypeMustBeAdded(metadata))
-            {
-                metadata.setContentType(MediaType.APPLICATION_XML);
-            }
-            return request;
-        }
-        catch (IOException ex)
-        {
-            throw new BindException(request, ex);
-        }
-    }
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      try {
+         String xml = xmlParser.toXML(checkNotNull(input, "input"));
+         request.setPayload(xml);
+         MutableContentMetadata metadata = request.getPayload().getContentMetadata();
+         if (contentTypeMustBeAdded(metadata)) {
+            metadata.setContentType(MediaType.APPLICATION_XML);
+         }
+         return request;
+      } catch (IOException ex) {
+         throw new BindException(request, ex);
+      }
+   }
 
-    private static boolean contentTypeMustBeAdded(final MutableContentMetadata metadata)
-    {
-        return Strings.isNullOrEmpty(metadata.getContentType())
+   private static boolean contentTypeMustBeAdded(final MutableContentMetadata metadata) {
+      return Strings.isNullOrEmpty(metadata.getContentType())
             || metadata.getContentType().equals("application/unknown");
-    }
+   }
 }
