@@ -385,7 +385,7 @@ ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 {% endhighlight %}
 
 
-#### Creating new http methods
+### Creating new http methods
 
 Sometimes, standard http methods will not do.  For example, you may need to use http PROPFIND. 
 To do this, you first need to create an annotation for the new method, then use that in your markup.  
@@ -411,4 +411,35 @@ As a general practice, we shouldn't throw an exception on something that is pars
 isn't critical (ex. new instance type, state, etc.)  
 In fact, throwing an exception essentially disables functionality.   Instead, let's return UNRECOGNIZED for any enums we cannot parse.
 
+### How we ensure BlobStore doesn't overrun our account with hundreds of containers
+
+The test initializer makes a BlobStoreContext shared across all tests in the same suite.  Tests that extend BaseBlobStoreIntegrationTest use this BlobStore, and share a pool of containers during tests.  These containers are created before the suite is started.
+
+This is so that you can run many tests concurrently, even if your blobstore can only allow creation of 5 buckets or containers.  That's achieved by try/finally block like below:
+
+{% highlight java %}
+ @Test(groups = { "integration", "live" })
+ public void testGetIfNoneMatch() throws UnsupportedEncodingException {
+   String container = getContainerName();
+   try {
+
+     String name = "apples";
+
+     String goodETag = addObjectAndValidateContent(container, name);
+
+     context.getBlobStore().getBlob(container, name, ifETagDoesntMatch("powerfrisbee"));
+     validateContent(container, name);
+
+     try {
+       context.getBlobStore().getBlob(container, name, ifETagDoesntMatch(goodETag));
+     } catch (HttpResponseException ex) {
+       assertEquals(ex.getResponse().getStatusCode(), 304);
+     }
+   } finally {
+     returnContainer(container);
+   }
+ }
+
+The test initializer manages how to run the test in integration (offline expensive tests using the transient provider) vs live (online expensive tests using some other provider).  The test initializer is a legacy object that can probably be replaced with "test.blobstore.provider=aws-s3" or something.  For now, you have to pass it.
+{% endhighlight %}
 

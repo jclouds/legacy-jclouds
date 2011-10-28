@@ -48,8 +48,8 @@ Tests are created in TestNG, so make sure you have the eclipse plug-in installed
 
 ## Live testing 
 
-To run tests that use a real live service like s3, you will need to provide your credentials to Eclipse and tell your tests to use them.  
-You'll key these on the provider name (ex. provider  is s3, cloudfiles, ec2, etc)
+To run tests that use a real live service like aws-s3, you will need to provide your credentials to Eclipse and tell your tests to use them.  
+You'll key these on the provider name (ex. provider  is aws-s3, cloudfiles-us, aws-ec2, etc)
 
 To implement this, open the test's Run Configurations and enter in the following into VM arguments-
 
@@ -64,6 +64,18 @@ ex. for vcloud
 {% highlight text %}
 
 -Dbasedir=. -Dtest.vcloud.endpoint=https://vcloudserverilike/api -Dtest.vcloud.identity=user@org -Dtest.vcloud.credential=password
+
+{% endhighlight %}
+
+### Testing a BlobStore
+
+If you are testing a BlobStore, you will also need to pass the test initializer you can find in its pom.xml file
+
+ex. for aws-s3
+
+{% highlight text %}
+
+-Dbasedir=. -Dtest.aws-s3.identity=accesskey -Dtest.aws-s3.credential=secret -Dtest.initializers=org.jclouds.aws.s3.blobstore.integration.AWSS3TestInitializer
 
 {% endhighlight %}
 
