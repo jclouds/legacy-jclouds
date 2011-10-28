@@ -49,8 +49,10 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -134,7 +136,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 		// Bridged Network
 		String command = "vboxmanage list bridgedifs";
 		String bridgedIfs = runScriptOnNode(hostId, command, runAsRoot(false).wrapInInitScript(false)).getOutput();
-		String hostInterface = retrieveAvailableBridgedInterfaceInfo(bridgedIfs).getName();
+		String hostInterface = retrieveAvailableBridgedInterfaceInfo(bridgedIfs);
 		checkNotNull(hostInterface);
 		String macAddress = manager.getVBox().getHost().generateMACAddress();
 		ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, hostInterface);
@@ -146,14 +148,14 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 	/**
 	 * @return hostInterface
 	 */
-	protected static BridgedInterface retrieveAvailableBridgedInterfaceInfo(String bridgedIfs) {
+	protected static String retrieveAvailableBridgedInterfaceInfo(String bridgedIfs) {
 		List<BridgedInterface> bridgedInterfaces = new ArrayList<BridgedInterface>();
 		String hostInterface = null;
 		List<String> networkInfoBlocks = Lists.newArrayList();
 		// separate the different bridge block
 		for (String bridgedIf : Splitter.on(Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfs)) {
 			
-			/*
+			
 			Iterable<String> block = Iterables.filter(Splitter.on("\n").split(bridgedIf), new Predicate<String>() {
 				@Override
 				public boolean apply(String arg0) {
@@ -161,17 +163,20 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 				}
 			});
 						
-			Iterable<String> block = Splitter.on("\n").split(bridgedIf);
+			
 			networkInfoBlocks.add(Joiner.on(",").join(block));
-			 */
+		}
+			/*
+			Iterable<String> block = Splitter.on("\n").split(bridgedIf);
 			if(!bridgedIf.isEmpty())
 				bridgedInterfaces.add(new BridgedInterface(bridgedIf));
+				
 		}
 		for (BridgedInterface bridgedInterface : bridgedInterfaces) {
 			if(bridgedInterface.getStatus().equals("Up"))
 				return bridgedInterface;
 		}
-		/*
+		*/
 		for (String networkInfoBlock : networkInfoBlocks) {
 			if(!networkInfoBlock.isEmpty() && networkInfoBlock.contains("Up")) {
 				Iterable<String> map = Splitter.on(",").split(networkInfoBlock);
@@ -181,8 +186,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 				}
 			}
 		}
-		*/
-		return null;
+		
+		return hostInterface;
 		
 	}
 

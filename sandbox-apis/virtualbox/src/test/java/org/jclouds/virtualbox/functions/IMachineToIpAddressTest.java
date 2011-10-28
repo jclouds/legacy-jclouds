@@ -55,6 +55,7 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 	private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String clonedName = "jclouds-image-virtualbox-machine-to-machine-test_clone";
    private VirtualBoxManager manager;
+	private String network = "192.168.1";
 	
 	  @Test
 	  public void testConvert() throws IOException {
@@ -85,7 +86,7 @@ public class IMachineToIpAddressTest extends BaseVirtualBoxClientLiveTest {
 			IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui", "");
 			prog.waitForCompletion(-1);
 			
-			String ipAddress = new IMachineToIpAddress(localContext, hostId).apply(clone);
+			String ipAddress = new IMachineToIpAddress(localContext, hostId, network ).apply(clone);
 	      assertTrue(!ipAddress.isEmpty());
 	  }
 }

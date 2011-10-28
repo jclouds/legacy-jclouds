@@ -130,7 +130,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsTest extends BaseVi
 	
 	@Test
 	public void retrieveAvailableBridgedInterfaceInfoTest() {
-		assertFalse(CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.retrieveAvailableBridgedInterfaceInfo(TEST1).getName().isEmpty());
+		assertFalse(CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.retrieveAvailableBridgedInterfaceInfo(TEST1).isEmpty());
 		// TODO enable this test for mac osx
 		//assertFalse(CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.retrieveAvailableBridgedInterfaceInfo(TEST2).isEmpty());
 	}
