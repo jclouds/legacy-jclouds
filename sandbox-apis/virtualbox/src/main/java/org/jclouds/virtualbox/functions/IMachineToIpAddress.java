@@ -40,11 +40,11 @@ import com.google.inject.Inject;
  */
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
-   private ComputeServiceContext context;
-   private String hostId;
-   private String network;
+	private ComputeServiceContext context;
+	private String hostId;
+	private String network;
 
-   @Inject
+	@Inject
 	public IMachineToIpAddress(ComputeServiceContext context, String hostId, String network) {
 		this.context = context;
 		this.hostId = hostId;
@@ -54,7 +54,7 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 	@Override
 	public String apply(@Nullable IMachine machine) {
 		String macAddress = new FormatVboxMacAddressToShellMacAddress(isOSX(hostId))
-			.apply(machine.getNetworkAdapter(0l).getMACAddress());
+		.apply(machine.getNetworkAdapter(0l).getMACAddress());
 
 		// TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
 		ExecResponse execResponse = runScriptOnNode(hostId,
@@ -75,9 +75,9 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 			RunScriptOptions options) {
 		return context.getComputeService().runScriptOnNode(nodeId, command, options);
 	}
-	
-   public boolean isOSX(String id) {
-      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
-               "Mac OS X");
-   }
+
+	public boolean isOSX(String id) {
+		return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
+				"Mac OS X");
+	}
 }
