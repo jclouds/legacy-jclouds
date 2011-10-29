@@ -27,8 +27,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.annotation.Resource;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.internal.GsonWrapper;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -43,6 +46,9 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    private final GsonWrapper json;
    private final TypeLiteral<T> type;
@@ -68,8 +74,11 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
          for (; token != JsonToken.END_DOCUMENT && nnn(this.name, reader, token, name); token = skipAndPeek(token,
                reader))
             ;
-         if (name.get().equals(this.name)) {
-            return json.delegate().<T>fromJson(reader, type.getType());
+         if (name.get() == null) {
+            logger.trace("did not object named %s in json from response %s", this.name, arg0);
+            return nothing();
+         } else if (name.get().equals(this.name)) {
+            return json.delegate().<T> fromJson(reader, type.getType());
          } else {
             return nothing();
          }
