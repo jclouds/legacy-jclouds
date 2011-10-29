@@ -36,8 +36,12 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -69,9 +73,9 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
    public void setUp() throws Exception {
       identity = "toor";
       credential = "password";
+      new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
    }
 
-   @Test
    public void testCreateImageMachineFromIso() throws Exception {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
