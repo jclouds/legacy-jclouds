@@ -18,40 +18,10 @@
  */
 package org.jclouds.cloudstack.config;
 
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.features.AccountAsyncClient;
-import org.jclouds.cloudstack.features.AccountClient;
-import org.jclouds.cloudstack.features.AddressAsyncClient;
-import org.jclouds.cloudstack.features.AddressClient;
-import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
-import org.jclouds.cloudstack.features.AsyncJobClient;
-import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
-import org.jclouds.cloudstack.features.ConfigurationClient;
-import org.jclouds.cloudstack.features.FirewallAsyncClient;
-import org.jclouds.cloudstack.features.FirewallClient;
-import org.jclouds.cloudstack.features.GuestOSAsyncClient;
-import org.jclouds.cloudstack.features.GuestOSClient;
-import org.jclouds.cloudstack.features.HypervisorAsyncClient;
-import org.jclouds.cloudstack.features.HypervisorClient;
-import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
-import org.jclouds.cloudstack.features.LoadBalancerClient;
-import org.jclouds.cloudstack.features.NATAsyncClient;
-import org.jclouds.cloudstack.features.NATClient;
-import org.jclouds.cloudstack.features.NetworkAsyncClient;
-import org.jclouds.cloudstack.features.NetworkClient;
-import org.jclouds.cloudstack.features.OfferingAsyncClient;
-import org.jclouds.cloudstack.features.OfferingClient;
-import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
-import org.jclouds.cloudstack.features.SecurityGroupClient;
-import org.jclouds.cloudstack.features.TemplateAsyncClient;
-import org.jclouds.cloudstack.features.TemplateClient;
-import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
-import org.jclouds.cloudstack.features.ZoneAsyncClient;
-import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.features.*;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -65,7 +35,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 /**
  * Configures the cloudstack connection.
@@ -92,6 +62,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(HypervisorClient.class, HypervisorAsyncClient.class)//
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
+         .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .build();
 
    public CloudStackRestClientModule() {

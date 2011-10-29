@@ -18,120 +18,112 @@
  */
 package org.jclouds.cloudstack;
 
-import org.jclouds.cloudstack.features.AccountAsyncClient;
-import org.jclouds.cloudstack.features.AddressAsyncClient;
-import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
-import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
-import org.jclouds.cloudstack.features.FirewallAsyncClient;
-import org.jclouds.cloudstack.features.GuestOSAsyncClient;
-import org.jclouds.cloudstack.features.HypervisorAsyncClient;
-import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
-import org.jclouds.cloudstack.features.NATAsyncClient;
-import org.jclouds.cloudstack.features.NetworkAsyncClient;
-import org.jclouds.cloudstack.features.OfferingAsyncClient;
-import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
-import org.jclouds.cloudstack.features.TemplateAsyncClient;
-import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
-import org.jclouds.cloudstack.features.ZoneAsyncClient;
+import org.jclouds.cloudstack.features.*;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides asynchronous access to CloudStack via their REST API.
  * <p/>
- * 
+ *
+ * @author Adrian Cole
  * @see CloudStackClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
- * @author Adrian Cole
  */
 public interface CloudStackAsyncClient {
 
-   /**
-    * Provides asynchronous access to Zone features.
-    */
-   @Delegate
-   ZoneAsyncClient getZoneClient();
+    /**
+     * Provides asynchronous access to Zone features.
+     */
+    @Delegate
+    ZoneAsyncClient getZoneClient();
 
-   /**
-    * Provides asynchronous access to Template features.
-    */
-   @Delegate
-   TemplateAsyncClient getTemplateClient();
+    /**
+     * Provides asynchronous access to Template features.
+     */
+    @Delegate
+    TemplateAsyncClient getTemplateClient();
 
-   /**
-    * Provides asynchronous access to Service, Disk, and Network Offering features.
-    */
-   @Delegate
-   OfferingAsyncClient getOfferingClient();
+    /**
+     * Provides asynchronous access to Service, Disk, and Network Offering features.
+     */
+    @Delegate
+    OfferingAsyncClient getOfferingClient();
 
-   /**
-    * Provides asynchronous access to Network features.
-    */
-   @Delegate
-   NetworkAsyncClient getNetworkClient();
+    /**
+     * Provides asynchronous access to Network features.
+     */
+    @Delegate
+    NetworkAsyncClient getNetworkClient();
 
-   /**
-    * Provides asynchronous access to VirtualMachine features.
-    */
-   @Delegate
-   VirtualMachineAsyncClient getVirtualMachineClient();
+    /**
+     * Provides asynchronous access to VirtualMachine features.
+     */
+    @Delegate
+    VirtualMachineAsyncClient getVirtualMachineClient();
 
-   /**
-    * Provides asynchronous access to SecurityGroup features.
-    */
-   @Delegate
-   SecurityGroupAsyncClient getSecurityGroupClient();
+    /**
+     * Provides asynchronous access to SecurityGroup features.
+     */
+    @Delegate
+    SecurityGroupAsyncClient getSecurityGroupClient();
 
-   /**
-    * Provides asynchronous access to AsyncJob features.
-    */
-   @Delegate
-   AsyncJobAsyncClient getAsyncJobClient();
+    /**
+     * Provides asynchronous access to AsyncJob features.
+     */
+    @Delegate
+    AsyncJobAsyncClient getAsyncJobClient();
 
-   /**
-    * Provides asynchronous access to Address features.
-    */
-   @Delegate
-   AddressAsyncClient getAddressClient();
+    /**
+     * Provides asynchronous access to Address features.
+     */
+    @Delegate
+    AddressAsyncClient getAddressClient();
 
-   /**
-    * Provides asynchronous access to NAT features.
-    */
-   @Delegate
-   NATAsyncClient getNATClient();
+    /**
+     * Provides asynchronous access to NAT features.
+     */
+    @Delegate
+    NATAsyncClient getNATClient();
 
-   /**
-    * Provides asynchronous access to Firewall features.
-    */
-   @Delegate
-   FirewallAsyncClient getFirewallClient();
+    /**
+     * Provides asynchronous access to Firewall features.
+     */
+    @Delegate
+    FirewallAsyncClient getFirewallClient();
 
-   /**
-    * Provides asynchronous access to LoadBalancer features.
-    */
-   @Delegate
-   LoadBalancerAsyncClient getLoadBalancerClient();
+    /**
+     * Provides asynchronous access to LoadBalancer features.
+     */
+    @Delegate
+    LoadBalancerAsyncClient getLoadBalancerClient();
 
-   /**
-    * Provides asynchronous access to GuestOS features.
-    */
-   @Delegate
-   GuestOSAsyncClient getGuestOSClient();
+    /**
+     * Provides asynchronous access to GuestOS features.
+     */
+    @Delegate
+    GuestOSAsyncClient getGuestOSClient();
 
-   /**
-    * Provides asynchronous access to Hypervisor features.
-    */
-   @Delegate
-   HypervisorAsyncClient getHypervisorClient();
+    /**
+     * Provides asynchronous access to Hypervisor features.
+     */
+    @Delegate
+    HypervisorAsyncClient getHypervisorClient();
 
-   /**
-    * Provides asynchronous access to Configuration features.
-    */
-   @Delegate
-   ConfigurationAsyncClient getConfigurationClient();
+    /**
+     * Provides asynchronous access to Configuration features.
+     */
+    @Delegate
+    ConfigurationAsyncClient getConfigurationClient();
 
-   /**
-    * Provides asynchronous access to Account features.
-    */
-   @Delegate
-   AccountAsyncClient getAccountClient();
+    /**
+     * Provides asynchronous access to Account features.
+     */
+    @Delegate
+    AccountAsyncClient getAccountClient();
+
+    /**
+     * Provides asynchronous access to SSH Keypairs
+     */
+    @Delegate
+    SSHKeyPairAsyncClient getSSHKeyPairClient();
 }

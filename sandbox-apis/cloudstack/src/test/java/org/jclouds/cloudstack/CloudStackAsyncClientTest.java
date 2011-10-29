@@ -18,23 +18,23 @@
  */
 package org.jclouds.cloudstack;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
+import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.features.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Tests behavior of {@code CloudStackAsyncClient}
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "CloudStackAsyncClientTest")
 public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<CloudStackAsyncClient> {
 
@@ -57,6 +57,7 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert syncClient.getHypervisorClient() != null;
       assert syncClient.getConfigurationClient() != null;
       assert syncClient.getAccountClient() != null;
+      assert syncClient.getSSHKeyPairClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
@@ -75,6 +76,7 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert asyncClient.getHypervisorClient() != null;
       assert asyncClient.getConfigurationClient() != null;
       assert asyncClient.getAccountClient() != null;
+      assert asyncClient.getSSHKeyPairClient() != null;
    }
 
    @Override

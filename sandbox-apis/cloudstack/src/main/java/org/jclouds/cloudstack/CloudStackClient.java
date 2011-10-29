@@ -18,25 +18,11 @@
  */
 package org.jclouds.cloudstack;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.cloudstack.features.AccountClient;
-import org.jclouds.cloudstack.features.AddressClient;
-import org.jclouds.cloudstack.features.AsyncJobClient;
-import org.jclouds.cloudstack.features.ConfigurationClient;
-import org.jclouds.cloudstack.features.FirewallClient;
-import org.jclouds.cloudstack.features.GuestOSClient;
-import org.jclouds.cloudstack.features.HypervisorClient;
-import org.jclouds.cloudstack.features.LoadBalancerClient;
-import org.jclouds.cloudstack.features.NATClient;
-import org.jclouds.cloudstack.features.NetworkClient;
-import org.jclouds.cloudstack.features.OfferingClient;
-import org.jclouds.cloudstack.features.SecurityGroupClient;
-import org.jclouds.cloudstack.features.TemplateClient;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
-import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.features.*;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack.
@@ -137,4 +123,11 @@ public interface CloudStackClient {
     */
    @Delegate
    AccountClient getAccountClient();
+
+    /**
+     * Provides synchronous access to SSH Keypairs
+     */
+    @Delegate
+    SSHKeyPairClient getSSHKeyPairClient();
+
 }
