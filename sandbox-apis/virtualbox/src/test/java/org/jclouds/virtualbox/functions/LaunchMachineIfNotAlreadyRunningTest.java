@@ -26,10 +26,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
 @Test(groups = "unit", testName = "LaunchMachineIfNotAlreadyRunningTest")
 public class LaunchMachineIfNotAlreadyRunningTest {
@@ -54,9 +51,11 @@ public class LaunchMachineIfNotAlreadyRunningTest {
       IMachine machine = createMock(IMachine.class);
       IProgress progress = createMock(IProgress.class);
 
-      expect(manager.getSessionObject()).andReturn(session);
+      expect(manager.getSessionObject()).andReturn(session).anyTimes();
       expect(machine.launchVMProcess(session, type, environment)).andReturn(progress);
       progress.waitForCompletion(-1);
+      expect(session.getState()).andReturn(SessionState.Locked);
+      session.unlockMachine();
 
       replay(manager, machine, session, progress);
 

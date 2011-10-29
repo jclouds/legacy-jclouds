@@ -29,10 +29,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
 import com.google.common.base.Function;
 
@@ -48,9 +45,8 @@ import com.google.common.base.Function;
  * found. VBOX_E_INVALID_OBJECT_STATE: Session already open or being opened.
  * VBOX_E_IPRT_ERROR: Launching process for machine failed. VBOX_E_VM_ERROR:
  * Failed to assign machine to session.
- * 
+ *
  * @author Mattias Holmqvist
- * 
  * @see ErrorCode
  */
 public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void> {
@@ -73,7 +69,7 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
    public Void apply(@Nullable IMachine machine) {
       try {
          final IProgress progress = machine
-               .launchVMProcess(manager.getSessionObject(), type.stringValue(), environment);
+                 .launchVMProcess(manager.getSessionObject(), type.stringValue(), environment);
          progress.waitForCompletion(-1);
          Thread.sleep(5000);
       } catch (InterruptedException e) {
@@ -81,12 +77,17 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
-         case VBOX_E_INVALID_OBJECT_STATE:
-            logger.warn(e, "Could not start machine. Got error code %s from launchMachine(). "
-                  + "The machine might already be running.", errorCode);
-            break;
-         default:
-            propagate(e);
+            case VBOX_E_INVALID_OBJECT_STATE:
+               logger.warn(e, "Could not start machine. Got error code %s from launchMachine(). "
+                       + "The machine might already be running.", errorCode);
+               break;
+            default:
+               propagate(e);
+         }
+      } finally {
+         if (manager.getSessionObject().getState() == SessionState.Locked) {
+            // Remove session lock taken by launchVmProcess()
+            manager.getSessionObject().unlockMachine();
          }
       }
       return null;
