@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,10 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 public enum ExecutionType {
 
-   GUI("gui"),
-   HEADLESS("headless"),
-   SDL("sdl"),
-   EMERGENCYSTOP("emergencystop");
+   GUI("gui"), HEADLESS("headless"), SDL("sdl"), EMERGENCYSTOP("emergencystop");
 
    private final String type;
 

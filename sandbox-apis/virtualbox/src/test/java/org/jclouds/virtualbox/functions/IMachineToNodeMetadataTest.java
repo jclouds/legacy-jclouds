@@ -33,7 +33,6 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.collect.ImmutableSet;
 
-//@Test(groups = "live")
 public class IMachineToNodeMetadataTest {
 
    @Test

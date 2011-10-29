@@ -1,28 +1,4 @@
-package org.jclouds.virtualbox.functions.admin;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.virtualbox.domain.YamlImage;
-import org.yaml.snakeyaml.Loader;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
-import javax.inject.Singleton;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkState;
-
 /**
- *
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -39,7 +15,34 @@ import static com.google.common.base.Preconditions.checkState;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
+ */
+
+package org.jclouds.virtualbox.functions.admin;
+
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
+import org.jclouds.compute.domain.Image;
+import org.jclouds.virtualbox.domain.YamlImage;
+import org.yaml.snakeyaml.Loader;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+
+/**
  * 
  * @author Andrea Turli
  */
@@ -53,12 +56,12 @@ public class ImageFromYamlStream implements Function<InputStream, Cache<String, 
    public static class Config {
       public List<YamlImage> images;
    }
-   
+
    private Object construct(String data) {
-       Yaml yaml = new Yaml();
-       return yaml.load(data);
+      Yaml yaml = new Yaml();
+      return yaml.load(data);
    }
-   
+
    @Override
    public Cache<String, Image> apply(InputStream source) {
 
@@ -74,15 +77,15 @@ public class ImageFromYamlStream implements Function<InputStream, Cache<String, 
       checkState(config.images != null, "missing images: collection");
 
       Map<String, Image> backingMap = Maps.uniqueIndex(Iterables.transform(config.images, YamlImage.toImage),
-              new Function<Image, String>() {
-                 public String apply(Image image) {
-                    return image.getId();
-                 }
-              });
-        Cache<String, Image> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(backingMap)));
-        for (String node : backingMap.keySet())
-           cache.getUnchecked(node);
-        return cache;
+            new Function<Image, String>() {
+               public String apply(Image image) {
+                  return image.getId();
+               }
+            });
+      Cache<String, Image> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(backingMap)));
+      for (String node : backingMap.keySet())
+         cache.getUnchecked(node);
+      return cache;
    }
-   
+
 }

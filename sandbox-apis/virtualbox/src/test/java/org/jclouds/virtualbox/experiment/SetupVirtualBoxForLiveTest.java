@@ -1,12 +1,8 @@
 /**
- *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
- *
- * ====================================================================
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
@@ -19,8 +15,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- * ====================================================================
  */
+
 package org.jclouds.virtualbox.experiment;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -40,8 +36,8 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
@@ -72,7 +68,7 @@ public class SetupVirtualBoxForLiveTest {
    private String vboxVersionName;
    private String basebaseResource;
    private String port;
-  
+
    private String vboxWebServerCredential;
    private String vboxWebServerIdentity;
 
@@ -88,18 +84,18 @@ public class SetupVirtualBoxForLiveTest {
 
    public void setupConfigurationProperties() {
       workingDir = System.getProperty("user.home") + File.separator
-               + System.getProperty("test." + provider + ".workingDir", "jclouds-virtualbox-test");
+            + System.getProperty("test." + provider + ".workingDir", "jclouds-virtualbox-test");
       if (new File(workingDir).mkdir())
          ;
       gaIsoName = System.getProperty("test." + provider + ".gaIsoName", "VBoxGuestAdditions_" + majorVersion + ".iso");
       gaIsoUrl = URI.create(System.getProperty("test." + provider + ".gaIsoUrl",
-               "http://download.virtualbox.org/virtualbox/" + majorVersion + "/" + gaIsoName));
+            "http://download.virtualbox.org/virtualbox/" + majorVersion + "/" + gaIsoName));
 
       distroIsoName = System.getProperty("test." + provider + ".distroIsoName", "ubuntu-11.04-server-i386.iso");
       distroIsoUrl = URI.create(System.getProperty("test." + provider + ".distroIsoUrl",
-               "http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso"));
+            "http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso"));
       vboxDmg = URI.create(System.getProperty("test." + provider + ".vboxDmg",
-               "http://download.virtualbox.org/virtualbox/4.1.2/VirtualBox-4.1.2-73507-OSX.dmg"));
+            "http://download.virtualbox.org/virtualbox/4.1.2/VirtualBox-4.1.2-73507-OSX.dmg"));
       vboxVersionName = System.getProperty("test" + provider + ".vboxVersionName", "VirtualBox-4.1.2-73507-OSX.dmg");
       basebaseResource = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_BASE_RESOURCE, ".");
       port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
@@ -120,7 +116,7 @@ public class SetupVirtualBoxForLiveTest {
       new StartVBoxIfNotAlreadyRunning(context, hostId, new Credentials(vboxWebServerIdentity, vboxWebServerCredential));
       new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
    }
-   
+
    @AfterSuite
    public void stopVboxWebServer() throws IOException {
       runScriptOnNode(hostId, "pidof vboxwebsrv | xargs kill");
@@ -133,29 +129,29 @@ public class SetupVirtualBoxForLiveTest {
             downloadFileUnlessPresent(vboxDmg, workingDir, vboxVersionName);
             runScriptOnNode(hostId, "hdiutil attach " + workingDir + "/" + vboxVersionName);
             runScriptOnNode(hostId,
-                     "installer -pkg /Volumes/VirtualBox/VirtualBox.mpkg -target /Volumes/Macintosh\\ HD");
+                  "installer -pkg /Volumes/VirtualBox/VirtualBox.mpkg -target /Volumes/Macintosh\\ HD");
          } else {
             // TODO other platforms
             runScriptOnNode(hostId, "cat > /etc/apt/sources.list.d/TODO");
             runScriptOnNode(hostId,
-                     "wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -");
+                  "wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -");
             runScriptOnNode(hostId, "apt-get update");
             runScriptOnNode(hostId, "apt-get --yes install virtualbox-4.1");
          }
       }
    }
 
-   public  void checkVboxVersionExpected() throws IOException, InterruptedException {
+   public void checkVboxVersionExpected() throws IOException, InterruptedException {
       logger().debug("checking virtualbox version");
       assertEquals(runScriptOnNode(hostId, "VBoxManage -version").getOutput().trim(), apiVersion);
    }
 
    public boolean isOSX(String id) {
-      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
-               "Mac OS X");
+      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription()
+            .equals("Mac OS X");
    }
 
-   public  File downloadFileUnlessPresent(URI sourceURL, String destinationDir, String filename) throws Exception {
+   public File downloadFileUnlessPresent(URI sourceURL, String destinationDir, String filename) throws Exception {
 
       File iso = new File(destinationDir, filename);
 

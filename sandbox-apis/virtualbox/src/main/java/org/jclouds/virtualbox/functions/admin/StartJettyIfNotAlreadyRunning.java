@@ -43,65 +43,65 @@ import com.google.inject.Singleton;
  */
 public class StartJettyIfNotAlreadyRunning implements Function<String, Server> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final int port;
+   private final int port;
 
-	@Inject
-	public StartJettyIfNotAlreadyRunning(
-			@Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) final String port) {
-		this.port = Integer.parseInt(port);
-	}
+   @Inject
+   public StartJettyIfNotAlreadyRunning(@Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) final String port) {
+      this.port = Integer.parseInt(port);
+   }
 
-	@Override
-	public Server apply(@Nullable String baseResource) {
-		final Server server = ServerJetty.getInstance().getServer();
+   @Override
+   public Server apply(@Nullable String baseResource) {
+      final Server server = ServerJetty.getInstance().getServer();
 
-		if (!server.getState().equals(Server.STARTED) && !new InetSocketAddressConnect().apply(new IPSocket("localhost", port))) {
-			ResourceHandler resource_handler = new ResourceHandler();
-			resource_handler.setDirectoriesListed(true);
-			resource_handler.setWelcomeFiles(new String[] { "index.html" });
+      if (!server.getState().equals(Server.STARTED)
+            && !new InetSocketAddressConnect().apply(new IPSocket("localhost", port))) {
+         ResourceHandler resource_handler = new ResourceHandler();
+         resource_handler.setDirectoriesListed(true);
+         resource_handler.setWelcomeFiles(new String[] { "index.html" });
 
-			resource_handler.setResourceBase(baseResource);
-			logger.info("serving " + resource_handler.getBaseResource());
+         resource_handler.setResourceBase(baseResource);
+         logger.info("serving " + resource_handler.getBaseResource());
 
-			HandlerList handlers = new HandlerList();
-			handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
-			server.setHandler(handlers);
+         HandlerList handlers = new HandlerList();
+         handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
+         server.setHandler(handlers);
 
-			try {
-				server.start();
-			} catch (Exception e) {
-				logger.error(e, "Server jetty could not be started at this %s", baseResource);
-			}
-			return server;
-		} else {
-			logger.debug("Server jetty serving %s already running. Skipping start", baseResource);
-			return server;
-		}
+         try {
+            server.start();
+         } catch (Exception e) {
+            logger.error(e, "Server jetty could not be started at this %s", baseResource);
+         }
+         return server;
+      } else {
+         logger.debug("Server jetty serving %s already running. Skipping start", baseResource);
+         return server;
+      }
 
-	}
-	
-	@Singleton
-	private static class ServerJetty {
-		private static ServerJetty instance;
-		private Server server;
-		private String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
+   }
 
-		private ServerJetty() {
-			this.server = new Server(Integer.parseInt(port));
-		}
+   @Singleton
+   private static class ServerJetty {
+      private static ServerJetty instance;
+      private Server server;
+      private String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
 
-		public static ServerJetty getInstance() {
-			if (instance == null)
-				instance = new ServerJetty();
-			return instance;
-		}
+      private ServerJetty() {
+         this.server = new Server(Integer.parseInt(port));
+      }
 
-		public Server getServer() {
-			return server;
-		}
-	}
+      public static ServerJetty getInstance() {
+         if (instance == null)
+            instance = new ServerJetty();
+         return instance;
+      }
+
+      public Server getServer() {
+         return server;
+      }
+   }
 }

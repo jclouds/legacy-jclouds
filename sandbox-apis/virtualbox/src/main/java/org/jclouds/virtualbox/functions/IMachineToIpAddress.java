@@ -19,7 +19,10 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -28,13 +31,11 @@ import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
-
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import com.google.common.base.Function;
 
 /**
  * Get an IP address from an IMachine using arp of the host machine.
- *
+ * 
  * @author Mattias Holmqvist, Andrea Turli
  */
 public class IMachineToIpAddress implements Function<IMachine, String> {
@@ -63,18 +64,25 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
       IMachine hostMachine = manager.getVBox().findMachine(hostId);
       if (isOSX(hostMachine)) {
          if (simplifiedMacAddressOfClonedVM.contains("00"))
-            simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("00"), simplifiedMacAddressOfClonedVM.indexOf("00") + 1).toString();
+            simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(
+                  simplifiedMacAddressOfClonedVM.indexOf("00"), simplifiedMacAddressOfClonedVM.indexOf("00") + 1)
+                  .toString();
 
          if (simplifiedMacAddressOfClonedVM.contains("0"))
-            if (simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':' && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
-               simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1).toString();
+            if (simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':'
+                  && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
+               simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(
+                     simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1)
+                     .toString();
       }
 
       // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
-      ExecResponse execResponse = runScriptOnNode(hostId, "for i in {1..254} ; do ping -c 1 -t 1 192.168.2.$i & done", runAsRoot(false).wrapInInitScript(false));
+      ExecResponse execResponse = runScriptOnNode(hostId, "for i in {1..254} ; do ping -c 1 -t 1 192.168.2.$i & done",
+            runAsRoot(false).wrapInInitScript(false));
       System.out.println(execResponse);
 
-      String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM, runAsRoot(false).wrapInInitScript(false)).getOutput();
+      String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM,
+            runAsRoot(false).wrapInInitScript(false)).getOutput();
       String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
       System.out.println("IP address " + ipAddress);
       return ipAddress;

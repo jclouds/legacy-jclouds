@@ -19,14 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
+import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
@@ -40,7 +40,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    private VirtualBoxManager manager;
 
    public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(String settingsFile, String osTypeId, String vmId,
-                                                            boolean forceOverwrite, VirtualBoxManager manager) {
+         boolean forceOverwrite, VirtualBoxManager manager) {
       this.settingsFile = settingsFile;
       this.osTypeId = osTypeId;
       this.vmId = vmId;

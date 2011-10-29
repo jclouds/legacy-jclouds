@@ -19,17 +19,15 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-/**
- * @author Andrea Turli
- */
-
 import static org.testng.Assert.assertEquals;
 
 import org.eclipse.jetty.server.Server;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
 
-
+/**
+ * @author Andrea Turli
+ */
 @Test(groups = "live", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningLiveTest")
 public class StartJettyIfNotAlreadyRunningLiveTest extends BaseVirtualBoxClientLiveTest {
 
@@ -42,7 +40,7 @@ public class StartJettyIfNotAlreadyRunningLiveTest extends BaseVirtualBoxClientL
       server.stop();
       assertEquals(server.getState(), server.STOPPED);
    }
-   
+
    @Test
    public void testLaunchingSameJettyServer() throws Exception {
       Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);

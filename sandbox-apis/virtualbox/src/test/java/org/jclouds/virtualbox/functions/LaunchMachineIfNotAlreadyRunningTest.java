@@ -19,17 +19,17 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
-
-import static org.easymock.classextension.EasyMock.verify;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.expect;
 
 @Test(groups = "unit", testName = "LaunchMachineIfNotAlreadyRunningTest")
 public class LaunchMachineIfNotAlreadyRunningTest {
@@ -39,9 +39,10 @@ public class LaunchMachineIfNotAlreadyRunningTest {
 
    }
 
-// VirtualBox error: The given session is busy (0x80BB0007)
-// VirtualBox error: The machine 'jclouds-image-virtualbox-iso-to-machine-test' is not registered (0x8000FFFF)
-
+   // VirtualBox error: The given session is busy (0x80BB0007)
+   // VirtualBox error: The machine
+   // 'jclouds-image-virtualbox-iso-to-machine-test' is not registered
+   // (0x8000FFFF)
 
    @Test
    public void testLaunchIfNotStarted() throws Exception {

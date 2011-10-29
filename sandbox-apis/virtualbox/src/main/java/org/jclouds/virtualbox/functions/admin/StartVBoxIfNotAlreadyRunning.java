@@ -20,8 +20,14 @@
 package org.jclouds.virtualbox.functions.admin;
 
 
-import com.google.common.base.Function;
-import com.google.common.cache.Cache;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+
+import java.net.URI;
+
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.inject.Named;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
@@ -30,14 +36,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.inject.Named;
-
-import java.net.URI;
-import java.util.concurrent.ExecutionException;
-
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import com.google.common.base.Function;
 
 public class StartVBoxIfNotAlreadyRunning implements Function<URI, VirtualBoxManager> {
 

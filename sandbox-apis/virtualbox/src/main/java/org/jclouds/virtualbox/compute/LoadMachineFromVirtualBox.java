@@ -19,23 +19,28 @@
 
 package org.jclouds.virtualbox.compute;
 
-import com.google.common.base.Function;
-import com.google.common.cache.CacheLoader;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_MACHINE_CREDENTIAL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_MACHINE_GROUP;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_MACHINE_LOCATION;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_MACHINE_USERNAME;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.inject.Inject;
+
 import org.jclouds.byon.Node;
 import org.jclouds.compute.domain.OsFamily;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Inject;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
+import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 
 /**
  * Loads a node from a VirtualBox IMachine
- *
+ * 
  * @author Mattias Holmqvist
  */
 public class LoadMachineFromVirtualBox extends CacheLoader<String, Node> {
@@ -53,16 +58,10 @@ public class LoadMachineFromVirtualBox extends CacheLoader<String, Node> {
    public Node load(final String id) throws Exception {
 
       if (id.equals("host")) {
-         final Node hostNode = Node.builder().id("host")
-                 .name("host installing virtualbox")
-                 .hostname("localhost")
-                 .osFamily(OsFamily.LINUX.toString())
-                 .osDescription(System.getProperty("os.name"))
-                 .osVersion(System.getProperty("os.version"))
-                 .group("ssh")
-                 .username(System.getProperty("user.name"))
-                 .credentialUrl(privateKeyFile())
-                 .build();
+         final Node hostNode = Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+               .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+               .osVersion(System.getProperty("os.version")).group("ssh").username(System.getProperty("user.name"))
+               .credentialUrl(privateKeyFile()).build();
          return hostNode;
       }
 
@@ -71,23 +70,14 @@ public class LoadMachineFromVirtualBox extends CacheLoader<String, Node> {
       final String osTypeId = machine.getOSTypeId();
       final IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
 
-      final Node node = Node.builder()
-              .id(machine.getId())
-              .name(machine.getName())
-              .description(machine.getDescription())
-              .loginPort(22)
-              .group(System.getProperty(VIRTUALBOX_MACHINE_GROUP))
-              .username(System.getProperty(VIRTUALBOX_MACHINE_USERNAME))
-              .credential(System.getProperty(VIRTUALBOX_MACHINE_CREDENTIAL))
-              .sudoPassword(System.getProperty(VIRTUALBOX_MACHINE_CREDENTIAL))
-              .locationId(System.getProperty(VIRTUALBOX_MACHINE_LOCATION))
-              .os64Bit(guestOSType.getIs64Bit())
-              .osArch(guestOSType.getDescription())
-              .osFamily(guestOSType.getFamilyDescription())
-              .osVersion(guestOSType.getId())
-              .osDescription(guestOSType.getDescription())
-              .hostname(ipAddress)
-              .build();
+      final Node node = Node.builder().id(machine.getId()).name(machine.getName())
+            .description(machine.getDescription()).loginPort(22).group(System.getProperty(VIRTUALBOX_MACHINE_GROUP))
+            .username(System.getProperty(VIRTUALBOX_MACHINE_USERNAME))
+            .credential(System.getProperty(VIRTUALBOX_MACHINE_CREDENTIAL))
+            .sudoPassword(System.getProperty(VIRTUALBOX_MACHINE_CREDENTIAL))
+            .locationId(System.getProperty(VIRTUALBOX_MACHINE_LOCATION)).os64Bit(guestOSType.getIs64Bit())
+            .osArch(guestOSType.getDescription()).osFamily(guestOSType.getFamilyDescription())
+            .osVersion(guestOSType.getId()).osDescription(guestOSType.getDescription()).hostname(ipAddress).build();
 
       return node;
 

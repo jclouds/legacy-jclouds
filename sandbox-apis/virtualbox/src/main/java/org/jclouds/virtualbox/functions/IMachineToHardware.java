@@ -44,7 +44,6 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
    public Hardware apply(@Nullable IMachine vm) {
       String osTypeId = vm.getOSTypeId();
 
-
       IGuestOSType guestOSType = virtualBoxManager.getVBox().getGuestOSType(osTypeId);
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();

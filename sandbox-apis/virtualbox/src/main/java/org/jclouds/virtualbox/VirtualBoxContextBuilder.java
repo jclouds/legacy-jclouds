@@ -30,11 +30,11 @@ import com.google.inject.Module;
 
 /**
  * Creates compute service context for VirtualBox
- *
+ * 
  * @author Mattias Holmqvist, Andrea Turli
  */
 public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBoxManager> {
-   
+
    public VirtualBoxContextBuilder(Properties properties) {
       super(VirtualBoxManager.class, properties);
    }
@@ -43,5 +43,5 @@ public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBui
    protected void addContextModule(List<Module> modules) {
       modules.add(new VirtualBoxComputeServiceContextModule());
    }
-   
+
 }

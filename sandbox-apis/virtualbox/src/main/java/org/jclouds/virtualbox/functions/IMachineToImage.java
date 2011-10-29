@@ -58,8 +58,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
 
       IGuestOSType guestOSType = virtualboxManager.getVBox().getGuestOSType(from.getOSTypeId());
       OsFamily family = parseOsFamilyOrUnrecognized(guestOSType.getDescription());
-      String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(),
-            osVersionMap);
+      String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(), osVersionMap);
       OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)
             .version(version).is64Bit(guestOSType.getIs64Bit()).build();
 

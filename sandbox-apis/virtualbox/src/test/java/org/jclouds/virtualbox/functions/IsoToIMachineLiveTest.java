@@ -19,10 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-/**
- * @author Andrea Turli, Mattias Holmqvist
- */
-
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
@@ -47,13 +43,16 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.inject.Guice;
 
+/**
+ * @author Andrea Turli, Mattias Holmqvist
+ */
 @Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineLiveTest")
 public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
-   
+
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-            .getInstance(Json.class));
-   
+         .getInstance(Json.class));
+
    private String settingsFile = null;
    private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
@@ -76,24 +75,16 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testCreateImageMachineFromIso() throws Exception {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-	  ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
-      IMachine imageMachine = new IsoToIMachine(manager,
-              adminDisk,
-              diskFormat,
-              settingsFile,
-              vmName,
-              osTypeId,
-              vmId,
-              forceOverwrite,
-              controllerIDE,
-              localHostContext,
-              hostId,
-              guestId,
-              new Credentials("toor", "password")).apply("ubuntu-11.04-server-i386.iso");
+      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
+            "localhost", new Credentials("toor", "password"));
+      IMachine imageMachine = new IsoToIMachine(manager, adminDisk, diskFormat, settingsFile, vmName, osTypeId, vmId,
+            forceOverwrite, controllerIDE, localHostContext, hostId, guestId, new Credentials("toor", "password"))
+            .apply("ubuntu-11.04-server-i386.iso");
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
-      //TODO add the description to the cache of the images or serialize to YAML the image desc
+      // TODO add the description to the cache of the images or serialize to
+      // YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
 
       assertTrue(any(images, equalTo(newImage)));

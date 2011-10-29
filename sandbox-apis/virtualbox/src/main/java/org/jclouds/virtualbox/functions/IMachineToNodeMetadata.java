@@ -19,8 +19,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import org.jclouds.compute.domain.*;
+import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LocationBuilder;
@@ -31,12 +42,7 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
+import com.google.common.base.Function;
 
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
@@ -57,7 +63,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       locationBuilder.id("");
       locationBuilder.scope(LocationScope.HOST);
       nodeMetadataBuilder.location(locationBuilder.build());
-      
+
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ram(vm.getMemorySize().intValue());
 
@@ -75,7 +81,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       nodeMetadataBuilder.hostname(vm.getName());
       nodeMetadataBuilder.loginPort(18083);
 
-
       MachineState vmState = vm.getState();
       NodeState nodeState = machineToNodeState.get(vmState);
       if (nodeState == null)
@@ -90,8 +95,8 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          System.out.println("Interface: " + bridgedInterface);
       }
 
-//      nodeMetadataBuilder.imageId("");
-//      nodeMetadataBuilder.group("");
+      // nodeMetadataBuilder.imageId("");
+      // nodeMetadataBuilder.group("");
 
       String provider = "virtualbox";
       String identity = System.getProperty("test." + provider + ".identity", "administrator");
@@ -101,5 +106,5 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       nodeMetadataBuilder.id(vm.getId());
       return nodeMetadataBuilder.build();
    }
-   
+
 }
