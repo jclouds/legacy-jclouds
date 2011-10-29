@@ -18,19 +18,18 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
@@ -245,7 +244,7 @@ public class Network implements Comparable<Network> {
    @SerializedName("issystem")
    private boolean isSystem;
    private String netmask;
-   @SerializedName("networkdomain")
+   @SerializedName("domain")
    private String networkDomain;
    @SerializedName("networkofferingavailability")
    private String networkOfferingAvailability;
