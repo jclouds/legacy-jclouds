@@ -35,7 +35,6 @@ import java.io.File;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import org.eclipse.jetty.server.Server;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -44,9 +43,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshException;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.AccessMode;
 import org.virtualbox_4_1.DeviceType;
@@ -104,9 +101,12 @@ public class IsoToIMachine implements Function<String, IMachine> {
    @Override
    public IMachine apply(@Nullable String isoName) {
 
-      String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
-      String baseResource = ".";
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(baseResource);
+      // TODO: WTF :) this is a prerequisite, so check state as opposed to
+      // starting.
+      // ex checkState(endpoint accessible, "please start jetty on %s",
+      // endpoint)
+      // Server server = new
+      // StartJettyIfNotAlreadyRunning(port).apply(baseResource);
 
       IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite,
             manager).apply(vmName);
@@ -174,13 +174,18 @@ public class IsoToIMachine implements Function<String, IMachine> {
          }
 
       });
-      try {
-         logger.debug("Stopping Jetty server...");
-         server.stop();
-         logger.debug("Jetty server stopped.");
-      } catch (Exception e) {
-         logger.error(e, "Could not stop Jetty server.");
-      }
+      // TODO: See above.
+      // if you want to manage jetty, do it outside this class as it
+      // has too many responsibilities otherwise. Allow this class to focus
+      // solely on making an IMachine
+      //
+      // try {
+      // logger.debug("Stopping Jetty server...");
+      // server.stop();
+      // logger.debug("Jetty server stopped.");
+      // } catch (Exception e) {
+      // logger.error(e, "Could not stop Jetty server.");
+      // }
       return vm;
    }
 

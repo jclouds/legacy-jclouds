@@ -130,7 +130,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDown() throws Exception {
       if (machine != null)
          adapter.destroyNode(machine.getId() + "");
       super.tearDown();

@@ -58,7 +58,7 @@ public class TestUtils {
    }
 
    public static ComputeServiceContext computeServiceForLocalhostAndGuest(String hostId, String hostname,
-         String guestId, String guestHostname, Credentials guestLogin) throws IOException {
+         String guestId, String guestHostname, Credentials guestLogin) {
 
       Node host = Node.builder().id(hostId).name("host installing virtualbox").hostname(hostname)
             .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))

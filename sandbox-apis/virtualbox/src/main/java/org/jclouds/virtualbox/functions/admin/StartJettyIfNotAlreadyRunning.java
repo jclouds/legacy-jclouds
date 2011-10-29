@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,18 +49,25 @@ public class StartJettyIfNotAlreadyRunning implements Function<String, Server> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   private final Server jetty;
    private final int port;
 
+   public StartJettyIfNotAlreadyRunning(Server jetty, @Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) int port) {
+      this.jetty = checkNotNull(jetty, "jetty");
+      this.port = port;
+   }
+
+   // TODO: getting an instance of the Server object should really be done in
+   // Guice, so inside a *Module class, perhaps as a @Provides method
    @Inject
-   public StartJettyIfNotAlreadyRunning(@Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) final String port) {
-      this.port = Integer.parseInt(port);
+   public StartJettyIfNotAlreadyRunning(@Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) int port) {
+      this(ServerJetty.getInstance().getServer(), port);
    }
 
    @Override
    public Server apply(@Nullable String baseResource) {
-      final Server server = ServerJetty.getInstance().getServer();
-
-      if (!server.getState().equals(Server.STARTED)
+      if (!jetty.getState().equals(Server.STARTED)
+            // TODO code smell = hard coding addresses or ports!!
             && !new InetSocketAddressConnect().apply(new IPSocket("localhost", port))) {
          ResourceHandler resource_handler = new ResourceHandler();
          resource_handler.setDirectoriesListed(true);
@@ -69,17 +78,17 @@ public class StartJettyIfNotAlreadyRunning implements Function<String, Server> {
 
          HandlerList handlers = new HandlerList();
          handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
-         server.setHandler(handlers);
+         jetty.setHandler(handlers);
 
          try {
-            server.start();
+            jetty.start();
          } catch (Exception e) {
             logger.error(e, "Server jetty could not be started at this %s", baseResource);
          }
-         return server;
+         return jetty;
       } else {
          logger.debug("Server jetty serving %s already running. Skipping start", baseResource);
-         return server;
+         return jetty;
       }
 
    }
