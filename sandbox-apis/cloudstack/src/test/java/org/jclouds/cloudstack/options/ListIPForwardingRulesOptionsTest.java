@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
+import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.IPAddressId;
 import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.id;
-import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.IPAddressId;
 import static org.jclouds.cloudstack.options.ListIPForwardingRulesOptions.Builder.virtualMachineId;
 import static org.testng.Assert.assertEquals;
 

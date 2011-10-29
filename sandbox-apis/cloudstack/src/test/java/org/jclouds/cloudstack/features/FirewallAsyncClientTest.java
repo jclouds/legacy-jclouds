@@ -23,9 +23,9 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -39,16 +39,17 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "FirewallAsyncClientTest")
 public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<FirewallAsyncClient> {
    public void testListPortForwardingRules() throws SecurityException, NoSuchMethodException, IOException {
       Method method = FirewallAsyncClient.class.getMethod("listPortForwardingRules",
-               ListPortForwardingRulesOptions[].class);
+            ListPortForwardingRulesOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listPortForwardingRules HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listPortForwardingRules HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -62,11 +63,11 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
 
    public void testListPortForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = FirewallAsyncClient.class.getMethod("listPortForwardingRules",
-               ListPortForwardingRulesOptions[].class);
+            ListPortForwardingRulesOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, ListPortForwardingRulesOptions.Builder.IPAddressId(3));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listPortForwardingRules&ipaddressid=3 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listPortForwardingRules&ipaddressid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -79,14 +80,14 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
    }
 
    public void testCreatePortForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
-            IOException {
+         IOException {
       Method method = FirewallAsyncClient.class.getMethod("createPortForwardingRuleForVirtualMachine", long.class,
-               long.class, String.class, int.class, int.class);
+            long.class, String.class, int.class, int.class);
       HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22, 22);
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&privateport=22&publicport=22 HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&privateport=22&publicport=22 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -103,7 +104,7 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=deletePortForwardingRule&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=deletePortForwardingRule&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 

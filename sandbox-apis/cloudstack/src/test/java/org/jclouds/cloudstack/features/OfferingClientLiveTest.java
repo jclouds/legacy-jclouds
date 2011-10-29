@@ -50,7 +50,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(offeringCount >= 0);
       for (DiskOffering offering : response) {
          DiskOffering newDetails = Iterables.getOnlyElement(client.getOfferingClient().listDiskOfferings(
-                  ListDiskOfferingsOptions.Builder.id(offering.getId())));
+               ListDiskOfferingsOptions.Builder.id(offering.getId())));
          assertEquals(offering, newDetails);
          assertEquals(offering, client.getOfferingClient().getDiskOffering(offering.getId()));
          assert offering.getId() > 0 : offering;
@@ -69,7 +69,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(offeringCount >= 0);
       for (ServiceOffering offering : response) {
          ServiceOffering newDetails = Iterables.getOnlyElement(client.getOfferingClient().listServiceOfferings(
-                  ListServiceOfferingsOptions.Builder.id(offering.getId())));
+               ListServiceOfferingsOptions.Builder.id(offering.getId())));
          assertEquals(offering, newDetails);
 
          assert offering.getId() > 0 : offering;
@@ -91,7 +91,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(offeringCount >= 0);
       for (NetworkOffering offering : response) {
          NetworkOffering newDetails = Iterables.getOnlyElement(client.getOfferingClient().listNetworkOfferings(
-                  ListNetworkOfferingsOptions.Builder.id(offering.getId())));
+               ListNetworkOfferingsOptions.Builder.id(offering.getId())));
          assertEquals(offering, newDetails);
          assertEquals(offering, client.getOfferingClient().getNetworkOffering(offering.getId()));
          assert offering.getId() > 0 : offering;

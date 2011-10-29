@@ -34,7 +34,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "ConfigurationAsyncClientTest")
 public class ConfigurationAsyncClientTest extends BaseCloudStackAsyncClientTest<ConfigurationAsyncClient> {
 
@@ -43,7 +44,7 @@ public class ConfigurationAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listCapabilities HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listCapabilities HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

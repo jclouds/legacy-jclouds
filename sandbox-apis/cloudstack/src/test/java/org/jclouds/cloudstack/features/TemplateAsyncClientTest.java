@@ -39,7 +39,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "TemplateAsyncClientTest")
 public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<TemplateAsyncClient> {
    public void testListTemplates() throws SecurityException, NoSuchMethodException, IOException {
@@ -47,7 +48,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -61,12 +62,15 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
 
    public void testListTemplatesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TemplateAsyncClient.class.getMethod("listTemplates", ListTemplatesOptions.class);
-      HttpRequest httpRequest = processor.createRequest(method, ListTemplatesOptions.Builder.accountInDomain("adrian",
-               6).hypervisor("xen").filter(TemplateFilter.FEATURED));
+      HttpRequest httpRequest = processor
+            .createRequest(
+                  method,
+                  ListTemplatesOptions.Builder.accountInDomain("adrian", 6).hypervisor("xen")
+                        .filter(TemplateFilter.FEATURED));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&account=adrian&domainid=6&hypervisor=xen&templatefilter=featured HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&account=adrian&domainid=6&hypervisor=xen&templatefilter=featured HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -82,8 +86,9 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       Method method = TemplateAsyncClient.class.getMethod("getTemplateInZone", long.class, long.class);
       HttpRequest httpRequest = processor.createRequest(method, 1, 5);
 
-      assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable&zoneid=1&id=5 HTTP/1.1");
+      assertRequestLineEquals(
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable&zoneid=1&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

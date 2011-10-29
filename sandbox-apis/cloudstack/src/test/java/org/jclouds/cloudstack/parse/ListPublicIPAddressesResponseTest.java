@@ -35,12 +35,11 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit")
 public class ListPublicIPAddressesResponseTest extends BaseSetParserTest<PublicIPAddress> {
 
-
    @Override
    public String resource() {
       return "/listpublicipaddressesresponse.json";
    }
-   
+
    @Override
    @SelectJson("publicipaddress")
    public Set<PublicIPAddress> expected() {

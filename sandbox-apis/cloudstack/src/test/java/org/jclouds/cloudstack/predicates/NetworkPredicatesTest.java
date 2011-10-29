@@ -47,9 +47,12 @@ public class NetworkPredicatesTest {
    }
 
    public void testSupportsStaticNATFindsWhenFirewallHasStaticNatFeature() {
-      Network network = Network.builder().id(204).services(
-               ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true"))))
-               .build();
+      Network network = Network
+            .builder()
+            .id(204)
+            .services(
+                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true"))))
+            .build();
 
       assert !hasLoadBalancerService().apply(network);
       assert supportsStaticNAT().apply(network);
@@ -57,8 +60,8 @@ public class NetworkPredicatesTest {
    }
 
    public void testNoSupport() {
-      Network network = Network.builder().id(204).services(
-               ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of()))).build();
+      Network network = Network.builder().id(204)
+            .services(ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of()))).build();
 
       assert !hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -66,9 +69,12 @@ public class NetworkPredicatesTest {
    }
 
    public void testSupportsPortForwardingFindsWhenFirewallHasPortForwardingFeature() {
-      Network network = Network.builder().id(204).services(
-               ImmutableSet.of(new NetworkService("Firewall", ImmutableMap
-                        .<String, String> of("PortForwarding", "true")))).build();
+      Network network = Network
+            .builder()
+            .id(204)
+            .services(
+                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("PortForwarding",
+                        "true")))).build();
 
       assert !hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -76,8 +82,11 @@ public class NetworkPredicatesTest {
    }
 
    public void testSupportsPortForwardingAndStaticNATWhenFirewallHasFeatures() {
-      Network network = Network.builder().id(204).services(
-               ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true",
+      Network network = Network
+            .builder()
+            .id(204)
+            .services(
+                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true",
                         "PortForwarding", "true")))).build();
 
       assert Predicates.and(supportsPortForwarding(), supportsStaticNAT()).apply(network);

@@ -27,11 +27,11 @@ import java.util.Map;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -43,55 +43,57 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "QuerySignerTest")
 public class QuerySignerTest {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("cloudstack",
-            "http://localhost:8080/client/api", "2.2", "", "apiKey", "secretKey", Map.class, List.class,
-            PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),
-                     new NullLoggingModule(), new AbstractModule() {
-                        @Override
-                        protected void configure() {
-                           bind(RequestSigner.class).to(QuerySigner.class);
-                        }
+         "http://localhost:8080/client/api", "2.2", "", "apiKey", "secretKey", Map.class, List.class,
+         PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),
+               new NullLoggingModule(), new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bind(RequestSigner.class).to(QuerySigner.class);
+                  }
 
-                     }));
+               }));
 
    @Test
    void testCreateStringToSign() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector().getInstance(
-               QuerySigner.class);
+      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
+            .getInstance(QuerySigner.class);
 
-      assertEquals(filter.createStringToSign(HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://localhost:8080/client/api?command=listZones")).build()),
-               "apikey=apikey&command=listzones");
+      assertEquals(
+            filter.createStringToSign(HttpRequest.builder().method("GET")
+                  .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build()),
+            "apikey=apikey&command=listzones");
    }
 
    @Test
    void testFilter() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector().getInstance(
-               QuerySigner.class);
+      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
+            .getInstance(QuerySigner.class);
 
       assertEquals(
-               filter.filter(
-                        HttpRequest.builder().method("GET").endpoint(
-                                 URI.create("http://localhost:8080/client/api?command=listZones")).build())
-                        .getRequestLine(),
-               "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
+            filter.filter(
+                  HttpRequest.builder().method("GET")
+                        .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build())
+                  .getRequestLine(),
+            "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
    }
 
    @Test
    void testFilterTwice() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector().getInstance(
-               QuerySigner.class);
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://localhost:8080/client/api?command=listZones")).build();
+      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
+            .getInstance(QuerySigner.class);
+      HttpRequest request = HttpRequest.builder().method("GET")
+            .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build();
       for (int i = 0; i < 2; i++) {
          request = filter.filter(request);
          assertEquals(
-                  request.getRequestLine(),
-                  "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
+               request.getRequestLine(),
+               "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
       }
    }
 }

@@ -18,15 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-
 /**
  * Tests behavior of {@code AccountClient}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AccountClientLiveTest")

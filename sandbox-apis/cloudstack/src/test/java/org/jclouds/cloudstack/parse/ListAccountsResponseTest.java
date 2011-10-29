@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit")
 public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
-   
+
    @Override
    protected Injector injector() {
       return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
@@ -93,20 +93,11 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
             .VMsRunning(1)
             .state(State.ENABLED)
             .users(
-                  ImmutableSet.of(User.builder()
-                        .id(505)
-                .name("jclouds")
-                .firstName("Adrian")
-                .lastName("Cole")
-                .email("adrian@jclouds.org")
-                .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-04-19T01:57:24+0000"))
-                .state("enabled")
-                .account("jclouds")
-                .accountType(Type.USER)
-                .domainId(457)
-                .domain("AA000062-jclouds-dev")
-                .apiKey("APIKEY")
-                .secretKey("SECRETKEY").build())).build());
+                  ImmutableSet.of(User.builder().id(505).name("jclouds").firstName("Adrian").lastName("Cole")
+                        .email("adrian@jclouds.org")
+                        .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-04-19T01:57:24+0000"))
+                        .state("enabled").account("jclouds").accountType(Type.USER).domainId(457)
+                        .domain("AA000062-jclouds-dev").apiKey("APIKEY").secretKey("SECRETKEY").build())).build());
    }
 
 }
