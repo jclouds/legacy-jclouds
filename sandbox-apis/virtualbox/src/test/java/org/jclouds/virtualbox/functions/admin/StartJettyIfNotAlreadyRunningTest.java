@@ -19,34 +19,37 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import org.eclipse.jetty.server.Server;
-import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningLiveTest")
-public class StartJettyIfNotAlreadyRunningLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "unit", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningTest")
+public class StartJettyIfNotAlreadyRunningTest {
 
    private String basebaseResource = ".";
-   private String port = "8080";
+   private int port = 8080;
 
    @Test
-   public void testLaunchJettyServer() throws Exception {
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
-      server.stop();
-      assertEquals(server.getState(), server.STOPPED);
+   public void testLaunchJettyServerWhenAlreadyRunningDoesntLaunchAgain() {
+      Server jetty = createMock(Server.class);
+      expect(jetty.getState()).andReturn(Server.STARTED);
+      replay(jetty);
+
+      assertEquals(new StartJettyIfNotAlreadyRunning(jetty, port).apply(basebaseResource), jetty);
+      verify(jetty);
+
    }
 
    @Test
-   public void testLaunchingSameJettyServer() throws Exception {
-      Server server = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
-      assertEquals(server.getState(), server.STARTED);
-      Server sameServer = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
-      sameServer.stop();
+   public void testLaunchJettyServerWhenNotRunningStartsJettyOnCorrectHostPortAndBasedir() {
+      // TODO: all yours!
    }
-
 }
