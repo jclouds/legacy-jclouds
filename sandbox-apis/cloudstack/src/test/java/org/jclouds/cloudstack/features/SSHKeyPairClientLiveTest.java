@@ -18,6 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertEquals;
+
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.SSHKeyPair;
 import org.testng.annotations.Test;
 
@@ -30,18 +34,20 @@ import org.testng.annotations.Test;
 public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListSSHKeyPairs() {
-      System.out.println(client.getSSHKeyPairClient().listSSHKeyPairs());
+      final Set<SSHKeyPair> sshKeyPairs = client.getSSHKeyPairClient().listSSHKeyPairs();
+      for (SSHKeyPair sshKeyPair : sshKeyPairs) {
+         checkSSHKeyPair(sshKeyPair);
+      }
    }
 
    public void testCreateSSHKeyPair() {
-      final String sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair("vijay-test");
+      final SSHKeyPair sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair("jclouds-keypair");
       System.out.println(sshKeyPair);
    }
 
    protected void checkSSHKeyPair(SSHKeyPair pair) {
       assert pair.getName() != null : pair;
-      // assertEquals(pair.toString(),
-      // client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).toString());
+      assertEquals(pair.toString(), client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).toString());
    }
 
 }

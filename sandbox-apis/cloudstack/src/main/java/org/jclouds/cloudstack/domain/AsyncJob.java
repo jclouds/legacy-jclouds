@@ -114,13 +114,13 @@ public class AsyncJob<T> {
 
       public AsyncJob<T> build() {
          return new AsyncJob<T>(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode,
-                  resultType, status, userId, error);
+               resultType, status, userId, error);
       }
 
       public static <T> Builder<T> fromAsyncJobUntyped(AsyncJob<T> in) {
-         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id).instanceId(
-                  in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result).resultCode(
-                  in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId).error(in.error);
+         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id)
+               .instanceId(in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result)
+               .resultCode(in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId).error(in.error);
       }
    }
 
@@ -149,7 +149,7 @@ public class AsyncJob<T> {
    private AsyncJobError error;
 
    public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-            int progress, T result, int resultCode, String resultType, int status, int userId, AsyncJobError error) {
+         int progress, T result, int resultCode, String resultType, int status, int userId, AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -260,7 +260,8 @@ public class AsyncJob<T> {
    /**
     * 
     * 
-    * @return the error related to this command, or null if no error or error not yet encountered.
+    * @return the error related to this command, or null if no error or error
+    *         not yet encountered.
     */
    public AsyncJobError getError() {
       return error;
@@ -345,9 +346,9 @@ public class AsyncJob<T> {
    @Override
    public String toString() {
       return "[accountId=" + accountId + ", cmd=" + cmd + ", created=" + created + ", id=" + id + ", instanceId="
-               + instanceId + ", instanceType=" + instanceType + ", error=" + error + ", progress=" + progress
-               + ", result=" + result + ", resultCode=" + resultCode + ", resultType=" + resultType + ", status="
-               + status + ", userId=" + userId + "]";
+            + instanceId + ", instanceType=" + instanceType + ", error=" + error + ", progress=" + progress
+            + ", result=" + result + ", resultCode=" + resultCode + ", resultType=" + resultType + ", status=" + status
+            + ", userId=" + userId + "]";
    }
 
 }

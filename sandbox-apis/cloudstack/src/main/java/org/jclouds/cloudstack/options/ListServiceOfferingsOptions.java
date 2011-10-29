@@ -25,7 +25,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what service offerings are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listServiceOfferings.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listServiceOfferings.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
@@ -62,8 +64,9 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
 
    /**
     * @param virtualMachineId
-    *           the ID of the virtual machine. Pass this in if you want to see the available service
-    *           offering that a virtual machine can be changed to.
+    *           the ID of the virtual machine. Pass this in if you want to see
+    *           the available service offering that a virtual machine can be
+    *           changed to.
     */
    public ListServiceOfferingsOptions virtualMachineId(long virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));

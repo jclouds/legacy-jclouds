@@ -38,15 +38,18 @@ public enum TrafficType {
     */
    GUEST,
    /**
-    * System network that only Admin can view, and only when isSystem is specified.
+    * System network that only Admin can view, and only when isSystem is
+    * specified.
     */
    STORAGE,
    /**
-    * System network that only Admin can view, and only when isSystem is specified.
+    * System network that only Admin can view, and only when isSystem is
+    * specified.
     */
    MANAGEMENT,
    /**
-    * System network that only Admin can view, and only when isSystem is specified.
+    * System network that only Admin can view, and only when isSystem is
+    * specified.
     */
    CONTROL,
 

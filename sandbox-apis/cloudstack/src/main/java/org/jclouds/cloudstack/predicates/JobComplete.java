@@ -57,7 +57,7 @@ public class JobComplete implements Predicate<Long> {
       logger.trace("%s: looking for job status %s: currently: %s", job.getId(), 1, job.getStatus());
       if (job.getError() != null)
          throw new IllegalStateException(String.format("job %s failed with exception %s", job.getId(), job.getError()
-                  .toString()));
+               .toString()));
       return job.getStatus() > 0;
    }
 

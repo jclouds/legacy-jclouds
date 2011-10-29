@@ -118,7 +118,7 @@ public class Zone implements Comparable<Zone> {
 
       public Zone build() {
          return new Zone(id, description, displayText, DNS, domain, domainId, guestCIDRAddress, internalDNS, name,
-                  networkType, status, VLAN, securityGroupsEnabled);
+               networkType, status, VLAN, securityGroupsEnabled);
       }
    }
 
@@ -158,8 +158,8 @@ public class Zone implements Comparable<Zone> {
    }
 
    public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
-            String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
-            String vLAN, boolean securityGroupsEnabled) {
+         String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
+         String vLAN, boolean securityGroupsEnabled) {
       this.id = id;
       this.description = description;
       this.displayText = displayText;
@@ -389,9 +389,9 @@ public class Zone implements Comparable<Zone> {
    @Override
    public String toString() {
       return "[id=" + id + ", status=" + status + ", name=" + name + ", description=" + description + ", displayText="
-               + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
-               + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS()
-               + ", securityGroupsEnabled=" + isSecurityGroupsEnabled() + ", internalDNS=" + getInternalDNS() + "]";
+            + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
+            + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS()
+            + ", securityGroupsEnabled=" + isSecurityGroupsEnabled() + ", internalDNS=" + getInternalDNS() + "]";
    }
 
    @Override

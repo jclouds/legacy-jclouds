@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what load balancer rules are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listLoadBalancerRules.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listLoadBalancerRules.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {

@@ -69,9 +69,9 @@ public interface FirewallAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> createPortForwardingRuleForVirtualMachine(
-            @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
-            @QueryParam("protocol") String protocol, @QueryParam("privateport") int privatePort,
-            @QueryParam("publicport") int publicPort);
+         @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
+         @QueryParam("protocol") String protocol, @QueryParam("privateport") int privatePort,
+         @QueryParam("publicport") int publicPort);
 
    /**
     * @see FirewallClient#deletePortForwardingRule

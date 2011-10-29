@@ -18,29 +18,31 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 public class ListSSHKeyPairsOptions extends BaseHttpRequestOptions {
 
-    public static final ListSSHKeyPairsOptions NONE = new ListSSHKeyPairsOptions();
+   public static final ListSSHKeyPairsOptions NONE = new ListSSHKeyPairsOptions();
 
-    /**
-     * @param name the SSHKeyPair name
-     */
-    public ListSSHKeyPairsOptions name(String name) {
-        this.queryParameters.replaceValues("name", ImmutableSet.of(name));
-        return this;
-    }
+   /**
+    * @param name
+    *           the SSHKeyPair name
+    */
+   public ListSSHKeyPairsOptions name(String name) {
+      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
+      return this;
+   }
 
-    public static class Builder {
-        /**
-         * @see ListSSHKeyPairsOptions#name
-         */
-        public static ListSSHKeyPairsOptions name(String name) {
-            ListSSHKeyPairsOptions options = new ListSSHKeyPairsOptions();
-            return options.name(name);
-        }
+   public static class Builder {
+      /**
+       * @see ListSSHKeyPairsOptions#name
+       */
+      public static ListSSHKeyPairsOptions name(String name) {
+         ListSSHKeyPairsOptions options = new ListSSHKeyPairsOptions();
+         return options.name(name);
+      }
 
-    }
+   }
 }

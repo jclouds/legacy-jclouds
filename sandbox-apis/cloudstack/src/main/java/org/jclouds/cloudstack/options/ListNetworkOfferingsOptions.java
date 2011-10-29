@@ -26,7 +26,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what network offerings are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listNetworkOfferings.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listNetworkOfferings.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
@@ -38,7 +40,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
     *           the ID of the network offering
     */
    public ListNetworkOfferingsOptions id(long id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id+""));
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -89,8 +91,8 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
 
    /**
     * @param specifyVLAN
-    *           True if we allow the network supports vlan, false otherwise. If you create network
-    *           using this offering, you must specify vlan.
+    *           True if we allow the network supports vlan, false otherwise. If
+    *           you create network using this offering, you must specify vlan.
     */
    public ListNetworkOfferingsOptions specifyVLAN(boolean specifyVLAN) {
       this.queryParameters.replaceValues("specifyvlan", ImmutableSet.of(specifyVLAN + ""));

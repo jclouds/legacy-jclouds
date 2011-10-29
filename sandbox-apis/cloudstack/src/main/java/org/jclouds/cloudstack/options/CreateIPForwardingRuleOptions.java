@@ -25,7 +25,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to create an ip forwarding rule
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/createIpForwardingRule.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/createIpForwardingRule.html"
+ *      />
  * @author Adrian Cole
  */
 public class CreateIPForwardingRuleOptions extends BaseHttpRequestOptions {

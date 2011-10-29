@@ -42,7 +42,8 @@ public interface VirtualMachineClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return VirtualMachines matching query, or empty set, if no VirtualMachines are found
+    * @return VirtualMachines matching query, or empty set, if no
+    *         VirtualMachines are found
     */
    Set<VirtualMachine> listVirtualMachines(ListVirtualMachinesOptions... options);
 
@@ -56,8 +57,8 @@ public interface VirtualMachineClient {
    VirtualMachine getVirtualMachine(long id);
 
    /**
-    * Creates and automatically starts a virtual machine based on a service offering, disk offering,
-    * and template.
+    * Creates and automatically starts a virtual machine based on a service
+    * offering, disk offering, and template.
     * 
     * @param zoneId
     *           availability zone for the virtual machine
@@ -69,7 +70,7 @@ public interface VirtualMachineClient {
     * @return virtual machine
     */
    AsyncCreateResponse deployVirtualMachineInZone(long zoneId, long serviceOfferingId, long templateId,
-            DeployVirtualMachineOptions... options);
+         DeployVirtualMachineOptions... options);
 
    /**
     * Reboots a virtual machine.
@@ -99,8 +100,9 @@ public interface VirtualMachineClient {
    Long stopVirtualMachine(long id);
 
    /**
-    * Resets the password for virtual machine. The virtual machine must be in a "Stopped" state and
-    * the template must already support this feature for this command to take effect.
+    * Resets the password for virtual machine. The virtual machine must be in a
+    * "Stopped" state and the template must already support this feature for
+    * this command to take effect.
     * 
     * @param id
     *           The ID of the virtual machine
@@ -109,8 +111,8 @@ public interface VirtualMachineClient {
    Long resetPasswordForVirtualMachine(long id);
 
    /**
-    * Changes the service offering for a virtual machine. The virtual machine must be in a "Stopped"
-    * state for this command to take effect.
+    * Changes the service offering for a virtual machine. The virtual machine
+    * must be in a "Stopped" state for this command to take effect.
     * 
     * @param id
     *           The ID of the virtual machine
@@ -128,11 +130,13 @@ public interface VirtualMachineClient {
    Long updateVirtualMachine(long id);
 
    /**
-    * Destroys a virtual machine. Once destroyed, only the administrator can recover it.
+    * Destroys a virtual machine. Once destroyed, only the administrator can
+    * recover it.
     * 
     * @param id
     *           vm to destroy
-    * @return job id related to destroying the VM, or null if resource was not found
+    * @return job id related to destroying the VM, or null if resource was not
+    *         found
     */
    Long destroyVirtualMachine(long id);
 }

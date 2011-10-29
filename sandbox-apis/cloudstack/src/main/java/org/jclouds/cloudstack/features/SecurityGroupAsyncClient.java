@@ -95,10 +95,10 @@ public interface SecurityGroupAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressPortsToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
-            @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
-            @QueryParam("endport") int endPort,
-            @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
-            AccountInDomainOptions... options);
+         @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
+         @QueryParam("endport") int endPort,
+         @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
+         AccountInDomainOptions... options);
 
    /**
     * @see SecurityGroupClient#authorizeIngressPortsToSecurityGroups
@@ -107,13 +107,11 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressPortsToSecurityGroups(
-            @QueryParam("securitygroupid") long securityGroupId,
-            @QueryParam("protocol") String protocol,
-            @QueryParam("startport") int startPort,
-            @QueryParam("endport") int endPort,
-            @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
-            AccountInDomainOptions... options);
+   ListenableFuture<Long> authorizeIngressPortsToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
+         @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
+         @QueryParam("endport") int endPort,
+         @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
+         AccountInDomainOptions... options);
 
    /**
     * @see SecurityGroupClient#authorizeIngressICMPToCIDRs
@@ -123,9 +121,9 @@ public interface SecurityGroupAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressICMPToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
-            @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
-            @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
-            AccountInDomainOptions... options);
+         @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
+         @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
+         AccountInDomainOptions... options);
 
    /**
     * @see SecurityGroupClient#authorizeIngressICMPToSecurityGroups
@@ -134,12 +132,10 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressICMPToSecurityGroups(
-            @QueryParam("securitygroupid") long securityGroupId,
-            @QueryParam("icmpcode") int ICMPCode,
-            @QueryParam("icmptype") int ICMPType,
-            @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
-            AccountInDomainOptions... options);
+   ListenableFuture<Long> authorizeIngressICMPToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
+         @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
+         @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
+         AccountInDomainOptions... options);
 
    /**
     * @see SecurityGroupClient#revokeIngressRule

@@ -93,7 +93,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
 
       public IPForwardingRule build() {
          return new IPForwardingRule(id, IPAddress, IPAddressId, startPort, protocol, endPort, state,
-                  virtualMachineDisplayName, virtualMachineId, virtualMachineName);
+               virtualMachineDisplayName, virtualMachineId, virtualMachineName);
       }
    }
 
@@ -121,7 +121,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    public IPForwardingRule(long id, String iPAddress, long iPAddressId, int startPort, String protocol, int endPort,
-            String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName) {
+         String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName) {
       this.id = id;
       this.IPAddress = iPAddress;
       this.IPAddressId = iPAddressId;
@@ -286,9 +286,9 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    @Override
    public String toString() {
       return "[IPAddress=" + IPAddress + ", IPAddressId=" + IPAddressId + ", id=" + id + ", startPort=" + startPort
-               + ", protocol=" + protocol + ", endPort=" + endPort + ", state=" + state
-               + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
-               + ", virtualMachineName=" + virtualMachineName + "]";
+            + ", protocol=" + protocol + ", endPort=" + endPort + ", state=" + state + ", virtualMachineDisplayName="
+            + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId + ", virtualMachineName="
+            + virtualMachineName + "]";
    }
 
 }

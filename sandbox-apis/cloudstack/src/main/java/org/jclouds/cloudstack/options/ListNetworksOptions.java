@@ -27,7 +27,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what networks information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listNetworks.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listNetworks.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListNetworksOptions extends BaseHttpRequestOptions {
@@ -82,8 +84,8 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
    /**
     * 
     * @param account
-    *           account who will own the VLAN. If VLAN is Zone wide, this parameter should be
-    *           ommited
+    *           account who will own the VLAN. If VLAN is Zone wide, this
+    *           parameter should be ommited
     */
    public ListNetworksOptions account(String account) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));

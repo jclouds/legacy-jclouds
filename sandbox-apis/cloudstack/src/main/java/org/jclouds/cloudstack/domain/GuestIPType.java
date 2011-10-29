@@ -30,13 +30,13 @@ import com.google.common.base.CaseFormat;
 public enum GuestIPType {
 
    /**
-    * guest IP address will be issued by Dhcp server in the guest virtual network. Dhcp role is
-    * played by domain router.
+    * guest IP address will be issued by Dhcp server in the guest virtual
+    * network. Dhcp role is played by domain router.
     */
    VIRTUAL,
    /**
-    * traffic directly to the network and VMs created here are assigned an IP directly from the
-    * network as configured
+    * traffic directly to the network and VMs created here are assigned an IP
+    * directly from the network as configured
     */
    DIRECT,
 
