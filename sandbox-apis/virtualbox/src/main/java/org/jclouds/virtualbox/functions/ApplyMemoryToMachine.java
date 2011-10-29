@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,10 +19,11 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import javax.annotation.Nullable;
+
 import org.virtualbox_4_1.IMachine;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist

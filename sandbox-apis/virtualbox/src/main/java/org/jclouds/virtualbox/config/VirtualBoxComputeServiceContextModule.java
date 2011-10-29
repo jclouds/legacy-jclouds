@@ -57,20 +57,21 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, Image, Location> {
+public class VirtualBoxComputeServiceContextModule extends
+      ComputeServiceAdapterContextModule<VirtualBoxManager, VirtualBoxManager, IMachine, IMachine, Image, Location> {
 
    public VirtualBoxComputeServiceContextModule() {
       super(VirtualBoxManager.class, VirtualBoxManager.class);
    }
-   
+
    @Provides
    @Singleton
-   protected VirtualBoxManager createInstance(@Provider URI endpoint, @Named(Constants.PROPERTY_IDENTITY) String identity,
-           @Named(Constants.PROPERTY_CREDENTIAL) String credential) {
-	   
-	   VirtualBoxManager manager = VirtualBoxManager.createInstance("");
-       manager.connect(endpoint.toASCIIString(), identity, credential);
-		return manager;
+   protected VirtualBoxManager createInstance(@Provider URI endpoint,
+         @Named(Constants.PROPERTY_IDENTITY) String identity, @Named(Constants.PROPERTY_CREDENTIAL) String credential) {
+
+      VirtualBoxManager manager = VirtualBoxManager.createInstance("");
+      manager.connect(endpoint.toASCIIString(), identity, credential);
+      return manager;
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -100,31 +101,24 @@ public class VirtualBoxComputeServiceContextModule extends ComputeServiceAdapter
 
    @VisibleForTesting
    public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-           .<MachineState, NodeState>builder()
-           .put(MachineState.Running, NodeState.RUNNING)
-           .put(MachineState.PoweredOff, NodeState.SUSPENDED)
-           .put(MachineState.DeletingSnapshot, NodeState.PENDING)
-           .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
-           .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
-           .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
-           .put(MachineState.LiveSnapshotting, NodeState.PENDING)
-           .put(MachineState.SettingUp, NodeState.PENDING)
-           .put(MachineState.Starting, NodeState.PENDING)
-           .put(MachineState.Stopping, NodeState.PENDING)
-           .put(MachineState.Restoring, NodeState.PENDING)
-                   // TODO What to map these states to?
-           .put(MachineState.FirstOnline, NodeState.PENDING)
-           .put(MachineState.FirstTransient, NodeState.PENDING)
-           .put(MachineState.LastOnline, NodeState.PENDING)
-           .put(MachineState.LastTransient, NodeState.PENDING)
-           .put(MachineState.Teleported, NodeState.PENDING)
-           .put(MachineState.TeleportingIn, NodeState.PENDING)
-           .put(MachineState.TeleportingPausedVM, NodeState.PENDING)
+         .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
+         .put(MachineState.PoweredOff, NodeState.SUSPENDED).put(MachineState.DeletingSnapshot, NodeState.PENDING)
+         .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
+         .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
+         .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
+         .put(MachineState.LiveSnapshotting, NodeState.PENDING)
+         .put(MachineState.SettingUp, NodeState.PENDING)
+         .put(MachineState.Starting, NodeState.PENDING)
+         .put(MachineState.Stopping, NodeState.PENDING)
+         .put(MachineState.Restoring, NodeState.PENDING)
+         // TODO What to map these states to?
+         .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
+         .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
+         .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
+         .put(MachineState.TeleportingPausedVM, NodeState.PENDING)
 
+         .put(MachineState.Aborted, NodeState.ERROR).put(MachineState.Stuck, NodeState.ERROR)
 
-           .put(MachineState.Aborted, NodeState.ERROR)
-           .put(MachineState.Stuck, NodeState.ERROR)
-
-           .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
+         .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
 
 }

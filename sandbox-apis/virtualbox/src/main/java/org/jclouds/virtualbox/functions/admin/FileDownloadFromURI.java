@@ -58,8 +58,8 @@ public class FileDownloadFromURI implements Function<URI, File> {
 
    @Inject
    public FileDownloadFromURI(final ComputeServiceContext context,
-                              @Named(VIRTUALBOX_WORKINGDIR) final String workingDir,
-                              @Named(VirtualBoxConstants.VIRTUALBOX_ISOFILE) final String isoFile) {
+         @Named(VIRTUALBOX_WORKINGDIR) final String workingDir,
+         @Named(VirtualBoxConstants.VIRTUALBOX_ISOFILE) final String isoFile) {
       this.context = context;
       this.workingDir = workingDir;
       this.isoFile = isoFile;

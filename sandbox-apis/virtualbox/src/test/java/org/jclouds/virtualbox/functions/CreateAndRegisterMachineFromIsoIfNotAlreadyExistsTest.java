@@ -19,16 +19,21 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
 import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
-
-import static org.easymock.EasyMock.anyBoolean;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
 
 /**
  * @author Mattias Holmqvist
@@ -55,9 +60,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       vBox.findMachine(vmName);
       expectLastCall().andThrow(vBoxException);
-      
-      expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(createdMachine).anyTimes();
-      
+
+      expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(
+            createdMachine).anyTimes();
+
       vBox.registerMachine(createdMachine);
 
       replay(manager, vBox);
@@ -103,10 +109,9 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
 
-
    }
 
    private String anyString() {
-      return EasyMock.<String>anyObject();
+      return EasyMock.<String> anyObject();
    }
 }

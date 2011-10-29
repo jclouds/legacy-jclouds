@@ -19,12 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import org.virtualbox_4_1.*;
-
 import javax.annotation.Nullable;
 
-import static org.virtualbox_4_1.DeviceType.HardDisk;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.VBoxException;
+
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
@@ -37,7 +39,8 @@ public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMach
    private int device;
    private DeviceType deviceType;
 
-   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, int controllerPort, int device, DeviceType deviceType) {
+   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, int controllerPort,
+         int device, DeviceType deviceType) {
       this.controllerIDE = controllerIDE;
       this.hardDisk = hardDisk;
       this.controllerPort = controllerPort;

@@ -16,32 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.rest.annotations;
 
-package org.jclouds.virtualbox;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.util.List;
-import java.util.Properties;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-import org.virtualbox_4_1.VirtualBoxManager;
-
-import com.google.inject.Module;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 
 /**
- * Creates compute service context for VirtualBox
+ * Shows the transformer type used to parse XML with the
+ * {@link ParseXMLWithJAXB} parser in a HttpResponse.
  * 
- * @author Mattias Holmqvist, Andrea Turli
+ * @author Ignasi Barrera
  */
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBoxManager> {
-
-   public VirtualBoxContextBuilder(Properties properties) {
-      super(VirtualBoxManager.class, properties);
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new VirtualBoxComputeServiceContextModule());
-   }
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface JAXBResponseParser {
 
 }

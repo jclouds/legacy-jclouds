@@ -18,14 +18,17 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
-
-import static org.easymock.classextension.EasyMock.*;
-
 
 /**
  * @author Mattias Holmqvist
@@ -67,7 +70,8 @@ public class AttachDistroMediumToMachineTest {
       errorBuilder.append("of this virtual machine (0x80BB000C)");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
+            isoAlreadyAttachedException);
       machine.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
       expectLastCall().andThrow(isoAttachedException);
 
@@ -92,7 +96,8 @@ public class AttachDistroMediumToMachineTest {
       errorBuilder.append("Some other VBox error");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
+            isoAlreadyAttachedException);
       machine.attachDevice(controllerIDE, 0, 0, DeviceType.DVD, distroMedium);
       expectLastCall().andThrow(isoAttachedException);
 
@@ -101,6 +106,5 @@ public class AttachDistroMediumToMachineTest {
       new AttachDistroMediumToMachine(controllerIDE, distroMedium).apply(machine);
 
    }
-
 
 }

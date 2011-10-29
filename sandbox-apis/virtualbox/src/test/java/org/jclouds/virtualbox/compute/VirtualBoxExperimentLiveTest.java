@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "VirtualBoxExperimentLiveTest")
-public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest{
+public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Test
    public void testAndExperiment() {

@@ -37,7 +37,7 @@
           extraction of appengine-java-sdk
         -->
         <appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
-        <appengine.sdk.version>1.5.3</appengine.sdk.version>
+        <appengine.sdk.version>1.5.5</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
         <jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,11 +19,15 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VBoxException;
-
-import static org.easymock.classextension.EasyMock.*;
 
 /**
  * @author Mattias Holmqvist
@@ -49,8 +53,8 @@ public class ApplyMemoryToMachineTest {
    @Test(expectedExceptions = VBoxException.class)
    public void testRethrowInvalidRamSizeError() throws Exception {
       // Mainly here for documentation purposes
-      final String error = "VirtualBox error: Invalid RAM size: " +
-              "3567587327 MB (must be in range [4, 2097152] MB) (0x80070057)";
+      final String error = "VirtualBox error: Invalid RAM size: "
+            + "3567587327 MB (must be in range [4, 2097152] MB) (0x80070057)";
 
       long memorySize = 1024l;
       IMachine machine = createMock(IMachine.class);

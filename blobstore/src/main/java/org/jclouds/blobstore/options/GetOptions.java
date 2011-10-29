@@ -21,7 +21,6 @@ package org.jclouds.blobstore.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -221,7 +220,7 @@ public class GetOptions {
       /**
        * @see GetOptions#ifETagMatches(String)
        */
-      public static GetOptions ifETagMatches(String eTag) throws UnsupportedEncodingException {
+      public static GetOptions ifETagMatches(String eTag) {
          GetOptions options = new GetOptions();
          return options.ifETagMatches(eTag);
       }
@@ -229,7 +228,7 @@ public class GetOptions {
       /**
        * @see GetOptions#ifETagDoesntMatch(String)
        */
-      public static GetOptions ifETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
+      public static GetOptions ifETagDoesntMatch(String eTag) {
          GetOptions options = new GetOptions();
          return options.ifETagDoesntMatch(eTag);
       }

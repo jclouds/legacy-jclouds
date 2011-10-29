@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -150,7 +149,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    @Test(groups = { "integration", "live" })
-   public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
+   public void testDirectory() throws InterruptedException {
       String containerName = getContainerName();
       String directory = "apps";
       Map<String, V> rootMap = createMap(context, containerName);

@@ -37,7 +37,7 @@
             extraction of appengine-java-sdk
         -->
         <appengine.applicationid>jclouds-tweetstore-spring</appengine.applicationid>
-        <appengine.sdk.version>1.5.3</appengine.sdk.version>
+        <appengine.sdk.version>1.5.5</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
         <jclouds.tweetstore.container>jclouds-tweetstore-spring</jclouds.tweetstore.container>
@@ -196,7 +196,7 @@
                     <plugin>
                         <groupId>net.kindleit</groupId>
                         <artifactId>maven-gae-plugin</artifactId>
-                        <version>0.8.4</version>
+                        <version>0.9.1</version>
                         <configuration>
                             <serverId>google-appengine</serverId>
                             <sdkDir>${appengine.sdk.root}</sdkDir>

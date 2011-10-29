@@ -21,8 +21,6 @@ package org.jclouds.s3.options;
 import static org.jclouds.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.reference.S3Headers;
 import org.testng.annotations.Test;
@@ -50,7 +48,7 @@ public class PutBucketOptionsTest {
    }
 
    @Test
-   void testBuildRequestHeaders() throws UnsupportedEncodingException {
+   void testBuildRequestHeaders() {
 
       PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
 

@@ -19,13 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
+import javax.annotation.Nullable;
+
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist

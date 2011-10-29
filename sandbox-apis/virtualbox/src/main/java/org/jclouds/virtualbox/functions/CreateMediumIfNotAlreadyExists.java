@@ -19,10 +19,16 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import org.virtualbox_4_1.*;
-
 import javax.annotation.Nullable;
+
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
@@ -71,15 +77,18 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
    private void createBaseStorage(IMedium hardDisk) {
       try {
          long size = 4L * 1024L * 1024L * 1024L - 4L;
-         IProgress storageCreation = hardDisk.createBaseStorage(size, (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
+         IProgress storageCreation = hardDisk.createBaseStorage(size,
+               (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
          storageCreation.waitForCompletion(-1);
       } catch (VBoxException e) {
          if (fileNotFoundException(e)) {
-            // File for medium could not be found. Something wrong with creation.
+            // File for medium could not be found. Something wrong with
+            // creation.
             hardDisk.deleteStorage();
          }
          if (!storageAlreadyExists(e)) {
-            // Hard disk file was created but the storage had been created before that.
+            // Hard disk file was created but the storage had been created
+            // before that.
             throw e;
          }
       }
@@ -90,8 +99,8 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
    }
 
    private boolean storageAlreadyExists(VBoxException e) {
-      return e.getMessage().indexOf("VirtualBox error: Storage for the medium ") != -1 &&
-              e.getMessage().indexOf("is already created") != -1;
+      return e.getMessage().indexOf("VirtualBox error: Storage for the medium ") != -1
+            && e.getMessage().indexOf("is already created") != -1;
    }
 
 }

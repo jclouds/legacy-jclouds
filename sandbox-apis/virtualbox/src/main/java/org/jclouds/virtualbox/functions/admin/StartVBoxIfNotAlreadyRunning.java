@@ -19,68 +19,74 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
-import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import org.jclouds.compute.ComputeServiceContext;
+import java.net.URI;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.inject.Named;
-
-import java.net.URI;
-import java.util.concurrent.ExecutionException;
-
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class StartVBoxIfNotAlreadyRunning implements Function<URI, VirtualBoxManager> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private ComputeServiceContext context;
-   private String hostId;
-   private Credentials credentials;
 
-   public StartVBoxIfNotAlreadyRunning(ComputeServiceContext context, String hostId, Credentials credentials) {
-      this.context = context;
-      this.hostId = hostId;
-      this.credentials = credentials;
+   private final ComputeService compute;
+   private final VirtualBoxManager manager;
+   private final Predicate<IPSocket> socketTester;
+   private final String hostId;
+   private final Credentials credentials;
+
+   public StartVBoxIfNotAlreadyRunning(ComputeService compute, VirtualBoxManager manager,
+         Predicate<IPSocket> socketTester, String hostId, Credentials credentials) {
+      this.compute = checkNotNull(compute, "compute");
+      this.manager = checkNotNull(manager, "manager");
+      this.socketTester = checkNotNull(socketTester, "socketTester");
+      this.hostId = checkNotNull(hostId, "hostId");
+      this.credentials = checkNotNull(credentials, "credentials");
    }
 
    @Override
-   public VirtualBoxManager apply(@Nullable URI endpoint) {
+   public VirtualBoxManager apply(URI endpoint) {
+      checkState(compute.getNodeMetadata(hostId) != null, "compute service %s cannot locate node with id %s", compute,
+            hostId);
+      checkNotNull(endpoint, "endpoint to virtualbox websrvd is needed");
 
-      // TODO Really create new object here? Should we cache these instead?
-      VirtualBoxManager manager = VirtualBoxManager.createInstance(hostId);
-
-      if (new InetSocketAddressConnect().apply(new IPSocket(endpoint.getHost(), endpoint.getPort()))) {
+      if (socketTester.apply(new IPSocket(endpoint.getHost(), endpoint.getPort()))) {
          manager.connect(endpoint.toASCIIString(), credentials.identity, credentials.credential);
          return manager;
       }
 
       logger.debug("disabling password access");
-      context.getComputeService().runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false).wrapInInitScript(false));
+      compute.runScriptOnNode(hostId, "VBoxManage setproperty websrvauthlibrary null", runAsRoot(false)
+            .wrapInInitScript(false));
       logger.debug("starting vboxwebsrv");
       String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
       if (isOSX(hostId))
          vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && " + vboxwebsrv;
 
-      context.getComputeService().runScriptOnNode(hostId, vboxwebsrv, runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"));
+      compute.runScriptOnNode(hostId, vboxwebsrv, runAsRoot(false).wrapInInitScript(false).blockOnComplete(false)
+            .nameTask("vboxwebsrv"));
 
       manager.connect(endpoint.toASCIIString(), credentials.identity, credentials.credential);
       return manager;
    }
 
    private boolean isOSX(String hostId) {
-      return context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getDescription().equals(
-              "Mac OS X");
+      return compute.getNodeMetadata(hostId).getOperatingSystem().getDescription().equals("Mac OS X");
    }
 
 }

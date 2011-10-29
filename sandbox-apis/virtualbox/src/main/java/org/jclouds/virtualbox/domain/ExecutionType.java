@@ -17,31 +17,19 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox;
+package org.jclouds.virtualbox.domain;
 
-import java.util.List;
-import java.util.Properties;
+public enum ExecutionType {
 
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-import org.virtualbox_4_1.VirtualBoxManager;
+   GUI("gui"), HEADLESS("headless"), SDL("sdl"), EMERGENCYSTOP("emergencystop");
 
-import com.google.inject.Module;
+   private final String type;
 
-/**
- * Creates compute service context for VirtualBox
- * 
- * @author Mattias Holmqvist, Andrea Turli
- */
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBoxManager> {
-
-   public VirtualBoxContextBuilder(Properties properties) {
-      super(VirtualBoxManager.class, properties);
+   ExecutionType(String type) {
+      this.type = type;
    }
 
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new VirtualBoxComputeServiceContextModule());
+   public String stringValue() {
+      return type;
    }
-
 }

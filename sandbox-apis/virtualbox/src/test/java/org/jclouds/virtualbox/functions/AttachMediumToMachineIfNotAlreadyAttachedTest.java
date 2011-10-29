@@ -19,11 +19,22 @@
 
 package org.jclouds.virtualbox.functions;
 
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
-
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
+
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 /**
  * @author Mattias Holmqvist
@@ -54,7 +65,8 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       machine.saveSettings();
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk).apply(machine);
+      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
+            .apply(machine);
 
       verify(machine);
 
@@ -79,13 +91,15 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       errorBuilder.append("of this virtual machine (0x80BB000C)");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
+            isoAlreadyAttachedException);
       machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk).apply(machine);
+      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
+            .apply(machine);
 
       verify(machine);
 
@@ -108,13 +122,15 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       errorBuilder.append("Some other VBox error");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
+            isoAlreadyAttachedException);
       machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk).apply(machine);
+      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
+            .apply(machine);
 
    }
 

@@ -26,7 +26,6 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResu
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -114,7 +113,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
+   public void testListContainerMarker() throws InterruptedException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
@@ -137,7 +136,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListRootUsesDelimiter() throws InterruptedException, UnsupportedEncodingException {
+   public void testListRootUsesDelimiter() throws InterruptedException {
       String containerName = getContainerName();
       try {
          String prefix = "rootdelimeter";
@@ -153,7 +152,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
+   public void testDirectory() throws InterruptedException {
       String containerName = getContainerName();
       try {
          String directory = "directory";
@@ -230,7 +229,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainerPrefix() throws InterruptedException, UnsupportedEncodingException {
+   public void testListContainerPrefix() throws InterruptedException {
       String containerName = getContainerName();
       try {
          String prefix = "containerprefix";
@@ -247,7 +246,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainerMaxResults() throws InterruptedException, UnsupportedEncodingException {
+   public void testListContainerMaxResults() throws InterruptedException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
@@ -295,8 +294,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException,
-         UnsupportedEncodingException {
+   public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);

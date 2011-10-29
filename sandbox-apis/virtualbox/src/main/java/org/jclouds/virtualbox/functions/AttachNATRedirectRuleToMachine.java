@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,14 +19,15 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
+import static org.virtualbox_4_1.NATProtocol.TCP;
+import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
 import javax.annotation.Nullable;
 
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.INetworkAdapter;
+
+import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
