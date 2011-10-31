@@ -25,7 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudstack.domain.SSHKeyPair;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -52,13 +52,13 @@ public interface SSHKeyPairAsyncClient {
    @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<SSHKeyPair>> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
+   ListenableFuture<Set<SshKeyPair>> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
 
    @GET
    @QueryParams(keys = "command", values = "createSSHKeyPair")
    @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<SSHKeyPair> createSSHKeyPair(@QueryParam("name") String name);
+   ListenableFuture<SshKeyPair> createSSHKeyPair(@QueryParam("name") String name);
 
    @GET
    @QueryParams(keys = "command", values = "listSSHKeyPairs")
@@ -66,6 +66,6 @@ public interface SSHKeyPairAsyncClient {
    @OnlyElement()
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SSHKeyPair> getSSHKeyPair(@QueryParam("name") String name);
+   ListenableFuture<SshKeyPair> getSSHKeyPair(@QueryParam("name") String name);
 
 }

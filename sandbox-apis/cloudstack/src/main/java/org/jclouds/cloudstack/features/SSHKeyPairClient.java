@@ -22,7 +22,7 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.SSHKeyPair;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -38,9 +38,9 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SSHKeyPairClient {
 
-   Set<SSHKeyPair> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
+   Set<SshKeyPair> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
 
-   SSHKeyPair createSSHKeyPair(String name);
+   SshKeyPair createSSHKeyPair(String name);
 
-   SSHKeyPair getSSHKeyPair(String name);
+   SshKeyPair getSSHKeyPair(String name);
 }
