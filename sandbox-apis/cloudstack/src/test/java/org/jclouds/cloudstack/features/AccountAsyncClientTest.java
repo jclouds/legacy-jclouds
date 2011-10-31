@@ -38,7 +38,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "AccountAsyncClientTest")
 public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<AccountAsyncClient> {
 
@@ -47,7 +48,7 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listAccounts HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAccounts HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -61,11 +62,11 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
 
    public void testListAccountsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListAccountsOptions.Builder.accountInDomain("jclouds",
-               123));
+      HttpRequest httpRequest = processor.createRequest(method,
+            ListAccountsOptions.Builder.accountInDomain("jclouds", 123));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listAccounts&account=jclouds&domainid=123 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAccounts&account=jclouds&domainid=123 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -82,7 +83,7 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
       HttpRequest httpRequest = processor.createRequest(method, 3l);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listAccounts&id=3 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAccounts&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

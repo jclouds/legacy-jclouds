@@ -40,7 +40,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "ServiceOfferingAsyncClientTest")
 public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<OfferingAsyncClient> {
    public void testListDiskOfferings() throws SecurityException, NoSuchMethodException, IOException {

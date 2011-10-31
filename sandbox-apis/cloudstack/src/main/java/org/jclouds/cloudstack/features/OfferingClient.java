@@ -44,7 +44,8 @@ public interface OfferingClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return service offerings matching query, or empty set, if no service offerings are found
+    * @return service offerings matching query, or empty set, if no service
+    *         offerings are found
     */
    Set<ServiceOffering> listServiceOfferings(ListServiceOfferingsOptions... options);
 
@@ -62,7 +63,8 @@ public interface OfferingClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return disk offerings matching query, or empty set, if no disk offerings are found
+    * @return disk offerings matching query, or empty set, if no disk offerings
+    *         are found
     */
    Set<DiskOffering> listDiskOfferings(ListDiskOfferingsOptions... options);
 
@@ -80,7 +82,8 @@ public interface OfferingClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return service offerings matching query, or empty set, if no service offerings are found
+    * @return service offerings matching query, or empty set, if no service
+    *         offerings are found
     */
    Set<NetworkOffering> listNetworkOfferings(ListNetworkOfferingsOptions... options);
 

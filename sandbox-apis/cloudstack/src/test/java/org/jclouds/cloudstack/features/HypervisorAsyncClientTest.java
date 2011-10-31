@@ -34,7 +34,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "HypervisorAsyncClientTest")
 public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<HypervisorAsyncClient> {
 
@@ -43,7 +44,7 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listHypervisors HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listHypervisors HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -60,7 +61,7 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
       HttpRequest httpRequest = processor.createRequest(method, 11);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listHypervisors&zoneid=11 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listHypervisors&zoneid=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 

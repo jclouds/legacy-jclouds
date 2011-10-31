@@ -112,10 +112,10 @@ public class NetworkPredicates {
    }
 
    public static Predicate<NetworkService> supportsStaticNAT = Predicates.and(new NetworkServiceNamed("Firewall"),
-            new CapabilitiesInclude("StaticNat"));
+         new CapabilitiesInclude("StaticNat"));
 
    public static Predicate<NetworkService> supportsPortForwarding = Predicates.and(new NetworkServiceNamed("Firewall"),
-            new CapabilitiesInclude("PortForwarding"));
+         new CapabilitiesInclude("PortForwarding"));
 
    public static Predicate<NetworkService> isLoadBalancerService = new NetworkServiceNamed("Lb");
 

@@ -58,14 +58,14 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public
-   ReuseOrAssociateNewPublicIPAddress(CloudStackClient client, Predicate<Long> jobComplete) {
+   public ReuseOrAssociateNewPublicIPAddress(CloudStackClient client, Predicate<Long> jobComplete) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
    }
 
    /**
-    * Finds existing addresses who are ready for use and not assigned to a machine.
+    * Finds existing addresses who are ready for use and not assigned to a
+    * machine.
     * 
     * @param networkId
     *           network id to search
@@ -76,14 +76,14 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
     *            if there's no existing ip address that is free for use
     */
    public static PublicIPAddress findAvailableAndAssociatedWithNetwork(long networkId, AddressClient client) {
-      return find(client.listPublicIPAddresses(allocatedOnly(true).networkId(networkId)), and(
-               associatedWithNetwork(networkId), available()));
+      return find(client.listPublicIPAddresses(allocatedOnly(true).networkId(networkId)),
+            and(associatedWithNetwork(networkId), available()));
    }
 
    public static PublicIPAddress associateIPAddressInNetwork(Network network, CloudStackClient client,
-            Predicate<Long> jobComplete) {
+         Predicate<Long> jobComplete) {
       AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(network.getZoneId(),
-               networkId(network.getId()));
+            networkId(network.getId()));
       checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
       PublicIPAddress ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
       assert ip.getZoneId() == network.getZoneId();

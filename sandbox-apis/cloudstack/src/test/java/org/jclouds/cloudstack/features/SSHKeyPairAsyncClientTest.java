@@ -21,13 +21,14 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.cloudstack.domain.TemplateFilter;
-import org.jclouds.cloudstack.options.ListTemplatesOptions;
+import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -35,20 +36,19 @@ import com.google.common.base.Functions;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code TemplateAsyncClient}
+ * Tests behavior of {@code SSHKeyPairAsyncClient}
  * 
- * @author Adrian Cole
+ * @author Vijay Kiran
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
-@Test(groups = "unit", testName = "TemplateAsyncClientTest")
-public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<TemplateAsyncClient> {
-   public void testListTemplates() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TemplateAsyncClient.class.getMethod("listTemplates");
+@Test(groups = "unit", testName = "SSHKeyPairAsyncClientTest")
+public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSHKeyPairAsyncClient> {
+
+   public void testListSSHKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SSHKeyPairAsyncClient.class.getMethod("listSSHKeyPairs", ListSSHKeyPairsOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -60,17 +60,12 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
 
    }
 
-   public void testListTemplatesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TemplateAsyncClient.class.getMethod("listTemplates", ListTemplatesOptions.class);
-      HttpRequest httpRequest = processor
-            .createRequest(
-                  method,
-                  ListTemplatesOptions.Builder.accountInDomain("adrian", 6).hypervisor("xen")
-                        .filter(TemplateFilter.FEATURED));
+   public void testListSSHKeyPairsOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SSHKeyPairAsyncClient.class.getMethod("listSSHKeyPairs", ListSSHKeyPairsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, ListSSHKeyPairsOptions.Builder.name("jclouds"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listTemplates&account=adrian&domainid=6&hypervisor=xen&templatefilter=featured HTTP/1.1");
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&name=jclouds HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -82,13 +77,12 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
 
    }
 
-   public void testGetTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TemplateAsyncClient.class.getMethod("getTemplateInZone", long.class, long.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1, 5);
+   public void testGetSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SSHKeyPairAsyncClient.class.getMethod("getSSHKeyPair", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "jclouds-keypair");
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listTemplates&templatefilter=executable&zoneid=1&id=5 HTTP/1.1");
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&name=jclouds-keypair HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -101,9 +95,26 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
 
    }
 
+   public void testDeleteSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SSHKeyPairAsyncClient.class.getMethod("deleteSSHKeyPair", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "jclouds-keypair");
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=deleteSSHKeyPair&name=jclouds-keypair HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<TemplateAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TemplateAsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<SSHKeyPairAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<SSHKeyPairAsyncClient>>() {
       };
    }
 }

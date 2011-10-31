@@ -25,19 +25,24 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what OSType information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listOsTypes.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listOsTypes.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListOSTypesOptions extends BaseHttpRequestOptions {
 
    public static final ListOSTypesOptions NONE = new ListOSTypesOptions();
+
    /**
-    * @param id list by Os type Id
+    * @param id
+    *           list by Os type Id
     */
    public ListOSTypesOptions id(long id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
+
    /**
     * @param OSCategoryId
     *           list by Os Category id
@@ -47,7 +52,6 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-
    public static class Builder {
       /**
        * @see ListOSTypesOptions#id
@@ -56,7 +60,6 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
          ListOSTypesOptions options = new ListOSTypesOptions();
          return options.id(id);
       }
-
 
       /**
        * @see ListOSTypesOptions#OSCategoryId

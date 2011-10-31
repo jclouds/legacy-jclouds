@@ -142,7 +142,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
 
       public LoadBalancerRule build() {
          return new LoadBalancerRule(id, account, algorithm, description, domain, domainId, name, privatePort,
-                  publicIP, publicIPId, publicPort, state);
+               publicIP, publicIPId, publicPort, state);
       }
    }
 
@@ -170,7 +170,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    public LoadBalancerRule(long id, String account, Algorithm algorithm, String description, String domain,
-            long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state) {
+         long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state) {
       this.id = id;
       this.account = account;
       this.algorithm = algorithm;
@@ -353,9 +353,9 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    @Override
    public String toString() {
       return "[account=" + account + ", algorithm=" + algorithm + ", description=" + description + ", domain=" + domain
-               + ", domainId=" + domainId + ", id=" + id + ", name=" + name + ", privatePort=" + privatePort
-               + ", publicIP=" + publicIP + ", publicIPId=" + publicIPId + ", publicPort=" + publicPort + ", state="
-               + state + "]";
+            + ", domainId=" + domainId + ", id=" + id + ", name=" + name + ", privatePort=" + privatePort
+            + ", publicIP=" + publicIP + ", publicIPId=" + publicIPId + ", publicPort=" + publicPort + ", state="
+            + state + "]";
    }
 
 }

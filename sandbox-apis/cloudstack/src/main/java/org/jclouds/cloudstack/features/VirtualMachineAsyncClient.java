@@ -81,9 +81,9 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "deployVirtualMachine")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone( @QueryParam("zoneid") long zoneId, @QueryParam("serviceofferingid") long serviceOfferingId,
-            @QueryParam("templateid") long templateId,
-            DeployVirtualMachineOptions... options);
+   ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone(@QueryParam("zoneid") long zoneId,
+         @QueryParam("serviceofferingid") long serviceOfferingId, @QueryParam("templateid") long templateId,
+         DeployVirtualMachineOptions... options);
 
    /**
     * @see VirtualMachineClient#rebootVirtualMachine

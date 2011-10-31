@@ -48,7 +48,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
    long zoneId = 100l;
    // note that it is associated network, not networkId
    PublicIPAddress address = PublicIPAddress.builder().id(200).state(PublicIPAddress.State.ALLOCATED)
-            .associatedNetworkId(networkId).zoneId(zoneId).build();
+         .associatedNetworkId(networkId).zoneId(zoneId).build();
 
    public void testReuseWorks() throws SecurityException, NoSuchMethodException {
 
@@ -60,15 +60,16 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       // an address is available
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
-               ImmutableSet.<PublicIPAddress> of(address));
+            ImmutableSet.<PublicIPAddress> of(address));
 
       // replay mocks
       replay(client);
       replay(addressClient);
 
       // run
-      assertEquals(new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
-               .zoneId(zoneId).build()), address);
+      assertEquals(
+            new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
+                  .zoneId(zoneId).build()), address);
 
       // verify mocks
       verify(client);
@@ -88,7 +89,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       // no ip addresses available
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
-               ImmutableSet.<PublicIPAddress> of());
+            ImmutableSet.<PublicIPAddress> of());
 
       AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
       // make sure we created the job relating to a new ip
@@ -105,8 +106,9 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
       replay(jobClient);
 
       // run
-      assertEquals(new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
-               .zoneId(zoneId).build()), address);
+      assertEquals(
+            new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
+                  .zoneId(zoneId).build()), address);
 
       // verify mocks
       verify(client);
@@ -128,13 +130,14 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       // no ip addresses available
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
-               ImmutableSet.<PublicIPAddress> of());
+            ImmutableSet.<PublicIPAddress> of());
 
       AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
       // make sure we created the job relating to a new ip
       expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 
-      // the alwaysfalse predicate above should blow up with IllegalStateException
+      // the alwaysfalse predicate above should blow up with
+      // IllegalStateException
 
       // replay mocks
       replay(client);
@@ -142,7 +145,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       // run
       new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId).zoneId(zoneId)
-               .build());
+            .build());
 
       // verify mocks
       verify(client);

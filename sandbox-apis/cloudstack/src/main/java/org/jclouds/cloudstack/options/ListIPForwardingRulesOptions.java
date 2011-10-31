@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what ip forwarding rules are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listIpForwardingRules.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listIpForwardingRules.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListIPForwardingRulesOptions extends AccountInDomainOptions {

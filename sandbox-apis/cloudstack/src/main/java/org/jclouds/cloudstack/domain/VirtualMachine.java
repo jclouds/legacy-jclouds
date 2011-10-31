@@ -289,11 +289,10 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
       public VirtualMachine build() {
          return new VirtualMachine(id, account, cpuCount, cpuSpeed, cpuUsed, displayName, created, domain, domainId,
-                  usesVirtualNetwork, group, groupId, guestOSId, HAEnabled, hostId, hostname, IPAddress,
-                  ISODisplayText, ISOId, ISOName, jobId, jobStatus, memory, name, networkKbsRead, networkKbsWrite,
-                  password, passwordEnabled, rootDeviceId, rootDeviceType, securityGroups, serviceOfferingId,
-                  serviceOfferingName, state, templateDisplayText, templateId, templateName, zoneId, zoneName, nics,
-                  hypervisor);
+               usesVirtualNetwork, group, groupId, guestOSId, HAEnabled, hostId, hostname, IPAddress, ISODisplayText,
+               ISOId, ISOName, jobId, jobStatus, memory, name, networkKbsRead, networkKbsWrite, password,
+               passwordEnabled, rootDeviceId, rootDeviceType, securityGroups, serviceOfferingId, serviceOfferingName,
+               state, templateDisplayText, templateId, templateName, zoneId, zoneName, nics, hypervisor);
       }
    }
 
@@ -390,13 +389,13 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
    public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, Long cpuUsed, String displayName,
-            Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
-            long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
-            long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
-            Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
-            Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
-            String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName,
-            Set<NIC> nics, String hypervisor) {
+         Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
+         long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
+         long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
+         Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
+         Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
+         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName, Set<NIC> nics,
+         String hypervisor) {
       this.id = id;
       this.account = account;
       this.cpuCount = cpuCount;
@@ -483,8 +482,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    /**
-    * @return user generated name. The name of the virtual machine is returned if no displayname
-    *         exists.
+    * @return user generated name. The name of the virtual machine is returned
+    *         if no displayname exists.
     */
    public String getDisplayName() {
       return displayName;
@@ -574,7 +573,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    /**
-    * @return an alternate display text of the ISO attached to the virtual machine
+    * @return an alternate display text of the ISO attached to the virtual
+    *         machine
     */
    public String getISODisplayText() {
       return ISODisplayText;
@@ -595,8 +595,9 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    /**
-    * @return shows the current pending asynchronous job ID. This tag is not returned if no current
-    *         pending jobs are acting on the virtual machine
+    * @return shows the current pending asynchronous job ID. This tag is not
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
     */
    @Nullable
    public Long getJobId() {
@@ -704,8 +705,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    /**
-    * @return the ID of the template for the virtual machine. A -1 is returned if the virtual
-    *         machine was created from an ISO file.
+    * @return the ID of the template for the virtual machine. A -1 is returned
+    *         if the virtual machine was created from an ISO file.
     */
    public long getTemplateId() {
       return templateId;
@@ -955,18 +956,17 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @Override
    public String toString() {
       return "[id=" + id + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed + ", cpuUsed="
-               + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain
-               + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group
-               + ", groupId=" + groupId + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId="
-               + hostId + ", hostname=" + hostname + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText
-               + ", ISOId=" + ISOId + ", ISOName=" + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus
-               + ", memory=" + memory + ", name=" + name + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite="
-               + networkKbsWrite + ", password=" + password + ", passwordEnabled=" + passwordEnabled
-               + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType=" + rootDeviceType + ", serviceOfferingId="
-               + serviceOfferingId + ", serviceOfferingName=" + serviceOfferingName + ", state=" + state
-               + ", templateDisplayText=" + templateDisplayText + ", templateId=" + templateId + ", templateName="
-               + templateName + ", zoneId=" + zoneId + ", zoneName=" + zoneName + ", nics=" + nics + ", hypervisor="
-               + hypervisor + ", securityGroups=" + securityGroups + "]";
+            + cpuUsed + ", displayName=" + displayName + ", created=" + created + ", domain=" + domain + ", domainId="
+            + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group + ", groupId=" + groupId
+            + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId + ", hostname=" + hostname
+            + ", IPAddress=" + IPAddress + ", ISODisplayText=" + ISODisplayText + ", ISOId=" + ISOId + ", ISOName="
+            + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory + ", name=" + name
+            + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite + ", password=" + password
+            + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType="
+            + rootDeviceType + ", serviceOfferingId=" + serviceOfferingId + ", serviceOfferingName="
+            + serviceOfferingName + ", state=" + state + ", templateDisplayText=" + templateDisplayText
+            + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId=" + zoneId + ", zoneName="
+            + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + ", securityGroups=" + securityGroups + "]";
    }
 
    @Override

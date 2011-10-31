@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what account information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listAccounts.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listAccounts.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListAccountsOptions extends AccountInDomainOptions {
@@ -50,7 +52,8 @@ public class ListAccountsOptions extends AccountInDomainOptions {
 
    /**
     * @param state
-    *           list accounts by state. Valid states are enabled, disabled, and locked.
+    *           list accounts by state. Valid states are enabled, disabled, and
+    *           locked.
     */
    public ListAccountsOptions state(String state) {
       this.queryParameters.replaceValues("state", ImmutableSet.of(state));
@@ -68,8 +71,8 @@ public class ListAccountsOptions extends AccountInDomainOptions {
 
    /**
     * @param recursive
-    *           defaults to false, but if true, lists all accounts from the parent specified by the
-    *           domain id till leaves.
+    *           defaults to false, but if true, lists all accounts from the
+    *           parent specified by the domain id till leaves.
     */
    public ListAccountsOptions recursive(boolean recursive) {
       this.queryParameters.replaceValues("isrecursive", ImmutableSet.of(recursive + ""));

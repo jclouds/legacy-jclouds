@@ -22,6 +22,7 @@ import static com.google.common.collect.Iterables.find;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -108,7 +109,8 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       assert network.getAccount() != null : network;
       assert network.getBroadcastDomainType() != null : network;
       assert network.getDisplayText() != null : network;
-      assert network.getNetworkDomain() != null : network;
+      // Network domain can be null sometimes
+      // assert network.getNetworkDomain() != null : network;
       assert network.getNetworkOfferingAvailability() != null : network;
       assert network.getNetworkOfferingDisplayText() != null : network;
       assert network.getNetworkOfferingId() > 0 : network;
@@ -132,7 +134,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          assert network.getNetmask() != null : network;
          assert network.getGateway() != null : network;
          assert network.getVLAN() != null : network;
-         assertEquals(network.getBroadcastURI(), "vlan://" + network.getVLAN());
+         assertEquals(network.getBroadcastURI(), URI.create("vlan://" + network.getVLAN()));
          assert network.getStartIP() != null : network;
          assert network.getEndIP() != null : network;
          break;

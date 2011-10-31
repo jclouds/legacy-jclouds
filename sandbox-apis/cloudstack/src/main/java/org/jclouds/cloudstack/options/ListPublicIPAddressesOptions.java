@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what ip addresss information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listIPAddresses.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listIPAddresses.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListPublicIPAddressesOptions extends AccountInDomainOptions {

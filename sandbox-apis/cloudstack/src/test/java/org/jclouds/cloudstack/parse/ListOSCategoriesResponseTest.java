@@ -43,9 +43,9 @@ public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<Long, S
 
    @Override
    public Map<Long, String> expected() {
-      return ImmutableMap.<Long, String> builder().put(1l, "CentOS").put(2l, "Debian").put(3l, "Oracle").put(4l,
-               "RedHat").put(5l, "SUSE").put(6l, "Windows").put(7l, "Other").put(8l, "Novel").put(9l, "Unix").put(10l,
-               "Ubuntu").build();
+      return ImmutableMap.<Long, String> builder().put(1l, "CentOS").put(2l, "Debian").put(3l, "Oracle")
+            .put(4l, "RedHat").put(5l, "SUSE").put(6l, "Windows").put(7l, "Other").put(8l, "Novel").put(9l, "Unix")
+            .put(10l, "Ubuntu").build();
    }
 
    @Override

@@ -25,7 +25,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what zones information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listZones.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listZones.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListZonesOptions extends BaseHttpRequestOptions {
@@ -37,7 +39,7 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
     *           the ID of the zone
     */
    public ListZonesOptions id(long id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id+""));
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -46,15 +48,16 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
     *           the ID of the domain associated with the zone
     */
    public ListZonesOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId+""));
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
    }
 
    /**
     * @param available
-    *           true if you want to retrieve all available Zones. False if you only want to return
-    *           the Zones from which you have at least one VM. Default is false.
+    *           true if you want to retrieve all available Zones. False if you
+    *           only want to return the Zones from which you have at least one
+    *           VM. Default is false.
     */
    public ListZonesOptions available(boolean available) {
       this.queryParameters.replaceValues("available", ImmutableSet.of(available + ""));

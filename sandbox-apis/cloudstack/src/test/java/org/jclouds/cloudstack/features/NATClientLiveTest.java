@@ -61,7 +61,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
-                  virtualMachineRunning);
+               virtualMachineRunning);
          if (vm.getPassword() != null)
             password = vm.getPassword();
       } catch (NoSuchElementException e) {
@@ -73,7 +73,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       if (networksDisabled)
          return;
       for (ip = reuseOrAssociate.apply(network); (!ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId()); ip = reuseOrAssociate
-               .apply(network)) {
+            .apply(network)) {
          // check to see if someone already grabbed this ip
          if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
             continue;
@@ -130,7 +130,7 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(response.size() >= 0);
       for (IPForwardingRule rule : response) {
          IPForwardingRule newDetails = getOnlyElement(client.getNATClient().listIPForwardingRules(
-                  ListIPForwardingRulesOptions.Builder.id(rule.getId())));
+               ListIPForwardingRulesOptions.Builder.id(rule.getId())));
          assertEquals(rule.getId(), newDetails.getId());
          checkRule(rule);
       }

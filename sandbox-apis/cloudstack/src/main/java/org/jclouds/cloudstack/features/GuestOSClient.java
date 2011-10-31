@@ -57,7 +57,8 @@ public interface GuestOSClient {
    /**
     * Lists all supported OS categories for this cloud.
     * 
-    * @return os categories matching query, or empty set, if no categories are found
+    * @return os categories matching query, or empty set, if no categories are
+    *         found
     */
    Map<Long, String> listOSCategories();
 

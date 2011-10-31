@@ -43,7 +43,8 @@ public interface SecurityGroupClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return security groups matching query, or empty set, if no security groups are found
+    * @return security groups matching query, or empty set, if no security
+    *         groups are found
     */
    Set<SecurityGroup> listSecurityGroups(ListSecurityGroupsOptions... options);
 
@@ -63,7 +64,7 @@ public interface SecurityGroupClient {
     * @return response relating to the creation of this ingress rule
     */
    long authorizeIngressPortsToCIDRs(long securityGroupId, String protocol, int startPort, int endPort,
-            Iterable<String> cidrList, AccountInDomainOptions... options);
+         Iterable<String> cidrList, AccountInDomainOptions... options);
 
    /**
     * Authorizes a particular TCP or UDP ingress rule for this security group
@@ -77,11 +78,12 @@ public interface SecurityGroupClient {
     * @param endPort
     *           end port for this ingress rule
     * @param accountToGroup
-    *           mapping of account names to security groups you wish to authorize
+    *           mapping of account names to security groups you wish to
+    *           authorize
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressPortsToSecurityGroups(long securityGroupId, String protocol, int startPort,
-            int endPort, Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
+   long authorizeIngressPortsToSecurityGroups(long securityGroupId, String protocol, int startPort, int endPort,
+         Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
 
    /**
     * Authorizes a particular ICMP ingress rule for this security group
@@ -96,8 +98,8 @@ public interface SecurityGroupClient {
     *           the cidr list associated
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressICMPToCIDRs(long securityGroupId, int ICMPCode, int ICMPType,
-            Iterable<String> cidrList, AccountInDomainOptions... options);
+   long authorizeIngressICMPToCIDRs(long securityGroupId, int ICMPCode, int ICMPType, Iterable<String> cidrList,
+         AccountInDomainOptions... options);
 
    /**
     * Authorizes a particular ICMP ingress rule for this security group
@@ -109,17 +111,20 @@ public interface SecurityGroupClient {
     * @param ICMPType
     *           error code for this icmp message
     * @param accountToGroup
-    *           mapping of account names to security groups you wish to authorize
+    *           mapping of account names to security groups you wish to
+    *           authorize
     * @return response relating to the creation of this ingress rule
     */
    long authorizeIngressICMPToSecurityGroups(long securityGroupId, int ICMPCode, int ICMPType,
-            Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
-   
+         Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
+
    /**
     * Deletes a particular ingress rule from this security group
     * 
-    * @param id The ID of the ingress rule
-    * @param options scope of the rule.
+    * @param id
+    *           The ID of the ingress rule
+    * @param options
+    *           scope of the rule.
     */
    long revokeIngressRule(long id, AccountInDomainOptions... options);;
 

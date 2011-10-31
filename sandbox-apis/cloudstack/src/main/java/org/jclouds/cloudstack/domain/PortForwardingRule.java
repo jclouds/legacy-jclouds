@@ -93,7 +93,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
 
       public PortForwardingRule build() {
          return new PortForwardingRule(id, IPAddress, IPAddressId, privatePort, protocol, publicPort, state,
-                  virtualMachineDisplayName, virtualMachineId, virtualMachineName);
+               virtualMachineDisplayName, virtualMachineId, virtualMachineName);
       }
    }
 
@@ -121,14 +121,14 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    }
 
    public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, String protocol,
-            int publicPort, String state, String virtualMachineDisplayName, long virtualMachineId,
-            String virtualMachineName) {
+         int publicPort, String state, String virtualMachineDisplayName, long virtualMachineId,
+         String virtualMachineName) {
       this.id = id;
       this.IPAddress = iPAddress;
       this.IPAddressId = iPAddressId;
       this.privatePort = privatePort;
       this.protocol = protocol;
-      this.publicPort = publicPort+"";
+      this.publicPort = publicPort + "";
       this.state = state;
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
@@ -290,9 +290,9 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @Override
    public String toString() {
       return "[IPAddress=" + IPAddress + ", IPAddressId=" + IPAddressId + ", id=" + id + ", privatePort=" + privatePort
-               + ", protocol=" + protocol + ", publicPort=" + publicPort + ", state=" + state
-               + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
-               + ", virtualMachineName=" + virtualMachineName + "]";
+            + ", protocol=" + protocol + ", publicPort=" + publicPort + ", state=" + state
+            + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
+            + ", virtualMachineName=" + virtualMachineName + "]";
    }
 
 }

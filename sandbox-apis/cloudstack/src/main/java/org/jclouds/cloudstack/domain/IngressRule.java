@@ -115,13 +115,13 @@ public class IngressRule implements Comparable<IngressRule> {
    }
 
    public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, long id,
-            String securityGroupName, int startPort) {
+         String securityGroupName, int startPort) {
       if (account == null)
          checkArgument(securityGroupName == null && CIDR != null,
-                  "if you do not specify an account and security group, you must specify a CIDR range");
+               "if you do not specify an account and security group, you must specify a CIDR range");
       if (CIDR == null)
          checkArgument(account != null && securityGroupName != null,
-                  "if you do not specify an account and security group, you must specify a CIDR range");
+               "if you do not specify an account and security group, you must specify a CIDR range");
       this.account = account;
       this.CIDR = CIDR;
       this.endPort = endPort;
@@ -257,8 +257,8 @@ public class IngressRule implements Comparable<IngressRule> {
    @Override
    public String toString() {
       return "[id=" + id + ", securityGroupName=" + securityGroupName + ", account=" + account + ", startPort="
-               + startPort + ", endPort=" + endPort + ", protocol=" + protocol + ", CIDR=" + CIDR + ", ICMPCode="
-               + ICMPCode + ", ICMPType=" + ICMPType + "]";
+            + startPort + ", endPort=" + endPort + ", protocol=" + protocol + ", CIDR=" + CIDR + ", ICMPCode="
+            + ICMPCode + ", ICMPType=" + ICMPType + "]";
    }
 
    @Override

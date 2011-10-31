@@ -29,7 +29,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what disk offerings are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/deployVirtualMachine.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/deployVirtualMachine.html"
+ *      />
  * @author Adrian Cole
  */
 public class DeployVirtualMachineOptions extends AccountInDomainOptions {
@@ -37,11 +39,13 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    public static final DeployVirtualMachineOptions NONE = new DeployVirtualMachineOptions();
 
    /**
-    * the ID of the disk offering for the virtual machine. If the template is of ISO format, the
-    * diskOfferingId is for the root disk volume. Otherwise this parameter is used to dinidcate the
-    * offering for the data disk volume. If the templateId parameter passed is from a Template
-    * object, the diskOfferingId refers to a DATA Disk Volume created. If the templateId parameter
-    * passed is from an ISO object, the diskOfferingId refers to a ROOT Disk Volume created.
+    * the ID of the disk offering for the virtual machine. If the template is of
+    * ISO format, the diskOfferingId is for the root disk volume. Otherwise this
+    * parameter is used to dinidcate the offering for the data disk volume. If
+    * the templateId parameter passed is from a Template object, the
+    * diskOfferingId refers to a DATA Disk Volume created. If the templateId
+    * parameter passed is from an ISO object, the diskOfferingId refers to a
+    * ROOT Disk Volume created.
     * 
     * @param id
     *           the ID of the disk offering
@@ -117,8 +121,8 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param securityGroupId
-    *           security group applied to the virtual machine. Should be passed only when vm is
-    *           created from a zone with Basic Network support
+    *           security group applied to the virtual machine. Should be passed
+    *           only when vm is created from a zone with Basic Network support
     */
    public DeployVirtualMachineOptions securityGroupId(long securityGroupId) {
       this.queryParameters.replaceValues("securitygroupids", ImmutableSet.of(securityGroupId + ""));
@@ -127,8 +131,8 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param securityGroupIds
-    *           security groups applied to the virtual machine. Should be passed only when vm is
-    *           created from a zone with Basic Network support
+    *           security groups applied to the virtual machine. Should be passed
+    *           only when vm is created from a zone with Basic Network support
     */
    public DeployVirtualMachineOptions securityGroupIds(Iterable<Long> securityGroupIds) {
       this.queryParameters.replaceValues("securitygroupids", ImmutableSet.of(Joiner.on(',').join(securityGroupIds)));
@@ -137,7 +141,8 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param dataDiskSize
-    *           the arbitrary size for the DATADISK volume. Mutually exclusive with diskOfferingId
+    *           the arbitrary size for the DATADISK volume. Mutually exclusive
+    *           with diskOfferingId
     */
    public DeployVirtualMachineOptions dataDiskSize(long dataDiskSize) {
       checkArgument(!queryParameters.containsKey("diskofferingid"), "Mutually exclusive with diskOfferingId");
@@ -147,10 +152,11 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param unencodedData
-    *           an optional binary data that can be sent to the virtual machine upon a successful
-    *           deployment. This binary data must be base64 encoded before adding it to the request.
-    *           Currently only HTTP GET is supported. Using HTTP GET (via querystring), you can send
-    *           up to 2KB of data after base64 encoding.
+    *           an optional binary data that can be sent to the virtual machine
+    *           upon a successful deployment. This binary data must be base64
+    *           encoded before adding it to the request. Currently only HTTP GET
+    *           is supported. Using HTTP GET (via querystring), you can send up
+    *           to 2KB of data after base64 encoding.
     */
    public DeployVirtualMachineOptions userData(byte[] unencodedData) {
       int length = checkNotNull(unencodedData, "unencodedData").length;

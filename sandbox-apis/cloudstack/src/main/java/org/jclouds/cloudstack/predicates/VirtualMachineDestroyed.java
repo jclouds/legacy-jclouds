@@ -56,7 +56,7 @@ public class VirtualMachineDestroyed implements Predicate<VirtualMachine> {
       if (virtualMachine == null)
          return true;
       logger.trace("%s: looking for virtualMachine state %s: currently: %s", virtualMachine.getId(), State.DESTROYED,
-               virtualMachine.getState());
+            virtualMachine.getState());
       return virtualMachine.getState() == State.DESTROYED;
    }
 

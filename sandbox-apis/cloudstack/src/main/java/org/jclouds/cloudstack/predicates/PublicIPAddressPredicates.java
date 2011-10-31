@@ -55,7 +55,7 @@ public class PublicIPAddressPredicates {
       @Override
       public boolean apply(PublicIPAddress arg0) {
          return !checkNotNull(arg0, "ipaddress").isSourceNAT() && !arg0.isStaticNAT()
-                  && arg0.getVirtualMachineId() <= 0 && arg0.getState() == PublicIPAddress.State.ALLOCATED;
+               && arg0.getVirtualMachineId() <= 0 && arg0.getState() == PublicIPAddress.State.ALLOCATED;
       }
 
       @Override
@@ -74,7 +74,8 @@ public class PublicIPAddressPredicates {
 
    /**
     * 
-    * @return true, if the public ip address is associated with the specified network
+    * @return true, if the public ip address is associated with the specified
+    *         network
     */
    public static Predicate<PublicIPAddress> associatedWithNetwork(final long networkId) {
       return new AssociatedWithNetwork(networkId);

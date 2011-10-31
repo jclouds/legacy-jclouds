@@ -37,7 +37,8 @@ public enum TemplateFilter {
     */
    SELF,
    /**
-    * templates that have been registered/created by the owner that can be used to deploy a new VM
+    * templates that have been registered/created by the owner that can be used
+    * to deploy a new VM
     */
    SELF_EXECUTABLE,
    /**

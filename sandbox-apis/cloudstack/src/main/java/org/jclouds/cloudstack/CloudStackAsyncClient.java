@@ -29,6 +29,7 @@ import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
+import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
 import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
@@ -39,9 +40,9 @@ import org.jclouds.rest.annotations.Delegate;
  * Provides asynchronous access to CloudStack via their REST API.
  * <p/>
  * 
+ * @author Adrian Cole
  * @see CloudStackClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
- * @author Adrian Cole
  */
 public interface CloudStackAsyncClient {
 
@@ -58,7 +59,8 @@ public interface CloudStackAsyncClient {
    TemplateAsyncClient getTemplateClient();
 
    /**
-    * Provides asynchronous access to Service, Disk, and Network Offering features.
+    * Provides asynchronous access to Service, Disk, and Network Offering
+    * features.
     */
    @Delegate
    OfferingAsyncClient getOfferingClient();
@@ -134,4 +136,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    AccountAsyncClient getAccountClient();
+
+   /**
+    * Provides asynchronous access to SSH Keypairs
+    */
+   @Delegate
+   SSHKeyPairAsyncClient getSSHKeyPairClient();
 }

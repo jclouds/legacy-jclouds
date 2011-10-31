@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.options;
 
-import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.accountInDomain;
-import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.IPAddress;
+import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.VLANId;
+import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.allocatedOnly;
+import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.id;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.networkId;
-import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.VLANId;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.usesVirtualNetwork;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "AccountClientLiveTest")
 public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
-   public void testListAccount() throws Exception {
+   public void testListAccounts() throws Exception {
       for (Account securityAccount : client.getAccountClient().listAccounts())
          checkAccount(securityAccount);
    }
@@ -75,8 +75,7 @@ public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
       assert account.getVMLimit() == null || account.getVMLimit() >= 0 : account;
       assert account.getVMsRunning() >= 0 : account;
       assert account.getVMsStopped() >= 0 : account;
-      // TODO update to 2.2.4 as this is a bug in 2.2.3
-      // assert account.getVMs() >= 0 : account;
+      assert account.getVMs() >= 0 : account;
       assert account.getVolumesAvailable() == null || account.getVolumesAvailable() >= 0 : account;
       assert account.getVolumeLimit() == null || account.getVolumeLimit() >= 0 : account;
       assert account.getVolumes() >= 0 : account;

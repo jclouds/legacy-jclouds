@@ -77,8 +77,8 @@ public interface NetworkClient {
     * 
     * @param id
     *           the ID of the network
-    * @return job id related to destroying the network, or null if resource was not
-    *         found
+    * @return job id related to destroying the network, or null if resource was
+    *         not found
     */
    Long deleteNetwork(long id);
 }

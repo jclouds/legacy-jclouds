@@ -33,7 +33,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class Network implements Comparable<Network> {
@@ -245,6 +244,7 @@ public class Network implements Comparable<Network> {
    @SerializedName("issystem")
    private boolean isSystem;
    private String netmask;
+   @Nullable
    @SerializedName("networkdomain")
    private String networkDomain;
    @SerializedName("networkofferingavailability")
@@ -274,7 +274,6 @@ public class Network implements Comparable<Network> {
 
    /**
     * present only for serializer
-    * 
     */
    Network() {
 
@@ -318,7 +317,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return network id
     */
    public long getId() {
@@ -326,7 +324,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the name of the account to which the template beLongs
     */
    public String getAccount() {
@@ -334,7 +331,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return Broadcast domain type of the network
     */
    public String getBroadcastDomainType() {
@@ -342,7 +338,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return broadcast uri of the network
     */
    public URI getBroadcastURI() {
@@ -350,7 +345,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the display text of the zone
     */
    public String getDisplayText() {
@@ -358,7 +352,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the external DNS for the network
     */
    public List<String> getDNS() {
@@ -371,7 +364,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return Domain name for the Vms in the zone
     */
    public String getDomain() {
@@ -379,7 +371,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
@@ -388,7 +379,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the end ip of the network
     */
    public String getEndIP() {
@@ -396,7 +386,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the network's gateway
     */
    public String getGateway() {
@@ -404,7 +393,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return true if network offering is default, false otherwise
     */
    public boolean isDefault() {
@@ -412,7 +400,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return true if network offering is shared, false otherwise
     */
    public boolean isShared() {
@@ -420,7 +407,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return true if network offering is system, false otherwise
     */
    public boolean isSystem() {
@@ -428,7 +414,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return network name
     */
    public String getName() {
@@ -436,7 +421,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the GuestIPType of the network
     */
    public GuestIPType getGuestIPType() {
@@ -444,7 +428,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return state of the network
     */
    public String getState() {
@@ -452,7 +435,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the vlan range of the zone
     */
    public String getVLAN() {
@@ -460,7 +442,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the traffic type for this network offering
     */
    public TrafficType getTrafficType() {
@@ -468,7 +449,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the network's netmask
     */
    public String getNetmask() {
@@ -476,7 +456,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the network domain
     */
    public String getNetworkDomain() {
@@ -484,7 +463,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return availability of the network offering the network is created from
     */
    public String getNetworkOfferingAvailability() {
@@ -492,7 +470,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return display text of the network offering the network is created from
     */
    public String getNetworkOfferingDisplayText() {
@@ -500,7 +477,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return network offering id the network is created from
     */
    public long getNetworkOfferingId() {
@@ -508,7 +484,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return name of the network offering the network is created from
     */
    public String getNetworkOfferingName() {
@@ -516,7 +491,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return related to what other network configuration
     */
    public long getRelated() {
@@ -524,7 +498,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the start ip of the network
     */
    public String getStartIP() {
@@ -532,7 +505,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return zone id of the network
     */
    public long getZoneId() {
@@ -540,7 +512,6 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * 
     * @return the list of services
     */
    public Set<? extends NetworkService> getServices() {
@@ -717,7 +688,7 @@ public class Network implements Comparable<Network> {
             + account + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
             + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI + ", services="
             + services + ", domain=" + domain + ", domainId=" + domainId + ", isDefault=" + isDefault + ", isShared="
-            + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", networkDomain="
+            + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", domain="
             + networkDomain + ", networkOfferingAvailability=" + networkOfferingAvailability
             + ", networkOfferingDisplayText=" + networkOfferingDisplayText + ", networkOfferingId=" + networkOfferingId
             + ", networkOfferingName=" + networkOfferingName + "]";

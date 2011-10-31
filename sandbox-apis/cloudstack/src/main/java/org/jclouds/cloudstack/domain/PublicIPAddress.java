@@ -153,8 +153,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
       public PublicIPAddress build() {
          return new PublicIPAddress(id, account, allocated, associatedNetworkId, domain, domainId, usesVirtualNetwork,
-                  IPAddress, isSourceNAT, isStaticNAT, networkId, state, virtualMachineDisplayName, virtualMachineId,
-                  virtualMachineName, VLANId, VLANName, zoneId, zoneName);
+               IPAddress, isSourceNAT, isStaticNAT, networkId, state, virtualMachineDisplayName, virtualMachineId,
+               virtualMachineName, VLANId, VLANName, zoneId, zoneName);
       }
    }
 
@@ -215,9 +215,9 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    public PublicIPAddress(long id, String account, Date allocated, long associatedNetworkId, String domain,
-            long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
-            long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
-            String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName) {
+         long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
+         long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
+         String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName) {
       this.id = id;
       this.account = account;
       this.allocated = allocated;
@@ -333,7 +333,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    /**
     * 
-    * @return State of the ip address. Can be: Allocating, Allocated and Releasing
+    * @return State of the ip address. Can be: Allocating, Allocated and
+    *         Releasing
     */
    public State getState() {
       return state;
@@ -341,8 +342,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    /**
     * 
-    * @return virtual machine display name the ip address is assigned to (not null only for static
-    *         nat Ip)
+    * @return virtual machine display name the ip address is assigned to (not
+    *         null only for static nat Ip)
     */
    public String getVirtualMachineDisplayName() {
       return virtualMachineDisplayName;
@@ -350,7 +351,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    /**
     * 
-    * @return virtual machine id the ip address is assigned to (not null only for static nat Ip)
+    * @return virtual machine id the ip address is assigned to (not null only
+    *         for static nat Ip)
     */
    public long getVirtualMachineId() {
       return virtualMachineId;
@@ -358,7 +360,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    /**
     * 
-    * @return virtual machine name the ip address is assigned to (not null only for static nat Ip)
+    * @return virtual machine name the ip address is assigned to (not null only
+    *         for static nat Ip)
     */
    public String getVirtualMachineName() {
       return virtualMachineName;
@@ -502,11 +505,11 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    @Override
    public String toString() {
       return "[id=" + id + ", IPAddress=" + IPAddress + ", VLANId=" + VLANId + ", VLANName=" + VLANName + ", account="
-               + account + ", allocated=" + allocated + ", associatedNetworkId=" + associatedNetworkId + ", domain="
-               + domain + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", isSourceNAT="
-               + isSourceNAT + ", isStaticNAT=" + isStaticNAT + ", networkId=" + networkId + ", state=" + state
-               + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
-               + ", virtualMachineName=" + virtualMachineName + ", zoneId=" + zoneId + ", zoneName=" + zoneName + "]";
+            + account + ", allocated=" + allocated + ", associatedNetworkId=" + associatedNetworkId + ", domain="
+            + domain + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", isSourceNAT="
+            + isSourceNAT + ", isStaticNAT=" + isStaticNAT + ", networkId=" + networkId + ", state=" + state
+            + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
+            + ", virtualMachineName=" + virtualMachineName + ", zoneId=" + zoneId + ", zoneName=" + zoneName + "]";
    }
 
 }

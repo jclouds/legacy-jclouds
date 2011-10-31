@@ -42,7 +42,8 @@ public interface NATClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return IPForwardingRulees matching query, or empty set, if no IPForwardingRulees are found
+    * @return IPForwardingRulees matching query, or empty set, if no
+    *         IPForwardingRulees are found
     */
    Set<IPForwardingRule> listIPForwardingRules(ListIPForwardingRulesOptions... options);
 
@@ -59,7 +60,8 @@ public interface NATClient {
     * Creates an ip forwarding rule
     * 
     * @param IPAddressId
-    *           the public IP address id of the forwarding rule, already associated via associateIp
+    *           the public IP address id of the forwarding rule, already
+    *           associated via associateIp
     * @param protocol
     *           the protocol for the rule. Valid values are TCP or UDP.
     * @param startPort

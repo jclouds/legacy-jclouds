@@ -126,7 +126,7 @@ public class QuerySigner implements HttpRequestFilter, RequestSigner {
       ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
       for (Entry<String, String> entry : decodedParams.entries())
          builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
-      
+
       // then, lower case the entire query string
       String stringToSign = Joiner.on('&').join(builder.build()).toLowerCase();
       if (signatureWire.enabled())

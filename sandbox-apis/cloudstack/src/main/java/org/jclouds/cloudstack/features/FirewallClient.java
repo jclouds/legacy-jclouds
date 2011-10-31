@@ -41,8 +41,8 @@ public interface FirewallClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return PortForwardingRules matching query, or empty set, if no PortForwardingRulees are
-    *         found
+    * @return PortForwardingRules matching query, or empty set, if no
+    *         PortForwardingRulees are found
     */
    Set<PortForwardingRule> listPortForwardingRules(ListPortForwardingRulesOptions... options);
 
@@ -52,8 +52,8 @@ public interface FirewallClient {
     * @param virtualMachineId
     *           the ID of the virtual machine for the port forwarding rule
     * @param IPAddressId
-    *           the public IP address id of the forwarding rule, already associated via
-    *           associatePort
+    *           the public IP address id of the forwarding rule, already
+    *           associated via associatePort
     * @param protocol
     *           the protocol for the rule. Valid values are TCP or UDP.
     * @param privatePort
@@ -63,7 +63,7 @@ public interface FirewallClient {
     * @return response used to track creation
     */
    AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long virtualMachineId, long IPAddressId,
-            String protocol, int privatePort, int publicPort);
+         String protocol, int privatePort, int publicPort);
 
    /**
     * Deletes an port forwarding rule
