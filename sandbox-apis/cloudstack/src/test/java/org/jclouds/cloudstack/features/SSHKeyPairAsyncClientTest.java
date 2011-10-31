@@ -36,10 +36,8 @@ import com.google.inject.TypeLiteral;
 /**
  * Tests behavior of {@code SSHKeyPairAsyncClient}
  * 
- * @author Adrian Cole
+ * @author Vijay Kiran
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
 @Test(groups = "unit", testName = "SSHKeyPairAsyncClientTest")
 public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSHKeyPairAsyncClient> {
 

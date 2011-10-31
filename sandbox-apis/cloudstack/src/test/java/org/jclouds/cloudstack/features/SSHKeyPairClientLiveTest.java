@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 /**
  * Tests behavior of {@code SSHKeyPairClient}
  * 
- * @author Adrian Cole
+ * @author Vijay Kiran
  */
 @Test(groups = "live", singleThreaded = true, testName = "SSHKeyPairClientLiveTest")
 public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
