@@ -28,19 +28,49 @@ import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack SSHKeyPair features.
- * <p/>
  * 
- * @author Vijay Kiran
- * @see <a href=
- *      "http://download.cloud.com/releases/2.2.0/api_2.2.8/user/listSSHKeyPairs.html"
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.8/TOC_User.html"
  *      />
+ * @author Vijay Kiran
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SSHKeyPairClient {
-
+   /**
+    * Returns a list of {@link SshKeyPair}s registered by current user.
+    * 
+    * @param options
+    *           if present, how to constrain the list
+    * @return Set of {@link SshKeyPair}s matching the current constrains or
+    *         empty set if no SshKeyPairs found.
+    */
    Set<SshKeyPair> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
 
+   /**
+    * Creates a {@link SshKeyPair} with specified name.
+    * 
+    * @param name
+    *           of the SshKeyPair.
+    * @return Created SshKeyPair.
+    */
    SshKeyPair createSSHKeyPair(String name);
 
+   /**
+    * Retrieves the {@link SSHKeyPairClient} with given name.
+    * 
+    * @param name
+    *           name of the key pair
+    * @return SSH Key pair or null if not found.
+    */
    SshKeyPair getSSHKeyPair(String name);
+
+   /**
+    * Deletes the {@link SSHKeyPairClient} with given name.
+    * 
+    * @param name
+    *           name of the key pair
+    * @return
+    */
+   void deleteSSHKeyPair(String name);
+
 }

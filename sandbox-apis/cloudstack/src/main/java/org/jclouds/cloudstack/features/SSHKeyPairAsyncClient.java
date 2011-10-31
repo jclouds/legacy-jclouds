@@ -35,17 +35,23 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Provides asynchronous access to CloudStack SSHKeyPair features.
+ * 
+ * @author Vijay Kiran
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.8/TOC_User.html"
+ *      />
+ */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-/**
- * @author Vijay Kiran
- */
 public interface SSHKeyPairAsyncClient {
    /**
-    * @see org.jclouds.cloudstack.features.SSHKeyPairClient#listSSHKeyPairs
+    * @see SSHKeyPairClient#listSSHKeyPairs
     */
    @GET
    @QueryParams(keys = "command", values = "listSSHKeyPairs")
@@ -54,12 +60,18 @@ public interface SSHKeyPairAsyncClient {
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SshKeyPair>> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
 
+   /**
+    * @see SSHKeyPairClient#createSSHKeyPair
+    */
    @GET
    @QueryParams(keys = "command", values = "createSSHKeyPair")
    @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<SshKeyPair> createSSHKeyPair(@QueryParam("name") String name);
 
+   /**
+    * @see SSHKeyPairClient#getSSHKeyPair
+    */
    @GET
    @QueryParams(keys = "command", values = "listSSHKeyPairs")
    @SelectJson("keypair")
@@ -67,5 +79,13 @@ public interface SSHKeyPairAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SshKeyPair> getSSHKeyPair(@QueryParam("name") String name);
+
+   /**
+    * @see SSHKeyPairClient#deleteSSHKeyPair
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteSSHKeyPair")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteSSHKeyPair(@QueryParam("name") String name);
 
 }

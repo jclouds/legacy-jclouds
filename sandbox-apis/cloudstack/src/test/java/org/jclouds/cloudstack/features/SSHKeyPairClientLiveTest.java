@@ -33,6 +33,9 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "SSHKeyPairClientLiveTest")
 public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   protected String prefix = System.getProperty("user.name");
+   private SshKeyPair sshKeyPair;
+
    public void testListSSHKeyPairs() {
       final Set<SshKeyPair> sshKeyPairs = client.getSSHKeyPairClient().listSSHKeyPairs();
       for (SshKeyPair sshKeyPair : sshKeyPairs) {
@@ -40,9 +43,13 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
-   public void testCreateSSHKeyPair() {
-      final SshKeyPair sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair("jclouds-keypair");
-      System.out.println(sshKeyPair);
+   public void testCreateDeleteSSHKeyPair() {
+      sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair(prefix + "jclouds-keypair");
+      checkSSHKeyPair(sshKeyPair);
+      client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
+      assertEquals(client.getSSHKeyPairClient().getSSHKeyPair(sshKeyPair.getName()), null);
+      // Set the keypair to null , if the delete test is passed.
+      sshKeyPair = null;
    }
 
    protected void checkSSHKeyPair(SshKeyPair pair) {

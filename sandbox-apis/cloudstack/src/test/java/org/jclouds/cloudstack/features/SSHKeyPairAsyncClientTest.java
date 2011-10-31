@@ -25,8 +25,10 @@ import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -88,6 +90,23 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
             Functions.compose(IdentityFunction.INSTANCE, IdentityFunction.INSTANCE).getClass());
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDeleteSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SSHKeyPairAsyncClient.class.getMethod("deleteSSHKeyPair", String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "jclouds-keypair");
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=deleteSSHKeyPair&name=jclouds-keypair HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
