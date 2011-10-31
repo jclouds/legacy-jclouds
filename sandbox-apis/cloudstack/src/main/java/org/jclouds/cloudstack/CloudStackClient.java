@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingClient;
+import org.jclouds.cloudstack.features.SSHKeyPairClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
@@ -61,7 +62,8 @@ public interface CloudStackClient {
    TemplateClient getTemplateClient();
 
    /**
-    * Provides synchronous access to Service, Disk, and Network Offering features.
+    * Provides synchronous access to Service, Disk, and Network Offering
+    * features.
     */
    @Delegate
    OfferingClient getOfferingClient();
@@ -137,4 +139,11 @@ public interface CloudStackClient {
     */
    @Delegate
    AccountClient getAccountClient();
+
+   /**
+    * Provides synchronous access to SSH Keypairs
+    */
+   @Delegate
+   SSHKeyPairClient getSSHKeyPairClient();
+
 }

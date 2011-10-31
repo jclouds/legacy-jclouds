@@ -25,7 +25,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what templates information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listTemplates.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listTemplates.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListTemplatesOptions extends AccountInDomainOptions {

@@ -16,42 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.domain;
 
-import org.jclouds.cloudstack.features.TemplateClient;
+package org.jclouds.cloudstack.features;
 
-import com.google.common.base.CaseFormat;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.cloudstack.domain.SSHKeyPair;
+import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
+import org.jclouds.concurrent.Timeout;
 
 /**
+ * Provides synchronous access to CloudStack SSHKeyPair features.
+ * <p/>
  * 
- * @author Adrian Cole
- * @see TemplateClient#listTemplates
+ * @author Vijay Kiran
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api_2.2.8/user/listSSHKeyPairs.html"
+ *      />
  */
-public enum TemplateFilter {
-   /**
-    * templates that are featured and are public
-    */
-   FEATURED,
-   /**
-    * templates that have been registered/created by the owner
-    */
-   SELF,
-   /**
-    * templates that have been registered/created by the owner that can be used
-    * to deploy a new VM
-    */
-   SELF_EXECUTABLE,
-   /**
-    * all templates that can be used to deploy a new VM
-    */
-   EXECUTABLE,
-   /**
-    * templates that are public
-    */
-   COMMUNITY;
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface SSHKeyPairClient {
 
-   @Override
-   public String toString() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
-   }
+   Set<SSHKeyPair> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
+
+   SSHKeyPair createSSHKeyPair(String name);
+
+   SSHKeyPair getSSHKeyPair(String name);
 }

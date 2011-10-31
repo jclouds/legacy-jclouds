@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to acquire and associate a public IP to an account.
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/associateIpAddress.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/associateIpAddress.html"
+ *      />
  * @author Adrian Cole
  */
 public class AssociateIPAddressOptions extends AccountInDomainOptions {

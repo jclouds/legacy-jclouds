@@ -82,11 +82,11 @@ public class BaseCloudStackClientLiveTest {
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-               + ".identity must be set.  ex. apiKey");
+            + ".identity must be set.  ex. apiKey");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential must be set.  ex. secretKey");
+            + ".credential must be set.  ex. secretKey");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
-               + ".endpoint must be set.  ex. http://localhost:8080/client/api");
+            + ".endpoint must be set.  ex. http://localhost:8080/client/api");
       apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
@@ -121,7 +121,7 @@ public class BaseCloudStackClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+            overrides);
 
       client = context.getApi();
       // check access
@@ -130,8 +130,8 @@ public class BaseCloudStackClientLiveTest {
 
       if (currentUser.getAccountType() != Account.Type.USER)
          throw new IllegalArgumentException(String.format(
-                  "invalid account type: %s, please specify an apiKey of a USER, for example: %s", currentUser
-                           .getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
+               "invalid account type: %s, please specify an apiKey of a USER, for example: %s",
+               currentUser.getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
 
       injector = Guice.createInjector(new SshjSshClientModule(), new Log4JLoggingModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -140,10 +140,10 @@ public class BaseCloudStackClientLiveTest {
       jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(jobComplete);
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineRunning);
       virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5, 5,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineDestroyed);
       reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
       injector.injectMembers(reuseOrAssociate);

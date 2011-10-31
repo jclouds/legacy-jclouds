@@ -39,8 +39,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
- * Templates can be present in a zone, and available, but not valid for launch as their hypervisor
- * isn't installed.
+ * Templates can be present in a zone, and available, but not valid for launch
+ * as their hypervisor isn't installed.
  * 
  * @author Adrian Cole
  */
@@ -58,7 +58,7 @@ public class CorrectHypervisorForZone implements Function<Long, Predicate<Templa
    }
 
    private static class CloudStackClientToZoneToHypervisors implements
-            Function<CloudStackClient, Map<Long, Set<String>>> {
+         Function<CloudStackClient, Map<Long, Set<String>>> {
 
       @Override
       public Map<Long, Set<String>> apply(CloudStackClient client) {

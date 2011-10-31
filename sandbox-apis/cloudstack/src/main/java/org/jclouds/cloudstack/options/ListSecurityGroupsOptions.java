@@ -23,7 +23,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what security groups are returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listSecurityGroups.html" />
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api/user/listSecurityGroups.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
@@ -50,8 +52,9 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
 
    /**
     * @param virtualMachineId
-    *           the ID of the virtual machine. Pass this in if you want to see the available service
-    *           offering that a virtual machine can be changed to.
+    *           the ID of the virtual machine. Pass this in if you want to see
+    *           the available service offering that a virtual machine can be
+    *           changed to.
     */
    public ListSecurityGroupsOptions virtualMachineId(long virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));

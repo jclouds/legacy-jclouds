@@ -42,16 +42,17 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "VirtualMachineAsyncClientTest")
 public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest<VirtualMachineAsyncClient> {
    public void testListVirtualMachines() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("listVirtualMachines",
-               ListVirtualMachinesOptions[].class);
+            ListVirtualMachinesOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -65,13 +66,13 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testListVirtualMachinesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("listVirtualMachines",
-               ListVirtualMachinesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListVirtualMachinesOptions.Builder.accountInDomain(
-               "adrian", 6).usesVirtualNetwork(true));
+            ListVirtualMachinesOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method,
+            ListVirtualMachinesOptions.Builder.accountInDomain("adrian", 6).usesVirtualNetwork(true));
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&account=adrian&domainid=6&forvirtualnetwork=true HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&account=adrian&domainid=6&forvirtualnetwork=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -88,7 +89,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -103,12 +104,12 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testDeployVirtualMachineInZone() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("deployVirtualMachineInZone", long.class, long.class,
-               long.class, DeployVirtualMachineOptions[].class);
+            long.class, DeployVirtualMachineOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, 4, 5);
 
       assertRequestLineEquals(
-               httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=deployVirtualMachine&zoneid=6&templateid=5&serviceofferingid=4 HTTP/1.1");
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=deployVirtualMachine&zoneid=6&templateid=5&serviceofferingid=4 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -125,7 +126,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=rebootVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=rebootVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -142,7 +143,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=startVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=startVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -159,7 +160,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -176,7 +177,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=resetPasswordForVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=resetPasswordForVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -193,7 +194,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=changeServiceForVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=changeServiceForVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -210,7 +211,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=updateVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=updateVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -227,7 +228,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=destroyVirtualMachine&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=destroyVirtualMachine&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

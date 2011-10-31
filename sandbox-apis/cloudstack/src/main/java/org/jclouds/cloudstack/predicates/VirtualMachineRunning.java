@@ -56,7 +56,7 @@ public class VirtualMachineRunning implements Predicate<VirtualMachine> {
       if (virtualMachine == null)
          return false;
       logger.trace("%s: looking for virtualMachine state %s: currently: %s", virtualMachine.getId(), State.RUNNING,
-               virtualMachine.getState());
+            virtualMachine.getState());
       if (virtualMachine.getState() == State.ERROR)
          throw new IllegalStateException("virtualMachine in error state: " + virtualMachine);
       return virtualMachine.getState() == State.RUNNING;

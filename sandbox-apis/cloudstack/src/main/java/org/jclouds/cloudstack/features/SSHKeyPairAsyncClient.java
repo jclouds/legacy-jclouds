@@ -25,60 +25,47 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.domain.SSHKeyPair;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
+import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-/**
- * Provides asynchronous access to cloudstack via their REST API.
- * <p/>
- * 
- * @see FirewallClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
- * @author Adrian Cole
- */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface FirewallAsyncClient {
-
+/**
+ * @author Vijay Kiran
+ */
+public interface SSHKeyPairAsyncClient {
    /**
-    * @see FirewallClient#listPortForwardingRules
+    * @see org.jclouds.cloudstack.features.SSHKeyPairClient#listSSHKeyPairs
     */
    @GET
-   @QueryParams(keys = "command", values = "listPortForwardingRules")
-   @SelectJson("portforwardingrule")
+   @QueryParams(keys = "command", values = "listSSHKeyPairs")
+   @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<PortForwardingRule>> listPortForwardingRules(ListPortForwardingRulesOptions... options);
+   ListenableFuture<Set<SSHKeyPair>> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
 
-   /**
-    * @see FirewallClient#createPortForwardingRuleForVirtualMachine
-    */
    @GET
-   @QueryParams(keys = "command", values = "createPortForwardingRule")
-   @Unwrap
+   @QueryParams(keys = "command", values = "createSSHKeyPair")
+   @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createPortForwardingRuleForVirtualMachine(
-         @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
-         @QueryParam("protocol") String protocol, @QueryParam("privateport") int privatePort,
-         @QueryParam("publicport") int publicPort);
+   ListenableFuture<SSHKeyPair> createSSHKeyPair(@QueryParam("name") String name);
 
-   /**
-    * @see FirewallClient#deletePortForwardingRule
-    */
    @GET
-   @QueryParams(keys = "command", values = "deletePortForwardingRule")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deletePortForwardingRule(@QueryParam("id") long id);
+   @QueryParams(keys = "command", values = "listSSHKeyPairs")
+   @SelectJson("keypair")
+   @OnlyElement()
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<SSHKeyPair> getSSHKeyPair(@QueryParam("name") String name);
 
 }

@@ -33,8 +33,8 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Multimap;
 
 /**
  * 
@@ -58,11 +58,11 @@ public class BindAccountSecurityGroupPairsToIndexedQueryParams implements Binder
       UriBuilder builder = uriBuilderProvider.get();
       builder.uri(request.getEndpoint());
       Builder<String, String> map = ImmutableMultimap.<String, String> builder().putAll(
-               ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery()));
+            ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery()));
       int i = 0;
       for (Entry<String, String> entry : pairs.entries())
          map.put(String.format("usersecuritygrouplist[%d].account", i), entry.getKey()).put(
-                  String.format("usersecuritygrouplist[%d].group", i++), entry.getValue());
+               String.format("usersecuritygrouplist[%d].group", i++), entry.getValue());
       builder.replaceQuery(ModifyRequest.makeQueryLine(map.build(), null));
       return (R) request.toBuilder().endpoint(builder.build()).build();
    }

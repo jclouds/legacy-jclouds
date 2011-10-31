@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
@@ -44,7 +44,7 @@ public class GuestOSClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(response.size() >= 0);
       for (OSType type : response) {
          OSType newDetails = getOnlyElement(client.getGuestOSClient().listOSTypes(
-                  ListOSTypesOptions.Builder.id(type.getId())));
+               ListOSTypesOptions.Builder.id(type.getId())));
          assertEquals(type.getId(), newDetails.getId());
          checkOSType(type);
       }

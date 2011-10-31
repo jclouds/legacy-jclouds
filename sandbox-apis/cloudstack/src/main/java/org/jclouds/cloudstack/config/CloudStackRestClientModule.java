@@ -44,6 +44,8 @@ import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.NetworkClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.OfferingClient;
+import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
+import org.jclouds.cloudstack.features.SSHKeyPairClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
@@ -92,6 +94,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(HypervisorClient.class, HypervisorAsyncClient.class)//
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
+         .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .build();
 
    public CloudStackRestClientModule() {

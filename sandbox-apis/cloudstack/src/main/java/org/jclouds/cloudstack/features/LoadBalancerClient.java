@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
-import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -42,7 +42,8 @@ public interface LoadBalancerClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return load balancer rules matching query, or empty set, if no load balancer rules are found
+    * @return load balancer rules matching query, or empty set, if no load
+    *         balancer rules are found
     */
    Set<LoadBalancerRule> listLoadBalancerRules(ListLoadBalancerRulesOptions... options);
 
@@ -59,20 +60,22 @@ public interface LoadBalancerClient {
     * Creates a load balancer rule.
     * 
     * @param publicIPId
-    *           the public port from where the network traffic will be load balanced from
+    *           the public port from where the network traffic will be load
+    *           balanced from
     * @param algorithm
     *           load balancer algorithm (source, roundrobin, leastconn)
     * @param name
     *           name of the load balancer rule
     * @param privatePort
-    *           the private port of the private ip address/virtual machine where the network traffic
-    *           will be load balanced to
+    *           the private port of the private ip address/virtual machine where
+    *           the network traffic will be load balanced to
     * @param publicPort
-    *           public ip address id from where the network traffic will be load balanced from
+    *           public ip address id from where the network traffic will be load
+    *           balanced from
     * @return newly created rule
     */
    LoadBalancerRule createLoadBalancerRuleForPublicIP(long publicIPId, Algorithm algorithm, String name,
-            int privatePort, int publicPort);
+         int privatePort, int publicPort);
 
    /**
     * 
@@ -80,63 +83,70 @@ public interface LoadBalancerClient {
     * 
     * @param id
     *           id of the rule to delete
-    * @return async job id of the job completing or null, if the load balancer rule was not found.
+    * @return async job id of the job completing or null, if the load balancer
+    *         rule was not found.
     */
    Long deleteLoadBalancerRule(long id);
 
    /**
-    * List all virtual machine instances that are assigned to a load balancer rule.
+    * List all virtual machine instances that are assigned to a load balancer
+    * rule.
     * 
     * @param id
     *           id of the rule
-    * @return VirtualMachines matching query, or empty set, if no VirtualMachines are assigned
+    * @return VirtualMachines matching query, or empty set, if no
+    *         VirtualMachines are assigned
     */
    Set<VirtualMachine> listVirtualMachinesAssignedToLoadBalancerRule(long id);
 
    /**
-    * Assigns virtual machine or a list of virtual machines to a load balancer rule.
+    * Assigns virtual machine or a list of virtual machines to a load balancer
+    * rule.
     * 
     * @param id
     *           the ID of the load balancer rule
     * @param virtualMachineIds
-    *           the list of IDs of the virtual machine that are being assigned to the load balancer
-    *           rule
+    *           the list of IDs of the virtual machine that are being assigned
+    *           to the load balancer rule
     * @return job id related to the operation
     */
    long assignVirtualMachinesToLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
 
    /**
-    * Assigns virtual machine or a list of virtual machines to a load balancer rule.
+    * Assigns virtual machine or a list of virtual machines to a load balancer
+    * rule.
     * 
     * @param id
     *           the ID of the load balancer rule
     * @param virtualMachineIds
-    *           the list of IDs of the virtual machine that are being assigned to the load balancer
-    *           rule
+    *           the list of IDs of the virtual machine that are being assigned
+    *           to the load balancer rule
     * @return job id related to the operation
     */
    long assignVirtualMachinesToLoadBalancerRule(long id, long... virtualMachineIds);
 
    /**
-    * Removes a virtual machine or a list of virtual machines from a load balancer rule.
+    * Removes a virtual machine or a list of virtual machines from a load
+    * balancer rule.
     * 
     * @param id
     *           the ID of the load balancer rule
     * @param virtualMachineIds
-    *           the list of IDs of the virtual machine that are being removed from the load balancer
-    *           rule
+    *           the list of IDs of the virtual machine that are being removed
+    *           from the load balancer rule
     * @return job id related to the operation
     */
    long removeVirtualMachinesFromLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
 
    /**
-    * Removes a virtual machine or a list of virtual machines from a load balancer rule.
+    * Removes a virtual machine or a list of virtual machines from a load
+    * balancer rule.
     * 
     * @param id
     *           the ID of the load balancer rule
     * @param virtualMachineIds
-    *           the list of IDs of the virtual machine that are being removed from the load balancer
-    *           rule
+    *           the list of IDs of the virtual machine that are being removed
+    *           from the load balancer rule
     * @return job id related to the operation
     */
    long removeVirtualMachinesFromLoadBalancerRule(long id, long... virtualMachineIds);

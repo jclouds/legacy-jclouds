@@ -49,8 +49,8 @@ public class OSCategoryIn implements Function<Set<String>, Predicate<Template>> 
 
    @Inject
    public OSCategoryIn(CloudStackClient client) {
-      this(Suppliers.ofInstance(checkNotNull(client, "client").getGuestOSClient().listOSCategories()), Suppliers.ofInstance(client
-               .getGuestOSClient().listOSTypes()));
+      this(Suppliers.ofInstance(checkNotNull(client, "client").getGuestOSClient().listOSCategories()), Suppliers
+            .ofInstance(client.getGuestOSClient().listOSTypes()));
    }
 
    public OSCategoryIn(Supplier<Map<Long, String>> categoriesSupplier, Supplier<Set<OSType>> osTypesSupplier) {
@@ -62,21 +62,21 @@ public class OSCategoryIn implements Function<Set<String>, Predicate<Template>> 
    public Predicate<Template> apply(final Set<String> acceptableCategories) {
       final Map<Long, String> categories = categoriesSupplier.get();
       final Set<Long> acceptableOSTypeIds = Maps.filterValues(
-               Maps.transformValues(Maps.uniqueIndex(osTypesSupplier.get(), new Function<OSType, Long>() {
+            Maps.transformValues(Maps.uniqueIndex(osTypesSupplier.get(), new Function<OSType, Long>() {
 
-                  @Override
-                  public Long apply(OSType input) {
-                     return input.getId();
-                  }
+               @Override
+               public Long apply(OSType input) {
+                  return input.getId();
+               }
 
-               }), new Function<OSType, String>() {
+            }), new Function<OSType, String>() {
 
-                  @Override
-                  public String apply(OSType input) {
-                     return categories.get(input.getOSCategoryId());
-                  }
+               @Override
+               public String apply(OSType input) {
+                  return categories.get(input.getOSCategoryId());
+               }
 
-               }), Predicates.in(acceptableCategories)).keySet();
+            }), Predicates.in(acceptableCategories)).keySet();
       return new Predicate<Template>() {
 
          @Override

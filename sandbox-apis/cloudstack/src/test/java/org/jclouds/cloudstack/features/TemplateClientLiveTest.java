@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.Template;
-import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -44,7 +44,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(templateCount >= 0);
       for (Template template : response) {
          Template newDetails = Iterables.getOnlyElement(client.getTemplateClient().listTemplates(
-                  zoneId(template.getZoneId()).id(template.getId())));
+               zoneId(template.getZoneId()).id(template.getId())));
          assertEquals(template, newDetails);
          assertEquals(template, client.getTemplateClient().getTemplateInZone(template.getZoneId(), template.getId()));
          assert template.getId() > 0 : template;

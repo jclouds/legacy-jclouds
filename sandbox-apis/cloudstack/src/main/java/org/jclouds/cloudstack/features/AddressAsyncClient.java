@@ -83,7 +83,7 @@ public interface AddressAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> associateIPAddressInZone(@QueryParam("zoneid") long zoneId,
-            AssociateIPAddressOptions... options);
+         AssociateIPAddressOptions... options);
 
    /**
     * @see AddressClient#disassociateIPAddress

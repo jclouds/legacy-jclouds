@@ -26,8 +26,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
-import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
 import org.jclouds.functions.JoinOnComma;
@@ -81,8 +81,8 @@ public interface LoadBalancerAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<LoadBalancerRule> createLoadBalancerRuleForPublicIP(@QueryParam("publicipid") long publicIPId,
-            @QueryParam("algorithm") Algorithm algorithm, @QueryParam("name") String name,
-            @QueryParam("privateport") int privatePort, @QueryParam("publicport") int publicPort);
+         @QueryParam("algorithm") Algorithm algorithm, @QueryParam("name") String name,
+         @QueryParam("privateport") int privatePort, @QueryParam("publicport") int publicPort);
 
    /**
     * @see LoadBalancerClient#deleteLoadBalancerRule
@@ -103,7 +103,7 @@ public interface LoadBalancerAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> assignVirtualMachinesToLoadBalancerRule(@QueryParam("id") long id,
-            @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
+         @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
 
    /**
     * @see LoadBalancerClient#assignVirtualMachinesToLoadBalancerRule(long,long[])
@@ -114,7 +114,7 @@ public interface LoadBalancerAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> assignVirtualMachinesToLoadBalancerRule(@QueryParam("id") long id,
-            @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
+         @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
 
    /**
     * @see LoadBalancerClient#removeVirtualMachinesFromLoadBalancerRule(long,Iterable)
@@ -125,7 +125,7 @@ public interface LoadBalancerAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> removeVirtualMachinesFromLoadBalancerRule(@QueryParam("id") long id,
-            @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
+         @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
 
    /**
     * @see LoadBalancerClient#removeVirtualMachinesFromLoadBalancerRule(long,long[])
@@ -136,7 +136,7 @@ public interface LoadBalancerAsyncClient {
    @Unwrap(depth = 2)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> removeVirtualMachinesFromLoadBalancerRule(@QueryParam("id") long id,
-            @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
+         @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
 
    /**
     * @see LoadBalancerClient#listVirtualMachinesAssignedToLoadBalancerRule

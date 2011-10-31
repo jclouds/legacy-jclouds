@@ -40,7 +40,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "GuestOSAsyncClientTest")
 public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestOSAsyncClient> {
 
@@ -49,7 +50,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method, 11l);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listOsCategories&id=11 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listOsCategories&id=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -66,7 +67,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listOsCategories HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listOsCategories HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -83,7 +84,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method, 11l);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listOsTypes&id=11 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listOsTypes&id=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -101,7 +102,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listOsTypes HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listOsTypes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -118,7 +119,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
       HttpRequest httpRequest = processor.createRequest(method, ListOSTypesOptions.Builder.OSCategoryId(11));
 
       assertRequestLineEquals(httpRequest,
-               "GET http://localhost:8080/client/api?response=json&command=listOsTypes&oscategoryid=11 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listOsTypes&oscategoryid=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

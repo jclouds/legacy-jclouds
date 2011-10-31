@@ -58,7 +58,6 @@ public class ListAsyncJobsOptionsTest {
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
-
    public void testStartDateStatic() {
       ListAsyncJobsOptions options = startDate(new Date(100000));
       assertEquals(ImmutableList.of("1970-01-01T00:01:40Z"), options.buildQueryParameters().get("startdate"));

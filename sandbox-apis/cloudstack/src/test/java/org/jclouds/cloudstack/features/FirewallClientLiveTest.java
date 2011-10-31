@@ -58,7 +58,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsPortForwarding());
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
-                  virtualMachineRunning);
+               virtualMachineRunning);
          if (vm.getPassword() != null)
             password = vm.getPassword();
       } catch (NoSuchElementException e) {
@@ -73,7 +73,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
          ip = reuseOrAssociate.apply(network);
          try {
             AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
-                     ip.getId(), "tcp", 22, 22);
+                  ip.getId(), "tcp", 22, 22);
             assert jobComplete.apply(job.getJobId());
             rule = findRuleWithId(job.getId());
          } catch (IllegalStateException e) {

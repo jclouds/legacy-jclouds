@@ -30,7 +30,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options used to control what asyncJobs information is returned
  * 
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/user/listAsyncJobs.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api/user/listAsyncJobs.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListAsyncJobsOptions extends AccountInDomainOptions {
@@ -43,8 +45,8 @@ public class ListAsyncJobsOptions extends AccountInDomainOptions {
     *           the start date of the async job
     */
    public ListAsyncJobsOptions startDate(Date startDate) {
-      this.queryParameters.replaceValues("startdate", ImmutableSet.of(dateService
-               .iso8601SecondsDateFormat(checkNotNull(startDate, "startDate"))));
+      this.queryParameters.replaceValues("startdate",
+            ImmutableSet.of(dateService.iso8601SecondsDateFormat(checkNotNull(startDate, "startDate"))));
       return this;
    }
 

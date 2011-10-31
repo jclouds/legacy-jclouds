@@ -42,7 +42,8 @@ public interface AddressClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return IPAddresses matching query, or empty set, if no IPAddresses are found
+    * @return IPAddresses matching query, or empty set, if no IPAddresses are
+    *         found
     */
    Set<PublicIPAddress> listPublicIPAddresses(ListPublicIPAddressesOptions... options);
 
@@ -59,7 +60,8 @@ public interface AddressClient {
     * Acquires and associates a public IP to an account.
     * 
     * @param zoneId
-    *           the ID of the availability zone you want to acquire an public IP address from
+    *           the ID of the availability zone you want to acquire an public IP
+    *           address from
     * @return IPAddress
     */
    AsyncCreateResponse associateIPAddressInZone(long zoneId, AssociateIPAddressOptions... options);

@@ -94,7 +94,8 @@ public class Capabilities {
 
    /**
     * 
-    * @return true if user and domain admins can set templates to be shared, false otherwise
+    * @return true if user and domain admins can set templates to be shared,
+    *         false otherwise
     */
    public boolean isSharedTemplatesEnabled() {
       return canShareTemplates;
@@ -134,6 +135,6 @@ public class Capabilities {
    @Override
    public String toString() {
       return "[cloudStackVersion=" + cloudStackVersion + ", canShareTemplates=" + canShareTemplates
-               + ", securityGroupsEnabled=" + securityGroupsEnabled + "]";
+            + ", securityGroupsEnabled=" + securityGroupsEnabled + "]";
    }
 }

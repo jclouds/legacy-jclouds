@@ -122,7 +122,7 @@ public class User implements Comparable<User> {
 
       public User build() {
          return new User(id, name, firstName, lastName, email, created, state, account, accountType, domain, domainId,
-                  timeZone, apiKey, secretKey);
+               timeZone, apiKey, secretKey);
       }
    }
 
@@ -158,8 +158,8 @@ public class User implements Comparable<User> {
    private String secretKey;
 
    public User(long id, String name, String firstname, String lastname, String email, Date created, String state,
-            String account, Type accountType, String domain, long domainId, String timeZone, String apiKey,
-            String secretKey) {
+         String account, Type accountType, String domain, long domainId, String timeZone, String apiKey,
+         String secretKey) {
       this.id = id;
       this.name = name;
       this.firstName = firstname;
@@ -327,10 +327,10 @@ public class User implements Comparable<User> {
    @Override
    public String toString() {
       return String
-               .format(
-                        "[id=%s, name=%s, state=%s, created=%s, account=%s, accountType=%s, domain=%s, domainId=%s, email=%s, firstName=%s, lastName=%s, apiKey=%s, secretKey=%s, timeZone=%s]",
-                        id, name, state, created, account, accountType, domain, domainId, email, firstName, lastName,
-                        apiKey, secretKey, timeZone);
+            .format(
+                  "[id=%s, name=%s, state=%s, created=%s, account=%s, accountType=%s, domain=%s, domainId=%s, email=%s, firstName=%s, lastName=%s, apiKey=%s, secretKey=%s, timeZone=%s]",
+                  id, name, state, created, account, accountType, domain, domainId, email, firstName, lastName, apiKey,
+                  secretKey, timeZone);
    }
 
 }

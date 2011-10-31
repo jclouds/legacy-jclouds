@@ -30,8 +30,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudStackContextBuilder extends
-         RestContextBuilder<CloudStackClient, CloudStackAsyncClient> {
+public class CloudStackContextBuilder extends RestContextBuilder<CloudStackClient, CloudStackAsyncClient> {
 
    public CloudStackContextBuilder(Properties props) {
       super(CloudStackClient.class, CloudStackAsyncClient.class, props);

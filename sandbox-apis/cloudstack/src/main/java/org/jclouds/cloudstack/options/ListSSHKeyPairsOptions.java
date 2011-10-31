@@ -23,35 +23,29 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options used to create an ip forwarding rule
- * 
- * @see <a href=
- *      "http://download.cloud.com/releases/2.2.0/api/user/createIpForwardingRule.html"
- *      />
- * @author Adrian Cole
+ * @author Vijay Kiran
  */
-public class CreateIPForwardingRuleOptions extends BaseHttpRequestOptions {
+public class ListSSHKeyPairsOptions extends BaseHttpRequestOptions {
 
-   public static final CreateIPForwardingRuleOptions NONE = new CreateIPForwardingRuleOptions();
+   public static final ListSSHKeyPairsOptions NONE = new ListSSHKeyPairsOptions();
 
    /**
-    * @param endPort
-    *           the end port for the rule
+    * @param name
+    *           the SSHKeyPair name
     */
-   public CreateIPForwardingRuleOptions endPort(int endPort) {
-      this.queryParameters.replaceValues("endport", ImmutableSet.of(endPort + ""));
+   public ListSSHKeyPairsOptions name(String name) {
+      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
       return this;
-
    }
 
    public static class Builder {
-
       /**
-       * @see CreatePortForwardingRuleOptions#endPort
+       * @see ListSSHKeyPairsOptions#name
        */
-      public static CreateIPForwardingRuleOptions endPort(int endPort) {
-         CreateIPForwardingRuleOptions options = new CreateIPForwardingRuleOptions();
-         return options.endPort(endPort);
+      public static ListSSHKeyPairsOptions name(String name) {
+         ListSSHKeyPairsOptions options = new ListSSHKeyPairsOptions();
+         return options.name(name);
       }
+
    }
 }

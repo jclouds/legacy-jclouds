@@ -523,8 +523,8 @@ public class Template implements Comparable<Template> {
 
    /**
     * 
-    * @return shows the current pending asynchronous job ID, or null if current pending jobs are
-    *         acting on the template
+    * @return shows the current pending asynchronous job ID, or null if current
+    *         pending jobs are acting on the template
     */
    @Nullable
    public Long getJobId() {

@@ -47,7 +47,8 @@ public interface TemplateClient {
     * List all public, private, and privileged templates.
     * 
     * @param options
-    *           if present, how to constrain the list, defaults to all executable templates
+    *           if present, how to constrain the list, defaults to all
+    *           executable templates
     * @return templates matching query, or empty set, if no templates are found
     * @see TemplateFilter
     */
