@@ -24,7 +24,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @author Vijay Kiran
  */
-public class SSHKeyPair implements Comparable<SSHKeyPair> {
+public class SshKeyPair implements Comparable<SshKeyPair> {
 
    public static Builder builder() {
       return new Builder();
@@ -51,13 +51,13 @@ public class SSHKeyPair implements Comparable<SSHKeyPair> {
          return this;
       }
 
-      public SSHKeyPair build() {
-         return new SSHKeyPair(fingerprint, name, privateKey);
+      public SshKeyPair build() {
+         return new SshKeyPair(fingerprint, name, privateKey);
       }
    }
 
    // for deserialization
-   SSHKeyPair() {
+   SshKeyPair() {
 
    }
 
@@ -66,7 +66,7 @@ public class SSHKeyPair implements Comparable<SSHKeyPair> {
    @SerializedName("privatekey")
    private String privateKey;
 
-   public SSHKeyPair(String fingerprint, String name, String privateKey) {
+   public SshKeyPair(String fingerprint, String name, String privateKey) {
       this.fingerprint = fingerprint;
       this.name = name;
       this.privateKey = privateKey;
@@ -103,7 +103,7 @@ public class SSHKeyPair implements Comparable<SSHKeyPair> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      SSHKeyPair other = (SSHKeyPair) obj;
+      SshKeyPair other = (SshKeyPair) obj;
       if (fingerprint == null) {
          if (other.fingerprint != null)
             return false;
@@ -129,7 +129,7 @@ public class SSHKeyPair implements Comparable<SSHKeyPair> {
    }
 
    @Override
-   public int compareTo(SSHKeyPair arg0) {
+   public int compareTo(SshKeyPair arg0) {
       return fingerprint.compareTo(arg0.getFingerprint());
    }
 
