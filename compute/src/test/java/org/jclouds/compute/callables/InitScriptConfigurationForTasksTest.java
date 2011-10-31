@@ -18,7 +18,10 @@
  */
 package org.jclouds.compute.callables;
 
+import static java.lang.String.format;
 import static org.testng.Assert.assertEquals;
+
+import java.io.File;
 
 import org.testng.annotations.Test;
 
@@ -42,7 +45,7 @@ public class InitScriptConfigurationForTasksTest {
    public void testPatternUpdatesBasedir() {
       InitScriptConfigurationForTasks config = InitScriptConfigurationForTasks.create();
       config.initScriptPattern("/var/foo-init-%s");
-      assertEquals(config.getBasedir(), "/var");
+      assertEquals(config.getBasedir(), format("%svar", File.separator));
       assertEquals(config.getInitScriptPattern(), "/var/foo-init-%s");
    }
 
@@ -57,7 +60,7 @@ public class InitScriptConfigurationForTasksTest {
 
       }).getInstance(InitScriptConfigurationForTasks.class);
       config.initScriptPattern("/var/foo-init-%s");
-      assertEquals(config.getBasedir(), "/var");
+      assertEquals(config.getBasedir(), format("%svar", File.separator));
       assertEquals(config.getInitScriptPattern(), "/var/foo-init-%s");
    }
 

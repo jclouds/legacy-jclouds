@@ -87,6 +87,8 @@ public class SshjSshClientTest {
    }
 
    public void testExceptionClassesRetry() {
+      assert ssh.shouldRetry(new ConnectionException("Read timed out", new SSHException("Read timed out",
+            new SocketTimeoutException("Read timed out"))));
       assert ssh.shouldRetry(new SocketTimeoutException("connect timed out"));
       assert ssh.shouldRetry(new TransportException("socket closed"));
       assert ssh.shouldRetry(new ConnectionException("problem"));

@@ -190,7 +190,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    private void ensureMachineIsLaunched(String vmName) {
-      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, ExecutionType.GUI, ""));
+      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, ExecutionType.HEADLESS, ""));
    }
 
    private void ensureGuestAdditionsMediumIsAttached(String vmName, final IMedium guestAdditionsDvdMedium) {
