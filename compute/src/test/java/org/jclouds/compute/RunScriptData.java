@@ -39,6 +39,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -46,7 +47,12 @@ import com.google.common.collect.ImmutableMap;
  */
 public class RunScriptData {
 
-   private static String jbossHome = "/usr/local/jboss";
+   public static final URI JDK7_URL = URI.create(System.getProperty("test.jdk7-url",
+         "http://download.oracle.com/otn-pub/java/jdk/7u1-b08/jdk-7u1-linux-x64.tar.gz"));
+   public static final URI JBOSS7_URL = URI.create(System.getProperty("test.jboss7-url",//
+         "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz"));
+
+   public static String JBOSS_HOME = "/usr/local/jboss";
 
    public static Statement installJavaAndCurl(OperatingSystem os) {
       if (os == null || OperatingSystemPredicates.supportsApt().apply(os))
@@ -72,22 +78,21 @@ public class RunScriptData {
                         AdminAccess.builder().adminUsername("web").build(),//
                         installJavaAndCurl(os),//
                         authorizePortsInIpTables(22, 8080),//
-                        extractTargzIntoDirectory(URI.create(System.getProperty("test.jboss-url",//
-                                 "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz")), "/usr/local"),//
-                        exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),//
+                        extractTargzIntoDirectory(JBOSS7_URL, "/usr/local"),//
+                        exec("{md} " + JBOSS_HOME), exec("mv /usr/local/jboss-*/* " + JBOSS_HOME),//
                         changeStandaloneConfigToListenOnAllIPAddresses(),
-                        exec("chmod -R oug+r+w " + jbossHome),
-                        exec("chown -R web " + jbossHome));
+                        exec("chmod -R oug+r+w " + JBOSS_HOME),
+                        exec("chown -R web " + JBOSS_HOME));
    }
    
    // NOTE do not name this the same as your login user, or the init process may kill you!
    public static InitBuilder startJBoss(String configuration) {
       return new InitBuilder(
                "jboss",
-               jbossHome,
-               jbossHome,
-               ImmutableMap.of("jbossHome", jbossHome),
-               ImmutableList.<Statement>of(appendFile(jbossHome + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration))),
+               JBOSS_HOME,
+               JBOSS_HOME,
+               ImmutableMap.of("jbossHome", JBOSS_HOME),
+               ImmutableList.<Statement>of(appendFile(JBOSS_HOME + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration))),
                ImmutableList
                         .<Statement> of(interpret(new StringBuilder().append("java ").append(' ')
                                  .append("-server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
@@ -122,30 +127,44 @@ public class RunScriptData {
    private static Statement changeStandaloneConfigToListenOnAllIPAddresses() {
       return exec(format(
                         "(cd %s/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)",
-                        jbossHome));
+                        JBOSS_HOME));
    }
+   
+   public static final ImmutableSet<String> exportJavaHomeAndAddToPath = ImmutableSet.of(
+         "export JAVA_HOME=/usr/local/jdk", "export PATH=$JAVA_HOME/bin:$PATH");
 
+   public static final Statement JDK7_INSTALL_TGZ = newStatementList(//
+         exec("{md} /usr/local/jdk"), extractTargzIntoDirectory(JDK7_URL, "/usr/local"),//
+         exec("mv /usr/local/jdk1.7*/* /usr/local/jdk/"),//
+         exec("test -n \"$SUDO_USER\" && "), appendFile("/home/$SUDO_USER/.bashrc", exportJavaHomeAndAddToPath),//
+         appendFile("/etc/bashrc", exportJavaHomeAndAddToPath),//
+         appendFile("$HOME/.bashrc", exportJavaHomeAndAddToPath),//
+         appendFile("/etc/skel/.bashrc", exportJavaHomeAndAddToPath),//
+         // TODO:
+         // eventhough we are setting the above, sometimes images (ex.
+         // cloudservers ubuntu) kick out of .bashrc (ex. [ -z "$PS1" ] &&
+         // return), for this reason, we should also explicitly link.
+         // A better way would be to update using alternatives or the like
+         exec("ln -fs /usr/local/jdk/bin/java /usr/bin/java"));
+  
    public static String aptInstall = "apt-get install -f -y -qq --force-yes";
 
-
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
-            normalizeHostAndDNSConfig(),//
-            exec("apt-get update -qq"),
-            exec("which curl || " + aptInstall + " curl"),//
-            exec(aptInstall + " openjdk-6-jdk"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> $HOME/.bashrc"));
+         normalizeHostAndDNSConfig(),//
+         exec("which curl >&- 2>&-|| " + aptInstall + " curl"),//
+         exec("which nslookup >&- 2>&-|| " + aptInstall + " dnsutils"),//
+         JDK7_INSTALL_TGZ);
 
    public static String yumInstall = "yum --nogpgcheck -y install";
 
    public static final Statement YUM_RUN_SCRIPT = newStatementList(//
-            normalizeHostAndDNSConfig(),//
-            exec("which curl || " + yumInstall + " curl"),//
-            exec(yumInstall + " java-1.6.0-openjdk-devel"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
+         normalizeHostAndDNSConfig(),//
+         exec("which curl >&- 2>&-|| " + yumInstall + " curl"),//
+         exec("which nslookup >&- 2>&-|| " + yumInstall + " bind-utils"),//
+         JDK7_INSTALL_TGZ);
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
-            normalizeHostAndDNSConfig(),//
-            exec("which curl || zypper install curl"),//
-            exec("zypper install java-1.6.0-openjdk"),//
-            exec("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /etc/bashrc"));
+         normalizeHostAndDNSConfig(),//
+         exec("which curl >&- 2>&-|| zypper install curl"),//
+         JDK7_INSTALL_TGZ);
 }

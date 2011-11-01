@@ -32,6 +32,9 @@ import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.RunScriptData.JBOSS7_URL;
+import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
+import static org.jclouds.compute.RunScriptData.JDK7_URL;
 import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
 import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
@@ -49,15 +52,19 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -85,6 +92,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
@@ -97,11 +105,13 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.net.InetAddresses;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.annotations.SerializedName;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -148,7 +158,8 @@ public abstract class BaseComputeServiceLiveTest {
       setServiceDefaults();
       if (group == null)
          group = checkNotNull(provider, "provider");
-      // groups need to work with hyphens in them, so let's make sure there is one!
+      // groups need to work with hyphens in them, so let's make sure there is
+      // one!
       if (group.indexOf('-') == -1)
          group = group + "-";
       setupCredentials();
@@ -176,8 +187,8 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet.of(
-               new Log4JLoggingModule(), getSshModule()), props);
+      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
+            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -193,7 +204,7 @@ public abstract class BaseComputeServiceLiveTest {
       long interval = 50;
       // get more precise than default socket tester
       preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
-               TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS);
    }
 
    abstract protected Module getSshModule();
@@ -204,7 +215,7 @@ public abstract class BaseComputeServiceLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA",
-                  ImmutableSet.<Module> of(new Log4JLoggingModule()));
+               ImmutableSet.<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -229,7 +240,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
       client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
-               .family(OsFamily.UBUNTU).description("ffoo").build()));
+            .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
@@ -252,14 +263,14 @@ public abstract class BaseComputeServiceLiveTest {
          assert good.credential != null : nodes;
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-                  runningInGroup(group), Statements.exec("hostname"),
-                  wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()) {
+               runningInGroup(group), Statements.exec("hostname"),
+               wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()) {
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
 
          // test single-node execution
-         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname", wrapInInitScript(false).runAsRoot(
-                  false));
+         ExecResponse response = client.runScriptOnNode(node.getId(), "hostname",
+               wrapInInitScript(false).runAsRoot(false));
          checkResponseEqualsHostname(response, node);
          OperatingSystem os = node.getOperatingSystem();
 
@@ -270,9 +281,10 @@ public abstract class BaseComputeServiceLiveTest {
 
          checkNodes(nodes, group, "runScriptWithCreds");
 
-         // test adding AdminAccess later changes the default boot user, in this case to foo
+         // test adding AdminAccess later changes the default boot user, in this
+         // case to foo
          ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), AdminAccess.builder()
-                  .adminUsername("foo").build(), nameTask("adminUpdate"));
+               .adminUsername("foo").build(), nameTask("adminUpdate"));
 
          response = future.get(3, TimeUnit.MINUTES);
 
@@ -282,7 +294,7 @@ public abstract class BaseComputeServiceLiveTest {
          // test that the node updated to the correct admin user!
          assertEquals(node.getCredentials().identity, "foo");
          assert node.getCredentials().credential != null : nodes;
-         
+
          weCanCancelTasks(node);
 
          assert response.getExitCode() == 0 : node.getId() + ": " + response;
@@ -300,20 +312,22 @@ public abstract class BaseComputeServiceLiveTest {
    protected void tryBadPassword(String group, Credentials good) throws AssertionError {
       try {
          Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(runningInGroup(group),
-                  "echo I put a bad password", wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(
-                           new Credentials(good.identity, "romeo")));
+               "echo I put a bad password",
+               wrapInInitScript(false).runAsRoot(false)
+                     .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
          assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
       } catch (AssertionError e) {
          throw e;
       } catch (RunScriptOnNodesException e) {
          assert Iterables.any(e.getNodeErrors().values(), Predicates.instanceOf(AuthorizationException.class)) : e
-                  + " not authexception!";
+               + " not authexception!";
       }
    }
 
    @Test(enabled = false)
    public void weCanCancelTasks(NodeMetadata node) throws InterruptedException, ExecutionException {
-      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"), nameTask("sleeper").runAsRoot(false));
+      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"),
+            nameTask("sleeper").runAsRoot(false));
       ExecResponse response = null;
       try {
          response = future.get(1, TimeUnit.MILLISECONDS);
@@ -321,11 +335,11 @@ public abstract class BaseComputeServiceLiveTest {
       } catch (TimeoutException e) {
          assert !future.isDone();
          response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
-                  .runAsRoot(false));
+               .runAsRoot(false));
          assert !response.getOutput().trim().equals("") : node.getId() + ": " + response;
          future.cancel(true);
          response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
-                  .runAsRoot(false));
+               .runAsRoot(false));
          assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
          try {
             future.get();
@@ -386,8 +400,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
-               Statements.newStatementList(AdminAccess.standard(),
-                        buildScript(template.getImage().getOperatingSystem())));
+            Statements.newStatementList(AdminAccess.standard(), buildScript(template.getImage().getOperatingSystem())));
       return template;
    }
 
@@ -399,8 +412,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
-                           .getOperatingSystem());
+               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(),
+                     node.getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -416,18 +429,18 @@ public abstract class BaseComputeServiceLiveTest {
       initializeContextAndClient();
 
       Location existingLocation = Iterables.get(this.nodes, 0).getLocation();
-      boolean existingLocationIsAssignable = Iterables.any(client.listAssignableLocations(), Predicates
-               .equalTo(existingLocation));
+      boolean existingLocationIsAssignable = Iterables.any(client.listAssignableLocations(),
+            Predicates.equalTo(existingLocation));
 
       if (existingLocationIsAssignable) {
          getAnonymousLogger().info("creating another node based on existing nodes' location: " + existingLocation);
-         template = addRunScriptToTemplate(client.templateBuilder().fromTemplate(template).locationId(
-                  existingLocation.getId()).build());
+         template = addRunScriptToTemplate(client.templateBuilder().fromTemplate(template)
+               .locationId(existingLocation.getId()).build());
       } else {
          refreshTemplate();
          getAnonymousLogger().info(
-                  format("%s is not assignable; using template's location %s as  ", existingLocation, template
-                           .getLocation()));
+               format("%s is not assignable; using template's location %s as  ", existingLocation,
+                     template.getLocation()));
       }
 
       Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
@@ -450,9 +463,9 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
-            Credentials creds) throws RunScriptOnNodesException {
+         Credentials creds) throws RunScriptOnNodesException {
       return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-               .nameTask("runScriptWithCreds"));
+            .nameTask("runScriptWithCreds"));
    }
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String taskName) throws IOException {
@@ -479,16 +492,16 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
-               .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
-               new Function<NodeMetadata, String>() {
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(
+            filter(client.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
+            new Function<NodeMetadata, String>() {
 
-                  @Override
-                  public String apply(NodeMetadata from) {
-                     return from.getId();
-                  }
+               @Override
+               public String apply(NodeMetadata from) {
+                  return from.getId();
+               }
 
-               }));
+            }));
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
@@ -507,7 +520,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : format("nodes left in set: [%s] which didn't match set: [%s]", metadataSet,
-               nodes);
+            nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -577,7 +590,7 @@ public abstract class BaseComputeServiceLiveTest {
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
          assert context.getCredentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
-                  + "node#" + node.getId();
+               + "node#" + node.getId();
       }
    }
 
@@ -586,32 +599,33 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    static class ServiceStats {
-      long backgroundProcessSeconds;
+      long backgroundProcessMilliseconds;
       long socketOpenMilliseconds;
       long reportedStartupTimeMilliseconds;
 
       @Override
       public String toString() {
          return String.format(
-                  "[backgroundProcessSeconds=%s, socketOpenMilliseconds=%s, reportedStartupTimeMilliseconds=%s]",
-                  backgroundProcessSeconds, socketOpenMilliseconds, reportedStartupTimeMilliseconds);
+               "[backgroundProcessMilliseconds=%s, socketOpenMilliseconds=%s, reportedStartupTimeMilliseconds=%s]",
+               backgroundProcessMilliseconds, socketOpenMilliseconds, reportedStartupTimeMilliseconds);
       }
    }
 
-   protected ServiceStats trackAvailabilityOfProcessOnNode(Supplier<ExecResponse> bgProcess, String processName,
-            NodeMetadata node, Pattern parseReported) {
+   protected ServiceStats trackAvailabilityOfProcessOnNode(Future<ExecResponse> bgProcess, String processName,
+         NodeMetadata node, Pattern parseReported) throws InterruptedException, ExecutionException {
       ServiceStats stats = new ServiceStats();
-      long startSeconds = currentTimeMillis();
+      Stopwatch watch = new Stopwatch().start();
 
       ExecResponse exec = bgProcess.get();
-      stats.backgroundProcessSeconds = (currentTimeMillis() - startSeconds) / 1000;
+      stats.backgroundProcessMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
+      watch.reset().start();
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
       assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket, node);
-      stats.socketOpenMilliseconds = currentTimeMillis() - startSeconds;
+      stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
 
       exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
-               .wrapInInitScript(false));
+            .wrapInInitScript(false));
 
       Matcher matcher = parseReported.matcher(exec.getOutput());
       if (matcher.find())
@@ -624,8 +638,19 @@ public abstract class BaseComputeServiceLiveTest {
    // started in 6462ms -
    public static final Pattern JBOSS_PATTERN = Pattern.compile("started in ([0-9]+)ms -");
 
-   protected ServiceStats trackAvailabilityOfJBossProcessOnNode(Supplier<ExecResponse> startProcess, NodeMetadata node) {
-      return trackAvailabilityOfProcessOnNode(startProcess, "jboss", node, JBOSS_PATTERN);
+   private static class FreeGeoIPLocation {
+      private String ip;
+      @SerializedName("countrycode")
+      private String countryCode;
+      @SerializedName("regioncode")
+      private String regionCode;
+      private String city;
+
+      @Override
+      public String toString() {
+         return format("FreeGeoIPLocation [ip=%s, countryCode=%s, regionCode=%s, city=%s]", ip, countryCode,
+               regionCode, city);
+      }
    }
 
    @Test(enabled = true)
@@ -633,7 +658,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       String group = this.group + "s";
       final String configuration = Strings2.toStringAndClose(RunScriptData.class
-               .getResourceAsStream("/standalone-basic.xml"));
+            .getResourceAsStream("/standalone-basic.xml"));
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
@@ -642,40 +667,71 @@ public abstract class BaseComputeServiceLiveTest {
 
       try {
          ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
-         long startSeconds = currentTimeMillis();
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080).blockOnPort(22,
-                  300).userMetadata(userMetadata)));
+         Stopwatch watch = new Stopwatch().start();
+         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
+               inboundPorts(22, 8080).blockOnPort(22, 300).userMetadata(userMetadata)));
+         long createSeconds = watch.elapsedTime(TimeUnit.SECONDS);
+
          final String nodeId = node.getId();
-         long createSeconds = (currentTimeMillis() - startSeconds) / 1000;
 
          checkUserMetadataInNodeEquals(node, userMetadata);
 
-         getAnonymousLogger()
-                  .info(
-                           format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(),
-                                    createSeconds));
+         getAnonymousLogger().info(
+               format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
 
-         startSeconds = currentTimeMillis();
+         watch.reset().start();
 
-         // note this is a dependency on the template resolution so we have the right process per
-         // operating system. moreover, we wish this to run as root, so that it can change ip
+         // note this is a dependency on the template resolution so we have the
+         // right process per
+         // operating system. moreover, we wish this to run as root, so that it
+         // can change ip
          // tables rules and setup our admin user
          client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
-                  nameTask("configure-jboss"));
+               nameTask("configure-jboss"));
 
-         long configureSeconds = (currentTimeMillis() - startSeconds) / 1000;
+         long configureSeconds = watch.elapsedTime(TimeUnit.SECONDS);
 
          getAnonymousLogger().info(
-                  format("<< configured node(%s) with %s in %ss", nodeId, client.runScriptOnNode(nodeId,
-                           "java -fullversion", runAsRoot(false).wrapInInitScript(false)).getOutput().trim(),
-                           configureSeconds));
+               format(
+                     "<< configured node(%s) with %s and JBoss %s in %ss",
+                     nodeId,
+                     exec(nodeId, "java -fullversion"),
+                     // version of the jboss jar
+                     exec(nodeId,
+                           format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
+                                 JBOSS_HOME)), configureSeconds));
 
-         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", JDK7_URL)
+               .entrySet()) {
+            // note we cannot use nslookup until we've configured the system, as
+            // it may have not been present checking the address of the download
+            // host using the local node's DNS config
+            String downloadSourceIp = exec(
+                  nodeId,
+                  format("nslookup -query=a -timeout=5 %s|grep Address|tail -1|sed 's/.* //g'", download.getValue()
+                        .getHost()));
+            if (InetAddresses.isInetAddress(downloadSourceIp)) {
+               getAnonymousLogger().info(
+                     format("<< location of %s(%s) from perpective of node(%s): %s", download.getKey(), download
+                           .getValue().getHost(), nodeId, getLocationForIp(downloadSourceIp)));
+            }
+         }
 
+         // the current IP configuration could show NAT destinations, as opposed
+         // to the real ip address of the host, so we'll use checkip to see what
+         // the world view this host as.
+         String nodeIp = exec(nodeId, SaveHttpResponseTo.CURL + " http://checkip.amazonaws.com/");
+         if (InetAddresses.isInetAddress(nodeIp)) {
+            getAnonymousLogger()
+                  .info(format("<< location of node(%s) from perspective of amazonaws: %s", nodeId,
+                        getLocationForIp(nodeIp)));
+         }
+
+         trackAvailabilityOfProcessOnNode(context.utils().userExecutor().submit(new Callable<ExecResponse>() {
             @Override
-            public ExecResponse get() {
+            public ExecResponse call() {
                return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
-                        .nameTask("jboss"));
+                     .nameTask("jboss"));
             }
 
             @Override
@@ -683,14 +739,14 @@ public abstract class BaseComputeServiceLiveTest {
                return "initial start of jboss";
             }
 
-         }, node);
+         }), "jboss", node, JBOSS_PATTERN);
 
          client.runScriptOnNode(nodeId, "./jboss stop", runAsRoot(false).wrapInInitScript(false));
 
-         trackAvailabilityOfJBossProcessOnNode(new Supplier<ExecResponse>() {
+         trackAvailabilityOfProcessOnNode(context.utils().userExecutor().submit(new Callable<ExecResponse>() {
 
             @Override
-            public ExecResponse get() {
+            public ExecResponse call() {
                return client.runScriptOnNode(nodeId, "./jboss start", runAsRoot(false).wrapInInitScript(false));
             }
 
@@ -699,7 +755,7 @@ public abstract class BaseComputeServiceLiveTest {
                return "warm start of jboss";
             }
 
-         }, node);
+         }), "jboss", node, JBOSS_PATTERN);
 
       } finally {
          client.destroyNodesMatching(inGroup(group));
@@ -707,9 +763,24 @@ public abstract class BaseComputeServiceLiveTest {
 
    }
 
+   protected String getLocationForIp(String ip) throws IOException {
+      InputStream json = context.utils().http().get(URI.create("http://freegeoip.appspot.com/" + ip));
+      String text = null;
+      if (json != null && (text = Strings2.toStringAndClose(json)).indexOf("}") != -1) {
+         return context.utils().json().fromJson(text, FreeGeoIPLocation.class).toString();
+      } else {
+         getAnonymousLogger().warning("could not get info on ip " + ip + "; check freegeoip");
+      }
+      return ip;
+   }
+
+   protected String exec(final String nodeId, String command) {
+      return client.runScriptOnNode(nodeId, command, runAsRoot(false).wrapInInitScript(false)).getOutput().trim();
+   }
+
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
-               userMetadata, node);
+            userMetadata, node);
    }
 
    public void testListImages() throws Exception {
@@ -728,26 +799,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-            case PROVIDER:
-               assertProvider(location);
-               break;
-            case REGION:
-               assertProvider(location.getParent());
-               break;
-            case ZONE:
-               Location provider = location.getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider == null)
-                  provider = location.getParent();
-               assertProvider(provider);
-               break;
-            case HOST:
-               Location provider2 = location.getParent().getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider2 == null)
-                  provider2 = location.getParent().getParent();
-               assertProvider(provider2);
-               break;
+         case PROVIDER:
+            assertProvider(location);
+            break;
+         case REGION:
+            assertProvider(location.getParent());
+            break;
+         case ZONE:
+            Location provider = location.getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider == null)
+               provider = location.getParent();
+            assertProvider(provider);
+            break;
+         case HOST:
+            Location provider2 = location.getParent().getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider2 == null)
+               provider2 = location.getParent().getParent();
+            assertProvider(provider2);
+            break;
          }
       }
    }
@@ -770,7 +841,7 @@ public abstract class BaseComputeServiceLiveTest {
          assert node.getState() != NodeState.RUNNING : node;
          long duration = (currentTimeMillis() - time) / 1000;
          assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
-                  duration, nonBlockDurationSeconds);
+               duration, nonBlockDurationSeconds);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
@@ -837,8 +908,9 @@ public abstract class BaseComputeServiceLiveTest {
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
-                  + ssh.exec("cat /tmp/" + taskName + "/stdout.log /tmp/" + taskName + "/stderr.log");
+         assert exec.getError().indexOf("1.7") != -1 || exec.getOutput().indexOf("1.7") != -1 : exec + "\n"
+               + ssh.exec("cat /tmp/" + taskName + "/" + taskName + ".sh /tmp/" + taskName + "/stdout.log /tmp/"
+                     + taskName + "/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();
