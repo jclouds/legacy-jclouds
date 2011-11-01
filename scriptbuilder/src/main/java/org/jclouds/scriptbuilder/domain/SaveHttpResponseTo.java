@@ -32,7 +32,7 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class SaveHttpResponseTo extends InterpretableStatement {
-   static final String CURL = "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20";
+   public static final String CURL = "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20";
 
    /**
     * 

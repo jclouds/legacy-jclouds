@@ -1,5 +1,5 @@
-mkdir -p /home/users/defaultAdminUsername
-useradd -s /bin/bash -d /home/users/defaultAdminUsername -p 'crypt(0)' defaultAdminUsername
+mkdir -p /home/users
+useradd -s /bin/bash -m  -d /home/users/defaultAdminUsername -p 'crypt(0)' defaultAdminUsername
 mkdir -p /home/users/defaultAdminUsername/.ssh
 cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<'END_OF_FILE'
 publicKey
