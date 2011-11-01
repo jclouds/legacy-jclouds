@@ -1,14 +1,14 @@
 ---
 layout: docs
-title: Quick Start - Open Stack
+title: Quick Start - OpenStack
 ---
 
-# Quick Start: Open Stack
+# Quick Start: OpenStack Nova
 
 `Note: This page is a work in progress and will be updated often. Check back later if something is missing.`
 
 1. Install !OpenStack, or get access to a running instance
-  * [Compute(nova)](http://www.openstack.org/projects/compute/latest-release/). At least Cactus release with Openstack API v1.1 is required.
+  * [Compute(nova)](http://www.openstack.org/projects/compute/latest-release/). At least Cactus release with OpenStack API v1.1 is required.
 2. Get credentials for the OpenStack API
   * You will require a Username and API Key to use the OpenStack API. 
 	The valid credentials are in novarc file generated for your Openstack project with `nova-manage project zipfile` command.

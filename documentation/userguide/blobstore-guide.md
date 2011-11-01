@@ -72,7 +72,6 @@ You can also set the context property `provider`.endpoint to use the following A
 | filesystem	|                                                                                                                                                                            
 | nova			|                                                                                                                                                                                  
 | swift			|                                                                                                                                                                                 
-| swift			|                                                                                                                                                                                 
 | walrus		|                                                                                                                                                                                
 
 
