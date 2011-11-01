@@ -4,9 +4,9 @@ root ALL = (ALL) ALL
 %wheel ALL = (ALL) NOPASSWD:ALL
 END_OF_FILE
 chmod 0440 /etc/sudoers
-mkdir -p /home/users/foo
+mkdir -p /home/users
 groupadd -f wheel
-useradd -s /bin/bash -g wheel -d /home/users/foo -p 'crypt(bar)' foo
+useradd -s /bin/bash -g wheel -m  -d /home/users/foo -p 'crypt(bar)' foo
 mkdir -p /home/users/foo/.ssh
 cat >> /home/users/foo/.ssh/authorized_keys <<'END_OF_FILE'
 fooPublicKey
