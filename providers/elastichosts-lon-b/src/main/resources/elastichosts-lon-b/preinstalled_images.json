@@ -1,37 +1,30 @@
 [
   {
-      "uuid": "38df0986-4d85-4b76-b502-3878ffc80161",
-      "description": "CentOS Linux 5.5",
+      "uuid": "d7736ff4-c045-46e0-bd62-f8719758d20d",
+      "description": "CentOS Linux 6.0",
       "osFamily": "CENTOS",
-      "osVersion": "5.5",
+      "osVersion": "6.0",
       "size": "3"
   },
   {
-      "uuid": "980cf63c-f21e-4382-997b-6541d5809629",
-      "description": "Debian Linux 5.0",
-      "osFamily": "DEBIAN",
-      "osVersion": "5.0",
-      "size": "1"
-  },
-  {
-      "uuid": "6aa953cc-3395-4e8d-938e-65c74fd20334",
-      "description": "Debian Linux 6.0.1",
+      "uuid": "b9593943-e252-4895-8715-ad04e55f5dda",
+      "description": "Debian Linux 6.0",
       "osFamily": "DEBIAN",
       "osVersion": "6.0",
       "size": "1"
   },
   {
       "uuid": "aee5589a-88c3-43ef-bb0a-9cab6e64192d",
-      "description": "Ubuntu Linux 10.04",
+      "description": "Ubuntu Linux 10.04 LTS",
       "osFamily": "UBUNTU",
       "osVersion": "10.04",
       "size": "1"
   },
   {
-      "uuid": "325c7e71-77c9-4e88-9fd2-85b34a996cfb",
-      "description": "Ubuntu Linux 10.10",
+      "uuid": "7738b8be-0812-4bec-9b82-aa9df29db110",
+      "description": "Ubuntu Linux 11.10",
       "osFamily": "UBUNTU",
-      "osVersion": "10.10",
+      "osVersion": "11.10",
       "size": "1"
   },
   {
@@ -42,14 +35,14 @@
       "size": "13"
   },
   {
-      "uuid": "b405b598-4ae4-4ba8-8a2b-a9487d693f34",
+      "uuid": "30824e97-05a4-410c-946e-2ba5a92b07cb",
       "description": "Windows Web Server 2008 R2",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",
       "size": "13"
   },
   {
-      "uuid": "9397d327-3bf6-46a2-abf6-69553dbb6927",
+      "uuid": "9ecf810e-6ad1-40ef-b360-d606f0444671",
       "description": "Windows Web Server 2008 R2 + SQL Server",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",
@@ -63,7 +56,7 @@
       "size": "13"
   },
   {
-      "uuid": "662c5b3f-9828-4aa2-a866-7cfa53798cdf",
+      "uuid": "2567f25c-8fb8-45c7-95fc-bfe3c3d84c47",
       "description": "Windows Server 2008 Standard R2 + SQL Server",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",
