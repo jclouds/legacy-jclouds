@@ -161,7 +161,8 @@ public class UserAdd implements Statement {
          throw new UnsupportedOperationException("windows not yet implemented");
       String homeDir = defaultHome + "{fs}" + login;
       ImmutableList.Builder<Statement> statements = ImmutableList.<Statement> builder();
-      statements.add(Statements.exec("{md} " + homeDir));
+      // useradd cannot create the default homedir
+      statements.add(Statements.exec("{md} " + defaultHome));
 
       ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.<String, String> builder();
       userAddOptions.put("-s", shell);
@@ -176,6 +177,7 @@ public class UserAdd implements Statement {
             userAddOptions.put("-G", Joiner.on(',').join(groups));
 
       }
+      userAddOptions.put("-m", "");
       userAddOptions.put("-d", homeDir);
       if (password != null) {
          try {

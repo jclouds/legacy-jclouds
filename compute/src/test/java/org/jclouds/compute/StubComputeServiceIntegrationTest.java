@@ -143,7 +143,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
                      client1);
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("web", "privateKey"))).andReturn(
-                     client1New).times(6);
+                     client1New).times(10);
             runScriptAndService(client1, client1New);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
@@ -257,6 +257,22 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                // note we have to reconnect here, as we updated the login user.
                client.disconnect();
 
+               clientNew.connect();               
+               expect(clientNew.exec("ls /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("nslookup -query=a -timeout=5 download.jboss.org|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("nslookup -query=a -timeout=5 download.oracle.com|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 http://checkip.amazonaws.com/\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
                clientNew.connect();
                expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
@@ -328,7 +344,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.6", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.7", 0));
 
             client.disconnect();
          }
