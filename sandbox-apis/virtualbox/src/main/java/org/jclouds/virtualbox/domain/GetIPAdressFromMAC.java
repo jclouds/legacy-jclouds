@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
 public class GetIPAdressFromMAC implements Statement {
 
    public static final Map<OsFamily, String> OS_TO_ARP = ImmutableMap.of(
-         OsFamily.UNIX, "$MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && $MAC={macAddressBSD}\n arp -an | grep $MAC\n", 
+         OsFamily.UNIX, "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBSD}\n arp -an | grep $MAC\n", 
          OsFamily.WINDOWS, "TODO");
 
    private String macAddress;

@@ -28,18 +28,22 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit")
 public class GetIPAddressFromMACTest {
-   
+  
    private static final String macAddressWith00 = "0800271A9806";
    private static final String unixMacAddressWith00 =  "08:00:27:1a:98:06";
    private static final String bsdMacAddressWith00 =   "8:0:27:1a:98:6";
    private static final String macAddressWith0c = "0811271A9806";
-   private static final String macAddressWithC0 = "8011271A9806";
-   private static final String macAddressWithout0 = "189827A32F31";
-
-   public void testGetIPAdressFromMACUNIX() {
-      GetIPAdressFromMAC getIPAdressFromMAC = new GetIPAdressFromMAC(macAddressWith00);
-      assertEquals(getIPAdressFromMAC.render(OsFamily.UNIX), "$MAC=" + unixMacAddressWith00 + 
-      		" && [[ `uname -s` = \"Darwin\" ]] && $MAC=" + bsdMacAddressWith00 + "\n arp -an | grep $MAC\n");
+   private static final String unixMacAddressWith0c =  "08:11:27:1a:98:06";
+   private static final String bsdMacAddressWith0c =   "8:11:27:1a:98:6";
+   
+   public void testGetIPAdressFromMacAddressUnix() {
+      GetIPAdressFromMAC statement = new GetIPAdressFromMAC(macAddressWith00);
+      assertEquals(statement.render(OsFamily.UNIX), "MAC=" + unixMacAddressWith00 + 
+      		" && [[ `uname -s` = \"Darwin\" ]] && MAC=" + bsdMacAddressWith00 + "\n arp -an | grep $MAC\n");
+       
+      statement = new GetIPAdressFromMAC(macAddressWith0c);
+      assertEquals(statement.render(OsFamily.UNIX), "MAC=" + unixMacAddressWith0c + 
+            " && [[ `uname -s` = \"Darwin\" ]] && MAC=" + bsdMacAddressWith0c + "\n arp -an | grep $MAC\n");
    }
    
 }
