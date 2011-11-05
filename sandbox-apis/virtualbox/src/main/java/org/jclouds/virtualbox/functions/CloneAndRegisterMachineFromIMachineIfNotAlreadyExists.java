@@ -37,7 +37,6 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.domain.BridgedInterface;
 import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
@@ -154,11 +153,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
    }
 
    /**
+    * 
+    * Intersect of bridgedIfs and ifconfig | grep status: active
+    * 
     * @return hostInterface
     */
    protected static String retrieveAvailableBridgedInterfaceInfo(
          String bridgedIfs) {
-      List<BridgedInterface> bridgedInterfaces = new ArrayList<BridgedInterface>();
       String hostInterface = null;
       List<String> networkInfoBlocks = Lists.newArrayList();
       // separate the different bridge block
@@ -195,9 +196,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
             }
          }
       }
-
       return hostInterface;
-
    }
 
    private void ensureBridgedNetworkingIsAppliedToMachine(String vmName,

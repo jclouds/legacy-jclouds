@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.virtualbox.domain.GetIPAdressFromMAC;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -54,9 +56,6 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
    @Override
    public String apply(@Nullable IMachine machine) {
-      String macAddress = new FormatVboxMacAddressToShellMacAddress(
-            isOSX(hostId)).apply(machine.getNetworkAdapter(0l).getMACAddress());
-
       // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
       ExecResponse execResponse = runScriptOnNode(hostId,
       /* "for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done", */
@@ -64,10 +63,11 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
             runAsRoot(false).wrapInInitScript(false));
       System.out.println(execResponse);
 
-      String arpLine = runScriptOnNode(hostId, "arp -an | grep " + macAddress,
+      //OsFamily osFamily = context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getFamily();
+      String command = new GetIPAdressFromMAC(machine.getNetworkAdapter(0l).getMACAddress()).render(OsFamily.UNIX);
+      String arpLine = runScriptOnNode(hostId, command,
             runAsRoot(false).wrapInInitScript(false)).getOutput();
-      String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1,
-            arpLine.indexOf(")"));
+      String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
       System.out.println("IP address " + ipAddress);
       return ipAddress;
    }

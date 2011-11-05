@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.IMachineAddStorageController;
 
 /**
  * Get an IP address from an IMachine using arp of the host machine.
@@ -69,11 +70,13 @@ public class IMachineToIpAddressLiveTest extends BaseVirtualBoxClientLiveTest {
                   "password"));
 
       // TODO this should be idempotent
+/*
       IMachine master = new IsoToIMachine(manager, adminDisk, diskFormat,
             settingsFile, vmName, osTypeId, vmId, forceOverwrite,
             controllerIDE, localHostContext, hostId, guestId, new Credentials(
                   "toor", "password")).apply("ubuntu-11.04-server-i386.iso");
-
+*/
+      IMachine master = manager.getVBox().findMachine(vmName);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
             manager, localContext, "", "", "", false, clonedName, hostId)
             .apply(master);
