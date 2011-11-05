@@ -40,7 +40,7 @@ import org.virtualbox_4_1.jaxws.IMachineAddStorageController;
  */
 @Test(groups = "live", singleThreaded = true, testName = "IMachineToIpAddressLiveTest")
 public class IMachineToIpAddressLiveTest extends BaseVirtualBoxClientLiveTest {
-
+   private VirtualBoxManager manager;
    private String settingsFile = null;
    private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
@@ -52,8 +52,7 @@ public class IMachineToIpAddressLiveTest extends BaseVirtualBoxClientLiveTest {
    private String hostId = "host";
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String clonedName = "jclouds-image-virtualbox-machine-to-machine-test_clone";
-   private VirtualBoxManager manager;
-   private String network = "192.168.1";
+   private String network = "192.168.1.1";
 
    @Test
    public void testConvert() throws IOException {
@@ -82,8 +81,7 @@ public class IMachineToIpAddressLiveTest extends BaseVirtualBoxClientLiveTest {
             .apply(master);
 
       // TODO launch machine + check it is ready
-      IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui",
-            "");
+      IProgress prog = clone.launchVMProcess(manager.getSessionObject(), "gui", "");
       prog.waitForCompletion(-1);
 
       String ipAddress = new IMachineToIpAddress(localContext, hostId, network)

@@ -28,9 +28,8 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.virtualbox.domain.GetIPAdressFromMAC;
+import org.jclouds.virtualbox.domain.ScanNetworkWithPing;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -56,20 +55,16 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
 
    @Override
    public String apply(@Nullable IMachine machine) {
-      // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
+      // TODO: eliminate OSFamily.UNIX hard-coded
+      OsFamily osFamily = OsFamily.UNIX; //context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getFamily();
       ExecResponse execResponse = runScriptOnNode(hostId,
-      /* "for i in {1..254} ; do ping -c 1 -t 1 192.168.1.$i & done", */
-      "for i in {1..254} ; do ping -c 1 -t 1 " + network + ".$i & done",
+            new ScanNetworkWithPing(network).render(osFamily),
             runAsRoot(false).wrapInInitScript(false));
-      System.out.println(execResponse);
-
-      //OsFamily osFamily = context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getFamily();
-      String command = new GetIPAdressFromMAC(machine.getNetworkAdapter(0l).getMACAddress()).render(OsFamily.UNIX);
+      
+      String command = new GetIPAdressFromMAC(machine.getNetworkAdapter(0l).getMACAddress()).render(osFamily);
       String arpLine = runScriptOnNode(hostId, command,
             runAsRoot(false).wrapInInitScript(false)).getOutput();
-      String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
-      System.out.println("IP address " + ipAddress);
-      return ipAddress;
+      return arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
    }
 
    private ExecResponse runScriptOnNode(String nodeId, String command,
