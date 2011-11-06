@@ -141,11 +141,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
       String command = "vboxmanage list bridgedifs";
       String bridgedIfs = runScriptOnNode(hostId, command,
             runAsRoot(false).wrapInInitScript(false)).getOutput();
-      String hostInterface = retrieveAvailableBridgedInterfaceInfo(bridgedIfs);
-      checkNotNull(hostInterface);
+      
+      
+      String bridgedInterfaces = retrieveAvailableBridgedInterfaceInfo(bridgedIfs);
+      checkNotNull(bridgedInterfaces);
       String macAddress = manager.getVBox().getHost().generateMACAddress();
       ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress,
-            hostInterface);
+            bridgedInterfaces);
 
       // TODO maybe need to notify outside about macaddress and network, useful
       // on IMachineToIpAddress
