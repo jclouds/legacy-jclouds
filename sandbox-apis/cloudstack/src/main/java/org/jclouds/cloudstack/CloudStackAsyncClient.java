@@ -33,6 +33,7 @@ import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
 import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
+import org.jclouds.cloudstack.features.VMGroupAsyncClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -142,4 +143,11 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    SSHKeyPairAsyncClient getSSHKeyPairClient();
+
+   /**
+    * Provides asynchronous access to VM groups
+    */
+   @Delegate
+   VMGroupAsyncClient getVMGroupClient();
+
 }
