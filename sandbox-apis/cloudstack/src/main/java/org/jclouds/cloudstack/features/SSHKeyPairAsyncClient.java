@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
@@ -37,11 +37,9 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
  * Provides asynchronous access to CloudStack SSHKeyPair features.
- * 
+ *
  * @author Vijay Kiran
  * @see <a
  *      href="http://download.cloud.com/releases/2.2.0/api_2.2.8/TOC_User.html"
@@ -59,6 +57,15 @@ public interface SSHKeyPairAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SshKeyPair>> listSSHKeyPairs(ListSSHKeyPairsOptions... options);
+
+  /**
+    * @see SSHKeyPairClient#registerSSHKeyPair
+    */
+   @GET
+   @QueryParams(keys = "command", values = "registerSSHKeyPair")
+   @SelectJson("keypair")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<SshKeyPair> registerSSHKeyPair(@QueryParam("name") String name, @QueryParam("publickey") String publicKey);
 
    /**
     * @see SSHKeyPairClient#createSSHKeyPair

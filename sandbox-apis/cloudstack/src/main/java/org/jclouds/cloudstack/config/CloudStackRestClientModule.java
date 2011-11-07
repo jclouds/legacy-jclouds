@@ -50,6 +50,8 @@ import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
 import org.jclouds.cloudstack.features.TemplateClient;
+import org.jclouds.cloudstack.features.VMGroupAsyncClient;
+import org.jclouds.cloudstack.features.VMGroupClient;
 import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
@@ -95,6 +97,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
          .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
+         .put(VMGroupClient.class, VMGroupAsyncClient.class)//
          .build();
 
    public CloudStackRestClientModule() {
