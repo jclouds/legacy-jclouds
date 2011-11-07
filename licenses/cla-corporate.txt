@@ -2,7 +2,7 @@
                                 jclouds, Inc.
   Software Grant and Corporate Contributor License Agreement ("Agreement")
                http://www.jclouds.org/licenses/cla-corporate.txt
-                                 v2011-08-11
+                                 v2011-11-03
 
 Thank you for your interest in jclouds, Inc. ("jclouds"). In order to clarify
 the intellectual property license granted with Contributions from any person 
@@ -53,15 +53,15 @@ reserve all right, title, and interest in and to Your Contributions.
 
    "Contribution" shall mean any original work of authorship, including any 
    modifications or additions to an existing work, that is intentionally 
-   submitted by You to jclouds for inclusion in, or documentation of, any of 
-   the products owned or managed by jclouds (the "Work"). For the purposes of 
-   this definition, "submitted" means any form of electronic, verbal, or 
-   written communication sent to jclouds or its representatives, including but
-   not limited to communication on electronic mailing lists, source code 
-   control systems, and issue tracking systems that are managed by, or on 
-   behalf of, jclouds for the purpose of discussing and improving the Work, 
-   but excluding communication that is conspicuously marked or otherwise 
-   designated in writing by You as "Not a Contribution."
+   submitted by You to jclouds solely for inclusion in, or documentation of, 
+   any of the open source projects owned or managed by jclouds (the "Work"). 
+   For the purposes of this definition, "submitted" means any form of 
+   electronic, verbal, or written communication sent to jclouds or its 
+   representatives, including but not limited to communication on electronic 
+   mailing lists, source code control systems, and issue tracking systems 
+   that are managed by, or on behalf of, jclouds for the purpose of discussing 
+   and improving the Work, but excluding communication that is conspicuously
+   marked or otherwise designated in writing by You as "Not a Contribution."
 
 2. Grant of Copyright License. Subject to the terms and conditions of this 
    Agreement, You hereby grant to jclouds and to recipients of software 
