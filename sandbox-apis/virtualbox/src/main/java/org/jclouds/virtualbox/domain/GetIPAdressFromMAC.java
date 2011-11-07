@@ -28,12 +28,10 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.util.Utils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Andrea Turli
@@ -42,13 +40,19 @@ public class GetIPAdressFromMAC implements Statement {
 
    public static final Map<OsFamily, String> OS_TO_ARP = ImmutableMap
          .of(OsFamily.UNIX,
-               "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBSD}\n arp -an | grep $MAC\n",
-               OsFamily.WINDOWS, "TODO");
+               "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBsd}\n arp -an | grep $MAC\n",
+               OsFamily.WINDOWS, "set MAC={macAddress} arp -a | Findstr %MAC%");
 
    private String macAddress;
+   private String macAddressBsd; 
 
    public GetIPAdressFromMAC(String macAddress) {
+   	this(macAddress, MacAddressToBSD.INSTANCE.apply(macAddress));
+   }
+   
+   public GetIPAdressFromMAC(String macAddress, String macAddressBsd) {
       this.macAddress = checkNotNull(macAddress, "macAddress");
+      this.macAddressBsd = checkNotNull(macAddressBsd, "macAddressBsd");
    }
 
    @Override
@@ -64,30 +68,11 @@ public class GetIPAdressFromMAC implements Statement {
       macAddress = Joiner.on(":")
             .join(Splitter.fixedLength(2).split(macAddress)).toLowerCase();
 
-      String macAddressBSD = bsdTraslator();
-
       StringBuilder arp = new StringBuilder();
       arp.append(Utils.replaceTokens(OS_TO_ARP.get(family), ImmutableMap.of(
-            "macAddress", macAddress, "macAddressBSD", macAddressBSD)));
+            "macAddress", macAddress, "macAddressBsd", macAddressBsd)));
 
       return arp.toString();
    }
-
-   private String bsdTraslator() {
-
-      return Joiner.on(":").join(
-            Iterables.transform(Splitter.on(":").split(macAddress),
-                  new Function<String, String>() {
-                     @Override
-                     public String apply(String arg0) {
-                        if (arg0.equals("00"))
-                           return "0";
-                        if (arg0.startsWith("0"))
-                           return arg0.substring(1);
-
-                        return arg0;
-                     }
-
-                  }));
-   }
+   
 }
