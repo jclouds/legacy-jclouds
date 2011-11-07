@@ -47,12 +47,16 @@ public class GetIPAdressFromMAC implements Statement {
    private String macAddressBsd; 
 
    public GetIPAdressFromMAC(String macAddress) {
-   	this(macAddress, MacAddressToBSD.INSTANCE.apply(macAddress));
+   	this(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase(),
+   	      MacAddressToBSD.INSTANCE.apply(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase()));
    }
    
    public GetIPAdressFromMAC(String macAddress, String macAddressBsd) {
-      this.macAddress = checkNotNull(macAddress, "macAddress");
-      this.macAddressBsd = checkNotNull(macAddressBsd, "macAddressBsd");
+      checkNotNull(macAddress, "macAddress");
+      checkArgument(macAddress.length() == 17);
+      this.macAddress = macAddress;
+      checkNotNull(macAddressBsd, "macAddressBsd");
+      this.macAddressBsd = macAddressBsd;
    }
 
    @Override
@@ -62,16 +66,9 @@ public class GetIPAdressFromMAC implements Statement {
 
    @Override
    public String render(OsFamily family) {
-      checkNotNull(macAddress);
-      checkArgument(macAddress.length() == 12);
-
-      macAddress = Joiner.on(":")
-            .join(Splitter.fixedLength(2).split(macAddress)).toLowerCase();
-
       StringBuilder arp = new StringBuilder();
       arp.append(Utils.replaceTokens(OS_TO_ARP.get(family), ImmutableMap.of(
             "macAddress", macAddress, "macAddressBsd", macAddressBsd)));
-
       return arp.toString();
    }
    

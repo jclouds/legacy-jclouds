@@ -1,5 +1,8 @@
 package org.jclouds.virtualbox.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -11,7 +14,8 @@ public enum MacAddressToBSD implements Function<String, String> {
 
 	@Override
 	public String apply(String macAddress) {
-		return Joiner.on(":").join(
+	      checkArgument(macAddress.length() == 17);
+	   return  Joiner.on(":").join(
 				Iterables.transform(Splitter.on(":").split(macAddress),
 						new Function<String, String>() {
 					@Override
