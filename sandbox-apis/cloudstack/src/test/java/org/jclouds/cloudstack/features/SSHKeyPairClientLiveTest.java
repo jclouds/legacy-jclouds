@@ -23,11 +23,12 @@ import static org.testng.Assert.assertEquals;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.SshKeyPair;
+import org.jclouds.crypto.SshKeys;
 import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code SSHKeyPairClient}
- * 
+ *
  * @author Vijay Kiran
  */
 @Test(groups = "live", singleThreaded = true, testName = "SSHKeyPairClientLiveTest")
@@ -51,6 +52,18 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       // Set the keypair to null , if the delete test is passed.
       sshKeyPair = null;
    }
+
+   public void testRegisterDeleteSSHKeyPair() {
+      final String publickey = SshKeys.generate().get("public");
+      sshKeyPair = client.getSSHKeyPairClient().registerSSHKeyPair(prefix + "jclouds-keypair", publickey);
+      checkSSHKeyPair(sshKeyPair);
+      client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
+      assertEquals(client.getSSHKeyPairClient().getSSHKeyPair(sshKeyPair.getName()), null);
+      // Set the keypair to null , if the delete test is passed.
+      sshKeyPair = null;
+
+   }
+
 
    protected void checkSSHKeyPair(SshKeyPair pair) {
       assert pair.getName() != null : pair;
