@@ -30,6 +30,8 @@ import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
+import org.jclouds.cloudstack.features.EventAsyncClient;
+import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
@@ -96,6 +98,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(HypervisorClient.class, HypervisorAsyncClient.class)//
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
+         .put(EventClient.class, EventAsyncClient.class)//
          .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .put(VMGroupClient.class, VMGroupAsyncClient.class)//
          .build();

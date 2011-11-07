@@ -24,6 +24,7 @@ import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
+import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
@@ -152,5 +153,11 @@ public interface CloudStackClient {
     */
    @Delegate
    VMGroupClient getVMGroupClient();
+
+   /**
+    * Provides synchronous access to Events
+    */
+   @Delegate
+   EventClient getEventClient();
 
 }
