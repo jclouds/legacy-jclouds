@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.SshKeyPair;
@@ -50,15 +51,20 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
       assertEquals(client.getSSHKeyPairClient().getSSHKeyPair(sshKeyPair.getName()), null);
       // Set the keypair to null , if the delete test is passed.
+      assertEquals(SshKeys.fingerprintPrivateKey(sshKeyPair.getPrivateKey()), sshKeyPair.getFingerprint());
       sshKeyPair = null;
    }
 
    public void testRegisterDeleteSSHKeyPair() {
-      final String publickey = SshKeys.generate().get("public");
-      sshKeyPair = client.getSSHKeyPairClient().registerSSHKeyPair(prefix + "jclouds-keypair", publickey);
+      final Map<String, String> sshKey = SshKeys.generate();
+      final String publicKey = sshKey.get("public");
+      final String privateKey = sshKey.get("private");
+      sshKeyPair = client.getSSHKeyPairClient().registerSSHKeyPair(prefix + "jclouds-keypair", publicKey);
       checkSSHKeyPair(sshKeyPair);
-      client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
+      client.getSSHKeyPairClient().deleteSSHKeyPair(prefix + "jclouds-keypair");
+
       assertEquals(client.getSSHKeyPairClient().getSSHKeyPair(sshKeyPair.getName()), null);
+      assertEquals(SshKeys.fingerprintPublicKey(publicKey), sshKeyPair.getFingerprint());
       // Set the keypair to null , if the delete test is passed.
       sshKeyPair = null;
 
