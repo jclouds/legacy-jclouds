@@ -18,11 +18,17 @@
  */
 package org.jclouds.cloudloadbalancers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.cloudloadbalancers.features.BaseCloudLoadBalancersAsyncClientTest;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -66,5 +72,22 @@ public class CloudLoadBalancersAsyncClientTest extends BaseCloudLoadBalancersAsy
    @Override
    protected void checkFilters(HttpRequest request) {
 
+   }
+   
+   protected String provider = "cloudservers";
+
+   @Override
+   public RestContextSpec<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> createContextSpec() {
+      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
+   }
+   
+   @Override
+   protected Properties getProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(PROPERTY_REGIONS, "US");
+      overrides.setProperty(PROPERTY_API_VERSION, "1");
+      overrides.setProperty(provider + ".endpoint", "https://auth");
+      overrides.setProperty(provider + ".contextbuilder", CloudLoadBalancersContextBuilder.class.getName());
+      return overrides;
    }
 }
