@@ -38,7 +38,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
  *
  * @author Vijay Kiran
  * @see org.jclouds.cloudstack.features.AccountClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.8/TOC_User.html" />
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
