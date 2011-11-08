@@ -41,6 +41,7 @@ public class Server extends Resource {
    private String hostId;
    private String imageRef;
    private String affinityId;
+   private String uuid;
 
    private Date created;
    private Date updated;
@@ -157,6 +158,14 @@ public class Server extends Resource {
       return status;
    }
 
+   public String getUuid() {
+      return uuid;
+   }
+
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -168,6 +177,7 @@ public class Server extends Resource {
       result = prime * result + id;
       result = prime * result + ((imageRef == null) ? 0 : imageRef.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
+      result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -213,6 +223,11 @@ public class Server extends Resource {
             return false;
       } else if (!metadata.equals(other.metadata))
          return false;
+      if (uuid == null) {
+         if (other.uuid != null)
+            return false;
+      } else if (!uuid.equals(other.uuid))
+         return false;
       if (name == null) {
          if (other.name != null)
             return false;
@@ -229,7 +244,7 @@ public class Server extends Resource {
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
             + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-            + ", metadata=" + metadata + ", name=" + name + "]";
+            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + "]";
    }
 
 }
