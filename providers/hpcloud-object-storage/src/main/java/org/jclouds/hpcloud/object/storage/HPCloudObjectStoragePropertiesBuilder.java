@@ -24,13 +24,13 @@ import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
  * 
  * @author Jeremy Daggtt
  */
-public class HPCloudObjectStoragePropertiesBuilder extends PropertiesBuilder {
+public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilder {
 
    public HPCloudObjectStoragePropertiesBuilder(Properties properties) {
       super(properties);
