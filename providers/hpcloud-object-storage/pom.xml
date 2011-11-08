@@ -34,17 +34,11 @@
     <packaging>bundle</packaging>
 
     <properties>
-    <test.initializer>org.jclouds.hpcloud.object.storage.blobstore.integration.HPCloudObjectStorageTestInitializer</test.initializer>
-        <test.hpcloud-object-storage.endpoint>https://auth.api.rackspacecloud.com</test.hpcloud-object-storage.endpoint>
-        <test.hpcloud-object-storage.apiversion>1.0</test.hpcloud-object-storage.apiversion>
-        <test.hpcloud-object-storage.identity>${test.rackspace.identity}</test.hpcloud-object-storage.identity>
-        <test.hpcloud-object-storage.credential>${test.rackspace.credential}</test.hpcloud-object-storage.credential>
-        <!--<test.initializer>org.jclouds.hpcloud.object.storage.blobstore.integration.HPCloudObjectStorageTestInitializer</test.initializer>
-        <test.cloudfiles.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles.endpoint>
-        <test.cloudfiles.apiversion>1.0</test.cloudfiles.apiversion>
-        <test.cloudfiles.identity>${test.rackspace.identity}</test.cloudfiles.identity>
-        <test.cloudfiles.credential>${test.rackspace.credential}</test.cloudfiles.credential>-->
-        
+        <test.initializer>org.jclouds.hpcloud.object.storage.blobstore.integration.HPCloudObjectStorageTestInitializer</test.initializer>
+        <test.hpcloud-object-storage.endpoint>${test.hpcloud-object-storage.endpoint}</test.hpcloud-object-storage.endpoint>
+        <test.hpcloud-object-storage.apiversion>1.1</test.hpcloud-object-storage.apiversion>
+        <test.hpcloud-object-storage.identity>${test.hpcloud-object-storage.identity}</test.hpcloud-object-storage.identity>
+        <test.hpcloud-object-storage.credential>${test.hpcloud-object-storage.credential}</test.hpcloud-object-storage.credential>        
     </properties>
 
     <dependencies>
