@@ -67,5 +67,7 @@
         <module>go2cloud-jhb1</module>
         <module>softlayer</module>
         <module>ninefold-compute</module>
+        <!--<module>hpcloud-compute</module>-->
+        <module>hpcloud-object-storage</module>
     </modules>
 </project>
