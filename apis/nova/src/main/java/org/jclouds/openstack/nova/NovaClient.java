@@ -82,7 +82,8 @@ public interface NovaClient {
     * @return false if the server is not found
     * @see Server
     */
-   boolean deleteServer(@PathParam("id") int id);
+   boolean deleteServer(int id);
+   boolean deleteServer(String id);
 
    /**
     * The reboot function allows for either a soft or hard reboot of a server.

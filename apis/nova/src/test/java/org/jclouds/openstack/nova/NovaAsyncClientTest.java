@@ -426,6 +426,21 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       checkFilters(request);
    }
 
+   public void testDeleteServerByUUID() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = NovaAsyncClient.class.getMethod("deleteServer", String.class);
+      HttpRequest request = processor.createRequest(method, "db8a1ac6-0a35-11e1-a42f-2837371c69ae");
+
+      assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/db8a1ac6-0a35-11e1-a42f-2837371c69ae HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testChangeAdminPass() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("changeAdminPass", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
