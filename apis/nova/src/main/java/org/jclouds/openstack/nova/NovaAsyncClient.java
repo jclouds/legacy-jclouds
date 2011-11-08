@@ -74,6 +74,17 @@ public interface NovaAsyncClient {
    ListenableFuture<Server> getServer(@PathParam("id") int id);
 
    /**
+    * @see NovaClient#getServer
+    */
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/servers/{uuid}")
+   ListenableFuture<Server> getServer(@PathParam("uuid") String uuid);
+
+   /**
     * @see NovaClient#deleteServer
     */
    @DELETE
@@ -184,6 +195,17 @@ public interface NovaAsyncClient {
    ListenableFuture<Flavor> getFlavor(@PathParam("id") int id);
 
    /**
+    * @see NovaClient#getFlavor
+    */
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/flavors/{uuid}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Flavor> getFlavor(@PathParam("uuid") String uuid);
+
+   /**
     * @see NovaClient#listImages
     */
    @GET
@@ -204,6 +226,17 @@ public interface NovaAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/images/{id}")
    ListenableFuture<Image> getImage(@PathParam("id") int id);
+
+   /**
+    * @see NovaClient#getImage
+    */
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/images/{uuid}")
+   ListenableFuture<Image> getImage(@PathParam("uuid") String uuid);
 
    /**
     * @see NovaClient#deleteImage

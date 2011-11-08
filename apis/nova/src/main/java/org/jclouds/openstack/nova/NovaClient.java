@@ -70,7 +70,8 @@ public interface NovaClient {
     * @return null, if the server is not found
     * @see Server
     */
-   Server getServer(@PathParam("id") int id);
+   Server getServer(int id);
+   Server getServer(String uuid);
 
    /**
     * 
@@ -204,6 +205,7 @@ public interface NovaClient {
     * @see Flavor
     */
    Flavor getFlavor(int id);
+   Flavor getFlavor(String uuid);
 
    /**
     * 
@@ -223,6 +225,7 @@ public interface NovaClient {
     * @see Image
     */
    Image getImage(int id);
+   Image getImage(String id);
 
    /**
     * 
