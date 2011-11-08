@@ -88,6 +88,7 @@ public interface NovaAsyncClient {
     * @see NovaClient#deleteServer
     */
    @DELETE
+   @Consumes
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Boolean> deleteServer(@PathParam("id") int id);

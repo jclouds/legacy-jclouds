@@ -416,7 +416,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
