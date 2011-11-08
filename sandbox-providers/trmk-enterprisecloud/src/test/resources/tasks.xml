@@ -1,0 +1,12 @@
+ <Tasks href="/livespec/tasks/environments/1" type="application/vnd.tmrk.cloud.task; type=collection">
+   <Task href="/livespec/tasks/1002" type="application/vnd.tmrk.cloud.task">
+  <Operation>Add Node Service</Operation>
+  <Status>Error</Status>
+  <ImpactedItem href="/livespec/nodeservices/1" name="sample node internet 1" type="application/vnd.tmrk.cloud.nodeService"/>
+  <StartTime>2011-11-07T11:19:13.38225Z</StartTime>
+  <CompletedTime>2011-11-07T11:20:13.38225Z</CompletedTime>
+  <Notes>Some notes about the operation.</Notes>
+  <ErrorMessage>sample error message 1 here</ErrorMessage>
+  <InitiatedBy href="/livespec/admin/users/1" name="User 1" type="application/vnd.tmrk.cloud.admin.user"/>
+</Task>
+</Tasks>
