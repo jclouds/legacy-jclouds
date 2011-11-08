@@ -65,5 +65,7 @@
         <module>aws-cloudwatch</module>
         <module>go2cloud-jhb1</module>
         <module>softlayer</module>
+        <!--<module>hpcloud-compute</module>-->
+        <module>hpcloud-object-storage</module>
     </modules>
 </project>
