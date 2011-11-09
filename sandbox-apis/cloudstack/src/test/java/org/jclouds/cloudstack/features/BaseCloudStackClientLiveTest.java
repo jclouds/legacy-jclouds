@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -126,7 +127,14 @@ public class BaseCloudStackClientLiveTest {
       client = context.getApi();
       // check access
       Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
-      User currentUser = Iterables.find(users, UserPredicates.apiKeyEquals(identity));
+      User currentUser; 
+      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
+      try {
+         currentUser = Iterables.find(users, apiKeyMatches);
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("none of the following users match %s: %s", apiKeyMatches,
+               users));
+      }
 
       if (currentUser.getAccountType() != Account.Type.USER)
          throw new IllegalArgumentException(String.format(
