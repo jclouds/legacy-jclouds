@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.virtualbox.functions.IsoToIMachine.lockMachineAndApply;
 import static org.virtualbox_4_1.LockType.Write;
 
@@ -138,16 +137,19 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
       manager.getVBox().registerMachine(clonedMachine);
 
       // Bridged Network
-      String command = "vboxmanage list bridgedifs";
-      String bridgedIfs = runScriptOnNode(hostId, command,
-            runAsRoot(false).wrapInInitScript(false)).getOutput();
       
+      String bridgedInterface = new RetrieveActiveBridgedInterface(context).apply(hostId);
+
       
-      String bridgedInterfaces = retrieveAvailableBridgedInterfaceInfo(bridgedIfs);
-      checkNotNull(bridgedInterfaces);
+//      String command = "vboxmanage list bridgedifs";
+//      String bridgedIfs = runScriptOnNode(hostId, command,
+//            runAsRoot(false).wrapInInitScript(false)).getOutput();
+//      
+//      
+//      String bridgedInterfaces = retrieveAvailableBridgedInterfaceInfo(bridgedIfs);
+      checkNotNull(bridgedInterface);
       String macAddress = manager.getVBox().getHost().generateMACAddress();
-      ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress,
-            bridgedInterfaces);
+      ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress, bridgedInterface);
 
       // TODO maybe need to notify outside about macaddress and network, useful
       // on IMachineToIpAddress
