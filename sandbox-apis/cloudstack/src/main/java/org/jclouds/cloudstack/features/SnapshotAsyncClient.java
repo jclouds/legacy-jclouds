@@ -25,10 +25,13 @@ import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
@@ -74,6 +77,20 @@ public interface SnapshotAsyncClient {
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Snapshot>> listSnapshots(ListSnapshotsOptions... options);
+
+   /**
+    * Gets a snapshot by its ID.
+    *
+    * @param id the snapshot ID
+    * @return the snapshot with the requested ID
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "listSnapshots")
+   @SelectJson("snapshot")
+   @OnlyElement
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Snapshot> getSnapshot(@QueryParam("id") long id);
 
    /**
     * Deletes a snapshot of a disk volume.

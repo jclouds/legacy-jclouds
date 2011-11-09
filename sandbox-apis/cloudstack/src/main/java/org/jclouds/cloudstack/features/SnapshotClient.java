@@ -56,6 +56,14 @@ public interface SnapshotClient {
    Set<Snapshot> listSnapshots(ListSnapshotsOptions... options);
 
    /**
+    * Gets a snapshot by its ID.
+    *
+    * @param id the snapshot ID
+    * @return the snapshot with the requested ID
+    */
+   Snapshot getSnapshot(long id);
+
+   /**
     * Deletes a snapshot of a disk volume.
     *
     * @param id The ID of the snapshot
