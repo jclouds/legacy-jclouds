@@ -25,8 +25,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.cloudstack.binders.BindTemplateMetadataToQueryParams;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.TemplateMetadata;
 import org.jclouds.cloudstack.domain.TemplatePermission;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
@@ -37,6 +39,7 @@ import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.cloudstack.options.RegisterTemplateOptions;
 import org.jclouds.cloudstack.options.UpdateTemplateOptions;
 import org.jclouds.cloudstack.options.UpdateTemplatePermissionsOptions;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
@@ -68,7 +71,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "createTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createTemplate(@QueryParam("name") String name, @QueryParam("ostypeid") long osTypeId, @QueryParam("displaytext") String displayText, CreateTemplateOptions... options);
+   ListenableFuture<AsyncCreateResponse> createTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, CreateTemplateOptions... options);
 
    /**
     * @see TemplateClient#registerTemplate
@@ -77,7 +80,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "registerTemplate")
    @SelectJson("template")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Template> registerTemplate(@QueryParam("name") String name, @QueryParam("ostypeid") long osTypeId, @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, @QueryParam("displaytext") String displayText, RegisterTemplateOptions... options);
+   ListenableFuture<Template> registerTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterTemplateOptions... options);
 
    /**
     * @see TemplateClient#updateTemplate
@@ -95,7 +98,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "copyTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> copyTemplate(@QueryParam("id") long id, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
+   ListenableFuture<AsyncCreateResponse> copyTemplateToZone(@QueryParam("id") long id, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
 
    /**
     * @see TemplateClient#deleteTemplate
@@ -134,7 +137,7 @@ public interface TemplateAsyncClient {
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Template> getTemplateInZone(@QueryParam("zoneid") long zoneId, @QueryParam("id") long id);
+   ListenableFuture<Template> getTemplateInZone(@QueryParam("id") long templateId, @QueryParam("zoneid") long zoneId);
 
    /**
     * @see TemplateClient#updateTemplatePermissions
@@ -159,5 +162,5 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "extractTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") String mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
+   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") Template.ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
 }

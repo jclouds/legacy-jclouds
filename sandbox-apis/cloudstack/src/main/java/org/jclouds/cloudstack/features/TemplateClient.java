@@ -88,7 +88,7 @@ public interface TemplateClient {
     * @param destZoneId ID of the zone the template is being copied to.
     * @return an asynchronous job response
     */
-   AsyncCreateResponse copyTemplate(long id, long sourceZoneId, long destZoneId);
+   AsyncCreateResponse copyTemplateToZone(long id, long sourceZoneId, long destZoneId);
 
    /**
     * Deletes a template from the system. All virtual machines using the deleted template will not be affected.
@@ -119,13 +119,13 @@ public interface TemplateClient {
    /**
     * get a specific template by id
     *
+    *
+    * @param templateId
     * @param zoneId
     *           zone template is defined in
-    * @param id
-    *           template to get
     * @return template or null if not found
     */
-   Template getTemplateInZone(long zoneId, long id);
+   Template getTemplateInZone(long templateId, long zoneId);
 
    /**
     * Updates a template visibility permissions. A public template is visible to all accounts within the same domain. A private

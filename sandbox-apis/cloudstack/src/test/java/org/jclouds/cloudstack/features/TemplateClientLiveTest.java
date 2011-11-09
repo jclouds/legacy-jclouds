@@ -46,7 +46,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          Template newDetails = Iterables.getOnlyElement(client.getTemplateClient().listTemplates(
                zoneId(template.getZoneId()).id(template.getId())));
          assertEquals(template, newDetails);
-         assertEquals(template, client.getTemplateClient().getTemplateInZone(template.getZoneId(), template.getId()));
+         assertEquals(template, client.getTemplateClient().getTemplateInZone(template.getId(), template.getZoneId()));
          assert template.getId() > 0 : template;
          assert template.getName() != null : template;
          assert template.getDisplayText() != null : template;
