@@ -40,12 +40,12 @@ public class Snapshot implements Comparable<Snapshot> {
       private Date created;
       private String domain;
       private long domainId;
-      private SnapshotIntervalType intervalType;
+      private Interval interval;
       private long jobId;
       private String jobStatus;
       private String name;
-      private SnapshotType snapshotType;
-      private SnapshotState state;
+      private Type snapshotType;
+      private State state;
       private long volumeId;
       private String volumeName;
       private String volumeType;
@@ -91,10 +91,10 @@ public class Snapshot implements Comparable<Snapshot> {
       }
 
       /**
-       * @param intervalType valid types are hourly, daily, weekly, monthy, template, and none.
+       * @param interval valid types are hourly, daily, weekly, monthy, template, and none.
        */
-      public Builder intervalType(SnapshotIntervalType intervalType) {
-         this.intervalType = intervalType;
+      public Builder interval(Interval interval) {
+         this.interval = interval;
          return this;
       }
 
@@ -125,7 +125,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param snapshotType the type of the snapshot
        */
-      public Builder snapshotType(SnapshotType snapshotType) {
+      public Builder snapshotType(Type snapshotType) {
          this.snapshotType = snapshotType;
          return this;
       }
@@ -133,7 +133,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param state the state of the snapshot. BackedUp means that snapshot is ready to be used; Creating - the snapshot is being allocated on the primary storage; BackingUp - the snapshot is being backed up on secondary storage
        */
-      public Builder state(SnapshotState state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -164,11 +164,11 @@ public class Snapshot implements Comparable<Snapshot> {
 
    }
 
-   public enum SnapshotState {
+   public static enum State {
 
       BackedUp, Creating, BackingUp, UNRECOGNIZED;
 
-      public static SnapshotState fromValue(String type) {
+      public static State fromValue(String type) {
          try {
             return valueOf(checkNotNull(type, "type"));
          } catch (IllegalArgumentException e) {
@@ -177,11 +177,11 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public enum SnapshotType {
+   public static enum Type {
 
       MANUAL, RECURRING, UNRECOGNIZED;
 
-      public static SnapshotType fromValue(String type) {
+      public static Type fromValue(String type) {
          try {
             return valueOf(checkNotNull(type, "type"));
          } catch (IllegalArgumentException e) {
@@ -190,11 +190,11 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public enum SnapshotIntervalType {
+   public static enum Interval {
 
       HOURLY, DAILY, WEEKLY, MONTHLY, template, none, UNRECOGNIZED;
 
-      public static SnapshotIntervalType fromValue(String type) {
+      public static Interval fromValue(String type) {
          try {
             return valueOf(checkNotNull(type, "type"));
          } catch (IllegalArgumentException e) {
@@ -210,15 +210,15 @@ public class Snapshot implements Comparable<Snapshot> {
    @SerializedName("domainid")
    private long domainId;
    @SerializedName("intervaltype")
-   private SnapshotIntervalType intervalType;
+   private Interval interval;
    @SerializedName("jobid")
    private long jobId;
    @SerializedName("jobstatus")
    private String jobStatus;
    private String name;
    @SerializedName("snapshottype")
-   private SnapshotType snapshotType;
-   private SnapshotState state;
+   private Type snapshotType;
+   private State state;
    @SerializedName("volumeid")
    private long volumeId;
    @SerializedName("volumename")
@@ -270,8 +270,8 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return valid types are hourly, daily, weekly, monthy, template, and none.
     */
-   public SnapshotIntervalType getIntervalType() {
-      return intervalType;
+   public Interval getInterval() {
+      return interval;
    }
 
    /**
@@ -298,14 +298,14 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return the type of the snapshot
     */
-   public SnapshotType getSnapshotType() {
+   public Type getSnapshotType() {
       return snapshotType;
    }
 
    /**
     * @return the state of the snapshot. BackedUp means that snapshot is ready to be used; Creating - the snapshot is being allocated on the primary storage; BackingUp - the snapshot is being backed up on secondary storage
     */
-   public SnapshotState getState() {
+   public State getState() {
       return state;
    }
 
@@ -344,7 +344,7 @@ public class Snapshot implements Comparable<Snapshot> {
       if (account != null ? !account.equals(snapshot.account) : snapshot.account != null) return false;
       if (created != null ? !created.equals(snapshot.created) : snapshot.created != null) return false;
       if (domain != null ? !domain.equals(snapshot.domain) : snapshot.domain != null) return false;
-      if (intervalType != snapshot.intervalType) return false;
+      if (interval != snapshot.interval) return false;
       if (jobStatus != null ? !jobStatus.equals(snapshot.jobStatus) : snapshot.jobStatus != null) return false;
       if (name != null ? !name.equals(snapshot.name) : snapshot.name != null) return false;
       if (snapshotType != snapshot.snapshotType) return false;
@@ -362,7 +362,7 @@ public class Snapshot implements Comparable<Snapshot> {
       result = 31 * result + (created != null ? created.hashCode() : 0);
       result = 31 * result + (domain != null ? domain.hashCode() : 0);
       result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (intervalType != null ? intervalType.hashCode() : 0);
+      result = 31 * result + (interval != null ? interval.hashCode() : 0);
       result = 31 * result + (int) (jobId ^ (jobId >>> 32));
       result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
       result = 31 * result + (name != null ? name.hashCode() : 0);
@@ -382,7 +382,7 @@ public class Snapshot implements Comparable<Snapshot> {
          ", created=" + created +
          ", domain='" + domain + '\'' +
          ", domainId=" + domainId +
-         ", intervalType=" + intervalType +
+         ", interval=" + interval +
          ", jobId=" + jobId +
          ", jobStatus='" + jobStatus + '\'' +
          ", name='" + name + '\'' +

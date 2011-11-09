@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.binders;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
@@ -51,7 +49,7 @@ public class BindSnapshotPolicyScheduleToQueryParam implements Binder {
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof SnapshotPolicySchedule, "this binder is only valid for SnapshotPolicySchedule");
       SnapshotPolicySchedule schedule = (SnapshotPolicySchedule) input;
-      R modifiedResult = ModifyRequest.addQueryParam(request, "intervaltype", schedule.getIntervalType(), uriBuilderProvider.get());
+      R modifiedResult = ModifyRequest.addQueryParam(request, "intervaltype", schedule.getInterval(), uriBuilderProvider.get());
       modifiedResult = ModifyRequest.addQueryParam(modifiedResult, "schedule", schedule.getTime(), uriBuilderProvider.get());
       return modifiedResult;
    }

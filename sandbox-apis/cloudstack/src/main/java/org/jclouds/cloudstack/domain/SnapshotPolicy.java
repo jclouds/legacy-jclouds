@@ -32,7 +32,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    public static class Builder {
 
       private long id;
-      private Snapshot.SnapshotIntervalType intervalType;
+      private Snapshot.Interval interval;
       private long numberToRetain;
       private String schedule;
       private String timezone;
@@ -47,10 +47,10 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
       }
 
       /**
-       * @param intervalType valid types are hourly, daily, weekly, monthy, template, and none.
+       * @param interval valid types are hourly, daily, weekly, monthy, template, and none.
        */
-      public Builder intervalType(Snapshot.SnapshotIntervalType intervalType) {
-         this.intervalType = intervalType;
+      public Builder interval(Snapshot.Interval interval) {
+         this.interval = interval;
          return this;
       }
 
@@ -90,7 +90,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    private long id;
    @SerializedName("intervaltype")
-   private Snapshot.SnapshotIntervalType intervalType;
+   private Snapshot.Interval interval;
    @SerializedName("maxsnaps")
    private long numberToRetain;
    private String schedule;
@@ -114,8 +114,8 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    /**
     * @return valid types are hourly, daily, weekly, monthy, template, and none.
     */
-   public Snapshot.SnapshotIntervalType getIntervalType() {
-      return intervalType;
+   public Snapshot.Interval getInterval() {
+      return interval;
    }
 
    /**

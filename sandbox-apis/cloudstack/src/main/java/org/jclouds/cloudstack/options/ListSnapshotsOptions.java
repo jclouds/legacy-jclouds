@@ -41,10 +41,10 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
    }
 
    /**
-    * @param intervalType valid values are HOURLY, DAILY, WEEKLY, and MONTHLY.
+    * @param interval valid values are HOURLY, DAILY, WEEKLY, and MONTHLY.
     */
-   public ListSnapshotsOptions intervalType(Snapshot.SnapshotIntervalType intervalType) {
-      this.queryParameters.replaceValues("intervaltype", ImmutableSet.of(intervalType + ""));
+   public ListSnapshotsOptions interval(Snapshot.Interval interval) {
+      this.queryParameters.replaceValues("intervaltype", ImmutableSet.of(interval + ""));
       return this;
    }
 
@@ -75,7 +75,7 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
    /**
     * @param snapshotType valid values are MANUAL or RECURRING.
     */
-   public ListSnapshotsOptions snapshotType(Snapshot.SnapshotType snapshotType) {
+   public ListSnapshotsOptions snapshotType(Snapshot.Type snapshotType) {
       this.queryParameters.replaceValues("snapshottype", ImmutableSet.of(snapshotType + ""));
       return this;
    }
@@ -113,10 +113,10 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @param intervalType valid values are HOURLY, DAILY, WEEKLY, and MONTHLY.
+       * @param interval valid values are HOURLY, DAILY, WEEKLY, and MONTHLY.
        */
-      public static ListSnapshotsOptions intervalType(Snapshot.SnapshotIntervalType intervalType) {
-         return new ListSnapshotsOptions().intervalType(intervalType);
+      public static ListSnapshotsOptions interval(Snapshot.Interval interval) {
+         return new ListSnapshotsOptions().interval(interval);
       }
 
       /**
@@ -143,7 +143,7 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
       /**
        * @param snapshotType valid values are MANUAL or RECURRING.
        */
-      public static ListSnapshotsOptions snapshotType(Snapshot.SnapshotType snapshotType) {
+      public static ListSnapshotsOptions snapshotType(Snapshot.Type snapshotType) {
          return new ListSnapshotsOptions().snapshotType(snapshotType);
       }
 
