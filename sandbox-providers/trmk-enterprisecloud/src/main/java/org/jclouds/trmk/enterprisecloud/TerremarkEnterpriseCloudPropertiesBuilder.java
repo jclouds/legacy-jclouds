@@ -34,8 +34,7 @@ public class TerremarkEnterpriseCloudPropertiesBuilder extends PropertiesBuilder
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      // TODO replace with the actual rest url
-      properties.setProperty(PROPERTY_ENDPOINT, "http://209.251.187.125/livespec");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://services-beta.enterprisecloud.terremark.com/cloudapi");
       properties.setProperty(PROPERTY_API_VERSION, "2011-07-01");
       return properties;
    }
