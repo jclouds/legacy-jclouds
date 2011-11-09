@@ -19,11 +19,17 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.binders.BindIdListToCommaDelimitedQueryParam;
+import org.jclouds.cloudstack.binders.BindSnapshotPolicyScheduleToQueryParam;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.domain.SnapshotPolicy;
+import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
+import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
@@ -103,5 +109,58 @@ public interface SnapshotAsyncClient {
    @QueryParams(keys = "command", values = "deleteSnapshot")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteSnapshot(@QueryParam("id") long id);
+
+   /**
+    * Creates a snapshot policy for the account.
+    *
+    * @param schedule how to schedule snapshots
+    * @param numberToRetain maximum number of snapshots to retain
+    * @param timezone Specifies a timezone for this command. For more information on the timezone parameter, see Time Zone Format.
+    * @param volumeId the ID of the disk volume
+    * @return the newly-created snapshot policy
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Unwrap
+   @QueryParams(keys = "command", values = "createSnapshotPolicy")
+   ListenableFuture<SnapshotPolicy> createSnapshotPolicy(@BinderParam(BindSnapshotPolicyScheduleToQueryParam.class) SnapshotPolicySchedule schedule, @QueryParam("maxsnaps") long numberToRetain, @QueryParam("timezone") String timezone, @QueryParam("volumeid") long volumeId);
+
+   /**
+    * Deletes a snapshot policy for the account.
+    *
+    * @param id The ID of the snapshot policy
+    * @return
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteSnapshotPolicy(@QueryParam("id") long id);
+
+   /**
+    * Deletes snapshot policies for the account.
+    *
+    * @param id IDs of snapshot policies
+    * @return
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteSnapshotPolicies(@BinderParam(BindIdListToCommaDelimitedQueryParam.class) Iterable<Long> id);
+
+   /**
+    * Lists snapshot policies.
+    *
+    * @param volumeId the ID of the disk volume
+    * @param options optional arguments
+    * @return the snapshot policies matching the query
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "listSnapshotPolicies")
+   @Unwrap
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<SnapshotPolicy>> listSnapshotPolicies(@QueryParam("volumeid") long volumeId, ListSnapshotPoliciesOptions... options);
 
 }

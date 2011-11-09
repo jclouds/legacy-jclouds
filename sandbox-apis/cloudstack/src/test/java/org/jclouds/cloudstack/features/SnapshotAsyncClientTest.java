@@ -19,9 +19,12 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
+import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
@@ -140,6 +143,87 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testCreateSnapshotPolicy() throws NoSuchMethodException {
+      Method method = SnapshotAsyncClient.class.getMethod("createSnapshotPolicy", SnapshotPolicySchedule.class, long.class, String.class, long.class);
+      HttpRequest httpRequest = processor.createRequest(method, SnapshotPolicySchedule.monthly(5, 6, 7), 10, "UTC", 12);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=createSnapshotPolicy&timezone=UTC&maxsnaps=10&volumeid=12&intervaltype=MONTHLY&schedule=07%3A06%3A05 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testDeleteSnapshotPolicy() throws NoSuchMethodException {
+      Method method = SnapshotAsyncClient.class.getMethod("deleteSnapshotPolicy", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 7);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=deleteSnapshotPolicies&id=7 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testDeleteSnapshotPolicies() throws NoSuchMethodException {
+      Method method = SnapshotAsyncClient.class.getMethod("deleteSnapshotPolicies", Iterable.class);
+      Iterable<Long> ids = ImmutableSet.of(3L, 5L, 7L);
+      HttpRequest httpRequest = processor.createRequest(method, ids);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=deleteSnapshotPolicies&ids=3%2C5%2C7 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListSnapshotPolicies() throws NoSuchMethodException {
+      Method method = SnapshotAsyncClient.class.getMethod("listSnapshotPolicies", long.class, ListSnapshotPoliciesOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 10);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listSnapshotPolicies&volumeid=10 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListSnapshotPoliciesOptions() throws NoSuchMethodException {
+      Method method = SnapshotAsyncClient.class.getMethod("listSnapshotPolicies", long.class, ListSnapshotPoliciesOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 10, ListSnapshotPoliciesOptions.Builder.accountInDomain("fred", 4).keyword("bob"));
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listSnapshotPolicies&volumeid=10&account=fred&domainid=4&keyword=bob HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
    }

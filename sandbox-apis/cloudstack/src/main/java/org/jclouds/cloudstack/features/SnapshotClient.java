@@ -20,10 +20,14 @@ package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.domain.SnapshotPolicy;
+import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
+import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.concurrent.Timeout;
 
+import javax.ws.rs.QueryParam;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -70,5 +74,41 @@ public interface SnapshotClient {
     * @return an asynchronous job structure
     */
    void deleteSnapshot(long id);
+
+   /**
+    * Creates a snapshot policy for the account.
+    *
+    * @param schedule how to schedule snapshots
+    * @param numberToRetain maximum number of snapshots to retain
+    * @param timezone Specifies a timezone for this command. For more information on the timezone parameter, see Time Zone Format.
+    * @param volumeId the ID of the disk volume
+    * @return the newly-created snapshot policy
+    */
+   SnapshotPolicy createSnapshotPolicy(SnapshotPolicySchedule schedule, long numberToRetain, String timezone, long volumeId);
+
+   /**
+    * Deletes a snapshot policy for the account.
+    *
+    * @param id The ID of the snapshot policy
+    * @return
+    */
+   void deleteSnapshotPolicy(long id);
+
+   /**
+    * Deletes snapshot policies for the account.
+    *
+    * @param id IDs of snapshot policies
+    * @return
+    */
+   void deleteSnapshotPolicies(Iterable<Long> id);
+
+   /**
+    * Lists snapshot policies.
+    *
+    * @param volumeId the ID of the disk volume
+    * @param options optional arguments
+    * @return the snapshot policies matching the query
+    */
+   Set<SnapshotPolicy> listSnapshotPolicies(long volumeId, ListSnapshotPoliciesOptions... options);
 
 }
