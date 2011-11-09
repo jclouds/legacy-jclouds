@@ -49,6 +49,8 @@ public class AWSCloudWatchPropertiesBuilder extends CloudWatchPropertiesBuilder 
             "https://monitoring.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
             "https://monitoring.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_2 + ".endpoint",
+            "https://monitoring.us-west-2.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
             "https://monitoring.eu-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",

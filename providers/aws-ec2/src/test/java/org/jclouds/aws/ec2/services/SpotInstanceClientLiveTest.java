@@ -164,7 +164,7 @@ public class SpotInstanceClientLiveTest {
       start = System.currentTimeMillis();
 
       requests = client.getSpotInstanceServices().requestSpotInstancesInRegion(
-               "us-west-1",
+               "us-west-2",
                0.09f,
                1,
                LaunchSpecification.builder().imageId("ami-951945d0").instanceType(InstanceType.M1_SMALL).build(),
