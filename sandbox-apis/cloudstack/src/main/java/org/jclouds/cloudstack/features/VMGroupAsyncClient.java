@@ -41,7 +41,7 @@ import java.util.Set;
  *
  * @author Richard Downer
  * @see VMGroupClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
