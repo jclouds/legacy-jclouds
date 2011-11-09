@@ -22,28 +22,27 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.cloudstack.domain.EventType;
 import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code EventClient}
- * 
+ *
  * @author Vijay Kiran
  */
 @Test(groups = "live", singleThreaded = true, testName = "EventClientLiveTest")
 public class EventClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testlistEventTypes() throws Exception {
-    Set<EventType> response = client.getEventClient().listEventTypes();
+      Set<String> response = client.getEventClient().listEventTypes();
       assert null != response;
       assertTrue(response.size() >= 0);
-      for (EventType type : response) {
+      for (String type : response) {
          checkEventType(type);
       }
    }
 
-   protected void checkEventType(EventType eventType) {
-      assert eventType.getName() != null : eventType;
+   protected void checkEventType(String eventType) {
+      assert eventType != null : eventType;
    }
 
 }

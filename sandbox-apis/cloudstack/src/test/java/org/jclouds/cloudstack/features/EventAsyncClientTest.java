@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import com.google.inject.TypeLiteral;
+import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -47,7 +47,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseEventTypesFromHttpResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
