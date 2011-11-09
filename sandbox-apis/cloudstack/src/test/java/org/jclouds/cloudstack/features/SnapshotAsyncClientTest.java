@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
+import org.jclouds.cloudstack.util.SnapshotPolicySchedules;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -149,7 +150,7 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
 
    public void testCreateSnapshotPolicy() throws NoSuchMethodException {
       Method method = SnapshotAsyncClient.class.getMethod("createSnapshotPolicy", SnapshotPolicySchedule.class, long.class, String.class, long.class);
-      HttpRequest httpRequest = processor.createRequest(method, SnapshotPolicySchedule.monthly(5, 6, 7), 10, "UTC", 12);
+      HttpRequest httpRequest = processor.createRequest(method, SnapshotPolicySchedules.monthly(5, 6, 7), 10, "UTC", 12);
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=createSnapshotPolicy&timezone=UTC&maxsnaps=10&volumeid=12&intervaltype=MONTHLY&schedule=07%3A06%3A05 HTTP/1.1");
