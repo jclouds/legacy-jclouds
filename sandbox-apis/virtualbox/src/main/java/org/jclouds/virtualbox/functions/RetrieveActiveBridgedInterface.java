@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import org.jclouds.compute.ComputeServiceContext;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -48,8 +47,14 @@ public class RetrieveActiveBridgedInterface implements Function<String, String> 
       //| grep status: active 
       List<String> interfaceNames = retrieveActiveNetworkInterfaces(ifconfigBlocks);
 
-      if(bridgedInterfaces.retainAll(interfaceNames));
-      return bridgedInterfaces.at;
+      for (String bi : bridgedInterfaces) {
+         for (String ifs : interfaceNames) {
+            if(bi.startsWith(ifs))
+               return bi;
+         }
+      }
+
+         return null;
    }
 
    /**
@@ -71,7 +76,11 @@ public class RetrieveActiveBridgedInterface implements Function<String, String> 
             }
          });
          for (String bridgedInterfaceName : bridgedIfName) {
-            bridgedInterfaceNames.add(bridgedInterfaceName);
+            for (String string : Splitter.on("Name:").split(bridgedInterfaceName)) {
+               if(!string.equals(""))
+                  bridgedInterfaceNames.add(string.trim());   
+            }
+            
          }
       }
       return bridgedInterfaceNames;
@@ -85,20 +94,18 @@ public class RetrieveActiveBridgedInterface implements Function<String, String> 
          String ifconfigBlocks) {
       List<String> activeNICnames = Lists.newArrayList();
 
-      for (String ifconfigBlock : Splitter.on(
-            Pattern.compile("(?m)^[ \t]*\r?\n")).split(ifconfigBlocks)) {
+      ifconfigBlocks = ifconfigBlocks.replace("\r\n\t", " ");
 
-         Iterable<String> interfaceName = Iterables.filter(Splitter.on("\n")
-               .split(ifconfigBlock), new Predicate<String>() {
+         Iterable<String> interfaceName = Iterables.filter(Splitter.on("\n").split(ifconfigBlocks), new Predicate<String>() {
             @Override
             public boolean apply(String arg0) {
                return arg0.contains("status: active");
             }
          });
          for (String bridgedInterfaceName : interfaceName) {
-            activeNICnames.add(bridgedInterfaceName);
+            activeNICnames.add(Splitter.on(":").split(bridgedInterfaceName).iterator().next());
          }
-      }
+      
       return activeNICnames;
    }
    
