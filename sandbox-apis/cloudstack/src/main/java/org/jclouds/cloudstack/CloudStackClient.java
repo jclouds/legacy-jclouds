@@ -28,6 +28,7 @@ import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
+import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
@@ -35,8 +36,8 @@ import org.jclouds.cloudstack.features.OfferingClient;
 import org.jclouds.cloudstack.features.SSHKeyPairClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateClient;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.VMGroupClient;
+import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -44,10 +45,10 @@ import org.jclouds.rest.annotations.Delegate;
 /**
  * Provides synchronous access to CloudStack.
  * <p/>
- * 
+ *
+ * @author Adrian Cole
  * @see CloudStackAsyncClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
- * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackClient {
@@ -159,5 +160,11 @@ public interface CloudStackClient {
     */
    @Delegate
    EventClient getEventClient();
+
+   /**
+    * Provides synchronous access to Resource Limits
+    */
+   @Delegate
+   LimitClient getLimitClient();
 
 }
