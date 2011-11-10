@@ -64,8 +64,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -107,14 +105,6 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      bind(SocketOpen.class).toInstance(new SocketOpen() {
-
-         @Override
-         public boolean apply(IPSocket arg0) {
-            return true;
-         }
-
-      });
       install(new CloudStackParserModule());
       super.configure();
    }

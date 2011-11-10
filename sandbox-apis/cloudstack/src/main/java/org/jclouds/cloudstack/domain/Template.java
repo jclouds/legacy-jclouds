@@ -253,6 +253,7 @@ public class Template implements Comparable<Template> {
    private String name;
    @SerializedName("templatetype")
    private Type type;
+   //TODO: this should be a type
    private String status;
    private Format format;
    private String hypervisor;
@@ -277,6 +278,7 @@ public class Template implements Comparable<Template> {
    @SerializedName("jobid")
    private Long jobId;
    @SerializedName("jobstatus")
+   //TODO: this should be a type
    private String jobStatus;
 
    public Template(long id, String displayText, String domain, long domainId, String account, long accountId,
