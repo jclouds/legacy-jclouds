@@ -28,7 +28,7 @@ import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
-import org.jclouds.cloudstack.features.IsoClient;
+import org.jclouds.cloudstack.features.ISOClient;
 import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATClient;
@@ -172,5 +172,5 @@ public interface CloudStackClient {
     * Provides synchronous access to ISOs
     */
    @Delegate
-   IsoClient getIsoClient();
+   ISOClient getISOClient();
 }

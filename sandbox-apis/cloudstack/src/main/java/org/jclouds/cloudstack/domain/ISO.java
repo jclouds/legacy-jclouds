@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Richard Downer
  */
-public class Iso implements Comparable<Iso> {
+public class ISO implements Comparable<ISO> {
 
    public static Builder builder() {
       return new Builder();
@@ -382,7 +382,7 @@ public class Iso implements Comparable<Iso> {
    /**
     * present only for serializer
     */
-   Iso() {
+   ISO() {
    }
 
    /**
@@ -625,15 +625,15 @@ public class Iso implements Comparable<Iso> {
    }
 
    @Override
-   public int compareTo(Iso other) {
+   public int compareTo(ISO other) {
       throw new RuntimeException("FIXME: Implement me");
    }
 
-   public enum IsoFilter {
+   public enum ISOFilter {
 
       featured, self, self_executable, executable, community, UNRECOGNIZED;
 
-      public static IsoFilter fromValue(String format) {
+      public static ISOFilter fromValue(String format) {
          try {
             return valueOf(checkNotNull(format, "format"));
          } catch (IllegalArgumentException e) {

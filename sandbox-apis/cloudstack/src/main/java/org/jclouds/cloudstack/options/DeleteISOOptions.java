@@ -22,31 +22,31 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Options for the Iso extractIso method.
+ * Options for the ISO deleteISO method.
  *
- * @see org.jclouds.cloudstack.features.IsoClient#extractIso
- * @see org.jclouds.cloudstack.features.IsoAsyncClient#extractIso
+ * @see org.jclouds.cloudstack.features.ISOClient#deleteISO
+ * @see org.jclouds.cloudstack.features.ISOAsyncClient#deleteISO
  * @author Richard Downer
  */
-public class ExtractIsoOptions extends BaseHttpRequestOptions {
+public class DeleteISOOptions extends BaseHttpRequestOptions {
 
-   public static final ExtractIsoOptions NONE = new ExtractIsoOptions(); 
+   public static final DeleteISOOptions NONE = new DeleteISOOptions();
 
    /**
-    * @param url the url to which the ISO would be extracted
+    * @param zoneId the ID of the zone of the ISO file. If not specified, the ISO will be deleted from all the zones
     */
-   public ExtractIsoOptions url(String url) {
-      this.queryParameters.replaceValues("url", ImmutableSet.of(url + ""));
+   public DeleteISOOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
 
    public static class Builder {
 
       /**
-       * @param url the url to which the ISO would be extracted
+       * @param zoneId the ID of the zone of the ISO file. If not specified, the ISO will be deleted from all the zones
        */
-      public static ExtractIsoOptions url(String url) {
-         return new ExtractIsoOptions().url(url);
+      public static DeleteISOOptions zoneId(long zoneId) {
+         return new DeleteISOOptions().zoneId(zoneId);
       }
    }
 

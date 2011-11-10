@@ -23,7 +23,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @author Richard Downer
  */
-public class IsoPermissions implements Comparable<IsoPermissions> {
+public class ISOPermissions implements Comparable<ISOPermissions> {
 
    public static Builder builder() {
       return new Builder();
@@ -80,7 +80,7 @@ public class IsoPermissions implements Comparable<IsoPermissions> {
    /**
     * present only for serializer
     */
-   IsoPermissions() {
+   ISOPermissions() {
    }
 
    /**
@@ -127,7 +127,7 @@ public class IsoPermissions implements Comparable<IsoPermissions> {
    }
 
    @Override
-   public int compareTo(IsoPermissions other) {
+   public int compareTo(ISOPermissions other) {
       throw new RuntimeException("FIXME: Implement me");
    }
 

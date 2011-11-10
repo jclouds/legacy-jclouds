@@ -20,15 +20,15 @@ package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
-import org.jclouds.cloudstack.domain.Iso;
-import org.jclouds.cloudstack.domain.IsoPermissions;
+import org.jclouds.cloudstack.domain.ISO;
+import org.jclouds.cloudstack.domain.ISOPermissions;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
-import org.jclouds.cloudstack.options.DeleteIsoOptions;
-import org.jclouds.cloudstack.options.ExtractIsoOptions;
-import org.jclouds.cloudstack.options.ListIsosOptions;
-import org.jclouds.cloudstack.options.RegisterIsoOptions;
-import org.jclouds.cloudstack.options.UpdateIsoOptions;
-import org.jclouds.cloudstack.options.UpdateIsoPermissionsOptions;
+import org.jclouds.cloudstack.options.DeleteISOOptions;
+import org.jclouds.cloudstack.options.ExtractISOOptions;
+import org.jclouds.cloudstack.options.ListISOsOptions;
+import org.jclouds.cloudstack.options.RegisterISOOptions;
+import org.jclouds.cloudstack.options.UpdateISOOptions;
+import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
 import org.jclouds.concurrent.Timeout;
 
 import java.util.Set;
@@ -38,12 +38,12 @@ import java.util.concurrent.TimeUnit;
  * 
  * <p/>
  * 
- * @see IsoAsyncClient
+ * @see ISOAsyncClient
  * @see http://download.cloud.com/releases/2.2.12/api/TOC_User.html
  * @author Richard Downer
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface IsoClient {
+public interface ISOClient {
 
    /**
     * Attaches an ISO to a virtual machine.
@@ -52,7 +52,7 @@ public interface IsoClient {
     * @param vmId the ID of the virtual machine
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse attachIso(long isoId, long vmId);
+   AsyncCreateResponse attachISO(long isoId, long vmId);
 
    /**
     * Detaches any ISO file (if any) currently attached to a virtual machine.
@@ -60,7 +60,7 @@ public interface IsoClient {
     * @param vmId The ID of the virtual machine
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse detachIso(long vmId);
+   AsyncCreateResponse detachISO(long vmId);
 
    /**
     * Gets information about an ISO by its ID.
@@ -68,7 +68,7 @@ public interface IsoClient {
     * @param id the ID of the ISO file
     * @return the ISO object matching the ID
     */
-   Iso getIso(long id);
+   ISO getISO(long id);
 
    /**
     * Lists all available ISO files.
@@ -76,7 +76,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return a set of ISO objects the match the filter
     */
-   Set<Iso> listIsos(ListIsosOptions... options);
+   Set<ISO> listISOs(ListISOsOptions... options);
 
    /**
     * Registers an existing ISO into the Cloud.com Cloud.
@@ -88,7 +88,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return the newly-added ISO
     */
-   Iso registerIso(String name, String displayText, String url, long zoneId, RegisterIsoOptions... options);
+   ISO registerISO(String name, String displayText, String url, long zoneId, RegisterISOOptions... options);
 
    /**
     * 
@@ -97,7 +97,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return the ISO object matching the ID
     */
-   Iso updateIso(long id, UpdateIsoOptions... options);
+   ISO updateISO(long id, UpdateISOOptions... options);
 
    /**
     * Deletes an ISO file.
@@ -106,7 +106,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse deleteIso(long id, DeleteIsoOptions... options);
+   AsyncCreateResponse deleteISO(long id, DeleteISOOptions... options);
 
    /**
     * Copies a template from one zone to another.
@@ -116,7 +116,7 @@ public interface IsoClient {
     * @param destZoneId ID of the zone the template is being copied to.
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse copyIso(long isoId, long sourceZoneId, long destZoneId);
+   AsyncCreateResponse copyISO(long isoId, long sourceZoneId, long destZoneId);
 
    /**
     * Updates iso permissions
@@ -125,7 +125,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return 
     */
-   void updateIsoPermissions(long id, UpdateIsoPermissionsOptions... options);
+   void updateISOPermissions(long id, UpdateISOPermissionsOptions... options);
 
    /**
     * List template visibility and all accounts that have permissions to view this template.
@@ -134,7 +134,7 @@ public interface IsoClient {
     * @param options optional arguments
     * @return A set of the permissions on this ISO
     */
-   Set<IsoPermissions> listIsoPermissions(long id, AccountInDomainOptions... options);
+   Set<ISOPermissions> listISOPermissions(long id, AccountInDomainOptions... options);
 
    /**
     * Extracts an ISO
@@ -145,6 +145,6 @@ public interface IsoClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse extractIso(long id, ExtractMode mode, long zoneId, ExtractIsoOptions... options);
+   AsyncCreateResponse extractISO(long id, ExtractMode mode, long zoneId, ExtractISOOptions... options);
 
 }

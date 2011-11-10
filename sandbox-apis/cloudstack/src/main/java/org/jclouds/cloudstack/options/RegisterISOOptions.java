@@ -22,20 +22,20 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Options for the Iso registerIso method.
+ * Options for the ISO registerISO method.
  *
- * @see org.jclouds.cloudstack.features.IsoClient#registerIso
- * @see org.jclouds.cloudstack.features.IsoAsyncClient#registerIso
+ * @see org.jclouds.cloudstack.features.ISOClient#registerISO
+ * @see org.jclouds.cloudstack.features.ISOAsyncClient#registerISO
  * @author Richard Downer
  */
-public class RegisterIsoOptions extends AccountInDomainOptions {
+public class RegisterISOOptions extends AccountInDomainOptions {
 
-   public static final RegisterIsoOptions NONE = new RegisterIsoOptions(); 
+   public static final RegisterISOOptions NONE = new RegisterISOOptions();
 
    /**
     * @param bootable true if this ISO is bootable
     */
-   public RegisterIsoOptions bootable(boolean bootable) {
+   public RegisterISOOptions bootable(boolean bootable) {
       this.queryParameters.replaceValues("bootable", ImmutableSet.of(bootable + ""));
       return this;
    }
@@ -43,7 +43,7 @@ public class RegisterIsoOptions extends AccountInDomainOptions {
    /**
     * @param isExtractable true if the iso or its derivatives are extractable; default is false
     */
-   public RegisterIsoOptions isExtractable(boolean isExtractable) {
+   public RegisterISOOptions isExtractable(boolean isExtractable) {
       this.queryParameters.replaceValues("isextractable", ImmutableSet.of(isExtractable + ""));
       return this;
    }
@@ -51,7 +51,7 @@ public class RegisterIsoOptions extends AccountInDomainOptions {
    /**
     * @param isFeatured true if you want this ISO to be featured
     */
-   public RegisterIsoOptions isFeatured(boolean isFeatured) {
+   public RegisterISOOptions isFeatured(boolean isFeatured) {
       this.queryParameters.replaceValues("isfeatured", ImmutableSet.of(isFeatured + ""));
       return this;
    }
@@ -59,7 +59,7 @@ public class RegisterIsoOptions extends AccountInDomainOptions {
    /**
     * @param isPublic true if you want to register the ISO to be publicly available to all users, false otherwise.
     */
-   public RegisterIsoOptions isPublic(boolean isPublic) {
+   public RegisterISOOptions isPublic(boolean isPublic) {
       this.queryParameters.replaceValues("ispublic", ImmutableSet.of(isPublic + ""));
       return this;
    }
@@ -67,7 +67,7 @@ public class RegisterIsoOptions extends AccountInDomainOptions {
    /**
     * @param osTypeId the ID of the OS Type that best represents the OS of this ISO
     */
-   public RegisterIsoOptions osTypeId(long osTypeId) {
+   public RegisterISOOptions osTypeId(long osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
       return this;
    }
@@ -77,50 +77,50 @@ public class RegisterIsoOptions extends AccountInDomainOptions {
       /**
        * @param account an optional account name. Must be used with domainId.
        */
-      public static RegisterIsoOptions accountInDomain(String account, long domainId) {
-         return (RegisterIsoOptions) new RegisterIsoOptions().accountInDomain(account, domainId);
+      public static RegisterISOOptions accountInDomain(String account, long domainId) {
+         return (RegisterISOOptions) new RegisterISOOptions().accountInDomain(account, domainId);
       }
 
       /**
        * @param bootable true if this ISO is bootable
        */
-      public static RegisterIsoOptions bootable(boolean bootable) {
-         return new RegisterIsoOptions().bootable(bootable);
+      public static RegisterISOOptions bootable(boolean bootable) {
+         return new RegisterISOOptions().bootable(bootable);
       }
 
       /**
        * @param domainId an optional domainId. If the account parameter is used, domainId must also be used.
        */
-      public static RegisterIsoOptions domainId(long domainId) {
-         return (RegisterIsoOptions) new RegisterIsoOptions().domainId(domainId);
+      public static RegisterISOOptions domainId(long domainId) {
+         return (RegisterISOOptions) new RegisterISOOptions().domainId(domainId);
       }
 
       /**
        * @param isExtractable true if the iso or its derivatives are extractable; default is false
        */
-      public static RegisterIsoOptions isExtractable(boolean isExtractable) {
-         return new RegisterIsoOptions().isExtractable(isExtractable);
+      public static RegisterISOOptions isExtractable(boolean isExtractable) {
+         return new RegisterISOOptions().isExtractable(isExtractable);
       }
 
       /**
        * @param isFeatured true if you want this ISO to be featured
        */
-      public static RegisterIsoOptions isFeatured(boolean isFeatured) {
-         return new RegisterIsoOptions().isFeatured(isFeatured);
+      public static RegisterISOOptions isFeatured(boolean isFeatured) {
+         return new RegisterISOOptions().isFeatured(isFeatured);
       }
 
       /**
        * @param isPublic true if you want to register the ISO to be publicly available to all users, false otherwise.
        */
-      public static RegisterIsoOptions isPublic(boolean isPublic) {
-         return new RegisterIsoOptions().isPublic(isPublic);
+      public static RegisterISOOptions isPublic(boolean isPublic) {
+         return new RegisterISOOptions().isPublic(isPublic);
       }
 
       /**
        * @param osTypeId the ID of the OS Type that best represents the OS of this ISO
        */
-      public static RegisterIsoOptions osTypeId(long osTypeId) {
-         return new RegisterIsoOptions().osTypeId(osTypeId);
+      public static RegisterISOOptions osTypeId(long osTypeId) {
+         return new RegisterISOOptions().osTypeId(osTypeId);
       }
    }
 

@@ -21,16 +21,16 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
-import org.jclouds.cloudstack.domain.Iso;
-import org.jclouds.cloudstack.domain.IsoPermissions;
+import org.jclouds.cloudstack.domain.ISO;
+import org.jclouds.cloudstack.domain.ISOPermissions;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
-import org.jclouds.cloudstack.options.DeleteIsoOptions;
-import org.jclouds.cloudstack.options.ExtractIsoOptions;
-import org.jclouds.cloudstack.options.ListIsosOptions;
-import org.jclouds.cloudstack.options.RegisterIsoOptions;
-import org.jclouds.cloudstack.options.UpdateIsoOptions;
-import org.jclouds.cloudstack.options.UpdateIsoPermissionsOptions;
+import org.jclouds.cloudstack.options.DeleteISOOptions;
+import org.jclouds.cloudstack.options.ExtractISOOptions;
+import org.jclouds.cloudstack.options.ListISOsOptions;
+import org.jclouds.cloudstack.options.RegisterISOOptions;
+import org.jclouds.cloudstack.options.UpdateISOOptions;
+import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
@@ -46,14 +46,14 @@ import java.util.Set;
  * 
  * <p/>
  * 
- * @see IsoClient
+ * @see ISOClient
  * @see http://download.cloud.com/releases/2.2.12/api/TOC_User.html
  * @author Richard Downer
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 @SkipEncoding({'/', ','})
-public interface IsoAsyncClient {
+public interface ISOAsyncClient {
 
    /**
     * Attaches an ISO to a virtual machine.
@@ -64,9 +64,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "attachIso")
+   @QueryParams(keys = "command", values = "attachISO")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> attachIso(@QueryParam("id") long isoId, @QueryParam("virtualmachineid") long vmId);
+   ListenableFuture<AsyncCreateResponse> attachISO(@QueryParam("id") long isoId, @QueryParam("virtualmachineid") long vmId);
 
    /**
     * Detaches any ISO file (if any) currently attached to a virtual machine.
@@ -76,9 +76,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "detachIso")
+   @QueryParams(keys = "command", values = "detachISO")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> detachIso(@QueryParam("virtualmachineid") long vmId);
+   ListenableFuture<AsyncCreateResponse> detachISO(@QueryParam("virtualmachineid") long vmId);
 
    /**
     * Gets information about an ISO by its ID.
@@ -88,9 +88,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsos")
+   @QueryParams(keys = "command", values = "listISOs")
    @Unwrap
-   ListenableFuture<Iso> getIso(@QueryParam("id") long id);
+   ListenableFuture<ISO> getISO(@QueryParam("id") long id);
 
    /**
     * Lists all available ISO files.
@@ -100,9 +100,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsos")
+   @QueryParams(keys = "command", values = "listISOs")
    @Unwrap
-   ListenableFuture<Set<Iso>> listIsos(ListIsosOptions... options);
+   ListenableFuture<Set<ISO>> listISOs(ListISOsOptions... options);
 
    /**
     * Registers an existing ISO into the Cloud.com Cloud.
@@ -116,9 +116,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "registerIso")
+   @QueryParams(keys = "command", values = "registerISO")
    @Unwrap
-   ListenableFuture<Iso> registerIso(@QueryParam("name") String name, @QueryParam("displaytext") String displayText, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterIsoOptions... options);
+   ListenableFuture<ISO> registerISO(@QueryParam("name") String name, @QueryParam("displaytext") String displayText, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterISOOptions... options);
 
    /**
     * 
@@ -129,9 +129,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "updateIso")
+   @QueryParams(keys = "command", values = "updateISO")
    @Unwrap
-   ListenableFuture<Iso> updateIso(@QueryParam("id") long id, UpdateIsoOptions... options);
+   ListenableFuture<ISO> updateISO(@QueryParam("id") long id, UpdateISOOptions... options);
 
    /**
     * Deletes an ISO file.
@@ -142,9 +142,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "deleteIso")
+   @QueryParams(keys = "command", values = "deleteISO")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> deleteIso(@QueryParam("id") long id, DeleteIsoOptions... options);
+   ListenableFuture<AsyncCreateResponse> deleteISO(@QueryParam("id") long id, DeleteISOOptions... options);
 
    /**
     * Copies a template from one zone to another.
@@ -156,9 +156,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "copyIso")
+   @QueryParams(keys = "command", values = "copyISO")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> copyIso(@QueryParam("id") long isoId, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
+   ListenableFuture<AsyncCreateResponse> copyISO(@QueryParam("id") long isoId, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
 
    /**
     * Updates iso permissions
@@ -169,9 +169,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "updateIsoPermissions")
+   @QueryParams(keys = "command", values = "updateISOPermissions")
    @Unwrap
-   ListenableFuture<Void> updateIsoPermissions(@QueryParam("id") long id, UpdateIsoPermissionsOptions... options);
+   ListenableFuture<Void> updateISOPermissions(@QueryParam("id") long id, UpdateISOPermissionsOptions... options);
 
    /**
     * List template visibility and all accounts that have permissions to view this template.
@@ -182,9 +182,9 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsoPermissions")
+   @QueryParams(keys = "command", values = "listISOPermissions")
    @Unwrap
-   ListenableFuture<Set<IsoPermissions>> listIsoPermissions(@QueryParam("id") long id, AccountInDomainOptions... options);
+   ListenableFuture<Set<ISOPermissions>> listISOPermissions(@QueryParam("id") long id, AccountInDomainOptions... options);
 
    /**
     * Extracts an ISO
@@ -197,8 +197,8 @@ public interface IsoAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "extractIso")
+   @QueryParams(keys = "command", values = "extractISO")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> extractIso(@QueryParam("id") long id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractIsoOptions... options);
+   ListenableFuture<AsyncCreateResponse> extractISO(@QueryParam("id") long id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractISOOptions... options);
 
 }

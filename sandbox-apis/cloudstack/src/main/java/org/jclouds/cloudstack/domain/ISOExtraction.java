@@ -25,7 +25,7 @@ import java.util.Date;
 /**
  * @author Richard Downer
  */
-public class IsoExtraction implements Comparable<IsoExtraction> {
+public class ISOExtraction implements Comparable<ISOExtraction> {
 
    public static Builder builder() {
       return new Builder();
@@ -175,7 +175,7 @@ public class IsoExtraction implements Comparable<IsoExtraction> {
    /**
     * present only for serializer
     */
-   IsoExtraction() {
+   ISOExtraction() {
    }
 
    /**
@@ -285,7 +285,7 @@ public class IsoExtraction implements Comparable<IsoExtraction> {
    }
 
    @Override
-   public int compareTo(IsoExtraction other) {
+   public int compareTo(ISOExtraction other) {
       throw new RuntimeException("FIXME: Implement me");
    }
 

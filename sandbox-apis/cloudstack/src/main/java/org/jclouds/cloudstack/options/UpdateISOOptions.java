@@ -22,20 +22,20 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Options for the Iso updateIso method.
+ * Options for the ISO updateISO method.
  *
- * @see org.jclouds.cloudstack.features.IsoClient#updateIso
- * @see org.jclouds.cloudstack.features.IsoAsyncClient#updateIso
+ * @see org.jclouds.cloudstack.features.ISOClient#updateISO
+ * @see org.jclouds.cloudstack.features.ISOAsyncClient#updateISO
  * @author Richard Downer
  */
-public class UpdateIsoOptions extends BaseHttpRequestOptions {
+public class UpdateISOOptions extends BaseHttpRequestOptions {
 
-   public static final UpdateIsoOptions NONE = new UpdateIsoOptions(); 
+   public static final UpdateISOOptions NONE = new UpdateISOOptions();
 
    /**
     * @param bootable true if image is bootable, false otherwise
     */
-   public UpdateIsoOptions bootable(boolean bootable) {
+   public UpdateISOOptions bootable(boolean bootable) {
       this.queryParameters.replaceValues("bootable", ImmutableSet.of(bootable + ""));
       return this;
    }
@@ -43,7 +43,7 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
    /**
     * @param displayText the display text of the image
     */
-   public UpdateIsoOptions displayText(String displayText) {
+   public UpdateISOOptions displayText(String displayText) {
       this.queryParameters.replaceValues("displaytext", ImmutableSet.of(displayText + ""));
       return this;
    }
@@ -51,7 +51,7 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
    /**
     * @param format the format for the image
     */
-   public UpdateIsoOptions format(String format) {
+   public UpdateISOOptions format(String format) {
       this.queryParameters.replaceValues("format", ImmutableSet.of(format + ""));
       return this;
    }
@@ -59,7 +59,7 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
    /**
     * @param name the name of the image file
     */
-   public UpdateIsoOptions name(String name) {
+   public UpdateISOOptions name(String name) {
       this.queryParameters.replaceValues("name", ImmutableSet.of(name + ""));
       return this;
    }
@@ -67,7 +67,7 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
    /**
     * @param osTypeId the ID of the OS type that best represents the OS of this image.
     */
-   public UpdateIsoOptions osTypeId(long osTypeId) {
+   public UpdateISOOptions osTypeId(long osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
       return this;
    }
@@ -75,7 +75,7 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
    /**
     * @param passwordEnabled true if the image supports the password reset feature; default is false
     */
-   public UpdateIsoOptions passwordEnabled(boolean passwordEnabled) {
+   public UpdateISOOptions passwordEnabled(boolean passwordEnabled) {
       this.queryParameters.replaceValues("passwordenabled", ImmutableSet.of(passwordEnabled + ""));
       return this;
    }
@@ -85,43 +85,43 @@ public class UpdateIsoOptions extends BaseHttpRequestOptions {
       /**
        * @param bootable true if image is bootable, false otherwise
        */
-      public static UpdateIsoOptions bootable(boolean bootable) {
-         return new UpdateIsoOptions().bootable(bootable);
+      public static UpdateISOOptions bootable(boolean bootable) {
+         return new UpdateISOOptions().bootable(bootable);
       }
 
       /**
        * @param displayText the display text of the image
        */
-      public static UpdateIsoOptions displayText(String displayText) {
-         return new UpdateIsoOptions().displayText(displayText);
+      public static UpdateISOOptions displayText(String displayText) {
+         return new UpdateISOOptions().displayText(displayText);
       }
 
       /**
        * @param format the format for the image
        */
-      public static UpdateIsoOptions format(String format) {
-         return new UpdateIsoOptions().format(format);
+      public static UpdateISOOptions format(String format) {
+         return new UpdateISOOptions().format(format);
       }
 
       /**
        * @param name the name of the image file
        */
-      public static UpdateIsoOptions name(String name) {
-         return new UpdateIsoOptions().name(name);
+      public static UpdateISOOptions name(String name) {
+         return new UpdateISOOptions().name(name);
       }
 
       /**
        * @param osTypeId the ID of the OS type that best represents the OS of this image.
        */
-      public static UpdateIsoOptions osTypeId(long osTypeId) {
-         return new UpdateIsoOptions().osTypeId(osTypeId);
+      public static UpdateISOOptions osTypeId(long osTypeId) {
+         return new UpdateISOOptions().osTypeId(osTypeId);
       }
 
       /**
        * @param passwordEnabled true if the image supports the password reset feature; default is false
        */
-      public static UpdateIsoOptions passwordEnabled(boolean passwordEnabled) {
-         return new UpdateIsoOptions().passwordEnabled(passwordEnabled);
+      public static UpdateISOOptions passwordEnabled(boolean passwordEnabled) {
+         return new UpdateISOOptions().passwordEnabled(passwordEnabled);
       }
    }
 

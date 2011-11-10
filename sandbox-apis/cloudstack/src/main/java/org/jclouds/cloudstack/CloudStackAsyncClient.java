@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.features.EventAsyncClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
-import org.jclouds.cloudstack.features.IsoAsyncClient;
+import org.jclouds.cloudstack.features.ISOAsyncClient;
 import org.jclouds.cloudstack.features.LimitAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
@@ -169,5 +169,5 @@ public interface CloudStackAsyncClient {
     * Provides asynchronous access to ISOs
     */
    @Delegate
-   IsoAsyncClient getIsoClient();
+   ISOAsyncClient getISOClient();
 }
