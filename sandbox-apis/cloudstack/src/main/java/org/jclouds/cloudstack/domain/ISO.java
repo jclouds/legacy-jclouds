@@ -611,22 +611,125 @@ public class ISO implements Comparable<ISO> {
 
    @Override
    public boolean equals(Object o) {
-      throw new RuntimeException("FIXME: Implement me");
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ISO iso = (ISO) o;
+
+      if (accountId != iso.accountId) return false;
+      if (bootable != iso.bootable) return false;
+      if (crossZones != iso.crossZones) return false;
+      if (domainid != iso.domainid) return false;
+      if (hostId != iso.hostId) return false;
+      if (id != iso.id) return false;
+      if (isExtractable != iso.isExtractable) return false;
+      if (isFeatured != iso.isFeatured) return false;
+      if (isPublic != iso.isPublic) return false;
+      if (isReady != iso.isReady) return false;
+      if (jobId != iso.jobId) return false;
+      if (osTypeId != iso.osTypeId) return false;
+      if (passwordEnabled != iso.passwordEnabled) return false;
+      if (size != iso.size) return false;
+      if (sourceTemplateId != iso.sourceTemplateId) return false;
+      if (zoneId != iso.zoneId) return false;
+      if (account != null ? !account.equals(iso.account) : iso.account != null) return false;
+      if (checksum != null ? !checksum.equals(iso.checksum) : iso.checksum != null) return false;
+      if (created != null ? !created.equals(iso.created) : iso.created != null) return false;
+      if (displayText != null ? !displayText.equals(iso.displayText) : iso.displayText != null) return false;
+      if (domain != null ? !domain.equals(iso.domain) : iso.domain != null) return false;
+      if (format != null ? !format.equals(iso.format) : iso.format != null) return false;
+      if (hostName != null ? !hostName.equals(iso.hostName) : iso.hostName != null) return false;
+      if (hypervisor != null ? !hypervisor.equals(iso.hypervisor) : iso.hypervisor != null) return false;
+      if (jobStatus != null ? !jobStatus.equals(iso.jobStatus) : iso.jobStatus != null) return false;
+      if (name != null ? !name.equals(iso.name) : iso.name != null) return false;
+      if (osTypeName != null ? !osTypeName.equals(iso.osTypeName) : iso.osTypeName != null) return false;
+      if (removed != null ? !removed.equals(iso.removed) : iso.removed != null) return false;
+      if (status != null ? !status.equals(iso.status) : iso.status != null) return false;
+      if (templateTag != null ? !templateTag.equals(iso.templateTag) : iso.templateTag != null) return false;
+      if (templateType != null ? !templateType.equals(iso.templateType) : iso.templateType != null) return false;
+      if (zoneName != null ? !zoneName.equals(iso.zoneName) : iso.zoneName != null) return false;
+
+      return true;
    }
 
    @Override
    public int hashCode() {
-      throw new RuntimeException("FIXME: Implement me");
+      int result = (int) (id ^ (id >>> 32));
+      result = 31 * result + (account != null ? account.hashCode() : 0);
+      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
+      result = 31 * result + (bootable ? 1 : 0);
+      result = 31 * result + (checksum != null ? checksum.hashCode() : 0);
+      result = 31 * result + (created != null ? created.hashCode() : 0);
+      result = 31 * result + (crossZones ? 1 : 0);
+      result = 31 * result + (displayText != null ? displayText.hashCode() : 0);
+      result = 31 * result + (domain != null ? domain.hashCode() : 0);
+      result = 31 * result + (int) (domainid ^ (domainid >>> 32));
+      result = 31 * result + (format != null ? format.hashCode() : 0);
+      result = 31 * result + (int) (hostId ^ (hostId >>> 32));
+      result = 31 * result + (hostName != null ? hostName.hashCode() : 0);
+      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
+      result = 31 * result + (isExtractable ? 1 : 0);
+      result = 31 * result + (isFeatured ? 1 : 0);
+      result = 31 * result + (isPublic ? 1 : 0);
+      result = 31 * result + (isReady ? 1 : 0);
+      result = 31 * result + (int) (jobId ^ (jobId >>> 32));
+      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
+      result = 31 * result + (name != null ? name.hashCode() : 0);
+      result = 31 * result + (int) (osTypeId ^ (osTypeId >>> 32));
+      result = 31 * result + (osTypeName != null ? osTypeName.hashCode() : 0);
+      result = 31 * result + (passwordEnabled ? 1 : 0);
+      result = 31 * result + (removed != null ? removed.hashCode() : 0);
+      result = 31 * result + (int) (size ^ (size >>> 32));
+      result = 31 * result + (int) (sourceTemplateId ^ (sourceTemplateId >>> 32));
+      result = 31 * result + (status != null ? status.hashCode() : 0);
+      result = 31 * result + (templateTag != null ? templateTag.hashCode() : 0);
+      result = 31 * result + (templateType != null ? templateType.hashCode() : 0);
+      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
+      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
+      return result;
    }
 
    @Override
    public String toString() {
-      throw new RuntimeException("FIXME: Implement me");
+      return "[" +
+         "id=" + id +
+         ", account='" + account + '\'' +
+         ", accountId=" + accountId +
+         ", bootable=" + bootable +
+         ", checksum='" + checksum + '\'' +
+         ", created=" + created +
+         ", crossZones=" + crossZones +
+         ", displayText='" + displayText + '\'' +
+         ", domain='" + domain + '\'' +
+         ", domainid=" + domainid +
+         ", format='" + format + '\'' +
+         ", hostId=" + hostId +
+         ", hostName='" + hostName + '\'' +
+         ", hypervisor='" + hypervisor + '\'' +
+         ", isExtractable=" + isExtractable +
+         ", isFeatured=" + isFeatured +
+         ", isPublic=" + isPublic +
+         ", isReady=" + isReady +
+         ", jobId=" + jobId +
+         ", jobStatus='" + jobStatus + '\'' +
+         ", name='" + name + '\'' +
+         ", osTypeId=" + osTypeId +
+         ", osTypeName='" + osTypeName + '\'' +
+         ", passwordEnabled=" + passwordEnabled +
+         ", removed=" + removed +
+         ", size=" + size +
+         ", sourceTemplateId=" + sourceTemplateId +
+         ", status='" + status + '\'' +
+         ", templateTag='" + templateTag + '\'' +
+         ", templateType='" + templateType + '\'' +
+         ", zoneId=" + zoneId +
+         ", zoneName='" + zoneName + '\'' +
+         ']';
    }
 
    @Override
    public int compareTo(ISO other) {
-      throw new RuntimeException("FIXME: Implement me");
+      return new Long(id).compareTo(other.getId());
    }
 
    public enum ISOFilter {

@@ -271,22 +271,68 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
    @Override
    public boolean equals(Object o) {
-      throw new RuntimeException("FIXME: Implement me");
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ISOExtraction that = (ISOExtraction) o;
+
+      if (accountId != that.accountId) return false;
+      if (extractId != that.extractId) return false;
+      if (id != that.id) return false;
+      if (uploadPercentage != that.uploadPercentage) return false;
+      if (zoneId != that.zoneId) return false;
+      if (created != null ? !created.equals(that.created) : that.created != null) return false;
+      if (extractMode != that.extractMode) return false;
+      if (name != null ? !name.equals(that.name) : that.name != null) return false;
+      if (state != null ? !state.equals(that.state) : that.state != null) return false;
+      if (status != null ? !status.equals(that.status) : that.status != null) return false;
+      if (storageType != null ? !storageType.equals(that.storageType) : that.storageType != null) return false;
+      if (url != null ? !url.equals(that.url) : that.url != null) return false;
+      if (zoneName != null ? !zoneName.equals(that.zoneName) : that.zoneName != null) return false;
+
+      return true;
    }
 
    @Override
    public int hashCode() {
-      throw new RuntimeException("FIXME: Implement me");
+      int result = (int) (id ^ (id >>> 32));
+      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
+      result = 31 * result + (created != null ? created.hashCode() : 0);
+      result = 31 * result + (int) (extractId ^ (extractId >>> 32));
+      result = 31 * result + (extractMode != null ? extractMode.hashCode() : 0);
+      result = 31 * result + (name != null ? name.hashCode() : 0);
+      result = 31 * result + (state != null ? state.hashCode() : 0);
+      result = 31 * result + (status != null ? status.hashCode() : 0);
+      result = 31 * result + (storageType != null ? storageType.hashCode() : 0);
+      result = 31 * result + uploadPercentage;
+      result = 31 * result + (url != null ? url.hashCode() : 0);
+      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
+      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
+      return result;
    }
 
    @Override
    public String toString() {
-      throw new RuntimeException("FIXME: Implement me");
+      return "[" +
+         "id=" + id +
+         ", accountId=" + accountId +
+         ", created=" + created +
+         ", extractId=" + extractId +
+         ", extractMode=" + extractMode +
+         ", name='" + name + '\'' +
+         ", state='" + state + '\'' +
+         ", status='" + status + '\'' +
+         ", storageType='" + storageType + '\'' +
+         ", uploadPercentage=" + uploadPercentage +
+         ", url='" + url + '\'' +
+         ", zoneId=" + zoneId +
+         ", zoneName='" + zoneName + '\'' +
+         ']';
    }
 
    @Override
    public int compareTo(ISOExtraction other) {
-      throw new RuntimeException("FIXME: Implement me");
+      return new Long(id).compareTo(other.getId());
    }
 
 }
