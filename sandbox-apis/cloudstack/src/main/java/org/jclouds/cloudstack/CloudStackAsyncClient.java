@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.features.EventAsyncClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
+import org.jclouds.cloudstack.features.LimitAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
 import org.jclouds.cloudstack.features.NetworkAsyncClient;
@@ -156,5 +157,11 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    EventAsyncClient getEventClient();
+
+   /**
+    * Provides synchronous access to Resource Limits
+    */
+   @Delegate
+   LimitAsyncClient getLimitClient();
 
 }

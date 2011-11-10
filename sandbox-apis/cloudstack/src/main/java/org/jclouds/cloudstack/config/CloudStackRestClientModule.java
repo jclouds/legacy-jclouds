@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.config;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.features.AccountAsyncClient;
@@ -38,6 +39,8 @@ import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
+import org.jclouds.cloudstack.features.LimitAsyncClient;
+import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
@@ -69,18 +72,16 @@ import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Configures the cloudstack connection.
- * 
+ *
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()//
          .put(ZoneClient.class, ZoneAsyncClient.class)//
          .put(TemplateClient.class, TemplateAsyncClient.class)//
          .put(OfferingClient.class, OfferingAsyncClient.class)//
@@ -97,6 +98,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
          .put(EventClient.class, EventAsyncClient.class)//
+         .put(LimitClient.class, LimitAsyncClient.class)//
          .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .put(VMGroupClient.class, VMGroupAsyncClient.class)//
          .build();
