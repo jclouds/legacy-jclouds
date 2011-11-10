@@ -23,15 +23,15 @@ import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudfiles.CloudFilesProviderMetadata;
+
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files in US.
  * 
  * @author Adrian Cole
  */
-public class CloudFilesUSProviderMetadata extends BaseProviderMetadata {
+public class CloudFilesUSProviderMetadata extends CloudFilesProviderMetadata {
 
    /**
     * {@inheritDoc}
@@ -45,32 +45,8 @@ public class CloudFilesUSProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getName() {
       return "Rackspace Cloud Files US";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
    }
 
    /**
@@ -87,14 +63,6 @@ public class CloudFilesUSProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getConsole() {
       return URI.create("https://manage.rackspacecloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html");
    }
 
    /**

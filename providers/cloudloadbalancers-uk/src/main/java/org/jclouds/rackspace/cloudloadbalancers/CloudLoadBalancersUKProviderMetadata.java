@@ -18,20 +18,19 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in UK.
  * 
  * @author Dan Lo Bianco
  */
-public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
+public class CloudLoadBalancersUKProviderMetadata extends CloudLoadBalancersProviderMetadata {
 
    /**
     * {@inheritDoc}
@@ -45,40 +44,16 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getType() {
-      return ProviderMetadata.LOADBALANCER_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getName() {
       return "Rackspace Cloud Load Balancers UK";
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
-   }
-
+   
    /**
     * {@inheritDoc}
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers");
+      return URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-load-balancers/");
    }
 
    /**
@@ -86,15 +61,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://manage.rackspacecloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html");
+      return URI.create("https://lon.manage.rackspacecloud.com");
    }
 
    /**

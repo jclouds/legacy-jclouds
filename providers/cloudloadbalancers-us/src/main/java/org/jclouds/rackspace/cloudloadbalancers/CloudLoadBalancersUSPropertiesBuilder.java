@@ -31,7 +31,7 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersPropertiesBuilder;
 
 import com.google.common.base.Joiner;
 
@@ -40,11 +40,10 @@ import com.google.common.base.Joiner;
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersUSPropertiesBuilder extends PropertiesBuilder {
+public class CloudLoadBalancersUSPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
       properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(ORD, DFW));
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");

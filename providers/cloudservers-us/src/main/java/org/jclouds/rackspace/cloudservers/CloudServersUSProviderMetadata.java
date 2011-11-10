@@ -23,15 +23,15 @@ import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudservers.CloudServersProviderMetadata;
+
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers in US.
  * 
  * @author Adrian Cole
  */
-public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
+public class CloudServersUSProviderMetadata extends CloudServersProviderMetadata {
 
    /**
     * {@inheritDoc}
@@ -45,32 +45,8 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getName() {
       return "Rackspace Cloud Servers US";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
    }
 
    /**
@@ -87,14 +63,6 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getConsole() {
       return URI.create("https://manage.rackspacecloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html");
    }
 
    /**
