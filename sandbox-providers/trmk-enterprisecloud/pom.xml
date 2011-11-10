@@ -48,10 +48,10 @@
     </repositories>
 
     <properties>
-        <test.trmk-enterprisecloud.endpoint>http://209.251.187.125/livespec</test.trmk-enterprisecloud.endpoint>
+        <test.trmk-enterprisecloud.endpoint>https://services-beta.enterprisecloud.terremark.com/cloudapi</test.trmk-enterprisecloud.endpoint>
         <test.trmk-enterprisecloud.apiversion>2011-07-01</test.trmk-enterprisecloud.apiversion>
-        <test.trmk-enterprisecloud.identity>readonly@terremark.com</test.trmk-enterprisecloud.identity>
-        <test.trmk-enterprisecloud.credential>T3rr3m@rk</test.trmk-enterprisecloud.credential>
+        <test.trmk-enterprisecloud.identity>FIXME</test.trmk-enterprisecloud.identity>
+        <test.trmk-enterprisecloud.credential>FIXME</test.trmk-enterprisecloud.credential>
     </properties>
     <dependencies>
         <dependency>

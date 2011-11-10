@@ -20,6 +20,7 @@ package org.jclouds.trmk.enterprisecloud.features;
 
 import java.util.Properties;
 
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -39,21 +40,22 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseTerremarkEnterpriseCloudClientLiveTest {
+public class BaseTerremarkEnterpriseCloudClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected RestContext<TerremarkEnterpriseCloudClient, TerremarkEnterpriseCloudAsyncClient> context;
    protected Module module;
 
+   public BaseTerremarkEnterpriseCloudClientLiveTest() {
+       provider = "trmk-enterprisecloud";
+   }
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      // TODO organize this like other compute tests
-      String identity = System.getProperty("test.trmk-enterprisecloud.identity", "readonly@terremark.com");
-      String credential = System.getProperty("test.trmk-enterprisecloud.credential", "T3rr3m@rk");
+      setupCredentials();
+      Properties overrides = setupProperties();
 
-      Properties props = new Properties();
-
-      context = new RestContextFactory().createContext("trmk-enterprisecloud", identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), props);
+      context = new RestContextFactory().createContext(provider, identity, credential,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
    }
 
    @AfterGroups(groups = "live")
