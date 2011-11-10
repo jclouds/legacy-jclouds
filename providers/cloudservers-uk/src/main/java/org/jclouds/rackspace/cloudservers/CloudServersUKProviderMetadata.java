@@ -102,7 +102,7 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk");
+      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk");
    }
 
    /**
