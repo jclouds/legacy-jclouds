@@ -18,66 +18,21 @@
  */
 package org.jclouds.trmk.enterprisecloud.domain;
 
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
 import java.net.URI;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Jason King
  * 
  */
-public class VirtualMachine extends BaseResource<VirtualMachine> {
-   public static enum Status {
-      /**
-       * the task is queued for execution.
-       */
-      QUEUED,
-      /**
-       * the task is running.
-       */
-      RUNNING,
-      /**
-       * the task failed.
-       */
-      FAILED,
-      /**
-       * the task completed successfully.
-       */
-      SUCCESS,
-      /**
-       * the task failed with an error.
-       */
-      ERROR,
-      /**
-       * Status was not parsed by jclouds.
-       */
-      UNRECOGNIZED;
-
-      public String value() {
-         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
-      }
-
-      @Override
-      public String toString() {
-         return value();
-      }
-
-      public static Status fromValue(String status) {
-         try {
-            return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, checkNotNull(status, "status")));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
+public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -89,93 +44,59 @@ public class VirtualMachine extends BaseResource<VirtualMachine> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromTask(this);
+      return new Builder().fromVirtualMachine(this);
    }
 
-   public static class Builder extends BaseResource.Builder<VirtualMachine> {
-      protected String operation;
-      protected Status status;
-      protected NamedResource impactedItem;
-      protected Date startTime;
-      protected Date completedTime;
-      protected String notes;
-      protected String errorMessage;
-      protected NamedResource initiatedBy;
+   public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
+      private List<Link> links;
+      private List<Action> actions;
+      private List<Task> tasks;
+      private String description;
 
       /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getOperation
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getLinks
        */
-      public Builder operation(String operation) {
-         this.operation = operation;
+      public Builder links(List<Link> links) {
+         this.links = links;
          return this;
       }
 
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getStatus
-       */
-      public Builder status(Status status) {
-         this.status = status;
-         return this;
-      }
+       /**
+        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getActions
+        */
+       public Builder actions(List<Action> actions) {
+          this.actions = actions;
+          return this;
+       }
 
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getImpactedItem
-       */
-      public Builder impactedItem(NamedResource impactedItem) {
-         this.impactedItem = impactedItem;
-         return this;
-      }
+       /**
+        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getTasks
+        */
+       public Builder tasks(List<Task> tasks) {
+          this.tasks = tasks;
+          return this;
+       }
 
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getStartTime
-       */
-      public Builder startTime(Date startTime) {
-         this.startTime = startTime;
-         return this;
-      }
 
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getCompletedTime
-       */
-      public Builder completedTime(Date completedTime) {
-         this.completedTime = completedTime;
-         return this;
-      }
-
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getNotes
-       */
-      public Builder notes(String notes) {
-         this.notes = notes;
-         return this;
-      }
-
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getErrorMessage
-       */
-      public Builder errorMessage(String errorMessage) {
-         this.errorMessage = errorMessage;
-         return this;
-      }
-
-      /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getInitiatedBy
-       */
-      public Builder initiatedBy(NamedResource initiatedBy) {
-         this.initiatedBy = initiatedBy;
-         return this;
-      }
+       /**
+        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getDescription
+        */
+       public Builder description(String description) {
+          this.description = description;
+          return this;
+       }
 
       @Override
       public VirtualMachine build() {
-         return new VirtualMachine(href, type, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
-               initiatedBy);
+         return new VirtualMachine(href, type, name, tasks, actions, links, description);
       }
 
-      public Builder fromTask(VirtualMachine in) {
-         return fromResource(in).operation(in.getOperation()).status(in.getStatus()).impactedItem(in.getImpactedItem())
-               .startTime(in.getStartTime()).completedTime(in.getCompletedTime()).notes(in.getNotes())
-               .errorMessage(in.getErrorMessage()).initiatedBy(in.getInitiatedBy());
+      public Builder fromVirtualMachine(VirtualMachine in) {
+        return fromNamedResource(in)
+            .links(in.getLinks())
+            .tasks(in.getTasks())
+            .actions(in.getActions())
+            .description(in.getDescription());
       }
 
       /**
@@ -184,6 +105,14 @@ public class VirtualMachine extends BaseResource<VirtualMachine> {
       @Override
       public Builder fromResource(BaseResource<VirtualMachine> in) {
          return Builder.class.cast(super.fromResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromNamedResource(BaseNamedResource<VirtualMachine> in) {
+         return Builder.class.cast(super.fromNamedResource(in));
       }
 
       /**
@@ -206,104 +135,85 @@ public class VirtualMachine extends BaseResource<VirtualMachine> {
        * {@inheritDoc}
        */
       @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          return Builder.class.cast(super.fromAttributes(attributes));
+          // TODO Other fields?
       }
 
    }
 
-   protected final String operation;
-   protected final Status status;
-   protected final NamedResource impactedItem;
-   protected final Date startTime;
-   protected final Date completedTime;
-   protected final String notes;
-   protected final String errorMessage;
-   protected final NamedResource initiatedBy;
+   private final List<Link> links;
+   private final List<Task> tasks;
+   private final List<Action> actions;
+   private final String description;
 
-   public VirtualMachine(URI href, String type, String operation, Status status, NamedResource impactedItem, Date startTime,
-                         @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
-      super(href, type);
-      this.operation = checkNotNull(operation, "operation");
-      this.status = checkNotNull(status, "status");
-      this.impactedItem = checkNotNull(impactedItem, "impactedItem");
-      this.startTime = checkNotNull(startTime, "startTime");
-      this.completedTime = completedTime;// null if Queued or Running
-      this.notes = notes;
-      this.errorMessage = errorMessage;
-      this.initiatedBy = checkNotNull(initiatedBy, "initiatedBy");
+   public VirtualMachine(URI href, String type, String name, List<Task> tasks, List<Action> actions, List<Link> links, String description) {
+      super(href, type, name);
+      this.description = checkNotNull(description, "description");
+      this.links = checkNotNull(links, "links");
+      this.tasks = checkNotNull(tasks, "tasks");
+      this.actions = checkNotNull(actions, "actions");
    }
 
-   /**
-    * 
-    * 
-    * @return name of action performed
-    */
-   public String getOperation() {
-      return operation;
+   public List<Link> getLinks() {
+       return links;
    }
 
-   /**
-    * 
-    * 
-    * @return the status of the task
-    */
-   public Status getStatus() {
-      return status;
+    /**
+     * refers to tasks regarding the virtual machine.
+     * Only the most recent tasks, up to twenty, are returned.
+     * Use the href to retrieve the complete list of tasks.
+     * @return most recent tasks
+     */
+   public List<Task> getTasks() {
+       return tasks;
    }
 
-   /**
-    * 
-    * @return the item acted upon
-    */
-   public NamedResource getImpactedItem() {
-      return impactedItem;
+   public List<Action> getActions() {
+       return actions;
    }
 
-   /**
-    * 
-    * @return time action started
-    */
-   public Date getStartTime() {
-      return startTime;
+   public String getDescription() {
+       return description;
    }
 
-   /**
-    * 
-    * @return time action completed, or null if Queued or Running
-    */
-   @Nullable
-   public Date getCompletedTime() {
-      return completedTime;
-   }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
-   /**
-    * @return notes on action
-    */
-   public String getNotes() {
-      return notes;
-   }
+        VirtualMachine that = (VirtualMachine) o;
 
-   /**
-    * @return error message
-    */
-   public String getErrorMessage() {
-      return errorMessage;
-   }
+        if (!actions.equals(that.actions)) return false;
+        if (!description.equals(that.description)) return false;
+        if (!links.equals(that.links)) return false;
+        if (!tasks.equals(that.tasks)) return false;
 
-   /**
-    * 
-    * @return the item acted upon
-    */
-   public NamedResource getInitiatedBy() {
-      return initiatedBy;
-   }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + links.hashCode();
+        result = 31 * result + tasks.hashCode();
+        result = 31 * result + actions.hashCode();
+        result = 31 * result + description.hashCode();
+        return result;
+    }
 
    @Override
-   public String toString() {
-      return "[type=" + type + ", href=" + href + ", operation=" + operation + ", status=" + status + ", impactedItem="
-            + impactedItem + ", startTime=" + startTime + ", completedTime=" + completedTime + ", notes=" + notes
-            + ", errorMessage=" + errorMessage + ", initiatedBy=" + initiatedBy + "]";
+   public String string() {
+      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description;
    }
 
 }
