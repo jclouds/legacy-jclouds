@@ -47,7 +47,7 @@ public class TaskClientLiveTest extends BaseTerremarkEnterpriseCloudClientLiveTe
       // TODO: don't hard-code id
       // TODO: docs say don't parse the href, yet no xml includes "identifier",
       // I suspect we may need to change to URI args as opposed to long
-      Set<Task> response = client.getTasksInEnvironment(1);
+      Set<Task> response = client.getTasksInEnvironment(77);
       assert null != response;
 
       assertTrue(response.size() >= 0);
