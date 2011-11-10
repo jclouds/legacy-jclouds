@@ -500,7 +500,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       checkArgument(in != null, "blob must be set");
       ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
       if (container == null) {
-         new IllegalStateException("containerName not found: " + containerName);
+         return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
       }
 
       Blob blob = createUpdatedCopyOfBlobInContainer(containerName, in);
@@ -513,7 +513,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Blob> putBlobAndReturnOld(String containerName, Blob in) {
       ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
       if (container == null) {
-         new IllegalStateException("containerName not found: " + containerName);
+         return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
       }
 
       Blob blob = createUpdatedCopyOfBlobInContainer(containerName, in);
