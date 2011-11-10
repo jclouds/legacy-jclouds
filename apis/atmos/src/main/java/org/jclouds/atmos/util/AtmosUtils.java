@@ -86,7 +86,7 @@ public class AtmosUtils {
             throw new IllegalStateException(path + " still exists after deleting!");
          }
       } catch (InterruptedException e) {
-         new IllegalStateException(path + " interrupted during deletion!", e);
+         throw new IllegalStateException(path + " interrupted during deletion!", e);
       }
    }
 

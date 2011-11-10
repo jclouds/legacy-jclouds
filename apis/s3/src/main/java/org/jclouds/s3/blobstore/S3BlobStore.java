@@ -177,7 +177,7 @@ public class S3BlobStore extends BaseBlobStore {
             throw new IllegalStateException(container + " still exists after deleting!");
          }
       } catch (InterruptedException e) {
-         new IllegalStateException(container + " interrupted during deletion!", e);
+         throw new IllegalStateException(container + " interrupted during deletion!", e);
       }
    }
 
