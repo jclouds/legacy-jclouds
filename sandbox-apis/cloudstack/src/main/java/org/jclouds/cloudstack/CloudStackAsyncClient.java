@@ -22,6 +22,7 @@ import org.jclouds.cloudstack.features.AccountAsyncClient;
 import org.jclouds.cloudstack.features.AddressAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
+import org.jclouds.cloudstack.features.EventAsyncClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
@@ -32,18 +33,18 @@ import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
-import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
 import org.jclouds.cloudstack.features.VMGroupAsyncClient;
+import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides asynchronous access to CloudStack via their REST API.
  * <p/>
- * 
+ *
  * @author Adrian Cole
  * @see CloudStackClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
 public interface CloudStackAsyncClient {
 
@@ -149,5 +150,11 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    VMGroupAsyncClient getVMGroupClient();
+
+   /**
+    * Provides synchronous access to Events
+    */
+   @Delegate
+   EventAsyncClient getEventClient();
 
 }

@@ -18,56 +18,39 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.ListAccountsOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.OnlyElement;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import java.util.Set;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 /**
  * Provides asynchronous access to cloudstack via their REST API.
  * <p/>
- * 
- * @see AccountClient
+ *
+ * @author Vijay Kiran
+ * @see org.jclouds.cloudstack.features.AccountClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
- * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface AccountAsyncClient {
+public interface EventAsyncClient {
    /**
-    * @see AccountClient#listAccounts
+    * @see EventClient#listEventTypes()
     */
    @GET
-   @QueryParams(keys = "command", values = "listAccounts")
-   @SelectJson("account")
+   @QueryParams(keys = "command", values = "listEventTypes")
    @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(ParseEventTypesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Account>> listAccounts(ListAccountsOptions... options);
-
-   /**
-    * @see AccountClient#getAccount
-    */
-   @GET
-   @QueryParams(keys = "command", values = "listAccounts")
-   @SelectJson("account")
-   @OnlyElement
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> getAccount(@QueryParam("id") long id);
+   ListenableFuture<Set<String>> listEventTypes();
 
 }

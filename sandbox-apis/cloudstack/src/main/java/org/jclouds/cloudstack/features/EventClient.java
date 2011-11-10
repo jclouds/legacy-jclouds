@@ -21,35 +21,22 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
- * Provides synchronous access to CloudStack asyncJob features.
+ * Provides synchronous access to CloudStack Event features.
  * <p/>
- * 
- * @see AsyncJobAsyncClient
+ *
+ * @author Vijay Kiran
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
- * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface AsyncJobClient {
-   /**
-    * Lists asyncJobs
-    * 
-    * @param options
-    *           if present, how to constrain the list.
-    * @return asyncJobs matching query, or empty set, if no asyncJobs are found
-    */
-   Set<AsyncJob<?>> listAsyncJobs(ListAsyncJobsOptions... options);
+public interface EventClient {
 
    /**
-    * get a specific asyncJob by id
-    * 
-    * @param id
-    *           asyncJob to get
-    * @return asyncJob or null if not found
+    * List Event Types
+    *
+    * @return event types or null if not found
     */
-   <T> AsyncJob<T> getAsyncJob(long id);
+   Set<String> listEventTypes();
 }
