@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
 /**
  * 
@@ -57,19 +58,27 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
        * {@inheritDoc}
        */
       @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
+      public Builder fromResource(BaseResource<NamedResource> in) {
+         return Builder.class.cast(super.fromResource(in));
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder type(String type) {
-         return Builder.class.cast(super.type(type));
+      public Builder fromNamedResource(BaseNamedResource<NamedResource> in) {
+         return Builder.class.cast(super.fromNamedResource(in));
       }
 
       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+       /**
        * {@inheritDoc}
        */
       @Override
@@ -81,8 +90,8 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromNamedResource(BaseNamedResource<NamedResource> in) {
-         return Builder.class.cast(super.fromNamedResource(in));
+      public Builder type(String type) {
+         return Builder.class.cast(super.type(type));
       }
 
       /**

@@ -131,6 +131,10 @@ public class BaseResource<T extends BaseResource<T>> {
 
    @Override
    public String toString() {
-      return "[href=" + href + ", type=" + type + "]";
+      return String.format("[%s]",string());
+   }
+
+   protected String string() {
+       return "href="+href+", type="+type;
    }
 }

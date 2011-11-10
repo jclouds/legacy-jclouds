@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
 /**
  * 
@@ -112,8 +113,40 @@ public class Action extends BaseNamedResource<Action> {
        * {@inheritDoc}
        */
       @Override
+      public Builder fromResource(BaseResource<Action> in) {
+         return Builder.class.cast(super.fromResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromNamedResource(BaseNamedResource<Action> in) {
          return Builder.class.cast(super.fromNamedResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder href(URI href) {
+         return Builder.class.cast(super.href(href));
+      }
+
+       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder type(String type) {
+         return Builder.class.cast(super.type(type));
       }
 
       /**
@@ -147,4 +180,28 @@ public class Action extends BaseNamedResource<Action> {
       return actionDisabled;
    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Action action = (Action) o;
+
+        if (actionDisabled != action.actionDisabled) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (actionDisabled != null ? actionDisabled.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String string() {
+        return super.string()+", actionDisabled="+actionDisabled;
+    }
 }

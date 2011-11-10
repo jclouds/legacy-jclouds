@@ -34,7 +34,7 @@ import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
  * @author Adrian Cole
  * 
  */
-public class Task extends BaseResource<Task> {
+public class VirtualMachine extends BaseResource<VirtualMachine> {
    public static enum Status {
       /**
        * the task is queued for execution.
@@ -92,7 +92,7 @@ public class Task extends BaseResource<Task> {
       return new Builder().fromTask(this);
    }
 
-   public static class Builder extends BaseResource.Builder<Task> {
+   public static class Builder extends BaseResource.Builder<VirtualMachine> {
       protected String operation;
       protected Status status;
       protected NamedResource impactedItem;
@@ -103,7 +103,7 @@ public class Task extends BaseResource<Task> {
       protected NamedResource initiatedBy;
 
       /**
-       * @see Task#getOperation
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getOperation
        */
       public Builder operation(String operation) {
          this.operation = operation;
@@ -111,7 +111,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getStatus
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getStatus
        */
       public Builder status(Status status) {
          this.status = status;
@@ -119,7 +119,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getImpactedItem
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getImpactedItem
        */
       public Builder impactedItem(NamedResource impactedItem) {
          this.impactedItem = impactedItem;
@@ -127,7 +127,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getStartTime
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getStartTime
        */
       public Builder startTime(Date startTime) {
          this.startTime = startTime;
@@ -135,7 +135,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getCompletedTime
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getCompletedTime
        */
       public Builder completedTime(Date completedTime) {
          this.completedTime = completedTime;
@@ -143,7 +143,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getNotes
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getNotes
        */
       public Builder notes(String notes) {
          this.notes = notes;
@@ -151,7 +151,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getErrorMessage
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getErrorMessage
        */
       public Builder errorMessage(String errorMessage) {
          this.errorMessage = errorMessage;
@@ -159,7 +159,7 @@ public class Task extends BaseResource<Task> {
       }
 
       /**
-       * @see Task#getInitiatedBy
+       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getInitiatedBy
        */
       public Builder initiatedBy(NamedResource initiatedBy) {
          this.initiatedBy = initiatedBy;
@@ -167,12 +167,12 @@ public class Task extends BaseResource<Task> {
       }
 
       @Override
-      public Task build() {
-         return new Task(href, type, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
+      public VirtualMachine build() {
+         return new VirtualMachine(href, type, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
                initiatedBy);
       }
 
-      public Builder fromTask(Task in) {
+      public Builder fromTask(VirtualMachine in) {
          return fromResource(in).operation(in.getOperation()).status(in.getStatus()).impactedItem(in.getImpactedItem())
                .startTime(in.getStartTime()).completedTime(in.getCompletedTime()).notes(in.getNotes())
                .errorMessage(in.getErrorMessage()).initiatedBy(in.getInitiatedBy());
@@ -182,7 +182,7 @@ public class Task extends BaseResource<Task> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Task> in) {
+      public Builder fromResource(BaseResource<VirtualMachine> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -221,8 +221,8 @@ public class Task extends BaseResource<Task> {
    protected final String errorMessage;
    protected final NamedResource initiatedBy;
 
-   public Task(URI href, String type, String operation, Status status, NamedResource impactedItem, Date startTime,
-         @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
+   public VirtualMachine(URI href, String type, String operation, Status status, NamedResource impactedItem, Date startTime,
+                         @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
       super(href, type);
       this.operation = checkNotNull(operation, "operation");
       this.status = checkNotNull(status, "status");
@@ -299,48 +299,11 @@ public class Task extends BaseResource<Task> {
       return initiatedBy;
    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        Task task = (Task) o;
-
-        if (completedTime != null ? !completedTime.equals(task.completedTime) : task.completedTime != null)
-            return false;
-        if (errorMessage != null ? !errorMessage.equals(task.errorMessage) : task.errorMessage != null)
-            return false;
-        if (!impactedItem.equals(task.impactedItem)) return false;
-        if (!initiatedBy.equals(task.initiatedBy)) return false;
-        if (notes != null ? !notes.equals(task.notes) : task.notes != null)
-            return false;
-        if (!operation.equals(task.operation)) return false;
-        if (!startTime.equals(task.startTime)) return false;
-        if (status != task.status) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + operation.hashCode();
-        result = 31 * result + status.hashCode();
-        result = 31 * result + impactedItem.hashCode();
-        result = 31 * result + startTime.hashCode();
-        result = 31 * result + (completedTime != null ? completedTime.hashCode() : 0);
-        result = 31 * result + (notes != null ? notes.hashCode() : 0);
-        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
-        result = 31 * result + initiatedBy.hashCode();
-        return result;
-    }
-
-    @Override
-    public String string() {
-       return super.string()+", operation="+operation+", status="+status+
-             ", impactedItem="+impactedItem+", startTime="+startTime+", completedTime="+completedTime+
-             ", notes="+notes+", errorMessage="+errorMessage+", initiatedBy="+initiatedBy;
-    }
+   @Override
+   public String toString() {
+      return "[type=" + type + ", href=" + href + ", operation=" + operation + ", status=" + status + ", impactedItem="
+            + impactedItem + ", startTime=" + startTime + ", completedTime=" + completedTime + ", notes=" + notes
+            + ", errorMessage=" + errorMessage + ", initiatedBy=" + initiatedBy + "]";
+   }
 
 }

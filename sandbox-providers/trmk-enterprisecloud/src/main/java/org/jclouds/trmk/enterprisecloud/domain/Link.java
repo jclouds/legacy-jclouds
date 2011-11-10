@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
 /**
  * 
@@ -122,8 +123,40 @@ public class Link extends BaseNamedResource<Link> {
        * {@inheritDoc}
        */
       @Override
+      public Builder fromResource(BaseResource<Link> in) {
+         return Builder.class.cast(super.fromResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromNamedResource(BaseNamedResource<Link> in) {
          return Builder.class.cast(super.fromNamedResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder href(URI href) {
+         return Builder.class.cast(super.href(href));
+      }
+
+       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder type(String type) {
+         return Builder.class.cast(super.type(type));
       }
 
       /**
@@ -153,4 +186,28 @@ public class Link extends BaseNamedResource<Link> {
       return rel;
    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Link link = (Link) o;
+
+        if (rel != link.rel) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + rel.hashCode();
+        return result;
+    }
+
+    @Override
+    public String string() {
+        return super.string()+", rel="+rel;
+    }
 }
