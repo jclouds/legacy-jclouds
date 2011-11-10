@@ -74,7 +74,7 @@ public class CloudLoadBalancersAsyncClientTest extends BaseCloudLoadBalancersAsy
 
    }
    
-   protected String provider = "cloudservers";
+   protected String provider = "cloudloadbalancers";
 
    @Override
    public RestContextSpec<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> createContextSpec() {
