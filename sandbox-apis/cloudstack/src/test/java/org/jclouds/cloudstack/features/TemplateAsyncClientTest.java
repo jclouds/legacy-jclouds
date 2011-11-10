@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateFilter;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
@@ -47,8 +48,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.inject.TypeLiteral;
-
-import javax.annotation.concurrent.Immutable;
 
 /**
  * Tests behavior of {@code TemplateAsyncClient}
@@ -315,8 +314,8 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testExtractTemplate() throws NoSuchMethodException {
-      Method method = TemplateAsyncClient.class.getMethod("extractTemplate", long.class, Template.ExtractMode.class, long.class, ExtractTemplateOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, Template.ExtractMode.HTTP_DOWNLOAD, 5);
+      Method method = TemplateAsyncClient.class.getMethod("extractTemplate", long.class, ExtractMode.class, long.class, ExtractTemplateOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=extractTemplate&id=3&zoneid=5&mode=HTTP_DOWNLOAD HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -330,8 +329,8 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testExtractTemplateOptions() throws NoSuchMethodException {
-      Method method = TemplateAsyncClient.class.getMethod("extractTemplate", long.class, Template.ExtractMode.class, long.class, ExtractTemplateOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, Template.ExtractMode.HTTP_DOWNLOAD, 5, ExtractTemplateOptions.Builder.url("http://example.com/"));
+      Method method = TemplateAsyncClient.class.getMethod("extractTemplate", long.class, ExtractMode.class, long.class, ExtractTemplateOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractTemplateOptions.Builder.url("http://example.com/"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=extractTemplate&id=3&zoneid=5&mode=HTTP_DOWNLOAD&url=http%3A%2F%2Fexample.com%2F HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");

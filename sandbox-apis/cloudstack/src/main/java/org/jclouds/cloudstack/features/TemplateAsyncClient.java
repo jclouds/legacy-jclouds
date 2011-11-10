@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.binders.BindTemplateMetadataToQueryParams;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
 import org.jclouds.cloudstack.domain.TemplatePermission;
@@ -164,5 +165,5 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "extractTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") Template.ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
+   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
 }

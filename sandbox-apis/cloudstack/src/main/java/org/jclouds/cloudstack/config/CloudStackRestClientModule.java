@@ -39,6 +39,8 @@ import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
+import org.jclouds.cloudstack.features.IsoAsyncClient;
+import org.jclouds.cloudstack.features.IsoClient;
 import org.jclouds.cloudstack.features.LimitAsyncClient;
 import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
@@ -101,6 +103,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(LimitClient.class, LimitAsyncClient.class)//
          .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .put(VMGroupClient.class, VMGroupAsyncClient.class)//
+         .put(IsoClient.class, IsoAsyncClient.class)//
          .build();
 
    public CloudStackRestClientModule() {
