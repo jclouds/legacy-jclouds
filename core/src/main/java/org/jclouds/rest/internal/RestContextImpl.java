@@ -89,7 +89,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       try {
          closer.close();
       } catch (IOException e) {
-         logger.error(e, "error closing content");
+         logger.error(e, "error closing context");
       }
    }
 
