@@ -85,8 +85,10 @@ Template template = context.getComputeService().templateBuilder().imageId(
 #### Release 1.1.0 and above 
 {% highlight java %}
    Properties overrides = new Properties();
-   // set owners to nothing
-   overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_QUERY, "");
+
+   // set AMI queries to nothing
+   overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
+   overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
    context = new ComputeServiceContextFactory().createContext("aws-ec2",
       accessid, secretkey, ImmutableSet.of(new Log4JLoggingModule()), overrides);
