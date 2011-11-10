@@ -18,27 +18,31 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.concurrent.TimeUnit;
+import static org.testng.Assert.assertTrue;
 
-import org.jclouds.cloudstack.domain.Capabilities;
-import org.jclouds.concurrent.Timeout;
+import java.util.Set;
+
+import org.testng.annotations.Test;
 
 /**
- * Provides synchronous access to CloudStack Configuration features.
- * <p/>
- * 
- * @see ConfigurationAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
- * @author Adrian Cole
+ * Tests behavior of {@code EventClient}
+ *
+ * @author Vijay Kiran
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface ConfigurationClient {
-   /**
-    * Lists capabilities
-    * 
-    * @return current capabilities of this cloud
-    * 
-    */
-   Capabilities listCapabilities();
+@Test(groups = "live", singleThreaded = true, testName = "EventClientLiveTest")
+public class EventClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   public void testlistEventTypes() throws Exception {
+      Set<String> response = client.getEventClient().listEventTypes();
+      assert null != response;
+      assertTrue(response.size() >= 0);
+      for (String type : response) {
+         checkEventType(type);
+      }
+   }
+
+   protected void checkEventType(String eventType) {
+      assert eventType != null : eventType;
+   }
 
 }

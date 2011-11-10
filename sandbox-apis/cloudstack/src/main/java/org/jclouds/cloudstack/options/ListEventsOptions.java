@@ -16,29 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.features;
-
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.cloudstack.domain.Capabilities;
-import org.jclouds.concurrent.Timeout;
+package org.jclouds.cloudstack.options;
 
 /**
- * Provides synchronous access to CloudStack Configuration features.
- * <p/>
- * 
- * @see ConfigurationAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
- * @author Adrian Cole
+ * Options used to control what events are returned
+ *
+ * @author Vijay Kiran
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/user/listEvents.html"
+ *      />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface ConfigurationClient {
-   /**
-    * Lists capabilities
-    * 
-    * @return current capabilities of this cloud
-    * 
-    */
-   Capabilities listCapabilities();
-
+public class ListEventsOptions {
 }
+

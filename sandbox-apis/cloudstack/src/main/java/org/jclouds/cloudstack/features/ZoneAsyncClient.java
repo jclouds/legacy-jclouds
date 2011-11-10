@@ -43,7 +43,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ZoneClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)

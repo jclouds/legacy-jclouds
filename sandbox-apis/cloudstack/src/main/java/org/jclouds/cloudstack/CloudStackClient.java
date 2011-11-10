@@ -24,6 +24,7 @@ import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
+import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
@@ -45,7 +46,7 @@ import org.jclouds.rest.annotations.Delegate;
  * <p/>
  * 
  * @see CloudStackAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -152,5 +153,11 @@ public interface CloudStackClient {
     */
    @Delegate
    VMGroupClient getVMGroupClient();
+
+   /**
+    * Provides synchronous access to Events
+    */
+   @Delegate
+   EventClient getEventClient();
 
 }
