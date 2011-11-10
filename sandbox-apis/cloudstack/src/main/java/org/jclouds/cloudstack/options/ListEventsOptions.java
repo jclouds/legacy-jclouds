@@ -18,6 +18,11 @@
  */
 package org.jclouds.cloudstack.options;
 
+import java.util.Date;
+
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.http.options.BaseHttpRequestOptions;
+
 /**
  * Options used to control what events are returned
  *
@@ -26,6 +31,69 @@ package org.jclouds.cloudstack.options;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/user/listEvents.html"
  *      />
  */
-public class ListEventsOptions {
+public class ListEventsOptions extends BaseHttpRequestOptions {
+   public static final ListEventsOptions NONE = new ListEventsOptions();
+
+   public ListEventsOptions account(String account) {
+      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
+      return this;
+   }
+
+   public ListEventsOptions domainId(long domainId) {
+      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
+      return this;
+   }
+
+   public ListEventsOptions duration(String duration) {
+      this.queryParameters.replaceValues("duration", ImmutableSet.of(duration));
+      return this;
+   }
+
+   public ListEventsOptions endDate(Date enddate) {
+      this.queryParameters.replaceValues("enddate", ImmutableSet.of(enddate + ""));
+      return this;
+   }
+
+   public ListEventsOptions entryTime(Date entrytime) {
+      this.queryParameters.replaceValues("entrytime", ImmutableSet.of(entrytime + ""));
+      return this;
+   }
+
+   public ListEventsOptions id(String id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
+      return this;
+   }
+
+   public ListEventsOptions keyword(String keyword) {
+      this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword));
+      return this;
+   }
+
+   public ListEventsOptions level(String level) {
+      this.queryParameters.replaceValues("level", ImmutableSet.of(level));
+      return this;
+   }
+
+//         page
+//   pagesize
+//         startdate
+//   type
+
+   /**
+    * @param name the SSHKeyPair name
+    */
+   public ListEventsOptions name(String name) {
+      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
+      return this;
+   }
+
+   public static class Builder {
+      public static ListEventsOptions name(String name) {
+         ListEventsOptions options = new ListEventsOptions();
+         return options.name(name);
+      }
+
+   }
+
 }
 
