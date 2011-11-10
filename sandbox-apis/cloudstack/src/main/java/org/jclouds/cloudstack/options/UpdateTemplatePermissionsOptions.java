@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control how a template should be updated.
@@ -37,7 +37,7 @@ public class UpdateTemplatePermissionsOptions extends BaseHttpRequestOptions {
     * a list of accounts. If specified, "op" parameter has to be passed in.
     */
    public UpdateTemplatePermissionsOptions accounts(Iterable<Long> accounts) {
-      this.queryParameters.replaceValues("accounts", Iterables.transform(accounts, Functions.toStringFunction()));
+      this.queryParameters.replaceValues("accounts", ImmutableSet.of(Joiner.on(',').join(accounts)));
       return this;
    }
 

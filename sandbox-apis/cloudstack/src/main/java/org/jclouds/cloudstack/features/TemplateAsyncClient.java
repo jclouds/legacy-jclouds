@@ -45,6 +45,7 @@ import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -62,6 +63,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
+@SkipEncoding(',')
 public interface TemplateAsyncClient {
 
    /**
