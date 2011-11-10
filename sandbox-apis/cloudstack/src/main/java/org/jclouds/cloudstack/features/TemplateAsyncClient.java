@@ -25,18 +25,32 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.cloudstack.binders.BindTemplateMetadataToQueryParams;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.TemplateMetadata;
+import org.jclouds.cloudstack.domain.TemplatePermission;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.AccountInDomainOptions;
+import org.jclouds.cloudstack.options.CreateTemplateOptions;
+import org.jclouds.cloudstack.options.DeleteTemplateOptions;
+import org.jclouds.cloudstack.options.ExtractTemplateOptions;
 import org.jclouds.cloudstack.options.ListTemplatesOptions;
+import org.jclouds.cloudstack.options.RegisterTemplateOptions;
+import org.jclouds.cloudstack.options.UpdateTemplateOptions;
+import org.jclouds.cloudstack.options.UpdateTemplatePermissionsOptions;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 /**
  * Provides asynchronous access to cloudstack via their REST API.
@@ -49,6 +63,50 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 public interface TemplateAsyncClient {
+
+   /**
+    * @see TemplateClient#createTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createTemplate")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> createTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, CreateTemplateOptions... options);
+
+   /**
+    * @see TemplateClient#registerTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "registerTemplate")
+   @SelectJson("template")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Template> registerTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterTemplateOptions... options);
+
+   /**
+    * @see TemplateClient#updateTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateTemplate")
+   @SelectJson("template")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Template> updateTemplate(@QueryParam("id") long id, UpdateTemplateOptions... options);
+
+   /**
+    * @see TemplateClient#copyTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "copyTemplate")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> copyTemplateToZone(@QueryParam("id") long id, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
+
+   /**
+    * @see TemplateClient#deleteTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteTemplate")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteTemplate(@QueryParam("id") long id, DeleteTemplateOptions... options);
 
    /**
     * @see TemplateClient#listTemplates
@@ -79,6 +137,30 @@ public interface TemplateAsyncClient {
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Template> getTemplateInZone(@QueryParam("zoneid") long zoneId, @QueryParam("id") long id);
+   ListenableFuture<Template> getTemplateInZone(@QueryParam("id") long templateId, @QueryParam("zoneid") long zoneId);
 
+   /**
+    * @see TemplateClient#updateTemplatePermissions
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateTemplatePermissions")
+   ListenableFuture<Void> updateTemplatePermissions(@QueryParam("id") long id, UpdateTemplatePermissionsOptions... options);
+
+   /**
+    * @see TemplateClient#listTemplatePermissions
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listTemplatePermissions")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Set<TemplatePermission>> listTemplatePermissions(@QueryParam("id") long id, AccountInDomainOptions... options);
+
+   /**
+    * @see TemplateClient#extractTemplate
+    */
+   @GET
+   @QueryParams(keys = "command", values = "extractTemplate")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") Template.ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
 }
