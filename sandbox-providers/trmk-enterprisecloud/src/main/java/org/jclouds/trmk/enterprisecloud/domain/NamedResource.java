@@ -107,4 +107,8 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
    public NamedResource(URI href, String type, String name) {
       super(href, type, name);
    }
+
+   protected NamedResource() {
+      //For JAXB
+   }
 }

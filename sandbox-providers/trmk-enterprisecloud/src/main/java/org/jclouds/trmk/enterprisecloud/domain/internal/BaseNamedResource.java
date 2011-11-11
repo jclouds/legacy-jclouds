@@ -18,6 +18,8 @@
  */
 package org.jclouds.trmk.enterprisecloud.domain.internal;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
@@ -77,11 +79,16 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
       }
    }
 
-   protected final String name;
+   @XmlAttribute
+   protected String name;
 
    public BaseNamedResource(URI href, String type, String name) {
       super(href, type);
       this.name = checkNotNull(name, "name");
+   }
+
+   protected BaseNamedResource() {
+      //For JAXB
    }
 
    public String getName() {
