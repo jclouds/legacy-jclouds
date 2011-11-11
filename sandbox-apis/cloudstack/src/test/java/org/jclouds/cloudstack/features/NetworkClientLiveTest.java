@@ -79,7 +79,9 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (network != null) {
-         jobComplete.apply(client.getNetworkClient().deleteNetwork(network.getId()));
+         Long jobId = client.getNetworkClient().deleteNetwork(network.getId());
+         if (jobId != null)
+            jobComplete.apply(jobId);
       }
       super.tearDown();
    }
