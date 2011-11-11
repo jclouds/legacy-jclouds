@@ -51,19 +51,17 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return !(input.version.startsWith("12.04") || input.version.startsWith("11.10") || input.version
-                           .equals("8.04"))
-                           && input.is64Bit;
-               case DEBIAN:
-                  return input.is64Bit;
-               case CENTOS:
-                  return !(input.version.matches("5.[0237]") || input.version.equals("6.0")) && input.is64Bit;
-               case WINDOWS:
-                  return input.version.equals("2008 SP2") || input.version.equals("")
-                           || (input.version.equals("2008 R2") && input.is64Bit);
-               default:
-                  return false;
+            case UBUNTU:
+               return !(input.version.startsWith("12.04") || input.version.startsWith("11.10")) && input.is64Bit;
+            case DEBIAN:
+               return input.is64Bit && !input.version.matches("[56].0");
+            case CENTOS:
+               return !(input.version.matches("5.[0237]") || input.version.equals("6.0")) && input.is64Bit;
+            case WINDOWS:
+               return input.version.equals("2008 SP2") || input.version.equals("")
+                     || (input.version.equals("2008 R2") && input.is64Bit);
+            default:
+               return false;
             }
          }
 
