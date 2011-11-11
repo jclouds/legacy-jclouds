@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateFilter;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
@@ -211,6 +212,6 @@ public interface TemplateClient {
     *           optional arguments
     * @return an asynchronous job response
     */
-   AsyncCreateResponse extractTemplate(long id, Template.ExtractMode mode, long zoneId,
+   AsyncCreateResponse extractTemplate(long id, ExtractMode mode, long zoneId,
          ExtractTemplateOptions... options);
 }

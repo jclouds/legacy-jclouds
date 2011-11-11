@@ -233,19 +233,6 @@ public class Template implements Comparable<Template> {
       }
    }
 
-   public enum ExtractMode {
-
-      HTTP_DOWNLOAD, FTP_UPLOAD, UNRECOGNIZED;
-
-      public static ExtractMode fromValue(String format) {
-         try {
-            return valueOf(checkNotNull(format, "format"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
-
    private long id;
    @SerializedName("displaytext")
    private String displayText;
