@@ -27,32 +27,19 @@
         <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.provider</groupId>
-    <artifactId>cloudloadbalancers-us</artifactId>
-    <name>jclouds CloudLoadBalancers US provider </name>
-    <description>LoadBalancer implementation targeted to Rackspace US</description>
+    <groupId>org.jclouds.api</groupId>
+    <artifactId>cloudloadbalancers</artifactId>
+    <name>jclouds cloudloadbalancers api</name>
+    <description>jclouds components to access a rackspace implementation of LoadBalancer</description>
     <packaging>bundle</packaging>
     
-    <properties>
-        <test.cloudloadbalancers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers-us.endpoint>
-        <test.cloudloadbalancers-us.apiversion>1.0</test.cloudloadbalancers-us.apiversion>
-        <test.cloudloadbalancers-us.identity>${test.rackspace-us.identity}</test.cloudloadbalancers-us.identity>
-        <test.cloudloadbalancers-us.credential>${test.rackspace-us.credential}</test.cloudloadbalancers-us.credential>
+     <properties>
+        <test.cloudloadbalancers.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers.endpoint>
+        <test.cloudloadbalancers.apiversion>1.0</test.cloudloadbalancers.apiversion>
+        <test.cloudloadbalancers.identity>${test.rackspace.identity}</test.cloudloadbalancers.identity>
+        <test.cloudloadbalancers.credential>${test.rackspace.credential}</test.cloudloadbalancers.credential>
     </properties>
-    
     <dependencies>
-    	<dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudloadbalancers</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudloadbalancers</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-loadbalancer</artifactId>
@@ -109,20 +96,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.endpoint</name>
-                                            <value>${test.cloudloadbalancers-us.endpoint}</value>
+                                            <name>test.cloudloadbalancers.endpoint</name>
+                                            <value>${test.cloudloadbalancers.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.apiversion</name>
-                                            <value>${test.cloudloadbalancers-us.apiversion}</value>
+                                            <name>test.cloudloadbalancers.apiversion</name>
+                                            <value>${test.cloudloadbalancers.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.identity</name>
-                                            <value>${test.cloudloadbalancers-us.identity}</value>
+                                            <name>test.cloudloadbalancers.identity</name>
+                                            <value>${test.cloudloadbalancers.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.credential</name>
-                                            <value>${test.cloudloadbalancers-us.credential}</value>
+                                            <name>test.cloudloadbalancers.credential</name>
+                                            <value>${test.cloudloadbalancers.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
@@ -142,7 +129,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.rackspace.cloudloadbalancers.*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.cloudloadbalancers.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>

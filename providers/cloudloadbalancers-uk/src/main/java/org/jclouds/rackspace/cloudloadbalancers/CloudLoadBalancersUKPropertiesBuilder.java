@@ -16,32 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace.cloudloadbalancers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.cloudloadbalancers.reference.RackspaceConstants.PROPERTY_ACCOUNT_ID;
+import static org.jclouds.cloudloadbalancers.reference.Region.LON;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.cloudfiles.CloudFilesPropertiesBuilder;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersPropertiesBuilder;
 
 /**
+ * Builds properties used inRackspace Cloud Load Balancers Clients
  * 
- * @author Adrian Cole
+ * @author Dan Lo Bianco
  */
-public class CloudFilesUKPropertiesBuilder extends CloudFilesPropertiesBuilder {
-
+public class CloudLoadBalancersUKPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "UK");
       properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
+      
+      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ISO3166_CODES, "GB-SLG");
+      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT, String
+               .format("https://lon.loadbalancers.api.rackspacecloud.com/v{%s}/{%s}", PROPERTY_API_VERSION,
+                        PROPERTY_ACCOUNT_ID));
+      
       return properties;
    }
 
-   public CloudFilesUKPropertiesBuilder(Properties properties) {
+   public CloudLoadBalancersUKPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

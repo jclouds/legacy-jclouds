@@ -16,30 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudservers;
-
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+package org.jclouds.cloudfiles;
 
 import java.util.Properties;
 
-import org.jclouds.cloudservers.CloudServersPropertiesBuilder;
+import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudServersUKPropertiesBuilder extends CloudServersPropertiesBuilder {
+public class CloudFilesPropertiesBuilder extends SwiftPropertiesBuilder {
 
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
       return properties;
    }
 
-   public CloudServersUKPropertiesBuilder(Properties properties) {
+   public CloudFilesPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

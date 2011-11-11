@@ -16,20 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudloadbalancers;
+package org.jclouds.rackspace.cloudloadbalancers;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudloadbalancers.features.LoadBalancerClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Dan Lo Bianco
  */
-@Test(groups = "unit", testName = "CloudLoadBalancersUSProviderTest")
-public class CloudLoadBalancersUSProviderTest extends BaseProviderMetadataTest {
-
-   public CloudLoadBalancersUSProviderTest() {
-      super(new CloudLoadBalancersUSProviderMetadata(), ProviderMetadata.LOADBALANCER_TYPE);
+@Test(groups = "live", singleThreaded = true)
+public class CloudLoadBalancersUKClientLiveTest extends LoadBalancerClientLiveTest {
+   public CloudLoadBalancersUKClientLiveTest() {
+      provider = "cloudloadbalancers-uk";
    }
 }

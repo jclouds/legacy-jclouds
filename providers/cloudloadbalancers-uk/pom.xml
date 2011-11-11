@@ -28,16 +28,16 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>cloudloadbalancers-us</artifactId>
-    <name>jclouds CloudLoadBalancers US provider </name>
-    <description>LoadBalancer implementation targeted to Rackspace US</description>
+    <artifactId>cloudloadbalancers-uk</artifactId>
+    <name>jclouds CloudLoadBalancers UK provider </name>
+    <description>LoadBalancer implementation targeted to Rackspace UK</description>
     <packaging>bundle</packaging>
     
     <properties>
-        <test.cloudloadbalancers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers-us.endpoint>
-        <test.cloudloadbalancers-us.apiversion>1.0</test.cloudloadbalancers-us.apiversion>
-        <test.cloudloadbalancers-us.identity>${test.rackspace-us.identity}</test.cloudloadbalancers-us.identity>
-        <test.cloudloadbalancers-us.credential>${test.rackspace-us.credential}</test.cloudloadbalancers-us.credential>
+        <test.cloudloadbalancers-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudloadbalancers-uk.endpoint>
+        <test.cloudloadbalancers-uk.apiversion>1.0</test.cloudloadbalancers-uk.apiversion>
+        <test.cloudloadbalancers-uk.identity>${test.rackspace-uk.identity}</test.cloudloadbalancers-uk.identity>
+        <test.cloudloadbalancers-uk.credential>${test.rackspace-uk.credential}</test.cloudloadbalancers-uk.credential>
     </properties>
     
     <dependencies>
@@ -109,20 +109,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.endpoint</name>
-                                            <value>${test.cloudloadbalancers-us.endpoint}</value>
+                                            <name>test.cloudloadbalancers-uk.endpoint</name>
+                                            <value>${test.cloudloadbalancers-uk.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.apiversion</name>
-                                            <value>${test.cloudloadbalancers-us.apiversion}</value>
+                                            <name>test.cloudloadbalancers-uk.apiversion</name>
+                                            <value>${test.cloudloadbalancers-uk.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.identity</name>
-                                            <value>${test.cloudloadbalancers-us.identity}</value>
+                                            <name>test.cloudloadbalancers-uk.identity</name>
+                                            <value>${test.cloudloadbalancers-uk.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudloadbalancers-us.credential</name>
-                                            <value>${test.cloudloadbalancers-us.credential}</value>
+                                            <name>test.cloudloadbalancers-uk.credential</name>
+                                            <value>${test.cloudloadbalancers-uk.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

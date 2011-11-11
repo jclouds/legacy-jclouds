@@ -16,28 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace.cloudloadbalancers;
 
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.cloudfiles.CloudFilesProviderMetadata;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersProviderMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files in UK.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in UK.
  * 
- * @author Adrian Cole
+ * @author Dan Lo Bianco
  */
-public class CloudFilesUKProviderMetadata extends CloudFilesProviderMetadata {
+public class CloudLoadBalancersUKProviderMetadata extends CloudLoadBalancersProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "cloudfiles-uk";
+      return "cloudloadbalancers-uk";
    }
 
    /**
@@ -45,15 +45,15 @@ public class CloudFilesUKProviderMetadata extends CloudFilesProviderMetadata {
     */
    @Override
    public String getName() {
-      return "Rackspace Cloud Files UK";
+      return "Rackspace Cloud Load Balancers UK";
    }
-
+   
    /**
     * {@inheritDoc}
     */
    @Override
    public URI getHomepage() {
-      return URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-files");
+      return URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-load-balancers/");
    }
 
    /**
