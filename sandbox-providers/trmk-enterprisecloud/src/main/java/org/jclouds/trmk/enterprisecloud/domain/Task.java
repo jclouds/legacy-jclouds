@@ -1,3 +1,21 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jclouds.trmk.enterprisecloud.domain;
 
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
@@ -281,11 +299,48 @@ public class Task extends BaseResource<Task> {
       return initiatedBy;
    }
 
-   @Override
-   public String toString() {
-      return "[type=" + type + ", href=" + href + ", operation=" + operation + ", status=" + status + ", impactedItem="
-            + impactedItem + ", startTime=" + startTime + ", completedTime=" + completedTime + ", notes=" + notes
-            + ", errorMessage=" + errorMessage + ", initiatedBy=" + initiatedBy + "]";
-   }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Task task = (Task) o;
+
+        if (completedTime != null ? !completedTime.equals(task.completedTime) : task.completedTime != null)
+            return false;
+        if (errorMessage != null ? !errorMessage.equals(task.errorMessage) : task.errorMessage != null)
+            return false;
+        if (!impactedItem.equals(task.impactedItem)) return false;
+        if (!initiatedBy.equals(task.initiatedBy)) return false;
+        if (notes != null ? !notes.equals(task.notes) : task.notes != null)
+            return false;
+        if (!operation.equals(task.operation)) return false;
+        if (!startTime.equals(task.startTime)) return false;
+        if (status != task.status) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + operation.hashCode();
+        result = 31 * result + status.hashCode();
+        result = 31 * result + impactedItem.hashCode();
+        result = 31 * result + startTime.hashCode();
+        result = 31 * result + (completedTime != null ? completedTime.hashCode() : 0);
+        result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
+        result = 31 * result + initiatedBy.hashCode();
+        return result;
+    }
+
+    @Override
+    public String string() {
+       return super.string()+", operation="+operation+", status="+status+
+             ", impactedItem="+impactedItem+", startTime="+startTime+", completedTime="+completedTime+
+             ", notes="+notes+", errorMessage="+errorMessage+", initiatedBy="+initiatedBy;
+    }
 
 }

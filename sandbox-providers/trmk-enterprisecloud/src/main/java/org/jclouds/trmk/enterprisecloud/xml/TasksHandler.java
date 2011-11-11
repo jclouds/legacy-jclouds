@@ -30,7 +30,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * @author Adrian Cole
@@ -46,7 +45,7 @@ public class TasksHandler extends ParseSax.HandlerWithResult<Set<Task>> {
 
    protected final TaskHandler taskHandler;
 
-   protected Builder<Task> builder = ImmutableSet.<Task> builder();
+   protected ImmutableSet.Builder<Task> builder = ImmutableSet.<Task> builder();
 
    @Inject
    public TasksHandler(TaskHandler taskHandler) {
