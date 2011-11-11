@@ -50,4 +50,9 @@ public interface Region {
     */
    public final static String DFW = "DFW";
    
+   /**
+    * London/Slough (LON) https://lon.loadbalancers.api.rackspacecloud.com/v1.0/1234/
+    */
+   public final static String LON = "LON";
+   
 }

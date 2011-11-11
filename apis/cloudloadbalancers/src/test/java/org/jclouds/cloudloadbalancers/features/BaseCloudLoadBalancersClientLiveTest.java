@@ -52,7 +52,7 @@ public class BaseCloudLoadBalancersClientLiveTest {
 
    protected CloudLoadBalancersClient client;
    protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> context;
-   protected String provider = "cloudloadbalancers-us";
+   protected String provider = "cloudloadbalancers";
    protected String identity;
    protected String credential;
    protected String endpoint;

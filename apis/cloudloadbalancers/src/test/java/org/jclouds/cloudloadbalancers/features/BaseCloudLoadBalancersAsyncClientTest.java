@@ -86,7 +86,7 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
    @Override
    public RestContextSpec<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> createContextSpec() {
       Properties props = new Properties();
-      return new RestContextFactory().createContextSpec("cloudloadbalancers-us", "email", "apikey", props);
+      return new RestContextFactory().createContextSpec("cloudloadbalancers", "email", "apikey", props);
    }
 
    @BeforeClass

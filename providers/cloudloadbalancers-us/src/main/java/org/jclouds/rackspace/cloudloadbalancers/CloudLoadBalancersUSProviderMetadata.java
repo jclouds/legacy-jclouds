@@ -16,22 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudloadbalancers;
-
-import com.google.common.collect.ImmutableSet;
+package org.jclouds.rackspace.cloudloadbalancers;
 
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in US.
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
+public class CloudLoadBalancersUSProviderMetadata extends CloudLoadBalancersProviderMetadata {
 
    /**
     * {@inheritDoc}
@@ -45,41 +44,17 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getType() {
-      return ProviderMetadata.LOADBALANCER_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getName() {
       return "Rackspace Cloud Load Balancers US";
    }
-
+   
    /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers");
-   }
+	 * {@inheritDoc}
+	 */
+	@Override
+	public URI getHomepage() {
+		return URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers");
+	}
 
    /**
     * {@inheritDoc}
@@ -87,14 +62,6 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
    @Override
    public URI getConsole() {
       return URI.create("https://manage.rackspacecloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html");
    }
 
    /**

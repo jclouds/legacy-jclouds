@@ -16,31 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudservers;
+package org.jclouds.rackspace.cloudloadbalancers;
 
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-
-import java.util.Properties;
-
-import org.jclouds.cloudservers.CloudServersPropertiesBuilder;
+import org.jclouds.cloudloadbalancers.features.LoadBalancerClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Dan Lo Bianco
  */
-public class CloudServersUKPropertiesBuilder extends CloudServersPropertiesBuilder {
-
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
-      return properties;
+@Test(groups = "live", singleThreaded = true)
+public class CloudLoadBalancersUSClientLiveTest extends LoadBalancerClientLiveTest {
+   public CloudLoadBalancersUSClientLiveTest() {
+      provider = "cloudloadbalancers-us";
    }
-
-   public CloudServersUKPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
 }
