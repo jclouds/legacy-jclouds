@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.DiskOffering;
@@ -49,16 +50,21 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       long offeringCount = response.size();
       assertTrue(offeringCount >= 0);
       for (DiskOffering offering : response) {
-         DiskOffering newDetails = Iterables.getOnlyElement(client.getOfferingClient().listDiskOfferings(
+         try {
+           DiskOffering newDetails = Iterables.getOnlyElement(client.getOfferingClient().listDiskOfferings(
                ListDiskOfferingsOptions.Builder.id(offering.getId())));
-         assertEquals(offering, newDetails);
-         assertEquals(offering, client.getOfferingClient().getDiskOffering(offering.getId()));
-         assert offering.getId() > 0 : offering;
-         assert offering.getName() != null : offering;
-         assert offering.getCreated() != null : offering;
-         assert offering.getDisplayText() != null : offering;
-         assert offering.getDiskSize() > 0 || (offering.getDiskSize() == 0 && offering.isCustomized()) : offering;
-         assert offering.getTags() != null : offering;
+           assertEquals(offering, newDetails);
+           assertEquals(offering, client.getOfferingClient().getDiskOffering(offering.getId()));
+           assert offering.getId() > 0 : offering;
+           assert offering.getName() != null : offering;
+           assert offering.getCreated() != null : offering;
+           assert offering.getDisplayText() != null : offering;
+           assert offering.getDiskSize() > 0 || (offering.getDiskSize() == 0 && offering.isCustomized()) : offering;
+           assert offering.getTags() != null : offering;
+
+         } catch (NoSuchElementException e) {
+           assertEquals(apiversion, "2.2.8");
+         }
       }
    }
 
