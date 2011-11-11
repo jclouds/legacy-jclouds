@@ -9,6 +9,7 @@
             "created" : "2010-08-10T12:00:00Z",
             "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
             "affinityId" : "fc88bcf8394db9c8d0564e08ca6a9724188a84d1",
+            "uuid" : "d84e2086-fc0d-11e0-8e08-2837371c69ae",
             "status" : "BUILD",
             "progress" : 60,
             "addresses" : {
@@ -53,6 +54,7 @@
             "created" : "2010-08-10T12:00:00Z",
             "hostId" : "9e107d9d372bb6826bd81d3542a419d6",
             "affinityId" : "b414fa41cb37b97dcb58d6c76112af1258e9eae2",
+            "uuid" : "e66d54d4-fc0d-11e0-b93f-2837371c69ae",
             "status" : "ACTIVE",
             "addresses" : {
                 "public" : [
@@ -74,12 +76,6 @@
                 },
                 {
                     "rel" : "bookmark",
-                    "type" : "application/vnd.openstack.compute-v1.1+xml",
-                    "href" : "http://servers.api.openstack.org/1234/servers/5678"
-                },
-                {
-                    "rel" : "bookmark",
-                    "type" : "application/vnd.openstack.compute-v1.1+json",
                     "href" : "http://servers.api.openstack.org/1234/servers/56789"
                 }
             ]
