@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.date.internal;
-import static org.jclouds.date.internal.DateUtils.trimNanosToMillis;
+import static org.jclouds.date.internal.DateUtils.trimToMillis;
 import static org.jclouds.date.internal.DateUtils.trimTZ;
 
 import java.text.ParseException;
@@ -124,7 +124,7 @@ public class SimpleDateFormatDateService implements DateService {
 
    public final Date iso8601DateParse(String toParse) {
       toParse = trimTZ(toParse);
-      toParse = trimNanosToMillis(toParse);
+      toParse = trimToMillis(toParse);
       synchronized (iso8601SimpleDateFormat) {
          try {
             return iso8601SimpleDateFormat.parse(toParse);

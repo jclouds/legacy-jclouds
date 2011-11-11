@@ -18,7 +18,7 @@
  */
 package org.jclouds.date.joda;
 
-import static org.jclouds.date.internal.DateUtils.trimNanosToMillis;
+import static org.jclouds.date.internal.DateUtils.trimToMillis;
 import static org.jclouds.date.internal.DateUtils.trimTZ;
 
 import java.util.Date;
@@ -98,7 +98,7 @@ public class JodaDateService implements DateService {
 
    public final Date iso8601DateParse(String toParse) {
       toParse = trimTZ(toParse);
-      toParse = trimNanosToMillis(toParse);
+      toParse = trimToMillis(toParse);
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
    }
 

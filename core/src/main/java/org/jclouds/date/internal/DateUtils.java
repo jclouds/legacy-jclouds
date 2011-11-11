@@ -27,13 +27,15 @@ import java.util.regex.Pattern;
  */
 public class DateUtils {
 
-   public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern.compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
+   public static final Pattern MILLIS_PATTERN = Pattern.compile("(.*\\.[0-9][0-9][0-9])[0-9]*Z?");
 
    public static final Pattern TZ_PATTERN = Pattern.compile("(.*)[+-][0-9][0-9]:?[0-9][0-9]Z?");
 
-   public static String trimNanosToMillis(String toParse) {
-      if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())
-         toParse = toParse.substring(0, toParse.length() - 3) + 'Z';
+   public static String trimToMillis(String toParse) {
+       Matcher matcher = MILLIS_PATTERN.matcher(toParse);
+       if (matcher.find()) {
+          toParse = matcher.group(1) + 'Z';
+       }
       return toParse;
    }
 
