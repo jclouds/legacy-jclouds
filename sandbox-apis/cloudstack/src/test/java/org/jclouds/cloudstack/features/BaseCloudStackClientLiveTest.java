@@ -36,6 +36,8 @@ import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -43,7 +45,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
@@ -80,6 +81,8 @@ public class BaseCloudStackClientLiveTest {
    protected Injector injector;
 
    protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
+
+   protected ComputeServiceContext computeContext;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
@@ -121,8 +124,10 @@ public class BaseCloudStackClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+      computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()),
             overrides);
+
+      context = computeContext.getProviderSpecificContext();
 
       client = context.getApi();
       // check access

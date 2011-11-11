@@ -42,6 +42,7 @@
        <module>swift</module>
        <module>cloudfiles</module>
        <module>cloudservers</module>
+       <module>cloudloadbalancers</module>
        <module>vcloud</module>
        <module>elasticstack</module>
        <module>atmos</module>

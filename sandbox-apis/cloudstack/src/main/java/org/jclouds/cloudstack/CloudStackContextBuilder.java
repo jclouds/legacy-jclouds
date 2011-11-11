@@ -21,8 +21,9 @@ package org.jclouds.cloudstack;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.compute.ComputeServiceContextBuilder;
 
 import com.google.inject.Module;
 
@@ -30,12 +31,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudStackContextBuilder extends RestContextBuilder<CloudStackClient, CloudStackAsyncClient> {
+public class CloudStackContextBuilder extends ComputeServiceContextBuilder<CloudStackClient, CloudStackAsyncClient> {
 
    public CloudStackContextBuilder(Properties props) {
       super(CloudStackClient.class, CloudStackAsyncClient.class, props);
    }
 
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudStackComputeServiceContextModule());
+   }
+
+   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new CloudStackRestClientModule());
    }

@@ -18,20 +18,19 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudservers.CloudServersProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers in UK.
  * 
  * @author Adrian Cole
  */
-public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
+public class CloudServersUKProviderMetadata extends CloudServersProviderMetadata {
 
    /**
     * {@inheritDoc}
@@ -45,32 +44,8 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getName() {
       return "Rackspace Cloud Servers UK";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
    }
 
    /**
@@ -93,16 +68,8 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk");
+      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk");
    }
 
    /**

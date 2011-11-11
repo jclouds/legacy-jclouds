@@ -24,9 +24,12 @@ import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
+import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
+import org.jclouds.cloudstack.features.ISOClient;
+import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATClient;
 import org.jclouds.cloudstack.features.NetworkClient;
@@ -34,8 +37,8 @@ import org.jclouds.cloudstack.features.OfferingClient;
 import org.jclouds.cloudstack.features.SSHKeyPairClient;
 import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateClient;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.VMGroupClient;
+import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -43,10 +46,10 @@ import org.jclouds.rest.annotations.Delegate;
 /**
  * Provides synchronous access to CloudStack.
  * <p/>
- * 
- * @see CloudStackAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api/TOC_User.html" />
+ *
  * @author Adrian Cole
+ * @see CloudStackAsyncClient
+ * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackClient {
@@ -153,4 +156,21 @@ public interface CloudStackClient {
    @Delegate
    VMGroupClient getVMGroupClient();
 
+   /**
+    * Provides synchronous access to Events
+    */
+   @Delegate
+   EventClient getEventClient();
+
+   /**
+    * Provides synchronous access to Resource Limits
+    */
+   @Delegate
+   LimitClient getLimitClient();
+
+   /**
+    * Provides synchronous access to ISOs
+    */
+   @Delegate
+   ISOClient getISOClient();
 }

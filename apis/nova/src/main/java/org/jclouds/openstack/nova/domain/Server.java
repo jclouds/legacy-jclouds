@@ -41,6 +41,9 @@ public class Server extends Resource {
    private String hostId;
    private String imageRef;
    private String affinityId;
+   private String uuid;
+   private Flavor flavor;
+   private Image image;
 
    private Date created;
    private Date updated;
@@ -101,6 +104,10 @@ public class Server extends Resource {
       this.flavorRef = flavorRef;
    }
 
+   /**
+    * @deprecated in nova 1.1 api at the Diablo release, replaced by {@link #getFlavor()}
+    */
+   @Deprecated
    public String getFlavorRef() {
       return flavorRef;
    }
@@ -129,6 +136,10 @@ public class Server extends Resource {
       this.imageRef = imageRef;
    }
 
+   /**
+    * @deprecated in nova 1.1 api at the Diablo release, replaced by {@link #getImage()}.
+    */
+   @Deprecated
    public String getImageRef() {
       return imageRef;
    }
@@ -157,6 +168,30 @@ public class Server extends Resource {
       return status;
    }
 
+   public String getUuid() {
+      return uuid;
+   }
+
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
+   }
+
+   public Flavor getFlavor() {
+       return flavor;
+   }
+
+   public void setFlavor(Flavor flavor) {
+       this.flavor = flavor;
+   }
+
+   public Image getImage() {
+       return image;
+   }
+
+   public void setImage(Image image) {
+       this.image = image;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -168,7 +203,10 @@ public class Server extends Resource {
       result = prime * result + id;
       result = prime * result + ((imageRef == null) ? 0 : imageRef.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
+      result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((flavor == null) ? 0 : flavor.hashCode());
+      result = prime * result + ((image == null) ? 0 : image.hashCode());
       return result;
    }
 
@@ -213,10 +251,25 @@ public class Server extends Resource {
             return false;
       } else if (!metadata.equals(other.metadata))
          return false;
+      if (uuid == null) {
+         if (other.uuid != null)
+            return false;
+      } else if (!uuid.equals(other.uuid))
+         return false;
       if (name == null) {
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
+         return false;
+      if (flavor == null) {
+         if (other.flavor != null)
+            return false;
+      } else if (!flavor.equals(other.flavor))
+         return false;
+      if (image == null) {
+         if (other.image != null)
+            return false;
+      } else if (!image.equals(other.image))
          return false;
       return true;
    }
@@ -229,7 +282,7 @@ public class Server extends Resource {
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
             + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-            + ", metadata=" + metadata + ", name=" + name + "]";
+            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + "]";
    }
 
 }

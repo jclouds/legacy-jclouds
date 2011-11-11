@@ -90,7 +90,7 @@ public class TestCanRecreateGroupLiveTest {
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
 
       try {
-         Template template = context.getComputeService().templateBuilder().locationId("us-west-1").build();
+         Template template = context.getComputeService().templateBuilder().locationId("us-west-2").build();
          context.getComputeService().createNodesInGroup(tag, 1, template);
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
          context.getComputeService().createNodesInGroup(tag, 1, template);

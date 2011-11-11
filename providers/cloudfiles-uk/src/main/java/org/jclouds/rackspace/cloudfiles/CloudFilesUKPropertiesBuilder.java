@@ -24,13 +24,13 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
+import org.jclouds.cloudfiles.CloudFilesPropertiesBuilder;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudFilesUKPropertiesBuilder extends SwiftPropertiesBuilder {
+public class CloudFilesUKPropertiesBuilder extends CloudFilesPropertiesBuilder {
 
    @Override
    protected Properties defaultProperties() {

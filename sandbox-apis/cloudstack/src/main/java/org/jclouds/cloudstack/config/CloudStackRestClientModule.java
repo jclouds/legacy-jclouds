@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.config;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.features.AccountAsyncClient;
@@ -30,12 +31,18 @@ import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
 import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
+import org.jclouds.cloudstack.features.EventAsyncClient;
+import org.jclouds.cloudstack.features.EventClient;
 import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
 import org.jclouds.cloudstack.features.HypervisorClient;
+import org.jclouds.cloudstack.features.ISOAsyncClient;
+import org.jclouds.cloudstack.features.ISOClient;
+import org.jclouds.cloudstack.features.LimitAsyncClient;
+import org.jclouds.cloudstack.features.LimitClient;
 import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudstack.features.LoadBalancerClient;
 import org.jclouds.cloudstack.features.NATAsyncClient;
@@ -64,23 +71,19 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Configures the cloudstack connection.
- * 
+ *
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()//
          .put(ZoneClient.class, ZoneAsyncClient.class)//
          .put(TemplateClient.class, TemplateAsyncClient.class)//
          .put(OfferingClient.class, OfferingAsyncClient.class)//
@@ -96,8 +99,11 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(HypervisorClient.class, HypervisorAsyncClient.class)//
          .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
          .put(AccountClient.class, AccountAsyncClient.class)//
+         .put(EventClient.class, EventAsyncClient.class)//
+         .put(LimitClient.class, LimitAsyncClient.class)//
          .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
          .put(VMGroupClient.class, VMGroupAsyncClient.class)//
+         .put(ISOClient.class, ISOAsyncClient.class)//
          .build();
 
    public CloudStackRestClientModule() {
@@ -107,14 +113,6 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      bind(SocketOpen.class).toInstance(new SocketOpen() {
-
-         @Override
-         public boolean apply(IPSocket arg0) {
-            return true;
-         }
-
-      });
       install(new CloudStackParserModule());
       super.configure();
    }

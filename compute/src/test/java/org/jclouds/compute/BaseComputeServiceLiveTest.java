@@ -120,7 +120,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, singleThreaded = true)
-public abstract class BaseComputeServiceLiveTest {
+public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiveTest {
 
    protected String group;
 
@@ -132,26 +132,6 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected Template template;
    protected Map<String, String> keyPair;
-
-   protected String provider;
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
@@ -170,13 +150,6 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void setServiceDefaults() {
 
-   }
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected void setupKeyPairForTest() throws FileNotFoundException, IOException {

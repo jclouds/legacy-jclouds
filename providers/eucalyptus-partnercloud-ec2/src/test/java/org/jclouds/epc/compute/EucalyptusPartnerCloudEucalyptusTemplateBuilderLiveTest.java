@@ -60,7 +60,8 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends Bas
                case DEBIAN:
                   return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
                case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
+               return (input.version.equals("") || input.version.equals("5.0") || input.version.equals("5.5"))
+                     && input.is64Bit;
                default:
                   return false;
             }

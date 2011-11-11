@@ -208,8 +208,10 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
          Files.createParentDirs(outputFile);
          if (payload.getRawContent() instanceof File)
             Files.copy(File.class.cast(payload.getRawContent()), outputFile);
-         else
-            payload.writeTo(new FileOutputStream(outputFile));
+         else {
+            output = new FileOutputStream(outputFile);
+            payload.writeTo(output);
+         }
       } catch (IOException ex) {
          if (outputFile != null) {
             outputFile.delete();

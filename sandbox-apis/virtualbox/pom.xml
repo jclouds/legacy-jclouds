@@ -35,33 +35,10 @@
 
     <properties>
         <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
-        <test.virtualbox.apiversion>4.1.2r73507</test.virtualbox.apiversion>
+        <test.virtualbox.apiversion>4.1.4</test.virtualbox.apiversion>
         <test.virtualbox.identity>administrator</test.virtualbox.identity>
         <test.virtualbox.credential>12345</test.virtualbox.credential>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>temporary</id>
-            <url>https://github.com/jclouds/jclouds/raw/master/repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>  
-    </repositories>
 
     <dependencies>
         <dependency>

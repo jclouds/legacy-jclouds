@@ -29,8 +29,8 @@
     </parent>
     <groupId>org.jclouds.provider</groupId>
     <artifactId>cloudloadbalancers-us</artifactId>
-    <name>jclouds cloudloadbalancers-us core</name>
-    <description>jclouds components to access cloudloadbalancers-us</description>
+    <name>jclouds CloudLoadBalancers US provider </name>
+    <description>LoadBalancer implementation targeted to Rackspace US</description>
     <packaging>bundle</packaging>
     
     <properties>
@@ -39,7 +39,20 @@
         <test.cloudloadbalancers-us.identity>${test.rackspace-us.identity}</test.cloudloadbalancers-us.identity>
         <test.cloudloadbalancers-us.credential>${test.rackspace-us.credential}</test.cloudloadbalancers-us.credential>
     </properties>
+    
     <dependencies>
+    	<dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudloadbalancers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudloadbalancers</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-loadbalancer</artifactId>

@@ -111,7 +111,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US", "US-CA", "IE", "SG", "JP-13");
+      return ImmutableSet.of("US", "US-CA", "US-OR", "IE", "SG", "JP-13");
    }
 
 }
