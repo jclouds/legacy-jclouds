@@ -87,6 +87,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getImageRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/images/1234");
       assertEquals(response.get(0).getFlavorRef(), "https://servers.api.rackspacecloud.com/v1.1/32278/flavors/1");
       assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
+      assertEquals(response.get(0).getUuid(), "d84e2086-fc0d-11e0-8e08-2837371c69ae");
       assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
       assertEquals(response.get(0).getProgress(), new Integer(60));
 
@@ -106,6 +107,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(1).getFlavorRef(), "1");
       assertEquals(response.get(1).getAffinityId(), "b414fa41cb37b97dcb58d6c76112af1258e9eae2");
       assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
+      assertEquals(response.get(1).getUuid(), "e66d54d4-fc0d-11e0-b93f-2837371c69ae");
       assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
       assertEquals(response.get(1).getProgress(), null);
 

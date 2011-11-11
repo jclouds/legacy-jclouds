@@ -70,7 +70,8 @@ public interface NovaClient {
     * @return null, if the server is not found
     * @see Server
     */
-   Server getServer(@PathParam("id") int id);
+   Server getServer(int id);
+   Server getServer(String uuid);
 
    /**
     * 
@@ -81,7 +82,8 @@ public interface NovaClient {
     * @return false if the server is not found
     * @see Server
     */
-   boolean deleteServer(@PathParam("id") int id);
+   boolean deleteServer(int id);
+   boolean deleteServer(String id);
 
    /**
     * The reboot function allows for either a soft or hard reboot of a server.
@@ -204,6 +206,7 @@ public interface NovaClient {
     * @see Flavor
     */
    Flavor getFlavor(int id);
+   Flavor getFlavor(String uuid);
 
    /**
     * 
@@ -223,6 +226,7 @@ public interface NovaClient {
     * @see Image
     */
    Image getImage(int id);
+   Image getImage(String id);
 
    /**
     * 

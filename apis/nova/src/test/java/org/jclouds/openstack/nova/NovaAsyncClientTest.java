@@ -212,6 +212,21 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       checkFilters(request);
    }
 
+   public void testGetServerByUUID() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = NovaAsyncClient.class.getMethod("getServer", String.class);
+      HttpRequest request = processor.createRequest(method, "dfdcd0a6-0a2f-11e1-8505-2837371c69ae");
+
+      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/dfdcd0a6-0a2f-11e1-8505-2837371c69ae?format=json HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testListFlavors() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
@@ -279,6 +294,21 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "GET http://endpoint/vapiversion/flavors/2?format=json HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetFlavorByUUID() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = NovaAsyncClient.class.getMethod("getFlavor", String.class);
+      HttpRequest request = processor.createRequest(method, "209904b6-0a30-11e1-a0f0-2837371c69ae");
+
+      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/flavors/209904b6-0a30-11e1-a0f0-2837371c69ae?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -366,12 +396,42 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       checkFilters(request);
    }
 
+   public void testGetImageByUUID() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = NovaAsyncClient.class.getMethod("getImage", int.class);
+      HttpRequest request = processor.createRequest(method, "3bd52d90-0a30-11e1-83f5-2837371c69ae");
+
+      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/images/3bd52d90-0a30-11e1-83f5-2837371c69ae?format=json HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testDeleteServer() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("deleteServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testDeleteServerByUUID() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = NovaAsyncClient.class.getMethod("deleteServer", String.class);
+      HttpRequest request = processor.createRequest(method, "db8a1ac6-0a35-11e1-a42f-2837371c69ae");
+
+      assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/db8a1ac6-0a35-11e1-a42f-2837371c69ae HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
