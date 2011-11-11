@@ -29,32 +29,44 @@ import java.util.Map;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * 
  * @author Adrian Cole
  * 
  */
+@XmlRootElement(name = "Task")
 public class Task extends BaseResource<Task> {
-   public static enum Status {
+    @XmlEnum
+    public static enum Status {
       /**
        * the task is queued for execution.
        */
+      @XmlEnumValue("Queued")
       QUEUED,
       /**
        * the task is running.
        */
+      @XmlEnumValue("Running")
       RUNNING,
       /**
        * the task failed.
        */
+      @XmlEnumValue("Failed")
       FAILED,
       /**
        * the task completed successfully.
        */
+      @XmlEnumValue("Success")
       SUCCESS,
       /**
        * the task failed with an error.
        */
+      @XmlEnumValue("Error")
       ERROR,
       /**
        * Status was not parsed by jclouds.
@@ -212,14 +224,29 @@ public class Task extends BaseResource<Task> {
 
    }
 
-   protected final String operation;
-   protected final Status status;
-   protected final NamedResource impactedItem;
-   protected final Date startTime;
-   protected final Date completedTime;
-   protected final String notes;
-   protected final String errorMessage;
-   protected final NamedResource initiatedBy;
+   @XmlElement(name = "Operation", required = true)
+   protected String operation;
+
+   @XmlElement(name = "Status", required = true)
+   protected Status status;
+
+   @XmlElement(name = "ImpactedItem", required = true)
+   protected NamedResource impactedItem;
+
+   @XmlElement(name = "StartTime", required = true)
+   protected Date startTime;
+
+   @XmlElement(name = "CompletedTime", required = false)
+   protected Date completedTime;
+
+   @XmlElement(name = "Notes", required = false)
+   protected String notes;
+
+   @XmlElement(name = "ErrorMessage", required = false)
+   protected String errorMessage;
+
+   @XmlElement(name = "InitiatedBy", required = true)
+   protected NamedResource initiatedBy;
 
    public Task(URI href, String type, String operation, Status status, NamedResource impactedItem, Date startTime,
          @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
@@ -232,6 +259,10 @@ public class Task extends BaseResource<Task> {
       this.notes = notes;
       this.errorMessage = errorMessage;
       this.initiatedBy = checkNotNull(initiatedBy, "initiatedBy");
+   }
+
+   protected Task() {
+       //For JAXB
    }
 
    /**
