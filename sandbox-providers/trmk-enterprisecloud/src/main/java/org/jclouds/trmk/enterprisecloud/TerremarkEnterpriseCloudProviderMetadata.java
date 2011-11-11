@@ -79,7 +79,7 @@ public class TerremarkEnterpriseCloudProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getHomepage() {
-      return URI.create("TODO");
+      return URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx");
    }
 
    /**
@@ -87,7 +87,7 @@ public class TerremarkEnterpriseCloudProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getConsole() {
-      return URI.create("TODO");
+      return URI.create("https://my-beta.enterprisecloud.terremark.com/");
    }
 
    /**

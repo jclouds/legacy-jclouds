@@ -1,0 +1,143 @@
+<VirtualMachine href="/cloudapi/ecloud/virtualmachines/5504" name="helloworld"
+                type="application/vnd.tmrk.cloud.virtualMachine"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        <Link href="/cloudapi/ecloud/environments/77" name="Beta Environment 01"
+              type="application/vnd.tmrk.cloud.environment" rel="up"/>
+        <Link href="/cloudapi/ecloud/tasks/virtualmachines/5504"
+              type="application/vnd.tmrk.cloud.task; type=collection"
+              rel="down"/>
+        <Link href="/cloudapi/ecloud/virtualmachines/5504/guest/processes"
+              name="helloworld"
+              type="application/vnd.tmrk.cloud.guest.process; type=collection"
+              rel="down"/>
+        <Link href="/cloudapi/ecloud/virtualmachines/5504/configurationoptions"
+              name="helloworld"
+              type="application/vnd.tmrk.cloud.virtualMachineConfigurationOptions"
+              rel="down"/>
+        <Link href="/cloudapi/ecloud/virtualmachines-streaming/5504/guest/action/files"
+              name="helloworld" type="application/octet-stream" rel="down"/>
+    </Links>
+    <Actions>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504" name="edit"
+                type="application/vnd.tmrk.cloud.virtualMachine"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/action/move"
+                name="move"
+                type="application/vnd.tmrk.cloud.moveLayoutRequest"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504" name="remove"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/action/poweroff"
+                name="power:powerOff" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/action/reboot"
+                name="power:reboot" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/action/shutdown"
+                name="power:shutdown" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/action/poweron"
+                name="power:powerOn"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/tools/action/mount"
+                name="tools:mount" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/tools/action/unmount"
+                name="tools:unmount" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/guest/action/createprocess"
+                name="createGuestProcess"
+                type="application/vnd.tmrk.cloud.guest.process"
+                actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/virtualmachines-streaming/5504/guest/action/files"
+                name="createFile" type="application/octet-stream"
+                actionDisabled="disabled"/>
+    </Actions>
+    <Tasks type="application/vnd.tmrk.cloud.task; type=collection">
+        <Links>
+            <Link href="/cloudapi/ecloud/virtualmachines/5504" name="helloworld"
+                  type="application/vnd.tmrk.cloud.virtualMachine" rel="up"/>
+        </Links>
+        <Task href="/cloudapi/ecloud/tasks/12345"
+              type="application/vnd.tmrk.cloud.task">
+            <Operation>Create Server</Operation>
+            <Status>Complete</Status>
+            <ImpactedItem href="/cloudapi/ecloud/virtualmachines/5504"
+                          name="helloworld"
+                          type="application/vnd.tmrk.cloud.virtualMachine"/>
+            <StartTime>2011-11-09T21:46:11.787Z</StartTime>
+            <CompletedTime>2011-11-09T21:50:32.933Z</CompletedTime>
+            <InitiatedBy href="/cloudapi/ecloud/admin/users/1804"
+                         name="Jason King"
+                         type="application/vnd.tmrk.cloud.admin.user"/>
+        </Task>
+        <TotalCount>1</TotalCount>
+    </Tasks>
+    <Description>My first terremark server</Description>
+    <Layout>
+        <Row href="/cloudapi/ecloud/layoutrows/285" name="test row"
+             type="application/vnd.tmrk.cloud.layoutRow"/>
+        <Group href="/cloudapi/ecloud/layoutgroups/308" name="test group"
+               type="application/vnd.tmrk.cloud.layoutGroup"/>
+    </Layout>
+    <Status>Deployed</Status>
+    <PoweredOn>false</PoweredOn>
+    <HardwareConfiguration
+            href="/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"
+            type="application/vnd.tmrk.cloud.virtualMachineHardware">
+        <Actions>
+            <Action href="/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"
+                    name="edit"
+                    type="application/vnd.tmrk.cloud.virtualMachineHardware"/>
+        </Actions>
+        <ProcessorCount>1</ProcessorCount>
+        <Memory>
+            <Unit>MB</Unit>
+            <Value>384</Value>
+        </Memory>
+        <Disks>
+            <Disk>
+                <Index>0</Index>
+                <Size>
+                    <Unit>GB</Unit>
+                    <Value>10</Value>
+                </Size>
+                <Name>Hard Disk 1</Name>
+            </Disk>
+        </Disks>
+        <Nics>
+            <Nic>
+                <UnitNumber>7</UnitNumber>
+                <Name>Network adapter 1</Name>
+                <MacAddress>00:50:56:b8:00:58</MacAddress>
+                <Network href="/cloudapi/ecloud/networks/3936"
+                         name="10.146.204.64/28"
+                         type="application/vnd.tmrk.cloud.network">
+                    <NetworkType>Internal</NetworkType>
+                </Network>
+            </Nic>
+        </Nics>
+    </HardwareConfiguration>
+    <IpAddresses>
+        <AssignedIpAddresses
+                href="/cloudapi/ecloud/virtualmachines/5504/assignedips"
+                type="application/vnd.tmrk.cloud.virtualMachineAssignedIps">
+            <Actions>
+                <Action href="/cloudapi/ecloud/virtualmachines/5504/assignedips"
+                        name="edit"
+                        type="application/vnd.tmrk.cloud.virtualMachineAssignedIps"/>
+            </Actions>
+            <Networks>
+                <Network href="/cloudapi/ecloud/networks/3936"
+                         name="10.146.204.64/28 (INT_202)"
+                         type="application/vnd.tmrk.cloud.network">
+                    <IpAddresses>
+                        <IpAddress>10.146.204.67</IpAddress>
+                    </IpAddresses>
+                </Network>
+            </Networks>
+        </AssignedIpAddresses>
+    </IpAddresses>
+    <OperatingSystem
+            href="/cloudapi/ecloud/operatingsystems/rhel5_64guest/computepools/89"
+            name="Red Hat Enterprise Linux 5 (64-bit)"
+            type="application/vnd.tmrk.cloud.operatingSystem"/>
+    <ToolsStatus>NotRunning</ToolsStatus>
+    <MediaStatus>Unmounted</MediaStatus>
+    <CustomizationPending>false</CustomizationPending>
+</VirtualMachine>
