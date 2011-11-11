@@ -105,10 +105,9 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       // TODO: check security groups vm.getSecurityGroups(),
       // check other things, like cpu correct, mem correct, image/os is correct
       // (as possible)
-      assert credentialStore.containsKey("node#" + vm.getZoneId() + "/" + vm.getId()) : "credentials to log into vm not found "
-            + vm;
+      assert credentialStore.containsKey("node#" + vm.getId()) : "credentials to log into vm not found " + vm;
       assert InetAddresses.isInetAddress(vm.getIPAddress()) : vm;
-      doConnectViaSsh(vm, credentialStore.get("node#" + vm.getZoneId() + "/" + vm.getId()));
+      doConnectViaSsh(vm, credentialStore.get("node#" + vm.getId()));
    }
 
    protected void doConnectViaSsh(VirtualMachine vm, Credentials creds) {

@@ -36,9 +36,7 @@ public class ServiceOfferingToHardware implements Function<ServiceOffering, Hard
    @Override
    public Hardware apply(ServiceOffering offering) {
       return new HardwareBuilder()
-            .id(offering.getId() + "")
-            // TODO: can the id be ambigious? should we include the domain if available?
-            .providerId(offering.getId() + "")
+            .ids(offering.getId() + "")
             .name(offering.getName())
             .tags(offering.getTags())
             .processors(ImmutableList.of(new Processor(offering.getCpuNumber(), offering.getCpuSpeed())))

@@ -86,8 +86,8 @@ public class CloudStackComputeServiceAdapter implements
          options.securityGroupIds(templateOptions.getSecurityGroupIds());
 
       long zoneId = Long.parseLong(template.getLocation().getId());
-      long templateId = Long.parseLong(template.getImage().getProviderId());
-      long serviceOfferingId = Long.parseLong(template.getHardware().getProviderId());
+      long templateId = Long.parseLong(template.getImage().getId());
+      long serviceOfferingId = Long.parseLong(template.getHardware().getId());
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
             zoneId, options);

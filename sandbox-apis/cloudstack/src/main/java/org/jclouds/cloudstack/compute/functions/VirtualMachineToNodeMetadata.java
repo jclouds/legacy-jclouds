@@ -82,9 +82,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    public NodeMetadata apply(VirtualMachine from) {
       // convert the result object to a jclouds NodeMetadata
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
-      String id = from.getZoneId() + "/" + from.getId();
-      builder.id(id);
-      builder.providerId(from.getId() + "");
+      builder.ids(from.getId() + "");
       builder.name(from.getName());
       builder.hostname(from.getHostname());
       builder.location(findLocationForVirtualMachine.apply(from));
@@ -110,7 +108,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          else
             builder.publicAddresses(addresses);
       }
-      builder.credentials(credentialStore.get("node#" + id));
+      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

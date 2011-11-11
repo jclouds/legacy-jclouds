@@ -78,7 +78,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("1/54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
                   .state(NodeState.PENDING).privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(ServiceOfferingToHardwareTest.one).imageId(TemplateToImageTest.one.getId())
                   .operatingSystem(TemplateToImageTest.one.getOperatingSystem()).build().toString());
@@ -90,7 +90,7 @@ public class VirtualMachineToNodeMetadataTest {
    @Test
    public void testApplyWhereVirtualMachineWithPassword() throws UnknownHostException {
 
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#1/54", new Credentials(
+      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#54", new Credentials(
             "root", "password"));
 
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
@@ -113,7 +113,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("1/54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
                   .state(NodeState.PENDING).privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(ServiceOfferingToHardwareTest.one).imageId(TemplateToImageTest.one.getId())
                   .credentials(new Credentials("root", "password"))

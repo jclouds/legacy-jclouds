@@ -56,9 +56,8 @@ public class TemplateToImage implements Function<Template, Image> {
 
       OperatingSystem os = templateToOperatingSystem.apply(template);
 
-      ImageBuilder builder = new ImageBuilder().id(template.getZoneId() + "/" + template.getId())
-            .providerId(template.getId() + "").name(template.getName()).description(template.getDisplayText())
-            .operatingSystem(os);
+      ImageBuilder builder = new ImageBuilder().ids(template.getId() + "").name(template.getName())
+            .description(template.getDisplayText()).operatingSystem(os);
 
       if (!template.isCrossZones())
          builder.location(findLocationForTemplate.apply(template));
