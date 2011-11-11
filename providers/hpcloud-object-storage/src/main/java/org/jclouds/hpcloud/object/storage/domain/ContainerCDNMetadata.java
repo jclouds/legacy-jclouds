@@ -20,6 +20,8 @@ package org.jclouds.hpcloud.object.storage.domain;
 
 import java.net.URI;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * 
  * @author James Murty
@@ -30,6 +32,7 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
    private String name;
    private boolean cdn_enabled;
    private long ttl;
+   @SerializedName("x-cdn-uri")
    private URI cdn_uri;
    private String referrer_acl;
    private String useragent_acl;

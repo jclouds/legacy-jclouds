@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageClient> {
-
+   
    @Override
    public HPCloudObjectStorageClient getApi() {
       return (HPCloudObjectStorageClient) context.getProviderSpecificContext().getApi();
@@ -48,10 +48,19 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
    
    @Override
    protected void testGetObjectContentType(SwiftObject getBlob) {
-      //lovely new bug.. should be text/plain
-      assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
+      assertEquals(getBlob.getInfo().getContentType(), "application/unknown");
    }
 
+   @Test
+   public void testListCDNContainers() {
+	   try {
+	       Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
+	       System.err.println(cdnMetadataList);
+        } catch (Exception e) {
+       	   e.printStackTrace();
+        }
+   }
+   
    @Test
    public void testCDNOperations() throws Exception {
       final long minimumTTL = 60 * 60; // The minimum TTL is 1 hour
@@ -64,7 +73,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
             getApi().disableCDN(containerNameWithCDN);
             getApi().disableCDN(containerNameWithoutCDN);
          } catch (Exception e) {
-
+        	 e.printStackTrace();
          }
          ContainerCDNMetadata cdnMetadata = null;
 
@@ -139,6 +148,8 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
 
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
          assertEquals(cdnMetadata.isCDNEnabled(), false);
+      } catch (Exception e) {
+    	  e.printStackTrace();
       } finally {
          recycleContainer(containerNameWithCDN);
          recycleContainer(containerNameWithoutCDN);

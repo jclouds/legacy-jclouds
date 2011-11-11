@@ -77,7 +77,6 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    @Endpoint(CDNManagement.class)
    ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCDNContainerOptions... options);
 
-   // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it here.
    /**
     * @see HPCloudObjectStorageClient#getCDNMetadata(String)
     */
@@ -122,7 +121,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#disableCDN(String)
     */
-   @POST
+   @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "False")
    @Endpoint(CDNManagement.class)

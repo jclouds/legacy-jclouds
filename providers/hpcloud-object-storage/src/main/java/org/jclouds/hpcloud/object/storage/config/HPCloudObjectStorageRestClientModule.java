@@ -20,6 +20,7 @@ package org.jclouds.hpcloud.object.storage.config;
 
 import java.net.URI;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.hpcloud.object.storage.CDNManagement;
@@ -33,6 +34,8 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 
 /**
@@ -42,7 +45,7 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 @RequiresHttp
 public class HPCloudObjectStorageRestClientModule extends BaseSwiftRestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
-
+	
    public HPCloudObjectStorageRestClientModule() {
       super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
    }
@@ -63,12 +66,14 @@ public class HPCloudObjectStorageRestClientModule extends BaseSwiftRestClientMod
    @Singleton
    @CDNManagement
    protected URI provideCDNUrl(AuthenticationResponse response) {
-	  /* FIXFIX - We need to have an external config for the CDN URI
+	  @Named("jclouds.hpcloud-object-storage.cdn.endpoint")
+	  @VisibleForTesting
+	  String cdnEndpoint = "https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/";
 	   
 	  if (response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL) == null) {
-	     return URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/");
-	  } 
-	  */
+	     return URI.create(cdnEndpoint);
+	  }
+	  
       return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
    }
 }
