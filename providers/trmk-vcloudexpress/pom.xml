@@ -38,6 +38,7 @@
         <test.trmk-vcloudexpress.apiversion>0.8a-ext1.6</test.trmk-vcloudexpress.apiversion>
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
+        <test.trmk-vcloudexpress.image-id></test.trmk-vcloudexpress.image-id>
     </properties>
 
     <dependencies>
@@ -114,6 +115,10 @@
                                         <property>
                                             <name>test.trmk-vcloudexpress.credential</name>
                                             <value>${test.trmk-vcloudexpress.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.trmk-vcloudexpress.image-id</name>
+                                            <value>${test.trmk-vcloudexpress.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

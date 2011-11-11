@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -41,7 +42,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -56,7 +56,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true)
-public abstract class BaseLoadBalancerServiceLiveTest {
+public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServiceLiveTest {
 
    protected SshClient.Factory sshFactory;
    protected String group;
@@ -67,11 +67,6 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected Map<String, String> keyPair;
    protected LoadBalancerMetadata loadbalancer;
 
-   protected String provider;
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected LoadBalancerServiceContext context;
 
    protected String computeProvider;
@@ -81,31 +76,16 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected String computeApiversion;
    protected ComputeServiceContext computeContext;
 
+   @Override
    protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+      super.setupCredentials();
       computeProvider = checkNotNull(System.getProperty("test." + provider + ".compute.provider"), "test." + provider
             + ".compute.provider");
-      computeIdentity = checkNotNull(System.getProperty("test." + provider + ".compute.identity"), "test." + provider + ".compute.identity");
+      computeIdentity = checkNotNull(System.getProperty("test." + provider + ".compute.identity"), "test." + provider
+            + ".compute.identity");
       computeCredential = System.getProperty("test." + provider + ".compute.credential");
       computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
       computeApiversion = System.getProperty("test." + provider + ".compute.apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
    }
 
    protected Properties setupComputeProperties() {
@@ -140,19 +120,15 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    private void initializeContext() throws IOException {
       if (context != null)
          context.close();
-      context = new LoadBalancerServiceContextFactory(getRestProperties()).createContext(provider,
+      context = new LoadBalancerServiceContextFactory(setupRestProperties()).createContext(provider,
             ImmutableSet.of(new Log4JLoggingModule()), setupProperties());
    }
 
    private void initializeComputeContext() throws IOException {
       if (computeContext != null)
          computeContext.close();
-      computeContext = new ComputeServiceContextFactory(getRestProperties()).createContext(computeProvider,
+      computeContext = new ComputeServiceContextFactory(setupRestProperties()).createContext(computeProvider,
             ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), setupComputeProperties());
-   }
-
-   protected Properties getRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    protected void buildSocketTester() {

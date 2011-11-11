@@ -38,6 +38,7 @@
         <test.elastichosts-sat-p.apiversion>2.0</test.elastichosts-sat-p.apiversion>
         <test.elastichosts-sat-p.identity>FIXME_IDENTITY</test.elastichosts-sat-p.identity>
         <test.elastichosts-sat-p.credential>FIXME_CREDENTIAL</test.elastichosts-sat-p.credential>
+        <test.elastichosts-sat-p.image-id></test.elastichosts-sat-p.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.elastichosts-sat-p.credential</name>
                                             <value>${test.elastichosts-sat-p.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elastichosts-sat-p.image-id</name>
+                                            <value>${test.elastichosts-sat-p.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

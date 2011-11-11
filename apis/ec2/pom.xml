@@ -34,12 +34,11 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.ec2.endpoint>
         <test.ec2.apiversion>2010-06-15</test.ec2.apiversion>
         <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
         <test.ec2.credential>${test.aws.credential}</test.ec2.credential>
+        <test.ec2.image-id></test.ec2.image-id>
     </properties>
 
     <dependencies>
@@ -117,8 +116,8 @@
                                             <value>${test.ec2.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.ec2.image-id</name>
+                                            <value>${test.ec2.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

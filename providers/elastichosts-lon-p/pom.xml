@@ -38,6 +38,7 @@
         <test.elastichosts-lon-p.apiversion>2.0</test.elastichosts-lon-p.apiversion>
         <test.elastichosts-lon-p.identity>FIXME_IDENTITY</test.elastichosts-lon-p.identity>
         <test.elastichosts-lon-p.credential>FIXME_CREDENTIAL</test.elastichosts-lon-p.credential>
+        <test.elastichosts-lon-p.image-id></test.elastichosts-lon-p.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.elastichosts-lon-p.credential</name>
                                             <value>${test.elastichosts-lon-p.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elastichosts-lon-p.image-id</name>
+                                            <value>${test.elastichosts-lon-p.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

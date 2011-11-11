@@ -37,6 +37,7 @@
         <test.dunkel-vcd.apiversion>1.0</test.dunkel-vcd.apiversion>
         <test.dunkel-vcd.identity>FIXME_IDENTITY</test.dunkel-vcd.identity>
         <test.dunkel-vcd.credential>FIXME_CREDENTIAL</test.dunkel-vcd.credential>
+        <test.dunkel-vcd.image-id></test.dunkel-vcd.image-id>
     </properties>
 
     <dependencies>
@@ -112,6 +113,10 @@
                                         <property>
                                             <name>test.dunkel-vcd.credential</name>
                                             <value>${test.dunkel-vcd.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.dunkel-vcd.image-id</name>
+                                            <value>${test.dunkel-vcd.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

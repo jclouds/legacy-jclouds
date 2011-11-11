@@ -52,6 +52,7 @@
         <test.deltacloud.apiversion>0.3.0</test.deltacloud.apiversion>
         <test.deltacloud.identity>mockuser</test.deltacloud.identity>
         <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
+        <test.deltacloud.image-id></test.deltacloud.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -118,6 +119,10 @@
                                         <property>
                                             <name>test.deltacloud.credential</name>
                                             <value>${test.deltacloud.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.deltacloud.image-id</name>
+                                            <value>${test.deltacloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

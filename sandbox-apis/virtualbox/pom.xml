@@ -38,6 +38,7 @@
         <test.virtualbox.apiversion>4.1.4</test.virtualbox.apiversion>
         <test.virtualbox.identity>administrator</test.virtualbox.identity>
         <test.virtualbox.credential>12345</test.virtualbox.credential>
+        <test.virtualbox.image-id></test.virtualbox.image-id>
     </properties>
 
     <dependencies>
@@ -154,6 +155,10 @@
                                         <property>
                                             <name>test.virtualbox.credential</name>
                                             <value>${test.virtualbox.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.virtualbox.image-id</name>
+                                            <value>${test.virtualbox.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

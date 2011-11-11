@@ -38,6 +38,7 @@
         <test.eucalyptus.apiversion>2010-06-15</test.eucalyptus.apiversion>
         <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
         <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
+        <test.eucalyptus.image-id></test.eucalyptus.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.eucalyptus.credential</name>
                                             <value>${test.eucalyptus.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.eucalyptus.image-id</name>
+                                            <value>${test.eucalyptus.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

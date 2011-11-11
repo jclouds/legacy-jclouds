@@ -40,6 +40,7 @@
         <test.vcloud.apiversion>1.0</test.vcloud.apiversion>
         <test.vcloud.identity>FIXME</test.vcloud.identity>
         <test.vcloud.credential>FIXME</test.vcloud.credential>
+        <test.vcloud.image-id></test.vcloud.image-id>
     </properties>
 
     <dependencies>
@@ -120,8 +121,8 @@
                                             <value>${test.vcloud.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.vcloud.image-id</name>
+                                            <value>${test.vcloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
@@ -135,7 +136,7 @@
 
     <build>
         <plugins>
-            <plugin>    
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>

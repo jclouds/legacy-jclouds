@@ -43,6 +43,7 @@
         <test.aws-elb.compute.apiversion>2010-06-15</test.aws-elb.compute.apiversion>
         <test.aws-elb.compute.identity>${test.aws.identity}</test.aws-elb.compute.identity>
         <test.aws-elb.compute.credential>${test.aws.credential}</test.aws-elb.compute.credential>
+        <test.aws-elb.compute.image-id></test.aws-elb.compute.image-id>
     </properties>
 
     <dependencies>
@@ -156,6 +157,10 @@
                                         <property>
                                             <name>test.aws-elb.compute.credential</name>
                                             <value>${test.aws-elb.compute.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.aws-elb.compute.image-id</name>
+                                            <value>${test.aws-elb.compute.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

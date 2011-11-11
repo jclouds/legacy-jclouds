@@ -39,6 +39,7 @@
         <test.cloudservers.apiversion>1.0</test.cloudservers.apiversion>
         <test.cloudservers.identity>${test.rackspace.identity}</test.cloudservers.identity>
         <test.cloudservers.credential>${test.rackspace.credential}</test.cloudservers.credential>
+        <test.cloudservers.image-id></test.cloudservers.image-id>
     </properties>
 
     <dependencies>
@@ -121,8 +122,8 @@
                                             <value>${test.cloudservers.credential}</value>
                                         </property>
                                         <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
+                                            <name>test.cloudservers.image-id</name>
+                                            <value>${test.cloudservers.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

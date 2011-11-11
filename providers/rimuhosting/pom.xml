@@ -34,11 +34,10 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.rimuhosting.endpoint>https://api.rimuhosting.com/r</test.rimuhosting.endpoint>
         <test.rimuhosting.apiversion>1.0</test.rimuhosting.apiversion>
         <test.rimuhosting.identity>FIXME</test.rimuhosting.identity>
+        <test.rimuhosting.image-id></test.rimuhosting.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -114,8 +113,8 @@
                                             <value>${test.rimuhosting.identity}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.rimuhosting.image-id</name>
+                                            <value>${test.rimuhosting.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

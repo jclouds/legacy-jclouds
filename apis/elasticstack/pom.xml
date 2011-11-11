@@ -54,6 +54,7 @@
         <test.elasticstack.apiversion>1.0</test.elasticstack.apiversion>
         <test.elasticstack.identity>FIXME</test.elasticstack.identity>
         <test.elasticstack.credential>FIXME</test.elasticstack.credential>
+        <test.elasticstack.image-id></test.elasticstack.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -122,8 +123,8 @@
                                             <value>${test.elasticstack.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.elasticstack.image-id</name>
+                                            <value>${test.elasticstack.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

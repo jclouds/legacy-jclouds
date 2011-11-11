@@ -38,6 +38,7 @@
         <test.greenhousedata-element-vcloud.apiversion>1.0</test.greenhousedata-element-vcloud.apiversion>
         <test.greenhousedata-element-vcloud.identity>FIXME_IDENTITY</test.greenhousedata-element-vcloud.identity>
         <test.greenhousedata-element-vcloud.credential>FIXME_CREDENTIAL</test.greenhousedata-element-vcloud.credential>
+        <test.greenhousedata-element-vcloud.image-id></test.greenhousedata-element-vcloud.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.greenhousedata-element-vcloud.credential</name>
                                             <value>${test.greenhousedata-element-vcloud.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.greenhousedata-element-vcloud.image-id</name>
+                                            <value>${test.greenhousedata-element-vcloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

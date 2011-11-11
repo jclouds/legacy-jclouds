@@ -52,6 +52,7 @@
         <test.ibm-smartcloud.apiversion>20100331</test.ibm-smartcloud.apiversion>
         <test.ibm-smartcloud.identity>FIXME</test.ibm-smartcloud.identity>
         <test.ibm-smartcloud.credential>FIXME</test.ibm-smartcloud.credential>
+        <test.ibm-smartcloud.image-id></test.ibm-smartcloud.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -123,6 +124,10 @@
                                         <property>
                                             <name>test.ibm-smartcloud.credential</name>
                                             <value>${test.ibm-smartcloud.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.ibm-smartcloud.image-id</name>
+                                            <value>${test.ibm-smartcloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

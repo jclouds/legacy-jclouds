@@ -38,6 +38,7 @@
         <test.cloudsigma-lvs.apiversion>1.0</test.cloudsigma-lvs.apiversion>
         <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
         <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
+        <test.cloudsigma-lvs.image-id></test.cloudsigma-lvs.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.cloudsigma-lvs.credential</name>
                                             <value>${test.cloudsigma-lvs.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudsigma-lvs.image-id</name>
+                                            <value>${test.cloudsigma-lvs.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

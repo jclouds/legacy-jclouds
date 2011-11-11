@@ -38,6 +38,7 @@
         <test.cloudsigma.apiversion>1.0</test.cloudsigma.apiversion>
         <test.cloudsigma.identity>FIXME</test.cloudsigma.identity>
         <test.cloudsigma.credential>FIXME</test.cloudsigma.credential>
+        <test.cloudsigma.image-id></test.cloudsigma.image-id>
     </properties>
 
     <dependencies>
@@ -107,8 +108,8 @@
                                             <value>${test.cloudsigma.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.cloudsigma.image-id</name>
+                                            <value>${test.cloudsigma.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

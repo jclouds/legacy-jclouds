@@ -38,6 +38,7 @@
         <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
         <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
         <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
+        <test.cloudsigma-zrh.image-id></test.cloudsigma-zrh.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.cloudsigma-zrh.credential</name>
                                             <value>${test.cloudsigma-zrh.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudsigma-zrh.image-id</name>
+                                            <value>${test.cloudsigma-zrh.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

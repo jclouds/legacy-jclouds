@@ -38,6 +38,7 @@
         <test.aws-ec2.apiversion>2011-05-15</test.aws-ec2.apiversion>
         <test.aws-ec2.identity>${test.aws.identity}</test.aws-ec2.identity>
         <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
+        <test.aws-ec2.image-id></test.aws-ec2.image-id>
     </properties>
 
     <dependencies>
@@ -124,6 +125,10 @@
                                         <property>
                                             <name>test.aws-ec2.credential</name>
                                             <value>${test.aws-ec2.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.aws-ec2.image-id</name>
+                                            <value>${test.aws-ec2.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

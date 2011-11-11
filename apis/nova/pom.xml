@@ -34,7 +34,11 @@
     <packaging>bundle</packaging>
 
     <properties>
-
+        <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
+        <test.nova.apiversion>1.1</test.nova.apiversion>
+        <test.nova.identity>${test.nova.identity}</test.nova.identity>
+        <test.nova.credential>${test.nova.credential}</test.nova.credential>
+        <test.nova.image-id></test.nova.image-id>
     </properties>
 
     <dependencies>
@@ -137,16 +141,16 @@
                                             <value>${test.nova.credential}</value>
                                         </property>
                                         <property>
+                                            <name>test.nova.image-id</name>
+                                            <value>${test.nova.image-id}</value>
+                                        </property>
+                                        <property>
                                             <name>test.ssh.keyfile.public</name>
                                             <value>${test.ssh.keyfile.public}</value>
                                         </property>
                                         <property>
                                             <name>test.ssh.keyfile.private</name>
                                             <value>${test.ssh.keyfile.private}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

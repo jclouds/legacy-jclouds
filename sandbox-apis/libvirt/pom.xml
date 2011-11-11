@@ -39,6 +39,7 @@
         <test.libvirt.apiversion>1.0</test.libvirt.apiversion>
         <test.libvirt.identity>FIXME</test.libvirt.identity>
         <test.libvirt.credential>FIXME</test.libvirt.credential>
+        <test.libvirt.image-id></test.libvirt.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -141,8 +142,8 @@
                                             <value>${test.libvirt.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>test.libvirt.image-id</name>
+                                            <value>${test.libvirt.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

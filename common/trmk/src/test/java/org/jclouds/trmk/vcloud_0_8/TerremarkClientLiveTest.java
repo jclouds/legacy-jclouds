@@ -18,7 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
@@ -39,10 +38,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Constants;
 import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
@@ -90,7 +89,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 @Test(groups =  "live" , singleThreaded = true)
-public abstract class TerremarkClientLiveTest {
+public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected String expectedOs = "Ubuntu Linux (64-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
@@ -719,31 +718,6 @@ public abstract class TerremarkClientLiveTest {
    }
 
    protected Iterable<Org> orgs;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".identity");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
 
    public RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> createContextWithProperties(
          Properties overrides) {

@@ -38,6 +38,7 @@
         <test.cloudservers-us.apiversion>1.0</test.cloudservers-us.apiversion>
         <test.cloudservers-us.identity>${test.rackspace-us.identity}</test.cloudservers-us.identity>
         <test.cloudservers-us.credential>${test.rackspace-us.credential}</test.cloudservers-us.credential>
+        <test.cloudservers-us.image-id></test.cloudservers-us.image-id>
     </properties>
 
     <dependencies>
@@ -119,6 +120,10 @@
                                         <property>
                                             <name>test.cloudservers-us.credential</name>
                                             <value>${test.cloudservers-us.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudservers-us.image-id</name>
+                                            <value>${test.cloudservers-us.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

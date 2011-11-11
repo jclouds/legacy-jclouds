@@ -38,6 +38,7 @@
         <test.cloudservers-uk.apiversion>1.0</test.cloudservers-uk.apiversion>
         <test.cloudservers-uk.identity>${test.rackspace-uk.identity}</test.cloudservers-uk.identity>
         <test.cloudservers-uk.credential>${test.rackspace-uk.credential}</test.cloudservers-uk.credential>
+        <test.cloudservers-uk.image-id></test.cloudservers-uk.image-id>
     </properties>
 
     <dependencies>
@@ -118,6 +119,10 @@
                                         <property>
                                             <name>test.cloudservers-uk.credential</name>
                                             <value>${test.cloudservers-uk.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudservers-uk.image-id</name>
+                                            <value>${test.cloudservers-uk.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

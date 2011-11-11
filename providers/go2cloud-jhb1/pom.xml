@@ -38,6 +38,7 @@
         <test.go2cloud-jhb1.apiversion>2.0</test.go2cloud-jhb1.apiversion>
         <test.go2cloud-jhb1.identity>FIXME_IDENTITY</test.go2cloud-jhb1.identity>
         <test.go2cloud-jhb1.credential>FIXME_CREDENTIAL</test.go2cloud-jhb1.credential>
+        <test.go2cloud-jhb1.image-id></test.go2cloud-jhb1.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.go2cloud-jhb1.credential</name>
                                             <value>${test.go2cloud-jhb1.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.go2cloud-jhb1.image-id</name>
+                                            <value>${test.go2cloud-jhb1.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

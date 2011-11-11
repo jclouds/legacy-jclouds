@@ -38,6 +38,7 @@
         <test.serverlove-z1-man.apiversion>1.0</test.serverlove-z1-man.apiversion>
         <test.serverlove-z1-man.identity>FIXME_IDENTITY</test.serverlove-z1-man.identity>
         <test.serverlove-z1-man.credential>FIXME_CREDENTIAL</test.serverlove-z1-man.credential>
+        <test.serverlove-z1-man.image-id></test.serverlove-z1-man.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.serverlove-z1-man.credential</name>
                                             <value>${test.serverlove-z1-man.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.serverlove-z1-man.image-id</name>
+                                            <value>${test.serverlove-z1-man.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

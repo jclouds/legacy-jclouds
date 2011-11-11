@@ -19,6 +19,8 @@
 package org.jclouds.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.inject.name.Names.named;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +29,6 @@ import com.google.common.base.Function;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -46,7 +47,7 @@ public class ValueOfConfigurationKeyOrNull implements Function<String, String> {
    public String apply(String configurationKey) {
       checkNotNull(configurationKey, "configurationKey");
       try {
-         return injector.getInstance(Key.get(String.class, Names.named(configurationKey)));
+         return emptyToNull(injector.getInstance(Key.get(String.class, named(configurationKey))));
       } catch (ConfigurationException e) {
          return null;
       }

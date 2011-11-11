@@ -52,6 +52,7 @@
         <test.softlayer.apiversion>3</test.softlayer.apiversion>
         <test.softlayer.identity>FIXME</test.softlayer.identity>
         <test.softlayer.credential>FIXME</test.softlayer.credential>
+        <test.softlayer.image-id></test.softlayer.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -118,6 +119,10 @@
                                         <property>
                                             <name>test.softlayer.credential</name>
                                             <value>${test.softlayer.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.softlayer.image-id</name>
+                                            <value>${test.softlayer.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

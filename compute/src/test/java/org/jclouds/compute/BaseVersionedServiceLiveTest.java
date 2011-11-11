@@ -19,6 +19,7 @@
 package org.jclouds.compute;
 
 import org.jclouds.Constants;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
 
 import java.util.Properties;
@@ -37,7 +38,12 @@ public abstract class BaseVersionedServiceLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   protected String imageId;
 
+   protected Properties setupRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
+   }
+   
    protected Properties setupProperties() {
 
       if (emptyToNull(provider) == null) throw new NullPointerException("provider must not be null or empty:"+provider);
@@ -55,6 +61,8 @@ public abstract class BaseVersionedServiceLiveTest {
          overrides.setProperty(provider + ".endpoint", endpoint);
       if (apiversion != null)
          overrides.setProperty(provider + ".apiversion", apiversion);
+      if (imageId != null)
+         overrides.setProperty(provider + ".image-id", imageId);
 
       return overrides;
    }
@@ -65,6 +73,7 @@ public abstract class BaseVersionedServiceLiveTest {
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
+      imageId = System.getProperty("test." + provider + ".image-id");
    }
 
 

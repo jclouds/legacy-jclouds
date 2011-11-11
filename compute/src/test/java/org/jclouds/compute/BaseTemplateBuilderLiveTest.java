@@ -18,20 +18,18 @@
  */
 package org.jclouds.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.OsFamily;
@@ -44,7 +42,6 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -62,21 +59,9 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "integration,live")
-public abstract class BaseTemplateBuilderLiveTest {
+public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLiveTest {
 
-   protected String provider;
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected ComputeServiceContext context;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
 
    public void testCompareSizes() throws Exception {
       Hardware defaultSize = context.getComputeService().templateBuilder().build().getHardware();
@@ -105,24 +90,6 @@ public abstract class BaseTemplateBuilderLiveTest {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assertEquals(context.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
                defaultTemplate.toString());
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    @BeforeClass
@@ -249,6 +216,39 @@ public abstract class BaseTemplateBuilderLiveTest {
                assertProvider(provider2);
                break;
          }
+      }
+   }
+
+   @Test
+   public void testTemplateBuilderWithImageIdsSpecified() throws IOException {
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+
+      ComputeServiceContext context = null;
+      try {
+         Properties overrides = setupProperties();
+         overrides.setProperty("jclouds.image-id", defaultTemplate.getImage().getId());
+
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+
+         assertEquals(context.getComputeService().templateBuilder().build(), defaultTemplate);
+      } finally {
+         if (context != null)
+            context.close();
+      }
+
+      context = null;
+      try {
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".image-id", defaultTemplate.getImage().getId());
+
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+
+         assertEquals(context.getComputeService().templateBuilder().build(), defaultTemplate);
+      } finally {
+         if (context != null)
+            context.close();
       }
    }
 

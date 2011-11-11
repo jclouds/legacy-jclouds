@@ -39,6 +39,7 @@
         <test.trmk-ecloud.apiversion>0.8b-ext2.8</test.trmk-ecloud.apiversion>
         <test.trmk-ecloud.identity>FIXME</test.trmk-ecloud.identity>
         <test.trmk-ecloud.credential>FIXME</test.trmk-ecloud.credential>
+        <test.trmk-ecloud.image-id></test.trmk-ecloud.image-id>
     </properties>
 
     <dependencies>
@@ -119,6 +120,10 @@
                                         <property>
                                             <name>test.trmk-ecloud.datacenter</name>
                                             <value>${test.trmk-ecloud.datacenter}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.trmk-ecloud.image-id</name>
+                                            <value>${test.trmk-ecloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

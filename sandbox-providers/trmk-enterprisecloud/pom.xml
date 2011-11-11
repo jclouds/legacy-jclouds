@@ -52,6 +52,7 @@
         <test.trmk-enterprisecloud.apiversion>2011-07-01</test.trmk-enterprisecloud.apiversion>
         <test.trmk-enterprisecloud.identity>FIXME</test.trmk-enterprisecloud.identity>
         <test.trmk-enterprisecloud.credential>FIXME</test.trmk-enterprisecloud.credential>
+        <test.trmk-enterprisecloud.image-id></test.trmk-enterprisecloud.image-id>
     </properties>
     <dependencies>
         <dependency>
@@ -118,6 +119,10 @@
                                         <property>
                                             <name>test.trmk-enterprisecloud.credential</name>
                                             <value>${test.trmk-enterprisecloud.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.trmk-enterprisecloud.image-id</name>
+                                            <value>${test.trmk-enterprisecloud.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

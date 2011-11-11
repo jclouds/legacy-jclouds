@@ -70,7 +70,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.ExecResponse;
@@ -91,7 +90,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
@@ -163,10 +161,6 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
       context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
             ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
-   }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    protected void buildSocketTester() {

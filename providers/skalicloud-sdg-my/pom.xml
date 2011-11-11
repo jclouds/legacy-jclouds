@@ -38,6 +38,7 @@
         <test.skalicloud-sdg-my.apiversion>1.0</test.skalicloud-sdg-my.apiversion>
         <test.skalicloud-sdg-my.identity>FIXME_IDENTITY</test.skalicloud-sdg-my.identity>
         <test.skalicloud-sdg-my.credential>FIXME_CREDENTIAL</test.skalicloud-sdg-my.credential>
+        <test.skalicloud-sdg-my.image-id></test.skalicloud-sdg-my.image-id>
     </properties>
 
     <dependencies>
@@ -113,6 +114,10 @@
                                         <property>
                                             <name>test.skalicloud-sdg-my.credential</name>
                                             <value>${test.skalicloud-sdg-my.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.skalicloud-sdg-my.image-id</name>
+                                            <value>${test.skalicloud-sdg-my.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

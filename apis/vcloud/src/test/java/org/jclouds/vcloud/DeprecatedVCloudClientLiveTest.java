@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -26,12 +25,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
@@ -60,7 +58,7 @@ import com.google.inject.Module;
  */
 @Deprecated
 @Test(groups = "live", singleThreaded = true)
-public class DeprecatedVCloudClientLiveTest  {
+public class DeprecatedVCloudClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected VCloudClient connection;
    protected RestContext<VCloudClient,VCloudAsyncClient> context;
@@ -280,38 +278,7 @@ public class DeprecatedVCloudClientLiveTest  {
          }
       }
    }
-
-   protected String provider = "vcloud";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected Iterable<Org> orgs;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".identity");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -37,6 +37,7 @@
         <test.virtacore-vcloudexpress.apiversion>1.0</test.virtacore-vcloudexpress.apiversion>
         <test.virtacore-vcloudexpress.identity>FIXME_IDENTITY</test.virtacore-vcloudexpress.identity>
         <test.virtacore-vcloudexpress.credential>FIXME_CREDENTIAL</test.virtacore-vcloudexpress.credential>
+        <test.virtacore-vcloudexpress.image-id></test.virtacore-vcloudexpress.image-id>
     </properties>
 
     <dependencies>
@@ -112,6 +113,10 @@
                                         <property>
                                             <name>test.virtacore-vcloudexpress.credential</name>
                                             <value>${test.virtacore-vcloudexpress.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.virtacore-vcloudexpress.image-id</name>
+                                            <value>${test.virtacore-vcloudexpress.image-id}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

@@ -18,14 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Account;
@@ -36,6 +34,7 @@ import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
@@ -61,16 +60,15 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudStackClientLiveTest {
+public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
+   public BaseCloudStackClientLiveTest() {
+      provider = "cloudstack";
+   }
+
    protected String prefix = System.getProperty("user.name");
 
    protected CloudStackClient client;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
-   protected String provider = "cloudstack";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
@@ -83,16 +81,6 @@ public class BaseCloudStackClientLiveTest {
    protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
 
    protected ComputeServiceContext computeContext;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-            + ".identity must be set.  ex. apiKey");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential must be set.  ex. secretKey");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
-            + ".endpoint must be set.  ex. http://localhost:8080/client/api");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
 
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
@@ -107,32 +95,20 @@ public class BaseCloudStackClientLiveTest {
             client.disconnect();
       }
    }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
+   
    @BeforeGroups(groups = "live")
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()),
-            overrides);
+      computeContext = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
 
       context = computeContext.getProviderSpecificContext();
 
       client = context.getApi();
       // check access
       Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
-      User currentUser; 
+      User currentUser;
       Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
       try {
          currentUser = Iterables.find(users, apiKeyMatches);
