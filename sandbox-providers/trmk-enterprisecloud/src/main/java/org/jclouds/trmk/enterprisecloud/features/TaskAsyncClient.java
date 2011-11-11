@@ -18,27 +18,20 @@
  */
 package org.jclouds.trmk.enterprisecloud.features;
 
-import java.net.URI;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.trmk.enterprisecloud.domain.Task;
+import org.jclouds.trmk.enterprisecloud.xml.TasksHandler;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.trmk.enterprisecloud.domain.Task;
-import org.jclouds.trmk.enterprisecloud.xml.TaskHandler;
-import org.jclouds.trmk.enterprisecloud.xml.TasksHandler;
-
-import com.google.common.util.concurrent.ListenableFuture;
+import java.net.URI;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to Task via their REST API.
@@ -69,7 +62,7 @@ public interface TaskAsyncClient {
     */
    @GET
    @Consumes("application/vnd.tmrk.cloud.task")
-   @XMLResponseParser(TaskHandler.class)
+   @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> getTask(@EndpointParam URI taskId);
 

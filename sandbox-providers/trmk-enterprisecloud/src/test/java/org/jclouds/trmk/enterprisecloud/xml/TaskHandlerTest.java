@@ -18,21 +18,38 @@
  */
 package org.jclouds.trmk.enterprisecloud.xml;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.URI;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.BaseRestClientTest;
+import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.enterprisecloud.domain.NamedResource;
 import org.jclouds.trmk.enterprisecloud.domain.Task;
+import org.jclouds.trmk.enterprisecloud.features.TaskAsyncClient;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.inject.Named;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Set;
+
+import static org.jclouds.io.Payloads.newInputStreamPayload;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code TaskHandler}
@@ -40,7 +57,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "TaskHandlerTest")
-public class TaskHandlerTest {
+public class TaskHandlerTest extends BaseRestClientTest {
    static SimpleDateFormatDateService dateService = new SimpleDateFormatDateService();
    static Task expected = Task
          .builder()
@@ -59,11 +76,41 @@ public class TaskHandlerTest {
                NamedResource.builder().href(URI.create("/livespec/admin/users/1")).name("User 1")
                      .type("application/vnd.tmrk.cloud.admin.user").build()).build();
 
-   public void test() {
+   @BeforeClass
+   void setupFactory() {
+   RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "userfoo",
+        "credentialFoo", String.class, Integer.class,
+        ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+
+            @Override
+            protected void configure() {}
+
+            @SuppressWarnings("unused")
+            @Provides
+            @Named("exception")
+            Set<String> exception() {
+                throw new AuthorizationException();
+            }
+
+        }));
+
+      injector = createContextBuilder(contextSpec).buildInjector();
+      parserFactory = injector.getInstance(ParseSax.Factory.class);
+      crypto = injector.getInstance(Crypto.class);
+   }
+
+   @Test
+   public void testParseTaskWithJAXB() throws Exception {
+
+      Method method = TaskAsyncClient.class.getMethod("getTask",URI.class);
+      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+
+      Function<HttpResponse, Task> parser = (Function<HttpResponse, Task>) RestAnnotationProcessor
+            .createResponseParser(parserFactory, injector, method, request);
+
       InputStream is = getClass().getResourceAsStream("/task.xml");
-      Injector injector = Guice.createInjector(new SaxParserModule());
-      Factory factory = injector.getInstance(ParseSax.Factory.class);
-      Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
-      assertEquals(result.toString(), expected.toString());
+      Task task = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+      assertEquals(task, expected);
    }
 }

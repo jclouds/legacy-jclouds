@@ -18,20 +18,19 @@
  */
 package org.jclouds.trmk.enterprisecloud.features;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.trmk.enterprisecloud.xml.TaskHandler;
 import org.jclouds.trmk.enterprisecloud.xml.TasksHandler;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
 
 /**
  * Tests annotation parsing of {@code TaskAsyncClient}
@@ -66,8 +65,7 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-trmk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
