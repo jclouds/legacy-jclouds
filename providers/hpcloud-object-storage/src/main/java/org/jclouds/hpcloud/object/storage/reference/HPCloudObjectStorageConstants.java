@@ -18,26 +18,17 @@
  */
 package org.jclouds.hpcloud.object.storage.reference;
 
-import org.jclouds.openstack.swift.reference.SwiftHeaders;
-
 
 /**
- * Additional headers specified by HP Cloud Object Storage REST API.
+ * Configuration properties and constants used by HP Cloud Object Storage.
  * 
- * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api" />
  * @author Jeremy Daggett
- * 
  */
-public interface HPCloudObjectStorageHeaders extends SwiftHeaders {
-   
-   public static final String CDN_ENABLED = "X-Cdn-Enabled";
-   public static final String CDN_LOG_RETENTION = "X-Log-Retention";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL";
-   public static final String CDN_TTL = "X-Ttl";
-   public static final String CDN_URI = "X-Cdn-Uri";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
-   
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
+public interface HPCloudObjectStorageConstants {
+
+   /**
+    * The CDN Endpoint property
+    */
+   public static final String PROPERTY_CDN_ENDPOINT = "jclouds.hpcloud-object-storage.cdn.endpoint";
 
 }

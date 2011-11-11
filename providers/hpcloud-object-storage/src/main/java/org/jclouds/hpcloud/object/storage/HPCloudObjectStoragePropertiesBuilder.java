@@ -21,14 +21,15 @@ package org.jclouds.hpcloud.object.storage;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageConstants.PROPERTY_CDN_ENDPOINT;
 
 import java.util.Properties;
 
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
- * 
- * @author Jeremy Daggtt
+ * @author Jeremy Daggett
  */
 public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilder {
 
@@ -40,8 +41,10 @@ public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilde
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0/");
-      properties.setProperty(PROPERTY_API_VERSION, "1.1");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth/");
+      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_CDN_ENDPOINT, "");
+      
       return properties;
    }
 
