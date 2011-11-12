@@ -22,6 +22,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.jclouds.cloudstack.domain.Event;
 import org.testng.annotations.Test;
 
 /**
@@ -33,12 +34,33 @@ import org.testng.annotations.Test;
 public class EventClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testlistEventTypes() throws Exception {
-      Set<String> response = client.getEventClient().listEventTypes();
+      final Set<String> response = client.getEventClient().listEventTypes();
       assert null != response;
       assertTrue(response.size() >= 0);
       for (String type : response) {
          checkEventType(type);
       }
+   }
+
+   public void testlistEvents() throws Exception {
+      final Set<Event> response = client.getEventClient().listEvents();
+      assert null != response;
+      assertTrue(response.size() >= 0);
+      for (Event event : response) {
+         checkEvent(event);
+      }
+   }
+
+   private void checkEvent(Event event) {
+      assert event.getAccount() != null : event;
+      assert event.getCreated() != null : event;
+      assert event.getDescription() != null : event;
+      assert event.getDomain() != null : event;
+      assert event.getId() != 0 : event;
+      assert event.getLevel() != null : event;
+      assert event.getState() != null : event;
+      assert event.getType() != null : event;
+      assert event.getUsername() != null : event;
    }
 
    protected void checkEventType(String eventType) {
