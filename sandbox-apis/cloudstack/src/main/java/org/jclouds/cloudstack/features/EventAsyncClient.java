@@ -24,12 +24,15 @@ import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.Event;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
+import org.jclouds.cloudstack.options.ListEventsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 /**
@@ -52,5 +55,15 @@ public interface EventAsyncClient {
    @ResponseParser(ParseEventTypesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listEventTypes();
+
+   /**
+    * @see EventClient#listEventTypes()
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listEvents")
+   @SelectJson("event")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<Event>> listEvents(ListEventsOptions...options);
 
 }
