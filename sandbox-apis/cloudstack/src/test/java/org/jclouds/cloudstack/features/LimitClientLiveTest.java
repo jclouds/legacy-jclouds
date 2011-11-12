@@ -40,7 +40,6 @@ public class LimitClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkResourceLimit(ResourceLimit resourceLimit) {
-      System.out.println(resourceLimit);
       assert resourceLimit.getAccount() != null : resourceLimit;
       assert resourceLimit.getDomain() != null : resourceLimit;
       assert resourceLimit.getResourceType() != ResourceLimit.ResourceType.UNRECOGNIZED : resourceLimit;

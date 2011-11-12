@@ -23,7 +23,9 @@ import java.lang.reflect.Method;
 
 import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
+import org.jclouds.cloudstack.options.ListEventsOptions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -48,6 +50,39 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseEventTypesFromHttpResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListEvents() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listEvents HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testEventsListOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, ListEventsOptions.Builder.account("jclouds"));
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listEvents&account=jclouds HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 

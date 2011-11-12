@@ -74,23 +74,56 @@ public class ListEventsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-//         page
-//   pagesize
-//         startdate
-//   type
-
-   /**
-    * @param name the SSHKeyPair name
-    */
-   public ListEventsOptions name(String name) {
-      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
+   public ListEventsOptions type(String type) {
+      this.queryParameters.replaceValues("type", ImmutableSet.of(type));
       return this;
    }
 
+
    public static class Builder {
-      public static ListEventsOptions name(String name) {
-         ListEventsOptions options = new ListEventsOptions();
-         return options.name(name);
+      public static ListEventsOptions account(String account) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.account(account);
+      }
+
+      public static ListEventsOptions domainId(long domainId) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.domainId(domainId);
+      }
+
+      public static ListEventsOptions duration(String duration) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.duration(duration);
+      }
+
+      public static ListEventsOptions endDate(Date enddate) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.endDate(enddate);
+      }
+
+      public static ListEventsOptions entryTime(Date entrytime) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.entryTime(entrytime);
+      }
+
+      public static ListEventsOptions id(String id) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.id(id);
+      }
+
+      public static ListEventsOptions keyword(String keyword) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.keyword(keyword);
+      }
+
+      public static ListEventsOptions level(String level) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.level(level);
+      }
+
+      public static ListEventsOptions type(String type) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.type(type);
       }
 
    }

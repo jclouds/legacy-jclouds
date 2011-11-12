@@ -21,6 +21,8 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.Event;
+import org.jclouds.cloudstack.options.ListEventsOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -40,6 +42,12 @@ public interface EventClient {
     */
    Set<String> listEventTypes();
 
+   /**
+    * List Events
+    *
+    * @return event list or null if not found
+    */
+   Set<Event> listEvents(ListEventsOptions... options);
 
 
 }
