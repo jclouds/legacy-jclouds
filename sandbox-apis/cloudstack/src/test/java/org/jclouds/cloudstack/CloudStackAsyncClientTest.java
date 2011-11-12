@@ -21,17 +21,16 @@ package org.jclouds.cloudstack;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.features.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
-
 /**
  * Tests behavior of {@code CloudStackAsyncClient}
- * 
+ *
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
@@ -59,6 +58,10 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert syncClient.getConfigurationClient() != null;
       assert syncClient.getAccountClient() != null;
       assert syncClient.getSSHKeyPairClient() != null;
+      assert syncClient.getVMGroupClient() != null;
+      assert syncClient.getEventClient() != null;
+      assert syncClient.getLimitClient() != null;
+      assert syncClient.getISOClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
@@ -78,6 +81,11 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert asyncClient.getConfigurationClient() != null;
       assert asyncClient.getAccountClient() != null;
       assert asyncClient.getSSHKeyPairClient() != null;
+      assert asyncClient.getVMGroupClient() != null;
+      assert asyncClient.getEventClient() != null;
+      assert asyncClient.getLimitClient() != null;
+      assert asyncClient.getISOClient() != null;
+
    }
 
    @Override
