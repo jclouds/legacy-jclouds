@@ -36,8 +36,8 @@
     <properties>
         <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
         <test.nova.apiversion>1.1</test.nova.apiversion>
-        <test.nova.identity>${test.nova.identity}</test.nova.identity>
-        <test.nova.credential>${test.nova.credential}</test.nova.credential>
+        <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
+        <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
         <test.nova.image-id></test.nova.image-id>
     </properties>
 
