@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Predicates;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -85,6 +86,16 @@ public class CloudStackComputeServiceAdapter implements
       if (templateOptions.getSecurityGroupIds().size() > 0)
          options.securityGroupIds(templateOptions.getSecurityGroupIds());
 
+      if (templateOptions.getKeyPair() != null) {
+         options.keyPair(templateOptions.getKeyPair());
+         if (templateOptions.getRunScript() != null) {
+           checkArgument(
+                 credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
+                 "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+                 templateOptions.getKeyPair());
+         }
+      }
+
       long zoneId = Long.parseLong(template.getLocation().getId());
       long templateId = Long.parseLong(template.getImage().getId());
       long serviceOfferingId = Long.parseLong(template.getHardware().getId());
@@ -104,9 +115,11 @@ public class CloudStackComputeServiceAdapter implements
       if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
          Credentials credentials = new Credentials("root", vm.getPassword());
-         credentialStore.put("node#" + zoneId + "/" + vm.getId(), credentials);
+         credentialStore.put("node#" + vm.getId(), credentials);
       } else {
-         // TODO: look for ssh key?
+         // assert templateOptions.getKeyPair() != null : vm;
+         Credentials credentials = credentialStore.get("keypair#" + templateOptions.getKeyPair());
+         credentialStore.put("node#" + vm.getId(), credentials);
       }
       return vm;
    }
@@ -121,7 +134,7 @@ public class CloudStackComputeServiceAdapter implements
    public Iterable<Template> listImages() {
       // TODO: we may need to filter these further
       // we may also want to see if we can work with ssh keys
-      return filter(client.getTemplateClient().listTemplates(), TemplatePredicates.isPasswordEnabled());
+      return filter(client.getTemplateClient().listTemplates(), TemplatePredicates.isReady());
    }
 
    @Override

@@ -59,5 +59,5 @@ public class CloudStackComputeServiceLiveTest extends BaseComputeServiceLiveTest
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
    }
-
 }
+
