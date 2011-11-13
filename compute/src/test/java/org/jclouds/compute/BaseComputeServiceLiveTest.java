@@ -181,8 +181,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, "MOMMA", "MIA",
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".identity", "MOMMA");
+         overrides.setProperty(provider + ".credential", "MIA");
+         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
