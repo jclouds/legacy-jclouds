@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.compute.options;
 
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.keyPair;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.securityGroupId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.securityGroupIds;
 import static org.testng.Assert.assertEquals;
@@ -71,6 +72,12 @@ public class CloudStackTemplateOptionsTest {
    public void testSecurityGroupIdsStatic() {
       TemplateOptions options = securityGroupIds(ImmutableSet.of(3l));
       assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of(3l));
+   }
+
+   @Test
+   public void testKeyPair() {
+      TemplateOptions options = keyPair("test");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getKeyPair(), "test");
    }
 
    @Test

@@ -55,6 +55,7 @@ import com.google.common.collect.Sets;
 public class CloudStackTemplateOptions extends TemplateOptions implements Cloneable {
 
    protected Set<Long> securityGroupIds = Sets.<Long> newLinkedHashSet();
+   protected String keyPair;
 
    @Override
    public CloudStackTemplateOptions clone() {
@@ -92,6 +93,18 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       return securityGroupIds;
    }
 
+   /**
+    * @see DeployVirtualMachineOptions#keyPair(String)
+    */
+   public CloudStackTemplateOptions keyPair(String keyPair) {
+      this.keyPair = keyPair;
+      return this;
+   }
+
+   public String getKeyPair() {
+      return keyPair;
+   }
+
    public static final CloudStackTemplateOptions NONE = new CloudStackTemplateOptions();
 
    public static class Builder {
@@ -110,6 +123,14 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       public static CloudStackTemplateOptions securityGroupIds(Iterable<Long> securityGroupIds) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.securityGroupIds(securityGroupIds);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#keyPair
+       */
+      public static CloudStackTemplateOptions keyPair(String keyPair) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.keyPair(keyPair);
       }
 
       // methods that only facilitate returning the correct object type
