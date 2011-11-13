@@ -31,8 +31,10 @@ import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -56,7 +58,7 @@ public interface NATAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listIpForwardingRules")
-   @Unwrap(depth = 2)
+   @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<IPForwardingRule>> listIPForwardingRules(ListIPForwardingRulesOptions... options);
@@ -66,7 +68,8 @@ public interface NATAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listIpForwardingRules")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("ipforwardingrule")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
