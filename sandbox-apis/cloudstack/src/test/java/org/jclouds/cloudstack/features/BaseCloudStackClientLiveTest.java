@@ -74,6 +74,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
+   protected User currentUser;
    protected String password = "password";
 
    protected Injector injector;
@@ -81,6 +82,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
 
    protected ComputeServiceContext computeContext;
+
 
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
@@ -108,7 +110,6 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       client = context.getApi();
       // check access
       Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
-      User currentUser;
       Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
       try {
          currentUser = Iterables.find(users, apiKeyMatches);

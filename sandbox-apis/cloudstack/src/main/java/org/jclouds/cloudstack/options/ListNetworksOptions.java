@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.options;
 
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.TrafficType;
-import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -32,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
  *      />
  * @author Adrian Cole
  */
-public class ListNetworksOptions extends BaseHttpRequestOptions {
+public class ListNetworksOptions extends AccountInDomainOptions {
 
    public static final ListNetworksOptions NONE = new ListNetworksOptions();
 
@@ -82,27 +81,6 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * 
-    * @param account
-    *           account who will own the VLAN. If VLAN is Zone wide, this
-    *           parameter should be ommited
-    */
-   public ListNetworksOptions account(String account) {
-      this.queryParameters.replaceValues("account", ImmutableSet.of(account));
-      return this;
-   }
-
-   /**
-    * @param domainId
-    *           domain ID of the account owning a VLAN
-    */
-   public ListNetworksOptions domainId(long domainId) {
-      this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
-      return this;
-
-   }
-
-   /**
     * @param zoneId
     *           the Zone ID of the network
     */
@@ -119,6 +97,22 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
    public ListNetworksOptions trafficType(TrafficType trafficType) {
       this.queryParameters.replaceValues("traffictype", ImmutableSet.of(trafficType.toString()));
       return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListNetworksOptions accountInDomain(String account, long domain) {
+      return ListNetworksOptions.class.cast(super.accountInDomain(account, domain));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListNetworksOptions domainId(long domainId) {
+      return ListNetworksOptions.class.cast(super.domainId(domainId));
    }
 
    public static class Builder {
@@ -155,22 +149,6 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see ListNetworksOptions#domainId
-       */
-      public static ListNetworksOptions domainId(long id) {
-         ListNetworksOptions options = new ListNetworksOptions();
-         return options.domainId(id);
-      }
-
-      /**
-       * @see ListNetworksOptions#account
-       */
-      public static ListNetworksOptions account(String account) {
-         ListNetworksOptions options = new ListNetworksOptions();
-         return options.account(account);
-      }
-
-      /**
        * @see ListNetworksOptions#id
        */
       public static ListNetworksOptions id(long id) {
@@ -192,6 +170,22 @@ public class ListNetworksOptions extends BaseHttpRequestOptions {
       public static ListNetworksOptions trafficType(TrafficType trafficType) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.trafficType(trafficType);
+      }
+
+      /**
+       * @see ListNetworksOptions#accountInDomain
+       */
+      public static ListNetworksOptions accountInDomain(String account, long domain) {
+         ListNetworksOptions options = new ListNetworksOptions();
+         return options.accountInDomain(account, domain);
+      }
+
+      /**
+       * @see ListNetworksOptions#domainId
+       */
+      public static ListNetworksOptions domainId(long domainId) {
+         ListNetworksOptions options = new ListNetworksOptions();
+         return options.domainId(domainId);
       }
    }
 

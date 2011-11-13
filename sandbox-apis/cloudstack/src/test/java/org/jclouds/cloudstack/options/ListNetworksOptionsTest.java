@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudstack.options;
 
-import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.account;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.id;
 import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.isDefault;
@@ -94,13 +94,14 @@ public class ListNetworksOptionsTest {
    }
 
    public void testAccountId() {
-      ListNetworksOptions options = new ListNetworksOptions().account("moo");
-      assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("account"));
+      ListNetworksOptions options = new ListNetworksOptions().accountInDomain("moo", 1);
+      assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountIdStatic() {
-      ListNetworksOptions options = account("moo");
+      ListNetworksOptions options = accountInDomain("moo", 1l);
       assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("account"));
+      assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testTrafficType() {

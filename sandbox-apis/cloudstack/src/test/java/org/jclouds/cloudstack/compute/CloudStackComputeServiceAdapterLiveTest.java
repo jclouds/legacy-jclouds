@@ -78,7 +78,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
 
          @Override
          protected void configure() {
-            bindProperties(binder(), new CloudStackPropertiesBuilder(new Properties()).build());
+            bindProperties(binder(), CloudStackComputeServiceAdapterLiveTest.this.setupProperties());
             bind(CloudStackClient.class).toInstance(context.getApi());
          }
 

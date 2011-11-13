@@ -88,7 +88,7 @@ public interface NetworkAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deleteNetwork")
-   @SelectJson("network")
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Long> deleteNetwork(@QueryParam("id") long id);

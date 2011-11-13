@@ -19,6 +19,10 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.accountInDomain;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -30,14 +34,13 @@ import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code NetworkClientLiveTest}
@@ -54,6 +57,9 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private Network network;
 
+   // only delete networks we create
+   private boolean weCreatedNetwork;
+
    @BeforeGroups(groups = "live")
    public void setupClient() {
       super.setupClient();
@@ -62,7 +68,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          // you can create guest direct network by Admin user, but since we are
          // not admin, let's try to create a guest virtual one
          zone = find(client.getZoneClient().listZones(), ZonePredicates.supportsGuestVirtualNetworks());
-         offering = Iterables.find(client.getOfferingClient().listNetworkOfferings(),
+         offering = find(client.getOfferingClient().listNetworkOfferings(),
                NetworkOfferingPredicates.supportsGuestVirtualNetworks());
          networksSupported = true;
       } catch (NoSuchElementException e) {
@@ -72,34 +78,39 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateNetwork() throws Exception {
       if (!networksSupported)
          return;
-      network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), prefix, prefix);
+      try {
+         network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), prefix, prefix);
+         weCreatedNetwork = true;
+      } catch (IllegalStateException e) {
+         network = find(
+               client.getNetworkClient().listNetworks(
+                     zoneId(zone.getId()).accountInDomain(currentUser.getAccount(), currentUser.getDomainId())),
+               new Predicate<Network>() {
+
+                  @Override
+                  public boolean apply(Network arg0) {
+                     return arg0.getNetworkOfferingId() == offering.getId();
+                  }
+
+               });
+      }
       checkNetwork(network);
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (network != null) {
-         Long jobId = client.getNetworkClient().deleteNetwork(network.getId());
-         if (jobId != null)
-            jobComplete.apply(jobId);
-      }
-      super.tearDown();
-   }
-
+   @Test(dependsOnMethods = "testCreateNetwork")
    public void testListNetworks() throws Exception {
       if (!networksSupported)
          return;
-      Set<Network> response = client.getNetworkClient().listNetworks();
+      Set<Network> response = client.getNetworkClient().listNetworks(
+            accountInDomain(network.getAccount(), network.getDomainId()));
       assert null != response;
       long networkCount = response.size();
       assertTrue(networkCount >= 0);
       for (Network network : response) {
-         Network newDetails = Iterables.getOnlyElement(client.getNetworkClient().listNetworks(
-               ListNetworksOptions.Builder.id(network.getId())));
+         Network newDetails = getOnlyElement(client.getNetworkClient().listNetworks(id(network.getId())));
          assertEquals(network, newDetails);
          assertEquals(network, client.getNetworkClient().getNetwork(network.getId()));
          checkNetwork(network);
-
       }
    }
 
@@ -142,4 +153,15 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          break;
       }
    }
+
+   @AfterGroups(groups = "live")
+   protected void tearDown() {
+      if (network != null && weCreatedNetwork) {
+         Long jobId = client.getNetworkClient().deleteNetwork(network.getId());
+         if (jobId != null)
+            jobComplete.apply(jobId);
+      }
+      super.tearDown();
+   }
+
 }
