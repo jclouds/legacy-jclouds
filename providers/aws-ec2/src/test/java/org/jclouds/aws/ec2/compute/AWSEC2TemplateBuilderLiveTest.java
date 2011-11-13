@@ -64,16 +64,18 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return true;
-               case DEBIAN:
-                  return true;
-               case CENTOS:
-                  return input.version.matches("5.[246]") || input.version.equals("");
-               case WINDOWS:
-                  return input.version.matches("200[38]") || input.version.equals("");
-               default:
-                  return false;
+            case UBUNTU:
+               return true;
+            case DEBIAN:
+               return true;
+            case CENTOS:
+               return input.version.matches("5.[246]") || (input.version.equals("5.0") && !input.is64Bit)
+                     || input.version.equals("");
+            case WINDOWS:
+               return input.version.matches("200[38]") || (input.version.equals("7") && !input.is64Bit)
+                     || input.version.equals("");
+            default:
+               return false;
             }
          }
 
@@ -81,14 +83,20 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilderM1SMALLWithDescriptionPrecise() {
+   public void testTemplateBuilderM1SMALLWithNegativeLookaroundDoesntMatchTestImages() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-               .osVersionMatches("1[012].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
-               .build();
+            .osVersionMatches("1[012].[10][04]")
+            // negative lookahead for daily and testing, but ensure match
+            // ubuntu-images
+            // http://www.regular-expressions.info/lookaround.html
+            .imageDescriptionMatches("^(?!.*(daily|testing)).*ubuntu-images.*$").osFamily(OsFamily.UBUNTU).build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-      assertEquals(template.getImage().getOperatingSystem().getVersion(), "12.04");
+      assert template.getImage().getDescription().indexOf("test") == -1 : template;
+      assert template.getImage().getDescription().indexOf("daily") == -1 : template;
+      assertEquals(template.getImage().getVersion(), "20111011");
+      assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -99,15 +107,20 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    }
 
    @Test
-   public void testUbuntuInstanceStoreGoesM1SmallPrecise() {
+   public void testUbuntuInstanceStoreGoesM1SmallNegativeLookaroundDoesntMatchTestImages() {
 
       Template template = context.getComputeService().templateBuilder()
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE))
-            .osVersionMatches("1[012].[10][04]").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU)
-            .build();
+            .osVersionMatches("1[012].[10][04]")
+            // negative lookahead for daily and testing, but ensure match
+            // ubuntu-images
+            // http://www.regular-expressions.info/lookaround.html
+            .imageDescriptionMatches("^(?!.*(daily|testing)).*ubuntu-images.*$").osFamily(OsFamily.UBUNTU).build();
 
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-      assertEquals(template.getImage().getOperatingSystem().getVersion(), "12.04");
+      assert template.getImage().getDescription().indexOf("test") == -1 : template;
+      assert template.getImage().getDescription().indexOf("daily") == -1 : template;
+      assertEquals(template.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -116,11 +129,12 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getHardware().getId(), InstanceType.M1_SMALL);
       assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
+
    @Test
    public void testTemplateBuilderCanUseImageIdAndhardwareIdAndAZ() {
 
-      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").hardwareId(
-               InstanceType.M2_2XLARGE).locationId("us-east-1a").build();
+      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
+            .hardwareId(InstanceType.M2_2XLARGE).locationId("us-east-1a").build();
 
       System.out.println(template.getHardware());
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -150,7 +164,6 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
-
    @Test
    public void testAmazonLinuxInstanceStore() throws IOException {
 
@@ -169,7 +182,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testFastestTemplateBuilder() throws IOException {
       Template fastestTemplate = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
-               .build();
+            .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.2");
@@ -197,7 +210,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderMicro() throws IOException {
 
       Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
-               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.10").os64Bit(true).build();
+            .osFamily(OsFamily.UBUNTU).osVersionMatches("10.10").os64Bit(true).build();
 
       assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
       assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
@@ -218,8 +231,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -254,8 +267,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMIs, "");
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -289,8 +302,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          // set regions to only 1
          overrides.setProperty(PROPERTY_REGIONS, Region.US_EAST_1);
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
          assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();
 
@@ -304,7 +317,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(getCores(template.getHardware()), 2.0d);
-         assertEquals(template.getHardware().getId(), "m1.large"); // because it is 64bit
+         assertEquals(template.getHardware().getId(), "m1.large"); // because it
+                                                                   // is 64bit
 
       } finally {
          if (context != null)
@@ -314,7 +328,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-VA", "US-CA", "IE", "SG", "JP-13");
+      return ImmutableSet.<String> of("US-VA", "US-CA", "US-OR", "IE", "SG", "JP-13");
    }
 
 }

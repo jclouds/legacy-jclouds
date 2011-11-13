@@ -231,7 +231,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
-         assertEquals(context.getComputeService().templateBuilder().build(), defaultTemplate);
+         assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
          if (context != null)
             context.close();
@@ -245,7 +245,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
-         assertEquals(context.getComputeService().templateBuilder().build(), defaultTemplate);
+         assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
          if (context != null)
             context.close();
