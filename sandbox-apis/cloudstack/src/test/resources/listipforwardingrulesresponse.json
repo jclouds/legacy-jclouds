@@ -1,0 +1,17 @@
+{
+    "listipforwardingrulesresponse": {
+        "count": 1,
+        "ipforwardingrule": [{
+            "id": 66,
+            "protocol": "tcp",
+            "virtualmachineid": 58,
+            "virtualmachinename": "i-4-58-VM",
+            "virtualmachinedisplayname": "i-4-58-VM",
+            "ipaddressid": 15,
+            "ipaddress": "10.27.27.64",
+            "startport": 22,
+            "endport": 22,
+            "state": "Active"
+        }]
+    }
+}

@@ -80,7 +80,6 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
          assert offering.getId() > 0 : offering;
          assert offering.getName() != null : offering;
-         assert offering.getCreated() != null : offering;
          assert offering.getDisplayText() != null : offering;
          assert offering.getCpuNumber() > 0 : offering;
          assert offering.getCpuSpeed() > 0 : offering;

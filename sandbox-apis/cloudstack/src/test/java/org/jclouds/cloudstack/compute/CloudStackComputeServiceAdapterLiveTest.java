@@ -21,7 +21,9 @@ package org.jclouds.cloudstack.compute;
 import static com.google.inject.name.Names.bindProperties;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.fail;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -34,10 +36,12 @@ import org.jclouds.cloudstack.CloudStackPropertiesBuilder;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.domain.ServiceOffering;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.TemplatePredicates;
+import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
@@ -64,6 +68,9 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    private CloudStackComputeServiceAdapter adapter;
    private VirtualMachine vm;
 
+   private String keyPairName;
+   private Map<String, String> keyPair;
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       super.setupClient();
@@ -84,6 +91,13 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       };
       adapter = Guice.createInjector(module, new Log4JLoggingModule()).getInstance(
             CloudStackComputeServiceAdapter.class);
+
+      keyPairName = prefix + "-adapter-test-keypair";
+      try {
+         keyPair = ComputeTestUtils.setupKeyPair();
+      } catch (IOException e) {
+         fail("Unable to create keypair", e);
+      }
    }
 
    @Test
@@ -97,16 +111,24 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       String name = "node" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
 
-      // TODO: look at SecurityGroupClientLiveTest for how to do this
-      template.getOptions().as(CloudStackTemplateOptions.class).securityGroupId(3l);
+      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+      client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
 
       Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
+      credentialStore.put("keypair#" + keyPairName, new Credentials("root", keyPair.get("private")));
+
+      // TODO: look at SecurityGroupClientLiveTest for how to do this
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);
+
       vm = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
+
       // TODO: check security groups vm.getSecurityGroups(),
       // check other things, like cpu correct, mem correct, image/os is correct
       // (as possible)
+
       assert credentialStore.containsKey("node#" + vm.getId()) : "credentials to log into vm not found " + vm;
       assert InetAddresses.isInetAddress(vm.getIPAddress()) : vm;
+
       doConnectViaSsh(vm, credentialStore.get("node#" + vm.getId()));
    }
 
@@ -141,7 +163,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       assertFalse(Iterables.isEmpty(templates));
 
       for (org.jclouds.cloudstack.domain.Template template : templates) {
-         assert TemplatePredicates.isPasswordEnabled().apply(template) : template;
+         assert TemplatePredicates.isReady().apply(template) : template;
       }
    }
 
