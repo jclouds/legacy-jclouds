@@ -86,6 +86,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    public void testTemplateBuilderM1SMALLWithNegativeLookaroundDoesntMatchTestImages() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+            // need to select versions with double-digits so that lexicographic
+            // doesn't end up prefering 9.x vs 11.x
             .osVersionMatches("1[012].[10][04]")
             // negative lookahead for daily and testing, but ensure match
             // ubuntu-images
@@ -111,6 +113,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
       Template template = context.getComputeService().templateBuilder()
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE))
+            // need to select versions with double-digits so that lexicographic
+            // doesn't end up prefering 9.x vs 11.x
             .osVersionMatches("1[012].[10][04]")
             // negative lookahead for daily and testing, but ensure match
             // ubuntu-images
