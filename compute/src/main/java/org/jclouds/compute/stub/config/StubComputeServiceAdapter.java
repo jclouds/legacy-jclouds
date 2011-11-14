@@ -19,8 +19,8 @@
 package org.jclouds.compute.stub.config;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
@@ -46,8 +46,8 @@ import org.jclouds.rest.ResourceNotFoundException;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -67,10 +67,10 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
-            @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-            @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
-            Map<String, Credentials> credentialStore) {
+         @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+         @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
+         JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
+         Map<String, Credentials> credentialStore) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;
@@ -83,8 +83,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String group, String name, Template template,
-            Map<String, Credentials> credentialStore) {
+   public NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       String id = idProvider.get() + "";
       builder.ids(id);
@@ -100,41 +99,35 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.state(NodeState.PENDING);
       builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
-      Credentials creds = template.getOptions().getOverridingCredentials();
-      if (creds == null)
-         creds = new Credentials(null, null);
-      if (creds.identity == null)
-         creds = creds.toBuilder().identity("root").build();
-      if (creds.credential == null)
-         creds = creds.toBuilder().credential(passwordPrefix + id).build();
-      builder.credentials(creds);
+      builder.credentials(new Credentials(null, passwordPrefix + id));
       NodeMetadata node = builder.build();
       credentialStore.put("node#" + node.getId(), node.getCredentials());
       nodes.put(node.getId(), node);
       StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 100);
-      return node;
+      return new NodeWithInitialCredentials(node);
    }
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
       return ImmutableSet.<Hardware> of(StubComputeServiceDependenciesModule.stub("small", 1, 1740, 160),
-               StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850), StubComputeServiceDependenciesModule
-                        .stub("large", 8, 15360, 1690));
+            StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850),
+            StubComputeServiceDependenciesModule.stub("large", 8, 15360, 1690));
    }
 
    @Override
    public Iterable<Image> listImages() {
       Credentials defaultCredentials = new Credentials("root", null);
-      // initializing as a List, as ImmutableSet does not allow you to put duplicates
-      Builder<Image> images = ImmutableList.<Image>builder();
+      // initializing as a List, as ImmutableSet does not allow you to put
+      // duplicates
+      Builder<Image> images = ImmutableList.<Image> builder();
       int id = 1;
       for (boolean is64Bit : new boolean[] { true, false })
          for (Entry<OsFamily, Map<String, String>> osVersions : this.osToVersionMap.entrySet()) {
             for (String version : ImmutableSet.copyOf(osVersions.getValue().values())) {
                String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
                images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
-                        .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
-                        .description(desc).defaultCredentials(defaultCredentials).build());
+                     .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
+                     .description(desc).defaultCredentials(defaultCredentials).build());
             }
          }
       return images.build();
@@ -154,8 +147,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    @Override
    public NodeMetadata getNode(String id) {
       NodeMetadata node = nodes.get(id);
-      return node == null ? null : NodeMetadataBuilder.fromNodeMetadata(node).credentials(
-               credentialStore.get("node#" + node.getId())).build();
+      return node == null ? null : NodeMetadataBuilder.fromNodeMetadata(node)
+            .credentials(credentialStore.get("node#" + node.getId())).build();
    }
 
    @Override

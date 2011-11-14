@@ -103,8 +103,7 @@ public class ElasticStackComputeServiceAdapter implements
    }
 
    @Override
-   public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<ServerInfo> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
 
       logger.debug(">> creating boot drive bytes(%d)", bootSize);
@@ -127,10 +126,7 @@ public class ElasticStackComputeServiceAdapter implements
       ServerInfo from = client.createServer(toCreate);
       client.startServer(from.getUuid());
       from = client.getServerInfo(from.getUuid());
-      // store the credentials so that later functions can use them
-      credentialStore.put("node#" + from.getUuid(), new Credentials(
-            template.getImage().getDefaultCredentials().identity, from.getVnc().getPassword()));
-      return from;
+      return new NodeAndInitialCredentials<ServerInfo>(from, from.getUuid(), new Credentials(null, defaultVncPassword));
    }
 
    @Override

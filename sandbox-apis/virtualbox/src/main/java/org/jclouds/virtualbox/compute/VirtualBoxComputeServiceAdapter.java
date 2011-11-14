@@ -25,14 +25,12 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 import java.util.Collections;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.suppliers.JustProvider;
@@ -71,8 +69,8 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    }
 
    @Override
-   public IMachine createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<IMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
+         Template template) {
       return null;
    }
 

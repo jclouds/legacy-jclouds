@@ -83,7 +83,7 @@ public class EC2ImageParserTest {
                .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
+      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(null), map,
                Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
                         .ofInstance(defaultLocation), new ReviseParsedImage.NoopReviseParsedImage());
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));

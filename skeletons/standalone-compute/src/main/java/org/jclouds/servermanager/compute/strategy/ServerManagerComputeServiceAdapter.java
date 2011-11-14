@@ -20,8 +20,6 @@ package org.jclouds.servermanager.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -52,15 +50,12 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    }
 
    @Override
-   public Server createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<Server>  createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       // create the backend object using parameters from the template.
       Server from = client.createServerInDC(template.getLocation().getId(), name,
             Integer.parseInt(template.getImage().getProviderId()),
             Integer.parseInt(template.getHardware().getProviderId()));
-      // store the credentials so that later functions can use them
-      credentialStore.put(from.id + "", new Credentials(from.loginUser, from.password));
-      return from;
+      return new NodeAndInitialCredentials<Server>(from, from.id + "", new Credentials(from.loginUser, from.password));
    }
 
    @Override

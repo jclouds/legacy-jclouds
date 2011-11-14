@@ -68,7 +68,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
                case UBUNTU:
                   return input.version.equals("") || input.version.equals("10.04") || input.version.equals("8");
                case DEBIAN:
-                  return input.version.equals("") || input.version.equals("5.0");
+                  return input.version.equals("") || input.version.matches("[56].0");
                case FEDORA:
                   return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
                case RHEL:
@@ -219,6 +219,6 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("SG", "US-CA", "US-TX", "US-VA", "US-WA", "US-TX");
+      return ImmutableSet.<String> of("SG", "NL", "US-CA", "US-TX", "US-VA", "US-WA", "US-TX");
    }
 }

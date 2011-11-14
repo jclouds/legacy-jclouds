@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  */
 public class Credentials {
+   public static final Credentials NO_CREDENTIALS = new Credentials(null, null);
 
    public static class Builder<T extends Credentials> {
       private String identity;

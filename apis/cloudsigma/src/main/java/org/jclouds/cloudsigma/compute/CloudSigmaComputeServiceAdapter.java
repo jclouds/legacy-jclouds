@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -107,8 +106,7 @@ public class CloudSigmaComputeServiceAdapter implements
    }
 
    @Override
-   public ServerInfo createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<ServerInfo> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
       logger.debug(">> imaging boot drive source(%s) bytes(%d)", template.getImage().getId(), bootSize);
       DriveInfo drive = client.cloneDrive(template.getImage().getId(), template.getImage().getId(),
@@ -128,9 +126,8 @@ public class CloudSigmaComputeServiceAdapter implements
       logger.debug("<< created server(%s)", from.getUuid());
       logger.debug(">> starting server(%s)", from.getUuid());
       client.startServer(from.getUuid());
-      // store the credentials so that later functions can use them
-      credentialStore.put("node#" + from.getUuid(), new Credentials("root", defaultVncPassword));
-      return from;
+      return new NodeAndInitialCredentials<ServerInfo>(from, from.getUuid(),
+            new Credentials("root", defaultVncPassword));
    }
 
    @Override

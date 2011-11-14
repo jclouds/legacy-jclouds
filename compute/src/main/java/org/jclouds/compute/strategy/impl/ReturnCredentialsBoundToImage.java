@@ -18,19 +18,29 @@
  */
 package org.jclouds.compute.strategy.impl;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnNullCredentials implements PopulateDefaultLoginCredentialsForImageStrategy {
+public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCredentialsForImageStrategy {
+
+   protected final Credentials creds;
+
+   @Inject
+   public ReturnCredentialsBoundToImage(@Nullable @Named("image") Credentials creds) {
+      this.creds = creds;
+   }
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
-      return null;
+      return creds;
    }
 }

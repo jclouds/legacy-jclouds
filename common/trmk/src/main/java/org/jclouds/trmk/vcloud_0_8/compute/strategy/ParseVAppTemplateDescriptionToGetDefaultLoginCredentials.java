@@ -25,12 +25,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
@@ -38,21 +40,25 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
-         PopulateDefaultLoginCredentialsForImageStrategy {
+public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends ReturnCredentialsBoundToImage {
+   @Inject
+   public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") Credentials creds) {
+      super(creds);
+   }
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   
+
    public static final Pattern USER_PASSWORD_PATTERN = Pattern
-            .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
+         .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
+      if (creds != null)
+         return creds;
       checkNotNull(resourceToAuthenticate);
-      checkArgument(resourceToAuthenticate instanceof VAppTemplate,
-               "Resource must be an VAppTemplate (for Terremark)");
+      checkArgument(resourceToAuthenticate instanceof VAppTemplate, "Resource must be an VAppTemplate (for Terremark)");
       VAppTemplate template = (VAppTemplate) resourceToAuthenticate;
       String search = template.getDescription() != null ? template.getDescription() : template.getName();
       if (search.indexOf("Windows") >= 0) {
@@ -62,8 +68,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
          if (matcher.find()) {
             return new Credentials(matcher.group(1), matcher.group(2));
          } else {
-            logger.warn("could not parse username/password for image: " + template.getHref() + "\n"
-                     + search);
+            logger.warn("could not parse username/password for image: " + template.getHref() + "\n" + search);
             return null;
          }
       }

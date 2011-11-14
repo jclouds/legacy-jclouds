@@ -20,7 +20,6 @@ package org.jclouds.byon.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -33,7 +32,6 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -67,8 +65,7 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name,
-            Template template, Map<String, Credentials> credentialStore) {
+   public NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       throw new UnsupportedOperationException();
    }
 

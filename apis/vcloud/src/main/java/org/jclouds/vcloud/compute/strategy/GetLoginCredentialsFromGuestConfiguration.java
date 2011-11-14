@@ -22,20 +22,29 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class GetLoginCredentialsFromGuestConfiguration implements PopulateDefaultLoginCredentialsForImageStrategy {
+public class GetLoginCredentialsFromGuestConfiguration extends ReturnCredentialsBoundToImage {
+   @Inject
+   public GetLoginCredentialsFromGuestConfiguration(@Nullable @Named("image") Credentials creds) {
+      super(creds);
+   }
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
+      if (creds != null)
+         return creds;
       checkNotNull(resourceToAuthenticate);
       checkArgument(resourceToAuthenticate instanceof VAppTemplate, "Resource must be an VAppTemplate");
       return getCredentialsFrom(VAppTemplate.class.cast(resourceToAuthenticate));

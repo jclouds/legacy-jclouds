@@ -18,11 +18,15 @@
  */
 package org.jclouds.gogrid.config.internal;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.ResolvesImages;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.AbstractModule;
 
@@ -34,15 +38,20 @@ public class GoGridResolveImagesModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-               GoGridPopulateDefaultLoginCredentialsForImageStrategy.class);
+            GoGridPopulateDefaultLoginCredentialsForImageStrategy.class);
    }
 
    @Singleton
-   public static class GoGridPopulateDefaultLoginCredentialsForImageStrategy implements
-            PopulateDefaultLoginCredentialsForImageStrategy {
+   public static class GoGridPopulateDefaultLoginCredentialsForImageStrategy extends ReturnCredentialsBoundToImage {
+      @Inject
+      public GoGridPopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") Credentials creds) {
+         super(creds);
+      }
 
       @Override
       public Credentials execute(Object resourceToAuthenticate) {
+         if (creds != null)
+            return creds;
          return new Credentials("root", null);
       }
    }

@@ -18,17 +18,15 @@
  */
 package org.jclouds.compute;
 
-import java.util.Map;
-
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
 /**
- * A means of specifying the implementation of a service that uses jclouds types.
+ * A means of specifying the implementation of a service that uses jclouds
+ * types.
  * 
  * @author Adrian Cole
  * 
@@ -39,8 +37,14 @@ public interface JCloudsNativeComputeServiceAdapter extends
     * {@inheritDoc}
     */
    @Override
-   NodeMetadata createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore);
+   NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(String group, String name, Template template);
+
+   public static class NodeWithInitialCredentials extends ComputeServiceAdapter.NodeAndInitialCredentials<NodeMetadata> {
+
+      public NodeWithInitialCredentials(NodeMetadata node) {
+         super(node, node.getId(), node.getCredentials());
+      }
+   }
 
    /**
     * {@inheritDoc}

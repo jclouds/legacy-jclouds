@@ -20,21 +20,29 @@ package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.domain.Image;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.domain.Image;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
-      PopulateDefaultLoginCredentialsForImageStrategy {
+public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCredentialsBoundToImage {
+   @Inject
+   public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") Credentials creds) {
+      super(creds);
+   }
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
+      if (creds != null)
+         return creds;
       Credentials credentials = new Credentials("root", null);
       if (resourceToAuthenticate != null) {
          String owner = null;

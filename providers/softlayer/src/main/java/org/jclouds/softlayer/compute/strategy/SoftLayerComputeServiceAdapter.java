@@ -33,7 +33,6 @@ import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLA
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -65,17 +64,17 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
- * defines the connection between the {@link SoftLayerClient} implementation and the jclouds
- * {@link ComputeService}
+ * defines the connection between the {@link SoftLayerClient} implementation and
+ * the jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class SoftLayerComputeServiceAdapter implements
-         ComputeServiceAdapter<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter> {
+      ComputeServiceAdapter<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -92,18 +91,18 @@ public class SoftLayerComputeServiceAdapter implements
 
    @Inject
    public SoftLayerComputeServiceAdapter(SoftLayerClient client,
-            VirtualGuestHasLoginDetailsPresent virtualGuestHasLoginDetailsPresent,
-            @Memoized Supplier<ProductPackage> productPackageSupplier, Iterable<ProductItemPrice> prices,
-            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex,
-            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE) String disk0Type,
-            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED) float portSpeed,
-            @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY) long guestLoginDelay) {
+         VirtualGuestHasLoginDetailsPresent virtualGuestHasLoginDetailsPresent,
+         @Memoized Supplier<ProductPackage> productPackageSupplier, Iterable<ProductItemPrice> prices,
+         @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex,
+         @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE) String disk0Type,
+         @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED) float portSpeed,
+         @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY) long guestLoginDelay) {
       this.client = checkNotNull(client, "client");
       this.guestLoginDelay = guestLoginDelay;
       this.productPackageSupplier = checkNotNull(productPackageSupplier, "productPackageSupplier");
       checkArgument(guestLoginDelay > 500, "guestOrderDelay must be in milliseconds and greater than 500");
       this.loginDetailsTester = new RetryablePredicate<VirtualGuest>(virtualGuestHasLoginDetailsPresent,
-               guestLoginDelay);
+            guestLoginDelay);
       this.cpuPattern = Pattern.compile(checkNotNull(cpuRegex, "cpuRegex"));
       this.prices = checkNotNull(prices, "prices");
       this.portSpeed = portSpeed;
@@ -112,21 +111,21 @@ public class SoftLayerComputeServiceAdapter implements
    }
 
    @Override
-   public VirtualGuest createNodeWithGroupEncodedIntoNameThenStoreCredentials(String group, String name,
-            Template template, Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<VirtualGuest> createNodeWithGroupEncodedIntoName(String group, String name,
+         Template template) {
       checkNotNull(template, "template was null");
       checkNotNull(template.getOptions(), "template options was null");
       checkArgument(template.getOptions().getClass().isAssignableFrom(SoftLayerTemplateOptions.class),
-               "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
-                        .getClass());
+            "options class %s should have been assignable from SoftLayerTemplateOptions", template.getOptions()
+                  .getClass());
 
       String domainName = template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName();
 
       VirtualGuest newGuest = VirtualGuest.builder().domain(domainName).hostname(name).build();
 
-      ProductOrder order = ProductOrder.builder().packageId(productPackageSupplier.get().getId()).location(
-               template.getLocation().getId()).quantity(1).useHourlyPricing(true).prices(getPrices(template))
-               .virtualGuest(newGuest).build();
+      ProductOrder order = ProductOrder.builder().packageId(productPackageSupplier.get().getId())
+            .location(template.getLocation().getId()).quantity(1).useHourlyPricing(true).prices(getPrices(template))
+            .virtualGuest(newGuest).build();
 
       logger.debug(">> ordering new virtualGuest domain(%s) hostname(%s)", domainName, name);
       ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);
@@ -137,14 +136,13 @@ public class SoftLayerComputeServiceAdapter implements
       boolean orderInSystem = loginDetailsTester.apply(result);
       logger.trace("<< virtualGuest(%s) complete(%s)", result.getId(), orderInSystem);
 
-      checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result, Long
-               .toString(guestLoginDelay));
+      checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result,
+            Long.toString(guestLoginDelay));
       result = client.getVirtualGuestClient().getVirtualGuest(result.getId());
 
       Password pw = get(result.getOperatingSystem().getPasswords(), 0);
-      Credentials credentials = new Credentials(pw.getUsername(), pw.getPassword());
-      credentialStore.put("node#" + result.getId(), credentials);
-      return result;
+      return new NodeAndInitialCredentials<VirtualGuest>(result, result.getId() + "", new Credentials(pw.getUsername(),
+            pw.getPassword()));
    }
 
    private Iterable<ProductItemPrice> getPrices(Template template) {
@@ -158,8 +156,8 @@ public class SoftLayerComputeServiceAdapter implements
          int id = Integer.parseInt(hardwareId);
          result.add(ProductItemPrice.builder().id(id).build());
       }
-      ProductItem uplinkItem = find(productPackageSupplier.get().getItems(), and(capacity(portSpeed),
-               categoryCode("port_speed")));
+      ProductItem uplinkItem = find(productPackageSupplier.get().getItems(),
+            and(capacity(portSpeed), categoryCode("port_speed")));
       result.add(get(uplinkItem.getPrices(), 0));
       result.addAll(prices);
       return result.build();
@@ -187,7 +185,7 @@ public class SoftLayerComputeServiceAdapter implements
 
    @Override
    public Iterable<VirtualGuest> listNodes() {
-      return Iterables.filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>(){
+      return Iterables.filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>() {
 
          @Override
          public boolean apply(VirtualGuest arg0) {
@@ -197,7 +195,7 @@ public class SoftLayerComputeServiceAdapter implements
             logger.trace("guest invalid, as it has no billing item %s", arg0);
             return false;
          }
-         
+
       });
    }
 
@@ -220,7 +218,7 @@ public class SoftLayerComputeServiceAdapter implements
 
       if (guest.getBillingItemId() == -1)
          throw new IllegalStateException(String.format("no billing item for guest(%s) so we cannot cancel the order",
-                  id));
+               id));
 
       logger.debug(">> canceling service for guest(%s) billingItem(%s)", id, guest.getBillingItemId());
       client.getVirtualGuestClient().cancelService(guest.getBillingItemId());
@@ -257,7 +255,7 @@ public class SoftLayerComputeServiceAdapter implements
          boolean hasBackendIp = newGuest.getPrimaryBackendIpAddress() != null;
          boolean hasPrimaryIp = newGuest.getPrimaryIpAddress() != null;
          boolean hasPasswords = newGuest.getOperatingSystem() != null
-                  && newGuest.getOperatingSystem().getPasswords().size() > 0;
+               && newGuest.getOperatingSystem().getPasswords().size() > 0;
 
          return hasBackendIp && hasPrimaryIp && hasPasswords;
       }

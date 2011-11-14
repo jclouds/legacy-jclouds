@@ -41,8 +41,10 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
@@ -50,6 +52,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
+import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
 import org.jclouds.location.config.LocationModule;
@@ -84,7 +87,11 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
       bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
       }).to(TemplateOptionsToStatement.class);
-
+      bind(Credentials.class).annotatedWith(Names.named("image")).toProvider(
+            GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull.class);
+      bind(new TypeLiteral<Function<Template, Credentials>>() {
+      }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);
+      
       install(new FactoryModuleBuilder()
             .implement(RunScriptOnNodeUsingSsh.class, Names.named("direct"), RunScriptOnNodeUsingSsh.class)
             .implement(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class, Names.named("blocking"),

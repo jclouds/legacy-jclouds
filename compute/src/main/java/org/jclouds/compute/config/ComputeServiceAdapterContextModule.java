@@ -20,6 +20,7 @@ package org.jclouds.compute.config;
 
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.TransformingSetSupplier;
@@ -27,18 +28,22 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -59,20 +64,19 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
       this.asyncClientType = asyncClientType;
    }
 
-   @SuppressWarnings( { "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(
-               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class,
-                        syncClientType, asyncClientType))).in(Scopes.SINGLETON);
+      }).to((TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
+            asyncClientType))).in(Scopes.SINGLETON);
    }
 
    @Provides
    @Singleton
    protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<L, Location> transformer) {
+         Function<L, Location> transformer) {
       return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
 
          @Override
@@ -86,7 +90,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<H, Hardware> transformer) {
+         Function<H, Hardware> transformer) {
       return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
          @Override
@@ -100,7 +104,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<I, Image> transformer) {
+         Function<I, Image> transformer, AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
       return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
 
          @Override
@@ -108,12 +112,34 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
             return adapter.listImages();
          }
 
-      }, transformer);
+      }, Functions.compose(addDefaultCredentialsToImage, transformer));
+   }
+
+   @Singleton
+   public static class AddDefaultCredentialsToImage implements Function<Image, Image> {
+      private final PopulateDefaultLoginCredentialsForImageStrategy credsForImage;
+
+      @Inject
+      public AddDefaultCredentialsToImage(PopulateDefaultLoginCredentialsForImageStrategy credsForImage) {
+         this.credsForImage = credsForImage;
+      }
+
+      @Override
+      public Image apply(Image arg0) {
+         Credentials credentials = credsForImage.execute(arg0);
+         return credentials != null ? ImageBuilder.fromImage(arg0).defaultCredentials(credentials).build() : arg0;
+      }
+
+      @Override
+      public String toString() {
+         return "addDefaultCredentialsToImage()";
+      }
    }
 
    @Provides
    @Singleton
-   protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+   protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(
+         AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 

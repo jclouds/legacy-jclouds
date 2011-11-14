@@ -88,7 +88,7 @@ public class TerremarkVCloudComputeClientTest {
       Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
-            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(), new Provider<String>() {
+            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null), new Provider<String>() {
 
                @Override
                public String get() {

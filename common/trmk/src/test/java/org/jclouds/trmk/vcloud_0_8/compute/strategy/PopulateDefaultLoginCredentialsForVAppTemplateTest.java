@@ -47,7 +47,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
-      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null);
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "vcloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
@@ -61,7 +61,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
-      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null);
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
@@ -75,7 +75,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
-      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null);
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "vpncubed");
       assertEquals(creds.credential, "vpncubed");
@@ -89,7 +89,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
-      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null);
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "TmrkCl0ud1s#1!");
@@ -103,7 +103,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
-      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null);
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "Administrator");
       assertEquals(creds.credential, null);

@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
@@ -45,14 +44,12 @@ import com.google.common.cache.CacheLoader;
 @Singleton
 public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
-   private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
 
    @Inject
    CredentialsForInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
+         Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
-      this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.imageMap = imageMap;
    }
 
@@ -73,8 +70,6 @@ public class CredentialsForInstance extends CacheLoader<RunningInstance, Credent
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) throws ExecutionException {
-      return checkNotNull(
-            credentialProvider.execute(imageMap.get().get(new RegionAndName(from.getRegion(), from.getImageId()))),
-            "login from image: " + from.getImageId()).identity;
+      return imageMap.get().get(new RegionAndName(from.getRegion(), from.getImageId())).getDefaultCredentials().identity;
    }
 }

@@ -80,6 +80,7 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getId(), "7fad4fe1-daf3-4cb8-a847-082aae4d8506");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getImage().getDefaultCredentials().identity, "cloudsigma");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

@@ -25,12 +25,15 @@ import static org.testng.Assert.assertFalse;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
@@ -48,14 +51,13 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private VirtualBoxComputeServiceAdapter adapter;
-   private IMachine machine;
+   private NodeAndInitialCredentials<IMachine> machine;
    private final Map<OsFamily, Map<String, String>> osVersionMap = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));
@@ -78,24 +80,26 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       assertFalse(Iterables.isEmpty(adapter.listLocations()));
    }
 
+   private static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
+         new DefaultCredentialsFromImageOrOverridingCredentials());
+
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "foo-ef4";
       Template template = context.getComputeService().templateBuilder().build();
-      Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
-      machine = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
-      assertEquals(machine.getName(), name);
+      machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      assertEquals(machine.getNode().getName(), name);
+      assertEquals(machine.getNodeId(), machine.getNode().getId());
       // is there a place for group?
       // check other things, like cpu correct, mem correct, image/os is correct
       // (as possible)
-      assert credentialStore.containsKey("node#" + machine.getId()) : "credentials to log into machine not found "
-            + machine;
       // TODO: what's the IP address?
       // assert
       // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
       // machine;
-      doConnectViaSsh(machine, credentialStore.get("node#" + machine.getId()));
+      doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
+
    }
 
    protected void doConnectViaSsh(IMachine machine, Credentials creds) {
@@ -132,7 +136,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @AfterGroups(groups = "live")
    protected void tearDown() throws Exception {
       if (machine != null)
-         adapter.destroyNode(machine.getId() + "");
+         adapter.destroyNode(machine.getNodeId() + "");
       super.tearDown();
    }
 }

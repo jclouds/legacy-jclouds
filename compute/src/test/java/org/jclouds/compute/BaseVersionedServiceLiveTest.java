@@ -18,14 +18,15 @@
  */
 package org.jclouds.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
+
+import java.util.Properties;
+import java.util.logging.Logger;
+
 import org.jclouds.Constants;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
-
-import java.util.Properties;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
 
 /**
  * 
@@ -39,15 +40,18 @@ public abstract class BaseVersionedServiceLiveTest {
    protected String endpoint;
    protected String apiversion;
    protected String imageId;
+   protected String loginUser;
 
    protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
-   
+
    protected Properties setupProperties() {
 
-      if (emptyToNull(provider) == null) throw new NullPointerException("provider must not be null or empty:"+provider);
-      if (emptyToNull(identity) == null) throw new NullPointerException("identity must not be null or empty:"+provider);
+      if (emptyToNull(provider) == null)
+         throw new NullPointerException("provider must not be null or empty:" + provider);
+      if (emptyToNull(identity) == null)
+         throw new NullPointerException("identity must not be null or empty:" + provider);
 
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
@@ -63,6 +67,8 @@ public abstract class BaseVersionedServiceLiveTest {
          overrides.setProperty(provider + ".apiversion", apiversion);
       if (imageId != null)
          overrides.setProperty(provider + ".image-id", imageId);
+      if (loginUser != null)
+         overrides.setProperty(provider + ".login-user", loginUser);
 
       return overrides;
    }
@@ -74,7 +80,7 @@ public abstract class BaseVersionedServiceLiveTest {
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
       imageId = System.getProperty("test." + provider + ".image-id");
+      loginUser = System.getProperty("test." + provider + ".login-user");
    }
-
 
 }

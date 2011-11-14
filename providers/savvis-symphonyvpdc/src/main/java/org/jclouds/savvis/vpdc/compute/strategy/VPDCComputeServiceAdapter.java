@@ -23,7 +23,6 @@ import static org.jclouds.savvis.vpdc.options.GetVMOptions.Builder.withPowerStat
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_VDC_EMAIL;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -34,7 +33,6 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.domain.Credentials;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.VPDCClient;
 import org.jclouds.savvis.vpdc.domain.Network;
@@ -49,15 +47,15 @@ import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 ;
 
 /**
- * defines the connection between the {@link VPDCClient} implementation and the jclouds
- * {@link ComputeService}
+ * defines the connection between the {@link VPDCClient} implementation and the
+ * jclouds {@link ComputeService}
  * 
  */
 @Singleton
@@ -73,12 +71,11 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
       this.client = checkNotNull(client, "client");
       // TODO: parameterize
       this.taskTester = new RetryablePredicate<String>(checkNotNull(taskSuccess, "taskSuccess"), 650, 10,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
    }
 
    @Override
-   public VM createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-            Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<VM> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       String networkTierName = template.getLocation().getId();
       String vpdcId = template.getLocation().getParent().getId();
       String billingSiteId = template.getLocation().getParent().getParent().getId();
@@ -104,7 +101,8 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
       if (taskTester.apply(task.getId())) {
          try {
-            return this.getNode(task.getResult().getHref().toASCIIString());
+            VM returnVal = this.getNode(task.getResult().getHref().toASCIIString());
+            return new NodeAndInitialCredentials<VM>(returnVal, returnVal.getId(), null);
          } finally {
             // TODO: get the credentials relevant to the billingSiteId/Org
             // credentialStore.put(id, new Credentials(orgId, orgUser));
@@ -118,7 +116,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
    public Iterable<VMSpec> listHardwareProfiles() {
       // TODO don't depend on OS
       return ImmutableSet.of(VMSpec.builder().operatingSystem(Iterables.get(listImages(), 0)).memoryInGig(2)
-               .addDataDrive("/data01", 25).build());
+            .addDataDrive("/data01", 25).build());
    }
 
    @Override
@@ -142,7 +140,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
             })) {
                builder.add(client.getBrowsingClient().getVMInVDC(org.getId(), vdc.getId(), vApp.getId(),
-                        withPowerState()));
+                     withPowerState()));
             }
          }
       }

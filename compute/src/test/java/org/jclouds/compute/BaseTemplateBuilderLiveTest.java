@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.json.Json;
@@ -89,20 +90,20 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
    public void testFromTemplate() {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assertEquals(context.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
-               defaultTemplate.toString());
+            defaultTemplate.toString());
    }
 
    @BeforeClass
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setupCredentials();
-      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), setupProperties());
+      context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), setupProperties());
    }
 
    @DataProvider(name = "osSupported")
    public Object[][] osSupported() {
-      return convertToArray(Sets.filter(provideAllOperatingSystems(), Predicates
-               .not(defineUnsupportedOperatingSystems())));
+      return convertToArray(Sets.filter(provideAllOperatingSystems(),
+            Predicates.not(defineUnsupportedOperatingSystems())));
    }
 
    protected Object[][] convertToArray(Set<OsFamilyVersion64Bit> supportedOperatingSystems) {
@@ -125,7 +126,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
    protected Set<OsFamilyVersion64Bit> provideAllOperatingSystems() {
       Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
       }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-               .getInstance(Json.class));
+            .getInstance(Json.class));
 
       Set<OsFamilyVersion64Bit> supportedOperatingSystems = Sets.newHashSet();
       for (Entry<OsFamily, Map<String, String>> osVersions : map.entrySet()) {
@@ -139,8 +140,8 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
 
    @Test(dataProvider = "osSupported")
    public void testTemplateBuilderCanFind(OsFamilyVersion64Bit matrix) throws InterruptedException {
-      TemplateBuilder builder = context.getComputeService().templateBuilder().osFamily(matrix.family).os64Bit(
-               matrix.is64Bit);
+      TemplateBuilder builder = context.getComputeService().templateBuilder().osFamily(matrix.family)
+            .os64Bit(matrix.is64Bit);
       if (!matrix.version.equals(""))
          builder.osVersionMatches("^" + matrix.version + "$");
       Template template = builder.build();
@@ -152,8 +153,8 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
 
    @Test(dataProvider = "osNotSupported", expectedExceptions = NoSuchElementException.class)
    public void testTemplateBuilderCannotFind(OsFamilyVersion64Bit matrix) throws InterruptedException {
-      TemplateBuilder builder = context.getComputeService().templateBuilder().osFamily(matrix.family).os64Bit(
-               matrix.is64Bit);
+      TemplateBuilder builder = context.getComputeService().templateBuilder().osFamily(matrix.family)
+            .os64Bit(matrix.is64Bit);
       if (!matrix.version.equals(""))
          builder.osVersionMatches("^" + matrix.version + "$");
       builder.build();
@@ -164,7 +165,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
 
       Template template = context.getComputeService().templateBuilder().imageId(defaultTemplate.getImage().getId())
-               .locationId(defaultTemplate.getLocation().getId()).build();
+            .locationId(defaultTemplate.getLocation().getId()).build();
       assertEquals(template.getImage(), defaultTemplate.getImage());
    }
 
@@ -172,7 +173,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert defaultTemplate.getImage().getOperatingSystem().getVersion().matches("1[012].[10][04]") : defaultTemplate
-               .getImage().getOperatingSystem().getVersion();
+            .getImage().getOperatingSystem().getVersion();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
@@ -189,38 +190,38 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-            case PROVIDER:
-               assertProvider(location);
-               break;
-            case REGION:
-               assertProvider(location.getParent());
-               assert location.getIso3166Codes().size() == 0
-                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
-                        + " ||" + location.getParent();
-               break;
-            case ZONE:
-               Location provider = location.getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider == null)
-                  provider = location.getParent();
-               assertProvider(provider);
-               assert location.getIso3166Codes().size() == 0
-                        || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location
-                        + " ||" + location.getParent();
-               break;
-            case HOST:
-               Location provider2 = location.getParent().getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider2 == null)
-                  provider2 = location.getParent().getParent();
-               assertProvider(provider2);
-               break;
+         case PROVIDER:
+            assertProvider(location);
+            break;
+         case REGION:
+            assertProvider(location.getParent());
+            assert location.getIso3166Codes().size() == 0
+                  || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location + " ||"
+                  + location.getParent();
+            break;
+         case ZONE:
+            Location provider = location.getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider == null)
+               provider = location.getParent();
+            assertProvider(provider);
+            assert location.getIso3166Codes().size() == 0
+                  || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location + " ||"
+                  + location.getParent();
+            break;
+         case HOST:
+            Location provider2 = location.getParent().getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider2 == null)
+               provider2 = location.getParent().getParent();
+            assertProvider(provider2);
+            break;
          }
       }
    }
 
    @Test
-   public void testTemplateBuilderWithImageIdsSpecified() throws IOException {
+   public void testTemplateBuilderWithImageIdSpecified() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
 
       ComputeServiceContext context = null;
@@ -246,6 +247,40 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
+      } finally {
+         if (context != null)
+            context.close();
+      }
+   }
+
+   @Test
+   public void testTemplateBuilderWithLoginUserSpecified() throws IOException {
+
+      ComputeServiceContext context = null;
+      try {
+         Properties overrides = setupProperties();
+         overrides.setProperty("jclouds.login-user", "foo:bar");
+
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+
+         assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
+               new Credentials("foo", "bar"));
+      } finally {
+         if (context != null)
+            context.close();
+      }
+
+      context = null;
+      try {
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".login-user", "foo:bar");
+
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+
+         assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
+               new Credentials("foo", "bar"));
       } finally {
          if (context != null)
             context.close();

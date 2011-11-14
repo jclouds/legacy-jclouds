@@ -21,11 +21,13 @@ package org.jclouds.softlayer.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import java.util.Map;
 import java.util.Random;
 
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
@@ -40,7 +42,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.net.InetAddresses;
 import com.google.inject.Guice;
 
@@ -48,19 +49,22 @@ import com.google.inject.Guice;
 public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
 
    private SoftLayerComputeServiceAdapter adapter;
-   private VirtualGuest guest;
+   private NodeAndInitialCredentials<VirtualGuest> guest;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       super.setupClient();
       adapter = Guice.createInjector(module, new Log4JLoggingModule())
-               .getInstance(SoftLayerComputeServiceAdapter.class);
+            .getInstance(SoftLayerComputeServiceAdapter.class);
    }
 
    @Test
    public void testListLocations() {
       assertFalse(Iterables.isEmpty(adapter.listLocations()));
    }
+
+   private static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
+         new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
@@ -71,15 +75,13 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
 
-      Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
-      guest = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
-      assertEquals(guest.getHostname(), name);
-      assertEquals(guest.getDomain(), template.getOptions().as(SoftLayerTemplateOptions.class).getDomainName());
-      // check other things, like cpu correct, mem correct, image/os is correct
-      // (as possible)
-      assert credentialStore.containsKey("node#" + guest.getId()) : "credentials to log into guest not found " + guest;
-      assert InetAddresses.isInetAddress(guest.getPrimaryBackendIpAddress()) : guest;
-      doConnectViaSsh(guest, credentialStore.get("node#" + guest.getId()));
+      guest = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      assertEquals(guest.getNode().getHostname(), name);
+      assertEquals(guest.getNodeId(), guest.getNode().getId());
+      assertEquals(guest.getNode().getDomain(), template.getOptions().as(SoftLayerTemplateOptions.class)
+            .getDomainName());
+      assert InetAddresses.isInetAddress(guest.getNode().getPrimaryBackendIpAddress()) : guest;
+      doConnectViaSsh(guest.getNode(), prioritizeCredentialsFromTemplate.apply(template, guest.getCredentials()));
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, Credentials creds) {
@@ -111,7 +113,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (guest != null)
-         adapter.destroyNode(guest.getId() + "");
+         adapter.destroyNode(guest.getNodeId() + "");
       super.tearDown();
    }
 }

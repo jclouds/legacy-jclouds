@@ -21,7 +21,6 @@ package org.jclouds.deltacloud.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -36,11 +35,11 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.domain.PasswordAuthentication;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
-import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.predicates.InstanceFinished;
 import org.jclouds.deltacloud.predicates.InstanceRunning;
@@ -56,13 +55,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
- * defines the connection between the {@link DeltacloudClient} implementation and the jclouds
- * {@link ComputeService}
+ * defines the connection between the {@link DeltacloudClient} implementation
+ * and the jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class DeltacloudComputeServiceAdapter implements
-         ComputeServiceAdapter<Instance, HardwareProfile, org.jclouds.deltacloud.domain.Image, Realm> {
+      ComputeServiceAdapter<Instance, HardwareProfile, org.jclouds.deltacloud.domain.Image, Realm> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -75,24 +74,23 @@ public class DeltacloudComputeServiceAdapter implements
       this.client = checkNotNull(client, "client");
       // TODO: parameterize
       stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
-               Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,
-                        TimeUnit.SECONDS),//
-               Instance.State.FINISH, new RetryablePredicate<Instance>(new InstanceFinished(client), 30, 1,
-                        TimeUnit.SECONDS)//
-               );
+            Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,
+                  TimeUnit.SECONDS),//
+            Instance.State.FINISH, new RetryablePredicate<Instance>(new InstanceFinished(client), 30, 1,
+                  TimeUnit.SECONDS)//
+            );
    }
 
    @Override
-   public Instance createNodeWithGroupEncodedIntoNameThenStoreCredentials(String tag, String name, Template template,
-            Map<String, Credentials> credentialStore) {
+   public NodeAndInitialCredentials<Instance> createNodeWithGroupEncodedIntoName(String tag, String name,
+         Template template) {
       Instance instance = client.createInstance(template.getImage().getProviderId(), CreateInstanceOptions.Builder
-               .named(name).hardwareProfile(template.getHardware().getId()).realm(template.getLocation().getId()));
+            .named(name).hardwareProfile(template.getHardware().getId()).realm(template.getLocation().getId()));
+      Credentials creds = null;
       if (instance.getAuthentication() != null && instance.getAuthentication() instanceof PasswordAuthentication) {
-         Credentials creds = PasswordAuthentication.class.cast(instance.getAuthentication()).getLoginCredentials();
-         // store the credentials so that later functions can use them
-         credentialStore.put(instance.getHref().toASCIIString(), creds);
+         creds = PasswordAuthentication.class.cast(instance.getAuthentication()).getLoginCredentials();
       }
-      return instance;
+      return new NodeAndInitialCredentials<Instance>(instance, instance.getId(), creds);
    }
 
    @Override
@@ -139,7 +137,7 @@ public class DeltacloudComputeServiceAdapter implements
    }
 
    Iterable<Transition> findChainTo(Instance.State desired, Instance.State currentState,
-            Multimap<Instance.State, ? extends Transition> states) {
+         Multimap<Instance.State, ? extends Transition> states) {
       for (Transition transition : states.get(currentState)) {
          if (currentState.ordinal() >= transition.getTo().ordinal())
             continue;
